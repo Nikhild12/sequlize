@@ -49,13 +49,13 @@ const sequelize = new Sequelize(
   config.mysql.db,
   config.mysql.user,
   config.mysql.password, {
-    dialect: "mysql",
-    port: config.mysql.port,
-    host: config.mysql.host,
-    define: {
-      timestamps: true
-    }
+  dialect: "mysql",
+  port: config.mysql.port,
+  host: config.mysql.host,
+  define: {
+    timestamps: true
   }
+}
 );
 
 const modelsDir = path.normalize(`${__dirname}/../models`);
@@ -90,8 +90,8 @@ Object.keys(db).forEach(modelName => {
 
 // assign the sequelize variables to the db object and returning the db.
 module.exports = _.extend({
-    sequelize,
-    Sequelize
-  },
+  sequelize,
+  Sequelize
+},
   db
 );

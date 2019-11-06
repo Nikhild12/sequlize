@@ -1,5 +1,9 @@
-const express =require('express');
+const express = require('express');
 
-const serviceRoute= express.Router();
+const emrWorkflowRouter = require('./emr.workflow.route');
+
+const serviceRoute = express.Router();
+
+serviceRoute.use('/emr-workflow-settings', emrWorkflowRouter);
 
 module.exports = serviceRoute;

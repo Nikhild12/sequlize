@@ -12,7 +12,7 @@ const swaggerUi = require('swagger-ui-express');
 const config = require('./config');
 
 // Index route 
-const indexRoute = require('');
+const indexRoute = require('../routes/index.route');
 
 // Express Initialize
 const app = express();
@@ -31,6 +31,9 @@ app.use(helmet());
 if (config.env === 'develoment') {
 	app.use(logger('dev'))
 }
+
+// Initialzing Index Route to Express Middleware
+app.use('/', indexRoute);
 
 module.exports = app;
 
