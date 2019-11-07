@@ -17,6 +17,7 @@ const EMRWorkflowSettings = () => {
             if (user_uuid && emrWorkflowSettingReqData) {
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.created_by = user_uuid;
+                    eRD.is_active = true;
                     eRD.created_date = eRD.modified_date = new Date().toISOString();
                     createEMRWorkflowPromiseArray = [
                         ...createEMRWorkflowPromiseArray,

@@ -6,7 +6,7 @@ const helmet = require('helmet');
 
 // Swagger UI and Json import
 const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument =require('./')
+const swaggerDocument = require('./swagger.json');
 
 // Config Import
 const config = require('./config');
@@ -34,6 +34,9 @@ if (config.env === 'develoment') {
 
 // Initialzing Index Route to Express Middleware
 app.use('/', indexRoute);
+
+// Swagger UI Middleware
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;
 

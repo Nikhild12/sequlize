@@ -1,0 +1,115 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "EMR API",
+        "description": "EMR DATA SERVICE API",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "localhost:7337",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "EMR API",
+            "description": "API for EMR Data"
+        }
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/emr-workflow-settings/create": {
+            "post": {
+                "description": "To Create a EMR Workflow for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createEMRWorkflowSettings",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createEMR"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRWorkflowSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Workflow"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "createEMR": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "facility_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "department_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "role_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "context_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "context_activity_map_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "activity_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "work_flow_order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "revision": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            }
+        }
+    }
+}
