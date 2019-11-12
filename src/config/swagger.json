@@ -60,7 +60,102 @@
                     }
                 }
             }
+        },
+        "/api/emr-workflow-settings/delete": {
+            "put": {
+                "description": "To delete a EMR Workflow for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "deleteEMRWorkflow",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deleteEMR"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRWorkflowSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully"
+                    }
+                }
+            }
+        },
+        "/api/emr-workflow-settings/update": {
+            "put": {
+                "description": "To Update a EMR Workflow for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updateEMRWorkflow",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateEMR"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRWorkflowSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upadted Successfully"
+                    }
+                }
+            }
+        },
+        "/api/emr-workflow-settings/getEMRWorkflowByUserId": {
+            "get": {
+                "description": "To get a EMR Workflow",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRWorkflowSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+                    }
+                }
+            }
         }
+        
     },
     "definitions": {
         "createEMR": {
@@ -107,6 +202,63 @@
                     "revision": {
                         "type": "integer",
                         "example": 1
+                    }
+                }
+            }
+        },
+        "deleteEMR": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "updateEMR": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "work_flow_order": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "emr_worflow_settings_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            }
+        },
+        "getEMRData": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "work_flow_order": {
+                        "type": "integer"
+                    },
+                    "emr_worflow_settings_id": {
+                        "type": "integer"
+                    },
+                    "facility_uuid": {
+                        "type": "integer"
+                    },
+                    "role_uuid": {
+                        "type": "integer"
+                    },
+                    "user_uuid": {
+                        "type": "integer"
+                    },
+                    "ews_is_active": {
+                        "type": "boolean"
+                    },
+                    "activity_code": {
+                        "type": "string"
+                    },
+                    "activity_icon": {
+                        "type": "string"
+                    },
+                    "activity_name": {
+                        "type": "string"
                     }
                 }
             }

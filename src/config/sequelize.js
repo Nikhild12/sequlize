@@ -59,7 +59,7 @@ const sequelize = new Sequelize(
 );
 
 const modelsDir = path.normalize(`${__dirname}/../models`);
-// console.log(modelsDir);
+const EMR_VIEWS_DIR = path.normalize(`${__dirname}/../views`);
 
 // loop through all files in models directory ignoring hidden files and this file
 fs.readdirSync(modelsDir)
@@ -70,6 +70,14 @@ fs.readdirSync(modelsDir)
     const model = sequelize.import(path.join(modelsDir, file));
     db[model.name] = model;
   });
+
+  fs.readdirSync(EMR_VIEWS_DIR)
+  .filter(file => file.indexOf(".") !== 0 && file.indexOf(".map") === -1)
+  .forEach(file => {
+    const model = sequelize.import(path.join(EMR_VIEWS_DIR, file));
+    db[model.name] = model;
+  });
+
 
 // calling all the associate function, in order to make the association between the models
 Object.keys(db).forEach(modelName => {

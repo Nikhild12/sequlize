@@ -8,7 +8,11 @@ const emrWorkflowController = require('../controllers/emr.workflow.controller');
 const emrWorkflowRoute = express.Router();
 
 // EMR Workflow Routes
+
 emrWorkflowRoute.route('/create').post(emrWorkflowController.createEMRWorkFlow);
+emrWorkflowRoute.route('/update').put(emrWorkflowController.updateEMRWorkFlow);
+emrWorkflowRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
+emrWorkflowRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);
 
 // Exporting EMR Workflow Route
 module.exports = emrWorkflowRoute;
