@@ -259,6 +259,9 @@
                     },
                     "activity_name": {
                         "type": "string"
+                    },
+                    "activity_id":{
+                        "type": "integer"
                     }
                 }
             }

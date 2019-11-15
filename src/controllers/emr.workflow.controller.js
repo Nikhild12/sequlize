@@ -186,7 +186,8 @@ function getEMRData(emr_data) {
                 ews_is_active: e.ews_is_active[0] === 1 ? true : false,
                 activity_code: e.activity_code,
                 activity_icon: e.activity_icon,
-                activity_name: e.activity_name
+                activity_name: e.activity_name,
+                activity_id: e.ews_activity_uuid
             }
         ];
     });
