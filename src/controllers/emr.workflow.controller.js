@@ -22,7 +22,8 @@ const getEMRWorkFlowSettings = [
     'ews_is_active',
     'activity_code',
     'activity_name',
-    'activity_icon'
+    'activity_icon',
+    'activity_route_url'
 ]
 
 const EMRWorkflowSettings = () => {
@@ -187,6 +188,7 @@ function getEMRData(emr_data) {
                 activity_code: e.activity_code,
                 activity_icon: e.activity_icon,
                 activity_name: e.activity_name,
+                activity_route_url : e.activity_route_url,
                 activity_id: e.ews_activity_uuid
             }
         ];
