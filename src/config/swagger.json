@@ -154,6 +154,74 @@
                     }
                 }
             }
+        },
+
+        "/api/emr-patient-vitals/create": {
+            "post": {
+                "description": "To Create a EMR Patient Vitals",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createEMRPatientVitals",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createPatientVital"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRPatientVitals"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Patient Vitals"
+                    }
+                }
+            }
+        },
+
+        "/api/emr-diagnosis/getEmrDiagnosis": {
+            "post": {
+                "description": "To Create a EMR Patient Vitals",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createEMRPatientVitals",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createPatientVital"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRPatientVitals"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Patient Vitals"
+                    }
+                }
+            }
         }
         
     },
@@ -262,6 +330,106 @@
                     },
                     "activity_id":{
                         "type": "integer"
+                    }
+                }
+            }
+        },
+        "createPatientVital":{
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "facility_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "department_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "patient_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "encounter_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "encounter_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "consultation_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "performed_date":{
+                        "type":"date",
+                        "example":"2019-02-11"
+                    },
+                    "vital_group_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_master_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mnemonic_code":{
+                        "type": "string",
+                        "example": "ssa"
+                    },
+                    "loinc_code":{
+                        "type": "string",
+                        "example": "ssa"
+                    },
+                    "vital_qualifier_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_value_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_value":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_uom_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "reference_range_from":{
+                        "type": "string",
+                        "example": "das"
+                    },
+                    "reference_range_to":{
+                        "type": "string",
+                        "example": "das"
+                    },
+                    "patient_vital_status_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "revision": {
+                        "type": "integer",
+                        "example": 1
                     }
                 }
             }
