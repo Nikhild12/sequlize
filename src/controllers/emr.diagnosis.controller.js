@@ -25,8 +25,8 @@ const emrDiagnosisController = () => {
             const limit = postData.paginationSize;
             const page = pageNo ? pageNo : 1;
             const itemsPerPage = limit ? limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            let sortArr = ['created_date', 'DESC'];
+            const offset = postData.offset ? parseInt(postData.offset) :0; 
+            let sortArr = ['name', 'ASC'];
             let fieldSplitArr = [];
             if (postData.sortField) {
                 fieldSplitArr = postData.sortField.split('.');
@@ -47,7 +47,7 @@ const emrDiagnosisController = () => {
                     sortArr.push(postData.sortOrder);
                 }
             }
-            await diagnosis_tbl.findAndCountAll({
+            let query ={
                 offset: offset,
                 limit: itemsPerPage,
                 order: [
@@ -57,7 +57,18 @@ const emrDiagnosisController = () => {
                     is_active: 1,
                     status: 1,
                 }
-            })
+            }
+            if(postData.searchKey && /\S/.test(postData.searchKey) )
+            {
+                // query[`where`][Op.or] = [{postData.code},{postData.name}] 
+                query.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + postData.searchKey.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + postData.searchKey.toLowerCase() + '%'),
+                    ];
+            }
+            console.log('query',query);
+            await diagnosis_tbl.findAndCountAll(  query  
+            )
                 .then((findData) => {
                     return res
                         .status(httpStatus.OK)
