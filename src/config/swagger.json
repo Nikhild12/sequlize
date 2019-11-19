@@ -192,7 +192,7 @@
 
         "/api/emr-diagnosis/getEmrDiagnosis": {
             "post": {
-                "description": "To Create a EMR Patient Vitals",
+                "description": "To get the EMR Diagnosis",
                 "parameters": [
                     {
                         "in": "header",
@@ -202,10 +202,10 @@
                     },
                     {
                         "in": "body",
-                        "name": "createEMRPatientVitals",
+                        "name": "getEMRDiagnosis",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/createPatientVital"
+                            "$ref": "#/definitions/getDiagnosis"
                         }
                     }
                 ],
@@ -214,11 +214,11 @@
                     "application/xml"
                 ],
                 "tags": [
-                    "EMRPatientVitals"
+                    "EMRDiagnosis"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully Inserted EMR Patient Vitals"
+                        "description": "Fetched Successfully"
                     }
                 }
             }
@@ -366,7 +366,7 @@
                         "example": 1
                     },
                     "performed_date":{
-                        "type":"date",
+                        "type":"string",
                         "example":"2019-02-11"
                     },
                     "vital_group_uuid":{
@@ -435,6 +435,27 @@
                     }
                 }
             }
-        }
+        },
+        "getDiagnosis": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "number",
+					"example": 0
+				},
+				"paginationSize": {
+					"type": "number",
+					"example": 10
+				},
+				"sortField": {
+					"type": "string",
+					"example": "created_date"
+				},
+				"sortOrder": {
+					"type": "string",
+					"example": "DESC"
+				}
+			}
+		}
     }
 }

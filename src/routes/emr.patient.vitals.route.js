@@ -9,7 +9,7 @@ const emrPatientVitalRoute = express.Router();
 
 // EMR Workflow Routes
 
-// emrPatientVitalRoute.route('/create').post(emrPatientVitalsController.createPatientVital);
+emrPatientVitalRoute.route('/create').post(emrPatientVitalsController.createPatientVital);
 // emrPatientVitalRoute.route('/update').put(emrWorkflowController.updateEMRWorkFlow);
 // emrPatientVitalRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
 // emrPatientVitalRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);
