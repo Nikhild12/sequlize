@@ -53,6 +53,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             activity_icon: {
                 type: DataTypes.STRING(255)
+            },
+            activity_route_url: {
+                type: DataTypes.STRING(255),
             }
 
 

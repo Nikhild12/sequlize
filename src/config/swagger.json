@@ -149,8 +149,8 @@
                     "200": {
                         "description": "Fetched Successfully",
                         "schema": {
-							"$ref": "#/definitions/getEMRData"
-						}
+                            "$ref": "#/definitions/getEMRData"
+                        }
                     }
                 }
             }
@@ -223,7 +223,6 @@
                 }
             }
         }
-        
     },
     "definitions": {
         "createEMR": {
@@ -328,8 +327,11 @@
                     "activity_name": {
                         "type": "string"
                     },
-                    "activity_id":{
+                    "activity_id": {
                         "type": "integer"
+                    },
+                    "activity_route_url": {
+                        "type": "string"
                     }
                 }
             }
