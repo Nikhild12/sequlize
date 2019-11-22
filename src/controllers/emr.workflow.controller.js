@@ -8,6 +8,8 @@ const sequelizeDb = require('../config/sequelize');
 const emr_workflow_settings = sequelizeDb.emr_workflow_settings;
 const vm_emr_workflow = sequelizeDb.vw_emr_work_flow_setting;
 
+const emr_constants = require('../config/constants');
+
 
 const getEMRWorkFlowSettings = [
     'ews_uuid',
@@ -37,11 +39,11 @@ const EMRWorkflowSettings = () => {
             if (user_uuid && emrWorkflowSettingReqData) {
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.created_by = user_uuid;
-                    eRD.is_active = true;
+                    eRD.is_active = emr_constants.IS_ACTIVE;
                     eRD.created_date = eRD.modified_date = new Date().toISOString();
                     createEMRWorkflowPromiseArray = [
                         ...createEMRWorkflowPromiseArray,
-                        emr_workflow_settings.create(eRD, { returning: true })];
+                        emr_workflow_settings.create(eRD, { returning: emr_constants.IS_ACTIVE })];
                 });
 
                 const emrCreatedData = await Promise.all(createEMRWorkflowPromiseArray);
@@ -65,7 +67,7 @@ const EMRWorkflowSettings = () => {
                 const emr_data = await vm_emr_workflow.findAll({
                     attributes: getEMRWorkFlowSettings,
                     where: {
-                        ews_is_active: 1,
+                        ews_is_active: emr_constants.IS_ACTIVE,
                         ews_user_uuid: user_uuid
                     }
                 });
@@ -78,7 +80,7 @@ const EMRWorkflowSettings = () => {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
             }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No User Id Found" });
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
     }
 
@@ -129,7 +131,7 @@ const EMRWorkflowSettings = () => {
             emrWorkflowIds.forEach((id) => {
                 deleteEMRWorkflowPromise = [...deleteEMRWorkflowPromise,
                 emr_workflow_settings.update(
-                    { is_active: 0, modified_by: user_uuid, modified_date: new Date().toISOString() },
+                    { status: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date().toISOString() },
                     { where: { uuid: id } }
                 )];
             });
@@ -188,7 +190,7 @@ function getEMRData(emr_data) {
                 activity_code: e.activity_code,
                 activity_icon: e.activity_icon,
                 activity_name: e.activity_name,
-                activity_route_url : e.activity_route_url,
+                activity_route_url: e.activity_route_url,
                 activity_id: e.ews_activity_uuid
             }
         ];

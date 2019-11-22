@@ -154,6 +154,103 @@
                     }
                 }
             }
+        },
+        "/api/chief-complaints-duration/get": {
+            "get": {
+                "description": "To get a chief Complaints Duration List",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsDuration"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getChiefComplaintsDuration"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chief-complaints-duration/create": {
+            "post": {
+                "description": "To create a chief Complaints Duration Period",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createChiefCompDuration",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createChiefCompDuration"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsDuration"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/recreateChiefCompDuration"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/patient-chief-complaints/create": {
+            "post": {
+                "description": "To create Patient chief Complaints",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createPatientChiefComplaints",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createPatientChiefComplaints"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientChiefComplaints"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -264,6 +361,77 @@
                     },
                     "activity_route_url": {
                         "type": "string"
+                    }
+                }
+            }
+        },
+        "getChiefComplaintsDuration": {
+            "type": "object",
+            "properties": {
+                "duration_period_code": {
+                    "type": "string"
+                },
+                "duration_period_name": {
+                    "type": "string"
+                },
+                "duration_period_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createChiefCompDuration": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "recreateChiefCompDuration": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "chCompDuraId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createPatientChiefComplaints": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "patient_uuid":{
+                        "type":"integer"
+                    },
+                    "encounter_uuid":{
+                        "type":"integer"
+                    },
+                    "encounter_type_uuid":{
+                        "type":"integer"
+                    },
+                    "consultation_uuid":{
+                        "type":"integer"
+                    },
+                    "chief_complaint_uuid":{
+                        "type":"integer"
+                    },
+                    "chief_complaint_duration":{
+                        "type":"integer"
+                    },
+                    "chief_complaint_duration_period_uuid":{
+                        "type":"integer"
+                    },
+                    "revision":{
+                        "type":"integer"
                     }
                 }
             }
