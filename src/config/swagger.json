@@ -9,14 +9,12 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "host": "localhost:7337",
+    "host": "192.168.1.110:7337",
     "basePath": "/",
-    "tags": [
-        {
-            "name": "EMR API",
-            "description": "API for EMR Data"
-        }
-    ],
+    "tags": [{
+        "name": "EMR API",
+        "description": "API for EMR Data"
+    }],
     "schemes": [
         "http",
         "https"
@@ -28,11 +26,42 @@
         "application/json"
     ],
     "paths": {
+        "/api/emr-diagnosis/getEmrDiagnosis": {
+            "post": {
+                "description": "To search a EMR diagnosi for the Master",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "searchEmrDiagnosis",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/searchEMR"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRWorkflowSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Workflow"
+                    }
+                }
+            }
+        },
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -64,8 +93,7 @@
         "/api/emr-workflow-settings/delete": {
             "put": {
                 "description": "To delete a EMR Workflow for the Master",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -97,8 +125,7 @@
         "/api/emr-workflow-settings/update": {
             "put": {
                 "description": "To Update a EMR Workflow for the Master",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -130,14 +157,12 @@
         "/api/emr-workflow-settings/getEMRWorkflowByUserId": {
             "get": {
                 "description": "To get a EMR Workflow",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "user_uuid",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
+                "parameters": [{
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -158,14 +183,12 @@
         "/api/chief-complaints-duration/get": {
             "get": {
                 "description": "To get a chief Complaints Duration List",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "user_uuid",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
+                "parameters": [{
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -186,8 +209,7 @@
         "/api/chief-complaints-duration/create": {
             "post": {
                 "description": "To create a chief Complaints Duration Period",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -222,8 +244,7 @@
         "/api/patient-chief-complaints/create": {
             "post": {
                 "description": "To create Patient chief Complaints",
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -299,6 +320,14 @@
                         "type": "integer",
                         "example": 1
                     }
+                }
+            }
+        },
+        "searchEMR": {
+            "type": "object",
+            "properties": {
+                "searchKey": {
+                    "type": "string"
                 }
             }
         },
@@ -409,29 +438,29 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "patient_uuid":{
-                        "type":"integer"
+                    "patient_uuid": {
+                        "type": "integer"
                     },
-                    "encounter_uuid":{
-                        "type":"integer"
+                    "encounter_uuid": {
+                        "type": "integer"
                     },
-                    "encounter_type_uuid":{
-                        "type":"integer"
+                    "encounter_type_uuid": {
+                        "type": "integer"
                     },
-                    "consultation_uuid":{
-                        "type":"integer"
+                    "consultation_uuid": {
+                        "type": "integer"
                     },
-                    "chief_complaint_uuid":{
-                        "type":"integer"
+                    "chief_complaint_uuid": {
+                        "type": "integer"
                     },
-                    "chief_complaint_duration":{
-                        "type":"integer"
+                    "chief_complaint_duration": {
+                        "type": "integer"
                     },
-                    "chief_complaint_duration_period_uuid":{
-                        "type":"integer"
+                    "chief_complaint_duration_period_uuid": {
+                        "type": "integer"
                     },
-                    "revision":{
-                        "type":"integer"
+                    "revision": {
+                        "type": "integer"
                     }
                 }
             }
