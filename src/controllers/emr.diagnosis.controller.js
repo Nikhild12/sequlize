@@ -18,7 +18,7 @@ const emrDiagnosisController = () => {
 
     /*=============== village API's================*/
 
-    const getEmrDiagnosis = async (req, res, next) => {
+    const _getEmrDiagnosis = async (req, res, next) => {
         const postData = req.body;
         try {
             const pageNo = postData.pageNo;
@@ -60,15 +60,12 @@ const emrDiagnosisController = () => {
             }
             if(postData.searchKey && /\S/.test(postData.searchKey) )
             {
-                // query[`where`][Op.or] = [{postData.code},{postData.name}] 
                 query.where[Op.or] = [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + postData.searchKey.toLowerCase() + '%'),
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + postData.searchKey.toLowerCase() + '%'),
-                    ];
+                ];
             }
-            console.log('query',query);
-            await diagnosis_tbl.findAndCountAll(  query  
-            )
+            await diagnosis_tbl.findAndCountAll(query)
                 .then((findData) => {
                     return res
                         .status(httpStatus.OK)
@@ -99,7 +96,7 @@ const emrDiagnosisController = () => {
     };
     // --------------------------------------------return----------------------------------
     return {
-        getEmrDiagnosis
+        getEmrDiagnosis:_getEmrDiagnosis
     };
 };
 

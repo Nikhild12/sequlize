@@ -94,15 +94,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             is_active: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "0",
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
                 allowNull: false,
             },
             status: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "0",
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
                 allowNull: false,
             },
             revision: {
@@ -129,7 +127,6 @@ module.exports = (sequelize, DataTypes) => {
             ]
 
         }
-    );
-
+    );    
     return patient_vitals;
 }
