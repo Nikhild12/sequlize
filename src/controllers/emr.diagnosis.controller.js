@@ -94,9 +94,28 @@ const emrDiagnosisController = () => {
                 });
         }
     };
+    const _getEmrDiagnosisById = async(req,res) => {
+        const {diagnosis_uuid} = req.query;
+        console.log('diagnosis_uuid',diagnosis_uuid);
+        if(diagnosis_uuid !== undefined){
+            try {
+                const result =  await diagnosis_tbl.findOne({where:{uuid:diagnosis_uuid,is_active:1,status:1}});
+                if(result){
+                    return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Diagnosis Successfully", responseContents:result  });
+                }    
+            }
+            catch(ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found " });
+        }   
+    }
     // --------------------------------------------return----------------------------------
     return {
-        getEmrDiagnosis:_getEmrDiagnosis
+        getEmrDiagnosis:_getEmrDiagnosis,
+        getEmrDiagnosisById:_getEmrDiagnosisById
     };
 };
 

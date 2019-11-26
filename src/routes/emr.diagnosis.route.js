@@ -5,11 +5,12 @@ const express = require('express');
 const emrDiagnosisController = require('../controllers/emr.diagnosis.controller');
 
 // Express Router Initialize
-const emrWorkflowRoute = express.Router();
+const emrDiagnosisRoute = express.Router();
 
 // EMR Workflow Routes
 
-emrWorkflowRoute.route('/getEmrDiagnosis').post(emrDiagnosisController.getEmrDiagnosis);
+emrDiagnosisRoute.route('/getEmrDiagnosis').post(emrDiagnosisController.getEmrDiagnosis);
+emrDiagnosisRoute.route('/getEmrDiagnosisById').get(emrDiagnosisController.getEmrDiagnosisById);
 
 // Exporting EMR Workflow Route
-module.exports = emrWorkflowRoute;
+module.exports = emrDiagnosisRoute;

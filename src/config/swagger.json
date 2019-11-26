@@ -9,7 +9,7 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "host": "192.168.1.110:7337",
+    "host": "localhost:7337",
     "basePath": "/",
     "tags": [{
         "name": "EMR API",
@@ -273,6 +273,34 @@
                     }
                 }
             }
+        },
+        "/api/emr-diagnosis/getEmrDiagnosisById": {
+            "get": {
+                "description": "To get a EMR Diagnosis By Id",
+                "parameters": [
+                    {
+                    "in": "query",
+                    "name": "diagnosis_uuid",
+                    "required": true,
+                    "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRDiagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getEMRDiagnosisById"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -482,6 +510,15 @@
 					"example": "ssa"
                 }
 			}
-		}
+        },
+        "getEMRDiagnosisById":{
+            "type": "object",
+			"properties": {
+				"diagnosis_uuid": {
+					"type": "number",
+					"example": 0
+                }
+            }    
+        }
     }
 }
