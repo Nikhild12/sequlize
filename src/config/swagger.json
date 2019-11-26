@@ -26,38 +26,6 @@
         "application/json"
     ],
     "paths": {
-        "/api/emr-diagnosis/getEmrDiagnosis": {
-            "post": {
-                "description": "To search a EMR diagnosi for the Master",
-                "parameters": [{
-                        "in": "header",
-                        "name": "user_uuid",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "searchEmrDiagnosis",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/searchEMR"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "tags": [
-                    "EMRWorkflowSettings"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully Inserted EMR Workflow"
-                    }
-                }
-            }
-        },
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
@@ -272,6 +240,39 @@
                     }
                 }
             }
+        },
+        "/api/emr-diagnosis/getEmrDiagnosis": {
+            "post": {
+                "description": "To get the EMR Diagnosis",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "getEMRDiagnosis",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getDiagnosis"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRDiagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -320,14 +321,6 @@
                         "type": "integer",
                         "example": 1
                     }
-                }
-            }
-        },
-        "searchEMR": {
-            "type": "object",
-            "properties": {
-                "searchKey": {
-                    "type": "string"
                 }
             }
         },
@@ -464,6 +457,31 @@
                     }
                 }
             }
-        }
+        },
+        "getDiagnosis": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "number",
+					"example": 0
+				},
+				"paginationSize": {
+					"type": "number",
+					"example": 10
+				},
+				"sortField": {
+					"type": "string",
+					"example": "created_date"
+				},
+				"sortOrder": {
+					"type": "string",
+					"example": "DESC"
+                },
+                "searchKey":{
+                    "type": "string",
+					"example": "ssa"
+                }
+			}
+		}
     }
 }
