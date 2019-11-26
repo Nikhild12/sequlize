@@ -24,12 +24,17 @@ const EMRPatientVitals = () => {
                 emrPatientVitalReqData.forEach((eRD) => {
                     eRD.performed_date = new Date(eRD.performed_date).toISOString();
                     eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
-                    eRD.is_active = true;
+                    eRD.is_active = eRD.status = true;
                     eRD.created_date = eRD.modified_date = new Date().toISOString();
                 });
                 const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(emrPatientVitalReqData, { returning: true });
+                
+                emrPatientVitalReqData.forEach((ePV, index) => {
+                    ePV.uuid = emr_patient_vitals_response[index].uuid;
+                });
+                
                 if (emr_patient_vitals_response) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted EMR Patient Vital Details  Successfully", responseContents: emr_patient_vitals_response });
+                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted EMR Patient Vital Details  Successfully", responseContents: emrPatientVitalReqData });
                 }
             }
         } catch (ex) {

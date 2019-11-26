@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             vital_value:{
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(50),
                 allowNull: true,
             },
             vital_uom_uuid:{

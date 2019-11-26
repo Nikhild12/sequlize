@@ -96,7 +96,6 @@ const emrDiagnosisController = () => {
     };
     const _getEmrDiagnosisById = async(req,res) => {
         const {diagnosis_uuid} = req.query;
-        console.log('diagnosis_uuid',diagnosis_uuid);
         if(diagnosis_uuid !== undefined){
             try {
                 const result =  await diagnosis_tbl.findOne({where:{uuid:diagnosis_uuid,is_active:1,status:1}});

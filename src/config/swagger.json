@@ -301,6 +301,38 @@
                     }
                 }
             }
+        },
+        "/api/emr-patient-vitals/create": {
+            "post": {
+                "description": "To Create a EMR Patient Vitals",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createPatientVitals",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createEMRPatientVitals"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRPatientVitals"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Patient Vitals"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -519,6 +551,98 @@
 					"example": 0
                 }
             }    
+        },
+        "createEMRPatientVitals": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "facility_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "department_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "patient_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "encounter_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "encounter_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "consultation_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "performed_date":{
+                        "type":"string",
+                        "example":"2019-11-21"
+                    },
+                    "vital_group_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_master_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mnemonic_code":{
+                        "type":"string",
+                        "example":"abc"
+                    },
+                    "loinc_code":{
+                        "type": "string",
+                        "example": "abc"
+                    },
+                    "vital_qualifier_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_value_type_uuid":{
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vital_value":{
+                        "type":"string",
+                        "example":"dasd"
+                    },
+                    "vital_uom_uuid":{
+                        "type":"integer",
+                        "example":1
+                    },
+                    "reference_range_from":{
+                        "type":"string",
+                        "example":"100"
+                    },
+                    "reference_range_to":{
+                        "type":"string",
+                        "example":"1000"
+                    },
+                    "patient_vital_status_uuid":{
+                        "type":"integer",
+                        "example":1
+                    },
+                    "comments":{
+                        "type":"string",
+                        "example":"1000"
+                    },
+                    "revision":{
+                        "type":"integer",
+                        "example":1
+                    }
+                }
+            }
         }
     }
 }
