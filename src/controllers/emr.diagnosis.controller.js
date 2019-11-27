@@ -100,15 +100,15 @@ const emrDiagnosisController = () => {
             try {
                 const result =  await diagnosis_tbl.findOne({where:{uuid:diagnosis_uuid,is_active:1,status:1}});
                 if(result){
-                    return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Diagnosis Successfully", responseContents:result  });
+                    return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched EMR Diagnosis Successfully", responseContent:result  });
                 }    
             }
             catch(ex) {
                 console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
             }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found " });
+            return res.status(400).send({ statusCode: httpStatus[400], message: "No Request Body Found " });
         }   
     }
     // --------------------------------------------return----------------------------------
