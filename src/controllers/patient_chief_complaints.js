@@ -5,15 +5,44 @@ const httpStatus = require("http-status");
 const sequelizeDb = require('../config/sequelize');
 
 // Initialize EMR Workflow
-const patient_chief_complaints = sequelizeDb.patient_chief_complaints;
+const patient_chief_complaints_tbl = sequelizeDb.patient_chief_complaints;
+const chief_complaints_tbl = sequelizeDb.chief_complaints;
 
 const emr_constants = require('../config/constants');
+
+function getPatientSearchQuery(searchKey, searchValue) {
+
+    let searchObject;
+    switch (searchKey) {
+
+        case 'encounterId':
+            searchObject = 'encounter_uuid';
+            break;
+        case 'patientId':
+        default:
+            searchObject = 'patient_uuid';
+            break;
+    }
+
+    return {
+        where: {
+            [searchObject]: searchValue,
+            is_active: emr_constants.IS_ACTIVE,
+            status: emr_constants.IS_ACTIVE
+        },
+        includes: [
+            {
+                model: chief_complaints_tbl,
+                attributes: ['code', 'name']
+            }
+        ]
+    }
+}
 
 const PatientChiefComplaints = () => {
 
 
     const _createChiefComplaints = async (req, res) => {
-
 
         const { user_uuid } = req.headers;
         const chiefComplaintsData = req.body;
@@ -27,11 +56,12 @@ const PatientChiefComplaints = () => {
             });
 
             try {
-                const chiefComplaintsCreatedData = await patient_chief_complaints.bulkCreate(chiefComplaintsData, { returning: true });
 
+                const chiefComplaintsCreatedData = await patient_chief_complaints_tbl.bulkCreate(chiefComplaintsData, { returning: true });
                 if (chiefComplaintsCreatedData) {
                     return res.status(200).send({ code: httpStatus.OK, message: "Inserted Patient Chief Complaints Successfully", responseContents: attachUUIDTOCreatedData(chiefComplaintsData, chiefComplaintsCreatedData) });
                 }
+
             } catch (ex) {
                 return res.status(200).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
             }
@@ -41,9 +71,22 @@ const PatientChiefComplaints = () => {
         }
     }
 
+    /**
+     * This is a filter API
+     * Key is - Patient Id and Encounter Id
+     * Otherwise it return entire list
+     */
+    const _getPatientChiefComplaints = () => {
+
+        const { searchKey, searchValue } = req.query;
+
+        const getPatientSearchQuery = '';
+    }
+
     return {
 
-        createChiefComplaints: _createChiefComplaints
+        createChiefComplaints: _createChiefComplaints,
+        getPatientChiefComplaints: _getPatientChiefComplaints
     }
 }
 
