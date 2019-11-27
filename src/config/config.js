@@ -3,20 +3,27 @@ const Joi = require("joi");
 require("dotenv").config()
 
 const envVarsSchema = Joi.object({
-    NODE_ENV : Joi.string()
-                .allow(["development", "production", "test", "provision"])
-                .default('development'),
-    PORT: Joi.number().default(7337),
+    NODE_ENV: Joi.string()
+        .allow(["development", "production", "test", "provision"])
+        .default("development"),
+    PORT: Joi.number().default(3000),
+    JWT_SECRET: Joi.string()
+        .default("GREAT!@!#$$%@%$SFA")
+        .description("JWT Secret required to sign"),
+    JWT_TOKEN_EXPIRE: Joi.string()
+        .default("1d")
+        .description("JWT Token Expired in Days"),
     PG_DB: Joi.string()
-        .default("dev_hmis_emr_25_10_2019")
+        .default("sfa")
         .description("test"),
-    PG_PORT: Joi.number().default(3306),
-    PG_HOST: Joi.string().default("192.168.1.102"),
+    PG_PORT: Joi.number().default(5432),
+    // SMTP_PORT: Joi.number().default(1337),
+    PG_HOST: Joi.string().default("127.0.0.1"),
     PG_USER: Joi.string()
-        .default("sureshkumar")
+        .default("root")
         .description("root"),
     PG_PASSWORD: Joi.string()
-        .default("5ureshKu3@r")
+        .default("root")
         .allow("")
         .description("test")
 })

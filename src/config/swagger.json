@@ -11,10 +11,12 @@
     },
     "host": "localhost:7337",
     "basePath": "/",
-    "tags": [{
-        "name": "EMR API",
-        "description": "API for EMR Data"
-    }],
+    "tags": [
+        {
+            "name": "EMR API",
+            "description": "API for EMR Data"
+        }
+    ],
     "schemes": [
         "http",
         "https"
@@ -29,7 +31,8 @@
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -61,7 +64,8 @@
         "/api/emr-workflow-settings/delete": {
             "put": {
                 "description": "To delete a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -93,7 +97,8 @@
         "/api/emr-workflow-settings/update": {
             "put": {
                 "description": "To Update a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -125,12 +130,14 @@
         "/api/emr-workflow-settings/getEMRWorkflowByUserId": {
             "get": {
                 "description": "To get a EMR Workflow",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -151,12 +158,14 @@
         "/api/chief-complaints-duration/get": {
             "get": {
                 "description": "To get a chief Complaints Duration List",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -177,7 +186,8 @@
         "/api/chief-complaints-duration/create": {
             "post": {
                 "description": "To create a chief Complaints Duration Period",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -212,7 +222,8 @@
         "/api/patient-chief-complaints/create": {
             "post": {
                 "description": "To create Patient chief Complaints",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -279,10 +290,10 @@
                 "description": "To get a EMR Diagnosis By Id",
                 "parameters": [
                     {
-                    "in": "query",
-                    "name": "diagnosis_uuid",
-                    "required": true,
-                    "type": "integer"
+                        "in": "query",
+                        "name": "diagnosis_uuid",
+                        "required": true,
+                        "type": "integer"
                     }
                 ],
                 "produces": [
@@ -519,36 +530,36 @@
             }
         },
         "getDiagnosis": {
-			"type": "object",
-			"properties": {
-				"offset": {
-					"type": "number",
-					"example": 0
-				},
-				"paginationSize": {
-					"type": "number",
-					"example": 10
-				},
-				"sortField": {
-					"type": "string",
-					"example": "created_date"
-				},
-				"sortOrder": {
-					"type": "string",
-					"example": "DESC"
-                },
-                "searchKey":{
-                    "type": "string",
-					"example": "ssa"
-                }
-			}
-        },
-        "getEMRDiagnosisById":{
             "type": "object",
-			"properties": {
-				"diagnosis_uuid": {
-					"type": "number",
-					"example": 0
+            "properties": {
+                "offset": {
+                    "type": "number",
+                    "example": 0
+                },
+                "paginationSize": {
+                    "type": "number",
+                    "example": 10
+                },
+                "sortField": {
+                    "type": "string",
+                    "example": "created_date"
+                },
+                "sortOrder": {
+                    "type": "string",
+                    "example": "DESC"
+                },
+                "searchKey": {
+                    "type": "string",
+                    "example": "ssa"
+                }
+            }
+        },
+        "getEMRDiagnosisById": {
+            "type": "object",
+            "properties": {
+                "diagnosis_uuid": {
+                    "type": "number",
+                    "example": 0
                 }
             }    
         },
