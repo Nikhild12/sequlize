@@ -344,6 +344,46 @@
                     }
                 }
             }
+        },
+        "/api/chief-complaints-master/getByFilters": {
+            "get": {
+                "description": "To get a Chief Complaints either by filters or By Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchBy",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchValue",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRChiefComplaints"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getChiefComplaintsByFilter"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -651,6 +691,35 @@
                     "revision":{
                         "type":"integer",
                         "example":1
+                    }
+                }
+            }
+        },
+        "getChiefComplaintsByFilter": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "number"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "chief_complaint_category_uuid": {
+                        "type": "integer"
+                    },
+                    "referrence_link": {
+                        "type": "string"
+                    },
+                    "body_site":{
+                        "type": "string"
                     }
                 }
             }
