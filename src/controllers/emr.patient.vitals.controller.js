@@ -22,10 +22,10 @@ const EMRPatientVitals = () => {
             if (user_uuid && emrPatientVitalReqData && emrPatientVitalReqData.length > 0) {
 
                 emrPatientVitalReqData.forEach((eRD) => {
-                    eRD.performed_date = new Date(eRD.performed_date).toISOString();
+                    eRD.performed_date = new Date(eRD.performed_date);
                     eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
                     eRD.is_active = eRD.status = true;
-                    eRD.created_date = eRD.modified_date = new Date().toISOString();
+                    eRD.created_date = eRD.modified_date = new Date();
                 });
                 const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(emrPatientVitalReqData, { returning: true });
                 
