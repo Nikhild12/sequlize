@@ -318,7 +318,77 @@
                         "schema": {
                             "$ref": "#/definitions/getPatientChiefComplaints"
                         }
-                    }                    
+                    }
+                }
+            }
+        },
+        "/api/encounter/create": {
+            "post": {
+                "description": "To Create a Encounter For Patient",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createEncounter",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createEncounter"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Encounter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted Encounter"
+                    }
+                }
+            }
+        },
+        "/api/encounter/getEncounterByDocAndPatientId": {
+            "get": {
+                "description": "To get a Encounter for Patient",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "patientId",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "doctorId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Encounter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Fetched Encounter"
+                    }
                 }
             }
         }
@@ -679,6 +749,81 @@
                 },
                 "modified_date": {
                     "type": "string"
+                }
+            }
+        },
+        "createEncounter": {
+            "type": "object",
+            "properties": {
+                "encounter": {
+                    "type": "object",
+                    "properties": {
+                        "facility_uuid": {
+                            "type": "number"
+                        },
+                        "encounter_type_uuid": {
+                            "type": "number"
+                        },
+                        "encounter_identifier": {
+                            "type": "number"
+                        },
+                        "patient_uuid": {
+                            "type": "number"
+                        },
+                        "appointment_uuid": {
+                            "type": "number"
+                        },
+                        "encounter_status_uuid": {
+                            "type": "number"
+                        },
+                        "admission_request_uuid": {
+                            "type": "number"
+                        },
+                        "admission_uuid": {
+                            "type": "number"
+                        },
+                        "discharge_type_uuid": {
+                            "type": "number"
+                        },
+                        "encounter_priority_uuid": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "encounterDoctor": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "number"
+                        },
+                        "doctor_uuid": {
+                            "type": "number"
+                        },
+                        "department_uuid": {
+                            "type": "number"
+                        },
+                        "encounter_uuid": {
+                            "type": "number"
+                        },
+                        "sub_deparment_uuid": {
+                            "type": "number"
+                        },
+                        "speciality_uuid": {
+                            "type": "number"
+                        },
+                        "dept_visit_type_uuid": {
+                            "type": "number"
+                        },
+                        "doctor_visit_type_uuid": {
+                            "type": "number"
+                        },
+                        "visit_type_uuid": {
+                            "type": "number"
+                        },
+                        "session_type_uuid": {
+                            "type": "number"
+                        }
+                    }
                 }
             }
         }

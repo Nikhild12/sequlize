@@ -6,4 +6,5 @@ module.exports = Object.freeze({
     FOUND: 'Found',
     NO_USER_ID: 'User Id',
     NO_REQUEST_BODY: 'Request Body',
+    NO_REQUEST_PARAM: 'Request Param'
 });
