@@ -40,7 +40,7 @@ const EMRWorkflowSettings = () => {
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.created_by = user_uuid;
                     eRD.is_active = emr_constants.IS_ACTIVE;
-                    eRD.created_date = eRD.modified_date = new Date().toISOString();
+                    eRD.created_date = eRD.modified_date = new Date();
                     createEMRWorkflowPromiseArray = [
                         ...createEMRWorkflowPromiseArray,
                         emr_workflow_settings.create(eRD, { returning: emr_constants.IS_ACTIVE })];
@@ -96,7 +96,7 @@ const EMRWorkflowSettings = () => {
             emrWorkflowUpdateData.forEach((eU) => {
                 updateEMRWorkFlowPromise = [...updateEMRWorkFlowPromise,
                 emr_workflow_settings.update(
-                    { work_flow_order: eU.work_flow_order, modified_by: user_uuid, modified_date: new Date().toISOString() },
+                    { work_flow_order: eU.work_flow_order, modified_by: user_uuid, modified_date: new Date() },
                     { where: { uuid: eU.emr_worflow_settings_id } }
                 )];
             });
@@ -131,7 +131,7 @@ const EMRWorkflowSettings = () => {
             emrWorkflowIds.forEach((id) => {
                 deleteEMRWorkflowPromise = [...deleteEMRWorkflowPromise,
                 emr_workflow_settings.update(
-                    { status: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date().toISOString() },
+                    { status: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date() },
                     { where: { uuid: id } }
                 )];
             });

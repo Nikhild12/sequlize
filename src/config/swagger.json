@@ -252,7 +252,8 @@
         "/api/emr-patient-vitals/create": {
             "post": {
                 "description": "To Create a EMR Patient Vitals",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -281,9 +282,9 @@
                 }
             }
         },
-        "/api/chief-complaints-master/getByFilters": {
+        "/api/patient-chief-complaints/getByFilters": {
             "get": {
-                "description": "To get a Chief Complaints either by filters or By Id",
+                "description": "To get Patient chief Complaints",
                 "parameters": [
                     {
                         "in": "header",
@@ -293,7 +294,7 @@
                     },
                     {
                         "in": "query",
-                        "name": "searchBy",
+                        "name": "searchKey",
                         "required": true,
                         "type": "string"
                     },
@@ -301,7 +302,7 @@
                         "in": "query",
                         "name": "searchValue",
                         "required": true,
-                        "type": "string"
+                        "type": "integer"
                     }
                 ],
                 "produces": [
@@ -309,15 +310,15 @@
                     "application/xml"
                 ],
                 "tags": [
-                    "EMRChiefComplaints"
+                    "PatientChiefComplaints"
                 ],
                 "responses": {
                     "200": {
                         "description": "Fetched Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getChiefComplaintsByFilter"
+                            "$ref": "#/definitions/getPatientChiefComplaints"
                         }
-                    }
+                    }                    
                 }
             }
         }
@@ -537,7 +538,7 @@
                     "type": "number",
                     "example": 0
                 }
-            }    
+            }
         },
         "createEMRPatientVitals": {
             "type": "array",
@@ -552,111 +553,132 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "patient_uuid":{
+                    "patient_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "encounter_uuid":{
+                    "encounter_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "encounter_type_uuid":{
+                    "encounter_type_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "consultation_uuid":{
+                    "consultation_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "performed_date":{
-                        "type":"string",
-                        "example":"2019-11-21"
+                    "performed_date": {
+                        "type": "string",
+                        "example": "2019-11-21"
                     },
-                    "vital_group_uuid":{
+                    "vital_group_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "vital_type_uuid":{
+                    "vital_type_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "vital_master_uuid":{
+                    "vital_master_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "mnemonic_code":{
-                        "type":"string",
-                        "example":"abc"
-                    },
-                    "loinc_code":{
+                    "mnemonic_code": {
                         "type": "string",
                         "example": "abc"
                     },
-                    "vital_qualifier_uuid":{
+                    "loinc_code": {
+                        "type": "string",
+                        "example": "abc"
+                    },
+                    "vital_qualifier_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "vital_value_type_uuid":{
+                    "vital_value_type_uuid": {
                         "type": "integer",
                         "example": 1
                     },
-                    "vital_value":{
-                        "type":"string",
-                        "example":"dasd"
+                    "vital_value": {
+                        "type": "string",
+                        "example": "dasd"
                     },
-                    "vital_uom_uuid":{
-                        "type":"integer",
-                        "example":1
+                    "vital_uom_uuid": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "reference_range_from":{
-                        "type":"string",
-                        "example":"100"
+                    "reference_range_from": {
+                        "type": "string",
+                        "example": "100"
                     },
-                    "reference_range_to":{
-                        "type":"string",
-                        "example":"1000"
+                    "reference_range_to": {
+                        "type": "string",
+                        "example": "1000"
                     },
-                    "patient_vital_status_uuid":{
-                        "type":"integer",
-                        "example":1
+                    "patient_vital_status_uuid": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "comments":{
-                        "type":"string",
-                        "example":"1000"
+                    "comments": {
+                        "type": "string",
+                        "example": "1000"
                     },
-                    "revision":{
-                        "type":"integer",
-                        "example":1
+                    "revision": {
+                        "type": "integer",
+                        "example": 1
                     }
                 }
             }
         },
-        "getChiefComplaintsByFilter": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "uuid": {
-                        "type": "number"
-                    },
-                    "code": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "chief_complaint_category_uuid": {
-                        "type": "integer"
-                    },
-                    "referrence_link": {
-                        "type": "string"
-                    },
-                    "body_site":{
-                        "type": "string"
-                    }
+        "getPatientChiefComplaints": {
+            "type": "object",
+            "properties": {
+                "patient_chief_id": {
+                    "type": "integer"
+                },
+                "encounter_id": {
+                    "type": "integer"
+                },
+                "encounter_type_id": {
+                    "type": "integer"
+                },
+                "chief_complaint_id": {
+                    "type": "integer"
+                },
+                "chief_complaint_name": {
+                    "type": "string"
+                },
+                "chief_complaint_code": {
+                    "type": "string"
+                },
+                "chief_complaint_duration_id": {
+                    "type": "integer"
+                },
+                "chief_complaint_duration_name": {
+                    "type": "string"
+                },
+                "chief_complaint_duration_code": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "boolean"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "modified_by": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "modified_date": {
+                    "type": "string"
                 }
             }
         }

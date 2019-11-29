@@ -95,6 +95,13 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: 'modified_date'
         }
     );
-
+    PATIENT_CHIEF_COMPLAINTS.associate = model =>{
+        PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaints, {
+            foreignKey: "chief_complaint_uuid"
+        }),
+        PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaint_duration_periods, {
+            foreignKey: "chief_complaint_duration_period_uuid"
+        })
+    }
     return PATIENT_CHIEF_COMPLAINTS;
 }

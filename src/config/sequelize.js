@@ -54,7 +54,14 @@ const sequelize = new Sequelize(
   host: config.mysql.host,
   define: {
     timestamps: true
-  }
+  },
+  dialectOptions: {
+    // useUTC: false, //for reading from database
+    dateStrings: true,
+    typeCast: true,
+    timezone: "+05:30"
+  },
+  timezone: '+05:30'
 }
 );
 
@@ -71,7 +78,7 @@ fs.readdirSync(modelsDir)
     db[model.name] = model;
   });
 
-  fs.readdirSync(EMR_VIEWS_DIR)
+fs.readdirSync(EMR_VIEWS_DIR)
   .filter(file => file.indexOf(".") !== 0 && file.indexOf(".map") === -1)
   .forEach(file => {
     const model = sequelize.import(path.join(EMR_VIEWS_DIR, file));
