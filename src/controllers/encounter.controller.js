@@ -92,7 +92,7 @@ const Encounter = () => {
             // Assigning
             encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
             encounterDoctor.is_active = encounterDoctor.status = emr_constants.IS_ACTIVE;
-            encounterDoctor.created_date = encounterDoctor.modified_date = new Date();
+            encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
 
             try {
                 const createdEncounterData = await encounter_tbl.create(encounter, { returning: true });
