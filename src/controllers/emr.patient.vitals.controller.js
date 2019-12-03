@@ -1,6 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
-
+const request = require('request');
 // Sequelizer Import
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
@@ -46,19 +46,61 @@ const EMRPatientVitals = () => {
         const {template_id} = req.query;
         const {user_uuid} =req.headers;
         try {
-            if(template_id && user_uuid){
-
+            let getPatientVitals = await emr_patientvitals_Tbl.findAll({where:{is_active:1,status:1}},{returning:true});
+            
+            if(getPatientVitals) {
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: getPatientVitals });
+            } else {
+                return res.status(400).send({ code: httpStatus[400], message: "Something went wrong" });
             }
-        }
-        catch(err){
 
+        }
+        catch(ex){
+            return res.status(400).send({ code: httpStatus[400], message: ex.message });
         }
     }
    
+    const _updateVitals = async(req,res) => {
+
+        // const {template_id,template_type_uuid,user_uuid} = req.headers;
+        // const reqHeaders =req.headers;
+        // const reqBody = req.body;
+
+        // if(reqHeaders && reqBody){
+        //     try {   
+
+        //         let options = {
+        //             url: 'https://api.github.com/repos/request/request',
+        //             headers: {
+        //                 template_id:template_id,
+        //                 template_type_uuid:template_type_uuid,
+        //                 user_uuid:user_uuid
+        //             },
+        //             data:body
+        //         };
+        //         request({options},(err,response,body) => {
+        //             if(body.code == 200) {
+        //                 let result = body.responseContent.new_temp_dtls;
+        //                 return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully",responseContents:result });
+        //             }
+        //             else {
+        //                 return res.status(400).send({ code: httpStatus[400], message: "something went wrong" });
+        //             }
+        //         }) 
+
+        //     } catch(ex) {
+
+        //         return res.status(400).send({ code: httpStatus[400], message: ex.message });
+        //     }
+        // } else {
+        //     return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
+        // }
+    }
 
     return {
         createPatientVital: _createPatientVital,
-        getVitalsByTemplateID:_getVitalsByTemplateID
+        getVitalsByTemplateID:_getVitalsByTemplateID,
+        AddVitalsToTemp:_updateVitals
     }
 }
 

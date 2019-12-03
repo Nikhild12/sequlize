@@ -128,5 +128,12 @@ module.exports = (sequelize, DataTypes) => {
 
         }
     );    
+    
+    // patient_vitals.associate = models => {
+    //     patient_vitals.belongsTo(models.encounter_uuid ,{
+    //         foreignKey : "encounter_uuid"
+    //     })
+    // }
+
     return patient_vitals;
 }
