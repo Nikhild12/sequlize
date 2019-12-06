@@ -391,6 +391,32 @@
                     }
                 }
             }
+        },
+
+        "/api/encounter-type/getEncounterType":{
+            "get": {
+                "description": "To get list of Encounter Type",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EncounterType"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Fetched Encounter Type"
+                    }
+                }
+            }
         }
     },
     "definitions": {
