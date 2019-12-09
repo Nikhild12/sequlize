@@ -1,6 +1,5 @@
 // Package Import
 const httpStatus = require("http-status");
-
 // Sequelizer Import
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
