@@ -109,7 +109,7 @@
                         "name": "updateEMRWorkflow",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/updateEMR"
+                            "$ref": "#/definitions/createEMR"
                         }
                     }
                 ],
