@@ -79,7 +79,10 @@ const EMRWorkflowSettings = () => {
             try {
                 const emr_data = await vm_emr_workflow.findAll({
                     attributes: getEMRWorkFlowSettings,
-                    where: getEMRByUserId(user_uuid).where
+                    where: {
+                        ews_is_active: emr_constants.IS_ACTIVE,
+                        ews_user_uuid: user_uuid
+                    }
                 });
 
                 if (emr_data) {
