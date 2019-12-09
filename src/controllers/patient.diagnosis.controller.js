@@ -38,10 +38,7 @@ const PatientDiagnsis = () => {
                 });
 
                 const patientDiagnosisCreatedData = await patient_diagnosis_tbl.bulkCreate(patientsDiagnosisData, { returning: true });
-                if (patientDiagnosisCreatedData) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted Patient Diagnosis Complaints Successfully", responseContents: patientsDiagnosisData });
-
-                }
+                return res.status(200).send({ code: httpStatus.OK, message: "Inserted Patient Diagnosis Complaints Successfully", responseContents: appendUUIDToReqData(patientsDiagnosisData, patientDiagnosisCreatedData) });
 
             } catch (ex) {
 
@@ -62,3 +59,16 @@ const PatientDiagnsis = () => {
 };
 
 module.exports = PatientDiagnsis();
+
+/**
+ * 
+ * @param {*} req i.e. body
+ * @param {*} res i.e created data
+ */
+function appendUUIDToReqData(req, res) {
+
+    req.forEach((r, idx) => {
+        r.uuid = res[idx].uuid;
+    })
+    return req;
+}
