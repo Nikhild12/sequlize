@@ -392,8 +392,7 @@
                 }
             }
         },
-
-        "/api/encounter-type/getEncounterType":{
+        "/api/encounter-type/getEncounterType": {
             "get": {
                 "description": "To get list of Encounter Type",
                 "parameters": [
@@ -410,6 +409,39 @@
                 ],
                 "tags": [
                     "EncounterType"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Fetched Encounter Type"
+                    }
+                }
+            }
+        },
+        "/api/patient-diagnosis/create": {
+            "post": {
+                "description": "To create Patient Diagnosis",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createPatientDiagnosis",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createPatientDiagnosis"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientDiagnosis"
                 ],
                 "responses": {
                     "200": {
@@ -849,6 +881,59 @@
                         "session_type_uuid": {
                             "type": "number"
                         }
+                    }
+                }
+            }
+        },
+        "createPatientDiagnosis": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "facility_uuid": {
+                        "type": "number"
+                    },
+                    "department_uuid": {
+                        "type": "number"
+                    },
+                    "patient_uuid": {
+                        "type": "number"
+                    },
+                    "encounter_uuid": {
+                        "type": "number"
+                    },
+                    "encounter_type_uuid": {
+                        "type": "number"
+                    },
+                    "consultation_uuid": {
+                        "type": "number"
+                    },
+                    "diagnosis_uuid": {
+                        "type": "number"
+                    },
+                    "condition_type_uuid": {
+                        "type": "number"
+                    },
+                    "condition_status_uuid": {
+                        "type": "number"
+                    },
+                    "category_uuid": {
+                        "type": "number"
+                    },
+                    "type_uuid": {
+                        "type": "number"
+                    },
+                    "grade_uuid": {
+                        "type": "number"
+                    },
+                    "body_site_uuid": {
+                        "type": "number"
+                    },
+                    "prescription_uuid": {
+                        "type": "number"
+                    },
+                    "patient_treatment_uuid": {
+                        "type": "number"
                     }
                 }
             }
