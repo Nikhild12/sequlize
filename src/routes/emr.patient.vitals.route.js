@@ -12,6 +12,7 @@ const emrPatientVitalRoute = express.Router();
 emrPatientVitalRoute.route('/create').post(emrPatientVitalsController.createPatientVital);
 emrPatientVitalRoute.route('/getVitalsByTemplateID').get(emrPatientVitalsController.getVitalsByTemplateID);
 emrPatientVitalRoute.route('/getPatientVitals').get(emrPatientVitalsController.getPatientVitals);
+emrPatientVitalRoute.route('/getHistoryPatientVitals').get(emrPatientVitalsController.getHistoryPatientVitals);
 
 // emrPatientVitalRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
 // emrPatientVitalRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);

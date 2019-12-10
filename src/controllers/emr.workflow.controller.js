@@ -26,7 +26,17 @@ const getEMRWorkFlowSettings = [
     'activity_name',
     'activity_icon',
     'activity_route_url'
-]
+];
+
+function getEMRByUserId(uId) {
+    return {
+        where: {
+            user_uuid: uId,
+            is_active: emr_constants.IS_ACTIVE,
+            status: emr_constants.IS_ACTIVE
+        }
+    }
+}
 
 const EMRWorkflowSettings = () => {
 
@@ -34,19 +44,22 @@ const EMRWorkflowSettings = () => {
 
         const emrWorkflowSettingReqData = req.body;
         const { user_uuid } = req.headers;
-        let createEMRWorkflowPromiseArray = [];
         try {
             if (user_uuid && emrWorkflowSettingReqData) {
+
+
+                const existingRecord = await emr_workflow_settings.findAll(getEMRByUserId(user_uuid));
+
+                if (existingRecord && existingRecord.length > 0) {
+                    return res.status(400).send({ code: 'DUPLICATE_RECORD', message: emr_constants.DUPLICATE_ENTRIES });
+                }
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.created_by = user_uuid;
                     eRD.is_active = emr_constants.IS_ACTIVE;
                     eRD.created_date = eRD.modified_date = new Date();
-                    createEMRWorkflowPromiseArray = [
-                        ...createEMRWorkflowPromiseArray,
-                        emr_workflow_settings.create(eRD, { returning: emr_constants.IS_ACTIVE })];
                 });
 
-                const emrCreatedData = await Promise.all(createEMRWorkflowPromiseArray);
+                const emrCreatedData = await emr_workflow_settings.bulkCreate(emrWorkflowSettingReqData, { returning: emr_constants.IS_ACTIVE });
                 if (emrCreatedData) {
                     return res.status(200).send({ code: httpStatus.OK, message: "Inserted EMR Workflow Successfully", responseContents: attachUUIDTORequestedData });
                 }
@@ -89,26 +102,22 @@ const EMRWorkflowSettings = () => {
         const emrWorkflowUpdateData = req.body;
         const { user_uuid } = req.headers;
 
-        let updateEMRWorkFlowPromise = [];
 
         if (user_uuid && emrWorkflowUpdateData.length > 0) {
 
-            emrWorkflowUpdateData.forEach((eU) => {
-                updateEMRWorkFlowPromise = [...updateEMRWorkFlowPromise,
-                emr_workflow_settings.update(
-                    { work_flow_order: eU.work_flow_order, modified_by: user_uuid, modified_date: new Date() },
-                    { where: { uuid: eU.emr_worflow_settings_id } }
-                )];
-            });
+
 
             try {
 
-                const emrUpdatedData = await Promise.all(updateEMRWorkFlowPromise);
-
-                if (emrUpdatedData) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Updated EMR Workflow Successfully" });
+                const deleteData = await emr_workflow_settings.destroy({
+                    where: { user_uuid: user_uuid }
+                });
+                if (deleteData) {
+                    const emrUpdatedData = await emr_workflow_settings.bulkCreate(emrWorkflowUpdateData, { returning: emr_constants.IS_ACTIVE });
+                    if (emrUpdatedData) {
+                        return res.status(200).send({ code: httpStatus.OK, message: "Updated EMR Workflow Successfully" });
+                    }
                 }
-
             } catch (ex) {
                 console.log(ex);
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
