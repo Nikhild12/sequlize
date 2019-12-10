@@ -1,8 +1,7 @@
 // Package Import
 const httpStatus = require("http-status");
-// Sequelizer Import
-var Sequelize = require('sequelize');
-var Op = Sequelize.Op;
+
+
 
 const sequelizeDb = require('../config/sequelize');
 
@@ -49,7 +48,7 @@ const EMRPatientVitals = () => {
         const { template_id } = req.query;
         const { user_uuid } = req.headers;
         try {
-            let getPatientVitals = await emr_patientvitals_Tbl.findAll({ where: { is_active: 1, status: 1 } }, { returning: true });
+            let getPatientVitals = await emr_patientvitals_Tbl.findAll({ where: { is_active: emrConstants.IS_ACTIVE, status: emrConstants.IS_ACTIVE } }, { returning: true });
 
             if (getPatientVitals) {
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: getPatientVitals });
@@ -67,7 +66,7 @@ const EMRPatientVitals = () => {
 
         try {
 
-            let getPatientVitals = await emr_patientvitals_Tbl.findAll({ where: { is_active: 1, status: 1 } }, { returning: true });
+            let getPatientVitals = await emr_patientvitals_Tbl.findAll({ where: { is_active: emrConstants.IS_ACTIVE, status: emrConstants.IS_ACTIVE } }, { returning: true });
             return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: getPatientVitals });
         }
         catch (ex) {
@@ -108,13 +107,27 @@ function getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid) {
     // user_uuid == doctor_uuid
     let query = {
         order: [['pv_uuid', 'DESC']],
-        attributes: ['pv_uuid', 'pv_vital_master_uuid', 'pv_vital_type_uuid', 'pv_vital_value_type_uuid', 'pv_vital_value', 'pv_doctor_uuid', 'pv_patient_uuid', 'pv_performed_date', 'vm_name', 'um_code', 'um_name'],
+        attributes: [
+            'pv_uuid',
+            'pv_vital_master_uuid',
+            'pv_vital_type_uuid',
+            'pv_vital_value_type_uuid',
+            'pv_vital_value',
+            'pv_doctor_uuid',
+            'pv_patient_uuid',
+            'pv_performed_date',
+            'vm_name',
+            'um_code',
+            'um_name'],
         limit: 10,
-        where: { vm_active: 1, vm_status: 1, pv_doctor_uuid: user_uuid, pv_patient_uuid: patient_uuid, pv_department_uuid: department_uuid },
+        where: { vm_active: emrConstants.IS_ACTIVE, vm_status: emrConstants.IS_ACTIVE, pv_doctor_uuid: user_uuid, pv_patient_uuid: patient_uuid, pv_department_uuid: department_uuid },
     }
     return query;
 }
-
+/**
+ * returns EMR Patient Vitals
+ * in readable format
+ */
 function patientVitalsList(getHistoryPatientVitals) {
     let patient_vitals_list = [];
     if (getHistoryPatientVitals && getHistoryPatientVitals.length > 0) {
@@ -122,14 +135,19 @@ function patientVitalsList(getHistoryPatientVitals) {
         getHistoryPatientVitals.forEach((pV) => {
             patient_vitals_list = [...patient_vitals_list,
             {
-                vital_name: pV.vm_name,
+                // patient vital values
+                patient_vital_uuid: pV.pv_uuid,
                 vital_value: pV.pv_vital_value,
                 vital_performed_date: pV.pv_performed_date,
                 vital_value_type_uuid: pV.pv_vital_value_type_uuid,
                 vital_type_uuid: pV.pv_vital_type_uuid,
                 vital_master_uuid: pV.pv_vital_master_uuid,
-                patient_vital_uuid: pV.pv_uuid,
 
+                //vital master values
+                vital_name: pV.vm_name,
+
+
+                // uom master table values
                 uom_code: pV.um_code,
                 uom_name: pV.um_name,
 
