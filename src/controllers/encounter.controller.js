@@ -40,6 +40,9 @@ function getActiveEncounterQuery(pId, dId) {
     }
 }
 
+
+
+
 const Encounter = () => {
 
     /**
@@ -77,9 +80,10 @@ const Encounter = () => {
      * @param {*} req 
      * @param {*} res 
      */
-    const _createPatientEncounter = async (req, res) => {
+    /*const _createPatientEncounter = async (req, res) => {
         const { user_uuid } = req.headers;
         const { encounter, encounterDoctor } = req.body;
+        
 
         if (user_uuid && encounter && encounterDoctor) {
 
@@ -114,12 +118,80 @@ const Encounter = () => {
         }
 
 
+    }*/
+
+
+    const _createPatientEncounter = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { encounter, encounterDoctor } = req.body;
+        const patientId = req.body.encounter.patient_uuid;
+        const encountertype = req.body.encounter.encounter_type_uuid;
+
+        if (user_uuid && encounter && encounterDoctor) {
+
+            // Assigning
+            encounter.modified_by = encounter.created_by = user_uuid;
+            encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
+            encounter.created_date = encounter.modified_date = new Date();
+            encounter.encounter_date = new Date();
+            //console.log ("--------",encounter.encounter_date);
+
+            // Assigning
+            encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
+            encounterDoctor.is_active = encounterDoctor.status = emr_constants.IS_ACTIVE;
+            encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
+
+            try {
+                if (encountertype == 2){
+                            const encounterData = await encounter_tbl.findAll({
+                                where:{encounter_type_uuid:1, 
+                                    patient_uuid: patientId, 
+                                    created_by: user_uuid,
+                                    is_active_encounter: 1 } });
+                
+                
+                        if (encounterData && encounterData.length > 0) 
+                        {
+                            let  date_1 = moment(encounterData[0].dataValues.encounter_date).format('MMMM Do YYYY');
+                            let date_2 = moment(encounter.encounter_date).format('MMMM Do YYYY');
+                                console.log(date_1,date_2);
+                                if (date_1 == date_2){ 
+                                    console.log("same dates");
+                                    await encounter_tbl.update (
+                                        {is_active_encounter: 0},
+                                        {where: { uuid : encounterData[0].dataValues.uuid}});
+                                    await encounter_doctors_tbl.update (
+                                        {encounter_doctor_status:0},{where: {encounter_uuid : encounterData[0].dataValues.uuid}});
+                                    }
+                                    
+                            } 
+                }
+
+                    const createdEncounterData = await encounter_tbl.create(encounter, { returning: true });
+
+                        if (createdEncounterData) {
+                                encounter.uuid = encounterDoctor.encounter_uuid = createdEncounterData.uuid;
+
+                                const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
+                                encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+
+                                return res.status(200).send({ code: httpStatus.OK, message: "Inserted Encounter Successfully", responseContents: { encounter, encounterDoctor } });
+                            }
+                            
+            } catch (ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
     }
 
     return {
 
         getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
-        createPatientEncounter: _createPatientEncounter
+        createPatientEncounter: _createPatientEncounter,
+        
 
     }
 }
