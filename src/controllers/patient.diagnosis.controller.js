@@ -6,9 +6,34 @@ const httpStatus = require("http-status");
 const sequelizeDb = require('../config/sequelize');
 
 const patient_diagnosis_tbl = sequelizeDb.patient_diagnosis;
+const diagnosis_tbl = sequelizeDb.diagnosis;
 
 const emr_constants = require('../config/constants');
 
+const getActiveAndStatusObject = (is_active) => {
+    return {
+
+        is_active: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE,
+        status: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE
+
+    }
+}
+
+const getPatientDiagnosisAttributes = () => {
+    return [
+        'uuid',
+        'diagnosis_uuid',
+        'other_diagnosis',
+        'is_snomed',
+        'is_patient_condition',
+        'condition_type_uuid',
+        'condition_date',
+        'comments',
+        'created_date',
+        'modified_date',
+        'performed_by'
+    ]
+}
 
 const PatientDiagnsis = () => {
 
@@ -53,8 +78,27 @@ const PatientDiagnsis = () => {
 
     }
 
+    const _getPatientDiagnosisFilters = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        const { searchKey, searchValue, patientId, departmentId } = req.query;
+
+        if (user_uuid && searchKey && searchValue && patientId && departmentId) {
+            try {
+                const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery(searchKey, searchValue, patientId, departmentId, user_uuid));
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
+            } catch (ex) {
+                console.log(ex);
+                return res.status(422).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(422).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+        }
+    }
+
     return {
-        createPatientDiagnosis: _createPatientDiagnosis
+        createPatientDiagnosis: _createPatientDiagnosis,
+        getPatientDiagnosisByFilters: _getPatientDiagnosisFilters
     }
 };
 
@@ -71,4 +115,58 @@ function appendUUIDToReqData(req, res) {
         r.uuid = res[idx].uuid;
     })
     return req;
+}
+
+/**
+ * 
+ * @param {*} key search key
+ * @param {*} value search key value
+ * @param {*} pId patient Id
+ * @param {*} dId department Id
+ * @param {*} uId user Id
+ */
+function getPatientFiltersQuery(key, value, pId, dId, uId) {
+
+    let filtersQuery = {};
+    switch (key) {
+        case 'getLatestDiagnosis':
+            filtersQuery = {
+                limit: +value,
+                attributes: getPatientDiagnosisAttributes(),
+                order: [['uuid', 'DESC']]
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    filtersQuery.include = [
+        {
+            model: diagnosis_tbl,
+            attributes: ['code', 'name']
+        }
+    ];
+    filtersQuery.where = {
+        department_uuid: dId,
+        patient_uuid: pId,
+        performed_by: uId
+    };
+    filtersQuery.attributes = getPatientDiagnosisAttributes();
+    Object.assign(filtersQuery.where, getActiveAndStatusObject(emr_constants.IS_ACTIVE));
+    return filtersQuery;
+}
+
+function getPatientData(responseData) {
+    return responseData.map((rD) => {
+        return {
+            patient_diagnosis_id: rD.uuid || 0,
+            diagnosis_created_date: rD.created_date,
+            diagnosis_modified_date: rD.modified_date,
+            diagnosis_performed_by: rD.performed_by,
+            diagnosis_name: rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : '',
+            diagnosis_code: rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : '',
+            diagnosis_is_snomed: rD.is_snomed[0] === 1 ? true : false
+        }
+    })
 }

@@ -485,6 +485,55 @@
                 ],
                 "responses": {
                     "200": {
+                        "description": "Successfully Inserted Patient Diagnosis"
+                    }
+                }
+            }
+        },
+        "/api/patient-diagnosis/getByFilters": {
+            "get": {
+                "description": "To get list of Patient Diagnosis By Filters",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchValue",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "patientId",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientDiagnosis"
+                ],
+                "responses": {
+                    "200": {
                         "description": "Successfully Fetched Encounter Type"
                     }
                 }
@@ -809,43 +858,43 @@
                         "type": "string",
                         "example": "BP"
                     },
-                    "vital_value":{
+                    "vital_value": {
                         "type": "string",
                         "example": "BP"
                     },
-                    "vital_performed_date":{
+                    "vital_performed_date": {
                         "type": "string",
                         "example": "2019-12-06 17:32:17"
                     },
-                    "vital_value_type_uuid":{
+                    "vital_value_type_uuid": {
                         "type": "number",
                         "example": 1
                     },
-                    "vital_type_uuid":{
+                    "vital_type_uuid": {
                         "type": "number",
                         "example": 1
                     },
-                    "vital_master_uuid":{
+                    "vital_master_uuid": {
                         "type": "number",
                         "example": 1
                     },
-                    "patient_vital_uuid":{
+                    "patient_vital_uuid": {
                         "type": "number",
                         "example": 1
                     },
-                    "uom_code":{
+                    "uom_code": {
                         "type": "string",
                         "example": "BP"
                     },
-                    "uom_name":{
+                    "uom_name": {
                         "type": "string",
                         "example": "BP"
                     },
-                    "patient_uuid":{
-                         "type": "number",
+                    "patient_uuid": {
+                        "type": "number",
                         "example": 1
                     },
-                    "doctor_uuid":{
+                    "doctor_uuid": {
                         "type": "number",
                         "example": 1
                     }

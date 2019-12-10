@@ -8,5 +8,6 @@ const PatientDiagnosisCtrl = require('../controllers/patient.diagnosis.controlle
 const PatientDiagnosisRoutes = express.Router();
 
 PatientDiagnosisRoutes.route('/create').post(PatientDiagnosisCtrl.createPatientDiagnosis);
+PatientDiagnosisRoutes.route('/getByFilters').get(PatientDiagnosisCtrl.getPatientDiagnosisByFilters);
 
 module.exports = PatientDiagnosisRoutes;

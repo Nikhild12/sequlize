@@ -103,10 +103,8 @@ const PatientChiefComplaints = () => {
 
             }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Param Found" });
+            return res.status(422).send({ code: httpStatus[400], message: "No Request Param Found" });
         }
-
-
 
     }
 

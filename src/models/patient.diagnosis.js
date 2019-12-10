@@ -114,6 +114,11 @@ module.exports = (sequelize, DataTypes) => {
                 }
             ]
         }
-    )
+    );
+    PATIENT_DIAGNOSIS.associate = model => {
+        PATIENT_DIAGNOSIS.belongsTo(model.diagnosis, {
+            foreignKey: "diagnosis_uuid"
+        })
+    }
     return PATIENT_DIAGNOSIS;
 }
