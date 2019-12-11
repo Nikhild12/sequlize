@@ -91,7 +91,7 @@ const Encounter = () => {
             encounter.modified_by = encounter.created_by = user_uuid;
             encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
             encounter.created_date = encounter.modified_date = new Date();
-            encounter.encounter_date = new Date();
+            encounter.encounter_date = new Daencounter.uuid = encounterDoctor.encounter_uuid = createdEncounterData.uuid;te();
 
             // Assigning
             encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
@@ -124,9 +124,8 @@ const Encounter = () => {
     const _createPatientEncounter = async (req, res) => {
         const { user_uuid } = req.headers;
         const { encounter, encounterDoctor } = req.body;
-        const patientId = req.body.encounter.patient_uuid;
-        const encountertype = req.body.encounter.encounter_type_uuid;
-
+        const { encounter_type_uuid, patient_uuid } = encounter;
+        let encounterPromise = [];
         if (user_uuid && encounter && encounterDoctor) {
 
             // Assigning
@@ -142,42 +141,49 @@ const Encounter = () => {
             encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
 
             try {
-                if (encountertype == 2){
-                            const encounterData = await encounter_tbl.findAll({
-                                where:{encounter_type_uuid:1, 
-                                    patient_uuid: patientId, 
-                                    created_by: user_uuid,
-                                    is_active_encounter: 1 } });
-                
-                
-                        if (encounterData && encounterData.length > 0) 
-                        {
-                            let  date_1 = moment(encounterData[0].dataValues.encounter_date).format('MMMM Do YYYY');
-                            let date_2 = moment(encounter.encounter_date).format('MMMM Do YYYY');
-                                console.log(date_1,date_2);
-                                if (date_1 == date_2){ 
-                                    console.log("same dates");
-                                    await encounter_tbl.update (
-                                        {is_active_encounter: 0},
-                                        {where: { uuid : encounterData[0].dataValues.uuid}});
-                                    await encounter_doctors_tbl.update (
-                                        {encounter_doctor_status:0},{where: {encounter_uuid : encounterData[0].dataValues.uuid}});
-                                    }
-                                    
-                            } 
+                // if Encounter Type is 2 then check
+                // for active encounter for type 1 if exists
+                // closing it
+
+                const encounterData = await encounter_tbl.findAll(getActiveEncounterQuery(patient_uuid, user_uuid));
+                if (encounter_type_uuid === 2) {
+                    if (encounterData && encounterData.length > 0) {
+
+                        encounterPromise = [...encounterPromise,
+                        encounter_tbl.update(
+                            {
+                                is_active_encounter: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE,
+                                status: emr_constants.IS_IN_ACTIVE
+                            },
+                            { where: { uuid: encounterData[0].uuid } }),
+                        encounter_doctors_tbl.update(
+                            {
+                                encounter_doctor_status: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE,
+                                status: emr_constants.IS_IN_ACTIVE
+                            },
+                            { where: { encounter_uuid: encounterData[0].uuid } })
+                        ]
+                    }
+                } else if (encounter_type_uuid === 1 && encounterData && encounterData.length > 0) {
+                    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER });
                 }
 
-                    const createdEncounterData = await encounter_tbl.create(encounter, { returning: true });
 
-                        if (createdEncounterData) {
-                                encounter.uuid = encounterDoctor.encounter_uuid = createdEncounterData.uuid;
+                encounterPromise = [...encounterPromise,
+                encounter_tbl.create(encounter, { returning: true })
+                ];
 
-                                const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
-                                encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+                const createdEncounterData = await Promise.all(encounterPromise);
 
-                                return res.status(200).send({ code: httpStatus.OK, message: "Inserted Encounter Successfully", responseContents: { encounter, encounterDoctor } });
-                            }
-                            
+                if (createdEncounterData) {
+                    encounter.uuid = encounterDoctor.encounter_uuid = getCreatedEncounterId(createdEncounterData);
+
+                    const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
+                    encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+
+                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted Encounter Successfully", responseContents: { encounter, encounterDoctor } });
+                }
+
             } catch (ex) {
                 console.log(ex);
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -191,9 +197,14 @@ const Encounter = () => {
 
         getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
         createPatientEncounter: _createPatientEncounter,
-        
+
 
     }
 }
 
 module.exports = Encounter();
+
+function getCreatedEncounterId(createdEncounterData) {
+
+    return createdEncounterData.length > 1 ? createdEncounterData[2].uuid : createdEncounterData[0].uuid;
+}
