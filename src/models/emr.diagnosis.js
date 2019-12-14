@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 autoIncrement: true
             },
-            diagnosis_code_scheme_uuid: {
+            diagnosis_scheme_uuid: {
                 type: DataTypes.INTEGER,
             },
             code:{
@@ -22,16 +22,8 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            diagnosis_Version_uuid: {
+            diagnosis_version_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            code_region_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            category: {
-                type:DataTypes.STRING(50),
                 allowNull: false,
             },
             speciality:{
@@ -50,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
                 type:DataTypes.STRING(50),
                 allowNull: false,
             },
-            body_site:{
+            body_site_uuid:{
                 type:DataTypes.STRING(50),
                 allowNull: false,
             },
@@ -70,10 +62,6 @@ module.exports = (sequelize, DataTypes) => {
                 type:DataTypes.STRING,
                 allowNull: false,
             },
-            active_status_uuid:{
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
             facility_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -81,22 +69,6 @@ module.exports = (sequelize, DataTypes) => {
             side_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
-            },
-            test_master_position_id:{
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
-            category_uuid:{
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
-            type_uuid:{
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
-            grade_uuid:{
-                type: DataTypes.INTEGER,
-                allowNull: true,
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -116,7 +88,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            updated_by: {
+            modified_by: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
@@ -124,7 +96,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             tableName: "diagnosis",
             createdAt: 'created_date',
-            updatedAt: 'updated_date',
+            updatedAt: 'modified_date',
             indexes:[
                 {
                     fields:["uuid"]

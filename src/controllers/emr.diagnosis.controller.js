@@ -80,7 +80,7 @@ const emrDiagnosisController = () => {
                         .status(500)
                         .json({
                             statusCode: 500,
-                            msg: "Village Data is not found",
+                            msg: "Data is not found",
                             err: err
                         });
                 })
