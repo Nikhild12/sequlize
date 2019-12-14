@@ -7,5 +7,6 @@ module.exports = Object.freeze({
     NO_USER_ID: 'User Id',
     NO_REQUEST_BODY: 'Request Body',
     NO_REQUEST_PARAM: 'Request Param',
-    DUPLICATE_ENTRIES: 'Duplicate Entries'
+    DUPLICATE_ENTRIES: 'Duplicate Entries',
+    DUPLICATE_ENCOUNTER: 'Already Encounter Exists For the same Patient'
 });

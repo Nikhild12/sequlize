@@ -1001,9 +1001,6 @@
                         "department_uuid": {
                             "type": "number"
                         },
-                        "encounter_uuid": {
-                            "type": "number"
-                        },
                         "sub_deparment_uuid": {
                             "type": "number"
                         },
