@@ -56,7 +56,7 @@ const Encounter = () => {
         const { user_uuid } = req.headers;
         const { patientId, doctorId } = req.query;
 
-        if (user_uuid && patientId && doctorId) {
+        if (user_uuid && (patientId && patientId > 0) && (doctorId && doctorId > 0)) {
 
             try {
 
@@ -124,16 +124,16 @@ const Encounter = () => {
     const _createPatientEncounter = async (req, res) => {
         const { user_uuid } = req.headers;
         const { encounter, encounterDoctor } = req.body;
-        const { encounter_type_uuid, patient_uuid } = encounter;
         let encounterPromise = [];
         if (user_uuid && encounter && encounterDoctor) {
+
+            const { encounter_type_uuid, patient_uuid } = encounter;
 
             // Assigning
             encounter.modified_by = encounter.created_by = user_uuid;
             encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
             encounter.created_date = encounter.modified_date = new Date();
             encounter.encounter_date = new Date();
-            //console.log ("--------",encounter.encounter_date);
 
             // Assigning
             encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
@@ -141,6 +141,7 @@ const Encounter = () => {
             encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
 
             try {
+
                 // if Encounter Type is 2 then check
                 // for active encounter for type 1 if exists
                 // closing it
@@ -196,8 +197,7 @@ const Encounter = () => {
     return {
 
         getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
-        createPatientEncounter: _createPatientEncounter,
-
+        createPatientEncounter: _createPatientEncounter
 
     }
 }

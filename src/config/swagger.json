@@ -226,6 +226,12 @@
                 "description": "To get a EMR Diagnosis By Id",
                 "parameters": [
                     {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
                         "in": "query",
                         "name": "diagnosis_uuid",
                         "required": true,

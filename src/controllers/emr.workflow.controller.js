@@ -44,14 +44,14 @@ const EMRWorkflowSettings = () => {
 
         const emrWorkflowSettingReqData = req.body;
         const { user_uuid } = req.headers;
-        try {
-            if (user_uuid && emrWorkflowSettingReqData) {
+        if (user_uuid && emrWorkflowSettingReqData && emrWorkflowSettingReqData.length > 0) {
 
+            try {
 
                 const existingRecord = await emr_workflow_settings.findAll(getEMRByUserId(user_uuid));
 
                 if (existingRecord && existingRecord.length > 0) {
-                    return res.status(400).send({ code: 'DUPLICATE_RECORD', message: emr_constants.DUPLICATE_ENTRIES });
+                    return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: `${emr_constants.DUPLICATE_RECORD} ${emr_constants.GIVEN_USER_UUID}` });
                 }
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.created_by = user_uuid;
@@ -64,9 +64,12 @@ const EMRWorkflowSettings = () => {
                     return res.status(200).send({ code: httpStatus.OK, message: "Inserted EMR Workflow Successfully", responseContents: attachUUIDTORequestedData });
                 }
             }
-        } catch (ex) {
-            console.log(ex);
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            catch (ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
 
     }
@@ -86,7 +89,8 @@ const EMRWorkflowSettings = () => {
                 });
 
                 if (emr_data) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Workflow Successfully", responseContents: getEMRData(emr_data) });
+                    const responseMessage = emr_data && emr_data.length > 0 ? emr_constants.EMR_FETCHED_SUCCESSFULLY : `${emr_constants.NO_RECORD_FOUND} for the given user_uuid`;
+                    return res.status(200).send({ code: httpStatus.OK, message: responseMessage, responseContents: getEMRData(emr_data) });
                 }
             } catch (ex) {
                 console.log(ex);

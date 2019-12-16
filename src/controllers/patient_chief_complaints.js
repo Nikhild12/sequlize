@@ -77,7 +77,7 @@ const PatientChiefComplaints = () => {
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No User Id Found" });
+            return res.status(400).send({ code: httpStatus[400], message:  `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
     }
 
@@ -130,7 +130,7 @@ function getPatientsChiefComplaintsInReadable(fetchedData) {
     fetchedData.forEach((fD) => {
         patientChiefComplaints = [...patientChiefComplaints,
         {
-            patient_chief_id: fD.patient_uuid,
+            patient_chief_complaint_id: fD.uuid,
             encounter_id: fD.encounter_uuid,
             encounter_type_id: fD.encounter_type_uuid,
             consulation_id: fD.consulation_uuid,
