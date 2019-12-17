@@ -188,73 +188,6 @@
                 }
             }
         },
-        "/api/emr-diagnosis/getEmrDiagnosis": {
-            "post": {
-                "description": "To get the EMR Diagnosis",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "user_uuid",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "body",
-                        "name": "getEMRDiagnosis",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/getDiagnosis"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "tags": [
-                    "EMRDiagnosis"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Fetched Successfully"
-                    }
-                }
-            }
-        },
-        "/api/emr-diagnosis/getEmrDiagnosisById": {
-            "get": {
-                "description": "To get a EMR Diagnosis By Id",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "user_uuid",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "query",
-                        "name": "diagnosis_uuid",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "tags": [
-                    "EMRDiagnosis"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Fetched Successfully",
-                        "schema": {
-                            "$ref": "#/definitions/getEMRDiagnosisById"
-                        }
-                    }
-                }
-            }
-        },
         "/api/emr-patient-vitals/create": {
             "post": {
                 "description": "To Create a EMR Patient Vitals",
@@ -544,6 +477,1068 @@
                     }
                 }
             }
+        },
+        "/api/favourite/create": {
+            "post": {
+                "description": "To Create a favourite Drug for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchkey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createFavourite",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createFavourite"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/delete": {
+            "put": {
+                "description": "To delete a favourite Drug",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updateData",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateData"
+                        }
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Delete",
+                        "schema": {
+                            "$ref": "#/definitions/getFavourite"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/getFavourite": {
+            "get": {
+                "description": "To get list of favourites for the Doctor login",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dept_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fav_type_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getFavourite"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/getFavouriteById": {
+            "get": {
+                "description": "To get favourite by given id for the Doctor login",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "favourite_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getFavouriteById"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/updateFavouriteById": {
+            "put": {
+                "description": "To update favourite by given id for the Doctor login",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updatefavourite",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateFavouriteById"
+                        }
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Updated"
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/gettemplateByID": {
+            "get": {
+                "summary": "List of Templates by id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dept_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "temp_type_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gettemplateByID"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/gettempdetails": {
+            "get": {
+                "summary": "List drugs info of template",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "temp_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "temp_type_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dept_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/gettempdetails"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/create": {
+            "post": {
+                "description": "To Create a template for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "create template",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createTemplate"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Insertion failed"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/deleteTemplateDetails": {
+            "put": {
+                "description": "To delete template for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updateData",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deletetemplate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Delete"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/updatetemplateById": {
+            "put": {
+                "description": "update template details by Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updatetemplate",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updatetemplateById"
+                        }
+                    }
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Updated"
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/getDFilter": {
+            "get": {
+                "description": "To get a Diagnosiseither by filters or By Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchBy",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchValue",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getDFilter"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/search": {
+            "post": {
+                "description": "To get a Diagnosiseither by filters or By Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "searchValue",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/search"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/search"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/createDiagnosis": {
+            "post": {
+                "description": "Diagnosis Details Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "searchkey",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createDiagnosis"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/createDiagnosis"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/getDiagnosis": {
+            "get": {
+                "description": "To get a diagnosis  Details",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get all datails Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getDiagnosis"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/deleteDiagnosis": {
+            "post": {
+                "description": "Deleted successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deleteDiagnosis"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deleteDiagnosis"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/updateDiagnosisById": {
+            "post": {
+                "description": "To Update diagnosis ",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateDiagnosisById"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updateDiagnosisById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/diagnosis/getDaignosisById": {
+            "post": {
+                "description": "To get a diagnosis by Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getDaignosisById"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Diagnosis"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "fetch the details Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getDaignosisById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/getByFilters": {
+            "get": {
+                "description": "To get a Chief Complaints either by filters or By Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchBy",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchValue",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getChiefComplaintsByFilter"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-duration/get": {
+            "get": {
+                "description": "To get a chief Complaints Duration List",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsDuration"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getChiefComplaintsDuration"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-duration/create": {
+            "post": {
+                "description": "To create a chief Complaints Duration Period",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createChiefCompDuration",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createChiefCompDuration"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsDuration"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/recreateChiefCompDuration"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/create": {
+            "post": {
+                "description": "To create a chief Complaints Master Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createChiefCompDuration",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createChiefMaster"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/rescreateChiefMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/getAll": {
+            "get": {
+                "description": "To create a chief Complaints Master Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getAllChiefMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/getById": {
+            "get": {
+                "description": "To get a chief Complaints Master Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "ChiefComplaints_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetch Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getChiefMasterById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/delete": {
+            "put": {
+                "description": "Deleted chief Complaints Master Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "ChiefComplaints_id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deleteChiefMaster"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deleteChiefMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/chief-complaints-master/update": {
+            "put": {
+                "description": "To Update Complaints Master Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "UpadteChiefCompDuration",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateChiefMaster"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "ChiefComplaintsMaster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updateChiefMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalMaster/create": {
+            "post": {
+                "description": "To Create a vitals for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "create vital master",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createVitalMaster"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "vital_master"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Insertion failed"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalMaster/getVitals": {
+            "get": {
+                "description": "To get a vitals master List",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "vital_master"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getVitalsMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalMaster/getAllVitals": {
+            "get": {
+                "description": "To get all vitals master list",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "vital_master"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getAllVitalsMaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/template/updateTemplateDetailsByID": {
+            "put": {
+                "description": "update template details by Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updatetemplatedetails",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateTemplateDetailsByID"
+                        }
+                    }
+                ],
+                "tags": [
+                    "template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Updated"
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
     },
     "definitions": {
@@ -561,10 +1556,6 @@
                         "example": 1
                     },
                     "role_uuid": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "user_uuid": {
                         "type": "integer",
                         "example": 1
                     },
@@ -658,45 +1649,6 @@
                 }
             }
         },
-        "getChiefComplaintsDuration": {
-            "type": "object",
-            "properties": {
-                "duration_period_code": {
-                    "type": "string"
-                },
-                "duration_period_name": {
-                    "type": "string"
-                },
-                "duration_period_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "createChiefCompDuration": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "recreateChiefCompDuration": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "chCompDuraId": {
-                    "type": "integer"
-                }
-            }
-        },
         "createPatientChiefComplaints": {
             "type": "array",
             "items": {
@@ -726,40 +1678,6 @@
                     "revision": {
                         "type": "integer"
                     }
-                }
-            }
-        },
-        "getDiagnosis": {
-            "type": "object",
-            "properties": {
-                "offset": {
-                    "type": "number",
-                    "example": 0
-                },
-                "paginationSize": {
-                    "type": "number",
-                    "example": 10
-                },
-                "sortField": {
-                    "type": "string",
-                    "example": "created_date"
-                },
-                "sortOrder": {
-                    "type": "string",
-                    "example": "DESC"
-                },
-                "searchKey": {
-                    "type": "string",
-                    "example": "ssa"
-                }
-            }
-        },
-        "getEMRDiagnosisById": {
-            "type": "object",
-            "properties": {
-                "diagnosis_uuid": {
-                    "type": "number",
-                    "example": 0
                 }
             }
         },
@@ -1078,6 +1996,1417 @@
                     },
                     "patient_treatment_uuid": {
                         "type": "number"
+                    }
+                }
+            }
+        },
+        "createFavourite": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "properties": {
+                        "is_public": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "facility_uuid": {
+                            "type": "integer"
+                        },
+                        "favourite_type_uuid": {
+                            "type": "integer"
+                        },
+                        "department_uuid": {
+                            "type": "integer"
+                        },
+                        "user_uuid": {
+                            "type": "integer"
+                        },
+                        "display_order": {
+                            "type": "integer"
+                        },
+                        "revision": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "test_master_uuid": {
+                                "type": "integer"
+                            },
+                            "item_master_uuid": {
+                                "type": "integer"
+                            },
+                            "chief_complaint_uuid": {
+                                "type": "integer"
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer"
+                            },
+                            "diagnosis_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer"
+                            },
+                            "duration": {
+                                "type": "string",
+                                "example": "1 month"
+                            },
+                            "duration_period_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer"
+                            },
+                            "display_order": {
+                                "type": "integer"
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "updateData": {
+            "type": "object",
+            "properties": {
+                "favouriteId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "gettemplateByID": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "dept_id": {
+                    "type": "integer"
+                },
+                "temp_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "gettempdetails": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                },
+                "temp_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createTemplate": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "example": "Fever"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "say somthing about related to fever"
+                        },
+                        "template_type_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "diagnosis_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "is_public": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "facility_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "department_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "display_order": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "revision": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "chief_complaint_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "test_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "item_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "duration": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "duration_period_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "deletetemplate": {
+            "type": "object",
+            "properties": {
+                "template_uuid": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "getFavourite": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "favourite_id": {
+                        "type": "integer"
+                    },
+                    "favourite_name": {
+                        "type": "string"
+                    },
+                    "favourite_details_id": {
+                        "type": "integer"
+                    },
+                    "drug_name": {
+                        "type": "string"
+                    },
+                    "drug_id": {
+                        "type": "integer"
+                    },
+                    "drug_oral_name": {
+                        "type": "string"
+                    },
+                    "drug_oral_id": {
+                        "type": "integer"
+                    },
+                    "drug_frequency_id": {
+                        "type": "integer"
+                    },
+                    "drug_frequency_name": {
+                        "type": "string"
+                    },
+                    "drug_period_id": {
+                        "type": "integer"
+                    },
+                    "drug_period_name": {
+                        "type": "string"
+                    },
+                    "drug_period_code": {
+                        "type": "string"
+                    },
+                    "drug_instruction_id": {
+                        "type": "integer"
+                    },
+                    "drug_instruction_name": {
+                        "type": "string"
+                    },
+                    "drug_instruction_code": {
+                        "type": "string"
+                    },
+                    "favourite_display_order": {
+                        "type": "integer"
+                    },
+                    "drug_duration": {
+                        "type": "string"
+                    },
+                    "drug_active": {
+                        "type": "boolean"
+                    },
+                    "test_master_code": {
+                        "type": "string"
+                    },
+                    "test_master_name": {
+                        "type": "string"
+                    },
+                    "test_master_description": {
+                        "type": "string"
+                    },
+                    "test_master_id": {
+                        "type": "integer"
+                    },
+                    "diagnosis_id": {
+                        "type": "integer"
+                    },
+                    "diagnosis_name": {
+                        "type": "string"
+                    },
+                    "diagnosis_code": {
+                        "type": "string"
+                    },
+                    "diagnosis_description": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "getFavouriteById": {
+            "type": "object",
+            "properties": {
+                "favourite_id": {
+                    "type": "integer"
+                },
+                "favourite_name": {
+                    "type": "string"
+                },
+                "favourite_details_id": {
+                    "type": "integer"
+                },
+                "drug_name": {
+                    "type": "string"
+                },
+                "drug_id": {
+                    "type": "integer"
+                },
+                "drug_oral_name": {
+                    "type": "string"
+                },
+                "drug_oral_id": {
+                    "type": "integer"
+                },
+                "drug_frequency_id": {
+                    "type": "integer"
+                },
+                "drug_frequency_name": {
+                    "type": "string"
+                },
+                "drug_period_id": {
+                    "type": "integer"
+                },
+                "drug_period_name": {
+                    "type": "string"
+                },
+                "drug_period_code": {
+                    "type": "string"
+                },
+                "drug_instruction_id": {
+                    "type": "integer"
+                },
+                "drug_instruction_name": {
+                    "type": "string"
+                },
+                "drug_instruction_code": {
+                    "type": "string"
+                },
+                "favourite_display_order": {
+                    "type": "integer"
+                },
+                "drug_duration": {
+                    "type": "string"
+                },
+                "drug_active": {
+                    "type": "boolean"
+                },
+                "test_master_code": {
+                    "type": "string"
+                },
+                "test_master_name": {
+                    "type": "string"
+                },
+                "test_master_description": {
+                    "type": "string"
+                },
+                "test_master_id": {
+                    "type": "integer"
+                },
+                "diagnosis_id": {
+                    "type": "integer"
+                },
+                "diagnosis_name": {
+                    "type": "string"
+                },
+                "diagnosis_code": {
+                    "type": "string"
+                },
+                "diagnosis_description": {
+                    "type": "string"
+                }
+            }
+        },
+        "updateFavouriteById": {
+            "type": "object",
+            "properties": {
+                "is_public": {
+                    "type": "boolean"
+                },
+                "department_id": {
+                    "type": "integer"
+                },
+                "favourite_display_order": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "drug_route_id": {
+                    "type": "integer"
+                },
+                "drug_frequency_id": {
+                    "type": "integer"
+                },
+                "drug_duration": {
+                    "type": "integer"
+                },
+                "drug_period_id": {
+                    "type": "integer"
+                },
+                "drug_instruction_id": {
+                    "type": "integer"
+                },
+                "favourite_id": {
+                    "type": "integer"
+                },
+                "chief_complaint_id": {
+                    "type": "integer"
+                },
+                "vital_master_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updatetemplateById": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "properties": {
+                        "template_id": {
+                            "type": "integer",
+                            "example": 19
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "Fever"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "say somthing about related to fever"
+                        },
+                        "template_type_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "diagnosis_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "is_public": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "facility_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "department_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "display_order": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "revision": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    }
+                },
+                "existing_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_details_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "template_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "test_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "chief_complaint_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_duration": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_period_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "display_order": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                },
+                "new_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "test_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "chief_complaint_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_duration": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_period_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "display_order": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                },
+                "removed_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "template_details_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "getDFilter": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "number"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "diagnosis_code_scheme_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_Version_uuid": {
+                        "type": "integer"
+                    },
+                    "code_region_uuid": {
+                        "type": "integer"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "speciality": {
+                        "type": "string"
+                    },
+                    "synonym": {
+                        "type": "integer"
+                    },
+                    "referrence_link": {
+                        "type": "integer"
+                    },
+                    "length_Of_stay": {
+                        "type": "integer"
+                    },
+                    "body_site": {
+                        "type": "integer"
+                    },
+                    "is_notifibale": {
+                        "type": "integer"
+                    },
+                    "is_sensitive": {
+                        "type": "integer"
+                    },
+                    "is_billable": {
+                        "type": "integer"
+                    },
+                    "comments": {
+                        "type": "string"
+                    },
+                    "active_status_uuid": {
+                        "type": "integer"
+                    },
+                    "facility_uuid": {
+                        "type": "integer"
+                    },
+                    "side_uuid": {
+                        "type": "integer"
+                    },
+                    "test_master_position_id": {
+                        "type": "integer"
+                    },
+                    "category_uuid": {
+                        "type": "integer"
+                    },
+                    "type_uuid": {
+                        "type": "integer"
+                    },
+                    "grade_uuid": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "search": {
+            "type": "object",
+            "properties": {
+                "searchValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "createDiagnosis": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "diagnosis_scheme_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_type_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_category_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_grade_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_region_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_version_uuid": {
+                    "type": "integer"
+                },
+                "speciality": {
+                    "type": "string"
+                },
+                "synonym": {
+                    "type": "string"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "length_Of_stay": {
+                    "type": "string"
+                },
+                "body_site_uuid": {
+                    "type": "integer"
+                },
+                "side_uuid": {
+                    "type": "integer"
+                },
+                "position_id": {
+                    "type": "integer"
+                },
+                "in_house": {
+                    "type": "string"
+                },
+                "is_notifibale": {
+                    "type": "integer"
+                },
+                "is_sensitive": {
+                    "type": "integer"
+                },
+                "is_billable": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "comments": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "boolean"
+                },
+                "revision": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getDiagnosis": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "diagnosis_scheme_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_type_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_category_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_grade_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_region_uuid": {
+                        "type": "integer"
+                    },
+                    "diagnosis_version_uuid": {
+                        "type": "integer"
+                    },
+                    "speciality": {
+                        "type": "string"
+                    },
+                    "synonym": {
+                        "type": "string"
+                    },
+                    "referrence_link": {
+                        "type": "string"
+                    },
+                    "length_Of_stay": {
+                        "type": "string"
+                    },
+                    "body_site_uuid": {
+                        "type": "integer"
+                    },
+                    "side_uuid": {
+                        "type": "integer"
+                    },
+                    "position_id": {
+                        "type": "integer"
+                    },
+                    "in_house": {
+                        "type": "string"
+                    },
+                    "is_notifibale": {
+                        "type": "integer"
+                    },
+                    "is_sensitive": {
+                        "type": "integer"
+                    },
+                    "is_billable": {
+                        "type": "integer"
+                    },
+                    "facility_uuid": {
+                        "type": "integer"
+                    },
+                    "department_uuid": {
+                        "type": "integer"
+                    },
+                    "comments": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "status": {
+                        "type": "boolean"
+                    },
+                    "revision": {
+                        "type": "string"
+                    },
+                    "created_by": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "deleteDiagnosis": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updateDiagnosisById": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getDaignosisById": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "responsescreateDiagnosis": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "diagnosis_scheme_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_type_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_category_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_grade_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_region_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_version_uuid": {
+                    "type": "integer"
+                },
+                "speciality": {
+                    "type": "string"
+                },
+                "synonym": {
+                    "type": "string"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "length_Of_stay": {
+                    "type": "string"
+                },
+                "body_site_uuid": {
+                    "type": "integer"
+                },
+                "side_uuid": {
+                    "type": "integer"
+                },
+                "position_id": {
+                    "type": "integer"
+                },
+                "in_house": {
+                    "type": "string"
+                },
+                "is_notifibale": {
+                    "type": "integer"
+                },
+                "is_sensitive": {
+                    "type": "integer"
+                },
+                "is_billable": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "comments": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "boolean"
+                },
+                "revision": {
+                    "type": "string"
+                }
+            }
+        },
+        "getChiefComplaintsByFilter": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "number"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "chief_complaint_category_uuid": {
+                        "type": "integer"
+                    },
+                    "referrence_link": {
+                        "type": "string"
+                    },
+                    "body_site": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "getChiefComplaintsDuration": {
+            "type": "object",
+            "properties": {
+                "duration_period_code": {
+                    "type": "string"
+                },
+                "duration_period_name": {
+                    "type": "string"
+                },
+                "duration_period_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createChiefCompDuration": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "recreateChiefCompDuration": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "chCompDuraId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createChiefMaster": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "chief_complaint_category_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "body_site": {
+                    "type": "string"
+                }
+            }
+        },
+        "getAllChiefMaster": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "chief_complaint_category_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "body_site": {
+                    "type": "string"
+                }
+            }
+        },
+        "getChiefMasterById": {
+            "type": "object",
+            "properties": {
+                "ChiefComplaints_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "deleteChiefMaster": {
+            "type": "object",
+            "properties": {
+                "ChiefComplaints_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updateChiefMaster": {
+            "type": "object",
+            "properties": {
+                "ChiefComplaints_id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "chief_complaint_category_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "body_site": {
+                    "type": "string"
+                }
+            }
+        },
+        "rescreateChiefMaster": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "chief_complaint_category_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "body_site": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "createVitalMaster": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "say somthing about related to fever"
+                },
+                "mnemonic": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "loinc_code": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "uom": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "vital_type_uuid": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "reference_range_from": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "reference_range_to": {
+                    "type": "string",
+                    "example": "asd"
+                },
+                "revision": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "getVitalsMaster": {
+            "type": "object",
+            "properties": {}
+        },
+        "getAllVitalsMaster": {
+            "type": "object",
+            "properties": {}
+        },
+        "updateTemplateDetailsByID": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "properties": {
+                        "template_id": {
+                            "type": "integer",
+                            "example": 19
+                        },
+                        "template_type_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "existing_temp_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_details_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "template_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "test_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "chief_complaint_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_duration": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_period_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "display_order": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                },
+                "new_temp_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "test_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "chief_complaint_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "vital_master_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_duration": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_period_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "display_order": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    }
+                },
+                "removed_temp_dtls": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "template_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "template_details_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        }
                     }
                 }
             }

@@ -80,47 +80,6 @@ const Encounter = () => {
      * @param {*} req 
      * @param {*} res 
      */
-    /*const _createPatientEncounter = async (req, res) => {
-        const { user_uuid } = req.headers;
-        const { encounter, encounterDoctor } = req.body;
-        
-
-        if (user_uuid && encounter && encounterDoctor) {
-
-            // Assigning
-            encounter.modified_by = encounter.created_by = user_uuid;
-            encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
-            encounter.created_date = encounter.modified_date = new Date();
-            encounter.encounter_date = new Daencounter.uuid = encounterDoctor.encounter_uuid = createdEncounterData.uuid;te();
-
-            // Assigning
-            encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
-            encounterDoctor.is_active = encounterDoctor.status = emr_constants.IS_ACTIVE;
-            encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
-
-            try {
-                const createdEncounterData = await encounter_tbl.create(encounter, { returning: true });
-
-                if (createdEncounterData) {
-                    encounter.uuid = encounterDoctor.encounter_uuid = createdEncounterData.uuid;
-
-                    const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
-                    encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-
-                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted Encounter Successfully", responseContents: { encounter, encounterDoctor } });
-                }
-            } catch (ex) {
-                console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-            }
-        } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-        }
-
-
-    }*/
-
-
     const _createPatientEncounter = async (req, res) => {
         const { user_uuid } = req.headers;
         const { encounter, encounterDoctor } = req.body;

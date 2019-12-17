@@ -54,7 +54,7 @@ const EMRWorkflowSettings = () => {
                     return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: `${emr_constants.DUPLICATE_RECORD} ${emr_constants.GIVEN_USER_UUID}` });
                 }
                 emrWorkflowSettingReqData.forEach((eRD) => {
-                    eRD.modified_by = eRD.created_by = user_uuid;
+                    eRD.modified_by = eRD.user_uuid = eRD.created_by = user_uuid;
                     eRD.is_active = emr_constants.IS_ACTIVE;
                     eRD.created_date = eRD.modified_date = new Date();
                 });
