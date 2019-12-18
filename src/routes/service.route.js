@@ -6,8 +6,8 @@ const emrPatientVitalRouter = require('./emr.patient.vitals.route');
 const encounterRouter = require('./encounter.route');
 const encounterTypeRouter = require('./encounter.type.route');
 const patientDiagnosisRouter = require('./patient.diagnosis.route');
-const uploadRouter = require('./upload.route');
-const serviceRoute = express.Router();
+const patientAttachmentsRouter = require('./patient_attachments.route');
+//const serviceRoute = express.Router();
 
 const favouriteRoutes = require('./favourite_master_route');
 const templateRoutes = require('./template_master.route');
@@ -27,8 +27,10 @@ const serviceRouter = express.Router();
 // EMR Work Flow Settings Routes
 serviceRouter.use('/emr-workflow-settings', emrWorkflowRouter);
 
-serviceRoute.use('/patient-diagnosis', patientDiagnosisRouter);
-serviceRoute.use('/upload',uploadRouter);
+serviceRouter.use('/patient-diagnosis', patientDiagnosisRouter);
+
+
+serviceRouter.use('/patientattachments',patientAttachmentsRouter);
 // Patient Chief Complaints
 serviceRouter.use('/patient-chief-complaints', patientChiefRoute);
 
