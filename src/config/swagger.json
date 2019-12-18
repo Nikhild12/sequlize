@@ -1597,6 +1597,38 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+
+        "/api/patientattachments/getattachmenttype": {
+            "get": {
+                "summary": "List attachment type",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getattachmenttype"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
     },
     "definitions": {
@@ -3538,6 +3570,15 @@
                             }
                         }
                     }
+                }
+            }
+        },
+
+        "getattachmenttype": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
                 }
             }
         }
