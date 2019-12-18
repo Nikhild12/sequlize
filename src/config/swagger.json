@@ -899,7 +899,7 @@
             }
         },
         "/api/diagnosis/search": {
-            "get": {
+            "post": {
                 "description": "To get a Diagnosiseither by filters or By Id",
                 "parameters": [
                     {
@@ -909,10 +909,12 @@
                         "type": "integer"
                     },
                     {
-                        "in": "query",
+                        "in": "body",
                         "name": "searchValue",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/search"
+                        }
                     }
                 ],
                 "produces": [
