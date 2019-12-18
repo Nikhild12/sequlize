@@ -134,7 +134,7 @@ const TickSheetMasterController = () => {
 
         if (favouriteMasterReqData && favouriteMasterDetailsReqData.length > 0 && searchkey) {
 
-            favouriteMasterReqData.created_by = favouriteMasterReqData.modified_by = user_uuid;
+            favouriteMasterReqData.created_by = favouriteMasterReqData.user_uuid = favouriteMasterReqData.modified_by = user_uuid;
             favouriteMasterReqData.created_date = favouriteMasterReqData.modified_date = new Date();
             favouriteMasterReqData.active_from = favouriteMasterReqData.active_to = new Date();
             favouriteMasterReqData.is_active = favouriteMasterReqData.status = true;

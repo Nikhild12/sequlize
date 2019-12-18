@@ -22,6 +22,8 @@ const diagnosisRoutes = require("./diagnosis.route");
 const chiefComplaintsRouter = require('./chief.complaints.route');
 const chiefDurationRoute = require('./chief_complaints_duration.route');
 
+const emrHisSetCtrl = require('./emr.history.settings.routes');
+
 const serviceRouter = express.Router();
 
 // EMR Work Flow Settings Routes
@@ -64,5 +66,8 @@ serviceRouter.use('/chiefComplaints', chiefComplaintsRoutes);
 serviceRouter.use('/chief-complaints-duration', chiefDurationRoute);
 serviceRouter.use('/chief-complaints-master', chiefComplaintsRouter);
 serviceRouter.use('/chiefComplaintCategory', chiefComplaintCategoryRoutes);
+
+// EMR History Settings Routes
+serviceRouter.use('/emr-history-settings', emrHisSetCtrl);
 
 module.exports = serviceRouter;
