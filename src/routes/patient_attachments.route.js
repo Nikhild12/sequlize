@@ -4,6 +4,6 @@ const patientattachmentCtrl = require("../controllers/patient_attachments.contro
 const router = express.Router(); 
 
 router.route("/upload").post(patientattachmentCtrl.upload);
-router.route("/getvisittype").get(patientattachmentCtrl.getvisittype);
+router.route("/getattachmenttype").get(patientattachmentCtrl.getattachmenttype);
 
 module.exports = router;
