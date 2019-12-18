@@ -73,6 +73,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
+    patient_attachments.associate =  models => {
+        patient_attachments.belongsTo(models.attachment_type , {
+            foreignKey:"attachment_type_uuid",
+            as:'attachment_type'
+        });
+    }
+
     return patient_attachments;
 };
 

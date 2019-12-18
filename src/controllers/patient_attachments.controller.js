@@ -27,7 +27,6 @@ const _getattachmenttype = async (req, res) => {
 
     try {
         if (user_uuid){
-            console.log(user_uuid);
         const data = await attachmentTypeTbl.findAll({returning:true });
         //console.log ("----",data);
                             
@@ -44,6 +43,46 @@ const _getattachmenttype = async (req, res) => {
             .json({ status: "error", msg: errorMsg });
     }
 };
+
+const _getlistBytype = async (req, res) => {
+    const {user_uuid} = req.headers;
+    const {attachment_type_uuid} = req.query;
+
+    try {
+        if (user_uuid && attachment_type_uuid){
+        const data = await attachmentTbl.findAll({
+            where: { 
+                attachment_type_uuid: attachment_type_uuid
+            },
+            include: [
+                {
+                  model: attachmentTypeTbl,
+                  as: 'attachment_type',
+                  where: {
+                    is_active: 1,
+                    status: 1
+                  }
+                },]
+        },
+            { returning: true } 
+        );
+        //console.log ("----",data);
+                            
+            if (data) {
+                return res
+                    .status(httpStatus.OK)
+                    .json({statusCode: 200, req: '', responseContents: data });
+            }
+        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+    } catch (err) {
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
+        return res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ status: "error", msg: errorMsg });
+    }
+};
+
+
 
 
 
@@ -97,7 +136,8 @@ const _upload = async(req, res) => {
 
 return {
     upload: _upload,
-    getattachmenttype: _getattachmenttype
+    getattachmenttype: _getattachmenttype,
+    getlistBytype: _getlistBytype
     };
 };
 
