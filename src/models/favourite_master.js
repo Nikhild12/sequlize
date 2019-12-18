@@ -3,128 +3,136 @@ module.exports = (sequelize, DataTypes) => {
     const TICK_SHEET_MASTER = sequelize.define(
         "favourite_master",
         {
-            uuid : {
-                
-                type : DataTypes.INTEGER,
+            uuid: {
+
+                type: DataTypes.INTEGER,
                 // allowNull : false,
-                primaryKey : true,
+                primaryKey: true,
                 autoIncrement: true,
             },
-            favourite_type_uuid : {
-                
-                type : DataTypes.INTEGER,
-                allowNull : false,
-                primaryKey : true,
-                validate : {
+            favourite_type_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                primaryKey: true,
+                validate: {
                     notNull: true
                 }
             },
-            code : {
-                
-                type : DataTypes.STRING(8),
-                allowNull : true
+            code: {
+
+                type: DataTypes.STRING(8),
+                allowNull: true
 
             },
-            name : {
-                
-                type:  DataTypes.STRING(100),
-                allowNull :  true
+            name: {
+
+                type: DataTypes.STRING(100),
+                allowNull: true
 
             },
-            is_public : {
-                
-                type : DataTypes.ENUM,
-                values : ["0", "1"],
-                defaultValue : "1"
+            is_public: {
+
+                type: DataTypes.ENUM,
+                values: ["0", "1"],
+                defaultValue: "1"
 
             },
-            facility_uuid : {
-                
-                type : DataTypes.INTEGER,
-                allowNull : false,
-                validate : {
-                    notNull: true
-                }
+            facility_uuid: {
 
-            },
-            department_uuid : {
-                
-                type : DataTypes.INTEGER,
-                allowNull : false,
-                validate : {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
                     notNull: true
                 }
 
             },
-            user_uuid : {
-                
-                type : DataTypes.INTEGER,
-                allowNull : false,
-                validate : {
+            department_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
                     notNull: true
                 }
 
             },
-            display_order : {
-                
-                type : DataTypes.STRING(255),
-                allowNull : true
+            diagnosis_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: true,
+                    min: 0
+                }
+            },
+            user_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: true
+                }
 
             },
-            
-            active_from : {
-                
-                type : DataTypes.DATE,
-                allowNull : false
+            display_order: {
+
+                type: DataTypes.STRING(255),
+                allowNull: true
 
             },
-            active_to  : {
 
-                type : DataTypes.DATE,
-                allowNull : true
+            active_from: {
 
-            },
-            
-            comments : {
-                
-                type : DataTypes.STRING(255),
-                allowNull : true
+                type: DataTypes.DATE,
+                allowNull: false
 
             },
-            is_active : {
-                
-                type : DataTypes.ENUM,
-                values : ["0", "1"],
-                defaultValue : "1"
+            active_to: {
+
+                type: DataTypes.DATE,
+                allowNull: true
 
             },
-            status : {
-                
-                type : DataTypes.ENUM,
-                values : ["0", "1"],
-                defaultValue : "1"
+
+            comments: {
+
+                type: DataTypes.STRING(255),
+                allowNull: true
 
             },
-            revision : {
-                
-                type : DataTypes.INTEGER,
-                allowNull : false
-                
+            is_active: {
+
+                type: DataTypes.ENUM,
+                values: ["0", "1"],
+                defaultValue: "1"
+
             },
-            
-            created_date : 'created_date',
-            modified_date : 'modified_date',
-            
-            created_by : {
+            status: {
 
-                type : DataTypes.INTEGER,
-                allowNull : false
+                type: DataTypes.ENUM,
+                values: ["0", "1"],
+                defaultValue: "1"
 
-            }, 
-            modified_by : {
+            },
+            revision: {
 
-                type : DataTypes.INTEGER,
-                allowNull : false
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
+
+            created_date: 'created_date',
+            modified_date: 'modified_date',
+
+            created_by: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
+            modified_by: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
 
             }
         },

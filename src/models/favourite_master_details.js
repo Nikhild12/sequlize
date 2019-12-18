@@ -20,6 +20,15 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            test_master_type_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: true,
+                    min: 0
+                }
+            },
+
             test_master_uuid: {
 
                 type: DataTypes.INTEGER,

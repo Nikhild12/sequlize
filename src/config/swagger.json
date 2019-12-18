@@ -155,6 +155,68 @@
                 }
             }
         },
+        
+        "/api/emr-history-settings/create": {
+            "post": {
+                "description": "To Create a EMR History for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "createEMRHistorySettings",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createEMRHistory"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRHistorySettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Inserted EMR Workflow"
+                    }
+                }
+            }
+        },
+        "/api/emr-history-settings/getById": {
+            "get": {
+                "description": "To get a EMR History Settings Workflow",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRHistorySettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getEMRData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/patient-chief-complaints/create": {
             "post": {
                 "description": "To create Patient chief Complaints",
@@ -899,7 +961,7 @@
             }
         },
         "/api/diagnosis/search": {
-            "post": {
+            "get": {
                 "description": "To get a Diagnosiseither by filters or By Id",
                 "parameters": [
                     {
@@ -909,12 +971,10 @@
                         "type": "integer"
                     },
                     {
-                        "in": "body",
+                        "in": "query",
                         "name": "searchValue",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/search"
-                        }
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -1005,7 +1065,7 @@
             }
         },
         "/api/diagnosis/deleteDiagnosis": {
-            "post": {
+            "put": {
                 "description": "Deleted successfully",
                 "parameters": [
                     {
@@ -1043,7 +1103,7 @@
             }
         },
         "/api/diagnosis/updateDiagnosisById": {
-            "post": {
+            "put": {
                 "description": "To Update diagnosis ",
                 "parameters": [
                     {
@@ -1081,7 +1141,7 @@
             }
         },
         "/api/diagnosis/getDaignosisById": {
-            "post": {
+            "get": {
                 "description": "To get a diagnosis by Id",
                 "parameters": [
                     {
@@ -1091,12 +1151,10 @@
                         "type": "integer"
                     },
                     {
-                        "in": "body",
+                        "in": "query",
                         "name": "Id",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/getDaignosisById"
-                        }
+                        "type": "integer"
                     }
                 ],
                 "produces": [
@@ -1574,14 +1632,6 @@
                     "work_flow_order": {
                         "type": "integer",
                         "example": 1
-                    },
-                    "status": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "revision": {
-                        "type": "integer",
-                        "example": 1
                     }
                 }
             }
@@ -1629,6 +1679,83 @@
                         "type": "integer"
                     },
                     "ews_is_active": {
+                        "type": "boolean"
+                    },
+                    "activity_code": {
+                        "type": "string"
+                    },
+                    "activity_icon": {
+                        "type": "string"
+                    },
+                    "activity_name": {
+                        "type": "string"
+                    },
+                    "activity_id": {
+                        "type": "integer"
+                    },
+                    "activity_route_url": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "createEMRHistory":{
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "facility_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "department_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "role_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "context_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "context_activity_map_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "activity_uuid": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "history_view_order": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                }
+            }
+        },
+        "getEMRHistory": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "work_flow_order": {
+                        "type": "integer"
+                    },
+                    "emr_history_settings_id": {
+                        "type": "integer"
+                    },
+                    "facility_uuid": {
+                        "type": "integer"
+                    },
+                    "role_uuid": {
+                        "type": "integer"
+                    },
+                    "user_uuid": {
+                        "type": "integer"
+                    },
+                    "ehs_is_active": {
                         "type": "boolean"
                     },
                     "activity_code": {
@@ -2019,7 +2146,7 @@
                         "department_uuid": {
                             "type": "integer"
                         },
-                        "user_uuid": {
+                        "diagnosis_uuid": {
                             "type": "integer"
                         },
                         "display_order": {
@@ -2041,6 +2168,9 @@
                         "type": "object",
                         "properties": {
                             "test_master_uuid": {
+                                "type": "integer"
+                            },
+                            "test_master_type_uuid": {
                                 "type": "integer"
                             },
                             "item_master_uuid": {

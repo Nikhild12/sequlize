@@ -55,8 +55,9 @@ const EMRWorkflowSettings = () => {
                 }
                 emrWorkflowSettingReqData.forEach((eRD) => {
                     eRD.modified_by = eRD.user_uuid = eRD.created_by = user_uuid;
-                    eRD.is_active = emr_constants.IS_ACTIVE;
+                    eRD.is_active = eRD.status = emr_constants.IS_ACTIVE;
                     eRD.created_date = eRD.modified_date = new Date();
+                    eRD.revision = 1;
                 });
 
                 const emrCreatedData = await emr_workflow_settings.bulkCreate(emrWorkflowSettingReqData, { returning: emr_constants.IS_ACTIVE });
