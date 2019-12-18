@@ -3,6 +3,8 @@ const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const bodyParser = require('body-parser');
+const path = require('path');
 
 // Swagger UI and Json import
 const swaggerUi = require('swagger-ui-express');
@@ -26,6 +28,11 @@ app.use(cors());
 
 // Enabling CORS for Accepting cross orgin req
 app.use(helmet());
+
+//for upload purpose
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "../src/assets")));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Enabling Log only for dev
 if (config.env === 'develoment') {

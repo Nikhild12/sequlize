@@ -7,6 +7,7 @@ const emrDiagnosisRouter = require('./emr.diagnosis.route');
 const encounterRouter = require('./encounter.route');
 const encounterTypeRouter = require('./encounter.type.route');
 const patientDiagnosisRouter = require('./patient.diagnosis.route');
+const uploadRouter = require('./upload.route');
 const serviceRoute = express.Router();
 
 serviceRoute.use('/emr-workflow-settings', emrWorkflowRouter);
@@ -19,5 +20,6 @@ serviceRoute.use('/encounter', encounterRouter);
 serviceRoute.use('/encounter-type', encounterTypeRouter);
 
 serviceRoute.use('/patient-diagnosis', patientDiagnosisRouter);
+serviceRoute.use('/upload',uploadRouter);
 
 module.exports = serviceRoute;
