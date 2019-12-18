@@ -899,7 +899,7 @@
             }
         },
         "/api/diagnosis/search": {
-            "post": {
+            "get": {
                 "description": "To get a Diagnosiseither by filters or By Id",
                 "parameters": [
                     {
@@ -909,12 +909,10 @@
                         "type": "integer"
                     },
                     {
-                        "in": "body",
+                        "in": "query",
                         "name": "searchValue",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/search"
-                        }
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -1005,7 +1003,7 @@
             }
         },
         "/api/diagnosis/deleteDiagnosis": {
-            "post": {
+            "put": {
                 "description": "Deleted successfully",
                 "parameters": [
                     {
@@ -1043,7 +1041,7 @@
             }
         },
         "/api/diagnosis/updateDiagnosisById": {
-            "post": {
+            "put": {
                 "description": "To Update diagnosis ",
                 "parameters": [
                     {
@@ -1081,7 +1079,7 @@
             }
         },
         "/api/diagnosis/getDaignosisById": {
-            "post": {
+            "get": {
                 "description": "To get a diagnosis by Id",
                 "parameters": [
                     {
@@ -1091,12 +1089,10 @@
                         "type": "integer"
                     },
                     {
-                        "in": "body",
+                        "in": "query",
                         "name": "Id",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/getDaignosisById"
-                        }
+                        "type": "integer"
                     }
                 ],
                 "produces": [

@@ -128,7 +128,7 @@ const diagnosisController = () => {
         } = req.headers;
         const {
             searchValue
-        } = req.body;
+        } = req.query;
 
         if (user_uuid && searchValue) {
 
