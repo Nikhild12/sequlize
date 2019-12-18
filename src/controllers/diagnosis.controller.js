@@ -344,7 +344,7 @@ const diagnosisController = () => {
         
     }
     const _getDaignosisById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.query
         try {
 
             const page = postData.page ? postData.page : 1;
