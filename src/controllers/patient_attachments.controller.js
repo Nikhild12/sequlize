@@ -22,7 +22,7 @@ const patientAttachmentsController = () => {
     */
    
    
-const _getvisittype = async (req, res) => {
+const _getattachmenttype = async (req, res) => {
     let {user_uuid} = req.headers;
 
     try {
@@ -97,7 +97,7 @@ const _upload = async(req, res) => {
 
 return {
     upload: _upload,
-    getvisittype: _getvisittype
+    getattachmenttype: _getattachmenttype
     };
 };
 
