@@ -29,14 +29,16 @@ const _getattachmenttype = async (req, res) => {
     try {
         if (user_uuid){
         const data = await attachmentTypeTbl.findAll({returning:true });
-        //console.log ("----",data);
-                            
+                                   
             if (data) {
                 return res
                     .status(httpStatus.OK)
                     .json({statusCode: 200, req: '', responseContents: data });
             }
-        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+        } 
+        else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
@@ -66,8 +68,7 @@ const _getlistBytype = async (req, res) => {
                     model: encounterTbl,
                     as: 'encounter',
                     attributes: ['uuid', 'patient_uuid', 'encounter_date'],
-                    where: { is_active: 1, status: 1
-                    }
+                    where: { is_active: 1, status: 1 }
                 },]
         },
             { returning: true } 
@@ -78,7 +79,10 @@ const _getlistBytype = async (req, res) => {
                     .status(httpStatus.OK)
                     .json({statusCode: 200, req: '', responseContents: {attachment: data} });
             }
-        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+        } 
+        else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
@@ -116,7 +120,11 @@ const _getAllAttachments = async (req, res) => {
                     .status(httpStatus.OK)
                     .json({statusCode: 200, req: '', responseContents: {attachment: data} });
             }
-        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+        } 
+        else 
+        {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
@@ -125,6 +133,29 @@ const _getAllAttachments = async (req, res) => {
     }
 };
 
+const _download = async(req, res) => {
+    const {user_uuid} = req.headers;
+    const {file_path} = req.query;
+    const location = './'+file_path;
+    try{
+        if (file_path && user_uuid){
+           await res.download(location, function (err, success)
+            {
+                if (err){
+                   console.log("download failed");
+                   //res.send({"status": 400,"message":"download failed "});
+                }
+                   else{ 
+                    console.log("download sucess");
+                    //res.send({"status": 200,"message":"download sucess "});
+                   }
+            }
+            );
+    } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+    } catch (err){
+        res.send({ "status": 400, "message": ex.message });
+    }
+};
 
 
 
@@ -153,7 +184,7 @@ const _upload = async(req, res) => {
         if (userUUID){
          uploadD(req,res ,async (err)=>{
             const attachmentData = req.body;
-            console.log ("---------",attachmentData);
+            //console.log ("---------",attachmentData);
 
             if(err instanceof multer.MulterError){
                 res.send({status:400,message:err}); 
@@ -165,6 +196,8 @@ const _upload = async(req, res) => {
                 attachmentData.is_active = attachmentData.status = true;
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
+                attachmentData.file_path = req.files[0].path;
+                console.log("--------",req.files[0].path);
                 await attachmentTbl.create(attachmentData, { returning: true });
                 res.send({"status": 200,"files":req.files,"count":req.files.length,"message":"Files Uploaded Successfully "});
              }
@@ -180,7 +213,8 @@ return {
     upload: _upload,
     getattachmenttype: _getattachmenttype,
     getlistBytype: _getlistBytype,
-    getAllAttachments: _getAllAttachments
+    getAllAttachments: _getAllAttachments,
+    download: _download
     };
 };
 
