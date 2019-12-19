@@ -103,44 +103,107 @@ module.exports = (sequelize, DataTypes) => {
             drug_route_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_route_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_route_uuid')
+                    },
+                    min: 0
+                }
             },
             drug_frequency_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_frequency_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_frequency_uuid')
+                    },
+                    min: 0
+                }
             },
             duration: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('duration')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('duration')
+                    },
+                    min: 0
+                }
             },
             duration_period_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('duration_period_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('duration_period_uuid')
+                    },
+                    min: 0
+                }
             },
             drug_instruction_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_instruction_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('drug_instruction_uuid')
+                    },
+                    min: 0
+                }
             },
             quantity: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('quantity')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('quantity')
+                    },
+                    min: 0
+                }
             },
             display_order:{
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('display_order')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('display_order')
+                    },
+                    min: 0
+                }
             },
             comments: {
                 type: DataTypes.STRING(500),
                 allowNull: true
             },
             is_active: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
+                allowNull: false
             },
             status: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
+                allowNull: false
             },
             revision: {
                 type: DataTypes.INTEGER,
@@ -152,12 +215,15 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: true
-                },
+                }
             },
 
             modified_by: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: true
+                }
             },
         },
         {
