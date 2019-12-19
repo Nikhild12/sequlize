@@ -1765,6 +1765,85 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/patientattachments/upload": {
+            "post": {
+                "summary": "upload the documents",
+                "consumes": "multipart/form-data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "header",
+                        "name": "folder_name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "upfile",
+                        "required": true,
+                        "type": "file"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "patient_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "encounter_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "attachment_type_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "comments",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "revision",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "attachment_name",
+                        "required": true,
+                        "type":"string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/upload"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
         
         
@@ -3740,6 +3819,15 @@
         },
 
         "getAllAttachments": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "upload": {
             "type": "object",
             "properties": {
                 "user_uuid": {
