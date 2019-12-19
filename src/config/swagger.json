@@ -1422,7 +1422,7 @@
             }
         },
         "/api/chief-complaints-master/getById": {
-            "get": {
+            "post": {
                 "description": "To get a chief Complaints Master Data",
                 "parameters": [
                     {
@@ -1432,10 +1432,12 @@
                         "type": "integer"
                     },
                     {
-                        "in": "query",
+                        "in": "body",
                         "name": "ChiefComplaints_id",
                         "required": true,
-                        "type": "integer"
+                        "schema": {
+                            "$ref": "#/definitions/getChiefMasterById"
+                        }
                     }
                 ],
                 "produces": [

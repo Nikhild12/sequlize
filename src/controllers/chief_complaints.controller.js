@@ -135,17 +135,24 @@ const ChiefComplaints = () => {
     const _getChiefComplaintsById = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        const { ChiefComplaints_id } = req.query;
-        if (user_uuid && ChiefComplaints_id) {
+        const { ChiefComplaints_id } = req.body;
+  
+        if (user_uuid&&ChiefComplaints_id) {
             try {
 
-                const chiefData = await chief_complaints_tbl.findAll({
+                const chiefData = await chief_complaints_tbl.findOne({
                     attributes: getChiefComplaintsAttributes,
                     where: {uuid:ChiefComplaints_id}
                 });
 
                
-                return res.status(httpStatus.OK).send(chiefData)
+                return res.status(httpStatus.OK).json({
+                    message: "success",
+                    statusCode: 200,
+                    responseContents:chiefData 
+                   
+
+                });
 
             } catch (ex) {
 

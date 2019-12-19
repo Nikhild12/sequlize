@@ -134,16 +134,22 @@ const diagnosisController = () => {
         if (user_uuid && searchValue) {
 
             try {
-                const diagnosisData = await diagnosisTbl.findAll({
+                const page = searchValue.page ? searchValue.page : 1;
+                const itemsPerPage = searchValue.limit ? searchValue.limit : 50;
+                const offset = (page - 1) * itemsPerPage;
+                const diagnosisData = await diagnosisTbl.findAndCountAll({
                     where: getDiagnosisFilterByQuery("filterbythree", searchValue),
-                    attributes: getDiagnosisAttributes().splice(0, 3)
+                    attributes: getDiagnosisAttributes().splice(0, 3),
+                    offset: offset,
+                    limit: itemsPerPage
                 });
 
                 if (diagnosisData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: "Fetched Diagnosis Data Successfully",
-                        responseContents: diagnosisData ? diagnosisData : []
+                        responseContents: diagnosisData,
+                        
                     });
                 }
             } catch (error) {

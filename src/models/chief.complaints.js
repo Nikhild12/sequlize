@@ -1,3 +1,4 @@
+const emr_constants = require('../config/constants');
 module.exports = (sequelize, DataTypes) => {
 
     const CHIEF_COMPLAINTS = sequelize.define(
@@ -9,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             code: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+
             },
             name: {
                 type: DataTypes.STRING
@@ -19,6 +21,16 @@ module.exports = (sequelize, DataTypes) => {
             },
             chief_complaint_category_uuid: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_category_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_category_uuid')
+                    },
+                    min: 0
+                }
             },
             referrence_link: {
                 type: DataTypes.STRING

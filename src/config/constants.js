@@ -36,6 +36,8 @@ module.exports = Object.freeze({
                 return `${returnProvideMsg} Context Activity Map Id`;
             case 'history_view_order':
                 return `${returnProvideMsg} History View Order Id`;
+                case 'chief_complaint_category_uuid':
+                return `${returnProvideMsg} chief complaint category Id`;
             default:
                 return `${returnProvideMsg} required Fields`;
         }
