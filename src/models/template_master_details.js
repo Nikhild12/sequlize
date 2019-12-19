@@ -1,4 +1,4 @@
-const uuidparse = require("uuid-parse");
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const template_master_details = sequelize.define(
@@ -11,35 +11,98 @@ module.exports = (sequelize, DataTypes) => {
             },
             template_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                    },
+                    min: 0
+                }
             },
             chief_complaint_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                    },
+                    min: 0
+                }
             },
             vital_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    min: 0
+                }
             },
             test_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                    },
+                    min: 0
+                }
             },
             item_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                    },
+                    min: 0
+                }
             },
             chief_complaint_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                    },
+                    min: 0
+                }
             },
             vital_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    min: 0
+                }
             },
             drug_route_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
             },
             drug_frequency_uuid: {
                 type: DataTypes.INTEGER,
