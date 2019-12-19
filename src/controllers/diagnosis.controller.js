@@ -137,7 +137,7 @@ const diagnosisController = () => {
                 const page = searchValue.page ? searchValue.page : 1;
                 const itemsPerPage = searchValue.limit ? searchValue.limit : 50;
                 const offset = (page - 1) * itemsPerPage;
-                const diagnosisData = await diagnosisTbl.findAndCountAll({
+                const diagnosisData = await diagnosisTbl.findAll({
                     where: getDiagnosisFilterByQuery("filterbythree", searchValue),
                     attributes: getDiagnosisAttributes().splice(0, 3),
                     offset: offset,
