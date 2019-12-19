@@ -1026,7 +1026,7 @@
             }
         },
         "/api/diagnosis/search": {
-            "get": {
+            "post": {
                 "description": "To get a Diagnosiseither by filters or By Id",
                 "parameters": [
                     {
@@ -1036,10 +1036,12 @@
                         "type": "integer"
                     },
                     {
-                        "in": "query",
+                        "in": "body",
                         "name": "searchValue",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/search"
+                        }
                     }
                 ],
                 "produces": [
@@ -1657,6 +1659,38 @@
                     },
                     "400": {
                         "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+
+        "/api/patientattachments/getattachmenttype": {
+            "get": {
+                "summary": "List attachment type",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getattachmenttype"
+                        }
                     }
                 },
                 "x-auth-type": "Application & Application User",
@@ -3609,6 +3643,15 @@
                             }
                         }
                     }
+                }
+            }
+        },
+
+        "getattachmenttype": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
                 }
             }
         }

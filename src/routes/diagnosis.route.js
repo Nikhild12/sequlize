@@ -6,7 +6,7 @@ const diagnosisRoutes = express.Router(); // eslint-disable-line new-cap
 
 
 diagnosisRoutes.route("/getDFilter").get(diagnosisCtrl.getDiagnosisFilter);
-diagnosisRoutes.route("/search").get(diagnosisCtrl.getDiagnosisSearch);
+diagnosisRoutes.route("/search").post(diagnosisCtrl.getDiagnosisSearch);
 
 diagnosisRoutes.route("/createDiagnosis").post(diagnosisCtrl.createDiagnosis);
 diagnosisRoutes.route("/getDiagnosis").get(diagnosisCtrl.getDiagnosis);
