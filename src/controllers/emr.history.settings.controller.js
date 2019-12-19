@@ -120,9 +120,92 @@ const EMR_HISTORY_SETTINGS = () => {
         }
     }
 
+    /**
+     * Delete EMR History By User Id and His Settings Id
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const _deleteEMRHisSettings = async (req, res) => {
+
+        const emrHisSetflowIds = req.body;
+        const { user_uuid } = req.headers;
+
+        let deleteEMRHisSetPromise = [];
+        if (user_uuid && emrHisSetflowIds && emrHisSetflowIds.length > 0) {
+
+            try {
+
+                // Finding NaN element in given body req 
+                // if exists returns bad req
+                if (emrHisSetflowIds.map(Number).includes(NaN)) {
+                    return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.SEND_PROPER_REQUEST} ${emr_constants.I_E_NUMBER_ARRAY}` });
+                }
+
+                emrHisSetflowIds.forEach((id) => {
+                    deleteEMRHisSetPromise = [...deleteEMRHisSetPromise,
+                    emrHistorySettingsTbl.update(
+                        { status: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date() },
+                        { where: { uuid: id, user_uuid: user_uuid } }
+                    )];
+                });
+
+                const updatedEMRHisSetData = await Promise.all(deleteEMRHisSetPromise);
+
+                if (updatedEMRHisSetData) {
+                    return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
+                }
+
+            } catch (ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+
+    }
+
+    /**
+     * Update History Settings for the userid
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const _updateEMRHistorySettings = async (req, res) => {
+
+        const emrHistorySettingsUpdateData = req.body;
+        const { user_uuid } = req.headers;
+
+        if (user_uuid && emrHistorySettingsUpdateData && emrHistorySettingsUpdateData.length > 0) {
+
+            try {
+                // Deleting Existing Data and creating new one
+                const deleteHisSetData = await emrHistorySettingsTbl.destroy({
+                    where: { user_uuid: user_uuid }
+                });
+
+                if (deleteHisSetData) {
+                    const emrUpdatedData = await emrHistorySettingsTbl.bulkCreate(emrHistorySettingsUpdateData, { returning: emr_constants.IS_ACTIVE });
+                    if (emrUpdatedData) {
+                        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.UPDATE_EMR_HIS_SET_SUC });
+                    }
+                }
+            } catch (ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+
     return {
+
         createEmrHistorySettings: _createEmrHistorySettings,
-        getEMRHistorySettingsByUserId: _getEMRHistorySettingsByUserId
+        getEMRHistorySettingsByUserId: _getEMRHistorySettingsByUserId,
+        deleteEMRHisSettings: _deleteEMRHisSettings,
+        updateEMRHistorySettings: _updateEMRHistorySettings
+
     }
 }
 

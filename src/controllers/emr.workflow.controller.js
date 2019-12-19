@@ -107,10 +107,7 @@ const EMRWorkflowSettings = () => {
         const emrWorkflowUpdateData = req.body;
         const { user_uuid } = req.headers;
 
-
         if (user_uuid && emrWorkflowUpdateData.length > 0) {
-
-
 
             try {
 
@@ -129,7 +126,7 @@ const EMRWorkflowSettings = () => {
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found or User Id Found" });
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });            
         }
 
     }
@@ -140,16 +137,22 @@ const EMRWorkflowSettings = () => {
         const { user_uuid } = req.headers;
 
         let deleteEMRWorkflowPromise = [];
-        if (user_uuid && emrWorkflowIds.length > 0) {
+        if (user_uuid && emrWorkflowIds && emrWorkflowIds.length > 0) {
 
-            emrWorkflowIds.forEach((id) => {
-                deleteEMRWorkflowPromise = [...deleteEMRWorkflowPromise,
-                emr_workflow_settings.update(
-                    { status: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date() },
-                    { where: { uuid: id } }
-                )];
-            });
             try {
+
+                if (emrWorkflowIds.map(Number).includes(NaN)) {
+                    return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.SEND_PROPER_REQUEST} ${emr_constants.I_E_NUMBER_ARRAY}` });                    
+                }
+
+                emrWorkflowIds.map(Number).forEach((id) => {
+                    deleteEMRWorkflowPromise = [...deleteEMRWorkflowPromise,
+                    emr_workflow_settings.update(
+                        { status: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date() },
+                        { where: { uuid: id, user_uuid: user_uuid } }
+                    )];
+                });
+
                 const updatedEMRData = await Promise.all(deleteEMRWorkflowPromise);
 
                 if (updatedEMRData) {
@@ -160,7 +163,10 @@ const EMRWorkflowSettings = () => {
                 console.log(ex);
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
             }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
+
 
     }
 
