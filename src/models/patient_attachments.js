@@ -78,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:"attachment_type_uuid",
             as:'attachment_type'
         });
+        patient_attachments.belongsTo(models.encounter , {
+            foreignKey:"encounter_uuid",
+            as:'encounter'
+        })
     }
 
     return patient_attachments;
