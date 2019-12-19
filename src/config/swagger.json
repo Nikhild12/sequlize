@@ -1696,7 +1696,78 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+
+        "/api/patientattachments/getlistBytype": {
+            "get": {
+                "summary": "List attachments by type",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "attachment_type_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getlistBytype"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+
+        "/api/patientattachments/getAllAttachments": {
+            "get": {
+                "summary": "List all attachments",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getAllAttachments"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
+        
+        
     },
     "definitions": {
         "createEMR": {
@@ -3648,6 +3719,27 @@
         },
 
         "getattachmenttype": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "getlistBytype": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "attachment_type_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "getAllAttachments": {
             "type": "object",
             "properties": {
                 "user_uuid": {
