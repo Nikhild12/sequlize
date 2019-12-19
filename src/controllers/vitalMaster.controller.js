@@ -33,14 +33,14 @@ const vitalmstrController = () => {
       try {
         const result = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
         if (result) {
-          return res.status(200).send({ statusCode: httpStatus.OK, message: "Inserted Vital Master Successfully", responseContent: result });
+          return res.status(200).send({ statusCode: 200, message: "Inserted Vital Master Successfully", responseContent: result });
         }
       }
       catch (ex) {
-        return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+        return res.status(400).send({ statusCode:400, message: ex.message });
       }
     } else {
-      return res.status(400).send({ statusCode: httpStatus[400], message: "No Request Body Found" });
+      return res.status(400).send({ statusCode:400, message: "No Request Body Found" });
     }
   };
   //function for getting default vitals

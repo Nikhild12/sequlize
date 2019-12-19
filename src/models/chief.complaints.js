@@ -27,15 +27,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING
             },
             is_active: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1",
-
+               
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
             },
             status: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
             },
             revision: {
                 type: DataTypes.INTEGER,

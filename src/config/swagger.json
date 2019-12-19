@@ -1392,8 +1392,8 @@
             }
         },
         "/api/chief-complaints-master/getAll": {
-            "get": {
-                "description": "To create a chief Complaints Master Data",
+            "post": {
+                "description": "To get a chief Complaints Master Data",
                 "parameters": [
                     {
                         "in": "header",
@@ -1411,7 +1411,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Inserted Successfully",
+                        "description": "get Successfully",
                         "schema": {
                             "$ref": "#/definitions/getAllChiefMaster"
                         }
