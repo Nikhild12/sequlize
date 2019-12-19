@@ -1,3 +1,4 @@
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const patient_attachments = sequelize.define(
@@ -12,18 +13,54 @@ module.exports = (sequelize, DataTypes) => {
             patient_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    min: 0
+                }
             },
             encounter_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    min: 0
+                }
             },
             consultation_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+                    },
+                    min: 0
+                }
             },
             attachment_type_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('attachment_type_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('attachment_type_uuid')
+                    },
+                    min: 0
+                }
             },
             attachment_name: {
                 type: DataTypes.STRING(100),
@@ -38,18 +75,27 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             is_active:{
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
+                allowNull: false
             },
             status:{
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
+                allowNull: false
             },
             revision:{
                 type : DataTypes.INTEGER,
-                allowNull : false
+                allowNull : false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('revision')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('revision')
+                    },
+                    min: 0
+                }
             },
             created_by: {
                 type: DataTypes.INTEGER,

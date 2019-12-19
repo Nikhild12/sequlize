@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('template_type_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('template_type_uuid')
                     },
                     min: 0
                 }
@@ -40,28 +40,28 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('diagnosis_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('diagnosis_uuid')
                     },
                     min: 0
                 }
             },
             is_public: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: "1",
+                allowNull: false
             },
             facility_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
                     min: 0
                 }
@@ -71,10 +71,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
                     },
                     min: 0
                 }
@@ -84,10 +84,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('user_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('user_uuid')
                     },
                     min: 0
                 }
@@ -97,10 +97,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('display_order')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('display_order')
                     },
                     min: 0
                 }
