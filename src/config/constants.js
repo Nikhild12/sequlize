@@ -14,6 +14,9 @@ module.exports = Object.freeze({
     EMR_FETCHED_SUCCESSFULLY: 'Fetched EMR Workflow Successfully',
     DUPLICATE_RECORD: 'Duplicate Record',
     GIVEN_USER_UUID: 'for the given user_uuid',
+    SEND_PROPER_REQUEST: 'Send Proper Request Body',
+    I_E_NUMBER_ARRAY: 'i.e. number array',
+    UPDATE_EMR_HIS_SET_SUC: "Updated EMR History Settings Successfully",
 
 
     GetpleaseProvideMsg: function (columnname) {

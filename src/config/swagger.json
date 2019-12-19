@@ -154,8 +154,7 @@
                     }
                 }
             }
-        },
-        
+        },        
         "/api/emr-history-settings/create": {
             "post": {
                 "description": "To Create a EMR History for the Master",
@@ -213,6 +212,72 @@
                         "schema": {
                             "$ref": "#/definitions/getEMRData"
                         }
+                    }
+                }
+            }
+        },
+        "/api/emr-history-settings/update": {
+            "put": {
+                "description": "To Update a EMR History Settings for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "updateEMRHistorySettings",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createEMRHistory"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRHistorySettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upadted Successfully"
+                    }
+                }
+            }
+        },
+        "/api/emr-history-settings/delete": {
+            "put": {
+                "description": "To delete a EMR History Settingd for the Master",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "deleteEMRHistory",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deleteEMRHistory"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "EMRHistorySettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully"
                     }
                 }
             }
@@ -1808,6 +1873,12 @@
                         "type": "string"
                     }
                 }
+            }
+        },
+        "deleteEMRHistory": {
+            "type": "array",
+            "items": {
+                "type": "string"
             }
         },
         "createPatientChiefComplaints": {

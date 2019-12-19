@@ -10,4 +10,6 @@ const emrHistorySettingsRoute = express.Router();
 
 emrHistorySettingsRoute.route('/create').post(emrHistorySettingsController.createEmrHistorySettings);
 emrHistorySettingsRoute.route('/getById').get(emrHistorySettingsController.getEMRHistorySettingsByUserId);
+emrHistorySettingsRoute.route('/delete').put(emrHistorySettingsController.deleteEMRHisSettings);
+emrHistorySettingsRoute.route('/update').put(emrHistorySettingsController.updateEMRHistorySettings);
 module.exports = emrHistorySettingsRoute;
