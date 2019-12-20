@@ -62,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            attached_date:{
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
             attachment_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true

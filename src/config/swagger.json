@@ -1795,6 +1795,12 @@
                     },
                     {
                         "in": "formData",
+                        "name": "attached_date",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
                         "name": "patient_uuid",
                         "required": true,
                         "type": "integer"
