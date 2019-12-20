@@ -72,7 +72,7 @@ const immunizationsController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const immunizationsController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -130,27 +130,27 @@ const immunizationsController = () => {
                     msg: "Inserted Immunization details Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to Immunization Module details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
 
             res.send({
                 status: 'failed',
                 msg: 'Please enterImmunization details'
-            })
+            });
         }
-    }
+    };
   
 
     const getimmunizationById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -171,7 +171,7 @@ const immunizationsController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -184,7 +184,7 @@ const immunizationsController = () => {
         }
     };
     const deleteimmunizationById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await immunizationsTbl.update({
             is_active: 0
@@ -198,21 +198,21 @@ const immunizationsController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
    
   
     const updateimmunizationById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await immunizationsTbl.update(
             postData, {
                 where: {
@@ -225,10 +225,10 @@ const immunizationsController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
 
-    }
+    };
     // --------------------------------------------return----------------------------------
     return {
         postimmunization,

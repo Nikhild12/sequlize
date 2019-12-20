@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-require("dotenv").config()
+require("dotenv").config();
 
 const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string()
@@ -48,6 +48,6 @@ const config = {
         password: envVars.PG_PASSWORD,
         dialect: "mysql"
     }
-}
+};
 
-module.exports = config
+module.exports = config;

@@ -40,7 +40,7 @@ const EMRPatientVitals = () => {
                 }
             }
         } catch (ex) {
-            console.log('-----', ex)
+            console.log('-----', ex);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
@@ -60,7 +60,7 @@ const EMRPatientVitals = () => {
         catch (ex) {
             return res.status(400).send({ code: httpStatus[400], message: ex.message });
         }
-    }
+    };
 
     const _getPatientVitals = async (req, res) => {
 
@@ -72,7 +72,7 @@ const EMRPatientVitals = () => {
         catch (ex) {
             return res.status(400).send({ code: httpStatus[400], message: ex.message });
         }
-    }
+    };
     const _getHistoryPatientVitals = async (req, res) => {
         const { user_uuid } = req.headers;
         const { patient_uuid, department_uuid } = req.query;
@@ -89,15 +89,15 @@ const EMRPatientVitals = () => {
         else {
             return res.status(400).send({ code: httpStatus[400], message: "No Request Params Found" });
         }
-    }
+    };
     return {
         createPatientVital: _createPatientVital,
         getVitalsByTemplateID: _getVitalsByTemplateID,
         getPatientVitals: _getPatientVitals,
         getHistoryPatientVitals: _getHistoryPatientVitals,
 
-    }
-}
+    };
+};
 
 
 
@@ -121,7 +121,7 @@ function getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid) {
             'um_name'],
         limit: 10,
         where: { vm_active: emrConstants.IS_ACTIVE, vm_status: emrConstants.IS_ACTIVE, pv_doctor_uuid: user_uuid, pv_patient_uuid: patient_uuid, pv_department_uuid: department_uuid },
-    }
+    };
     return query;
 }
 /**
@@ -155,7 +155,7 @@ function patientVitalsList(getHistoryPatientVitals) {
                 doctor_uuid: pV.pv_doctor_uuid,
 
             }
-            ]
+            ];
         });
     }
     return patient_vitals_list;

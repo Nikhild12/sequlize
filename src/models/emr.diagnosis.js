@@ -107,4 +107,4 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     return diagnosis;
-}
+};

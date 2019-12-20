@@ -20,7 +20,7 @@ function getEMRHistorySettingsByUserId(uId) {
             is_active: emr_constants.IS_ACTIVE,
             status: emr_constants.IS_ACTIVE
         }
-    }
+    };
 }
 
 const getEMRWorkFlowSettings = [
@@ -85,7 +85,7 @@ const EMR_HISTORY_SETTINGS = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
 
-    }
+    };
 
     /**
      * Get History Settings API By User Id
@@ -118,7 +118,7 @@ const EMR_HISTORY_SETTINGS = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     /**
      * Delete EMR History By User Id and His Settings Id
@@ -163,7 +163,7 @@ const EMR_HISTORY_SETTINGS = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
 
-    }
+    };
 
     /**
      * Update History Settings for the userid
@@ -197,7 +197,7 @@ const EMR_HISTORY_SETTINGS = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
 
@@ -206,8 +206,8 @@ const EMR_HISTORY_SETTINGS = () => {
         deleteEMRHisSettings: _deleteEMRHisSettings,
         updateEMRHistorySettings: _updateEMRHistorySettings
 
-    }
-}
+    };
+};
 
 module.exports = EMR_HISTORY_SETTINGS();
 
@@ -235,7 +235,7 @@ function getEMRHisSetData(emr_data) {
             activity_name: e.activity_name,
             activity_route_url: e.activity_route_url,
             activity_id: e.ehs_activity_uuid
-        }
+        };
     });
 
 }

@@ -42,7 +42,7 @@ function getPatientSearchQuery(searchKey, searchValue) {
                 attributes: ['code', 'name']
             }
         ]
-    }
+    };
 }
 
 const PatientChiefComplaints = () => {
@@ -79,7 +79,7 @@ const PatientChiefComplaints = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message:  `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     /**
      * This is a filter API
@@ -106,14 +106,14 @@ const PatientChiefComplaints = () => {
             return res.status(422).send({ code: httpStatus[400], message: "No Request Param Found" });
         }
 
-    }
+    };
 
     return {
 
         createChiefComplaints: _createChiefComplaints,
         getPatientChiefComplaints: _getPatientChiefComplaints
-    }
-}
+    };
+};
 
 module.exports = PatientChiefComplaints();
 

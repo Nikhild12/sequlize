@@ -72,7 +72,7 @@ const chiefComplaintsController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const chiefComplaintsController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -117,7 +117,7 @@ const chiefComplaintsController = () => {
 
     const postchiefComplaints = async (req, res, next) => {
         const postData = req.body;
-        postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
 
         if (postData) {
             chiefComplaintTbl.findAll({}).then(data => {
@@ -132,7 +132,7 @@ const chiefComplaintsController = () => {
                             });
                     }
                 });
-            })
+            });
             await chiefComplaintTbl.create(postData, {
                 returning: true
             }).then(data => {
@@ -141,26 +141,26 @@ const chiefComplaintsController = () => {
                     msg: "Inserted Allery details Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to Allery Module details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
 
             res.send({
                 status: 'failed',
                 msg: 'Please enter Allery details'
-            })
+            });
         }
-    }
+    };
 
     const getchiefComplaintsById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -181,7 +181,7 @@ const chiefComplaintsController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -198,7 +198,7 @@ const chiefComplaintsController = () => {
 
 
     const deletechiefComplaintsById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await chiefComplaintTbl.update({
             is_active: 0
@@ -212,21 +212,21 @@ const chiefComplaintsController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
 
 
     const updatechiefComplaintsById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await chiefComplaintTbl.update(
             postData, {
                 where: {
@@ -239,10 +239,10 @@ const chiefComplaintsController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
 
-    }
+    };
 
     // --------------------------------------------return----------------------------------
     return {

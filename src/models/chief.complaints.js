@@ -81,6 +81,6 @@ module.exports = (sequelize, DataTypes) => {
                 }
             ]
         }
-    )
+    );
     return CHIEF_COMPLAINTS;
-}
+};

@@ -72,7 +72,7 @@ const allergyTypeController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const allergyTypeController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -117,7 +117,7 @@ const allergyTypeController = () => {
 
     const postAlleryType = async (req, res, next) => {
         const postData = req.body;
-        postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
 
         if (postData) {
             await allergyTypeTbl.create(postData, {
@@ -129,26 +129,26 @@ const allergyTypeController = () => {
                     msg: "Inserted Allery Type  details Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to AlleryType details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
 
             res.send({
                 status: 'failed',
                 msg: 'Please enter Allery Type details'
-            })
+            });
         }
-    }
+    };
    
     const getallergyTypeById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
             
             const page = postData.page ? postData.page : 1;
@@ -169,7 +169,7 @@ const allergyTypeController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
             
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -185,7 +185,7 @@ const allergyTypeController = () => {
 
 
     const deleteAllergyTypeById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await allergyTypeTbl.update({
             is_active: 0
@@ -199,21 +199,21 @@ const allergyTypeController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
    
  
     const updateAllergyTypeById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await allergyTypeTbl.update(
             postData, {
                 where: {
@@ -227,10 +227,10 @@ const allergyTypeController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
        
-    }
+    };
     // --------------------------------------------return----------------------------------
     return {
         postAlleryType,

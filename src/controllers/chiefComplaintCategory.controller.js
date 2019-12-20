@@ -72,7 +72,7 @@ const chiefComplaintCategoryController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const chiefComplaintCategoryController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -117,7 +117,7 @@ const chiefComplaintCategoryController = () => {
 
     const postChiefComplaintCategory = async (req, res, next) => {
         const postData = req.body;
-        postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
        
         
         if (postData) {
@@ -130,26 +130,26 @@ const chiefComplaintCategoryController = () => {
                     msg: "Inserted Chief Complain Category details Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to Chief Complain Category details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
 
             res.send({
                 status: 'failed',
                 msg: 'Please enter Chief Complain Category details'
-            })
+            });
         }
-    }
+    };
   
     const getChiefComplaintCategoryById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -170,7 +170,7 @@ const chiefComplaintCategoryController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -184,7 +184,7 @@ const chiefComplaintCategoryController = () => {
     };
    
     const deleteChiefComplaintCategoryById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await chiefComplaintCategoryTbl.update({
             is_active: 0
@@ -198,24 +198,19 @@ const chiefComplaintCategoryController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
-
-   
- 
-
-   
     const updateChiefComplaintCategoryById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await chiefComplaintCategoryTbl.update(
             postData, {
                 where: {
@@ -228,10 +223,10 @@ const chiefComplaintCategoryController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
         
-    }
+    };
   
     // --------------------------------------------return----------------------------------
     return {

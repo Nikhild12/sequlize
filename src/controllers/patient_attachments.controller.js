@@ -5,7 +5,7 @@ const db = require("../config/sequelize");
 const _ = require('lodash');
 const multer = require('multer');
 //const path = require('path');
-const fs = require('file-system')
+const fs = require('file-system');
 //const bodyParser = require('body-parser');
 
 const attachmentTbl = db.patient_attachments;
@@ -174,7 +174,7 @@ const storage = multer.diskStorage({
     filename: function (req, file, callback) {
         callback(null, file.originalname);
     }
-})
+});
 
 const uploadD =  multer({ storage: storage }).any();
 

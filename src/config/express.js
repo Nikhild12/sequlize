@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Enabling Log only for dev
 if (config.env === 'develoment') {
-	app.use(logger('dev'))
+	app.use(logger('dev'));
 }
 
 // Initialzing Index Route to Express Middleware

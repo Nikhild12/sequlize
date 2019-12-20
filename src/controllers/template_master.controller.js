@@ -234,7 +234,7 @@ function getTemplateData(fetchedData) {
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
 
-    }
+    };
 
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
@@ -461,7 +461,7 @@ function getLabListForTemplate(fetchedData, template_id) {
 
   let lab_list = [];
   const filteredData = fetchedData.filter((fD) => {
-    return fD.dataValues.tm_uuid === template_id
+    return fD.dataValues.tm_uuid === template_id;
   });
 
   if (filteredData && filteredData.length > 0) {
@@ -477,8 +477,8 @@ function getLabListForTemplate(fetchedData, template_id) {
         lab_test_is_active: lD.ltm_is_active[0] === 1 ? true : false,
         lab_type_uuid: lD.ltm_lab_master_type_uuid
       }
-      ]
-    })
+      ];
+    });
   }
   return lab_list;
 }
@@ -493,7 +493,7 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
     [Op.or]: [
       { "tm_dept": { [Op.eq]: dept_id }, "tm_public": { [Op.eq]: 1 } }, { "tm_userid": { [Op.eq]: user_uuid } }
     ]
-  }
+  };
 }
 
 function getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id) {
@@ -507,7 +507,7 @@ function getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id) {
     [Op.or]: [
       { "tm_dept": { [Op.eq]: dept_id }, "tm_public": { [Op.eq]: 1 } }, { "tm_userid": { [Op.eq]: user_uuid } }
     ]
-  }
+  };
 }
 
 function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
@@ -537,7 +537,7 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
         },
       }],
     }]
-  }
+  };
 }
 function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
   return {
@@ -565,20 +565,20 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
         },
       }],
     }]
-  }
+  };
 }
 
 function getTempData(temp_type_id, result) {
   switch (temp_type_id) {
     case "1":
-      return getTemplateListData(result)
+      return getTemplateListData(result);
     case "2":
-      return getLabListData(result)
+      return getLabListData(result);
     case "3":
-      return getLabListData(result)
+      return getLabListData(result);
     default:
-      let templateDetails = result
-      return { templateDetails }
+      let templateDetails = result;
+      return { templateDetails };
   }
 }
 
@@ -590,14 +590,14 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   templateMasterReqData.created_date = templateMasterReqData.modified_date = new Date();
   templateMasterReqData.is_active = true;
 
-  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData, { returning: true })
+  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData, { returning: true });
   templateMasterDetailsReqData.forEach((item, index) => {
-    item.template_master_uuid = templateMasterCreatedData.dataValues.uuid
+    item.template_master_uuid = templateMasterCreatedData.dataValues.uuid;
     item.created_by = userUUID;
     item.modified_by = 0;
     item.created_date = item.modified_date = new Date();
   });
-  const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true })
+  const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true });
   return { "templateMasterReqData": templateMasterCreatedData, "templateMasterDetailsReqData": dtls_result };
 }
 
@@ -626,7 +626,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
-      }
+      };
     case "2":
       return {
         table_name: vw_lab,
@@ -642,7 +642,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
             tmd_active: 1
           }
         }
-      }
+      };
     case "3":
       return {
         table_name: vw_lab,
@@ -658,13 +658,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
             tmd_active: 1
           }
         }
-      }
+      };
     case "4":
       return {
         table_name: tempmstrTbl,
         query: getVitalsQuery(temp_type_id, dept_id, user_uuid),
-
-      }
+      };
   }
 }
 
@@ -677,7 +676,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
           where: getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
-      }
+      };
     case "2":
       return {
         table_name: vw_lab,
@@ -694,7 +693,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tmd_active: 1
           }
         }
-      }
+      };
     case "3":
       return {
         table_name: vw_lab,
@@ -711,13 +710,12 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tmd_active: 1
           }
         }
-      }
+      };
     case "4":
       return {
         table_name: tempmstrTbl,
         query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id),
-
-      }
+      };
   }
 }
 //function is for getting single Template Detailed Data

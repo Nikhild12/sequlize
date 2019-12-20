@@ -72,7 +72,7 @@ const immunizationScheduleController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const immunizationScheduleController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -117,7 +117,7 @@ const immunizationScheduleController = () => {
 
     const postimmunizationSchedule = async (req, res, next) => {
         const postData = req.body;
-        postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
         
         if (postData) {
             await immunizationsTbl.create(postData, {
@@ -129,26 +129,26 @@ const immunizationScheduleController = () => {
                     msg: "Inserted Immunization Schedule Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to Immunization Schedule details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
 
             res.send({
                 status: 'failed',
                 msg: 'Please enter Immunization Schedule'
-            })
+            });
         }
-    }
+    };
   
     const getimmunizationScheduleById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -169,7 +169,7 @@ const immunizationScheduleController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -182,7 +182,7 @@ const immunizationScheduleController = () => {
         }
     };
     const deleteimmunizationScheduleById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await immunizationScheduleTbl.update({
             is_active: 0
@@ -196,22 +196,19 @@ const immunizationScheduleController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
-   
-    
-  
     const updateimmunizationScheduleById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await immunizationScheduleTbl.update(
             postData, {
                 where: {
@@ -224,10 +221,10 @@ const immunizationScheduleController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
 
-    }
+    };
     // --------------------------------------------return----------------------------------
     return {
         postimmunizationSchedule,

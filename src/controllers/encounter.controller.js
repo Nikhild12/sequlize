@@ -37,7 +37,7 @@ function getActiveEncounterQuery(pId, dId) {
                 }
             },
         ]
-    }
+    };
 }
 
 
@@ -73,7 +73,7 @@ const Encounter = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     /**
      * 
@@ -122,7 +122,7 @@ const Encounter = () => {
                                 status: emr_constants.IS_IN_ACTIVE
                             },
                             { where: { encounter_uuid: encounterData[0].uuid } })
-                        ]
+                        ];
                     }
                 } else if (encounter_type_uuid === 1 && encounterData && encounterData.length > 0) {
                     return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER });
@@ -151,15 +151,15 @@ const Encounter = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
 
         getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
         createPatientEncounter: _createPatientEncounter
 
-    }
-}
+    };
+};
 
 module.exports = Encounter();
 

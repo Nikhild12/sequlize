@@ -72,7 +72,7 @@ const allergyMasterController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -101,7 +101,7 @@ const allergyMasterController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -116,7 +116,7 @@ const allergyMasterController = () => {
 
     const postAlleryMaster = async (req, res, next) => {
         const postData = req.body;
-        postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
         if (postData) {
             await allergyMastersTbl.create(postData, {
                 returning: true
@@ -127,27 +127,27 @@ const allergyMasterController = () => {
                     msg: "Inserted Allery Master details Successfully",
                     req: postData,
                     responseContents: data
-                })
+                });
             }).catch(err => {
 
                 res.send({
                     status: "failed",
                     msg: "failed to Allery Master details",
                     error: err
-                })
-            })
+                });
+            });
         } else {
             
             res.send({
                 status: 'failed',
                 msg: 'Please enter Allery Master details'
-            })
+            });
         }
-    }
+    };
 
 
     const deleteAlleryMaster = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await allergyMastersTbl.update({
             is_active: 0
@@ -161,19 +161,19 @@ const allergyMasterController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
     const updateAlleryMasterById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await allergyMastersTbl.update(
             postData, {
                 where: {
@@ -186,14 +186,14 @@ const allergyMasterController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
         
-    }
+    };
   
 
     const getAlleryMasterById = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -214,7 +214,7 @@ const allergyMasterController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;

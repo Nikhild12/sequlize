@@ -35,7 +35,7 @@ function getEMRByUserId(uId) {
             is_active: emr_constants.IS_ACTIVE,
             status: emr_constants.IS_ACTIVE
         }
-    }
+    };
 }
 
 const EMRWorkflowSettings = () => {
@@ -73,7 +73,7 @@ const EMRWorkflowSettings = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
 
-    }
+    };
 
     const _getEMRWorkFlowByUserId = async (req, res) => {
 
@@ -100,7 +100,7 @@ const EMRWorkflowSettings = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     const _updateEMRWorkflow = async (req, res) => {
 
@@ -129,7 +129,7 @@ const EMRWorkflowSettings = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });            
         }
 
-    }
+    };
 
     const _deleteEMRWorkflow = async (req, res) => {
 
@@ -168,7 +168,7 @@ const EMRWorkflowSettings = () => {
         }
 
 
-    }
+    };
 
     return {
 
@@ -177,8 +177,8 @@ const EMRWorkflowSettings = () => {
         updateEMRWorkFlow: _updateEMRWorkflow,
         deleteEMRWorkflow: _deleteEMRWorkflow
 
-    }
-}
+    };
+};
 
 module.exports = EMRWorkflowSettings();
 

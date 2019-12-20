@@ -32,7 +32,7 @@ function getChiefComplaintsFilterByQuery(searchBy, searchValue) {
                         }
                     }
                 ]
-            }
+            };
 
 
         case 'chiefId':
@@ -42,7 +42,7 @@ function getChiefComplaintsFilterByQuery(searchBy, searchValue) {
                 is_active: emr_const.IS_ACTIVE,
                 status: emr_const.IS_ACTIVE,
                 uuid: searchValue
-            }
+            };
     }
 }
 
@@ -103,7 +103,7 @@ const ChiefComplaints = () => {
         } else {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'No Headers Found' });
         }
-    }
+    };
 
     const _createChiefComplaints = async (req, res) => {
         const { user_uuid } = req.headers;
@@ -131,7 +131,7 @@ const ChiefComplaints = () => {
             return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
         }
 
-    }
+    };
     const _getChiefComplaintsById = async (req, res) => {
 
         const { user_uuid } = req.headers;
@@ -164,7 +164,7 @@ const ChiefComplaints = () => {
             return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Query Param Found" });
         }
 
-    }
+    };
 
     const _updateChiefComplaintsById = async (req, res) => {
 
@@ -197,7 +197,7 @@ const ChiefComplaints = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
         }
-    }
+    };
 
     const _deleteChiefComplaints = async (req, res) => {
 
@@ -228,7 +228,7 @@ const ChiefComplaints = () => {
             return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
 
-    }
+    };
     const _getChiefComplaints = async (req, res) => {
 
         const { user_uuid } = req.headers;
@@ -251,7 +251,7 @@ const ChiefComplaints = () => {
                     responseContents: (chiefdata.rows ? chiefdata.rows : []),
                     totalRecords: (chiefdata.count ? chiefdata.count : 0),
 
-                });;
+                });
 
             } catch (ex) {
 
@@ -265,7 +265,7 @@ const ChiefComplaints = () => {
         }
 
 
-    }
+    };
     return {
         getChiefComplaintsFilter: _getChiefComplaintsFilter,
         createChiefComplaints: _createChiefComplaints,
@@ -273,8 +273,8 @@ const ChiefComplaints = () => {
         getChiefComplaintsById:_getChiefComplaintsById,
         updateChiefComplaintsById:_updateChiefComplaintsById,
         deleteChiefComplaints:_deleteChiefComplaints
-    }
+    };
 
-}
+};
 
 module.exports = ChiefComplaints();

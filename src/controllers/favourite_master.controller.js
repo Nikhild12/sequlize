@@ -91,7 +91,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
         [Op.or]: [
             { "tsm_dept": { [Op.eq]: dept_id }, "tsm_public": { [Op.eq]: 1 } }, { "tsm_userid": { [Op.eq]: user_uuid } }
         ]
-    }
+    };
 }
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
@@ -103,14 +103,14 @@ function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue,
         [Op.or]: [
             { "tsm_dept": { [Op.eq]: dept_id }, "tsm_public": { [Op.eq]: active_boolean } }, { "tsm_userid": { [Op.eq]: user_id } }
         ]
-    }
+    };
 }
 
 function getFavouriteById(fav_id) {
     return {
         tsm_uuid: fav_id,
         tsm_active: active_boolean
-    }
+    };
 }
 
 
@@ -178,7 +178,7 @@ const TickSheetMasterController = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
         }
-    }
+    };
 
     const _getFavourites = async (req, res) => {
 
@@ -210,7 +210,7 @@ const TickSheetMasterController = () => {
         }
 
 
-    }
+    };
 
     const _getFavouriteById = async (req, res) => {
 
@@ -237,7 +237,7 @@ const TickSheetMasterController = () => {
             return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Query Param Found" });
         }
 
-    }
+    };
 
     const _updateFavouriteById = async (req, res) => {
 
@@ -270,7 +270,7 @@ const TickSheetMasterController = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
         }
-    }
+    };
 
     const _deleteFavourite = async (req, res) => {
 
@@ -301,7 +301,7 @@ const TickSheetMasterController = () => {
             return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
 
-    }
+    };
 
     return {
 
@@ -311,9 +311,9 @@ const TickSheetMasterController = () => {
         updateFavouriteById: _updateFavouriteById,
         deleteFavourite: _deleteFavourite
 
-    }
+    };
 
-}
+};
 
 module.exports = TickSheetMasterController();
 
@@ -437,25 +437,25 @@ function getSearchValueBySearchKey(details, search_key) {
             return {
                 search_key: 'cc_uuid',
                 search_value: details.chief_complaint_uuid
-            }
+            };
         case 'lab':
         case 'radiology':
         case 'investigations':
             return {
                 search_key: 'tsmd_test_master_uuid',
                 search_value: details.test_master_uuid
-            }
+            };
 
         case 'diagnosis':
             return {
                 search_key: 'tmsd_diagnosis_uuid',
                 search_value: details.diagnosis_uuid
-            }
+            };
         case 'drug':
         default:
             return {
                 search_key: 'im_uuid',
                 search_value: details.item_master_uuid
-            }
+            };
     }
 }

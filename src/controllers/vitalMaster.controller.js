@@ -28,7 +28,7 @@ const vitalmstrController = () => {
 
     if (vitalsMasterData && user_uuid) {
       vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
-      vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date()
+      vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
 
       try {
         const result = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
@@ -54,7 +54,7 @@ const vitalmstrController = () => {
     catch (ex) {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
-  }
+  };
   //function for getting all vitals
   const _getALLVitals = async (req, res) => {
     let query = {
@@ -67,7 +67,7 @@ const vitalmstrController = () => {
       //     status:1
       //   }
       // }] 
-    }
+    };
     try {
       const result = await vitalmstrTbl.findAll(query, { returning: true });
       if (result) {
@@ -77,7 +77,7 @@ const vitalmstrController = () => {
     catch (ex) {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
-  }
+  };
   const _getVitalByID = async (req, res) => {
 
     let { vital_uuid } = req.query;
@@ -101,7 +101,7 @@ const vitalmstrController = () => {
 
       return res.status(400).send({ code: httpStatus[400], message: "No Request body Found" });
     }
-  }
+  };
 
   return {
     createVital: _createVital,
@@ -134,7 +134,7 @@ function getdefaultVitalsQuery(vital_uuid) {
         }
       }
     ]
-  }
+  };
 
   if (vital_uuid) {
     q.where.uuid = vital_uuid;

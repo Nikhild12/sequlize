@@ -41,12 +41,12 @@ const EncounterType = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
         }
-    }
+    };
 
     return {
         getEncounterTypeList: _getEncounterTypeList
-    }
-}
+    };
+};
 
 
 module.exports = EncounterType();

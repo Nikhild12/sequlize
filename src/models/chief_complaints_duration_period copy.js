@@ -62,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
             createAt: 'created_date',
             updatedAt: 'modified_date'
         }
-    )
+    );
 
     return CHIEF_COMPLAINT_DURATION_PERIODS;
-}
+};

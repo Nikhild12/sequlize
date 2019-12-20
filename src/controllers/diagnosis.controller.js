@@ -28,7 +28,7 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
                             }
                         }
                     ]
-            }
+            };
 
 
             case 'dignosisId':
@@ -38,7 +38,7 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
                     is_active: emr_const.IS_ACTIVE,
                         status: emr_const.IS_ACTIVE,
                         uuid: searchValue
-                }
+                };
     }
 }
 
@@ -72,7 +72,7 @@ function getDiagnosisAttributes() {
         'status',
         'revision',
         'created_by'
-    ]
+    ];
 }
 const diagnosisController = () => {
     /**
@@ -121,7 +121,7 @@ const diagnosisController = () => {
                 message: 'No Headers Found'
             });
         }
-    }
+    };
     const _getDiagnosisSearch = async (req, res) => {
         const {
             user_uuid
@@ -165,7 +165,7 @@ const diagnosisController = () => {
                 message: 'No Headers Found'
             });
         }
-    }
+    };
 
     const _createDiagnosis = async (req, res) => {
         const {
@@ -207,7 +207,7 @@ const diagnosisController = () => {
             });
         }
 
-    }
+    };
     const _getDiagnosis = async (req, res, next) => {
         let getsearch = req.body;
 
@@ -262,7 +262,7 @@ const diagnosisController = () => {
                     }
 
                 ]
-            }
+            };
         }
 
 
@@ -291,7 +291,7 @@ const diagnosisController = () => {
                             err: err,
                             req: ''
                         });
-                })
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -307,7 +307,7 @@ const diagnosisController = () => {
 
 
     const _deleteDiagnosis = async (req, res, next) => {
-        const postData = req.body
+        const postData = req.body;
 
         await diagnosisTbl.update({
             is_active: 0
@@ -321,19 +321,19 @@ const diagnosisController = () => {
                 msg: "Deleted Successfully",
                 req: postData,
                 responseContents: data
-            })
+            });
         }).catch(err => {
             res.send({
                 status: "failed",
                 msg: "failed to delete data",
                 error: err
-            })
-        })
-    }
+            });
+        });
+    };
 
     const _updateDiagnosisById = async (req, res, next) => {
-        const postData = req.body
-        postData.modified_by = req.headers.user_uuid
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
         await diagnosisTbl.update(
             postData, {
                 where: {
@@ -346,12 +346,12 @@ const diagnosisController = () => {
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
-            })
-        })
+            });
+        });
         
-    }
+    };
     const _getDaignosisById = async (req, res, next) => {
-        const postData = req.query
+        const postData = req.query;
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -372,7 +372,7 @@ const diagnosisController = () => {
                             req: '',
                             responseContents: data
                         });
-                })
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;

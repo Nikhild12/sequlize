@@ -92,7 +92,7 @@ module.exports = (sequelize, DataTypes) => {
         vital_masters.belongsTo(models.vital_value_type , {
             foreignKey:"vital_value_type_uuid",
             as:'vital_value_type'
-        })
+        });
     };
     return vital_masters;
 };

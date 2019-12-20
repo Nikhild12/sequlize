@@ -16,8 +16,8 @@ const getActiveAndStatusObject = (is_active) => {
         is_active: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE,
         status: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE
 
-    }
-}
+    };
+};
 
 const getPatientDiagnosisAttributes = () => {
     return [
