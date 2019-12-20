@@ -10,6 +10,7 @@ const fs = require('file-system')
 
 const attachmentTbl = db.patient_attachments;
 const attachmentTypeTbl = db.attachment_type;
+const encounterTbl = db.encounter;
 
 
 const patientAttachmentsController = () => {
@@ -28,14 +29,16 @@ const _getattachmenttype = async (req, res) => {
     try {
         if (user_uuid){
         const data = await attachmentTypeTbl.findAll({returning:true });
-        //console.log ("----",data);
-                            
+                                   
             if (data) {
                 return res
                     .status(httpStatus.OK)
                     .json({statusCode: 200, req: '', responseContents: data });
             }
-        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+        } 
+        else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
@@ -58,22 +61,28 @@ const _getlistBytype = async (req, res) => {
                 {
                   model: attachmentTypeTbl,
                   as: 'attachment_type',
-                  where: {
-                    is_active: 1,
-                    status: 1
-                  }
+                  attributes: ['uuid', 'code', 'name'],
+                  where: { is_active: 1, status: 1 }
+                },
+               {
+                    model: encounterTbl,
+                    as: 'encounter',
+                    attributes: ['uuid', 'patient_uuid', 'encounter_date'],
+                    where: { is_active: 1, status: 1 }
                 },]
         },
             { returning: true } 
         );
-        //console.log ("----",data);
                             
             if (data) {
                 return res
                     .status(httpStatus.OK)
-                    .json({statusCode: 200, req: '', responseContents: data });
+                    .json({statusCode: 200, req: '', responseContents: {attachment: data} });
             }
-        } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+        } 
+        else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
@@ -82,7 +91,71 @@ const _getlistBytype = async (req, res) => {
     }
 };
 
+const _getAllAttachments = async (req, res) => {
+    const {user_uuid} = req.headers;
+    //const {attachment_type_uuid} = req.query;
 
+    try {
+        if (user_uuid){
+        const data = await attachmentTbl.findAll({
+            include: [
+                {
+                  model: attachmentTypeTbl,
+                  as: 'attachment_type',
+                  attributes: ['uuid', 'code', 'name'],
+                  where: { is_active: 1, status: 1 }
+                },
+               {
+                    model: encounterTbl,
+                    as: 'encounter',
+                    attributes: ['uuid', 'patient_uuid', 'encounter_date'],
+                    where: { is_active: 1, status: 1 }
+                  },]
+        },
+            { returning: true } 
+        );
+                                   
+            if (data) {
+                return res
+                    .status(httpStatus.OK)
+                    .json({statusCode: 200, req: '', responseContents: {attachment: data} });
+            }
+        } 
+        else 
+        {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+    } catch (err) {
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
+        return res
+            .status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ status: "error", msg: errorMsg });
+    }
+};
+
+const _download = async(req, res) => {
+    const {user_uuid} = req.headers;
+    const {file_path} = req.query;
+    const location = './'+file_path;
+    try{
+        if (file_path && user_uuid){
+           await res.download(location, function (err, success)
+            {
+                if (err){
+                   console.log("download failed");
+                   //res.send({"status": 400,"message":"download failed "});
+                }
+                   else{ 
+                    console.log("download sucess");
+                    //res.send({"status": 200,"message":"download sucess "});
+                   }
+            }
+            );
+    } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
+    } catch (err){
+        res.send({ "status": 400, "message": ex.message });
+    }
+};
 
 
 
@@ -111,7 +184,7 @@ const _upload = async(req, res) => {
         if (userUUID){
          uploadD(req,res ,async (err)=>{
             const attachmentData = req.body;
-            console.log ("---------",attachmentData);
+            //console.log ("---------",attachmentData);
 
             if(err instanceof multer.MulterError){
                 res.send({status:400,message:err}); 
@@ -123,6 +196,8 @@ const _upload = async(req, res) => {
                 attachmentData.is_active = attachmentData.status = true;
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
+                attachmentData.file_path = req.files[0].path;
+                console.log("--------",req.files[0].path);
                 await attachmentTbl.create(attachmentData, { returning: true });
                 res.send({"status": 200,"files":req.files,"count":req.files.length,"message":"Files Uploaded Successfully "});
              }
@@ -137,7 +212,9 @@ const _upload = async(req, res) => {
 return {
     upload: _upload,
     getattachmenttype: _getattachmenttype,
-    getlistBytype: _getlistBytype
+    getlistBytype: _getlistBytype,
+    getAllAttachments: _getAllAttachments,
+    download: _download
     };
 };
 

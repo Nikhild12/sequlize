@@ -22,10 +22,12 @@
         "https"
     ],
     "consumes": [
-        "application/json"
+        "application/json",
+        "multipart/form-data"
     ],
     "produces": [
-        "application/json"
+        "application/json",
+        "application/file"
     ],
     "paths": {
         "/api/emr-workflow-settings/create": {
@@ -1392,8 +1394,8 @@
             }
         },
         "/api/chief-complaints-master/getAll": {
-            "get": {
-                "description": "To create a chief Complaints Master Data",
+            "post": {
+                "description": "To get a chief Complaints Master Data",
                 "parameters": [
                     {
                         "in": "header",
@@ -1411,7 +1413,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Inserted Successfully",
+                        "description": "get Successfully",
                         "schema": {
                             "$ref": "#/definitions/getAllChiefMaster"
                         }
@@ -1422,7 +1424,7 @@
             }
         },
         "/api/chief-complaints-master/getById": {
-            "get": {
+            "post": {
                 "description": "To get a chief Complaints Master Data",
                 "parameters": [
                     {
@@ -1432,10 +1434,12 @@
                         "type": "integer"
                     },
                     {
-                        "in": "query",
+                        "in": "body",
                         "name": "ChiefComplaints_id",
                         "required": true,
-                        "type": "integer"
+                        "schema": {
+                            "$ref": "#/definitions/getChiefMasterById"
+                        }
                     }
                 ],
                 "produces": [
@@ -1696,7 +1700,196 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+
+        "/api/patientattachments/getlistBytype": {
+            "get": {
+                "summary": "List attachments by type",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "attachment_type_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getlistBytype"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+
+        "/api/patientattachments/getAllAttachments": {
+            "get": {
+                "summary": "List all attachments",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getAllAttachments"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patientattachments/upload": {
+            "post": {
+                "summary": "upload the documents",
+                
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "header",
+                        "name": "folder_name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "upfile",
+                        "required": true,
+                        "type": "file"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "patient_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "encounter_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "attachment_type_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "comments",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "revision",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "attachment_name",
+                        "required": true,
+                        "type":"string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/upload"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patientattachments/download": {
+            "get": {
+                "summary": "download the documents",
+                
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "file_path",
+                        "required": true,
+                        "type": "string"
+                    }
+                    
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml",
+                    "application/file"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/download"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
+        
+        
     },
     "definitions": {
         "createEMR": {
@@ -3652,6 +3845,44 @@
             "properties": {
                 "user_uuid": {
                     "type": "integer"
+                }
+            }
+        },
+
+        "getlistBytype": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "attachment_type_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "getAllAttachments": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "upload": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "download": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string"
                 }
             }
         }

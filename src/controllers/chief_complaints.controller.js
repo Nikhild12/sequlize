@@ -54,7 +54,8 @@ const getChiefComplaintsAttributes= [
         'chief_complaint_category_uuid',
         'referrence_link',
         'body_site',
-        'created_date'
+        'created_date',
+        'is_active'
     ];
 
 
@@ -120,31 +121,38 @@ const ChiefComplaints = () => {
 
                 if (chiefComplaintsCreatedData) {
                     chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
-                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted Chief Complaints Successfully", responseContents: chiefComplaintsData });
+                    return res.status(200).send({  statusCode: 200, message: "Inserted Chief Complaints Successfully", responseContents: chiefComplaintsData });
                 }
             } catch (ex) {
                 console.log(ex.message);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({ statusCode: 400, message: ex.message });
             }
         } else {
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'No Headers Found' });
+            return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
         }
 
     }
     const _getChiefComplaintsById = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        const { ChiefComplaints_id } = req.query;
-        if (user_uuid && ChiefComplaints_id) {
+        const { ChiefComplaints_id } = req.body;
+  
+        if (user_uuid&&ChiefComplaints_id) {
             try {
 
-                const chiefData = await chief_complaints_tbl.findAll({
+                const chiefData = await chief_complaints_tbl.findOne({
                     attributes: getChiefComplaintsAttributes,
                     where: {uuid:ChiefComplaints_id}
                 });
 
                
-                return res.status(httpStatus.OK).send(chiefData)
+                return res.status(httpStatus.OK).json({
+                    message: "success",
+                    statusCode: 200,
+                    responseContents:chiefData 
+                   
+
+                });
 
             } catch (ex) {
 
@@ -231,13 +239,19 @@ const ChiefComplaints = () => {
 
             try {
 
-                const chiefdata = await chief_complaints_tbl.findAll({
+                const chiefdata = await chief_complaints_tbl.findAndCountAll({
                     attributes: getChiefComplaintsAttributes,
                     
                 });
 
                 // favouriteList = getFavouritesInList(tickSheetData);
-                return res.status(httpStatus.OK).send(chiefdata);
+                return res.status(httpStatus.OK).json({
+                    message: "success",
+                    statusCode: 200,
+                    responseContents: (chiefdata.rows ? chiefdata.rows : []),
+                    totalRecords: (chiefdata.count ? chiefdata.count : 0),
+
+                });;
 
             } catch (ex) {
 
