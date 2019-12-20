@@ -101,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
         }),
         PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaint_duration_periods, {
             foreignKey: "chief_complaint_duration_period_uuid"
-        })
-    }
+        });
+    };
     return PATIENT_CHIEF_COMPLAINTS;
-}
+};

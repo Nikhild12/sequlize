@@ -97,11 +97,11 @@ module.exports = (sequelize, DataTypes) => {
                 }
             ]
         }
-    )
+    );
     ENCOUNTER.associate = model => {
         ENCOUNTER.hasMany(model.encounter_doctors, {
             foreignKey: "encounter_uuid"
-        })
-    }
+        });
+    };
     return ENCOUNTER;
-}
+};

@@ -182,4 +182,4 @@ module.exports = (sequelize, DataTypes) => {
 
     return TICK_SHEET_MASTER_DETAILS;
 
-}
+};

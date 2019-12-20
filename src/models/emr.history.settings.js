@@ -145,4 +145,4 @@ module.exports = (sequelize, DataTypes) => {
     )
 
     return EMR_HISTORY_SETTINGS;
-}
+};

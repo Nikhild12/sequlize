@@ -129,4 +129,4 @@ module.exports = (sequelize, DataTypes) => {
         }
     );    
     return patient_vitals;
-}
+};

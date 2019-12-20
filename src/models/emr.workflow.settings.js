@@ -102,4 +102,4 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     return EMR_WORKFLOW_SETTINGS;
-}
+};

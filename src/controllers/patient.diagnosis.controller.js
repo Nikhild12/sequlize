@@ -9,7 +9,7 @@ const patient_diagnosis_tbl = sequelizeDb.patient_diagnosis;
 const diagnosis_tbl = sequelizeDb.diagnosis;
 
 const emr_constants = require('../config/constants');
-
+const utilityService = require('../services/utility.service');
 const getActiveAndStatusObject = (is_active) => {
     return {
 
@@ -32,8 +32,8 @@ const getPatientDiagnosisAttributes = () => {
         'created_date',
         'modified_date',
         'performed_by'
-    ]
-}
+    ];
+};
 
 const PatientDiagnsis = () => {
 
@@ -76,7 +76,7 @@ const PatientDiagnsis = () => {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
 
-    }
+    };
 
     const _getPatientDiagnosisFilters = async (req, res) => {
 
@@ -94,12 +94,12 @@ const PatientDiagnsis = () => {
         } else {
             return res.status(422).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
         createPatientDiagnosis: _createPatientDiagnosis,
         getPatientDiagnosisByFilters: _getPatientDiagnosisFilters
-    }
+    };
 };
 
 module.exports = PatientDiagnsis();
@@ -113,7 +113,7 @@ function appendUUIDToReqData(req, res) {
 
     req.forEach((r, idx) => {
         r.uuid = res[idx].uuid;
-    })
+    });
     return req;
 }
 
@@ -134,7 +134,7 @@ function getPatientFiltersQuery(key, value, pId, dId, uId) {
                 limit: +value,
                 attributes: getPatientDiagnosisAttributes(),
                 order: [['uuid', 'DESC']]
-            }
+            };
             break;
 
         default:
@@ -153,7 +153,7 @@ function getPatientFiltersQuery(key, value, pId, dId, uId) {
         performed_by: uId
     };
     filtersQuery.attributes = getPatientDiagnosisAttributes();
-    Object.assign(filtersQuery.where, getActiveAndStatusObject(emr_constants.IS_ACTIVE));
+    Object.assign(filtersQuery.where, utilityService.getActiveAndStatusObject(emr_constants.IS_ACTIVE));
     return filtersQuery;
 }
 
@@ -167,6 +167,6 @@ function getPatientData(responseData) {
             diagnosis_name: rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : '',
             diagnosis_code: rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : '',
             diagnosis_is_snomed: rD.is_snomed[0] === 1 ? true : false
-        }
-    })
+        };
+    });
 }

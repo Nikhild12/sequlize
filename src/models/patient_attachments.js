@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:"attachment_type_uuid",
             as:'attachment_type'
         });
-    }
+    };
 
     return patient_attachments;
 };

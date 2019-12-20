@@ -67,4 +67,4 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     return VM_EMR_HISTORY_SETTING;
-}
+};

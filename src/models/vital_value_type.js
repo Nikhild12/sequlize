@@ -52,4 +52,4 @@ module.exports = (sequelize, DataTypes) => {
     );    
 
     return vital_value_type;
-}
+};

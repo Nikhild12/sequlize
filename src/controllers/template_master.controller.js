@@ -115,7 +115,7 @@ const tmpmstrController = () => {
     }
     else if (exists.length === 0 && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
       try {
-        let createData = createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData)
+        let createData = createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
         if (createData) {
           return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
         }
@@ -126,7 +126,7 @@ const tmpmstrController = () => {
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
-  }
+  };
 
   const _updateTemplateById = async (req, res) => {
 
@@ -154,7 +154,7 @@ const tmpmstrController = () => {
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
     }
-  }
+  };
 
   // Dyanmic function for template drugs and vitals update
   const _updateTemplateDetailsByID = async (req, res) => {
@@ -189,7 +189,7 @@ const tmpmstrController = () => {
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
     }
-  }
+  };
 
   return {
     gettemplateByID: _gettemplateByID,
@@ -292,11 +292,11 @@ function getTemplateListData(fetchedData) {
 
         drug_details: [...drug_details, ...getDrugsListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
-      ]
+      ];
     });
     let uniq = {};
     let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
-    return { "templates_list": temp_list }
+    return { "templates_list": temp_list };
   }
   else {
     return {};
@@ -323,7 +323,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.quantity = mD.quantity,
       mD.status = mD.status,
       mD.revision = mD.revision,
-      mD.is_active = mD.is_active
+      mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
     detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id } }, { returning: true })
     ];
@@ -373,10 +373,10 @@ function removedTmpDetails(dtlsTbl, dtls, user_id) {
   // updating template master details  
   dtls.forEach((mD) => {
 
-    mD.modified_by = user_id,
-      mD.modified_date = new Date(),
-      mD.status = 0,
-      mD.is_active = 0
+    mD.modified_by = user_id;
+    mD.modified_date = new Date();
+    mD.status = 0;
+    mD.is_active = 0;
     masterDetailsPromise = [...masterDetailsPromise,
     dtlsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: mD.template_uuid } }, { returning: true })
     ];
@@ -388,7 +388,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
 
   let drug_list = [];
   const filteredData = fetchedData.filter((fD) => {
-    return fD.dataValues.tm_uuid === template_id
+    return fD.dataValues.tm_uuid === template_id;
   });
 
   if (filteredData && filteredData.length > 0) {
@@ -418,8 +418,8 @@ function getDrugsListForTemplate(fetchedData, template_id) {
 
         is_active: dD.im_acive[0] === 1 ? true : false
       }
-      ]
-    })
+      ];
+    });
   }
   return drug_list;
 }
@@ -446,11 +446,11 @@ function getLabListData(fetchedData) {
 
         lab_details: [...lab_details, ...getLabListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
-      ]
+      ];
     });
     let uniq = {};
     let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
-    return { "templates_lab_list": temp_list }
+    return { "templates_lab_list": temp_list };
   }
   else {
     return {};

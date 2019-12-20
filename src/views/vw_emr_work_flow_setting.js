@@ -67,4 +67,4 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     return VM_EMR_WORK_FLOW_SETTING;
-}
+};

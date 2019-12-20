@@ -133,4 +133,4 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     return VM_TICK_SHEET_MASTET_DETAILS;
-}
+};

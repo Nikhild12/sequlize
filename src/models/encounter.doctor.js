@@ -87,6 +87,6 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
 
-    )
+    );
     return ENCOUNTER_DOCTOR;
-}
+};
