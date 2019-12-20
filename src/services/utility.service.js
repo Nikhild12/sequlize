@@ -1,3 +1,5 @@
+const emr_constants = require('../config/constants');
+
 const _getActiveAndStatusObject = (is_active) => {
     return {
 

@@ -14,7 +14,7 @@ const lintrule = './.eslintrc';
 const releasefolder = '../release/';
 const releasetmpfolder = 'tmp/';
 const adminappfolder = 'LIS/';
-const WarFileName = 'OASYS_LIS';
+const WarFileName = 'OASYS_EMR';
 
 gulp.task('eslint', function () {
     return gulp.src(['**/*.js', '!node_modules/**'])
