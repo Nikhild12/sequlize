@@ -26,7 +26,8 @@
         "multipart/form-data"
     ],
     "produces": [
-        "application/json"
+        "application/json",
+        "application/file"
     ],
     "paths": {
         "/api/emr-workflow-settings/create": {
@@ -1841,6 +1842,45 @@
                         "description": "sucessful operation",
                         "schema": {
                             "$ref": "#/definitions/upload"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patientattachments/download": {
+            "get": {
+                "summary": "download the documents",
+                
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "file_path",
+                        "required": true,
+                        "type": "string"
+                    }
+                    
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml",
+                    "application/file"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/download"
                         }
                     }
                 },
@@ -3835,6 +3875,14 @@
             "properties": {
                 "user_uuid": {
                     "type": "integer"
+                }
+            }
+        },
+        "download": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string"
                 }
             }
         }
