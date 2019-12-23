@@ -1782,7 +1782,7 @@
                         "type": "integer"
                     },
                     {
-                        "in": "header",
+                        "in": "formData",
                         "name": "folder_name",
                         "required": true,
                         "type": "string"
