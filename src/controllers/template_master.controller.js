@@ -115,7 +115,7 @@ const tmpmstrController = () => {
     }
     else if (exists.length === 0 && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
       try {
-        let createData = createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
+        let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
         if (createData) {
           return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
         }
