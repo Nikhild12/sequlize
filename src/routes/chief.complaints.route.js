@@ -12,7 +12,7 @@ ChiefComplaintsRoutes.route('/create').post(ChiefComplaints.createChiefComplaint
 ChiefComplaintsRoutes.route('/getAll').post(ChiefComplaints.getChiefComplaints);
 
 ChiefComplaintsRoutes.route('/getById').post(ChiefComplaints.getChiefComplaintsById);
-ChiefComplaintsRoutes.route('/update').put(ChiefComplaints.updateChiefComplaintsById);
-ChiefComplaintsRoutes.route('/delete').put(ChiefComplaints.deleteChiefComplaints);
+ChiefComplaintsRoutes.route('/update').post(ChiefComplaints.updateChiefComplaintsById);
+ChiefComplaintsRoutes.route('/delete').post(ChiefComplaints.deleteChiefComplaints);
 
 module.exports = ChiefComplaintsRoutes;

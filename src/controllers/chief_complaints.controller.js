@@ -184,18 +184,18 @@ const ChiefComplaints = () => {
                 ]);
 
                 if (updatedcheifcomplaintsData) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
+                    return res.status(200).send({ code:200, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
                 }
 
             } catch (ex) {
 
                 console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+                return res.status(400).send({ code: 400, message: ex.message });
 
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
+            return res.status(400).send({ code: 400, message: "No Request headers or Body Found" });
         }
     };
 
@@ -206,7 +206,7 @@ const ChiefComplaints = () => {
         const { user_uuid } = req.headers;
 
         if (ChiefComplaints_id) {
-            const updatedcheifcomplaintsData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
+            const updatedcheifcomplaintsData = { status: 0, modified_by: user_uuid, modified_date: new Date() };
             try {
 
                 const updatedcheifcomplaintsAsync = await Promise.all(
@@ -217,55 +217,205 @@ const ChiefComplaints = () => {
                 );
 
                 if (updatedcheifcomplaintsAsync) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
+                    return res.status(200).send({ code: 200, message: "Deleted Successfully" });
                 }
 
             } catch (ex) {
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({ code: 400, message: ex.message });
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+            return res.status(400).send({ code: 400, message: "No Request Body Found" });
         }
 
     };
-    const _getChiefComplaints = async (req, res) => {
+    // const _getChiefComplaints = async (req, res) => {
+ 
+    //     const { user_uuid } = req.headers;
+    //     let getsearch = req.body;
 
-        const { user_uuid } = req.headers;
-        
+    //     let pageNo = 0;
+    //     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    //     let sortField = 'created_date';
+    //     let sortOrder = 'DESC';
 
-        if (user_uuid ) {
-            let favouriteList = [];
+    //     if (getsearch.pageNo) {
+    //         let temp = parseInt(getsearch.pageNo);
 
-            try {
 
-                const chiefdata = await chief_complaints_tbl.findAndCountAll({
-                    attributes: getChiefComplaintsAttributes,
-                    
-                });
+    //         if (temp && (temp != NaN)) {
+    //             pageNo = temp;
+    //         }
+    //     }
+    //     const offset = pageNo * itemsPerPage;
 
-                // favouriteList = getFavouritesInList(tickSheetData);
-                return res.status(httpStatus.OK).json({
-                    message: "success",
-                    statusCode: 200,
-                    responseContents: (chiefdata.rows ? chiefdata.rows : []),
-                    totalRecords: (chiefdata.count ? chiefdata.count : 0),
 
-                });
+    //     if (getsearch.sortField) {
 
-            } catch (ex) {
+    //         sortField = getsearch.sortField;
+    //     }
 
-                console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+    //     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
 
+    //         sortOrder = getsearch.sortOrder;
+    //     }
+    //     let findQuery = {
+    //         offset: offset,
+    //         limit: itemsPerPage,
+    //         order: [
+    //             [sortField, sortOrder],
+    //         ],
+
+    //     };
+
+    //     if (getsearch.search && /\S/.test(getsearch.search)) {
+
+    //         findQuery.where = {
+    //             [Op.or]: [{
+    //                     name: {
+    //                         [Op.like]: '%' + getsearch.search + '%',
+    //                     },
+
+
+    //                 }, {
+    //                     code: {
+    //                         [Op.like]: '%' + getsearch.search + '%',
+    //                     },
+    //                 }
+
+    //             ]
+    //         };
+    //     }
+    //     // if (user_uuid ) {
+    //     //     let favouriteList = [];
+
+    //         try {
+
+    //             const chiefdata = await chief_complaints_tbl.findAndCountAll({
+    //                 attributes: getChiefComplaintsAttributes,
+    //                findQuery:findQuery
+                   
+    //             });
+
+    //             // favouriteList = getFavouritesInList(tickSheetData);
+    //             return res.status(httpStatus.OK).json({
+    //                 message: "success",
+    //                 statusCode: 200,
+    //                 responseContents: (chiefdata.rows ? chiefdata.rows : []),
+    //                 totalRecords: (chiefdata.count ? chiefdata.count : 0),
+
+    //             });
+
+    //         } catch (ex) {
+
+    //             console.log(`Exception Happened ${ex}`);
+    //             return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+    //         }
+
+    //     // } else {
+    //     //     return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Query Param Found" });
+    //     // }
+
+
+    // };
+
+    const _getChiefComplaints = async (req, res, next) => {
+        let getsearch = req.body;
+
+        let pageNo = 0;
+        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+        let sortField = 'created_date';
+        let sortOrder = 'DESC';
+
+        if (getsearch.pageNo) {
+            let temp = parseInt(getsearch.pageNo);
+
+
+            if (temp && (temp != NaN)) {
+                pageNo = temp;
             }
+        }
 
-        } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Query Param Found" });
+        const offset = pageNo * itemsPerPage;
+
+
+        if (getsearch.sortField) {
+
+            sortField = getsearch.sortField;
+        }
+
+        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+            sortOrder = getsearch.sortOrder;
+        }
+        let findQuery = {
+            offset: offset,
+            limit: itemsPerPage,
+            order: [
+                [sortField, sortOrder],
+            ],
+
+        };
+
+        if (getsearch.search && /\S/.test(getsearch.search)) {
+
+            findQuery.where = {
+                [Op.or]: [{
+                        name: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+
+
+                    }, {
+                        code: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+                    }
+
+                ]
+            };
+        }
+
+
+        try {
+            await chief_complaints_tbl.findAndCountAll(findQuery)
+
+
+                .then((findData) => {
+
+                    return res
+
+                        .status(httpStatus.OK)
+                        .json({
+                            message: "success",
+                            statusCode: 200,
+                            responseContents: (findData.rows ? findData.rows : []),
+                            totalRecords: (findData.count ? findData.count : 0),
+
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            message: "error",
+                            err: err,
+                            req: ''
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    message: "error",
+                });
         }
 
 
     };
+
     return {
         getChiefComplaintsFilter: _getChiefComplaintsFilter,
         createChiefComplaints: _createChiefComplaints,
