@@ -143,11 +143,9 @@ const _download = async(req, res) => {
             {
                 if (err){
                    console.log("download failed");
-                   //res.send({"status": 400,"message":"download failed "});
                 }
                    else{ 
                     console.log("download sucess");
-                    //res.send({"status": 200,"message":"download sucess "});
                    }
             }
             );
