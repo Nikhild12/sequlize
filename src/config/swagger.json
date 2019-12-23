@@ -1104,7 +1104,7 @@
             }
         },
         "/api/diagnosis/getDiagnosis": {
-            "get": {
+            "post": {
                 "description": "To get a diagnosis  Details",
                 "parameters": [
                     {
