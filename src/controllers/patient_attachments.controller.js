@@ -159,7 +159,7 @@ const _download = async(req, res) => {
 
 const storage = multer.diskStorage({
     destination: async function (req, file, callback) {
-       let {folder_name} = req.headers; 
+       let {folder_name} = req.body; 
        let getDir_Name = getExtension(file, folder_name);
        
        if(!fs.existsSync(getDir_Name)){
