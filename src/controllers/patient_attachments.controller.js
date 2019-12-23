@@ -155,8 +155,6 @@ const _download = async(req, res) => {
     }
 };
 
-
-
 const storage = multer.diskStorage({
     destination: async function (req, file, callback) {
        let {folder_name} = req.body; 

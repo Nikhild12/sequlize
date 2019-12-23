@@ -3,7 +3,7 @@ const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const path = require('path');
 
 // Swagger UI and Json import
@@ -30,9 +30,9 @@ app.use(cors());
 app.use(helmet());
 
 //for upload purpose
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "../src/assets")));
-app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(bodyParser.urlencoded({ extended: false }));
 
 // Enabling Log only for dev
 if (config.env === 'develoment') {
