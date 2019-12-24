@@ -17,6 +17,31 @@ const diagnosisversionController = () => {
      * @param next
      * @returns {*}
      */
-   
+   const getdiagnosisversion=(req,res,next)=>{
+    let findQuery = {
+        where: {
+            uuid,name
+          }
+    }
+    try {
+        await diagnosisversionTbl.findAll(
+            findQuery)
+    .then(async (data) => {
+        return await res
+          .status(httpStatus.OK)
+          .json({
+            statusCode: 200,
+            message: "Fetched Details successfully",
+            responseContents: data.rows
+            
+          });
+      })
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ status: "error", msg: errorMsg });
+  }
+   }
 };
 module.exports=diagnosisversionController();

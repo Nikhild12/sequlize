@@ -355,7 +355,9 @@ const ChiefComplaints = () => {
             order: [
                 [sortField, sortOrder],
             ],
-
+            where: {
+                status:1
+             },
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {

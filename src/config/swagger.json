@@ -1134,7 +1134,7 @@
             }
         },
         "/api/diagnosis/deleteDiagnosis": {
-            "put": {
+            "post": {
                 "description": "Deleted successfully",
                 "parameters": [
                     {
@@ -1172,7 +1172,7 @@
             }
         },
         "/api/diagnosis/updateDiagnosisById": {
-            "put": {
+            "post": {
                 "description": "To Update diagnosis ",
                 "parameters": [
                     {
@@ -1210,7 +1210,7 @@
             }
         },
         "/api/diagnosis/getDaignosisById": {
-            "get": {
+            "post": {
                 "description": "To get a diagnosis by Id",
                 "parameters": [
                     {
@@ -1220,7 +1220,7 @@
                         "type": "integer"
                     },
                     {
-                        "in": "query",
+                        "in": "body",
                         "name": "Id",
                         "required": true,
                         "type": "integer"
