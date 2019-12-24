@@ -1825,12 +1825,6 @@
                     },
                     {
                         "in": "formData",
-                        "name": "revision",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "in": "formData",
                         "name": "attachment_name",
                         "required": true,
                         "type":"string"
