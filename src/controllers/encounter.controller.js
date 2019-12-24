@@ -14,6 +14,8 @@ const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 
 const emr_constants = require('../config/constants');
 
+
+
 // Query
 function getActiveEncounterQuery(pId, dId) {
     return {
@@ -90,12 +92,13 @@ const Encounter = () => {
 
             // Assigning
             encounter.modified_by = encounter.created_by = user_uuid;
-            encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
+            encounter.is_active = encounter.status = encounter.is_active_encounter = emr_constants.IS_ACTIVE;
             encounter.created_date = encounter.modified_date = new Date();
             encounter.encounter_date = new Date();
 
             // Assigning
             encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
+            encounterDoctor.patientId = encounter.patientId;
             encounterDoctor.is_active = encounterDoctor.status = emr_constants.IS_ACTIVE;
             encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
 

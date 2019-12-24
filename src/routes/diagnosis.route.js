@@ -11,8 +11,8 @@ diagnosisRoutes.route("/search").post(diagnosisCtrl.getDiagnosisSearch);
 diagnosisRoutes.route("/createDiagnosis").post(diagnosisCtrl.createDiagnosis);
 diagnosisRoutes.route("/getDiagnosis").post(diagnosisCtrl.getDiagnosis);
 
-diagnosisRoutes.route("/deleteDiagnosis").put(diagnosisCtrl.deleteDiagnosis);
+diagnosisRoutes.route("/deleteDiagnosis").post(diagnosisCtrl.deleteDiagnosis);
 diagnosisRoutes.route("/updateDiagnosisById").put(diagnosisCtrl.updateDiagnosisById);
-diagnosisRoutes.route("/getDaignosisById").get(diagnosisCtrl.getDaignosisById);
+diagnosisRoutes.route("/getDaignosisById").post(diagnosisCtrl.getDaignosisById);
 
 module.exports = diagnosisRoutes;

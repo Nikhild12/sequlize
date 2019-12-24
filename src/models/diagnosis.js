@@ -19,34 +19,36 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             },
             description: {
-                type: DataTypes.STRING(250),
-                allowNull: true
+                type: DataTypes.STRING(250),         
+                       allowNull: true
+
+               
             },
             diagnosis_scheme_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
 
             diagnosis_type_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             diagnosis_category_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             diagnosis_grade_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
 
             diagnosis_region_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             diagnosis_version_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
 
             speciality: {
@@ -59,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             referrence_link: {
                 type: DataTypes.STRING(250),
-                allowNull: true
+                // allowNull: true
             },
             length_Of_stay: {
                 type: DataTypes.STRING(250),
@@ -67,45 +69,45 @@ module.exports = (sequelize, DataTypes) => {
             },
             body_site_uuid: {
                 type: DataTypes.STRING(250),
-                allowNull: true
+                // allowNull: true
             },
             side_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             position_id: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             in_house: {
                 type: DataTypes.STRING(250),
-                allowNull: true
+                // allowNull: true
             },
             is_notifibale: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
 
             },
             is_sensitive: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
 
             },
             is_billable: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             facility_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             department_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                // allowNull: true
             },
             comments: {
                 type: DataTypes.STRING(250),
-                allowNull: true
+                // allowNull: true
             },
             is_active: {
                 type: DataTypes.BOOLEAN,

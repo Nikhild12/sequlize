@@ -243,6 +243,9 @@ const diagnosisController = () => {
             order: [
                 [sortField, sortOrder],
             ],
+            where: {
+               status:1
+            },
 
         };
 
@@ -306,31 +309,37 @@ const diagnosisController = () => {
   
 
 
-    const _deleteDiagnosis = async (req, res, next) => {
-        const postData = req.body;
 
-        await diagnosisTbl.update({
-            is_active: 0
-        }, {
-            where: {
-                uuid: postData.Id
+    const _deleteDiagnosis = async (req, res) => {
+
+        // plucking data req body
+        const { Diagnosis_id } = req.body;
+        const { user_uuid } = req.headers; 
+
+        if (Diagnosis_id) {
+            const updateddiagnosisData = { status: 0, modified_by: user_uuid, modified_date: new Date() };
+            try {
+
+                const updateddiagnosissAsync = await Promise.all(
+                    [
+                        diagnosisTbl.update(updateddiagnosisData, { where: { uuid: Diagnosis_id } })
+                       
+                    ]
+                );
+
+                if (updateddiagnosissAsync) {
+                    return res.status(200).send({ code: 200, message: "Deleted Successfully" });
+                }
+
+            } catch (ex) {
+                return res.status(400).send({ code: 400, message: ex.message });
             }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
-        });
-    };
 
+        } else {
+            return res.status(400).send({ code: 400, message: "No Request Body Found" });
+        }
+
+    };
     const _updateDiagnosisById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
@@ -351,7 +360,8 @@ const diagnosisController = () => {
         
     };
     const _getDaignosisById = async (req, res, next) => {
-        const postData = req.query;
+        const postData = req.body;
+        console.log(postData)
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -359,7 +369,7 @@ const diagnosisController = () => {
             const offset = (page - 1) * itemsPerPage;
             await diagnosisTbl.findOne({
                     where: {
-                        uuid: postData.Id
+                        uuid: postData.Diagnosis_id
                     },
                     offset: offset,
                     limit: itemsPerPage

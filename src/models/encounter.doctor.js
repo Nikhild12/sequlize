@@ -1,3 +1,5 @@
+const emr_constants = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
     const ENCOUNTER_DOCTOR = sequelize.define(
         "encounter_doctors",
@@ -11,7 +13,20 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
             },
             doctor_uuid: {
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('doctor_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('doctor_uuid')
+                    },
+                    min: {
+                        args: 1,
+                        msg: emr_constants.GetMinimumMessage('doctor_uuid')
+                    }
+                }
             },
             department_uuid: {
                 type: DataTypes.INTEGER
@@ -50,19 +65,19 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_primary_doctor: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
             },
             encounter_doctor_status: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
             },
             revision: {
                 type: DataTypes.BOOLEAN,
