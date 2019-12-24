@@ -139,6 +139,7 @@ const _download = async(req, res) => {
     const location = './'+file_path;
     try{
         if (file_path && user_uuid){
+            if (fs.existsSync(location)){
            await res.download(location, function (err, success)
             {
                 if (err){
@@ -149,6 +150,7 @@ const _download = async(req, res) => {
                    }
             }
             );
+        } else {return res.status(400).send({ code: httpStatus[400], message: "no such file or directory" });}
     } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
     } catch (err){
         res.send({ "status": 400, "message": ex.message });
@@ -180,7 +182,9 @@ const _upload = async(req, res) => {
         if (userUUID){
          uploadD(req,res ,async (err)=>{
             const attachmentData = req.body;
+            //const attachmentfields = req.body.fields;
             //console.log ("---------",attachmentData);
+            //console.log ("***********",attachmentfields);
 
             if(err instanceof multer.MulterError){
                 res.send({status:400,message:err}); 
@@ -193,6 +197,7 @@ const _upload = async(req, res) => {
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
                 attachmentData.file_path = req.files[0].path;
+                attachmentData.revision = 1;
                 console.log("--------",req.files[0].path);
                 await attachmentTbl.create(attachmentData, { returning: true });
                 res.send({"status": 200,"attachment data":attachmentData,"files":req.files,"count":req.files.length,"message":"Files Uploaded Successfully "});

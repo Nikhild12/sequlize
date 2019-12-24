@@ -20,9 +20,9 @@ const indexRoute = require('../routes/index.route');
 const app = express();
 
 // Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
+app.use(express.urlencoded({ extended: true ,limit:'100mb'}));
+app.use(express.json());
 // Enabling CORS for Accepting cross orgin req
 app.use(cors());
 
