@@ -1577,7 +1577,7 @@
         },
         "/api/vitalMaster/getVitals": {
             "get": {
-                "description": "To get a vitals master List",
+                "summary": "To get default vitals master List",
                 "parameters": [
                     {
                         "in": "header",
@@ -1607,7 +1607,7 @@
         },
         "/api/vitalMaster/getAllVitals": {
             "get": {
-                "description": "To get all vitals master list",
+                "summary": "To get all vitals master list",
                 "parameters": [
                     {
                         "in": "header",
