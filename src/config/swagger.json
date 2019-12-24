@@ -1782,7 +1782,7 @@
                         "type": "integer"
                     },
                     {
-                        "in": "header",
+                        "in": "formData",
                         "name": "folder_name",
                         "required": true,
                         "type": "string"
@@ -1822,12 +1822,6 @@
                         "name": "comments",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "in": "formData",
-                        "name": "revision",
-                        "required": true,
-                        "type": "integer"
                     },
                     {
                         "in": "formData",

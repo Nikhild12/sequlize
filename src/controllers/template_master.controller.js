@@ -23,8 +23,8 @@ const tmpmstrController = () => {
   const _gettemplateByID = async (req, res) => {
     const { user_uuid } = req.headers;
     const { temp_type_id, dept_id } = req.query;
-    if (user_uuid && temp_type_id && dept_id) {
-      try {
+    try {
+      if (user_uuid && temp_type_id && dept_id) {
 
         const { table_name, query } = getTemplateTypeUUID(temp_type_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
@@ -33,15 +33,15 @@ const tmpmstrController = () => {
           .status(httpStatus.OK)
           .json({ statusCode: 200, req: '', responseContents: getTempData(temp_type_id, templateList) });
 
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
       }
-      catch (ex) {
-        const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
-        return res
-          .status(httpStatus.INTERNAL_SERVER_ERROR)
-          .json({ status: "error", msg: errorMsg });
-      }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+    }
+    catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
     }
   };
 
@@ -50,9 +50,10 @@ const tmpmstrController = () => {
     // plucking data req body
     const tempuuid = req.body.template_uuid;
     const userUUID = parseInt(req.headers.user_uuid);
-    if (tempuuid) {
-      const updatedtempData = { status: 0, is_active: 0, modified_by: userUUID, modified_date: new Date() };
-      try {
+
+    try {
+      if (tempuuid) {
+        const updatedtempData = { status: 0, is_active: 0, modified_by: userUUID, modified_date: new Date() };
 
         const updatetempAsync = await Promise.all(
           [
@@ -64,22 +65,21 @@ const tmpmstrController = () => {
           return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
         }
 
-      } catch (ex) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
       }
-
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+    } catch (ex) {
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
 
   const _gettempdetails = async (req, res) => {
     const user_uuid = req.headers.user_uuid;
     const { temp_id, temp_type_id, dept_id } = req.query;
-    if (user_uuid && temp_id && temp_type_id && dept_id) {
-      try {
-        const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
+    try {
+      if (user_uuid && temp_id && temp_type_id && dept_id) {
 
+        const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
 
         if (templateList) {
@@ -89,14 +89,15 @@ const tmpmstrController = () => {
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
         }
-      } catch (err) {
-        const errorMsg = err.errors ? err.errors[0].message : err.message;
-        return res
-          .status(httpStatus.INTERNAL_SERVER_ERROR)
-          .json({ status: "error", msg: errorMsg });
+
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
       }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
     }
   };
 
@@ -109,22 +110,21 @@ const tmpmstrController = () => {
     let temp_name = templateMasterReqData.name;
     let temp_type_id = templateMasterReqData.template_type_uuid;
     const exists = await nameExists(temp_name, userUUID);
+    try {
+      if (exists && exists.length > 0) {
+        return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
+      }
+      else if (exists.length === 0 && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
-    if (exists && exists.length > 0) {
-      return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
-    }
-    else if (exists.length === 0 && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
-      try {
         let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
         if (createData) {
           return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
         }
-
-      } catch (err) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
       }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+    } catch (err) {
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
     }
   };
 
@@ -137,9 +137,10 @@ const tmpmstrController = () => {
     const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(user_uuid, req.body.new_details);
     const templateMasterUpdateData = getTemplateMasterUpdateData(user_uuid, templateMasterReqData);
     const tmpDtlsRmvdDrugs = req.body.removed_details;
-    if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
 
-      try {
+    try {
+      if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
+
         const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
         const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
         const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id } }, { returning: true, plain: true });
@@ -148,11 +149,11 @@ const tmpmstrController = () => {
         if (temp_mas && temp_mas_dtls) {
           return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
         }
-      } catch (ex) {
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
+    } catch (ex) {
+      return res.status(400).send({ code: httpStatus[400], message: ex.message });
     }
   };
 
@@ -168,8 +169,9 @@ const tmpmstrController = () => {
     const templateMasterUpdateData = templateMasterReqData ? getTemplateMasterUpdateData(user_uuid, templateMasterReqData) : '';
     const tmpDtlsRmvd = req.body.removed_temp_dtls;
 
+    try {
     if (user_uuid && tempReqBody) {
-      try {
+      
         if (templateMasterReqData.template_type_uuid == 1) {
           const del_temp_dtls = (tmpDtlsRmvd && tmpDtlsRmvd.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvd, user_uuid) : '';
           const new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(templateMasterNewTempDetailsReqData, { returning: true });
@@ -182,13 +184,14 @@ const tmpmstrController = () => {
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(templateMasterNewTempDetailsReqData, { returning: true });
           return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { new_temp_dtls } });
         }
-      } catch (ex) {
-        console.log('ex', ex);
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
-      }
+      
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
     }
+  } catch (ex) {
+    console.log('ex', ex);
+    return res.status(400).send({ code: httpStatus[400], message: ex.message });
+  }
   };
 
   return {
