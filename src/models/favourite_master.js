@@ -56,14 +56,6 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
-            diagnosis_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: true,
-                    min: 0
-                }
-            },
             user_uuid: {
 
                 type: DataTypes.INTEGER,
