@@ -3,12 +3,13 @@ const db = require("../config/sequelize");
 
 
 const Sequelize = require('sequelize');
+var Op = Sequelize.Op;
 
 
 
-const DiagnosisVersion = db.diagnosis_version;
+const BodySite = db.body_site;
 
-const DiagnosisVersionController = () => {
+const BodySiteController = () => {
     /**
      * Returns jwt token if valid username and password is provided
      * @param req
@@ -18,7 +19,7 @@ const DiagnosisVersionController = () => {
      */
 
 
-    const getDiagnosisVersion = async (req, res, next) => {
+    const getBodySite = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -77,7 +78,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await BodySite.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -113,7 +114,7 @@ const DiagnosisVersionController = () => {
 
 
     };
-    const getDiagnosisVersionfilter = async (req, res, next) => {
+    const getBodySitefilter = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -148,7 +149,7 @@ const DiagnosisVersionController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            attributes: ['uuid','name']
+            attributes: ['uuid', 'name']
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -173,7 +174,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await BodySite.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -209,16 +210,14 @@ const DiagnosisVersionController = () => {
 
 
     };
-
-   
-    const postDiagnosisVersion = async (req, res, next) => {
+    const postBodySite = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
 
 
         if (postData) {
 
-            DiagnosisVersion.findAll({
+            BodySite.findAll({
                 where: {
                     [Op.or]: [{
                             code: postData.code
@@ -232,16 +231,16 @@ const DiagnosisVersionController = () => {
                 if (result.length != 0) {
                     return res.send({
                         status: "error",
-                        msg: "Record already Found. Please enter New DIAGNOSIS version"
+                        msg: "Record already Found. Please enter New DIAGNOSIS CATEGORY"
                     });
                 } else {
-                    await DiagnosisVersion.create(postData, {
+                    await BodySite.create(postData, {
                         returning: true
                     }).then(data => {
 
                         res.send({
                             statusCode: 200,
-                            msg: "Inserted type details Successfully",
+                            msg: "Inserted CATEGORY details Successfully",
                             req: postData,
                             responseContents: data
                         });
@@ -260,20 +259,23 @@ const DiagnosisVersionController = () => {
             // console.log("resreresrersrsrsesresrsersesr",res)
             res.send({
                 status: 'failed',
-                msg: 'Please enter  diagnosis type details'
+                msg: 'Please enter  diagnosis category details'
             });
         }
     };
-    const getDiagnosisVersionById = async (req, res, next) => {
+
+
+
+    const getBodySiteById = async (req, res, next) => {
         const postData = req.body;
         try {
-            
-          
-            await DiagnosisVersion.findOne({
+
+
+            await BodySite.findOne({
                     where: {
                         uuid: postData.Id
                     },
-                   
+
                 })
                 .then((data) => {
                     return res
@@ -284,7 +286,7 @@ const DiagnosisVersionController = () => {
                             responseContents: data
                         });
                 });
-            
+
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -298,64 +300,17 @@ const DiagnosisVersionController = () => {
 
 
 
-    const deleteDiagnosisVersionById = async (req, res, next) => {
-        const postData = req.body;
-
-        await DiagnosisVersion.update({
-            is_active: 0
-        }, {
-            where: {
-                uuid: postData.Id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
-        });
-    };
-
    
- 
-    const updateDiagnosisVersionById = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await DiagnosisVersion.update(
-            postData, {
-                where: {
-                    uuid: postData.Id
-                    
-                }
-            }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
-       
-    };
     // --------------------------------------------return----------------------------------
     return {
-        postDiagnosisVersion,
-        getDiagnosisVersion,
-        getDiagnosisVersionById,
-        deleteDiagnosisVersionById,
-        updateDiagnosisVersionById,
-        getDiagnosisVersionfilter
+        postBodySite,
+        getBodySite,
+        getBodySiteById,
+       
+        getBodySitefilter
 
     };
 };
 
 
-module.exports = DiagnosisVersionController();
+module.exports = BodySiteController();

@@ -18,9 +18,19 @@ const chiefComplaintsRoutes = require("./chiefComplaints.route");
 const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
+
 const diagnosisRoutes = require("./diagnosis.route");
+const diagnosisVersionRoutes = require("./diagnosis_version.route");
+const diagnosisTypeRoutes = require("./diagnosis_type.route");
+const diagnosisCategoryRoutes = require("./diagnosis_category.route");
+const diagnosisGradeRoutes = require("./diagnosis_grade.route");
+const diagnosisRegionRoutes = require("./diagnosis_region.route");
+const bodysiteRoutes = require("./body_site.route");
+
+
 const chiefComplaintsRouter = require('./chief.complaints.route');
 const chiefDurationRoute = require('./chief_complaints_duration.route');
+const treatmentKitRoute = require('./treatment.kit.routes');
 
 const emrHisSetCtrl = require('./emr.history.settings.routes');
 
@@ -32,7 +42,7 @@ serviceRouter.use('/emr-workflow-settings', emrWorkflowRouter);
 serviceRouter.use('/patient-diagnosis', patientDiagnosisRouter);
 
 
-serviceRouter.use('/patientattachments',patientAttachmentsRouter);
+serviceRouter.use('/patientattachments', patientAttachmentsRouter);
 // Patient Chief Complaints
 serviceRouter.use('/patient-chief-complaints', patientChiefRoute);
 
@@ -62,12 +72,21 @@ serviceRouter.use('/vitalMaster', vitalMasterRoutes);
 
 // Diagnosis Routes
 serviceRouter.use('/diagnosis', diagnosisRoutes);
+serviceRouter.use('/diagnosisType', diagnosisTypeRoutes);
+serviceRouter.use('/diagnosisVersion', diagnosisVersionRoutes);
+serviceRouter.use('/diagnosisCategory', diagnosisCategoryRoutes);
+serviceRouter.use('/diagnosisGrade', diagnosisGradeRoutes);
+serviceRouter.use('/diagnosisRegion', diagnosisRegionRoutes);
+serviceRouter.use('/bodysite', bodysiteRoutes);
 
 // Chief Complaints Routes
 serviceRouter.use('/chiefComplaints', chiefComplaintsRoutes);
 serviceRouter.use('/chief-complaints-duration', chiefDurationRoute);
 serviceRouter.use('/chief-complaints-master', chiefComplaintsRouter);
 serviceRouter.use('/chiefComplaintCategory', chiefComplaintCategoryRoutes);
+
+// Treatment Kit Routes
+serviceRouter.use('/treatment-kit', treatmentKitRoute);
 
 // EMR History Settings Routes
 serviceRouter.use('/emr-history-settings', emrHisSetCtrl);

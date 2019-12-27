@@ -11,7 +11,7 @@ const authenticateService = require('../services/authenticate.service');
 const indexRoute = express.Router();
 
 // Middleware
-indexRoute.use('/api', authenticateService, serviceRoute);
+indexRoute.use('/HMIS-EMR/v1/api', authenticateService, serviceRoute);
 
 // Exporting Index Route
 module.exports = indexRoute;

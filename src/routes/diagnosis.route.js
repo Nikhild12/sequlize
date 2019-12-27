@@ -12,7 +12,7 @@ diagnosisRoutes.route("/createDiagnosis").post(diagnosisCtrl.createDiagnosis);
 diagnosisRoutes.route("/getDiagnosis").post(diagnosisCtrl.getDiagnosis);
 
 diagnosisRoutes.route("/deleteDiagnosis").post(diagnosisCtrl.deleteDiagnosis);
-diagnosisRoutes.route("/updateDiagnosisById").put(diagnosisCtrl.updateDiagnosisById);
+diagnosisRoutes.route("/updateDiagnosisById").post(diagnosisCtrl.updateDiagnosisById);
 diagnosisRoutes.route("/getDaignosisById").post(diagnosisCtrl.getDaignosisById);
 
 module.exports = diagnosisRoutes;
