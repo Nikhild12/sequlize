@@ -156,7 +156,7 @@
                     }
                 }
             }
-        },        
+        },
         "/api/emr-history-settings/create": {
             "post": {
                 "description": "To Create a EMR History for the Master",
@@ -1669,7 +1669,6 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/patientattachments/getattachmenttype": {
             "get": {
                 "summary": "List attachment type",
@@ -1680,7 +1679,6 @@
                         "required": true,
                         "type": "integer"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -1701,7 +1699,6 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/patientattachments/getlistBytype": {
             "get": {
                 "summary": "List attachments by type",
@@ -1718,7 +1715,6 @@
                         "required": true,
                         "type": "integer"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -1739,7 +1735,6 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/patientattachments/getAllAttachments": {
             "get": {
                 "summary": "List all attachments",
@@ -1773,7 +1768,6 @@
         "/api/patientattachments/upload": {
             "post": {
                 "summary": "upload the documents",
-                
                 "parameters": [
                     {
                         "in": "header",
@@ -1827,7 +1821,7 @@
                         "in": "formData",
                         "name": "attachment_name",
                         "required": true,
-                        "type":"string"
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -1852,7 +1846,6 @@
         "/api/patientattachments/download": {
             "get": {
                 "summary": "download the documents",
-                
                 "parameters": [
                     {
                         "in": "header",
@@ -1866,7 +1859,6 @@
                         "required": true,
                         "type": "string"
                     }
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -1887,9 +1879,42 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/treatment-kit/create": {
+            "post": {
+                "summary": "To create Treatment Kit",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "treatmentKit",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/treatmentKit"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "TreatmentKit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
-        
-        
     },
     "definitions": {
         "createEMR": {
@@ -1991,7 +2016,7 @@
                 }
             }
         },
-        "createEMRHistory":{
+        "createEMRHistory": {
             "type": "array",
             "items": {
                 "type": "object",
@@ -3839,7 +3864,6 @@
                 }
             }
         },
-
         "getattachmenttype": {
             "type": "object",
             "properties": {
@@ -3848,7 +3872,6 @@
                 }
             }
         },
-
         "getlistBytype": {
             "type": "object",
             "properties": {
@@ -3860,7 +3883,6 @@
                 }
             }
         },
-
         "getAllAttachments": {
             "type": "object",
             "properties": {
@@ -3869,7 +3891,6 @@
                 }
             }
         },
-
         "upload": {
             "type": "object",
             "properties": {
@@ -3883,6 +3904,101 @@
             "properties": {
                 "file_path": {
                     "type": "string"
+                }
+            }
+        },
+        "treatmentKit": {
+            "type": "object",
+            "properties": {
+                "treatment_kit": {
+                    "type": "object",
+                    "properties": {
+                        "treatment_kit_type_uuid": {
+                            "type": "integer"
+                        },
+                        "code": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "is_public": {
+                            "type": "boolean"
+                        },
+                        "facility_uuid": {
+                            "type": "integer"
+                        },
+                        "department_uuid": {
+                            "type": "integer"
+                        },
+                        "user_uuid": {
+                            "type": "integer"
+                        },
+                        "activefrom": {
+                            "type": "string"
+                        },
+                        "activeto": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "treatment_kit_drug": {
+                    "type": "object",
+                    "properties": {
+                        "item_master_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_route_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_frequency_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "string"
+                        },
+                        "duration_period_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_instruction_uuid": {
+                            "type": "integer"
+                        },
+                        "quantity": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "treatment_kit_lab": {
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "treatment_kit_investigation": {
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "treatment_kit_radiology": {
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "treatment_kit_diagnosis": {
+                    "type": "object",
+                    "properties": {
+                        "diagnosis_uuid": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         }
