@@ -371,6 +371,19 @@
                         "name": "department_uuid",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_date",
+                        "type": "string",
+                        "format": "date"
+
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_date",
+                        "type": "string",
+                        "format": "date"
                     }
                 ],
                 "produces": [
@@ -484,7 +497,21 @@
                         "name": "doctorId",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_date",
+                        "type": "string",
+                        "format": "date"
+
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_date",
+                        "type": "string",
+                        "format": "date"
                     }
+
                 ],
                 "produces": [
                     "application/json",
@@ -1223,7 +1250,9 @@
                         "in": "body",
                         "name": "Id",
                         "required": true,
-                        "type": "integer"
+                        "schema": {
+                            "$ref": "#/definitions/getDaignosisById"
+                        }
                     }
                 ],
                 "produces": [

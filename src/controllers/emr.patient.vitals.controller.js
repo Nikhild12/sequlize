@@ -1,8 +1,10 @@
 // Package Import
 const httpStatus = require("http-status");
+const moment = require('moment');
 
 
-
+var Sequelize = require('sequelize');
+var Op = Sequelize.Op;
 const sequelizeDb = require('../config/sequelize');
 
 const emrConstants = require('../config/constants');
@@ -75,20 +77,30 @@ const EMRPatientVitals = () => {
     };
     const _getHistoryPatientVitals = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { patient_uuid, department_uuid } = req.query;
-        if (user_uuid && patient_uuid && department_uuid) {
+        const { patient_uuid, department_uuid, from_date, to_date } = req.query;
+        
+        try {
+            
+            if (user_uuid && patient_uuid && department_uuid !== null && from_date !== null && to_date != null) {
 
-            try {
-                let getHistoryPatientVitals = await vw_patientVitalsTbl.findAll(getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid), { returning: true });
-                return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR History Patient Vital Details  Successfully", responseContents: patientVitalsList(getHistoryPatientVitals) });
+                let getPatientVitals = await vw_patientVitalsTbl.findAll(getPatientQuery(patient_uuid, from_date, to_date), { returning: true });
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: patientVitalsList(getPatientVitals) });
             }
-            catch (ex) {
-                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+            else if (user_uuid && patient_uuid && department_uuid) {
+
+                    let getHistoryPatientVitals = await vw_patientVitalsTbl.findAll(getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid), { returning: true });
+                    return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR History Patient Vital Details  Successfully", responseContents: patientVitalsList(getHistoryPatientVitals) });
             }
+            
+            else {
+                    return res.status(400).send({ code: httpStatus[400], message: "No Request Params Found" });
+            }
+        
         }
-        else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Params Found" });
-        }
+        
+    catch (ex) {
+        return res.status(400).send({ code: httpStatus[400], message: ex.message });
+    }
     };
     return {
         createPatientVital: _createPatientVital,
@@ -124,6 +136,37 @@ function getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid) {
     };
     return query;
 }
+
+function getPatientQuery(patient_uuid, from_date, to_date) {
+    // user_uuid == doctor_uuid
+    let query = {
+        order: [['pv_uuid', 'DESC']],
+        attributes: [
+            'pv_uuid',
+            'pv_vital_master_uuid',
+            'pv_vital_type_uuid',
+            'pv_vital_value_type_uuid',
+            'pv_vital_value',
+            'pv_doctor_uuid',
+            'pv_patient_uuid',
+            'pv_performed_date',
+            'vm_name',
+            'um_code',
+            'um_name'],
+        
+        where: { vm_active: emrConstants.IS_ACTIVE, 
+                 vm_status: emrConstants.IS_ACTIVE, 
+                 pv_patient_uuid: patient_uuid, 
+                 pv_performed_date: {
+                    [Op.between]: [from_date, to_date] }  
+                    //$lte: to_date,
+                    //$gte: from_date}
+          },
+    };
+    return query;
+}
+
+
 /**
  * returns EMR Patient Vitals
  * in readable format
