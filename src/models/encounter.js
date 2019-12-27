@@ -137,6 +137,9 @@ module.exports = (sequelize, DataTypes) => {
         ENCOUNTER.hasMany(model.encounter_doctors, {
             foreignKey: "encounter_uuid"
         });
+        ENCOUNTER.belongsTo(model.encounter_type, {
+            foreignKey: "encounter_type_uuid"
+        });
     };
     return ENCOUNTER;
 };
