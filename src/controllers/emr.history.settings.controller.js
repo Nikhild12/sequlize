@@ -8,6 +8,9 @@ const sequelizeDb = require('../config/sequelize');
 // EMR Constants Import
 const emr_constants = require('../config/constants');
 
+// EMR Utility Service
+const emr_utility = require('../services/utility.service');
+
 // Initialize Tick Sheet Master
 const emrHistorySettingsTbl = sequelizeDb.emr_history_settings;
 const vw_emr_history_settings = sequelizeDb.vw_emr_history_settings;
@@ -183,6 +186,9 @@ const EMR_HISTORY_SETTINGS = () => {
                     where: { user_uuid: user_uuid }
                 });
 
+                emrHistorySettingsUpdateData.forEach((emr) => {
+                    emr = emr_utility.createIsActiveAndStatus(emr, user_uuid);
+                });
                 if (deleteHisSetData) {
                     const emrUpdatedData = await emrHistorySettingsTbl.bulkCreate(emrHistorySettingsUpdateData, { returning: emr_constants.IS_ACTIVE });
                     if (emrUpdatedData) {
