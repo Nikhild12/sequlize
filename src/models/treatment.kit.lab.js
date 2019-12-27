@@ -1,9 +1,8 @@
-
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const TREATMENT_kIT_DRUG = sequelize.define(
-        'treatmentkit_drug_map',
+    const TREATMENT_kIT_LAB_MAP = sequelize.define(
+        'treatment_kit_lab_map',
         {
             uuid: {
 
@@ -19,41 +18,30 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            item_master_uuid: {
+            test_master_uuid: {
 
-                type: DataTypes.INTEGER
-
-            },
-            drug_route_uuid: {
-
-                type: DataTypes.INTEGER
-
-            },
-            drug_frequency_uuid: {
-
-                type: DataTypes.INTEGER
-
-            },
-            duration: {
-
-                type: DataTypes.STRING(255),
-                allowNull: true
-
-            },
-            duration_period_uuid: {
-
-                type: DataTypes.INTEGER
-
-            },
-            drug_instruction_uuid: {
-
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('test_master_uuid')
+                    }
+                    // min: 0
+                }
 
             },
             quantity: {
 
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                defaultValue: 0
 
             },
             is_active: {
@@ -71,19 +59,26 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             revision: {
+
                 type: DataTypes.INTEGER
-            },
-            created_by: {
-                type: DataTypes.INTEGER
-            },
-            modified_by: {
-                type: DataTypes.INTEGER
+
             },
             created_date: 'created_date',
-            modified_date: 'modified_date'
+            modified_date: 'modified_date',
+            created_by: {
+
+                type: DataTypes.INTEGER
+
+            },
+            modified_by: {
+
+                type: DataTypes.INTEGER
+
+            }
         },
         {
-            tableName: "treatmentkit_drug_map",
+
+            tableName: "treatment_kit_lab_map",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [
@@ -91,8 +86,8 @@ module.exports = (sequelize, DataTypes) => {
                     fields: ["uuid"]
                 }
             ]
+
         }
     );
-
-    return TREATMENT_kIT_DRUG;
+    return TREATMENT_kIT_LAB_MAP;
 };

@@ -13,15 +13,26 @@ const _createIsActiveAndStatus = (create_object, userId) => {
 
     create_object.modified_by = create_object.user_uuid = create_object.created_by = userId;
     create_object.is_active = create_object.status = emr_constants.IS_ACTIVE;
-    create_object.created_date = ele.modified_date = new Date();
+    create_object.created_date = create_object.modified_date = new Date();
     create_object.revision = 1;
     return create_object;
+};
+
+const _assignDefaultValuesAndUUIdToObject = (target, assign, userId, assignCol) => {
+
+    // assigning Default Values
+    target = _createIsActiveAndStatus(target, userId);
+
+    // assigning Master Id to child tables
+    target[assignCol] = assign && assign.uuid || 0;
     
-}
+    return target;
+};
 
 module.exports = {
 
     getActiveAndStatusObject: _getActiveAndStatusObject,
-    createIsActiveAndStatus: _createIsActiveAndStatus
+    createIsActiveAndStatus: _createIsActiveAndStatus,
+    assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject
 
 };

@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('treatment_kit_type_uuid')
                     },
-                    min: 0
+                    min: {
+                        args: 1,
+                        msg: emr_constants.GetMinimumMessage('treatment_kit_type_uuid')
+                    }
                 }
 
             },
@@ -72,7 +75,10 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
-                    min: 0
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+                    }
                 }
 
             },
@@ -87,7 +93,10 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
                     },
-                    min: 0
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('department_uuid')
+                    }
                 }
 
             },
@@ -122,14 +131,14 @@ module.exports = (sequelize, DataTypes) => {
             is_active: {
                 
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
+                defaultValue: 1,
                 allowNull: false
 
             },
             status: {
                 
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
+                defaultValue: 1,
                 allowNull: false
 
             },

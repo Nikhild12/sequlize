@@ -1,9 +1,9 @@
-
 const emr_constants = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
 
     const TREATMENT_KIT_RADIOLOGY_MAP = sequelize.define(
-        'treatment_kit_radiology_map',
+        'treatment_kit_investigation_map',
         {
             uuid: {
 
@@ -30,27 +30,31 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
                     },
-                    min: 0
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('test_master_uuid')
+                    }
                 }
 
             },
             quantity: {
 
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                defaultValue: 0
 
             },
             is_active: {
 
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
+                defaultValue: 1,
                 allowNull: false
 
             },
             status: {
 
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
+                defaultValue: 1,
                 allowNull: false
 
             },
@@ -75,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
             created_date: 'created_date',
             modified_date: 'modified_date'
         }, {
-        tableName: "treatment_kit_radiology_map",
+        tableName: "treatment_kit_investigation_map",
         createdAt: 'created_date',
         updatedAt: 'modified_date',
         indexes: [
@@ -89,6 +93,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     }
+
     );
     return TREATMENT_KIT_RADIOLOGY_MAP;
 };
