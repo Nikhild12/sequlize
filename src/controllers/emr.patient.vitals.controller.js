@@ -81,12 +81,12 @@ const EMRPatientVitals = () => {
         
         try {
             
-            if (user_uuid && patient_uuid && department_uuid !== null && from_date !== null && to_date != null) {
+            if (user_uuid && patient_uuid && department_uuid == 0 && from_date && to_date) {
 
                 let getPatientVitals = await vw_patientVitalsTbl.findAll(getPatientQuery(patient_uuid, from_date, to_date), { returning: true });
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: patientVitalsList(getPatientVitals) });
             }
-            else if (user_uuid && patient_uuid && department_uuid) {
+            else if (user_uuid && patient_uuid && department_uuid > 0) {
 
                     let getHistoryPatientVitals = await vw_patientVitalsTbl.findAll(getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid), { returning: true });
                     return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR History Patient Vital Details  Successfully", responseContents: patientVitalsList(getHistoryPatientVitals) });
