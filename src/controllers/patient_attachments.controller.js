@@ -4,6 +4,7 @@ const db = require("../config/sequelize");
 
 const _ = require('lodash');
 const multer = require('multer');
+const moment = require('moment');
 //const path = require('path');
 const fs = require('file-system');
 //const bodyParser = require('body-parser');
@@ -194,6 +195,7 @@ const _upload = async(req, res) => {
                 attachmentData.consultation_uuid = userUUID;
                 //attachmentData.attachment_name = req.file.originalname;
                 attachmentData.is_active = attachmentData.status = true;
+                attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD');
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
                 attachmentData.file_path = req.files[0].path;
