@@ -44,7 +44,7 @@ const TreatMent_Kit = () => {
                 let treatmentSave = [];
                 const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
                 if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
-
+                    return res.send(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord) });
                 }
                 treatment_kit = emr_utility.createIsActiveAndStatus(treatment_kit, user_uuid);
                 const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true, transaction: treatmentTransaction });
@@ -140,8 +140,8 @@ async function findDuplicateTreatmentKitByCodeAndName({ code, name }) {
     });
 }
 
-function getDuplicateMsg(duplicateTreatmentRecord) {
-    return duplicateTreatmentRecord[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
+function getDuplicateMsg(record) {
+    return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
 }
 
 /**
