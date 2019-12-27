@@ -52,15 +52,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(255),
             },
             is_active: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1",
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: false
 
             },
             status: {
-                type: DataTypes.ENUM,
-                values: ["0", "1"],
-                defaultValue: "1"
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: false
             },
             revision: {
                 type: DataTypes.INTEGER,
@@ -95,13 +95,13 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: 'modified_date'
         }
     );
-    PATIENT_CHIEF_COMPLAINTS.associate = model =>{
+    PATIENT_CHIEF_COMPLAINTS.associate = model => {
         PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaints, {
             foreignKey: "chief_complaint_uuid"
         }),
-        PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaint_duration_periods, {
-            foreignKey: "chief_complaint_duration_period_uuid"
-        });
+            PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaint_duration_periods, {
+                foreignKey: "chief_complaint_duration_period_uuid"
+            });
     };
     return PATIENT_CHIEF_COMPLAINTS;
 };
