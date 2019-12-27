@@ -11,8 +11,11 @@ const sequelizeDb = require('../config/sequelize');
 
 const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
+const encounter_type_tbl = sequelizeDb.encounter_type;
 
 const emr_constants = require('../config/constants');
+
+
 
 // Query
 function getActiveEncounterQuery(pId, dId) {
@@ -43,6 +46,7 @@ function getActiveEncounterQuery(pId, dId) {
 
 
 
+
 const Encounter = () => {
 
     /**
@@ -54,24 +58,26 @@ const Encounter = () => {
     const _getEncounterByDocAndPatientId = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        const { patientId, doctorId } = req.query;
+        const { patientId, doctorId, from_date, to_date } = req.query;
 
-        if (user_uuid && (patientId && patientId > 0) && (doctorId && doctorId > 0)) {
-
-            try {
+        try {
+            if (user_uuid && patientId && doctorId == 0 && from_date && to_date) {
+                const encounterData = await encounter_tbl.findAll(getEncounterQuery(patientId, from_date, to_date));
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Encounter Successfully", responseContents: encounterData });
+            }
+            else if (user_uuid && (patientId && patientId > 0) && (doctorId && doctorId > 0)) {
 
                 const encounterData = await encounter_tbl.findAll(getActiveEncounterQuery(patientId, doctorId));
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched Encounter Successfully", responseContents: encounterData });
 
-            } catch (ex) {
-
-                console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-
+            } else {
+                return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
             }
+        } catch (ex) {
 
-        } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+            console.log(ex);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+
         }
     };
 
@@ -90,12 +96,13 @@ const Encounter = () => {
 
             // Assigning
             encounter.modified_by = encounter.created_by = user_uuid;
-            encounter.is_active = encounter.status = emr_constants.IS_ACTIVE;
+            encounter.is_active = encounter.status = encounter.is_active_encounter = emr_constants.IS_ACTIVE;
             encounter.created_date = encounter.modified_date = new Date();
             encounter.encounter_date = new Date();
 
             // Assigning
             encounterDoctor.modified_by = encounterDoctor.created_by = user_uuid;
+            encounterDoctor.patientId = encounter.patientId;
             encounterDoctor.is_active = encounterDoctor.status = emr_constants.IS_ACTIVE;
             encounterDoctor.created_date = encounterDoctor.modified_date = encounterDoctor.consultation_start_date = new Date();
 
@@ -166,4 +173,29 @@ module.exports = Encounter();
 function getCreatedEncounterId(createdEncounterData) {
 
     return createdEncounterData.length > 1 ? createdEncounterData[2].uuid : createdEncounterData[0].uuid;
+}
+
+
+function getEncounterQuery(pId, from_date, to_date) {
+    return {
+        where: {
+            patient_uuid: pId,
+            encounter_date: {
+                [Op.between]: [from_date, to_date]
+            },
+            is_active_encounter: emr_constants.IS_ACTIVE,
+            is_active: emr_constants.IS_ACTIVE,
+            status: emr_constants.IS_ACTIVE
+        },
+        include: [
+            {
+                model: encounter_type_tbl,
+                attributes: ['uuid', 'code', 'name'],
+                where: {
+                    is_active: emr_constants.IS_ACTIVE,
+                    status: emr_constants.IS_ACTIVE
+                }
+            },
+        ]
+    };
 }

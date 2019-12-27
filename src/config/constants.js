@@ -17,7 +17,8 @@ module.exports = Object.freeze({
     SEND_PROPER_REQUEST: 'Send Proper Request Body',
     I_E_NUMBER_ARRAY: 'i.e. number array',
     UPDATE_EMR_HIS_SET_SUC: "Updated EMR History Settings Successfully",
-
+    DUPLICATE_ACTIVE_MSG: 'Already item is available in the list',
+    DUPLICATE_IN_ACTIVE_MSG: 'This item is Inactive! Please contact administrator',
 
     GetpleaseProvideMsg: function (columnname) {
         let returnProvideMsg = 'Please provide';
@@ -44,8 +45,36 @@ module.exports = Object.freeze({
                 return `${returnProvideMsg} Code`;
             case 'name':
                 return `${returnProvideMsg} Name`;
+            case 'activefrom':
+                return `${returnProvideMsg} Active From`;
+            case 'test_master_uuid':
+                return `${returnProvideMsg} Test Master Id`;
+            case 'diagnosis_uuid':
+                return `${returnProvideMsg}  Diagnosis Id`;
+            case 'doctor_uuid':
+                return `${returnProvideMsg}  Doctor Id`;
+            case 'encounter_type_uuid':
+                return `${returnProvideMsg} Encounter Type Id`;
+            case 'patient_uuid':
+                return `${returnProvideMsg} Patient Id`
             default:
                 return `${returnProvideMsg} required Fields`;
+        }
+    },
+
+    GetMinimumMessage: function (columnname) {
+        let lengthMessage = 'must be greater than 0';
+        switch (columnname) {
+            case 'doctor_uuid':
+                return `Doctor Id ${lengthMessage}`;
+            case 'encounter_type_uuid':
+                return `Encounter Type Id ${lengthMessage}`;
+            case 'patient_uuid':
+                return `Patient Id ${lengthMessage}`;
+            case 'facility_uuid':
+                return `Facility Id ${lengthMessage}`;
+            default:
+                break;
         }
     }
 });

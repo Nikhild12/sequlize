@@ -371,6 +371,19 @@
                         "name": "department_uuid",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_date",
+                        "type": "string",
+                        "format": "date"
+
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_date",
+                        "type": "string",
+                        "format": "date"
                     }
                 ],
                 "produces": [
@@ -484,7 +497,21 @@
                         "name": "doctorId",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_date",
+                        "type": "string",
+                        "format": "date"
+
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_date",
+                        "type": "string",
+                        "format": "date"
                     }
+
                 ],
                 "produces": [
                     "application/json",
@@ -1221,9 +1248,9 @@
                     },
                     {
                         "in": "body",
-                        "name": "Id",
+                        "name": "Diagnosis_id",
                         "required": true,
-                         "schema": {
+                        "schema": {
                             "$ref": "#/definitions/getDaignosisById"
                         }
                     }
@@ -1579,7 +1606,7 @@
         },
         "/api/vitalMaster/getVitals": {
             "get": {
-                "description": "To get a vitals master List",
+                "summary": "To get default vitals master List",
                 "parameters": [
                     {
                         "in": "header",
@@ -1609,7 +1636,7 @@
         },
         "/api/vitalMaster/getAllVitals": {
             "get": {
-                "description": "To get all vitals master list",
+                "summary": "To get all vitals master list",
                 "parameters": [
                     {
                         "in": "header",

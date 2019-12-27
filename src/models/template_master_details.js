@@ -197,17 +197,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
-                allowNull: false
+                defaultValue: 1,
+                //allowNull: false
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
-                allowNull: false
+                defaultValue: 1,
+                //allowNull: false
             },
             revision: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                defaultValue: 1,
             },
 
             created_by: {
