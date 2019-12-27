@@ -1,12 +1,8 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
-
-
 const Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-
 const emr_const = require('../config/constants');
-
 const diagnosisTbl = db.diagnosis;
 
 function getDiagnosisFilterByQuery(searchBy, searchValue) {
@@ -174,6 +170,26 @@ const diagnosisController = () => {
         const diagnosisData = req.body;
 
         if (user_uuid && diagnosisData) {
+
+            diagnosisTbl.findAll({
+                where: {
+                  [Op.or]: [{
+                      code: diagnosisData.code
+                    },
+                    {
+                      name: diagnosisData.name
+                    }
+                  ]
+                }
+              }).then(async (result) =>{
+                if (result.length != 0) {
+                    return res.send({
+                      status: "error",
+                      msg: "Record already Found. Please enter New diagnosis "
+                    });
+                  } 
+              });
+
             diagnosisData.code = diagnosisData & diagnosisData.code ? diagnosisData.code : diagnosisData.name;
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
             diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
@@ -188,7 +204,7 @@ const diagnosisController = () => {
                 if (diagnosisCreatedData) {
                     diagnosisData.uuid = diagnosisCreatedData.uuid;
                     return res.status(200).send({
-                        code: httpStatus.OK,
+                        code: 200,
                         message: "Inserted Diagnosis Successfully",
                         responseContents: diagnosisData
                     });
@@ -209,6 +225,7 @@ const diagnosisController = () => {
 
     };
     const _getDiagnosis = async (req, res, next) => {
+        
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -227,8 +244,7 @@ const diagnosisController = () => {
 
         const offset = pageNo * itemsPerPage;
 
-
-        if (getsearch.sortField) {
+          if (getsearch.sortField) {
 
             sortField = getsearch.sortField;
         }
@@ -240,34 +256,13 @@ const diagnosisController = () => {
         let findQuery = {
             offset: offset,
             limit: itemsPerPage,
-            order: [
-                [sortField, sortOrder],
-            ],
             where: {
                status:1
             },
-
+            attributes: getDiagnosisAttributes()
         };
 
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-
-            findQuery.where = {
-                [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-
-
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
-
-                ]
-            };
-        }
-
+      
 
         try {
             await diagnosisTbl.findAndCountAll(findQuery)
@@ -281,7 +276,7 @@ const diagnosisController = () => {
                         .json({
                             message: "success",
                             statusCode: 200,
-                            responseContents: (findData.rows ? findData.rows : []),
+                            responseContents:(findData.rows ? findData.rows:[]),
                             totalRecords: (findData.count ? findData.count : 0),
 
                         });
@@ -346,12 +341,12 @@ const diagnosisController = () => {
         await diagnosisTbl.update(
             postData, {
                 where: {
-                    uuid: postData.Id
+                    uuid: postData.Diagnosis_id
                 }
             }
         ).then((data) => {
             res.send({
-                statusCode: 200,
+                code: 200,
                 msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
@@ -361,7 +356,7 @@ const diagnosisController = () => {
     };
     const _getDaignosisById = async (req, res, next) => {
         const postData = req.body;
-        console.log(postData)
+        
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -369,8 +364,10 @@ const diagnosisController = () => {
             const offset = (page - 1) * itemsPerPage;
             await diagnosisTbl.findOne({
                     where: {
-                        uuid: postData.Diagnosis_id
+                        uuid: postData.Diagnosis_id,
+
                     },
+                    attributes: getDiagnosisAttributes(),
                     offset: offset,
                     limit: itemsPerPage
                 })

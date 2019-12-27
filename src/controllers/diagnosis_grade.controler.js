@@ -3,12 +3,13 @@ const db = require("../config/sequelize");
 
 
 const Sequelize = require('sequelize');
+var Op = Sequelize.Op;
 
 
 
-const DiagnosisVersion = db.diagnosis_version;
+const DiagnosisGrade = db.diagnosis_grade;
 
-const DiagnosisVersionController = () => {
+const DiagnosisGradeController = () => {
     /**
      * Returns jwt token if valid username and password is provided
      * @param req
@@ -18,7 +19,7 @@ const DiagnosisVersionController = () => {
      */
 
 
-    const getDiagnosisVersion = async (req, res, next) => {
+    const getDiagnosisGrade = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -77,7 +78,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await DiagnosisGrade.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -113,7 +114,7 @@ const DiagnosisVersionController = () => {
 
 
     };
-    const getDiagnosisVersionfilter = async (req, res, next) => {
+    const getDiagnosisGradefilter = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -148,7 +149,7 @@ const DiagnosisVersionController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            attributes: ['uuid','name']
+            attributes: ['uuid', 'name']
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -173,7 +174,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await DiagnosisGrade.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -209,16 +210,14 @@ const DiagnosisVersionController = () => {
 
 
     };
-
-   
-    const postDiagnosisVersion = async (req, res, next) => {
+    const postDiagnosisGrade = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
 
 
         if (postData) {
 
-            DiagnosisVersion.findAll({
+            DiagnosisGrade.findAll({
                 where: {
                     [Op.or]: [{
                             code: postData.code
@@ -232,16 +231,16 @@ const DiagnosisVersionController = () => {
                 if (result.length != 0) {
                     return res.send({
                         status: "error",
-                        msg: "Record already Found. Please enter New DIAGNOSIS version"
+                        msg: "Record already Found. Please enter New DIAGNOSIS grade"
                     });
                 } else {
-                    await DiagnosisVersion.create(postData, {
+                    await DiagnosisGrade.create(postData, {
                         returning: true
                     }).then(data => {
 
                         res.send({
                             statusCode: 200,
-                            msg: "Inserted type details Successfully",
+                            msg: "Inserted  details Successfully",
                             req: postData,
                             responseContents: data
                         });
@@ -260,20 +259,23 @@ const DiagnosisVersionController = () => {
             // console.log("resreresrersrsrsesresrsersesr",res)
             res.send({
                 status: 'failed',
-                msg: 'Please enter  diagnosis type details'
+                msg: 'Please enter  diagnosis grade details'
             });
         }
     };
-    const getDiagnosisVersionById = async (req, res, next) => {
+
+
+
+    const getDiagnosisGradeById = async (req, res, next) => {
         const postData = req.body;
         try {
-            
-          
-            await DiagnosisVersion.findOne({
+
+
+            await DiagnosisGrade.findOne({
                     where: {
                         uuid: postData.Id
                     },
-                   
+
                 })
                 .then((data) => {
                     return res
@@ -284,7 +286,7 @@ const DiagnosisVersionController = () => {
                             responseContents: data
                         });
                 });
-            
+
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -298,10 +300,10 @@ const DiagnosisVersionController = () => {
 
 
 
-    const deleteDiagnosisVersionById = async (req, res, next) => {
+    const deleteDiagnosisGradeById = async (req, res, next) => {
         const postData = req.body;
 
-        await DiagnosisVersion.update({
+        await DiagnosisGrade.update({
             is_active: 0
         }, {
             where: {
@@ -323,16 +325,16 @@ const DiagnosisVersionController = () => {
         });
     };
 
-   
- 
-    const updateDiagnosisVersionById = async (req, res, next) => {
+
+
+    const updateDiagnosisGradeById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
-        await DiagnosisVersion.update(
+        await DiagnosisGrade.update(
             postData, {
                 where: {
                     uuid: postData.Id
-                    
+
                 }
             }
         ).then((data) => {
@@ -343,19 +345,19 @@ const DiagnosisVersionController = () => {
                 responseContents: data
             });
         });
-       
+
     };
     // --------------------------------------------return----------------------------------
     return {
-        postDiagnosisVersion,
-        getDiagnosisVersion,
-        getDiagnosisVersionById,
-        deleteDiagnosisVersionById,
-        updateDiagnosisVersionById,
-        getDiagnosisVersionfilter
+        postDiagnosisGrade,
+        getDiagnosisGrade,
+        getDiagnosisGradeById,
+        deleteDiagnosisGradeById,
+        updateDiagnosisGradeById,
+        getDiagnosisGradefilter
 
     };
 };
 
 
-module.exports = DiagnosisVersionController();
+module.exports = DiagnosisGradeController();

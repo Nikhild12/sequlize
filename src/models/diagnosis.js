@@ -7,9 +7,6 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
-            // 1 to 21 columns
-
-
             code: {
                 type: DataTypes.STRING(250),
                 allowNull: true
@@ -21,27 +18,20 @@ module.exports = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING(250),         
                        allowNull: true
-
-               
             },
             diagnosis_scheme_uuid: {
                 type: DataTypes.INTEGER,
-                // allowNull: true
             },
-
             diagnosis_type_uuid: {
                 type: DataTypes.INTEGER,
-                // allowNull: true
             },
             diagnosis_category_uuid: {
                 type: DataTypes.INTEGER,
-                // allowNull: true
             },
             diagnosis_grade_uuid: {
                 type: DataTypes.INTEGER,
                 // allowNull: true
             },
-
             diagnosis_region_uuid: {
                 type: DataTypes.INTEGER,
                 // allowNull: true
@@ -50,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 // allowNull: true
             },
-
             speciality: {
                 type: DataTypes.STRING(250),
                 allowNull: true

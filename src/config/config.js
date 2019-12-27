@@ -40,6 +40,7 @@ const config = {
     port: envVars.PORT,
     jwtSecret: envVars.JWT_SECRET,
     jwtTokenExpire: envVars.JWT_TOKEN_EXPIRE,
+    username:envVars.USER_NAME_URL,
     mysql: {
         db: envVars.PG_DB,
         port: envVars.PG_PORT,
@@ -47,7 +48,8 @@ const config = {
         user: envVars.PG_USER,
         password: envVars.PG_PASSWORD,
         dialect: "mysql"
-    }
+    },
+   
 };
 
 module.exports = config;

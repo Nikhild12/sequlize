@@ -1,6 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
-
+const username=require("../config/config");
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
@@ -109,8 +109,27 @@ const ChiefComplaints = () => {
         const { user_uuid } = req.headers;
         const chiefComplaintsData = req.body;
 
-        if (user_uuid && chiefComplaintsData) {
-            chiefComplaintsData.code = chiefComplaintsData & chiefComplaintsData.code ? chiefComplaintsData.code : chiefComplaintsData.name;
+        if(user_uuid && chiefComplaintsData){
+            chief_complaints_tbl.findAll({
+                where: {
+                  [Op.or]: [{
+                      code: chiefComplaintsData.code
+                    },
+                    {
+                      name: chiefComplaintsData.name
+                    }
+                  ]
+                }
+              }).then(async (result) =>{
+                if (result.length != 0) {
+                    return res.send({
+                      status: "error",
+                      msg: "Record already Found. Please enter New CHIEF COMPLAINT "
+                    });
+                  } 
+              });
+
+              chiefComplaintsData.code = chiefComplaintsData & chiefComplaintsData.code ? chiefComplaintsData.code : chiefComplaintsData.name;
             chiefComplaintsData.description = chiefComplaintsData & chiefComplaintsData.description ? chiefComplaintsData.description : chiefComplaintsData.name;
             chiefComplaintsData.is_active = chiefComplaintsData.status = emr_const.IS_ACTIVE;
             chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
@@ -127,9 +146,12 @@ const ChiefComplaints = () => {
                 console.log(ex.message);
                 return res.status(400).send({ statusCode: 400, message: ex.message });
             }
-        } else {
+        }else {
             return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
         }
+       
+
+  
 
     };
     const _getChiefComplaintsById = async (req, res) => {
@@ -321,6 +343,7 @@ const ChiefComplaints = () => {
     // };
 
     const _getChiefComplaints = async (req, res, next) => {
+
         let getsearch = req.body;
 
         let pageNo = 0;

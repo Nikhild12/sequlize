@@ -18,7 +18,16 @@ const chiefComplaintsRoutes = require("./chiefComplaints.route");
 const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
+
 const diagnosisRoutes = require("./diagnosis.route");
+const diagnosisVersionRoutes = require("./diagnosis_version.route");
+const diagnosisTypeRoutes = require("./diagnosis_type.route");
+const diagnosisCategoryRoutes = require("./diagnosis_category.route");
+const diagnosisGradeRoutes = require("./diagnosis_grade.route");
+const diagnosisRegionRoutes = require("./diagnosis_region.route");
+const bodysiteRoutes = require("./body_site.route");
+
+
 const chiefComplaintsRouter = require('./chief.complaints.route');
 const chiefDurationRoute = require('./chief_complaints_duration.route');
 
@@ -62,6 +71,12 @@ serviceRouter.use('/vitalMaster', vitalMasterRoutes);
 
 // Diagnosis Routes
 serviceRouter.use('/diagnosis', diagnosisRoutes);
+serviceRouter.use('/diagnosisType', diagnosisTypeRoutes);
+serviceRouter.use('/diagnosisVersion', diagnosisVersionRoutes);
+serviceRouter.use('/diagnosisCategory', diagnosisCategoryRoutes);
+serviceRouter.use('/diagnosisGrade', diagnosisGradeRoutes);
+serviceRouter.use('/diagnosisRegion', diagnosisRegionRoutes);
+serviceRouter.use('/bodysite', bodysiteRoutes);
 
 // Chief Complaints Routes
 serviceRouter.use('/chiefComplaints', chiefComplaintsRoutes);

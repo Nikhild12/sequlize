@@ -6,9 +6,9 @@ const Sequelize = require('sequelize');
 
 
 
-const DiagnosisVersion = db.diagnosis_version;
+const DiagnosisTypeTbl = db.diagnosis_type;
 
-const DiagnosisVersionController = () => {
+const DiagnosisTypeController = () => {
     /**
      * Returns jwt token if valid username and password is provided
      * @param req
@@ -18,7 +18,7 @@ const DiagnosisVersionController = () => {
      */
 
 
-    const getDiagnosisVersion = async (req, res, next) => {
+    const getDiagnosisType = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -77,7 +77,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await DiagnosisTypeTbl.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -113,7 +113,7 @@ const DiagnosisVersionController = () => {
 
 
     };
-    const getDiagnosisVersionfilter = async (req, res, next) => {
+    const getDiagnosisTypefilter = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -173,7 +173,7 @@ const DiagnosisVersionController = () => {
 
 
         try {
-            await DiagnosisVersion.findAndCountAll(findQuery)
+            await DiagnosisTypeTbl.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -211,14 +211,14 @@ const DiagnosisVersionController = () => {
     };
 
    
-    const postDiagnosisVersion = async (req, res, next) => {
+    const postDiagnosisType = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
 
 
         if (postData) {
 
-            DiagnosisVersion.findAll({
+            DiagnosisTypeTbl.findAll({
                 where: {
                     [Op.or]: [{
                             code: postData.code
@@ -232,16 +232,16 @@ const DiagnosisVersionController = () => {
                 if (result.length != 0) {
                     return res.send({
                         status: "error",
-                        msg: "Record already Found. Please enter New DIAGNOSIS version"
+                        msg: "Record already Found. Please enter New DIAGNOSIS type"
                     });
                 } else {
-                    await DiagnosisVersion.create(postData, {
+                    await DiagnosisTypeTbl.create(postData, {
                         returning: true
                     }).then(data => {
 
                         res.send({
                             statusCode: 200,
-                            msg: "Inserted type details Successfully",
+                            msg: "Inserted details Successfully",
                             req: postData,
                             responseContents: data
                         });
@@ -264,12 +264,13 @@ const DiagnosisVersionController = () => {
             });
         }
     };
-    const getDiagnosisVersionById = async (req, res, next) => {
+
+    const getDiagnosisTypeById = async (req, res, next) => {
         const postData = req.body;
         try {
             
           
-            await DiagnosisVersion.findOne({
+            await DiagnosisTypeTbl.findOne({
                     where: {
                         uuid: postData.Id
                     },
@@ -298,10 +299,10 @@ const DiagnosisVersionController = () => {
 
 
 
-    const deleteDiagnosisVersionById = async (req, res, next) => {
+    const deleteDiagnosisTypeById = async (req, res, next) => {
         const postData = req.body;
 
-        await DiagnosisVersion.update({
+        await DiagnosisTypeTbl.update({
             is_active: 0
         }, {
             where: {
@@ -325,10 +326,10 @@ const DiagnosisVersionController = () => {
 
    
  
-    const updateDiagnosisVersionById = async (req, res, next) => {
+    const updateDiagnosisTypeById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
-        await DiagnosisVersion.update(
+        await DiagnosisTypeTbl.update(
             postData, {
                 where: {
                     uuid: postData.Id
@@ -347,15 +348,15 @@ const DiagnosisVersionController = () => {
     };
     // --------------------------------------------return----------------------------------
     return {
-        postDiagnosisVersion,
-        getDiagnosisVersion,
-        getDiagnosisVersionById,
-        deleteDiagnosisVersionById,
-        updateDiagnosisVersionById,
-        getDiagnosisVersionfilter
+        postDiagnosisType,
+        getDiagnosisType,
+        getDiagnosisTypeById,
+        deleteDiagnosisTypeById,
+        updateDiagnosisTypeById,
+        getDiagnosisTypefilter
 
     };
 };
 
 
-module.exports = DiagnosisVersionController();
+module.exports = DiagnosisTypeController();

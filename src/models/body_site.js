@@ -1,8 +1,8 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-    const diagnosis_version = sequelize.define(
-        "diagnosis_version", {
+    const body_site = sequelize.define(
+        "body_site", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -18,23 +18,8 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            color:{
-                type: DataTypes.STRING,
-                allowNull: true
-            },
+
             status: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1
-            },
-            language:{
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            display_order:{
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            Is_default:{
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
             },
@@ -57,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             },
            
         }, {
-            tableName: "diagnosis_version",
+            tableName: "body_site",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -66,5 +51,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return diagnosis_version;
+    return body_site;
 };

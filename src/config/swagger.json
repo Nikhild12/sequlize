@@ -1183,7 +1183,7 @@
                     },
                     {
                         "in": "body",
-                        "name": "Id",
+                        "name": "Diagnosis_id",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/updateDiagnosisById"
@@ -1223,7 +1223,9 @@
                         "in": "body",
                         "name": "Id",
                         "required": true,
-                        "type": "integer"
+                         "schema": {
+                            "$ref": "#/definitions/getDaignosisById"
+                        }
                     }
                 ],
                 "produces": [
@@ -3346,7 +3348,87 @@
         "updateDiagnosisById": {
             "type": "object",
             "properties": {
-                "Id": {
+                "Diagnosis_id": {
+                    "type": "integer"
+                },"code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "diagnosis_scheme_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_type_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_category_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_grade_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_region_uuid": {
+                    "type": "integer"
+                },
+                "diagnosis_version_uuid": {
+                    "type": "integer"
+                },
+                "speciality": {
+                    "type": "string"
+                },
+                "synonym": {
+                    "type": "string"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "length_Of_stay": {
+                    "type": "string"
+                },
+                "body_site_uuid": {
+                    "type": "integer"
+                },
+                "side_uuid": {
+                    "type": "integer"
+                },
+                "position_id": {
+                    "type": "integer"
+                },
+                "in_house": {
+                    "type": "string"
+                },
+                "is_notifibale": {
+                    "type": "integer"
+                },
+                "is_sensitive": {
+                    "type": "integer"
+                },
+                "is_billable": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "comments": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "boolean"
+                },
+                "revision": {
+                    "type": "string"
+                },
+                "created_by": {
                     "type": "integer"
                 }
             }
