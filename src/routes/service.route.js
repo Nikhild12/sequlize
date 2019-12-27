@@ -21,6 +21,7 @@ const vitalMasterRoutes = require("./vital_master_route");
 const diagnosisRoutes = require("./diagnosis.route");
 const chiefComplaintsRouter = require('./chief.complaints.route');
 const chiefDurationRoute = require('./chief_complaints_duration.route');
+const treatmentKitRoute = require('./treatment.kit.routes');
 
 const emrHisSetCtrl = require('./emr.history.settings.routes');
 
@@ -32,7 +33,7 @@ serviceRouter.use('/emr-workflow-settings', emrWorkflowRouter);
 serviceRouter.use('/patient-diagnosis', patientDiagnosisRouter);
 
 
-serviceRouter.use('/patientattachments',patientAttachmentsRouter);
+serviceRouter.use('/patientattachments', patientAttachmentsRouter);
 // Patient Chief Complaints
 serviceRouter.use('/patient-chief-complaints', patientChiefRoute);
 
@@ -68,6 +69,9 @@ serviceRouter.use('/chiefComplaints', chiefComplaintsRoutes);
 serviceRouter.use('/chief-complaints-duration', chiefDurationRoute);
 serviceRouter.use('/chief-complaints-master', chiefComplaintsRouter);
 serviceRouter.use('/chiefComplaintCategory', chiefComplaintCategoryRoutes);
+
+// Treatment Kit Routes
+serviceRouter.use('/treatment-kit', treatmentKitRoute);
 
 // EMR History Settings Routes
 serviceRouter.use('/emr-history-settings', emrHisSetCtrl);

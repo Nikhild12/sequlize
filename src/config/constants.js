@@ -19,6 +19,7 @@ module.exports = Object.freeze({
     UPDATE_EMR_HIS_SET_SUC: "Updated EMR History Settings Successfully",
     DUPLICATE_ACTIVE_MSG: 'Already item is available in the list',
     DUPLICATE_IN_ACTIVE_MSG: 'This item is Inactive! Please contact administrator',
+    TREATMENT_SUCCESS: 'Treatment Kit Successfully Inserted',
 
     GetpleaseProvideMsg: function (columnname) {
         let returnProvideMsg = 'Please provide';
@@ -56,7 +57,17 @@ module.exports = Object.freeze({
             case 'encounter_type_uuid':
                 return `${returnProvideMsg} Encounter Type Id`;
             case 'patient_uuid':
-                return `${returnProvideMsg} Patient Id`
+                return `${returnProvideMsg} Patient Id`;
+            case 'item_master_uuid':
+                return `${returnProvideMsg} Item Master Id`;
+            case 'drug_route_uuid':
+                return `${returnProvideMsg} Drug Route Id`;
+            case 'duration_period_uuid':
+                return `${returnProvideMsg} Duration Period Id`;
+            case 'drug_instruction_uuid':
+                return `${returnProvideMsg} Drug Instruction Id`;
+            case 'quantity':
+                return `${returnProvideMsg} Drug Quantity`;
             default:
                 return `${returnProvideMsg} required Fields`;
         }
@@ -73,8 +84,56 @@ module.exports = Object.freeze({
                 return `Patient Id ${lengthMessage}`;
             case 'facility_uuid':
                 return `Facility Id ${lengthMessage}`;
+            case 'treatment_kit_type_uuid':
+                return `Treatment Kit Type Id ${lengthMessage}`;
+            case 'item_master_uuid':
+                return `Item Master Id ${lengthMessage}`;
+            case 'drug_route_uuid':
+                return `Drug Route Id ${lengthMessage}`;
+            case 'drug_frequency_uuid':
+                return `Drug Frequency Id ${lengthMessage}`;
+            case 'duration_period_uuid':
+                return `Drug Period Id ${lengthMessage}`;
+            case 'drug_instruction_uuid':
+                return `Drug Instruction Id ${lengthMessage}`;
+            case 'quantity':
+                return `Drug Quantity ${lengthMessage}`;
             default:
-                break;
+                return `Value ${lengthMessage}`;
+        }
+    },
+
+    GetZeroValidationMessage: function (columnname) {
+        let validationMessage = 'must be greater than or equal to 0';
+        switch (columnname) {
+            case 'doctor_uuid':
+                return `Doctor Id ${validationMessage}`;
+            case 'encounter_type_uuid':
+                return `Encounter Type Id ${validationMessage}`;
+            case 'patient_uuid':
+                return `Patient Id ${validationMessage}`;
+            case 'department_uuid':
+                return `Department Id ${validationMessage}`;
+            case 'facility_uuid':
+                return `Facility Id ${validationMessage}`;
+            case 'diagnosis_uuid':
+                return `Diagnosis Id ${validationMessage}`;
+            case 'test_master_uuid':
+                return `Test Master Id ${validationMessage}`;
+            case 'item_master_uuid':
+                return `Item Master Id ${validationMessage}`;
+            case 'drug_route_uuid':
+                return `Drug Route Id ${validationMessage}`;
+            case 'drug_frequency_uuid':
+                return `Drug Frequency Id ${validationMessage}`;
+            case 'duration_period_uuid':
+                return `Drug Period Id ${validationMessage}`;
+            case 'drug_instruction_uuid':
+                return `Drug Instruction Id ${validationMessage}`;
+            case 'quantity':
+                return `Drug Quantity ${validationMessage}`;
+            default:
+                return `Value ${validationMessage}`;
         }
     }
 });
