@@ -4,6 +4,9 @@ const httpStatus = require("http-status");
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
 
+var Sequelize = require('sequelize');
+var Op = Sequelize.Op;
+
 const emr_utility = require('../services/utility.service');
 
 // Initialize EMR Workflow
