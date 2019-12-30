@@ -198,9 +198,12 @@ const _upload = async(req, res) => {
                 attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD');
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
-                attachmentData.file_path = req.files[0].path;
-                attachmentData.revision = 1;
                 console.log("--------",req.files[0].path);
+                attachmentData.file_path = req.files[0].path;
+                //attachmentData.file_path = req.body.
+                attachmentData.revision = 1;
+               // console.log("--------",req.files[0].path);
+               //console.log ("--------",req)
                 await attachmentTbl.create(attachmentData, { returning: true });
                 res.send({"status": 200,"attachment data":attachmentData,"files":req.files,"count":req.files.length,"message":"Files Uploaded Successfully "});
              }

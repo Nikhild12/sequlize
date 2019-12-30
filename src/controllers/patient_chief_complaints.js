@@ -4,6 +4,9 @@ const httpStatus = require("http-status");
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
 
+var Sequelize = require('sequelize');
+var Op = Sequelize.Op;
+
 const emr_utility = require('../services/utility.service');
 
 // Initialize EMR Workflow
@@ -47,6 +50,31 @@ function getPatientSearchQuery(searchKey, searchValue) {
     };
 }
 
+function getCCQuery(searchKey, searchValue, from_date, to_date) {
+
+    //let searchObject;
+    searchKey = searchKey.toLowerCase();
+    return {
+        where: {
+            patient_uuid: searchValue,
+            is_active: emr_constants.IS_ACTIVE,
+            status: emr_constants.IS_ACTIVE,
+            created_date: {
+                [Op.between]: [from_date, to_date] }
+        },
+        include: [
+            {
+                model: chief_complaints_tbl,
+                attributes: ['code', 'name']
+            },
+            {
+                model: chief_complaints_duration_tbl,
+                attributes: ['code', 'name']
+            }
+        ]
+    };
+}
+
 const PatientChiefComplaints = () => {
 
     /**
@@ -60,7 +88,7 @@ const PatientChiefComplaints = () => {
         const chiefComplaintsData = req.body;
 
         if (chiefComplaintsData && chiefComplaintsData.length > 0 && user_uuid) {
-          
+
             try {
 
                 chiefComplaintsData.forEach((cD) => {
@@ -88,28 +116,30 @@ const PatientChiefComplaints = () => {
      */
     const _getPatientChiefComplaints = async (req, res) => {
 
-        const { searchKey, searchValue } = req.query;
+        const { searchKey, searchValue, from_date, to_date } = req.query;
 
-        if (searchKey && searchValue) {
-            try {
-
+        try {
+            
+            if (searchKey && searchValue && from_date && to_date)
+            {
+                const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getCCQuery(searchKey, searchValue, from_date, to_date));
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Chief Complaints Successfully", responseContents: getPatientsChiefComplaintsInReadable(patChiefComplaintsData) });
+            }
+            else if (searchKey && searchValue) 
+            {
                 const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getPatientSearchQuery(searchKey, searchValue));
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Chief Complaints Successfully", responseContents: getPatientsChiefComplaintsInReadable(patChiefComplaintsData) });
-
-            } catch (ex) {
-
-                console.log(ex.message);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-
+            } else {
+                return res.status(422).send({ code: httpStatus[400], message: "No Request Param Found" });
             }
-        } else {
-            return res.status(422).send({ code: httpStatus[400], message: "No Request Param Found" });
-        }
+        } catch (ex) {
 
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
     };
 
     return {
-
         createChiefComplaints: _createChiefComplaints,
         getPatientChiefComplaints: _getPatientChiefComplaints
     };

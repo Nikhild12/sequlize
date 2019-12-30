@@ -424,7 +424,21 @@
                         "name": "searchValue",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "from_date",
+                        "type": "string",
+                        "format": "date"
+
+                    },
+                    {
+                        "in": "query",
+                        "name": "to_date",
+                        "type": "string",
+                        "format": "date"
                     }
+
                 ],
                 "produces": [
                     "application/json",

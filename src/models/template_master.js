@@ -50,8 +50,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_public: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: "1",
-                allowNull: false
+                defaultValue: 1
             },
             facility_uuid: {
                 type: DataTypes.INTEGER,
