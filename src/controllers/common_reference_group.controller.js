@@ -295,9 +295,9 @@ const commonReferenceGroupController = () => {
         const postData = req.body;
         const table_name = postData.table_name;
         // const table_name = "gender";
-        console.log("common_tbl.........",table_name)
+     
         const common_tbl = db[table_name];
-        console.log("common_tbl.........",common_tbl)
+ 
         postData.created_by = req.body.user_uuid;
         try {
             if (postData) {

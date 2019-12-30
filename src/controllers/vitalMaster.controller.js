@@ -28,7 +28,7 @@ const vitalmstrController = () => {
 
     if(user_uuid && vitalsMasterData){
       
-console.log(vitalsMasterData,"vitalsMasterData..............")
+
           vitalsMasterData.code = vitalsMasterData & vitalsMasterData.code ? vitalsMasterData.code : vitalsMasterData.name;
         vitalsMasterData.description = vitalsMasterData & vitalsMasterData.description ? vitalsMasterData.description : vitalsMasterData.name;
         vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
