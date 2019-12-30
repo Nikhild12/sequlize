@@ -11,31 +11,31 @@ module.exports = (sequelize, DataTypes) => {
             },
             vital_type_uuid:{
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
             },
             name:{
                 type: DataTypes.STRING(100),
                 allowNull:true
             },
             description:{
-                type: DataTypes.STRING(255),
+                type: DataTypes.STRING(100),
                 allowNull:true
             },
             mnemonic:{
-                type: DataTypes.STRING(255),
-                allowNull:true
+                type: DataTypes.BOOLEAN,
+                allowNull: true,
             },
             loinc_code_master_uuid:{
                 type: DataTypes.INTEGER,
-                allowNull:false
+                allowNull:true
             },
             uom_master_uuid:{
                 type: DataTypes.INTEGER,
-                allowNull:false                
+                allowNull:true                
             },
             vital_value_type_uuid:{
                 type: DataTypes.INTEGER,
-                allowNull: false
+                
             },
             reference_range_from:{
                 type: DataTypes.DATE,
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_default:{
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
+                allowNull: true,
             },
             is_active:{
                 type: DataTypes.BOOLEAN,

@@ -30,6 +30,45 @@
         "application/file"
     ],
     "paths": {
+        "/api/commonReference/getReferenceIdName": {
+            "post": {
+                "description": "Reference Details Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "tablename",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getReferenceIdName"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Common Reference Group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getReferenceIdName"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+       
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
@@ -374,6 +413,11 @@
                     },
                     {
                         "in": "query",
+                        "name": "facility_uuid",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
@@ -422,6 +466,11 @@
                         "in": "query",
                         "name": "searchValue",
                         "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "facility_uuid",
                         "type": "integer"
                     },
                     {
@@ -626,6 +675,11 @@
                         "in": "query",
                         "name": "departmentId",
                         "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "facility_uuid",
                         "type": "integer"
                     },
                     {
@@ -2051,6 +2105,17 @@
         }
     },
     "definitions": {
+        "getReferenceIdName":{
+            "type": "object",
+            "properties": {
+                "tablename": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
         "createEMR": {
             "type": "array",
             "items": {

@@ -13,6 +13,7 @@ const emr_utility = require('../services/utility.service');
 const patient_chief_complaints_tbl = sequelizeDb.patient_chief_complaints;
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
 const chief_complaints_duration_tbl = sequelizeDb.chief_complaint_duration_periods;
+const encounter_tbl = sequelizeDb.encounter;
 
 const emr_constants = require('../config/constants');
 
@@ -50,7 +51,7 @@ function getPatientSearchQuery(searchKey, searchValue) {
     };
 }
 
-function getCCQuery(searchKey, searchValue, from_date, to_date) {
+function getCCQuery(searchKey, facility_uuid, searchValue, from_date, to_date) {
 
     //let searchObject;
     searchKey = searchKey.toLowerCase();
@@ -70,7 +71,13 @@ function getCCQuery(searchKey, searchValue, from_date, to_date) {
             {
                 model: chief_complaints_duration_tbl,
                 attributes: ['code', 'name']
-            }
+            },
+            {
+                model: encounter_tbl,
+                attributes: ['uuid', 'facility_uuid'],
+                where :{ facility_uuid: facility_uuid}
+            },
+
         ]
     };
 }
@@ -116,14 +123,14 @@ const PatientChiefComplaints = () => {
      */
     const _getPatientChiefComplaints = async (req, res) => {
 
-        const { searchKey, searchValue, from_date, to_date } = req.query;
+        const { searchKey, searchValue, facility_uuid, from_date, to_date } = req.query;
 
         try {
             
-            if (searchKey && searchValue && from_date && to_date)
+            if (searchKey && searchValue && facility_uuid && from_date && to_date)
             {
-                const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getCCQuery(searchKey, searchValue, from_date, to_date));
-                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Chief Complaints Successfully", responseContents: getPatientsChiefComplaintsInReadable(patChiefComplaintsData) });
+                const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getCCQuery(searchKey, searchValue, facility_uuid, from_date, to_date), { returning: true });
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Chief Complaints Successfully", responseContents: patChiefComplaintsData });
             }
             else if (searchKey && searchValue) 
             {
