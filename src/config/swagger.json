@@ -1900,6 +1900,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+
         "/api/patientattachments/download": {
             "get": {
                 "summary": "download the documents",
@@ -1930,6 +1931,42 @@
                         "description": "sucessful operation",
                         "schema": {
                             "$ref": "#/definitions/download"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patientattachments/deleteAttachmentDetails": {
+            "put": {
+                "summary": "delete the documents",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "attachment_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "attachment"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/deleteAttachmentDetails"
                         }
                     }
                 },
@@ -4041,6 +4078,17 @@
             "properties": {
                 "file_path": {
                     "type": "string"
+                }
+            }
+        },
+        "deleteAttachmentDetails": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "attachment_uuid": {
+                    "type": "integer"
                 }
             }
         },
