@@ -5,8 +5,7 @@ const username=require("../config/config");
 const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-var request = require('request');
-var requests = require('../services/requests');
+
 
 // Initialize EMR Workflow
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
