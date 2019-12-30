@@ -67,7 +67,10 @@ function getDiagnosisAttributes() {
         'is_active',
         'status',
         'revision',
-        'created_by'
+        'created_by',
+        'created_date',
+        'modified_by',
+            'modified_date'
     ];
 }
 const diagnosisController = () => {

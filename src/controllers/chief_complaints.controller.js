@@ -5,6 +5,8 @@ const username=require("../config/config");
 const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+var request = require('request');
+var requests = require('../services/requests');
 
 // Initialize EMR Workflow
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
@@ -55,7 +57,10 @@ const getChiefComplaintsAttributes= [
         'referrence_link',
         'body_site',
         'created_date',
-        'is_active'
+        'is_active',
+        'created_by',
+            'modified_by',
+            'modified_date'
     ];
 
 
@@ -72,7 +77,10 @@ function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
         body_site:ChiefComplaintsReqData.body_site,
         modified_by: user_uuid,
         modified_date: new Date(),
-        is_active: ChiefComplaintsReqData.is_active
+        created_by: user_uuid,
+        created_date: new Date(),
+        is_active: ChiefComplaintsReqData.is_active,
+
     };
 
 }
@@ -123,19 +131,21 @@ const ChiefComplaints = () => {
               }).then(async (result) =>{
                 if (result.length != 0) {
                     return res.send({
+                        statusCode: 400,
                       status: "error",
                       msg: "Record already Found. Please enter New CHIEF COMPLAINT "
                     });
                   } 
               });
 
-              chiefComplaintsData.code = chiefComplaintsData & chiefComplaintsData.code ? chiefComplaintsData.code : chiefComplaintsData.name;
-            chiefComplaintsData.description = chiefComplaintsData & chiefComplaintsData.description ? chiefComplaintsData.description : chiefComplaintsData.name;
-            chiefComplaintsData.is_active = chiefComplaintsData.status = emr_const.IS_ACTIVE;
-            chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
-            chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
-            chiefComplaintsData.revision = 1;
+             
             try {
+                chiefComplaintsData.code = chiefComplaintsData & chiefComplaintsData.code ? chiefComplaintsData.code : chiefComplaintsData.name;
+                chiefComplaintsData.description = chiefComplaintsData & chiefComplaintsData.description ? chiefComplaintsData.description : chiefComplaintsData.name;
+                chiefComplaintsData.is_active = chiefComplaintsData.status = emr_const.IS_ACTIVE;
+                chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
+                chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
+                chiefComplaintsData.revision = 1;
                 const chiefComplaintsCreatedData = await chief_complaints_tbl.create(chiefComplaintsData, { returning: true });
 
                 if (chiefComplaintsCreatedData) {
@@ -402,7 +412,8 @@ const ChiefComplaints = () => {
             };
         }
 
-
+        // let bodyParse = await requests.getResults("users/getusersById", req, getsearch.Id);
+        // console.log(bodyParse)
         try {
             await chief_complaints_tbl.findAndCountAll(findQuery)
 
