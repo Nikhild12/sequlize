@@ -77,13 +77,13 @@ const EMRPatientVitals = () => {
     };
     const _getHistoryPatientVitals = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { patient_uuid, department_uuid, from_date, to_date } = req.query;
+        const { patient_uuid, department_uuid, facility_uuid, from_date, to_date } = req.query;
         
         try {
             
-            if (user_uuid && patient_uuid && department_uuid == 0 && from_date && to_date) {
+            if (user_uuid && patient_uuid && department_uuid == 0 && facility_uuid &&from_date && to_date) {
 
-                let getPatientVitals = await vw_patientVitalsTbl.findAll(getPatientQuery(patient_uuid, from_date, to_date), { returning: true });
+                let getPatientVitals = await vw_patientVitalsTbl.findAll(getPatientQuery(patient_uuid, facility_uuid, from_date, to_date), { returning: true });
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Patient Vital Details  Successfully", responseContents: patientVitalsList(getPatientVitals) });
             }
             else if (user_uuid && patient_uuid && department_uuid > 0) {
@@ -137,12 +137,13 @@ function getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid) {
     return query;
 }
 
-function getPatientQuery(patient_uuid, from_date, to_date) {
+function getPatientQuery(patient_uuid, facility_uuid, from_date, to_date) {
     // user_uuid == doctor_uuid
     let query = {
         order: [['pv_uuid', 'DESC']],
         attributes: [
             'pv_uuid',
+            'pv_facility_uuid',
             'pv_vital_master_uuid',
             'pv_vital_type_uuid',
             'pv_vital_value_type_uuid',
@@ -157,6 +158,7 @@ function getPatientQuery(patient_uuid, from_date, to_date) {
         where: { vm_active: emrConstants.IS_ACTIVE, 
                  vm_status: emrConstants.IS_ACTIVE, 
                  pv_patient_uuid: patient_uuid, 
+                 pv_facility_uuid: facility_uuid,
                  pv_performed_date: {
                     [Op.between]: [from_date, to_date] }  
                     //$lte: to_date,
@@ -180,6 +182,7 @@ function patientVitalsList(getHistoryPatientVitals) {
             {
                 // patient vital values
                 patient_vital_uuid: pV.pv_uuid,
+                patient_facility_uuid: pV.pv_facility_uuid,
                 vital_value: pV.pv_vital_value,
                 vital_performed_date: pV.pv_performed_date,
                 vital_value_type_uuid: pV.pv_vital_value_type_uuid,

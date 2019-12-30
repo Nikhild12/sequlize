@@ -413,10 +413,14 @@
                     },
                     {
                         "in": "query",
+                        "name": "facility_uuid",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
-
                     },
                     {
                         "in": "query",
@@ -466,10 +470,14 @@
                     },
                     {
                         "in": "query",
+                        "name": "facility_uuid",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
-
                     },
                     {
                         "in": "query",
@@ -477,7 +485,6 @@
                         "type": "string",
                         "format": "date"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -556,7 +563,6 @@
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
-
                     },
                     {
                         "in": "query",
@@ -564,7 +570,6 @@
                         "type": "string",
                         "format": "date"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -674,10 +679,14 @@
                     },
                     {
                         "in": "query",
+                        "name": "facility_uuid",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
-
                     },
                     {
                         "in": "query",
@@ -685,7 +694,6 @@
                         "type": "string",
                         "format": "date"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -1939,7 +1947,6 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/patientattachments/download": {
             "get": {
                 "summary": "download the documents",
@@ -2042,6 +2049,54 @@
                 "responses": {
                     "200": {
                         "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/treatment-kit/getByFilters": {
+            "get": {
+                "summary": "To get list of Treatment Kits",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchKey",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "searchValue",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "TreatmentKit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Treatment Kit Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKit"
+                        }
                     }
                 },
                 "x-auth-type": "Application & Application User",
@@ -3517,7 +3572,8 @@
             "properties": {
                 "Diagnosis_id": {
                     "type": "integer"
-                },"code": {
+                },
+                "code": {
                     "type": "string"
                 },
                 "name": {
@@ -4233,6 +4289,26 @@
                         "diagnosis_uuid": {
                             "type": "integer"
                         }
+                    }
+                }
+            }
+        },
+        "getTreatmentKit": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "treatment_kit_id": {
+                        "type": "integer"
+                    },
+                    "treatment_code": {
+                        "type": "integer"
+                    },
+                    "treatment_name": {
+                        "type": "string"
+                    },
+                    "treatment_type_id": {
+                        "type": "integer"
                     }
                 }
             }

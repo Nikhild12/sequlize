@@ -20,6 +20,9 @@ module.exports = Object.freeze({
     DUPLICATE_ACTIVE_MSG: 'Already item is available in the list',
     DUPLICATE_IN_ACTIVE_MSG: 'This item is Inactive! Please contact administrator',
     TREATMENT_SUCCESS: 'Treatment Kit Successfully Inserted',
+    FILTERBYTHREE: 'filterbythree',
+    FETCHD_TREATMENT_KIT_SUCCESSFULLY: 'Fetched Treatment Kit Successfully',
+    NO_RECORD_FOUND: 'No Record Found',
 
     GetpleaseProvideMsg: function (columnname) {
         let returnProvideMsg = 'Please provide';

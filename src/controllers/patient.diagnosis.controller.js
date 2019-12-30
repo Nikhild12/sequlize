@@ -86,10 +86,10 @@ const PatientDiagnsis = () => {
 
         try {
         const { user_uuid } = req.headers;
-        const { searchKey, searchValue, patientId, departmentId, from_date, to_date } = req.query;
+        const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
 
-        if (user_uuid && searchKey && searchValue && patientId && departmentId && from_date, to_date) {
-            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, from_date, to_date));
+        if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
+            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
             return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
         }
         
@@ -167,7 +167,7 @@ function getPatientFiltersQuery(key, value, pId, dId, uId, from_date, to_date) {
     return filtersQuery;
 }
 
-function getPatientFiltersQuery1(key, value, pId, dId, uId, from_date, to_date) {
+function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_date, to_date) {
 
     let filtersQuery = {};
     switch (key) {
@@ -189,9 +189,8 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, from_date, to_date) 
         }
     ];
     filtersQuery.where = {
-        //department_uuid: dId,
         patient_uuid: pId,
-        //performed_by: uId,
+        facility_uuid: facility_uuid,
         created_date: {
                 [Op.between]: [from_date, to_date] }
         
