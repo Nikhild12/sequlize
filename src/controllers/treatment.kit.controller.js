@@ -19,6 +19,57 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 
+// Treatment Kit Filters Query Function
+const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
+    searchBy = searchBy.toLowerCase();
+
+    switch (searchBy) {
+        case emr_constants.FILTERBYTHREE:
+
+            filterByQuery = {
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE,
+                [Op.and]: [
+                    {
+                        [Op.or]: [
+                            {
+                                name: {
+                                    [Op.like]: `%${searchValue}%`
+                                }
+                            },
+                            {
+                                code: {
+                                    [Op.like]: `%${searchValue}%`,
+                                }
+                            }
+                        ],
+
+                    },
+                    {
+                        [Op.or]: [
+                            { "department_uuid": { [Op.eq]: dept_id }, "is_public": { [Op.eq]: emr_constants.IS_ACTIVE } }, { "user_uuid": { [Op.eq]: user_uuid } }
+                        ]
+                    }
+                ]
+            };
+            return filterByQuery;
+        case 'treatment_kit_id':
+        default:
+            return {
+                uuid: searchValue,
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE
+            }
+    }
+};
+
+const getFilterByCodeAndNameAttributes = [
+    'uuid',
+    'treatment_kit_type_uuid',
+    'code',
+    'name'
+];
+
 const TreatMent_Kit = () => {
 
     /**
@@ -117,13 +168,58 @@ const TreatMent_Kit = () => {
         }
     };
 
+    /**
+     * Treatment Kit Filters Search
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const _getTreatmentKitByFilters = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        const { searchKey, searchValue, departmentId } = req.query;
+
+        if (user_uuid && searchKey && searchValue) {
+
+            try {
+
+                const treatmentKitFilteredData = await treatmentkitTbl.findAll({
+                    where: getByFilterQuery(searchKey, searchValue, user_uuid, departmentId),
+                    attributes: getFilterByCodeAndNameAttributes
+                });
+                const returnMessage = treatmentKitFilteredData.length > 0 ? emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+
+                let response = getFilterTreatmentKitResponse(treatmentKitFilteredData);
+                let responseLength = response.length;
+                if (searchKey.toLowerCase() === 'treatment_kit_id') {
+                    response = response[0];
+                }
+                return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response, responseLength });
+
+            } catch (ex) {
+
+                console.log('Exception happened', ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+
+            }
+
+        } else {
+
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+
+        }
+
+
+    };
+
     return {
 
-        createTreatmentKit: _createTreatmentKit
+        createTreatmentKit: _createTreatmentKit,
+        getTreatmentKitByFilters: _getTreatmentKitByFilters
 
     };
 
 };
+
 module.exports = TreatMent_Kit();
 
 async function findDuplicateTreatmentKitByCodeAndName({ code, name }) {
@@ -178,6 +274,16 @@ function checkTreatmentKitDrug(drug) {
     return drug && drug.item_master_uuid;
 }
 
+function getFilterTreatmentKitResponse(argument) {
+    return argument.map((a) => {
+        return {
+            treatment_kit_id: a.uuid,
+            treatment_code: a.code,
+            treatment_name: a.name,
+            treatment_type_id: a.treatment_kit_type_uuid
+        }
+    });
+}
 
 
 
