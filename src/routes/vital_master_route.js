@@ -8,11 +8,16 @@ const vitalController = require('../controllers/vitalMaster.controller');
 const vitalRoute = express.Router();
 
 vitalRoute.route('/create').post(vitalController.createVital);
-vitalRoute.route('/getVitals').get(vitalController.getVitals);//get default vitals
+vitalRoute.route('/getVitals').post(vitalController.getVitals);//get default vitals
 
-vitalRoute.route('/getAllVitals').get(vitalController.getAllVitals);
+vitalRoute.route('/getAllVitals').post(vitalController.getAllVitals);
 
-vitalRoute.route('/getVitalByID').get(vitalController.getVitalByID);
+vitalRoute.route('/getVitalByID').post(vitalController.getVitalByID);
+
+vitalRoute.route('/getALLVitalsmaster').post(vitalController.getALLVitalsmaster);
+vitalRoute.route('/updatevitals').post(vitalController.updatevitalsById);
+
+vitalRoute.route('/deletevitals').post(vitalController.deletevitals);
 
 
 module.exports = vitalRoute;
