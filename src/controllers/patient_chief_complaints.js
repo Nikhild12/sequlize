@@ -57,6 +57,7 @@ function getCCQuery(searchKey, searchValue, from_date, to_date) {
     return {
         where: {
             patient_uuid: searchValue,
+            facility_uuid: facility_uuid,
             is_active: emr_constants.IS_ACTIVE,
             status: emr_constants.IS_ACTIVE,
             created_date: {
@@ -116,13 +117,13 @@ const PatientChiefComplaints = () => {
      */
     const _getPatientChiefComplaints = async (req, res) => {
 
-        const { searchKey, searchValue, from_date, to_date } = req.query;
+        const { searchKey, searchValue, facility_uuid, from_date, to_date } = req.query;
 
         try {
             
-            if (searchKey && searchValue && from_date && to_date)
+            if (searchKey && searchValue && facility_uuid && from_date && to_date)
             {
-                const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getCCQuery(searchKey, searchValue, from_date, to_date));
+                const patChiefComplaintsData = await patient_chief_complaints_tbl.findAll(getCCQuery(searchKey, searchValue, facility_uuid, from_date, to_date));
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Chief Complaints Successfully", responseContents: getPatientsChiefComplaintsInReadable(patChiefComplaintsData) });
             }
             else if (searchKey && searchValue) 
