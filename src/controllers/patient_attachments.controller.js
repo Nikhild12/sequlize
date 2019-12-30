@@ -24,6 +24,34 @@ const patientAttachmentsController = () => {
     */
    
    
+   const _deleteAttachmentDetails = async (req, res) => {
+
+    // plucking data req body
+    const {attachment_uuid} = req.query;
+    const userUUID = parseInt(req.headers.user_uuid);
+
+    try {
+      if (attachment_uuid && userUUID) {
+        const updatedAttachData = { status: 0, is_active: 0, modified_by: userUUID, modified_date: new Date() };
+
+        const updateAttachAsync = await attachmentTbl.update(updatedAttachData, 
+                                                { where: { uuid: attachment_uuid} });
+            
+        if (updateAttachAsync) {
+          return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
+        }
+
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
+    } catch (ex) {
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
+
+
+
 const _getattachmenttype = async (req, res) => {
     let {user_uuid} = req.headers;
 
@@ -99,6 +127,7 @@ const _getAllAttachments = async (req, res) => {
     try {
         if (user_uuid){
         const data = await attachmentTbl.findAll({
+            where:{ is_active: 1, status: 1},
             include: [
                 {
                   model: attachmentTypeTbl,
@@ -220,7 +249,8 @@ return {
     getattachmenttype: _getattachmenttype,
     getlistBytype: _getlistBytype,
     getAllAttachments: _getAllAttachments,
-    download: _download
+    download: _download,
+    deleteAttachmentDetails: _deleteAttachmentDetails
     };
 };
 
