@@ -374,6 +374,11 @@
                     },
                     {
                         "in": "query",
+                        "name": "facility_uuid",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
                         "name": "from_date",
                         "type": "string",
                         "format": "date"
@@ -423,6 +428,11 @@
                         "in": "query",
                         "name": "searchValue",
                         "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "facility_uuid",
                         "type": "integer"
                     },
                     {
@@ -631,6 +641,11 @@
                         "in": "query",
                         "name": "departmentId",
                         "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "facility_uuid",
                         "type": "integer"
                     },
                     {
