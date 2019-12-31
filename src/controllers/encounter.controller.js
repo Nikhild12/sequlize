@@ -181,7 +181,10 @@ function getEncounterQuery(pId, from_date, to_date) {
         where: {
             patient_uuid: pId,
             encounter_date: {
-                [Op.between]: [from_date, to_date]
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('encounter_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('encounter_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
             },
             is_active_encounter: emr_constants.IS_ACTIVE,
             is_active: emr_constants.IS_ACTIVE,
