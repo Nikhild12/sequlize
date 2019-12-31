@@ -5,8 +5,10 @@ const db = require("../config/sequelize");
 const _ = require('lodash');
 const multer = require('multer');
 const moment = require('moment');
-//const path = require('path');
+const path = require('path');
 const fs = require('file-system');
+const mime = require ('mime');
+
 //const bodyParser = require('body-parser');
 
 const attachmentTbl = db.patient_attachments;
@@ -170,20 +172,32 @@ const _download = async(req, res) => {
     try{
         if (file_path && user_uuid){
             if (fs.existsSync(location)){
-           await res.download(location, function (err, success)
-            {
-                if (err){
-                   console.log("download failed");
-                }
-                   else{ 
-                    console.log("download sucess");
-                   }
-            }
-            );
+        //    await res.download(location, function (err, success)
+        //     {
+        //         if (err){
+        //            console.log("download failed");
+        //         }
+        //            else{ 
+        //             console.log("download sucess");
+        //            }
+        //     }
+        //     );
+
+        //var file = __dirname + '/upload-folder/dramaticpenguin.MOV';
+
+        var filename = path.basename(location);
+        var mimetype = mime.lookup(location);
+      
+        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+        res.setHeader('Content-type', mimetype);
+      
+        var filestream = fs.createReadStream(location);
+        filestream.pipe(res);
+        
         } else {return res.status(400).send({ code: httpStatus[400], message: "no such file or directory" });}
     } else {return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });}
     } catch (err){
-        res.send({ "status": 400, "message": ex.message });
+        res.send({ "status": 400, "message": err.message });
     }
 };
 
