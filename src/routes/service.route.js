@@ -83,6 +83,7 @@ serviceRouter.use('/bodysite', bodysiteRoutes);
 serviceRouter.use('/bodyside', bodysiteRoutes);
 serviceRouter.use('/commonReference',common_reference_group);
 serviceRouter.use('/Reference',emrrefereneRoutes);
+serviceRouter.use('/CommonReference',commonRouter);
 
 
 // Chief Complaints Routes
