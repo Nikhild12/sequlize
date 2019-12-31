@@ -91,7 +91,15 @@ const PatientDiagnsis = () => {
         const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
 
         if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
-            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
+            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date),{
+                patient_uuid: patientId,
+        facility_uuid: facility_uuid,
+        created_date: {
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+            ] }
+            });
             return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
         }
         
@@ -179,6 +187,8 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
                     attributes: getPatientDiagnosisAttributes(),
                     order: [['uuid', 'DESC']]
                 };
+                
+                
                 break;
         default:
             break;
@@ -193,12 +203,12 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
     filtersQuery.where = {
         patient_uuid: pId,
         facility_uuid: facility_uuid,
-        created_date: {
-            [Op.and]: [
-                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-            ] 
-            }
+        // created_date: {
+        //     [Op.and]: [
+        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+        //     ] 
+        //     }
         
     };
     filtersQuery.attributes = getPatientDiagnosisAttributes();
