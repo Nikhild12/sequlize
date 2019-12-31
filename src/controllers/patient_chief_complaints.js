@@ -61,7 +61,11 @@ function getCCQuery(searchKey, facility_uuid, searchValue, from_date, to_date) {
             is_active: emr_constants.IS_ACTIVE,
             status: emr_constants.IS_ACTIVE,
             created_date: {
-                [Op.between]: [from_date, to_date] }
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ] 
+            }
         },
         include: [
             {

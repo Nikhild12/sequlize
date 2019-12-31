@@ -192,7 +192,11 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
         patient_uuid: pId,
         facility_uuid: facility_uuid,
         created_date: {
-                [Op.between]: [from_date, to_date] }
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+            ] 
+            }
         
     };
     filtersQuery.attributes = getPatientDiagnosisAttributes();

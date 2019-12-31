@@ -160,10 +160,12 @@ function getPatientQuery(patient_uuid, facility_uuid, from_date, to_date) {
                  pv_patient_uuid: patient_uuid, 
                  pv_facility_uuid: facility_uuid,
                  pv_performed_date: {
-                    [Op.between]: [from_date, to_date] }  
-                    //$lte: to_date,
-                    //$gte: from_date}
-          },
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('date', Sequelize.col('pv_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                        Sequelize.where(Sequelize.fn('date', Sequelize.col('pv_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                    ]
+                }  
+        },
     };
     return query;
 }
