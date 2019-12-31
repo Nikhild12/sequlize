@@ -1,15 +1,13 @@
 const express = require("express");
-const genderctrl = require("../controllers/common_reference_group.controller");
+const commonreferencectrl = require("../controllers/common_reference_group.controller");
 
 
-const router = express.Router();
-router.route("/addReference").post(genderctrl.addReference);
-router.route("/updateReference").post(genderctrl.updateReference);
-router.route("/deleteReference").post(genderctrl.deleteReference);
-router.route("/getReference").post(genderctrl.getReference);
-router.route("/getReferenceNameId").post(genderctrl.getReferenceIdName);
-
-router.route("/getReferenceById").post(genderctrl.getReferenceById);
+const commonRouter = express.Router();
+commonRouter.route("/addReference").post(commonreferencectrl.addReference);
+commonRouter.route("/updateReference").post(commonreferencectrl.updateReference);
+commonRouter.route("/deleteReference").post(commonreferencectrl.deleteReference);
+commonRouter.route("/getReference").post(commonreferencectrl.getReference);
+commonRouter.route("/getReferenceById").post(commonreferencectrl.getReferenceById);
 
 
-module.exports = router;
+module.exports = commonRouter;
