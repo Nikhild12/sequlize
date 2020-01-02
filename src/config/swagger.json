@@ -68,7 +68,6 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-<<<<<<< HEAD
        "/api/allergyMaster/addAllergyMaster":{
         "post": {
             "description": "To Create a Allergy for the Master",
@@ -228,8 +227,6 @@
         }
        },
        
-=======
->>>>>>> 273d60b89e21c90f0b42e7bb4df7e92312898e6e
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
@@ -2387,7 +2384,6 @@
         },
 
         "getReferenceIdName":{
-        "getReferenceIdName": {
             "type": "object",
             "properties": {
                 "tablename": {
@@ -2950,8 +2946,19 @@
                         "department_uuid": {
                             "type": "integer"
                         },
+                        "diagnosis_uuid": {
+                            "type": "integer"
+                        },
                         "display_order": {
                             "type": "integer"
+                        },
+                        "revision": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
                         }
                     }
                 },
@@ -2985,7 +2992,8 @@
                                 "type": "integer"
                             },
                             "duration": {
-                                "type": "integer"
+                                "type": "string",
+                                "example": "1 month"
                             },
                             "duration_period_uuid": {
                                 "type": "integer"
@@ -2996,8 +3004,13 @@
                             "display_order": {
                                 "type": "integer"
                             },
-                            "treatment_kit_uuid": {
-                                "type": "integer"
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
                             }
                         }
                     }
@@ -4499,70 +4512,60 @@
                     }
                 },
                 "treatment_kit_drug": {
-                    "type": "array",
-                    "items": {
-                        "properties": {
-                            "item_master_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_route_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_frequency_uuid": {
-                                "type": "integer"
-                            },
-                            "duration": {
-                                "type": "string"
-                            },
-                            "duration_period_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_instruction_uuid": {
-                                "type": "integer"
-                            },
-                            "quantity": {
-                                "type": "string"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "item_master_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_route_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_frequency_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "string"
+                        },
+                        "duration_period_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_instruction_uuid": {
+                            "type": "integer"
+                        },
+                        "quantity": {
+                            "type": "string"
                         }
                     }
                 },
                 "treatment_kit_lab": {
-                    "type": "array",
-                    "items": {
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_investigation": {
-                    "type": "array",
-                    "items": {
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_radiology": {
-                    "type": "array",
-                    "items": {
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_diagnosis": {
-                    "type": "array",
-                    "items": {
-                        "properties": {
-                            "diagnosis_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "diagnosis_uuid": {
+                            "type": "integer"
                         }
                     }
                 }
