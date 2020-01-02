@@ -1877,7 +1877,7 @@
             }
         },
         "/api/chief-complaints-master/delete": {
-            "put": {
+            "post": {
                 "description": "Deleted chief Complaints Master Data",
                 "parameters": [
                     {
@@ -1915,7 +1915,7 @@
             }
         },
         "/api/chief-complaints-master/update": {
-            "put": {
+            "post": {
                 "description": "To Update Complaints Master Data",
                 "parameters": [
                     {
