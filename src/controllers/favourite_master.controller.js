@@ -1,6 +1,5 @@
 // Package Import
 const httpStatus = require("http-status");
-// const tickSheetDebug = require('debug')('app:favourite');
 
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
@@ -12,10 +11,12 @@ const favouriteMasterTbl = sequelizeDb.favourite_master;
 const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 
+// Utility Service Import
+const emr_utility = require('../services/utility.service');
+
 const favourite_clinical_type_id = 1;
 
 const active_boolean = 1;
-const in_active_boolean = 0;
 const neQuery = { [Op.ne]: null };
 
 const duplicate_active_msg = 'Already item is available in the list';
@@ -125,8 +126,8 @@ const TickSheetMasterController = () => {
     const _createTickSheetMaster = async (req, res) => {
 
         // plucking data req body
-        const favouriteMasterReqData = req.body.headers;
-        const favouriteMasterDetailsReqData = req.body.details;
+        let favouriteMasterReqData = req.body.headers;
+        let favouriteMasterDetailsReqData = req.body.details;
 
         const { searchkey } = req.query;
         const { user_uuid } = req.headers;
@@ -134,10 +135,8 @@ const TickSheetMasterController = () => {
 
         if (favouriteMasterReqData && favouriteMasterDetailsReqData.length > 0 && searchkey) {
 
-            favouriteMasterReqData.created_by = favouriteMasterReqData.user_uuid = favouriteMasterReqData.modified_by = user_uuid;
-            favouriteMasterReqData.created_date = favouriteMasterReqData.modified_date = new Date();
-            favouriteMasterReqData.active_from = favouriteMasterReqData.active_to = new Date();
-            favouriteMasterReqData.is_active = favouriteMasterReqData.status = true;
+            favouriteMasterReqData.active_from = new Date();
+            favouriteMasterReqData = emr_utility.createIsActiveAndStatus(favouriteMasterReqData, user_uuid);
 
             try {
 
@@ -327,10 +326,7 @@ function getFavouriteMasterDetailsWithUUID(detailsTbl, detailsData, masterData, 
     // creating a Promise Array to push All async 
     detailsData.forEach((mD) => {
 
-        mD.favourite_master_uuid = masterData.uuid;
-        mD.created_by = mD.modified_by = reqUserUUId;
-        mD.created_date = mD.modified_date = new Date();
-        mD.is_active = mD.status = true;
+        mD = emr_utility.assignDefaultValuesAndUUIdToObject(mD, masterData, reqUserUUId, 'favourite_master_uuid');
         masterDetailsPromise = [...masterDetailsPromise,
         detailsTbl.create(mD, { returning: true })
         ];
@@ -450,6 +446,11 @@ function getSearchValueBySearchKey(details, search_key) {
             return {
                 search_key: 'tmsd_diagnosis_uuid',
                 search_value: details.diagnosis_uuid
+            };
+        case 'treatment':
+            return {
+                search_key: 'tsmd_treatment_kit_uuid',
+                search_value: details.treatment_kit_uuid
             };
         case 'drug':
         default:

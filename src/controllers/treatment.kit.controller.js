@@ -95,53 +95,63 @@ const TreatMent_Kit = () => {
                 let treatmentSave = [];
                 const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
                 if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
-                    return res.send(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord) });
+                    return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord) });
                 }
                 treatment_kit = emr_utility.createIsActiveAndStatus(treatment_kit, user_uuid);
                 const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true, transaction: treatmentTransaction });
                 // Lab
-                if (treatment_kit_lab && treatment_kit_lab.test_master_uuid && treatmentSavedData) {
+                if (treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 && treatmentSavedData) {
 
                     // assigning Default Values
-                    treatment_kit_lab = emr_utility.assignDefaultValuesAndUUIdToObject(treatment_kit_lab, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    treatment_kit_lab.forEach((l) => {
+                        l = emr_utility.assignDefaultValuesAndUUIdToObject(l, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    });
 
                     // Treatment Kit Lab Save
-                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.create(treatment_kit_lab, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.bulkCreate(treatment_kit_lab, { returning: true, transaction: treatmentTransaction })];
 
                 }
                 // Drug
-                if (treatment_kit_drug && treatment_kit_drug.item_master_uuid && treatmentSavedData) {
+                if (treatment_kit_drug && Array.isArray(treatment_kit_drug) && treatment_kit_drug.length > 0 && treatmentSavedData) {
 
                     // assigning Default Values
-                    treatment_kit_drug = emr_utility.assignDefaultValuesAndUUIdToObject(treatment_kit_drug, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    treatment_kit_drug.forEach((dr) => {
+                        dr = emr_utility.assignDefaultValuesAndUUIdToObject(dr, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.create(treatment_kit_drug, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, { returning: true, transaction: treatmentTransaction })];
 
                 }
                 // Investigation 
-                if (treatment_kit_investigation && treatment_kit_investigation.test_master_uuid && treatmentSavedData) {
+                if (treatment_kit_investigation && Array.isArray(treatment_kit_investigation) && treatment_kit_investigation.length > 0 && treatmentSavedData) {
                     // assigning Default Values
-                    treatment_kit_investigation = emr_utility.assignDefaultValuesAndUUIdToObject(treatment_kit_investigation, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    treatment_kit_investigation.forEach((i) => {
+                        i = emr_utility.assignDefaultValuesAndUUIdToObject(i, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.create(treatment_kit_investigation, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.bulkCreate(treatment_kit_investigation, { returning: true, transaction: treatmentTransaction })];
                 }
                 // Diagnosis 
-                if (treatment_kit_diagnosis && treatment_kit_diagnosis.diagnosis_uuid && treatmentSavedData) {
+                if (treatment_kit_diagnosis && Array.isArray(treatment_kit_diagnosis) && treatment_kit_diagnosis.length > 0 && treatmentSavedData) {
                     // assigning Default Values
-                    treatment_kit_diagnosis = emr_utility.assignDefaultValuesAndUUIdToObject(treatment_kit_diagnosis, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    treatment_kit_diagnosis.forEach((d) => {
+                        d = emr_utility.assignDefaultValuesAndUUIdToObject(d, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.create(treatment_kit_diagnosis, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, { returning: true, transaction: treatmentTransaction })];
                 }
                 // Radiology
-                if (treatment_kit_radiology && treatment_kit_radiology.test_master_uuid && treatmentSavedData) {
+                if (treatment_kit_radiology && Array.isArray(treatment_kit_radiology) && treatment_kit_radiology.length > 0 && treatmentSavedData) {
                     // assigning Default Values
-                    treatment_kit_radiology = emr_utility.assignDefaultValuesAndUUIdToObject(treatment_kit_radiology, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    treatment_kit_radiology.forEach((r) => {
+                        r = emr_utility.assignDefaultValuesAndUUIdToObject(r, treatmentSavedData, user_uuid, 'treatment_kit_uuid');
+                    });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.create(treatment_kit_radiology, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, { returning: true, transaction: treatmentTransaction })];
                 }
 
                 await Promise.all(treatmentSave);
@@ -263,15 +273,15 @@ function checkTreatmentKit(req) {
 
 
 function checkTreatmentKitObj(kit) {
-    return kit && kit.test_master_uuid;
+    return kit && Array.isArray(kit) && kit.length > 0;
 }
 
 function checkTreatmentKitDiagnosis(diagnosis) {
-    return diagnosis && diagnosis.diagnosis_uuid;
+    return diagnosis && Array.isArray(diagnosis) && diagnosis.length > 0;
 }
 
 function checkTreatmentKitDrug(drug) {
-    return drug && drug.item_master_uuid;
+    return drug && Array.isArray(drug) && drug.length > 0;
 }
 
 function getFilterTreatmentKitResponse(argument) {
