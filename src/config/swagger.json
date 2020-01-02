@@ -2351,35 +2351,15 @@
             }
         },
         "getAlleryMasterById":{
-            "type": "array",
-            "items": {
+            
+            
                 "type": "object",
                 "properties": {
-                    "patient_uuid": {
+                    "Allergy_id": {
                         "type": "integer"
-                    },
-                    "encounter_uuid": {
-                        "type": "integer"
-                    },
-                    "encounter_type_uuid": {
-                        "type": "integer"
-                    },
-                    "consultation_uuid": {
-                        "type": "integer"
-                    },
-                    "chief_complaint_uuid": {
-                        "type": "integer"
-                    },
-                    "chief_complaint_duration": {
-                        "type": "integer"
-                    },
-                    "chief_complaint_duration_period_uuid": {
-                        "type": "integer"
-                    },
-                    "revision": {
-                        "type": "integer"
+                   
                     }
-                }
+                
             }
         },
 
