@@ -14,6 +14,9 @@ const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 // Utility Service Import
 const emr_utility = require('../services/utility.service');
 
+// Constants Import
+const emr_constants = require('../config/constants');
+
 const favourite_clinical_type_id = 1;
 
 const active_boolean = 1;
@@ -79,9 +82,8 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
             notNullSearchKey = 'cc_name';
             break;
         case 6:
-            notNullSearchKey = 'd_name';
-            break;
         default:
+            notNullSearchKey = 'd_name';
             break;
     }
     return {
@@ -110,7 +112,8 @@ function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue,
 function getFavouriteById(fav_id) {
     return {
         tsm_uuid: fav_id,
-        tsm_active: active_boolean
+        tsm_active: active_boolean,
+        tsm_status: active_boolean
     };
 }
 
@@ -131,10 +134,10 @@ const TickSheetMasterController = () => {
 
         const { searchkey } = req.query;
         const { user_uuid } = req.headers;
-        const { department_uuid } = favouriteMasterReqData;
 
-        if (favouriteMasterReqData && favouriteMasterDetailsReqData.length > 0 && searchkey) {
+        if (favouriteMasterReqData && Array.isArray(favouriteMasterDetailsReqData) && favouriteMasterDetailsReqData.length > 0 && searchkey) {
 
+            const { department_uuid } = favouriteMasterReqData;
             favouriteMasterReqData.active_from = new Date();
             favouriteMasterReqData = emr_utility.createIsActiveAndStatus(favouriteMasterReqData, user_uuid);
 
@@ -195,7 +198,8 @@ const TickSheetMasterController = () => {
                 });
 
                 favouriteList = getFavouritesInList(tickSheetData);
-                return res.status(httpStatus.OK).send(favouriteList);
+                const returnMessage = favouriteList && favouriteList.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteList, responseContentLength: favouriteList.length });
 
             } catch (ex) {
 
@@ -223,8 +227,10 @@ const TickSheetMasterController = () => {
                     where: getFavouriteById(favourite_id)
                 });
 
+
                 favouriteList = getFavouritesInList(tickSheetData);
-                return res.status(httpStatus.OK).send(favouriteList[0]);
+                const returnMessage = favouriteList && favouriteList.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteList[0], responseContentLength: favouriteList.length });
 
             } catch (ex) {
 
@@ -243,12 +249,22 @@ const TickSheetMasterController = () => {
         const { user_uuid } = req.headers;
         const favouriteMasterReqData = req.body;
 
-        const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
-        const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
+        try {
+            const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
+            const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
 
-        if (user_uuid && favouriteMasterReqData) {
+            if (user_uuid && favouriteMasterReqData && favouriteMasterReqData.hasOwnProperty('favourite_id') && favouriteMasterReqData.hasOwnProperty('is_active')) {
 
-            try {
+                const updatingRecord = await favouriteMasterTbl.findAll({
+                    where: {
+                        uuid: favouriteMasterReqData.favourite_id,
+                        status: emr_constants.IS_ACTIVE
+                    }
+                });
+
+                if (updatingRecord && updatingRecord.length === 0) {
+                    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
+                }
 
                 const updatedFavouriteData = await Promise.all([
                     favouriteMasterTbl.update(favouriteMasterUpdateData, { where: { uuid: favouriteMasterReqData.favourite_id } }),
@@ -259,15 +275,14 @@ const TickSheetMasterController = () => {
                     return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: favouriteMasterReqData });
                 }
 
-            } catch (ex) {
-
-                console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({ code: httpStatus[400], message: ex.message });
-
+            } else {
+                return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
             }
+        } catch (ex) {
 
-        } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
+            console.log(`Exception Happened ${ex}`);
+            return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
         }
     };
 
