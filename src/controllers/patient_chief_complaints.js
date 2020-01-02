@@ -1,5 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
+const moment = require('moment');
 
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
@@ -60,10 +61,10 @@ function getCCQuery(searchKey, facility_uuid, searchValue, from_date, to_date) {
             patient_uuid: searchValue,
             is_active: emr_constants.IS_ACTIVE,
             status: emr_constants.IS_ACTIVE,
-            created_date: {
+            performed_date: {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
                 ] 
             }
         },

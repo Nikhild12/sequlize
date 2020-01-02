@@ -26,6 +26,8 @@ const diagnosisCategoryRoutes = require("./diagnosis_category.route");
 const diagnosisGradeRoutes = require("./diagnosis_grade.route");
 const diagnosisRegionRoutes = require("./diagnosis_region.route");
 const bodysiteRoutes = require("./body_site.route");
+const emrrefereneRoutes = require("./emr_reference_group.route");
+const commonRouter = require("./commonReference.route");
 
 
 const chiefComplaintsRouter = require('./chief.complaints.route');
@@ -80,6 +82,10 @@ serviceRouter.use('/diagnosisRegion', diagnosisRegionRoutes);
 serviceRouter.use('/bodysite', bodysiteRoutes);
 serviceRouter.use('/bodyside', bodysiteRoutes);
 serviceRouter.use('/commonReference',common_reference_group);
+serviceRouter.use('/Reference',emrrefereneRoutes);
+serviceRouter.use('/CommonReference',commonRouter);
+
+
 // Chief Complaints Routes
 serviceRouter.use('/chiefComplaints', chiefComplaintsRoutes);
 serviceRouter.use('/chief-complaints-duration', chiefDurationRoute);

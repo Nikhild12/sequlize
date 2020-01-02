@@ -2,6 +2,8 @@
 // Package Import
 const httpStatus = require("http-status");
 
+const moment = require('moment');
+
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
 
@@ -33,6 +35,7 @@ const getPatientDiagnosisAttributes = () => {
         'condition_type_uuid',
         'condition_date',
         'comments',
+        'performed_date',
         'created_date',
         'modified_date',
         'performed_by'
@@ -89,7 +92,17 @@ const PatientDiagnsis = () => {
         const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
 
         if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
-            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
+            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date) 
+        //     {
+        //         patient_uuid: patientId,
+        // facility_uuid: facility_uuid,
+        // created_date: {
+        //     [Op.and]: [
+        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+        //     ] }
+        //     });
+            );
             return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
         }
         
@@ -177,6 +190,7 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
                     attributes: getPatientDiagnosisAttributes(),
                     order: [['uuid', 'DESC']]
                 };
+                               
                 break;
         default:
             break;
@@ -188,17 +202,20 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
             attributes: ['code', 'name']
         }
     ];
+
+
     filtersQuery.where = {
         patient_uuid: pId,
         facility_uuid: facility_uuid,
-        created_date: {
-            [Op.and]: [
-                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-            ] 
-            }
+        performed_date: {
+             [Op.and]: [
+                 Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                 Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+             ] 
+             }
         
     };
+
     filtersQuery.attributes = getPatientDiagnosisAttributes();
     Object.assign(filtersQuery.where, utilityService.getActiveAndStatusObject(emr_constants.IS_ACTIVE));
     return filtersQuery;
@@ -209,6 +226,7 @@ function getPatientData(responseData) {
     return responseData.map((rD) => {
         return {
             patient_diagnosis_id: rD.uuid || 0,
+            diagnosis_performed_date: rD.performed_date,
             diagnosis_created_date: rD.created_date,
             diagnosis_modified_date: rD.modified_date,
             diagnosis_performed_by: rD.performed_by,
