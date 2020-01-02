@@ -353,20 +353,20 @@ const commonReferenceGroupController = () => {
 
     function dynamicField(postData, tableName, keyValue) {
         let postingData;
-        if(true)
-        {
-           postingData = {
-            name: postData.name,
-            code: postData.code,
-            //   revision: postData.revision,
-            is_active: postData.is_active,
-              created_date: postData.created_date,
-            created_by: postData.created_by,
-              modified_date: postData.modified_date,
-            modified_by: postData.modified_by,
-            // uuid: uuidv4()
-           }
-        }
+        // if(true)
+        // {
+        //    postingData = {
+        //     name: postData.name,
+        //     code: postData.code,
+        //     //   revision: postData.revision,
+        //     is_active: postData.is_active,
+        //       created_date: postData.created_date,
+        //     created_by: postData.created_by,
+        //       modified_date: postData.modified_date,
+        //     modified_by: postData.modified_by,
+        //     // uuid: uuidv4()
+        //    }
+        // }
 
         if (false) {
             postingData = {
@@ -386,7 +386,7 @@ const commonReferenceGroupController = () => {
                 language: postData.language,
                 color: postData.color,
                 display_order: postData.display_order,
-                Is_default: postData.Is_default
+                // Is_default: postData.Is_default
             };
         }
         if (keyValue == 1) {

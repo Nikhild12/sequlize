@@ -128,7 +128,13 @@ module.exports = (sequelize, DataTypes) => {
                 fields: ["uuid"]
             }]
         }
+        
     );
-
+    diagnosis.associate = models => {
+       model.diagnosis.belongsTo(models.diagnosis_version, {
+            foreignKey: "diagnosis_version_uuid",
+            // targetKey : "uuid"
+        });
+    };
     return diagnosis;
 };

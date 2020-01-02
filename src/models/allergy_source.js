@@ -1,8 +1,8 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-    const positions = sequelize.define(
-        "positions", {
+    const allergy_source = sequelize.define(
+        "allergy_source", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             },
            
         }, {
-            tableName: "positions",
+            tableName: "allergy_source",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -51,5 +51,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return positions;
+    return allergy_source;
 };

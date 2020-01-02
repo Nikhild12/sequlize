@@ -1,9 +1,10 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
-const Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const diagnosisTbl = db.diagnosis;
+const diagnosisversionTb = db.diagnosis_version
 
 function getDiagnosisFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -72,6 +73,12 @@ function getDiagnosisAttributes() {
         'modified_by',
             'modified_date'
     ];
+}
+function getDiagnosisversion(){
+    return [
+        'uuid',
+        'code',
+        'name']
 }
 const diagnosisController = () => {
     /**
@@ -262,13 +269,21 @@ const diagnosisController = () => {
             where: {
                status:1
             },
-            attributes: getDiagnosisAttributes()
+            attributes: getDiagnosisAttributes(),
+            include: [
+                {
+                  model: diagnosisversionTb,
+                  attributes:getDiagnosisversion()
+                }
+              ]
         };
 
       
 
         try {
-            await diagnosisTbl.findAndCountAll(findQuery)
+            await diagnosisTbl.findAndCountAll({
+                findQuery
+            })
 
 
                 .then((findData) => {
