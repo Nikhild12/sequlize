@@ -30,9 +30,9 @@
         "application/file"
     ],
     "paths": {
-        "/api/commonReference/getReferenceIdName": {
+        "/api/CommonReference/getReferenceById": {
             "post": {
-                "description": "Reference Details Inserted Successfully",
+                "description": "get Reference Details",
                 "parameters": [
                     {
                         "in": "header",
@@ -45,7 +45,7 @@
                         "name": "tablename",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/getReferenceIdName"
+                            "$ref": "#/definitions/getReferenceById"
                         }
                     }
                 ],
@@ -60,7 +60,7 @@
                     "200": {
                         "description": "get Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getReferenceIdName"
+                            "$ref": "#/definitions/getReferenceById"
                         }
                     }
                 },
@@ -68,6 +68,159 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/CommonReference/addReference":{
+            "post": {
+                "description": "Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "tablename details",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addReference"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Common Reference Group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/addReference"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/CommonReference/updateReference":{
+            "post": {
+                "description": "Reference Details Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "tablename",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updateReference"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Common Reference Group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updateReference"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/CommonReference/deleteReference":{
+            "post": {
+                "description": "Reference Details Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "tablename",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deleteReference"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Common Reference Group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deleteReference"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/CommonReference/getReference":{
+            "post": {
+                "description": "Reference Details Inserted Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "tablename",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getReference"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Common Reference Group"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getReference"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        
        "/api/allergyMaster/addAllergyMaster":{
         "post": {
             "description": "To Create a Allergy for the Master",
@@ -2263,6 +2416,75 @@
         }
     },
     "definitions": {
+        "getReference":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+               
+                }
+            
+        } 
+        },
+        "updateReference":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+               
+                },
+                "code":{
+                    "type": "string"
+                },"name":{
+                    "type": "string"
+                },
+                "Id":{
+                    "type": "integer"
+                }
+            
+        } 
+        },
+        "deleteReference":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+               
+                }
+            
+        } 
+        },
+
+        "getReferenceById":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+               
+                },
+                "Id":{
+                    "type": "integer"
+                }
+            
+        } 
+        },
+
+        "addReference":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+               
+                },
+                "code":{
+                    "type": "string"
+                },"name":{
+                    "type": "string"
+                }
+            
+        } 
+        },
+        
         "addAllergyMaster":{
           
             
