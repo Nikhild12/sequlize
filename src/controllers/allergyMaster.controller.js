@@ -1,8 +1,9 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
 const sequelizeDb = require('../config/sequelize');
-
-
+// const sequelizeDb = require('../config/sequelize');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 
 
@@ -53,7 +54,7 @@ const allergyMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-
+            where:{is_active: 1}
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -117,25 +118,51 @@ const allergyMasterController = () => {
     const postAlleryMaster = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
+       
+        
+
         if (postData) {
-            await allergyMastersTbl.create(postData, {
-                returning: true
-            }).then(data => {
 
-                res.send({
-                    statusCode: 200,
-                    msg: "Inserted Allery Master details Successfully",
-                    req: postData,
-                    responseContents: data
-                });
-            }).catch(err => {
+            allergyMastersTbl.findAll({
+                where: {
+                  [Op.or]: [{
+                    allergey_code: postData.allergey_code
+                    },
+                    {
+                        allergy_name: postData.allergy_name
+                    }
+                  ]
+                }
+              }).then(async (result) =>{
+                if (result.length != 0) {
+                    return res.send({
+                        statusCode: 400,
+                      status: "error",
+                      msg: "Record already Found. Please enter Allergy Master"
+                    });
+                  } else{
+                    await allergyMastersTbl.create(postData, {
+                        returning: true
+                    }).then(data => {
+        
+                        res.send({
+                            statusCode: 200,
+                            msg: "Inserted Allery Master details Successfully",
+                            req: postData,
+                            responseContents: data
+                        });
+                    }).catch(err => {
+        
+                        res.send({
+                            status: "failed",
+                            msg: "failed to Allery Master details",
+                            error: err
+                        });
+                    });
+                  }
+              });
 
-                res.send({
-                    status: "failed",
-                    msg: "failed to Allery Master details",
-                    error: err
-                });
-            });
+          
         } else {
             
             res.send({
@@ -153,7 +180,7 @@ const allergyMasterController = () => {
             is_active: 0
         }, {
             where: {
-                uuid: postData.Id
+                uuid: postData.Allergy_id
             }
         }).then((data) => {
             res.send({
@@ -177,7 +204,7 @@ const allergyMasterController = () => {
         await allergyMastersTbl.update(
             postData, {
                 where: {
-                    uuid: postData.Id
+                    uuid: postData.Allergy_id
                 }
             }
         ).then((data) => {
@@ -201,7 +228,7 @@ const allergyMasterController = () => {
             const offset = (page - 1) * itemsPerPage;
             await allergyMastersTbl.findOne({
                     where: {
-                        uuid: postData.Id
+                        uuid: postData.Allergy_id
                     },
                     offset: offset,
                     limit: itemsPerPage

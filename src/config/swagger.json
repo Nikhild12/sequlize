@@ -68,6 +68,164 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+       "/api/allergyMaster/addAllergyMaster":{
+        "post": {
+            "description": "To Create a Allergy for the Master",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                },
+                {
+                    "in": "body",
+                    "name": "allergy master",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/addAllergyMaster"
+                    }
+                }
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Allergy Master"
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successfully Inserted allergy"
+                }
+            }
+        }
+       },
+       "/api/allergyMaster/getAllergyMaster":{
+        "post": {
+            "description": "To get  Allergy Master",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }
+               
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Allergy Master"
+            ],
+            "responses": {
+                "200": {
+                    "description": "get Allergy Master"
+                }
+            }
+        }
+       },
+       "/api/allergyMaster/updateAlleryMasterById":{
+        "post": {
+            "description": "To Update Allergy Master",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                },
+                {
+                    "in": "body",
+                    "name": "update allergy",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/updateAlleryMasterById"
+                    }
+                }
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Allergy Master"
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successfully Updated"
+                }
+            }
+        }
+       },
+       "/api/allergyMaster/deleteAllergyMaster":{
+        "post": {
+            "description": "To Delete Allergy Master",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                },
+                {
+                    "in": "body",
+                    "name": "DeleteId",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/deleteAllergyMaster"
+                    }
+                }
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Allergy Master"
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successfully Inserted EMR Workflow"
+                }
+            }
+        }
+       },
+       "/api/allergyMaster/getAlleryMasterById":{
+        "post": {
+            "description": "To get by Id",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                },
+                {
+                    "in": "body",
+                    "name": "getbyId",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/getAlleryMasterById"
+                    }
+                }
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Allergy Master"
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successfully Inserted EMR Workflow"
+                }
+            }
+        }
+       },
        
         "/api/emr-workflow-settings/create": {
             "post": {
@@ -2105,6 +2263,126 @@
         }
     },
     "definitions": {
+        "addAllergyMaster":{
+          
+            
+                "type": "object",
+                "properties": {
+                    "allergy_type_uuid": {
+                        "type": "integer"
+                    },
+                    "allergey_code": {
+                        "type": "string"
+                    },
+                    "allergy_name": {
+                        "type": "string"
+                    },
+                    "allergy_description": {
+                        "type": "string"
+                    },
+                    "generic_uuid": {
+                        "type": "integer"
+                    },
+                    "diet_item_uuid": {
+                        "type": "integer"
+                    },
+                    "item_master_uuid": {
+                        "type": "integer"
+                    },
+                    "is_active":{
+                        "type": "integer" 
+                    },
+                    "revision":{
+                        "type": "integer" 
+                    }
+                   
+                
+            }
+        },
+        "updateAlleryMasterById":{
+          
+           
+                "type": "object",
+                "properties": {
+                    "Allergy_id": {
+                        "type": "integer"
+                    },
+                    "allergy_type_uuid": {
+                        "type": "integer"
+                    },
+                    "allergey_code": {
+                        "type": "string"
+                    },
+                    "allergy_name": {
+                        "type": "string"
+                    },
+                    "allergy_description": {
+                        "type": "string"
+                    },
+                    "generic_uuid": {
+                        "type": "integer"
+                    },
+                    "diet_item_uuid": {
+                        "type": "integer"
+                    },
+                    "item_master_uuid": {
+                        "type": "integer"
+                    },
+                    "is_active":{
+                        "type": "integer" 
+                    },
+                    "revision":{
+                        "type": "integer" 
+                    }
+                
+            }
+        },
+        "deleteAllergyMaster":{
+          
+           
+                "type": "object",
+                "properties": {
+                    "Allergy_id": {
+                        "type": "integer"
+                    }
+                    
+                   
+                
+            }
+        },
+        "getAlleryMasterById":{
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "patient_uuid": {
+                        "type": "integer"
+                    },
+                    "encounter_uuid": {
+                        "type": "integer"
+                    },
+                    "encounter_type_uuid": {
+                        "type": "integer"
+                    },
+                    "consultation_uuid": {
+                        "type": "integer"
+                    },
+                    "chief_complaint_uuid": {
+                        "type": "integer"
+                    },
+                    "chief_complaint_duration": {
+                        "type": "integer"
+                    },
+                    "chief_complaint_duration_period_uuid": {
+                        "type": "integer"
+                    },
+                    "revision": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+
         "getReferenceIdName":{
             "type": "object",
             "properties": {
