@@ -13,7 +13,7 @@
     "basePath": "/",
     "tags": [
         {
-            "name": "EMR API",
+            "name": "EMR API",  
             "description": "API for EMR Data"
         }
     ],
@@ -30,6 +30,378 @@
         "application/file"
     ],
     "paths": {
+                    "api/immunizations/addimmunization":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/addimmunization"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/addimmunization"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizations/getimmunization":{
+                    "post": {
+                        "description": "To get Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            }
+                           
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunization"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+        
+                "api/immunizations/getimmunizationById":{
+                    "post": {
+                        "description": "To get by Id",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunizationById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunizationById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+        
+                "api/immunizations/deleteimmunizationById":{
+                    "post": {
+                        "description": "To Delete",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/deleteimmunizationById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Delete Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/deleteimmunizationById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizations/updateimmunizationById":{
+                    "post": {
+                        "description": "To update",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/updateimmunizationById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "update Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/updateimmunizationById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                
+                "api/immunizationSchedule/addimmunizationSchedule":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/addimmunizationSchedule"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/addimmunizationSchedule"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizationSchedule/getimmunizationSchedule":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            }
+                            
+                            
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunizationSchedule"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizationSchedule/getimmunizationScheduleById":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunizationScheduleById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/getimmunizationScheduleById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizationSchedule/deleteimmunizationScheduleById":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/deleteimmunizationScheduleById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/deleteimmunizationScheduleById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+                "api/immunizationSchedule/updateimmunizationScheduleById":{
+                    "post": {
+                        "description": "Inserted Successfully",
+                        "parameters": [
+                            {
+                                "in": "header",
+                                "name": "user_uuid",
+                                "required": true,
+                                "type": "integer"
+                            },
+                            {
+                                "in": "body",
+                                "name": "tablename details",
+                                "required": true,
+                                "schema": {
+                                    "$ref": "#/definitions/updateimmunizationScheduleById"
+                                }
+                            }
+                        ],
+                        "produces": [
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "tags": [
+                            "Immunizations"
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "get Successfully",
+                                "schema": {
+                                    "$ref": "#/definitions/updateimmunizationScheduleById"
+                                }
+                            }
+                        },
+                        "x-auth-type": "Application & Application User",
+                        "x-throttling-tier": "Unlimited"
+                    }
+                },
+      
+
         "/api/CommonReference/getReferenceById": {
             "post": {
                 "description": "get Reference Details",
@@ -1525,6 +1897,14 @@
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "page",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getDiagnosis"
+                        }
                     }
                 ],
                 "produces": [
@@ -2416,6 +2796,249 @@
         }
     },
     "definitions": {
+        "addimmunizationSchedule":{
+            "type": "object",
+            "properties": {
+        "schedule_uuid":{
+            "type": "integer"
+        },
+        "immunization_uuid":{
+            "type": "integer"
+        },
+        "immunization_name":{
+            "type": "string"
+        },
+        "immunization_schedule_flag_uuid":{
+            "type": "integer"
+        },
+        "immunization_route_uuid":{
+            "type": "integer"
+        },
+        "immunization_dosage_uuid":{
+            "type": "integer"
+        },
+        "duration":{
+            "type": "string"
+        },
+        "immunization_period_uuid":{
+            "type": "integer"
+        },
+        "displayorder":{
+            "type": "string"
+        },
+        "status":{
+            "type": "integer"
+        },
+        "revision":{
+            "type": "integer"
+        }
+            }
+        },
+        "getimmunizationSchedule":{
+            "type": "object",
+            "properties": {
+                "Id":{"type": "integer"},
+        "schedule_uuid":{
+            "type": "integer"
+        },
+        "immunization_uuid":{
+            "type": "integer"
+        },
+        "immunization_name":{
+            "type": "string"
+        },
+        "immunization_schedule_flag_uuid":{
+            "type": "integer"
+        },
+        "immunization_route_uuid":{
+            "type": "integer"
+        },
+        "immunization_dosage_uuid":{
+            "type": "integer"
+        },
+        "duration":{
+            "type": "string"
+        },
+        "immunization_period_uuid":{
+            "type": "integer"
+        },
+        "displayorder":{
+            "type": "string"
+        },
+        "status":{
+            "type": "integer"
+        },
+        "revision":{
+            "type": "integer"
+        }
+            }
+        },
+        "getimmunizationScheduleById":{
+            "type": "object",
+            "properties": {
+                "Id":{"type": "integer"}}
+        },
+        "deleteimmunizationScheduleById":{
+            "type": "object",
+            "properties": {
+                "Id":{"type": "integer"}}
+        },
+        "updateimmunizationScheduleById":{
+            "type": "object",
+            "properties": {
+                "Id":{"type": "integer"},
+        "schedule_uuid":{
+            "type": "integer"
+        },
+        "immunization_uuid":{
+            "type": "integer"
+        },
+        "immunization_name":{
+            "type": "string"
+        },
+        "immunization_schedule_flag_uuid":{
+            "type": "integer"
+        },
+        "immunization_route_uuid":{
+            "type": "integer"
+        },
+        "immunization_dosage_uuid":{
+            "type": "integer"
+        },
+        "duration":{
+            "type": "string"
+        },
+        "immunization_period_uuid":{
+            "type": "integer"
+        },
+        "displayorder":{
+            "type": "string"
+        },
+        "status":{
+            "type": "integer"
+        },
+        "revision":{
+            "type": "integer"
+        }
+            }
+        },
+        "addimmunization":{
+            "type": "object",
+            "properties": {
+                
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "condition_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "instruction": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+               
+               
+            
+        }
+        },
+        "getimmunization":{
+            "uuid": {
+                "type": "integer"
+            },
+            "name": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            },
+            "condition_uuid": {
+                "type": "integer"
+            },
+            "referrence_link": {
+                "type": "string"
+            },
+            "instruction": {
+                "type": "string"
+            },
+            "status": {
+                "type": "integer"
+            },
+            "revision": {
+                "type": "integer"
+            },
+            "created_by": {
+                "type": "integer"
+            },
+            "modified_by": {
+                "type": "integer"
+            },
+            "created_date":{
+                "type": "string"
+            } ,
+            "modified_date": {
+                "type": "string"
+            }
+        },
+
+        "getimmunizationById":{
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        "deleteimmunizationById":{
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updateimmunizationById":{
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "condition_uuid": {
+                    "type": "integer"
+                },
+                "referrence_link": {
+                    "type": "string"
+                },
+                "instruction": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+            }
+        },
+
+        
         "getReference":{
             "type": "object",
             "properties": {
@@ -3951,93 +4574,23 @@
             }
         },
         "getDiagnosis": {
-            "type": "array",
-            "items": {
+           
                 "type": "object",
                 "properties": {
-                    "code": {
-                        "type": "string"
+                    "pageNo": {
+                      "type": "number",
+                      "example": 0
                     },
-                    "name": {
-                        "type": "string"
+                    "paginationSize": {
+                      "type": "number",
+                      "example": 10
                     },
-                    "description": {
-                        "type": "string"
-                    },
-                    "diagnosis_scheme_uuid": {
-                        "type": "integer"
-                    },
-                    "diagnosis_type_uuid": {
-                        "type": "integer"
-                    },
-                    "diagnosis_category_uuid": {
-                        "type": "integer"
-                    },
-                    "diagnosis_grade_uuid": {
-                        "type": "integer"
-                    },
-                    "diagnosis_region_uuid": {
-                        "type": "integer"
-                    },
-                    "diagnosis_version_uuid": {
-                        "type": "integer"
-                    },
-                    "speciality": {
-                        "type": "string"
-                    },
-                    "synonym": {
-                        "type": "string"
-                    },
-                    "referrence_link": {
-                        "type": "string"
-                    },
-                    "length_Of_stay": {
-                        "type": "string"
-                    },
-                    "body_site_uuid": {
-                        "type": "integer"
-                    },
-                    "side_uuid": {
-                        "type": "integer"
-                    },
-                    "position_id": {
-                        "type": "integer"
-                    },
-                    "in_house": {
-                        "type": "string"
-                    },
-                    "is_notifibale": {
-                        "type": "integer"
-                    },
-                    "is_sensitive": {
-                        "type": "integer"
-                    },
-                    "is_billable": {
-                        "type": "integer"
-                    },
-                    "facility_uuid": {
-                        "type": "integer"
-                    },
-                    "department_uuid": {
-                        "type": "integer"
-                    },
-                    "comments": {
-                        "type": "string"
-                    },
-                    "is_active": {
-                        "type": "boolean"
-                    },
-                    "status": {
-                        "type": "boolean"
-                    },
-                    "revision": {
-                        "type": "string"
-                    },
-                    "created_by": {
-                        "type": "integer"
+                    "search": {
+                      "type": "string",
+                      "example": "string"
                     }
-                }
-            }
+                    
+                  }
         },
         "deleteDiagnosis": {
             "type": "object",
