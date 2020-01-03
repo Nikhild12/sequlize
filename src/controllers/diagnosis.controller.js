@@ -4,7 +4,7 @@ var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const diagnosisTbl = db.diagnosis;
-const diagnosisversionTb = db.diagnosis_version
+const diagnosisversionTb = db.diagnosis_version;
 
 function getDiagnosisFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -28,14 +28,14 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
             };
 
 
-            case 'dignosisId':
-            default:
-                searchValue = +searchValue;
-                return {
-                    is_active: emr_const.IS_ACTIVE,
-                        status: emr_const.IS_ACTIVE,
-                        uuid: searchValue
-                };
+        case 'dignosisId':
+        default:
+            searchValue = +searchValue;
+            return {
+                is_active: emr_const.IS_ACTIVE,
+                    status: emr_const.IS_ACTIVE,
+                    uuid: searchValue
+            };
     }
 }
 
@@ -71,14 +71,16 @@ function getDiagnosisAttributes() {
         'created_by',
         'created_date',
         'modified_by',
-            'modified_date'
+        'modified_date'
     ];
 }
-function getDiagnosisversion(){
+
+function getDiagnosisversion() {
     return [
         'uuid',
         'code',
-        'name']
+        'name'
+    ];
 }
 const diagnosisController = () => {
     /**
@@ -135,7 +137,7 @@ const diagnosisController = () => {
         const {
             searchValue
         } = req.body;
-        
+
 
         if (user_uuid && searchValue) {
 
@@ -155,7 +157,7 @@ const diagnosisController = () => {
                         code: httpStatus.OK,
                         message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData,
-                        
+
                     });
                 }
             } catch (error) {
@@ -183,22 +185,22 @@ const diagnosisController = () => {
 
             diagnosisTbl.findAll({
                 where: {
-                  [Op.or]: [{
-                      code: diagnosisData.code
-                    },
-                    {
-                      name: diagnosisData.name
-                    }
-                  ]
+                    [Op.or]: [{
+                            code: diagnosisData.code
+                        },
+                        {
+                            name: diagnosisData.name
+                        }
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
-                      status: "error",
-                      msg: "Record already Found. Please enter New diagnosis "
+                        status: "error",
+                        msg: "Record already Found. Please enter New diagnosis "
                     });
-                  } 
-              });
+                }
+            });
 
             diagnosisData.code = diagnosisData & diagnosisData.code ? diagnosisData.code : diagnosisData.name;
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
@@ -235,7 +237,7 @@ const diagnosisController = () => {
 
     };
     const _getDiagnosis = async (req, res, next) => {
-        
+
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -254,7 +256,7 @@ const diagnosisController = () => {
 
         const offset = pageNo * itemsPerPage;
 
-          if (getsearch.sortField) {
+        if (getsearch.sortField) {
 
             sortField = getsearch.sortField;
         }
@@ -270,20 +272,36 @@ const diagnosisController = () => {
                status:1
             },
             attributes: getDiagnosisAttributes(),
-            include: [
-                {
-                  model: diagnosisversionTb,
-                  attributes:getDiagnosisversion()
-                }
-              ]
-        };
 
-      
+            include: [{
+                model: diagnosisversionTb,
+                attributes: ['uuid', 'code', 'name']
+            }]
+
+        };
+        if (getsearch.search && /\S/.test(getsearch.search)) {
+
+            findQuery.where = {
+                [Op.or]: [{
+                        name: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+
+
+                    }, {
+                        code: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+                    }
+
+                ]
+            };
+        }
+       
+
 
         try {
-            await diagnosisTbl.findAndCountAll({
-                findQuery
-            })
+            await diagnosisTbl.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -294,12 +312,14 @@ const diagnosisController = () => {
                         .json({
                             message: "success",
                             statusCode: 200,
-                            responseContents:(findData.rows ? findData.rows:[]),
+                            responseContents: (findData.rows ? findData.rows : []),
                             totalRecords: (findData.count ? findData.count : 0),
 
                         });
                 })
                 .catch(err => {
+                    console.log('\n err...', err);
+
                     return res
                         .status(httpStatus.OK)
                         .json({
@@ -309,6 +329,7 @@ const diagnosisController = () => {
                         });
                 });
         } catch (err) {
+            console.log('\n catch err...', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -319,37 +340,58 @@ const diagnosisController = () => {
 
 
     };
-  
+
 
 
 
     const _deleteDiagnosis = async (req, res) => {
 
         // plucking data req body
-        const { Diagnosis_id } = req.body;
-        const { user_uuid } = req.headers; 
+        const {
+            Diagnosis_id
+        } = req.body;
+        const {
+            user_uuid
+        } = req.headers;
 
         if (Diagnosis_id) {
-            const updateddiagnosisData = { status: 0, modified_by: user_uuid, modified_date: new Date() };
+            const updateddiagnosisData = {
+                status: 0,
+                modified_by: user_uuid,
+                modified_date: new Date()
+            };
             try {
 
                 const updateddiagnosissAsync = await Promise.all(
                     [
-                        diagnosisTbl.update(updateddiagnosisData, { where: { uuid: Diagnosis_id } })
-                       
+                        diagnosisTbl.update(updateddiagnosisData, {
+                            where: {
+                                uuid: Diagnosis_id
+                            }
+                        })
+
                     ]
                 );
 
                 if (updateddiagnosissAsync) {
-                    return res.status(200).send({ code: 200, message: "Deleted Successfully" });
+                    return res.status(200).send({
+                        code: 200,
+                        message: "Deleted Successfully"
+                    });
                 }
 
             } catch (ex) {
-                return res.status(400).send({ code: 400, message: ex.message });
+                return res.status(400).send({
+                    code: 400,
+                    message: ex.message
+                });
             }
 
         } else {
-            return res.status(400).send({ code: 400, message: "No Request Body Found" });
+            return res.status(400).send({
+                code: 400,
+                message: "No Request Body Found"
+            });
         }
 
     };
@@ -370,11 +412,11 @@ const diagnosisController = () => {
                 responseContents: data
             });
         });
-        
+
     };
     const _getDaignosisById = async (req, res, next) => {
         const postData = req.body;
-        
+
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -414,10 +456,10 @@ const diagnosisController = () => {
         getDiagnosisFilter: _getDiagnosisFilter,
         createDiagnosis: _createDiagnosis,
         getDiagnosisSearch: _getDiagnosisSearch,
-        getDiagnosis:_getDiagnosis,
-        deleteDiagnosis:_deleteDiagnosis,
-        updateDiagnosisById:_updateDiagnosisById,
-        getDaignosisById:_getDaignosisById
+        getDiagnosis: _getDiagnosis,
+        deleteDiagnosis: _deleteDiagnosis,
+        updateDiagnosisById: _updateDiagnosisById,
+        getDaignosisById: _getDaignosisById
 
     };
 };
