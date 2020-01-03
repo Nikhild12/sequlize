@@ -217,18 +217,18 @@ const ChiefComplaints = () => {
                 ]);
 
                 if (updatedcheifcomplaintsData) {
-                    return res.status(200).send({ code:200, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
+                    return res.status(200).send({ statusCode:200, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
                 }
 
             } catch (ex) {
 
                 console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({ code: 400, message: ex.message });
+                return res.status(400).send({ statusCode: 400, message: ex.message });
 
             }
 
         } else {
-            return res.status(400).send({ code: 400, message: "No Request headers or Body Found" });
+            return res.status(400).send({ statusCode: 400, message: "No Request headers or Body Found" });
         }
     };
 
@@ -250,15 +250,15 @@ const ChiefComplaints = () => {
                 );
 
                 if (updatedcheifcomplaintsAsync) {
-                    return res.status(200).send({ code: 200, message: "Deleted Successfully" });
+                    return res.status(200).send({ statusCode: 200, message: "Deleted Successfully" });
                 }
 
             } catch (ex) {
-                return res.status(400).send({ code: 400, message: ex.message });
+                return res.status(400).send({ statusCode: 400, message: ex.message });
             }
 
         } else {
-            return res.status(400).send({ code: 400, message: "No Request Body Found" });
+            return res.status(400).send({ statusCode: 400, message: "No Request Body Found" });
         }
 
     };

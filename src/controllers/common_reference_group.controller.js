@@ -23,9 +23,11 @@ const commonReferenceGroupController = () => {
         const postData = req.body;
 
         const table_name = req.body.table_name;
+    
 
 
         const common_tbl = db[table_name];
+     
 
         let sortField = 'name';
         let sortOrder = 'ASC';
@@ -138,126 +140,7 @@ const commonReferenceGroupController = () => {
                 .json({ statusCode: 500, msg: errorMsg });
         }
     };
-    const getReferenceIdName = async (req, res, next) => {
-        const postData = req.body;
 
-        const table_name = req.body.table_name;
-
-
-        const common_tbl = db[table_name];
-
-        let sortField = 'name';
-        let sortOrder = 'ASC';
-        let pageNo = 0;
-        const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-        if (postData.pageNo) {
-            let temp = parseInt(postData.pageNo);
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
-        }
-        if (postData.sortField) {
-            sortField = postData.sortField;
-        }
-
-        if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
-            sortOrder = postData.sortOrder;
-        }
-
-        const offset = pageNo * itemsPerPage;
-        var postingData;
-
-        // var query;
-
-        var query1;
-
-
-        try {
-            postingData = {
-                offset: offset,
-                limit: itemsPerPage,
-                order: [
-                    [sortField, sortOrder],
-                ],
-                attributes: ['uuid', 'name']
-            };
-
-            if (postData.name != null && postData.name != "") {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [{
-                            query1,
-                            [Op.or]: [
-                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
-                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
-                            ]
-                        }]
-                    };
-                }
-                else {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
-                        ]
-                    };
-                }
-
-                console.log("queryN",query1);
-                
-            }
-
-            if (postData.status != null && postData.status != "") {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [
-                            query1,
-                            Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
-                        ]
-                    };
-                }
-                else {
-                    query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
-                }
-                console.log("queryS",query1);
-            }
-            if (query1 == null) {
-                if (postData.search != null && postData.search != "") {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
-                        ]
-                    };
-                }
-                console.log("querys",query1);
-            }
-            if (query1 != null && query1 != "") {
-                postingData['where'] = query1;
-            }
-            /* gender Data */
-            console.log("\n");
-            console.log("DATA QUERY",postingData['where']);
-            console.log("\n");
-            
-
-            await common_tbl.findAndCountAll(postingData).then((data) => {
-                return res
-                    .status(httpStatus.OK)
-                    .json({ statusCode: 200, req: '', responseContents: data.rows, totalRecords: data.count });
-            })
-                .catch(err => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({ statusCode: 500, msg: "Reference Data's not found", req: '', error: err });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({ statusCode: 500, msg: errorMsg });
-        }
-    };
     const getReferenceById = async (req, res, next) => {
         const postData = req.body;
         // const table_name = "gender";
@@ -295,9 +178,7 @@ const commonReferenceGroupController = () => {
         const postData = req.body;
         const table_name = postData.table_name;
         // const table_name = "gender";
-     
         const common_tbl = db[table_name];
- 
         postData.created_by = req.body.user_uuid;
         try {
             if (postData) {
@@ -479,11 +360,11 @@ const commonReferenceGroupController = () => {
         //     code: postData.code,
         //     //   revision: postData.revision,
         //     is_active: postData.is_active,
-        //     //   created_date: postData.created_date,
+        //       created_date: postData.created_date,
         //     created_by: postData.created_by,
-        //     //   modified_date: postData.modified_date,
+        //       modified_date: postData.modified_date,
         //     modified_by: postData.modified_by,
-        //     uuid: uuidv4()
+        //     // uuid: uuidv4()
         //    }
         // }
 
@@ -505,7 +386,7 @@ const commonReferenceGroupController = () => {
                 language: postData.language,
                 color: postData.color,
                 display_order: postData.display_order,
-                Is_default: postData.Is_default
+                // Is_default: postData.Is_default
             };
         }
         if (keyValue == 1) {
@@ -521,7 +402,6 @@ const commonReferenceGroupController = () => {
         deleteReference,
         updateReference,
         getReferenceById,
-        getReferenceIdName
     };
 };
 
