@@ -17,7 +17,6 @@ const emr_utility = require('../services/utility.service');
 // Constants Import
 const emr_constants = require('../config/constants');
 
-const favourite_clinical_type_id = 1;
 
 const active_boolean = 1;
 const neQuery = { [Op.ne]: null };
@@ -317,13 +316,33 @@ const TickSheetMasterController = () => {
 
     };
 
+    const _getTreatmentKitFavourite = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { departmentId } = req.query;
+
+        if (user_uuid && departmentId) {
+
+            try {
+                
+            } catch (error) {
+                
+                console.log(`Exception Happened ${ex}`);
+                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+        }
+    }
+
     return {
 
         createTickSheetMaster: _createTickSheetMaster,
         getFavourite: _getFavourites,
         getFavouriteById: _getFavouriteById,
         updateFavouriteById: _updateFavouriteById,
-        deleteFavourite: _deleteFavourite
+        deleteFavourite: _deleteFavourite,
+        getTreatmentKitFavourite: _getTreatmentKitFavourite
 
     };
 
