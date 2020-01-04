@@ -9,7 +9,7 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "host": "localhost:7337",
+    "host": "localhost:7337/",
     "basePath": "/",
     "tags": [
         {
@@ -240,7 +240,7 @@
                             "application/xml"
                         ],
                         "tags": [
-                            "Immunizations"
+                            "Immunizations Schedule"
                         ],
                         "responses": {
                             "200": {
@@ -272,7 +272,7 @@
                             "application/xml"
                         ],
                         "tags": [
-                            "Immunizations"
+                            "Immunizations Schedule"
                         ],
                         "responses": {
                             "200": {
@@ -310,7 +310,7 @@
                             "application/xml"
                         ],
                         "tags": [
-                            "Immunizations"
+                            "Immunizations Schedule"
                         ],
                         "responses": {
                             "200": {
@@ -348,7 +348,7 @@
                             "application/xml"
                         ],
                         "tags": [
-                            "Immunizations"
+                            "Immunizations Schedule"
                         ],
                         "responses": {
                             "200": {
@@ -386,7 +386,7 @@
                             "application/xml"
                         ],
                         "tags": [
-                            "Immunizations"
+                            "Immunizations Schedule"
                         ],
                         "responses": {
                             "200": {
