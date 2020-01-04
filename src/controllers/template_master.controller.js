@@ -53,7 +53,7 @@ const tmpmstrController = () => {
 
     try {
       if (tempuuid) {
-        const updatedtempData = { status: 0, is_active: 0, modified_by: userUUID, modified_date: new Date() };
+        const updatedtempData = { status: 0, modified_by: userUUID, modified_date: new Date() };
 
         const updatetempAsync = await Promise.all(
           [
@@ -112,11 +112,14 @@ const tmpmstrController = () => {
       let temp_type_id = templateMasterReqData.template_type_uuid;
 
       const exists = await nameExists(temp_name, userUUID);
+  //    console.log("*****",exists[0]);
+//console.log("---------",exists[0].dataValues.is_active);
+//console.log("---------",exists[0].status );
 
-      if (exists && exists.length > 0) {
+      if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
         return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
       }
-      else if (exists.length === 0 && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
+      else if ((exists.length == 0 || exists[0].dataValues.status == 0 ) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
         let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
         if (createData) {
@@ -587,6 +590,8 @@ function getTempData(temp_type_id, result) {
       return getLabListData(result);
     case "3":
       return getLabListData(result);
+    case "9":
+      return getTemplateListData(result);
     default:
       let templateDetails = result;
       return { templateDetails };
@@ -617,7 +622,7 @@ const nameExists = (temp_name, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
-        attributes: ['name'],
+        attributes: ['name','is_active','status'],
         where: { name: temp_name, user_uuid: userUUID }
       }); if (value) {
         resolve(value);
@@ -674,6 +679,14 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: tempmstrTbl,
         query: getVitalsQuery(temp_type_id, dept_id, user_uuid),
+      };
+      case "9":
+      return {
+        table_name: vw_template,
+        query: {
+          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
+          attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
+        }
       };
   }
 }
