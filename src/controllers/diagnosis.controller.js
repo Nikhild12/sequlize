@@ -306,9 +306,9 @@ const diagnosisController = () => {
 
 
                 .then((findData) => {
-                    console.log('\n err...success elseeeeeeeeeee', err)
+                    console.log('\n err...success elseeeeeeeeeee', findData)
                     return res
-                    console.log('\n err...success else', err)
+                  
                         .status(httpStatus.OK)
                         .json({
                             message: "success",
