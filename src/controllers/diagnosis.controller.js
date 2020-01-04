@@ -318,18 +318,18 @@ const diagnosisController = () => {
                         });
                 })
                 .catch(err => {
-                    console.log('\n err...', err);
+                    console.log('\n err...success else', err);
 
                     return res
                         .status(httpStatus.OK)
                         .json({
                             message: "error",
                             err: err,
-                            req: ''
+                             req: ''
                         });
                 });
         } catch (err) {
-            console.log('\n catch err...', err);
+            console.log('\n catch err...INTERNAL_SERVER_ERROR', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
