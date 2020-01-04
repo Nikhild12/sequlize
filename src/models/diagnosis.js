@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             diagnosis_version_uuid: {
                 type: DataTypes.INTEGER,
-                // allowNull: true
+                defaultValue: 1
             },
             speciality: {
                 type: DataTypes.STRING(250),
