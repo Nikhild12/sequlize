@@ -134,9 +134,9 @@ module.exports = (sequelize, DataTypes) => {
     diagnosis.associate = models => {
        
         console.log(models)
-        diagnosis.belongsTo(models.diagnosis_version, {
-             foreignKey: "diagnosis_version_uuid",
-             targetKey : "uuid"
+        diagnosis.hasOne(models.diagnosis_version, {
+             foreignKey: "uuid",
+            //  targetKey : "uuid"
          });
      };
 
