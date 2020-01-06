@@ -110,7 +110,7 @@ const gedTreatmentKit = [
     'tkrm_test_master_uuid',
     'tm3_code',
     'tm3_description',
-]
+];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
 
@@ -152,7 +152,7 @@ function getTreatmentQuery(dept_id, user_uuid) {
         [Op.or]: [
             { "fm_dept": { [Op.eq]: dept_id }, "fm_public": { [Op.eq]: 1 } }, { "fm_userid": { [Op.eq]: user_uuid } }
         ]
-    }
+    };
 }
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
@@ -400,7 +400,7 @@ const TickSheetMasterController = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
 
