@@ -271,12 +271,9 @@ const diagnosisController = () => {
             where: {
                status:1
             },
-            attributes: getDiagnosisAttributes(),
+            attributes: getDiagnosisAttributes()
 
-            include: [{
-                model: diagnosisversionTb,
-                attributes: ['uuid', 'code', 'name']
-            }]
+            
 
         };
         console.log("findQuery...............",findQuery)

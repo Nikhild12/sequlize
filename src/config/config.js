@@ -40,7 +40,7 @@ const config = {
     port: envVars.PORT,
     jwtSecret: envVars.JWT_SECRET,
     jwtTokenExpire: envVars.JWT_TOKEN_EXPIRE,
-    username:envVars.USER_NAME_URL,
+    username: envVars.USER_NAME_URL,
     mysql: {
         db: envVars.PG_DB,
         port: envVars.PG_PORT,
@@ -49,7 +49,9 @@ const config = {
         password: envVars.PG_PASSWORD,
         dialect: "mysql"
     },
-   
+    logging: envVars.PG_DB_LOGGING,
+    wso2_logurl: envVars.WSO2_LOG_URL,
+    requestDate: new Date(), //Logging
 };
 
 module.exports = config;

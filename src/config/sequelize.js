@@ -104,6 +104,13 @@ Object.keys(db).forEach(modelName => {
 //   });
 
 // assign the sequelize variables to the db object and returning the db.
+
+
+const logStream = fs.createWriteStream('./sql.txt', { 'flags': 'a' });
+sequelize.options.logging = str => {
+log = str,
+  logStream.write(log);
+};
 module.exports = _.extend({
   sequelize,
   Sequelize
