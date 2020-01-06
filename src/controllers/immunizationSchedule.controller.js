@@ -3,7 +3,7 @@ const db = require("../config/sequelize");
 const _ = require("lodash");
 
 var Sequelize = require('sequelize');
-
+const Op = Sequelize.Op;
 
 
 const immunizationScheduleTbl = db.immunization_schedule;
@@ -52,7 +52,9 @@ const immunizationScheduleController = () => {
             limit: itemsPerPage,
             order: [
                 [sortField, sortOrder],
-            ],
+            ],where:{
+status:1
+            }
 
         };
 
@@ -128,7 +130,7 @@ const immunizationScheduleController = () => {
                 where: {
                   [Op.or]: [
                     {
-                        name: postData.name
+                        immunization_name: postData.immunization_name
                     }
                   ]
                 }
@@ -208,7 +210,7 @@ const immunizationScheduleController = () => {
         const postData = req.body;
 
         await immunizationScheduleTbl.update({
-            is_active: 0
+            status: 0
         }, {
             where: {
                 uuid: postData.Id

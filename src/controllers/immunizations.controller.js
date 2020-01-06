@@ -53,6 +53,9 @@ const immunizationsController = () => {
             order: [
                 [sortField, sortOrder],
             ],
+            where:{
+                status:1
+            }
 
         };
 
@@ -209,7 +212,7 @@ const immunizationsController = () => {
         const postData = req.body;
 
         await immunizationsTbl.update({
-            is_active: 0
+            status: 0
         }, {
             where: {
                 uuid: postData.Id
