@@ -112,10 +112,7 @@ const tmpmstrController = () => {
       let temp_type_id = templateMasterReqData.template_type_uuid;
 
       const exists = await nameExists(temp_name, userUUID);
-      //console.log("*****",exists[0]);
-      //console.log("---------",exists[0].dataValues.is_active);
-      //console.log("---------",exists[0].status );
-
+      
       if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
         return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
       }
