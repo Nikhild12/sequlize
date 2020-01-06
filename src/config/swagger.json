@@ -28,6 +28,36 @@
         "application/file"
     ],
     "paths": {
+        "/api/Reference/getreference": {
+            "post": {
+                "description": "To get Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Immunizations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getreference"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/immunizations/addimmunization": {
             "post": {
                 "description": "Inserted Successfully",
@@ -2712,6 +2742,14 @@
         }
     },
     "definitions": {
+        "getreference":{
+            "type": "object",
+            "properties": {
+                "table_name": {
+                    "type": "string"
+                }
+            }
+        },
         "addimmunization": {
             "type": "object",
             "properties": {
@@ -3035,6 +3073,12 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "is_active":{
+                    "type": "integer"
+                },
+                "revision":{
+                    "type": "integer"
                 }
 
             }

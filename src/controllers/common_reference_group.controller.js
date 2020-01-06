@@ -182,35 +182,74 @@ const commonReferenceGroupController = () => {
         postData.created_by = req.body.user_uuid;
         try {
             if (postData) {
-                await common_tbl.create(dynamicField(postData, table_name, 1), {
-                    returning: true,
-                    plain: true
-                }).then(data => {
-                    res.send({
-                        statusCode: 200,
-                        msg: "Inserted Reference Successfully",
-                        req: postData,
-                        responseContents: data,
-                        totalRecords: data.length
-                    });
-                }).catch(err => {
-                    if ((err && err['original'] && err['original']['errno'] == 1062)) {
-                        return res
-                            .status(409)
-                            .json({
-                                statusCode: 409,
+                common_tbl.findAll({
+                    where: {
+                      [Op.or]: [{
+                        code: postData.code
+                        },
+                        {
+                            name: postData.name
+                        }
+                      ]
+                    }
+                  }).then(async (result) =>{
+                    if (result.length != 0) {
+                        return res.send({
+                            statusCode: 400,
+                          status: "error",
+                          msg: "Record already Found. Please enter common reference group"
+                        });
+                      } else{
+                        await common_tbl.create(postData, {
+                            returning: true
+                        }).then(data => {
+            
+                            res.send({
+                                statusCode: 200,
+                                msg: "Inserted common reference group details Successfully",
+                                req: postData,
+                                responseContents: data
+                            });
+                        }).catch(err => {
+            
+                            res.send({
+                                status: "failed",
+                                msg: "failed to common reference group details",
                                 error: err
                             });
-                    }
-                    else {
-                        return res
-                            .status(500)
-                            .json({
-                                statusCode: 500,
-                                error: err
-                            });
-                    }
-                });
+                        });
+                      }
+                  });
+    
+                // await common_tbl.create(dynamicField(postData, table_name, 1), {
+                //     returning: true,
+                //     plain: true
+                // }).then(data => {
+                //     res.send({
+                //         statusCode: 200,
+                //         msg: "Inserted Reference Successfully",
+                //         req: postData,
+                //         responseContents: data,
+                //         totalRecords: data.length
+                //     });
+                // }).catch(err => {
+                //     if ((err && err['original'] && err['original']['errno'] == 1062)) {
+                //         return res
+                //             .status(409)
+                //             .json({
+                //                 statusCode: 409,
+                //                 error: err
+                //             });
+                //     }
+                //     else {
+                //         return res
+                //             .status(500)
+                //             .json({
+                //                 statusCode: 500,
+                //                 error: err
+                //             });
+                //     }
+                // });
             } else {
                 res.send({
                     status: 'failed',

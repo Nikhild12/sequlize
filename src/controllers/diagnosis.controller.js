@@ -271,12 +271,9 @@ const diagnosisController = () => {
             where: {
                status:1
             },
-            attributes: getDiagnosisAttributes(),
+            attributes: getDiagnosisAttributes()
 
-            include: [{
-                model: diagnosisversionTb,
-                attributes: ['uuid', 'code', 'name']
-            }]
+            
 
         };
         if (getsearch.search && /\S/.test(getsearch.search)) {
