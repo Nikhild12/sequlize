@@ -44,7 +44,7 @@
                     "application/xml"
                 ],
                 "tags": [
-                    "Immunizations"
+                    "Reference"
                 ],
                 "responses": {
                     "200": {
@@ -2770,16 +2770,15 @@
         }
     },
     "definitions": {
-        "getAllVitalsMaster":{
+        
+        "getALLVitalsmaster":{
             "type": "object",
             "properties": {}
         },
         "getreference":{
             "type": "object",
             "properties": {
-                "table_name": {
-                    "type": "string"
-                }
+                
             }
         },
         "addimmunization": {

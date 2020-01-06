@@ -91,21 +91,67 @@ const vitalmstrController = () => {
     }
   };
   const _getALLVitalsmaster = async (req, res) => {
-    let query = {
-      where: { status: 1 },
-      // include:[{
-      //   model:vitalTypeTbl, 
-      //   as:'vital_type',    
-      //   where:{
-      //     is_active:1,
-      //     status:1
-      //   }
-      // }] 
+    let getsearch = req.body;
+
+    let pageNo = 0;
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    let sortField = 'created_date';
+    let sortOrder = 'DESC';
+
+    if (getsearch.pageNo) {
+        let temp = parseInt(getsearch.pageNo);
+
+
+        if (temp && (temp != NaN)) {
+            pageNo = temp;
+        }
+    }
+
+    const offset = pageNo * itemsPerPage;
+
+
+    if (getsearch.sortField) {
+
+        sortField = getsearch.sortField;
+    }
+
+    if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+        sortOrder = getsearch.sortOrder;
+    }
+    let findQuery = {
+        offset: offset,
+        limit: itemsPerPage,
+        order: [
+            [sortField, sortOrder],
+        ],
+        where:{is_active: 1}
     };
+
+    if (getsearch.search && /\S/.test(getsearch.search)) {
+
+        findQuery.where = {
+            [Op.or]: [{
+                allergey_code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+
+
+                }, {
+                    allergy_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
+
+            ]
+        };
+    }
+   
     try {
-      const result = await vitalmstrTbl.findAll(query, { returning: true });
+      const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
       if (result) {
-        return res.status(200).send({ statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents:  result  });
+        return res.status(200).send({ statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents:  (result.rows ? result.rows : []),
+        totalRecords: (result.count ? result.count : 0),  });
       }
     }
     catch (ex) {
