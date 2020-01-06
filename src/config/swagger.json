@@ -28,6 +28,186 @@
         "application/file"
     ],
     "paths": {
+        "/api/vitalLonic/addvitalslonic": {
+            "post": {
+                "description": "Inserted Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    
+                    {
+                        "in": "body",
+                        "name": "add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addvitalslonic"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Vitals Lonic"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/addvitalslonic"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalLonic/getvitalslonic": {
+            "post": {
+                "description": "get Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                    
+                
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Vitals Lonic"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getvitalslonic"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalLonic/updatevitalslonicById": {
+            "post": {
+                "description": "Updated Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updatevitalslonicById"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Vitals Lonic"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updatevitalslonicById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalLonic/deletevitalslonic": {
+            "post": {
+                "description": "Inserted Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deletevitalslonic"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Vitals Lonic"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deletevitalslonic"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/vitalLonic/getvitalslonicById": {
+            "post": {
+                "description": "Inserted Successfully",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/getvitalslonicById"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Vitals Lonic"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getvitalslonicById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/Reference/getreference": {
             "post": {
                 "description": "To get Successfully",
@@ -2770,7 +2950,160 @@
         }
     },
     "definitions": {
-        
+        "getvitalslonicById":{
+            "type": "object",
+            "properties": {
+                "vitals_lonic_id":{
+                    "type":"integer"
+                }
+            }
+        },
+        "deletevitalslonic":{
+            "type": "object",
+            "properties": {
+                "vitals_lonic_id":{
+                    "type":"integer"
+                }
+            }
+        },
+        "updatevitalslonicById":{
+            "type": "object",
+            "properties": {
+                "vitals_lonic_id":{
+                    "type":"integer"
+                },
+                "vital_master_uuid":{
+                    "type":"integer"
+                },
+                "loinc_code":{
+                    "type": "string"
+                   
+                  
+                },
+                "loinc_name":{
+                    "type": "string"
+                    
+                   
+                },"component":{
+                    "type": "string"
+                    
+                   
+                },"property":{
+                    "type": "string"
+                },"timing":{
+                    "type": "string"
+                },"system":{
+                    "type": "string"
+                },"scale":{
+                    "type": "string"
+                },"meathod":{
+                    "type": "string"
+                },"calss":{
+                    "type": "string"
+                },
+                "is_active":{
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"        
+                }
+               
+            }
+        },
+        "addvitalslonic":{
+            "type": "object",
+            "properties": {
+                "vital_master_uuid":{
+                    "type":"integer"
+                },
+                "loinc_code":{
+                    "type": "string"
+                   
+                  
+                },
+                "loinc_name":{
+                    "type": "string"
+                    
+                   
+                },"component":{
+                    "type": "string"
+                    
+                   
+                },"property":{
+                    "type": "string"
+                },"timing":{
+                    "type": "string"
+                },"system":{
+                    "type": "string"
+                },"scale":{
+                    "type": "string"
+                },"meathod":{
+                    "type": "string"
+                },"calss":{
+                    "type": "string"
+                },
+                "is_active":{
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"        
+                }
+               
+            }
+        },
+"getvitalslonic":{
+    "type": "object",
+            "properties": {
+                "uuid":{
+                    "type":"integer"
+                },
+                "vital_master_uuid":{
+                    "type":"integer"
+                },
+                "loinc_code":{
+                    "type": "string"
+                   
+                  
+                },
+                "loinc_name":{
+                    "type": "string"
+                    
+                   
+                },"component":{
+                    "type": "string"
+                    
+                   
+                },"property":{
+                    "type": "string"
+                },"timing":{
+                    "type": "string"
+                },"system":{
+                    "type": "string"
+                },"scale":{
+                    "type": "string"
+                },"meathod":{
+                    "type": "string"
+                },"calss":{
+                    "type": "string"
+                },
+                "is_active":{
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"        
+                }
+               
+            }
+},
         "getALLVitalsmaster":{
             "type": "object",
             "properties": {}
@@ -4700,7 +5033,7 @@
         "getDaignosisById": {
             "type": "object",
             "properties": {
-                "Id": {
+                "Diagnosis_id": {
                     "type": "integer"
                 }
             }

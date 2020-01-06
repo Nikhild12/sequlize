@@ -1,14 +1,16 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
-const _ = require("lodash");
+const sequelizeDb = require('../config/sequelize');
+// const sequelizeDb = require('../config/sequelize');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
-var Sequelize = require('sequelize');
-var Op = Sequelize.Op;
 
 
-const immunizationsTbl = db.immunizations;
 
-const immunizationsController = () => {
+const vital_loincTbl = db.vital_loinc;
+
+const vitalslonicController = () => {
     /**
      * Returns jwt token if valid username and password is provided
      * @param req
@@ -17,8 +19,7 @@ const immunizationsController = () => {
      * @returns {*}
      */
 
-
-    const getimmunization = async (req, res, next) => {
+    const getvitalslonic = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -53,21 +54,22 @@ const immunizationsController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{
-                status:1
-            }
-
+            where:{is_active: 1}
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
+                    allergey_code: {
                             [Op.like]: '%' + getsearch.search + '%',
                         },
 
 
+                    }, {
+                        allergy_name: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
                     }
 
                 ]
@@ -76,7 +78,7 @@ const immunizationsController = () => {
 
 
         try {
-            await immunizationsTbl.findAndCountAll(findQuery)
+            await vital_loincTbl.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -113,9 +115,7 @@ const immunizationsController = () => {
 
     };
 
-
-   
-    const postimmunization = async (req, res, next) => {
+    const postvitalslonic = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
        
@@ -123,11 +123,13 @@ const immunizationsController = () => {
 
         if (postData) {
 
-            immunizationsTbl.findAll({
+            vital_loincTbl.findAll({
                 where: {
-                  [Op.or]: [
+                  [Op.or]: [{
+                    loinc_code: postData.loinc_code
+                    },
                     {
-                        name: postData.name
+                        loinc_name: postData.loinc_name
                     }
                   ]
                 }
@@ -136,16 +138,16 @@ const immunizationsController = () => {
                     return res.send({
                         statusCode: 400,
                       status: "error",
-                      msg: "Record already Found. Please enter immunizations"
+                      msg: "Record already Found. Please enter vitals lonic"
                     });
                   } else{
-                    await immunizationsTbl.create(postData, {
+                    await vital_loincTbl.create(postData, {
                         returning: true
                     }).then(data => {
         
                         res.send({
                             statusCode: 200,
-                            msg: "Inserted immunizations details Successfully",
+                            msg: "Inserted vitals lonic details Successfully",
                             req: postData,
                             responseContents: data
                         });
@@ -153,7 +155,7 @@ const immunizationsController = () => {
         
                         res.send({
                             status: "failed",
-                            msg: "failed to immunizations details",
+                            msg: "failed to vitals lonic details",
                             error: err
                         });
                     });
@@ -165,21 +167,68 @@ const immunizationsController = () => {
             
             res.send({
                 status: 'failed',
-                msg: 'Please enter immunizations details'
+                msg: 'Please enter vitals lonic details'
             });
         }
     };
 
-    const getimmunizationById = async (req, res, next) => {
+
+    const deletevitalslonic = async (req, res, next) => {
+        const postData = req.body;
+
+        await vital_loincTbl.update({
+            is_active: 0
+        }, {
+            where: {
+                uuid: postData.vitals_lonic_id
+            }
+        }).then((data) => {
+            res.send({
+                statusCode: 200,
+                msg: "Deleted Successfully",
+                req: postData,
+                responseContents: data
+            });
+        }).catch(err => {
+            res.send({
+                status: "failed",
+                msg: "failed to delete data",
+                error: err
+            });
+        });
+    };
+
+    const updatevitalslonicById = async (req, res, next) => {
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
+        await vital_loincTbl.update(
+            postData, {
+                where: {
+                    uuid: postData.vitals_lonic_id
+                }
+            }
+        ).then((data) => {
+            res.send({
+                statusCode: 200,
+                msg: "Updated Successfully",
+                req: postData,
+                responseContents: data
+            });
+        });
+        
+    };
+  
+
+    const getvitalslonicById = async (req, res, next) => {
         const postData = req.body;
         try {
 
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await immunizationsTbl.findOne({
+            await vital_loincTbl.findOne({
                     where: {
-                        uuid: postData.Id
+                        uuid: postData.vitals_lonic_id
                     },
                     offset: offset,
                     limit: itemsPerPage
@@ -204,62 +253,19 @@ const immunizationsController = () => {
                 });
         }
     };
-    const deleteimmunizationById = async (req, res, next) => {
-        const postData = req.body;
 
-        await immunizationsTbl.update({
-            status: 0
-        }, {
-            where: {
-                uuid: postData.Id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
-        });
-    };
-
-   
-  
-    const updateimmunizationById = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await immunizationsTbl.update(
-            postData, {
-                where: {
-                    uuid: postData.Id
-                }
-            }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
-
-    };
     // --------------------------------------------return----------------------------------
     return {
-        postimmunization,
-        getimmunization,
-        getimmunizationById,
-        deleteimmunizationById,
-        updateimmunizationById
 
+        postvitalslonic,
+        getvitalslonic,
+        updatevitalslonicById,
+        deletevitalslonic,
+
+        getvitalslonicById,
+        
     };
 };
 
 
-module.exports = immunizationsController();
+module.exports = vitalslonicController();
