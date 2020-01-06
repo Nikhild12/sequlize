@@ -9,8 +9,6 @@ const path = require('path');
 const fs = require('file-system');
 const mime = require ('mime');
 
-//const bodyParser = require('body-parser');
-
 const attachmentTbl = db.patient_attachments;
 const attachmentTypeTbl = db.attachment_type;
 const encounterTbl = db.encounter;
@@ -37,7 +35,7 @@ const patientAttachmentsController = () => {
         const updatedAttachData = { status: 0, is_active: 0, modified_by: userUUID, modified_date: new Date() };
 
         const updateAttachAsync = await attachmentTbl.update(updatedAttachData, 
-                                                { where: { uuid: attachment_uuid} });
+                                        { where: { uuid: attachment_uuid} });
             
         if (updateAttachAsync) {
           return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
@@ -50,9 +48,6 @@ const patientAttachmentsController = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
-
-
 
 const _getattachmenttype = async (req, res) => {
     let {user_uuid} = req.headers;
@@ -124,7 +119,6 @@ const _getlistBytype = async (req, res) => {
 
 const _getAllAttachments = async (req, res) => {
     const {user_uuid} = req.headers;
-    //const {attachment_type_uuid} = req.query;
 
     try {
         if (user_uuid){
@@ -226,9 +220,6 @@ const _upload = async(req, res) => {
         if (userUUID){
          uploadD(req,res ,async (err)=>{
             const attachmentData = req.body;
-            //const attachmentfields = req.body.fields;
-            //console.log ("---------",attachmentData);
-            //console.log ("***********",attachmentfields);
 
             if(err instanceof multer.MulterError){
                 res.send({status:400,message:err}); 
@@ -236,17 +227,12 @@ const _upload = async(req, res) => {
                 res.send({status:400,message:err}); 
             }else{
                 attachmentData.consultation_uuid = userUUID;
-                //attachmentData.attachment_name = req.file.originalname;
                 attachmentData.is_active = attachmentData.status = true;
                 attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD');
                 attachmentData.created_by = attachmentData.modified_by = userUUID;
                 attachmentData.created_date = attachmentData.modified_date = new Date();
-                console.log("--------",req.files[0].path);
                 attachmentData.file_path = req.files[0].path;
-                //attachmentData.file_path = req.body.
                 attachmentData.revision = 1;
-               // console.log("--------",req.files[0].path);
-               //console.log ("--------",req)
                 await attachmentTbl.create(attachmentData, { returning: true });
                 res.send({"status": 200,"attachment data":attachmentData,"files":req.files,"count":req.files.length,"message":"Files Uploaded Successfully "});
              }
