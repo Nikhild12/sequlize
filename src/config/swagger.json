@@ -2387,6 +2387,34 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/vitalMaster/getALLVitalsmaster": {
+            "post": {
+                "summary": "To get all vitals master list",
+                "parameters": [{
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "vital_master"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getALLVitalsmaster"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/template/updateTemplateDetailsByID": {
             "put": {
                 "description": "update template details by Id",
@@ -2742,6 +2770,10 @@
         }
     },
     "definitions": {
+        "getAllVitalsMaster":{
+            "type": "object",
+            "properties": {}
+        },
         "getreference":{
             "type": "object",
             "properties": {
@@ -4984,10 +5016,7 @@
             "type": "object",
             "properties": {}
         },
-        "getAllVitalsMaster": {
-            "type": "object",
-            "properties": {}
-        },
+        
         "updateTemplateDetailsByID": {
             "type": "object",
             "properties": {
