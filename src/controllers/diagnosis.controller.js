@@ -276,7 +276,7 @@ const diagnosisController = () => {
             
 
         };
-        console.log("findQuery...............",findQuery)
+        console.log("findQuery...............",findQuery);
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
@@ -303,7 +303,7 @@ const diagnosisController = () => {
 
 
                 .then((findData) => {
-                    console.log('\n err...success elseeeeeeeeeee', findData)
+                    console.log('\n err...success elseeeeeeeeeee', findData);
                     return res
                   
                         .status(httpStatus.OK)
@@ -318,7 +318,7 @@ const diagnosisController = () => {
                 .catch(err => {
                     console.log('\n err...success else', err);
 
-                    return res
+                    return res;
                     console.log('\n err...success elseeeeeeeeeeee', err)
                         .status(httpStatus.OK)
                         .json({
