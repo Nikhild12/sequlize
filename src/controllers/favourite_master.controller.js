@@ -10,6 +10,7 @@ const Op = Sequelize.Op;
 const favouriteMasterTbl = sequelizeDb.favourite_master;
 const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
+const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
 
 // Utility Service Import
 const emr_utility = require('../services/utility.service');
@@ -64,6 +65,53 @@ const getFavouritesAttributes = [
     "d_description"
 ];
 
+const gedTreatmentKit = [
+    'fm_uuid',
+    'fm_name',
+    'fm_dept',
+    'fm_userid',
+    'fm_favourite_type_uuid',
+    'fm_active',
+    'fm_public',
+    'fm_status',
+    'tk_uuid',
+    'tk_code',
+    'tk_name',
+    'tk_treatment_kit_type_uuid',
+    'im_code',
+    'im_name',
+    'tkd_item_master_uuid',
+    'dr_code',
+    'dr_name',
+    'tkd_drug_route_uuid',
+    'df_code',
+    'df_name',
+    'df_display',
+    'tkd_drug_frequency_uuid',
+    'dp_code',
+    'dp_name',
+    'tkd_duration_period_uuid',
+    'di_code',
+    'di_name',
+    'tkd_drug_instruction_uuid',
+    'tkd_quantity',
+    'tkd_duration',
+    'd_code',
+    'd_name',
+    'd_description',
+    'tkdm_diagnosis_uuid',
+    'tm1_code',
+    'tm1_name',
+    'tm1_description',
+    'tklm_test_master_uuid',
+    'tm2_code',
+    'tm2_name',
+    'tm2_description',
+    'tkrm_test_master_uuid',
+    'tm3_code',
+    'tm3_description',
+]
+
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
 
     let notNullSearchKey;
@@ -94,6 +142,17 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
             { "tsm_dept": { [Op.eq]: dept_id }, "tsm_public": { [Op.eq]: 1 } }, { "tsm_userid": { [Op.eq]: user_uuid } }
         ]
     };
+}
+
+function getTreatmentQuery(dept_id, user_uuid) {
+    return {
+        fm_active: active_boolean,
+        fm_status: active_boolean,
+        fm_favourite_type_uuid: 8,
+        [Op.or]: [
+            { "fm_dept": { [Op.eq]: dept_id }, "fm_public": { [Op.eq]: 1 } }, { "fm_userid": { [Op.eq]: user_uuid } }
+        ]
+    }
 }
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
@@ -323,11 +382,19 @@ const TickSheetMasterController = () => {
         if (user_uuid && departmentId) {
 
             try {
-                
+                const favouriteTreatment = await vmTreatmentFavourite.findAll(
+                    {
+                        attributes: gedTreatmentKit,
+                        where: getTreatmentQuery(user_uuid, departmentId)
+                    }
+                );
+                // favouriteList = getFavouritesInList(tickSheetData);
+                const returnMessage = favouriteTreatment && favouriteTreatment.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteTreatment, responseContentLength: favouriteTreatment.length });
             } catch (error) {
-                
-                console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+                console.log(`Exception Happened ${error}`);
+                return res.status(400).send({ code: httpStatus[400], message: error.message });
 
             }
         } else {
