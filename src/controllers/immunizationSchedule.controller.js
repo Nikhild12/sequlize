@@ -3,10 +3,10 @@ const db = require("../config/sequelize");
 const _ = require("lodash");
 
 var Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 
-
-const immunizationScheduleTbl = db.chief_complaints;
+const immunizationScheduleTbl = db.immunization_schedule;
 
 const immunizationScheduleController = () => {
     /**
@@ -52,7 +52,9 @@ const immunizationScheduleController = () => {
             limit: itemsPerPage,
             order: [
                 [sortField, sortOrder],
-            ],
+            ],where:{
+status:1
+            }
 
         };
 
@@ -77,7 +79,7 @@ const immunizationScheduleController = () => {
 
 
         try {
-            await immunizationsTbl.findAndCountAll(findQuery)
+            await immunizationScheduleTbl.findAndCountAll(findQuery)
 
 
                 .then((findData) => {
@@ -115,38 +117,61 @@ const immunizationScheduleController = () => {
     };
 
 
+  
     const postimmunizationSchedule = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
+       
         
+
         if (postData) {
-            await immunizationsTbl.create(postData, {
-                returning: true
-            }).then(data => {
 
-                res.send({
-                    statusCode: 200,
-                    msg: "Inserted Immunization Schedule Successfully",
-                    req: postData,
-                    responseContents: data
-                });
-            }).catch(err => {
+            immunizationScheduleTbl.findAll({
+                where: {
+                  [Op.or]: [
+                    {
+                        immunization_name: postData.immunization_name
+                    }
+                  ]
+                }
+              }).then(async (result) =>{
+                if (result.length != 0) {
+                    return res.send({
+                        statusCode: 400,
+                      status: "error",
+                      msg: "Record already Found. Please enter immunizations Schedule"
+                    });
+                  } else{
+                    await immunizationScheduleTbl.create(postData, {
+                        returning: true
+                    }).then(data => {
+        
+                        res.send({
+                            statusCode: 200,
+                            msg: "Inserted immunizations Schedule details Successfully",
+                            req: postData,
+                            responseContents: data
+                        });
+                    }).catch(err => {
+        
+                        res.send({
+                            status: "failed",
+                            msg: "failed to immunizations Schedule details",
+                            error: err
+                        });
+                    });
+                  }
+              });
 
-                res.send({
-                    status: "failed",
-                    msg: "failed to Immunization Schedule details",
-                    error: err
-                });
-            });
+          
         } else {
-
+            
             res.send({
                 status: 'failed',
-                msg: 'Please enter Immunization Schedule'
+                msg: 'Please enter immunizations details'
             });
         }
     };
-  
     const getimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
         try {
@@ -154,7 +179,7 @@ const immunizationScheduleController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await immunizationsTbl.findOne({
+            await immunizationScheduleTbl.findOne({
                     where: {
                         uuid: postData.Id
                     },
@@ -185,7 +210,7 @@ const immunizationScheduleController = () => {
         const postData = req.body;
 
         await immunizationScheduleTbl.update({
-            is_active: 0
+            status: 0
         }, {
             where: {
                 uuid: postData.Id

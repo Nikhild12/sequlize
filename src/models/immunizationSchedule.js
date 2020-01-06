@@ -9,10 +9,7 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
-            name: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
+           
             schedule_uuid: {
                 type: DataTypes.STRING(250),
                 allowNull: true
@@ -68,7 +65,8 @@ module.exports = (sequelize, DataTypes) => {
             
             modified_by: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: true,
+                defaultValue: 0
             },
            
         }, {

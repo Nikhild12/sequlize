@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
     const diagnosis = sequelize.define(
         "diagnosis", {
@@ -38,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             diagnosis_version_uuid: {
                 type: DataTypes.INTEGER,
-                // allowNull: true
+                defaultValue: 1
             },
             speciality: {
                 type: DataTypes.STRING(250),
@@ -129,6 +130,15 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
+
+    diagnosis.associate = models => {
+       
+        console.log(models)
+        diagnosis.belongsTo(models.diagnosis_version, {
+             foreignKey: "diagnosis_version_uuid",
+            //  targetKey : "uuid"
+         });
+     };
 
     return diagnosis;
 };

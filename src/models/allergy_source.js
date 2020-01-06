@@ -1,8 +1,8 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-    const diagnosis_version = sequelize.define(
-        "diagnosis_version", {
+    const allergy_source = sequelize.define(
+        "allergy_source", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -18,29 +18,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            color:{
-                type: DataTypes.STRING,
-                allowNull: true
-            },
+
             status: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1
-            },
-            language:{
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            display_order:{
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            Is_default:{
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
             },
             revision: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true,
+                defaultValue: 1
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -57,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
             },
            
         }, {
-            tableName: "diagnosis_version",
+            tableName: "allergy_source",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -66,12 +52,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    diagnosis_version.associate = models => {
-        diagnosis_version.belongsTo(models.diagnosis, {
-             foreignKey: "uuid",
-            //  targetKey : "diagnosis_version_uuid"
-         });
-     };
-
-    return diagnosis_version;
+    return allergy_source;
 };
