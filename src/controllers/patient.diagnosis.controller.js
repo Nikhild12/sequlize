@@ -172,7 +172,7 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
     switch (key) {
         case 'date':
                 filtersQuery = {
-                    limit: +value,
+                    
                     attributes: getPatientDiagnosisAttributes(),
                     order: [['uuid', 'DESC']]
                 };

@@ -25,7 +25,6 @@ const tmpmstrController = () => {
     const { temp_type_id, dept_id } = req.query;
     try {
       if (user_uuid && temp_type_id && dept_id) {
-
         const { table_name, query } = getTemplateTypeUUID(temp_type_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
 
@@ -54,7 +53,6 @@ const tmpmstrController = () => {
     try {
       if (tempuuid) {
         const updatedtempData = { status: 0, modified_by: userUUID, modified_date: new Date() };
-
         const updatetempAsync = await Promise.all(
           [
             tempmstrTbl.update(updatedtempData, { where: { uuid: tempuuid } }),
@@ -64,7 +62,6 @@ const tmpmstrController = () => {
         if (updatetempAsync) {
           return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
         }
-
       } else {
         return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
       }
@@ -78,18 +75,14 @@ const tmpmstrController = () => {
     const { temp_id, temp_type_id, dept_id } = req.query;
     try {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
-
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
-
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
         }
-
       } else {
         return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
       }
@@ -112,12 +105,11 @@ const tmpmstrController = () => {
       let temp_type_id = templateMasterReqData.template_type_uuid;
 
       const exists = await nameExists(temp_name, userUUID);
-      
+
       if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
         return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
       }
       else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
-
         let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
         if (createData) {
           return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
@@ -144,12 +136,10 @@ const tmpmstrController = () => {
 
       try {
         if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
-
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
           const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id } }, { returning: true, plain: true });
           const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid));
-
           if (temp_mas && temp_mas_dtls) {
             return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
           }
@@ -299,7 +289,6 @@ function getTemplateListData(fetchedData) {
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
         },
-
         drug_details: [...drug_details, ...getDrugsListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
       ];
@@ -337,9 +326,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
     masterDetailsPromise = [...masterDetailsPromise,
     detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id } }, { returning: true })
     ];
-
   });
-
   return masterDetailsPromise;
 }
 //function for adding new values to template details table when perform update action
@@ -349,7 +336,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
     temp_master_details.forEach((tD) => {
       newTempDtls = [...newTempDtls,
       {
-
         template_master_uuid: tD.template_master_uuid,
         test_master_uuid: tD.test_master_uuid,
         chief_complaint_uuid: tD.chief_complaint_uuid,
@@ -368,7 +354,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
         modified_by: user_uuid,
         created_date: new Date(),
         modified_date: new Date()
-
       }
       ];
     });
@@ -565,8 +550,7 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
       where: {
         status: 1,
         is_active: 1
-      }
-      ,
+      },
       include: [{
         model: vitalMasterTbl,
         require: false,
