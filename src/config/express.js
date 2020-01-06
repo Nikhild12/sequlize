@@ -120,7 +120,7 @@ var myLogger = function (req, res, next) {
 
 app.use(myLogger);
 
-console.log(config.logging);
+//console.log(config.logging);
 
 module.exports = app;
 
