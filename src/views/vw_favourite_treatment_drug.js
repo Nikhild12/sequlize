@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
 
             },
+            tk_status: {
+                type: DataTypes.BOOLEAN
+            },
+            tk_active: {
+                type: DataTypes.BOOLEAN
+            },
             im_code: {
 
                 type: DataTypes.STRING(255)

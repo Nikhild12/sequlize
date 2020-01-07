@@ -11,10 +11,12 @@
     },
     "host": "localhost:7337",
     "basePath": "/",
-    "tags": [{
-        "name": "EMR API",
-        "description": "API for EMR Data"
-    }],
+    "tags": [
+        {
+            "name": "EMR API",
+            "description": "API for EMR Data"
+        }
+    ],
     "schemes": [
         "http",
         "https"
@@ -31,13 +33,13 @@
         "/api/vitalLonic/addvitalslonic": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "add",
@@ -69,14 +71,13 @@
         "/api/vitalLonic/getvitalslonic": {
             "post": {
                 "description": "get Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-                    
-                
                 ],
                 "produces": [
                     "application/json",
@@ -100,7 +101,8 @@
         "/api/vitalLonic/updatevitalslonicById": {
             "post": {
                 "description": "Updated Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -137,7 +139,8 @@
         "/api/vitalLonic/deletevitalslonic": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -174,7 +177,8 @@
         "/api/vitalLonic/getvitalslonicById": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -211,13 +215,13 @@
         "/api/Reference/getreference": {
             "post": {
                 "description": "To get Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -241,7 +245,8 @@
         "/api/immunizations/addimmunization": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -278,13 +283,13 @@
         "/api/immunizations/getimmunization": {
             "post": {
                 "description": "To get Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -305,11 +310,11 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/immunizations/getimmunizationById": {
             "post": {
                 "description": "To get by Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -341,14 +346,13 @@
                 },
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
-                
             }
         },
-
         "/api/immunizations/deleteimmunizationById": {
             "post": {
                 "description": "To Delete",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -385,7 +389,8 @@
         "/api/immunizations/updateimmunizationById": {
             "post": {
                 "description": "To update",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -419,11 +424,11 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/immunizationSchedule/addimmunizationSchedule": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -460,14 +465,13 @@
         "/api/immunizationSchedule/getimmunizationSchedule": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-
-
                 ],
                 "produces": [
                     "application/json",
@@ -491,7 +495,8 @@
         "/api/immunizationSchedule/getimmunizationScheduleById": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -528,7 +533,8 @@
         "/api/immunizationSchedule/deleteimmunizationScheduleById": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -565,7 +571,8 @@
         "/api/immunizationSchedule/updateimmunizationScheduleById": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -599,12 +606,11 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
-
         "/api/CommonReference/getReferenceById": {
             "post": {
                 "description": "get Reference Details",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -641,7 +647,8 @@
         "/api/CommonReference/addReference": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -678,7 +685,8 @@
         "/api/CommonReference/updateReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -715,7 +723,8 @@
         "/api/CommonReference/deleteReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -752,7 +761,8 @@
         "/api/CommonReference/getReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -786,11 +796,11 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-
         "/api/allergyMaster/addAllergyMaster": {
             "post": {
                 "description": "To Create a Allergy for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -822,13 +832,13 @@
         "/api/allergyMaster/getAllergyMaster": {
             "post": {
                 "description": "To get  Allergy Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-
                 ],
                 "produces": [
                     "application/json",
@@ -847,7 +857,8 @@
         "/api/allergyMaster/updateAlleryMasterById": {
             "post": {
                 "description": "To Update Allergy Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -879,7 +890,8 @@
         "/api/allergyMaster/deleteAllergyMaster": {
             "post": {
                 "description": "To Delete Allergy Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -911,7 +923,8 @@
         "/api/allergyMaster/getAlleryMasterById": {
             "post": {
                 "description": "To get by Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -940,11 +953,11 @@
                 }
             }
         },
-
         "/api/emr-workflow-settings/create": {
             "post": {
                 "description": "To Create a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -976,7 +989,8 @@
         "/api/emr-workflow-settings/delete": {
             "put": {
                 "description": "To delete a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1008,7 +1022,8 @@
         "/api/emr-workflow-settings/update": {
             "put": {
                 "description": "To Update a EMR Workflow for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1040,12 +1055,14 @@
         "/api/emr-workflow-settings/getEMRWorkflowByUserId": {
             "get": {
                 "description": "To get a EMR Workflow",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -1066,7 +1083,8 @@
         "/api/emr-history-settings/create": {
             "post": {
                 "description": "To Create a EMR History for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1098,12 +1116,14 @@
         "/api/emr-history-settings/getById": {
             "get": {
                 "description": "To get a EMR History Settings Workflow",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -1124,7 +1144,8 @@
         "/api/emr-history-settings/update": {
             "put": {
                 "description": "To Update a EMR History Settings for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1156,7 +1177,8 @@
         "/api/emr-history-settings/delete": {
             "put": {
                 "description": "To delete a EMR History Settingd for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1188,7 +1210,8 @@
         "/api/patient-chief-complaints/create": {
             "post": {
                 "description": "To create Patient chief Complaints",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1220,7 +1243,8 @@
         "/api/emr-patient-vitals/create": {
             "post": {
                 "description": "To Create a EMR Patient Vitals",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1252,7 +1276,8 @@
         "/api/emr-patient-vitals/getHistoryPatientVitals": {
             "get": {
                 "description": "To get a EMR History Patient Vitals",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1308,7 +1333,8 @@
         "/api/patient-chief-complaints/getByFilters": {
             "get": {
                 "description": "To get Patient chief Complaints",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1364,7 +1390,8 @@
         "/api/encounter/create": {
             "post": {
                 "description": "To Create a Encounter For Patient",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1396,7 +1423,8 @@
         "/api/encounter/getEncounterByDocAndPatientId": {
             "get": {
                 "description": "To get a Encounter for Patient",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1444,12 +1472,14 @@
         "/api/encounter-type/getEncounterType": {
             "get": {
                 "description": "To get list of Encounter Type",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -1467,7 +1497,8 @@
         "/api/patient-diagnosis/create": {
             "post": {
                 "description": "To create Patient Diagnosis",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1499,7 +1530,8 @@
         "/api/patient-diagnosis/getByFilters": {
             "get": {
                 "description": "To get list of Patient Diagnosis By Filters",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1564,7 +1596,8 @@
         "/api/favourite/create": {
             "post": {
                 "description": "To Create a favourite Drug for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1604,7 +1637,8 @@
         "/api/favourite/delete": {
             "put": {
                 "description": "To delete a favourite Drug",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1637,7 +1671,8 @@
         "/api/favourite/getFavourite": {
             "get": {
                 "description": "To get list of favourites for the Doctor login",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1677,7 +1712,8 @@
         "/api/favourite/getTreatmentKitFavourite": {
             "get": {
                 "description": "To get list of Treatment favourites",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1695,8 +1731,45 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful"
-                    
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitForFav"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/getTreatmentKitFavouriteById": {
+            "get": {
+                "description": "To get Treatment favourite by Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "treatmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitById"
+                        }
                     },
                     "400": {
                         "description": "Sorry! Something Went Wrong"
@@ -1709,7 +1782,8 @@
         "/api/favourite/getFavouriteById": {
             "get": {
                 "description": "To get favourite by given id for the Doctor login",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1743,7 +1817,8 @@
         "/api/favourite/updateFavouriteById": {
             "put": {
                 "description": "To update favourite by given id for the Doctor login",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1776,7 +1851,8 @@
         "/api/template/gettemplateByID": {
             "get": {
                 "summary": "List of Templates by id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1817,7 +1893,8 @@
         "/api/template/gettempdetails": {
             "get": {
                 "summary": "List drugs info of template",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1864,7 +1941,8 @@
         "/api/template/create": {
             "post": {
                 "description": "To Create a template for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1901,7 +1979,8 @@
         "/api/template/deleteTemplateDetails": {
             "put": {
                 "description": "To delete template for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1931,7 +2010,8 @@
         "/api/template/updatetemplateById": {
             "put": {
                 "description": "update template details by Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -1964,7 +2044,8 @@
         "/api/diagnosis/getDFilter": {
             "get": {
                 "description": "To get a Diagnosiseither by filters or By Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2005,7 +2086,8 @@
         "/api/diagnosis/search": {
             "post": {
                 "description": "To get a Diagnosiseither by filters or By Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2042,7 +2124,8 @@
         "/api/diagnosis/createDiagnosis": {
             "post": {
                 "description": "Diagnosis Details Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2079,7 +2162,8 @@
         "/api/diagnosis/getDiagnosis": {
             "post": {
                 "description": "To get a diagnosis  Details",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2116,7 +2200,8 @@
         "/api/diagnosis/deleteDiagnosis": {
             "post": {
                 "description": "Deleted successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2153,7 +2238,8 @@
         "/api/diagnosis/updateDiagnosisById": {
             "post": {
                 "description": "To Update diagnosis ",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2190,7 +2276,8 @@
         "/api/diagnosis/getDaignosisById": {
             "post": {
                 "description": "To get a diagnosis by Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2227,7 +2314,8 @@
         "/api/chief-complaints-master/getByFilters": {
             "get": {
                 "description": "To get a Chief Complaints either by filters or By Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2268,12 +2356,14 @@
         "/api/chief-complaints-duration/get": {
             "get": {
                 "description": "To get a chief Complaints Duration List",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2296,7 +2386,8 @@
         "/api/chief-complaints-duration/create": {
             "post": {
                 "description": "To create a chief Complaints Duration Period",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2333,7 +2424,8 @@
         "/api/chief-complaints-master/create": {
             "post": {
                 "description": "To create a chief Complaints Master Data",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2370,12 +2462,14 @@
         "/api/chief-complaints-master/getAll": {
             "post": {
                 "description": "To get a chief Complaints Master Data",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2398,7 +2492,8 @@
         "/api/chief-complaints-master/getById": {
             "post": {
                 "description": "To get a chief Complaints Master Data",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2435,7 +2530,8 @@
         "/api/chief-complaints-master/delete": {
             "post": {
                 "description": "Deleted chief Complaints Master Data",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2472,7 +2568,8 @@
         "/api/chief-complaints-master/update": {
             "post": {
                 "description": "To Update Complaints Master Data",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2509,7 +2606,8 @@
         "/api/vitalMaster/create": {
             "post": {
                 "description": "To Create a vitals for the Master",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2546,12 +2644,14 @@
         "/api/vitalMaster/getVitals": {
             "get": {
                 "summary": "To get default vitals master List",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2574,12 +2674,14 @@
         "/api/vitalMaster/getAllVitals": {
             "get": {
                 "summary": "To get all vitals master list",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2602,12 +2704,14 @@
         "/api/vitalMaster/getALLVitalsmaster": {
             "post": {
                 "summary": "To get all vitals master list",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2630,7 +2734,8 @@
         "/api/template/updateTemplateDetailsByID": {
             "put": {
                 "description": "update template details by Id",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2663,12 +2768,14 @@
         "/api/patientattachments/getattachmenttype": {
             "get": {
                 "summary": "List attachment type",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2691,7 +2798,8 @@
         "/api/patientattachments/getlistBytype": {
             "get": {
                 "summary": "List attachments by type",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2726,12 +2834,14 @@
         "/api/patientattachments/getAllAttachments": {
             "get": {
                 "summary": "List all attachments",
-                "parameters": [{
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -2754,7 +2864,8 @@
         "/api/patientattachments/upload": {
             "post": {
                 "summary": "upload the documents",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2831,7 +2942,8 @@
         "/api/patientattachments/download": {
             "get": {
                 "summary": "download the documents",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2867,7 +2979,8 @@
         "/api/patientattachments/deleteAttachmentDetails": {
             "put": {
                 "summary": "delete the documents",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2902,7 +3015,8 @@
         "/api/treatment-kit/create": {
             "post": {
                 "summary": "To create Treatment Kit",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2936,7 +3050,8 @@
         "/api/treatment-kit/getByFilters": {
             "get": {
                 "summary": "To get list of Treatment Kits",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
@@ -2982,174 +3097,171 @@
         }
     },
     "definitions": {
-        "getvitalslonicById":{
+        "getvitalslonicById": {
             "type": "object",
             "properties": {
-                "vitals_lonic_id":{
-                    "type":"integer"
+                "vitals_lonic_id": {
+                    "type": "integer"
                 }
             }
         },
-        "deletevitalslonic":{
+        "deletevitalslonic": {
             "type": "object",
             "properties": {
-                "vitals_lonic_id":{
-                    "type":"integer"
+                "vitals_lonic_id": {
+                    "type": "integer"
                 }
             }
         },
-        "updatevitalslonicById":{
+        "updatevitalslonicById": {
             "type": "object",
             "properties": {
-                "vitals_lonic_id":{
-                    "type":"integer"
+                "vitals_lonic_id": {
+                    "type": "integer"
                 },
-                "vital_master_uuid":{
-                    "type":"integer"
+                "vital_master_uuid": {
+                    "type": "integer"
                 },
-                "loinc_code":{
-                    "type": "string"
-                   
-                  
-                },
-                "loinc_name":{
-                    "type": "string"
-                    
-                   
-                },"component":{
-                    "type": "string"
-                    
-                   
-                },"property":{
-                    "type": "string"
-                },"timing":{
-                    "type": "string"
-                },"system":{
-                    "type": "string"
-                },"scale":{
-                    "type": "string"
-                },"meathod":{
-                    "type": "string"
-                },"calss":{
+                "loinc_code": {
                     "type": "string"
                 },
-                "is_active":{
+                "loinc_name": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "property": {
+                    "type": "string"
+                },
+                "timing": {
+                    "type": "string"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "scale": {
+                    "type": "string"
+                },
+                "meathod": {
+                    "type": "string"
+                },
+                "calss": {
+                    "type": "string"
+                },
+                "is_active": {
                     "type": "integer"
                 },
                 "status": {
                     "type": "integer"
                 },
                 "revision": {
-                    "type": "integer"        
+                    "type": "integer"
                 }
-               
             }
         },
-        "addvitalslonic":{
+        "addvitalslonic": {
             "type": "object",
             "properties": {
-                "vital_master_uuid":{
-                    "type":"integer"
+                "vital_master_uuid": {
+                    "type": "integer"
                 },
-                "loinc_code":{
-                    "type": "string"
-                   
-                  
-                },
-                "loinc_name":{
-                    "type": "string"
-                    
-                   
-                },"component":{
-                    "type": "string"
-                    
-                   
-                },"property":{
-                    "type": "string"
-                },"timing":{
-                    "type": "string"
-                },"system":{
-                    "type": "string"
-                },"scale":{
-                    "type": "string"
-                },"meathod":{
-                    "type": "string"
-                },"calss":{
+                "loinc_code": {
                     "type": "string"
                 },
-                "is_active":{
+                "loinc_name": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "property": {
+                    "type": "string"
+                },
+                "timing": {
+                    "type": "string"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "scale": {
+                    "type": "string"
+                },
+                "meathod": {
+                    "type": "string"
+                },
+                "calss": {
+                    "type": "string"
+                },
+                "is_active": {
                     "type": "integer"
                 },
                 "status": {
                     "type": "integer"
                 },
                 "revision": {
-                    "type": "integer"        
+                    "type": "integer"
                 }
-               
             }
         },
-"getvitalslonic":{
-    "type": "object",
+        "getvitalslonic": {
+            "type": "object",
             "properties": {
-                "uuid":{
-                    "type":"integer"
+                "uuid": {
+                    "type": "integer"
                 },
-                "vital_master_uuid":{
-                    "type":"integer"
+                "vital_master_uuid": {
+                    "type": "integer"
                 },
-                "loinc_code":{
-                    "type": "string"
-                   
-                  
-                },
-                "loinc_name":{
-                    "type": "string"
-                    
-                   
-                },"component":{
-                    "type": "string"
-                    
-                   
-                },"property":{
-                    "type": "string"
-                },"timing":{
-                    "type": "string"
-                },"system":{
-                    "type": "string"
-                },"scale":{
-                    "type": "string"
-                },"meathod":{
-                    "type": "string"
-                },"calss":{
+                "loinc_code": {
                     "type": "string"
                 },
-                "is_active":{
+                "loinc_name": {
+                    "type": "string"
+                },
+                "component": {
+                    "type": "string"
+                },
+                "property": {
+                    "type": "string"
+                },
+                "timing": {
+                    "type": "string"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "scale": {
+                    "type": "string"
+                },
+                "meathod": {
+                    "type": "string"
+                },
+                "calss": {
+                    "type": "string"
+                },
+                "is_active": {
                     "type": "integer"
                 },
                 "status": {
                     "type": "integer"
                 },
                 "revision": {
-                    "type": "integer"        
+                    "type": "integer"
                 }
-               
             }
-},
-        "getALLVitalsmaster":{
+        },
+        "getALLVitalsmaster": {
             "type": "object",
             "properties": {}
         },
-        "getreference":{
+        "getreference": {
             "type": "object",
-            "properties": {
-                
-            }
+            "properties": {}
         },
         "addimmunization": {
             "type": "object",
             "properties": {
-
                 "name": {
                     "type": "string"
                 },
@@ -3171,9 +3283,6 @@
                 "revision": {
                     "type": "integer"
                 }
-
-
-
             }
         },
         "getimmunization": {
@@ -3217,7 +3326,6 @@
                 }
             }
         },
-
         "getimmunizationById": {
             "type": "object",
             "properties": {
@@ -3226,7 +3334,6 @@
                 }
             }
         },
-
         "deleteimmunizationById": {
             "type": "object",
             "properties": {
@@ -3399,15 +3506,13 @@
                     "type": "integer"
                 }
             }
-        },  
+        },
         "getReference": {
             "type": "object",
             "properties": {
                 "table_name": {
                     "type": "string"
-
                 }
-
             }
         },
         "updateReference": {
@@ -3415,7 +3520,6 @@
             "properties": {
                 "table_name": {
                     "type": "string"
-
                 },
                 "code": {
                     "type": "string"
@@ -3426,7 +3530,6 @@
                 "Id": {
                     "type": "integer"
                 }
-
             }
         },
         "deleteReference": {
@@ -3434,9 +3537,7 @@
             "properties": {
                 "table_name": {
                     "type": "string"
-
                 }
-
             }
         },
         "getReferenceById": {
@@ -3444,12 +3545,10 @@
             "properties": {
                 "table_name": {
                     "type": "string"
-
                 },
                 "Id": {
                     "type": "integer"
                 }
-
             }
         },
         "addReference": {
@@ -3457,7 +3556,6 @@
             "properties": {
                 "table_name": {
                     "type": "string"
-
                 },
                 "code": {
                     "type": "string"
@@ -3465,13 +3563,12 @@
                 "name": {
                     "type": "string"
                 },
-                "is_active":{
+                "is_active": {
                     "type": "integer"
                 },
-                "revision":{
+                "revision": {
                     "type": "integer"
                 }
-
             }
         },
         "addAllergyMaster": {
@@ -3539,7 +3636,6 @@
                 "revision": {
                     "type": "integer"
                 }
-
             }
         },
         "deleteAllergyMaster": {
@@ -4121,15 +4217,8 @@
                         "department_uuid": {
                             "type": "integer"
                         },
-                        "diagnosis_uuid": {
-                            "type": "integer"
-                        },
                         "display_order": {
                             "type": "integer"
-                        },
-                        "revision": {
-                            "type": "boolean",
-                            "example": true
                         },
                         "is_active": {
                             "type": "boolean",
@@ -4178,10 +4267,6 @@
                             },
                             "display_order": {
                                 "type": "integer"
-                            },
-                            "revision": {
-                                "type": "boolean",
-                                "example": true
                             },
                             "is_active": {
                                 "type": "boolean",
@@ -4927,7 +5012,6 @@
             }
         },
         "getDiagnosis": {
-
             "type": "object",
             "properties": {
                 "pageNo": {
@@ -4942,7 +5026,6 @@
                     "type": "string",
                     "example": "string"
                 }
-
             }
         },
         "deleteDiagnosis": {
@@ -5360,7 +5443,6 @@
             "type": "object",
             "properties": {}
         },
-        
         "updateTemplateDetailsByID": {
             "type": "object",
             "properties": {
@@ -5617,60 +5699,75 @@
                     }
                 },
                 "treatment_kit_drug": {
-                    "type": "object",
-                    "properties": {
-                        "item_master_uuid": {
-                            "type": "integer"
-                        },
-                        "drug_route_uuid": {
-                            "type": "integer"
-                        },
-                        "drug_frequency_uuid": {
-                            "type": "integer"
-                        },
-                        "duration": {
-                            "type": "string"
-                        },
-                        "duration_period_uuid": {
-                            "type": "integer"
-                        },
-                        "drug_instruction_uuid": {
-                            "type": "integer"
-                        },
-                        "quantity": {
-                            "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "item_master_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_route_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_uuid": {
+                                "type": "integer"
+                            },
+                            "duration": {
+                                "type": "string"
+                            },
+                            "duration_period_uuid": {
+                                "type": "integer"
+                            },
+                            "drug_instruction_uuid": {
+                                "type": "integer"
+                            },
+                            "quantity": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
                 "treatment_kit_lab": {
-                    "type": "object",
-                    "properties": {
-                        "test_master_uuid": {
-                            "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "test_master_uuid": {
+                                "type": "integer"
+                            }
                         }
                     }
                 },
                 "treatment_kit_investigation": {
-                    "type": "object",
-                    "properties": {
-                        "test_master_uuid": {
-                            "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "test_master_uuid": {
+                                "type": "integer"
+                            }
                         }
                     }
                 },
                 "treatment_kit_radiology": {
-                    "type": "object",
-                    "properties": {
-                        "test_master_uuid": {
-                            "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "test_master_uuid": {
+                                "type": "integer"
+                            }
                         }
                     }
                 },
                 "treatment_kit_diagnosis": {
-                    "type": "object",
-                    "properties": {
-                        "diagnosis_uuid": {
-                            "type": "integer"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "diagnosis_uuid": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }
@@ -5691,6 +5788,188 @@
                         "type": "string"
                     },
                     "treatment_type_id": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "getTreatmentKitById": {
+            "type": "object",
+            "properties": {
+                "treatment_name": {
+                    "type": "string"
+                },
+                "treatment_code": {
+                    "type": "string"
+                },
+                "treatment_id": {
+                    "type": "integer"
+                },
+                "drug_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "drug_name": {
+                                "type": "string"
+                            },
+                            "drug_code": {
+                                "type": "string"
+                            },
+                            "drug_id": {
+                                "type": "integer"
+                            },
+                            "drug_quantity": {
+                                "type": "integer"
+                            },
+                            "drug_duration": {
+                                "type": "integer"
+                            },
+                            "drug_route_name": {
+                                "type": "string"
+                            },
+                            "drug_route_code": {
+                                "type": "string"
+                            },
+                            "drug_route_id": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_name": {
+                                "type": "string"
+                            },
+                            "drug_frequency_id": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_code": {
+                                "type": "string"
+                            },
+                            "drug_frequency_display": {
+                                "type": "string"
+                            },
+                            "drug_period_name": {
+                                "type": "string"
+                            },
+                            "drug_period_id": {
+                                "type": "integer"
+                            },
+                            "drug_period_code": {
+                                "type": "string"
+                            },
+                            "drug_instruction_code": {
+                                "type": "string"
+                            },
+                            "drug_instruction_name": {
+                                "type": "string"
+                            },
+                            "drug_instruction_id": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "diagnosis_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "diagnosis_id": {
+                                "type": "integer"
+                            },
+                            "diagnosis_name": {
+                                "type": "string"
+                            },
+                            "diagnosis_code": {
+                                "type": "string"
+                            },
+                            "diagnosis_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "investigation_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "investigation_id": {
+                                "type": "integer"
+                            },
+                            "investigation_name": {
+                                "type": "string"
+                            },
+                            "investigation_code": {
+                                "type": "string"
+                            },
+                            "investigation_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "radiology_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "radiology_id": {
+                                "type": "integer"
+                            },
+                            "radiology_name": {
+                                "type": "string"
+                            },
+                            "radiology_code": {
+                                "type": "string"
+                            },
+                            "radiology_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "lab_details_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "lab_id": {
+                                "type": "integer"
+                            },
+                            "lab_name": {
+                                "type": "string"
+                            },
+                            "lab_code": {
+                                "type": "string"
+                            },
+                            "lab_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "getTreatmentKitForFav": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "favourite_id": {
+                        "type": "integer"
+                    },
+                    "favourite_name": {
+                        "type": "string"
+                    },
+                    "treatment_kit_type_id": {
+                        "type": "integer"
+                    },
+                    "favourite_code": {
+                        "type": "string"
+                    },
+                    "favourite_active": {
+                        "type": "boolean"
+                    },
+                    "favourite_type_id": {
                         "type": "integer"
                     }
                 }
