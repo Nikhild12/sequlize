@@ -1860,6 +1860,38 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/favourite/getTreatmentKitFavourite": {
+            "get": {
+                "description": "To get list of Treatment favourites",
+                "parameters": [{
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful"
+                    
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/favourite/getFavouriteById": {
             "get": {
                 "description": "To get favourite by given id for the Doctor login",
@@ -3687,10 +3719,7 @@
                     "type": "integer"
                 }
             }
-        },
-       
-
-
+        },  
         "getReference": {
             "type": "object",
             "properties": {
@@ -3730,7 +3759,6 @@
 
             }
         },
-
         "getReferenceById": {
             "type": "object",
             "properties": {
@@ -3744,7 +3772,6 @@
 
             }
         },
-
         "addReference": {
             "type": "object",
             "properties": {
@@ -3767,10 +3794,7 @@
 
             }
         },
-
         "addAllergyMaster": {
-
-
             "type": "object",
             "properties": {
                 "allergy_type_uuid": {
@@ -3803,8 +3827,6 @@
             }
         },
         "updateAlleryMasterById": {
-
-
             "type": "object",
             "properties": {
                 "Allergy_id": {
@@ -3841,31 +3863,21 @@
             }
         },
         "deleteAllergyMaster": {
-
-
             "type": "object",
             "properties": {
                 "Allergy_id": {
                     "type": "integer"
                 }
-
-
-
             }
         },
         "getAlleryMasterById": {
-
-
             "type": "object",
             "properties": {
                 "Allergy_id": {
                     "type": "integer"
-
                 }
-
             }
         },
-
         "getReferenceIdName": {
             "type": "object",
             "properties": {
