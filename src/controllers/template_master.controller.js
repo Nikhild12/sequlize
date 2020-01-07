@@ -137,10 +137,6 @@ const tmpmstrController = () => {
         await templateTransaction.rollback();
       }
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> b49e9804fd73e03bf24133a97a96fe9c2a670e88
   };
 
   const _updateTemplateById = async (req, res) => {
@@ -362,10 +358,6 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
     detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction }, { returning: true })];
-<<<<<<< HEAD
-=======
-
->>>>>>> b49e9804fd73e03bf24133a97a96fe9c2a670e88
   });
   return masterDetailsPromise;
 }
@@ -623,10 +615,6 @@ function getTempData(temp_type_id, result) {
 }
 
 async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction) {
-<<<<<<< HEAD
-=======
-
->>>>>>> b49e9804fd73e03bf24133a97a96fe9c2a670e88
 
   templateMasterReqData = emr_utility.createIsActiveAndStatus(templateMasterReqData, userUUID);
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
@@ -641,10 +629,6 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true, transaction: templateTransaction });
   return { "templateMasterReqData": templateMasterCreatedData, "templateMasterDetailsReqData": dtls_result };
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> b49e9804fd73e03bf24133a97a96fe9c2a670e88
 
 const nameExists = (temp_name, userUUID) => {
 
