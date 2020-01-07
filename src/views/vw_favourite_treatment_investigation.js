@@ -1,9 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const VW_FAVOURITE_TREATMENT_DIAGNOSIS = sequelize.define(
-        'vw_favourite_treatment_diagnosis',
+    const VW_FAVOURITE_TREATMENT_INVESTIGATION = sequelize.define(
+        'vw_favourite_treatment_investigation',
         {
-
 
             tk_uuid: {
 
@@ -27,24 +26,29 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
 
             },
-            td_code: {
-
-                type: DataTypes.STRING(255)
-
-            },
-            td_name: {
-
-                type: DataTypes.STRING(255)
-
-            },
-            td_description: {
-
-                type: DataTypes.STRING(255)
-
-            },
-            tkdm_diagnosis_uuid: {
+            tkim_test_master_uuid: {
 
                 type: DataTypes.INTEGER
+
+            },
+            tkim_treatment_kit_uuid: {
+
+                type: DataTypes.INTEGER
+
+            },
+            tm_code: {
+
+                type: DataTypes.STRING(255)
+
+            },
+            tm_name: {
+
+                type: DataTypes.STRING(255)
+
+            },
+            tm_description: {
+
+                type: DataTypes.STRING(255)
 
             }
         },
@@ -53,5 +57,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return VW_FAVOURITE_TREATMENT_DIAGNOSIS;
+    return VW_FAVOURITE_TREATMENT_INVESTIGATION;
 };
