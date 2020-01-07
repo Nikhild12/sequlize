@@ -18,6 +18,7 @@ const chiefComplaintsRoutes = require("./chiefComplaints.route");
 const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
+const vitallonicRoutes = require("./vital_loinc.route");
 
 const diagnosisRoutes = require("./diagnosis.route");
 const diagnosisVersionRoutes = require("./diagnosis_version.route");
@@ -71,6 +72,7 @@ serviceRouter.use('/immunizations', immunizationsRoutes);
 
 // Vital Master Routes
 serviceRouter.use('/vitalMaster', vitalMasterRoutes);
+serviceRouter.use('/vitalLonic', vitallonicRoutes);
 
 // Diagnosis Routes
 serviceRouter.use('/diagnosis', diagnosisRoutes);

@@ -68,6 +68,7 @@ const getFavouritesAttributes = [
     "d_description"
 ];
 
+
 const gedTreatmentKit = [
     'fm_uuid',
     'fm_name',
@@ -207,7 +208,7 @@ function getTreatmentQuery(dept_id, user_uuid) {
         [Op.or]: [
             { "fm_dept": { [Op.eq]: dept_id }, "fm_public": { [Op.eq]: 1 } }, { "fm_userid": { [Op.eq]: user_uuid } }
         ]
-    }
+    };
 }
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
@@ -239,8 +240,12 @@ const TickSheetMasterController = () => {
      * @param {*} res 
      */
 
+    let favouriteTransaction;
+    let favouriteTransStatus = false;
+    
     const _createTickSheetMaster = async (req, res) => {
 
+        
         // plucking data req body
         let favouriteMasterReqData = req.body.headers;
         let favouriteMasterDetailsReqData = req.body.details;
@@ -255,9 +260,8 @@ const TickSheetMasterController = () => {
             favouriteMasterReqData = emr_utility.createIsActiveAndStatus(favouriteMasterReqData, user_uuid);
 
             try {
-
+                favouriteTransaction = await sequelizeDb.sequelize.transaction();
                 const { search_key, search_value } = getSearchValueBySearchKey(favouriteMasterDetailsReqData[0], searchkey);
-
                 // checking for duplicate before 
                 // creating a new favourite
                 const checkingForSameFavourite = await vmTickSheetMasterTbl
@@ -270,25 +274,31 @@ const TickSheetMasterController = () => {
                     const duplicate_msg = checkingForSameFavourite[0].tsm_active[0] === 1 ? duplicate_active_msg : duplicate_in_active_msg;
                     return res.status(400).send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
                 }
-
-                const favouriteMasterCreatedData = await favouriteMasterTbl.create(favouriteMasterReqData, { returning: true });
-                const favouriteMasterDetailsCreatedData = await Promise.all(getFavouriteMasterDetailsWithUUID(favouritMasterDetailsTbl, favouriteMasterDetailsReqData, favouriteMasterCreatedData, user_uuid));
+                
+                const favouriteMasterCreatedData = await favouriteMasterTbl.create(favouriteMasterReqData, { returning: true, transaction: favouriteTransaction });
+                const favouriteMasterDetailsCreatedData = await Promise.all(getFavouriteMasterDetailsWithUUID(favouritMasterDetailsTbl, favouriteMasterDetailsReqData, favouriteMasterCreatedData, user_uuid ,favouriteTransaction));
 
                 if (favouriteMasterDetailsCreatedData) {
-
                     // returning req data with inserted record Id
                     favouriteMasterReqData.uuid = favouriteMasterCreatedData.uuid;
                     favouriteMasterDetailsReqData.forEach((fMD, index) => {
                         fMD.uuid = favouriteMasterDetailsCreatedData[index].uuid;
                     });
-
+                    await favouriteTransaction.commit();
+                    favouriteTransStatus = true;
                     return res.status(200).send({ code: httpStatus.OK, message: "Inserted Favourite Master Successfully", responseContents: { headers: favouriteMasterReqData, details: favouriteMasterDetailsReqData } });
                 }
             } catch (ex) {
-
                 // tickSheetDebug(`Exception Happened ${ex.message}`);
+                await favouriteTransaction.rollback();
+                favouriteTransStatus = true;
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
 
+            }
+            finally{
+                if(favouriteTransaction && !favouriteTransStatus){
+                    await favouriteTransaction.rollback();
+                }
             }
         } else {
             return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
@@ -358,16 +368,20 @@ const TickSheetMasterController = () => {
     };
 
     const _updateFavouriteById = async (req, res) => {
+        // let favouriteTransaction;
+        // let favouriteTransStatus = false;
 
         const { user_uuid } = req.headers;
         const favouriteMasterReqData = req.body;
 
-        try {
+        
             const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
             const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
 
             if (user_uuid && favouriteMasterReqData && favouriteMasterReqData.hasOwnProperty('favourite_id') && favouriteMasterReqData.hasOwnProperty('is_active')) {
 
+            try {
+                favouriteTransaction = await sequelizeDb.sequelize.transaction();
                 const updatingRecord = await favouriteMasterTbl.findAll({
                     where: {
                         uuid: favouriteMasterReqData.favourite_id,
@@ -380,24 +394,34 @@ const TickSheetMasterController = () => {
                 }
 
                 const updatedFavouriteData = await Promise.all([
-                    favouriteMasterTbl.update(favouriteMasterUpdateData, { where: { uuid: favouriteMasterReqData.favourite_id } }),
-                    favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, { where: { favourite_master_uuid: favouriteMasterReqData.favourite_id } }),
+                    favouriteMasterTbl.update(favouriteMasterUpdateData, { where: { uuid: favouriteMasterReqData.favourite_id } , transaction: favouriteTransaction}),
+                    favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, { where: { favourite_master_uuid: favouriteMasterReqData.favourite_id }, transaction: favouriteTransaction} ),
+
                 ]);
+                await favouriteTransaction.commit();
+                    favouriteTransStatus = true;
 
                 if (updatedFavouriteData) {
                     return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: favouriteMasterReqData });
                 }
 
-            } else {
-                return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
-            }
-        } catch (ex) {
+            } catch (ex) {
 
-            console.log(`Exception Happened ${ex}`);
-            return res.status(400).send({ code: httpStatus[400], message: ex.message });
+                console.log(`Exception Happened ${ex}`);
+                await favouriteTransaction.rollback();
+                favouriteTransaction = true;
+                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+            }
+            finally{
+                if(favouriteTransaction && !favouriteTransStatus){
+                    await favouriteTransaction.rollback();
+                }
+            }
 
         }
-    };
+    }
+
 
     const _deleteFavourite = async (req, res) => {
 
@@ -456,7 +480,7 @@ const TickSheetMasterController = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
 
@@ -473,7 +497,7 @@ const TickSheetMasterController = () => {
 
 module.exports = TickSheetMasterController();
 
-function getFavouriteMasterDetailsWithUUID(detailsTbl, detailsData, masterData, reqUserUUId) {
+function getFavouriteMasterDetailsWithUUID(detailsTbl, detailsData, masterData, reqUserUUId, favouriteTransaction) {
 
 
     let masterDetailsPromise = [];
@@ -482,14 +506,9 @@ function getFavouriteMasterDetailsWithUUID(detailsTbl, detailsData, masterData, 
     // to tick sheet Master Details Id
     // creating a Promise Array to push All async 
     detailsData.forEach((mD) => {
-
         mD = emr_utility.assignDefaultValuesAndUUIdToObject(mD, masterData, reqUserUUId, 'favourite_master_uuid');
-        masterDetailsPromise = [...masterDetailsPromise,
-        detailsTbl.create(mD, { returning: true })
-        ];
-
+        masterDetailsPromise = [...masterDetailsPromise,detailsTbl.create(mD, { returning: true, transaction: favouriteTransaction})];
     });
-
     return masterDetailsPromise;
 }
 
