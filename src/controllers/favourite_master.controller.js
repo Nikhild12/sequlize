@@ -12,6 +12,9 @@ const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
 
+const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
+const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
+
 // Utility Service Import
 const emr_utility = require('../services/utility.service');
 
@@ -110,7 +113,59 @@ const gedTreatmentKit = [
     'tkrm_test_master_uuid',
     'tm3_code',
     'tm3_description',
-]
+];
+
+const gedTreatmentKitDrug = [
+    'fm_uuid',
+    'fm_name',
+    'fm_dept',
+    'fm_userid',
+    'fm_favourite_type_uuid',
+    'fm_active',
+    'fm_public',
+    'fm_status',
+    'tk_uuid',
+    'tk_code',
+    'tk_name',
+    'tk_treatment_kit_type_uuid',
+    'im_code',
+    'im_name',
+    'tkd_item_master_uuid',
+    'dr_code',
+    'dr_name',
+    'tkd_drug_route_uuid',
+    'df_code',
+    'df_name',
+    'df_display',
+    'tkd_drug_frequency_uuid',
+    'dp_code',
+    'dp_name',
+    'tkd_duration_period_uuid',
+    'di_code',
+    'di_name',
+    'tkd_drug_instruction_uuid',
+    'tkd_quantity',
+    'tkd_duration'
+];
+
+const getTreatmentKitDiaAtt = [
+    'fm_uuid',
+    'fm_name',
+    'fm_dept',
+    'fm_userid',
+    'fm_favourite_type_uuid',
+    'fm_active',
+    'fm_public',
+    'fm_status',
+    'tk_uuid',
+    'tk_code',
+    'tk_name',
+    'tk_treatment_kit_type_uuid',
+    'tkdm_diagnosis_uuid',
+    'td_name',
+    'td_code',
+    'td_description'
+];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
 
@@ -382,15 +437,16 @@ const TickSheetMasterController = () => {
         if (user_uuid && departmentId) {
 
             try {
-                const favouriteTreatment = await vmTreatmentFavourite.findAll(
-                    {
-                        attributes: gedTreatmentKit,
-                        where: getTreatmentQuery(user_uuid, departmentId)
-                    }
-                );
+                const treatmentFavourites = await
+                    Promise.all(
+                        [
+                            vmTreatmentFavouriteDrug.findAll({ attributes: gedTreatmentKitDrug, where: getTreatmentQuery(user_uuid, departmentId) }),
+                            vmTreatmentFavouriteDiagnosis.findAll({ attributes: getTreatmentKitDiaAtt, where: getTreatmentQuery(user_uuid, departmentId) })
+                        ]
+                    );
                 // favouriteList = getFavouritesInList(tickSheetData);
-                const returnMessage = favouriteTreatment && favouriteTreatment.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
-                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteTreatment, responseContentLength: favouriteTreatment.length });
+                const returnMessage = treatmentFavourites && treatmentFavourites.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: treatmentFavourites, responseContentLength: treatmentFavourites.length });
             } catch (error) {
 
                 console.log(`Exception Happened ${error}`);
@@ -560,4 +616,38 @@ function getSearchValueBySearchKey(details, search_key) {
                 search_value: details.item_master_uuid
             };
     }
+}
+
+
+function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
+    return treatFav.map((fav) => {
+        return {
+
+            // treatment Details
+            treatment_kit_name: fav.tk_name,
+            treatment_kit_code: fav.tk_code,
+            treatment_kit_id: fav.tk_uuid,
+
+            // treatment Drug Details
+
+            treatment_drug_details: getTreatmentKitFavourites(treatFav)
+        }
+    });
+}
+
+
+function getTreatmentKitFavourites(treatmentkit, kitName) {
+    let response = [];
+    switch (kitName) {
+        case 'drug':
+            treatmentkit.filter((t) => {
+                return t
+            });
+            break;
+
+        default:
+            break;
+    }
+
+    return response;
 }
