@@ -53,6 +53,9 @@ const immunizationsController = () => {
             order: [
                 [sortField, sortOrder],
             ],
+            where:{
+                status:1
+            }
 
         };
 
@@ -65,10 +68,6 @@ const immunizationsController = () => {
                         },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
                     }
 
                 ]
@@ -115,39 +114,61 @@ const immunizationsController = () => {
     };
 
 
+   
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
-        // postData.created_by = req.headers.user_uuid
+        postData.created_by = req.headers.user_uuid;
        
         
+
         if (postData) {
-            await immunizationsTbl.create(postData, {
-                returning: true
-            }).then(data => {
 
-                res.send({
-                    statusCode: 200,
-                    msg: "Inserted Immunization details Successfully",
-                    req: postData,
-                    responseContents: data
-                });
-            }).catch(err => {
+            immunizationsTbl.findAll({
+                where: {
+                  [Op.or]: [
+                    {
+                        name: postData.name
+                    }
+                  ]
+                }
+              }).then(async (result) =>{
+                if (result.length != 0) {
+                    return res.send({
+                        statusCode: 400,
+                      status: "error",
+                      msg: "Record already Found. Please enter immunizations"
+                    });
+                  } else{
+                    await immunizationsTbl.create(postData, {
+                        returning: true
+                    }).then(data => {
+        
+                        res.send({
+                            statusCode: 200,
+                            msg: "Inserted immunizations details Successfully",
+                            req: postData,
+                            responseContents: data
+                        });
+                    }).catch(err => {
+        
+                        res.send({
+                            status: "failed",
+                            msg: "failed to immunizations details",
+                            error: err
+                        });
+                    });
+                  }
+              });
 
-                res.send({
-                    status: "failed",
-                    msg: "failed to Immunization Module details",
-                    error: err
-                });
-            });
+          
         } else {
-
+            
             res.send({
                 status: 'failed',
-                msg: 'Please enterImmunization details'
+                msg: 'Please enter immunizations details'
             });
         }
     };
-  
 
     const getimmunizationById = async (req, res, next) => {
         const postData = req.body;
@@ -187,7 +208,7 @@ const immunizationsController = () => {
         const postData = req.body;
 
         await immunizationsTbl.update({
-            is_active: 0
+            status: 0
         }, {
             where: {
                 uuid: postData.Id

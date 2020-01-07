@@ -59,7 +59,7 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
                 uuid: searchValue,
                 is_active: emr_constants.IS_ACTIVE,
                 status: emr_constants.IS_ACTIVE
-            }
+            };
     }
 };
 
@@ -291,7 +291,7 @@ function getFilterTreatmentKitResponse(argument) {
             treatment_code: a.code,
             treatment_name: a.name,
             treatment_type_id: a.treatment_kit_type_uuid
-        }
+        };
     });
 }
 

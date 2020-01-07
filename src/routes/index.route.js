@@ -13,5 +13,12 @@ const indexRoute = express.Router();
 // Middleware
 indexRoute.use('/api', authenticateService, serviceRoute);
 
+// EMR Logging
+const config = require("../config/config");
+const moment = require("moment");
+
+const utcMoment = moment.utc();
+config.requestDate = new Date(utcMoment.format());
+
 // Exporting Index Route
 module.exports = indexRoute;

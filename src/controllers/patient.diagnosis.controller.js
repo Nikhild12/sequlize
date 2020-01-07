@@ -73,10 +73,7 @@ const PatientDiagnsis = () => {
                 return res.status(200).send({ code: httpStatus.OK, message: "Inserted Patient Diagnosis Complaints Successfully", responseContents: appendUUIDToReqData(patientsDiagnosisData, patientDiagnosisCreatedData) });
 
             } catch (ex) {
-
-                console.log(ex);
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-
             }
 
         } else {
@@ -92,18 +89,12 @@ const PatientDiagnsis = () => {
         const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
 
         if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
-            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date) 
-        //     {
-        //         patient_uuid: patientId,
-        // facility_uuid: facility_uuid,
-        // created_date: {
-        //     [Op.and]: [
-        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-        //         Sequelize.where(Sequelize.fn('date', Sequelize.col('created_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-        //     ] }
-        //     });
-            );
+            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
+            //console.log("----------",patientDiagnosisData);
             return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
+            //console.log("----------",patientDiagnosisData);
+            //return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: patientDiagnosisData });
+            
         }
         
         else if (user_uuid && searchKey && searchValue && patientId && departmentId) {
@@ -113,7 +104,6 @@ const PatientDiagnsis = () => {
             return res.status(422).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
         } catch (ex) {
-        console.log(ex);
         return res.status(422).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
     };
@@ -186,7 +176,6 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
     switch (key) {
         case 'date':
                 filtersQuery = {
-                    limit: +value,
                     attributes: getPatientDiagnosisAttributes(),
                     order: [['uuid', 'DESC']]
                 };
@@ -230,6 +219,7 @@ function getPatientData(responseData) {
             diagnosis_created_date: rD.created_date,
             diagnosis_modified_date: rD.modified_date,
             diagnosis_performed_by: rD.performed_by,
+            diagnosis_comments: rD.comments,
             diagnosis_name: rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : '',
             diagnosis_code: rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : '',
             diagnosis_is_snomed: rD.is_snomed[0] === 1 ? true : false
