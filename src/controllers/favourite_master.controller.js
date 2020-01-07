@@ -12,6 +12,11 @@ const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
 
+// Get Treatment Fav Views
+const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
+const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
+const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
+
 // Utility Service Import
 const emr_utility = require('../services/utility.service');
 
@@ -65,8 +70,23 @@ const getFavouritesAttributes = [
     "d_description"
 ];
 
+// Fav Treatment Kit Att
+const treatmentKitAtt = [
+    'fm_uuid',
+    'fm_name',
+    'fm_dept',
+    'fm_userid',
+    'fm_favourite_type_uuid',
+    'fm_active',
+    'fm_public',
+    'fm_status',
+    'tk_uuid',
+    'tk_code',
+    'tk_name',
+    'tk_treatment_kit_type_uuid'
+];
 
-const gedTreatmentKit = [
+const gedTreatmentKitDrug = [
     'fm_uuid',
     'fm_name',
     'fm_dept',
@@ -96,22 +116,25 @@ const gedTreatmentKit = [
     'di_name',
     'tkd_drug_instruction_uuid',
     'tkd_quantity',
-    'tkd_duration',
-    'd_code',
-    'd_name',
-    'd_description',
-    'tkdm_diagnosis_uuid',
-    'tm1_code',
-    'tm1_name',
-    'tm1_description',
-    'tklm_test_master_uuid',
-    'tm2_code',
-    'tm2_name',
-    'tm2_description',
-    'tkrm_test_master_uuid',
-    'tm3_code',
-    'tm3_description',
+    'tkd_duration'
 ];
+
+let getTreatmentKitDiaAtt = [
+    'tkdm_diagnosis_uuid',
+    'td_name',
+    'td_code',
+    'td_description'
+];
+getTreatmentKitDiaAtt = [...treatmentKitAtt, ...getTreatmentKitDiaAtt];
+
+let getTreatmentKitInvestigationAtt = [
+    'tkim_test_master_uuid',
+    'tkim_treatment_kit_uuid',
+    'tm_code',
+    'tm_name',
+    'tm_description'
+];
+getTreatmentKitInvestigationAtt = [...treatmentKitAtt, ...getTreatmentKitInvestigationAtt];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
 
@@ -158,6 +181,7 @@ function getTreatmentQuery(dept_id, user_uuid) {
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
 
+
     return {
         tsm_favourite_type_uuid: fav_type_id,
         [searchKey]: searchvalue,
@@ -187,10 +211,9 @@ const TickSheetMasterController = () => {
 
     let favouriteTransaction;
     let favouriteTransStatus = false;
-    
+
     const _createTickSheetMaster = async (req, res) => {
 
-        
         // plucking data req body
         let favouriteMasterReqData = req.body.headers;
         let favouriteMasterDetailsReqData = req.body.details;
@@ -219,9 +242,9 @@ const TickSheetMasterController = () => {
                     const duplicate_msg = checkingForSameFavourite[0].tsm_active[0] === 1 ? duplicate_active_msg : duplicate_in_active_msg;
                     return res.status(400).send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
                 }
-                
+
                 const favouriteMasterCreatedData = await favouriteMasterTbl.create(favouriteMasterReqData, { returning: true, transaction: favouriteTransaction });
-                const favouriteMasterDetailsCreatedData = await Promise.all(getFavouriteMasterDetailsWithUUID(favouritMasterDetailsTbl, favouriteMasterDetailsReqData, favouriteMasterCreatedData, user_uuid ,favouriteTransaction));
+                const favouriteMasterDetailsCreatedData = await Promise.all(getFavouriteMasterDetailsWithUUID(favouritMasterDetailsTbl, favouriteMasterDetailsReqData, favouriteMasterCreatedData, user_uuid, favouriteTransaction));
 
                 if (favouriteMasterDetailsCreatedData) {
                     // returning req data with inserted record Id
@@ -240,8 +263,8 @@ const TickSheetMasterController = () => {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
 
             }
-            finally{
-                if(favouriteTransaction && !favouriteTransStatus){
+            finally {
+                if (favouriteTransaction && !favouriteTransStatus) {
                     await favouriteTransaction.rollback();
                 }
             }
@@ -319,11 +342,11 @@ const TickSheetMasterController = () => {
         const { user_uuid } = req.headers;
         const favouriteMasterReqData = req.body;
 
-        
-            const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
-            const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
 
-            if (user_uuid && favouriteMasterReqData && favouriteMasterReqData.hasOwnProperty('favourite_id') && favouriteMasterReqData.hasOwnProperty('is_active')) {
+        const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
+        const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
+
+        if (user_uuid && favouriteMasterReqData && favouriteMasterReqData.hasOwnProperty('favourite_id') && favouriteMasterReqData.hasOwnProperty('is_active')) {
 
             try {
                 favouriteTransaction = await sequelizeDb.sequelize.transaction();
@@ -339,12 +362,12 @@ const TickSheetMasterController = () => {
                 }
 
                 const updatedFavouriteData = await Promise.all([
-                    favouriteMasterTbl.update(favouriteMasterUpdateData, { where: { uuid: favouriteMasterReqData.favourite_id } , transaction: favouriteTransaction}),
-                    favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, { where: { favourite_master_uuid: favouriteMasterReqData.favourite_id }, transaction: favouriteTransaction} ),
+                    favouriteMasterTbl.update(favouriteMasterUpdateData, { where: { uuid: favouriteMasterReqData.favourite_id }, transaction: favouriteTransaction }),
+                    favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, { where: { favourite_master_uuid: favouriteMasterReqData.favourite_id }, transaction: favouriteTransaction }),
 
                 ]);
                 await favouriteTransaction.commit();
-                    favouriteTransStatus = true;
+                favouriteTransStatus = true;
 
                 if (updatedFavouriteData) {
                     return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: favouriteMasterReqData });
@@ -358,15 +381,14 @@ const TickSheetMasterController = () => {
                 return res.status(400).send({ code: httpStatus[400], message: ex.message });
 
             }
-            finally{
-                if(favouriteTransaction && !favouriteTransStatus){
+            finally {
+                if (favouriteTransaction && !favouriteTransStatus) {
                     await favouriteTransaction.rollback();
                 }
             }
 
         }
-    }
-
+    };
 
     const _deleteFavourite = async (req, res) => {
 
@@ -406,15 +428,17 @@ const TickSheetMasterController = () => {
         if (user_uuid && departmentId) {
 
             try {
-                const favouriteTreatment = await vmTreatmentFavourite.findAll(
+
+                const treatMentFav = await vmTreatmentFavourite.findAll(
                     {
-                        attributes: gedTreatmentKit,
-                        where: getTreatmentQuery(user_uuid, departmentId)
+                        attributes: treatmentKitAtt,
+                        where: getTreatmentQuery(departmentId, user_uuid)
                     }
                 );
-                // favouriteList = getFavouritesInList(tickSheetData);
-                const returnMessage = favouriteTreatment && favouriteTreatment.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
-                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteTreatment, responseContentLength: favouriteTreatment.length });
+
+                const favouriteList = getTreatmentFavouritesInHumanUnderstandable(treatMentFav);
+                const returnMessage = treatMentFav && treatMentFav.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteList, responseContentLength: favouriteList.length });
             } catch (error) {
 
                 console.log(`Exception Happened ${error}`);
@@ -451,7 +475,7 @@ function getFavouriteMasterDetailsWithUUID(detailsTbl, detailsData, masterData, 
     // creating a Promise Array to push All async 
     detailsData.forEach((mD) => {
         mD = emr_utility.assignDefaultValuesAndUUIdToObject(mD, masterData, reqUserUUId, 'favourite_master_uuid');
-        masterDetailsPromise = [...masterDetailsPromise,detailsTbl.create(mD, { returning: true, transaction: favouriteTransaction})];
+        masterDetailsPromise = [...masterDetailsPromise, detailsTbl.create(mD, { returning: true, transaction: favouriteTransaction })];
     });
     return masterDetailsPromise;
 }
@@ -580,3 +604,18 @@ function getSearchValueBySearchKey(details, search_key) {
             };
     }
 }
+
+
+function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
+    return treatFav.map((fav) => {
+        return {
+            // treatment Details
+            treatment_kit_name: fav.tk_name,
+            treatment_kit_code: fav.tk_code,
+            treatment_kit_id: fav.tk_uuid,
+            favourite_id: fav.fm_uuid,
+            favourite_status: fav.fm_active
+        };
+    });
+}
+
