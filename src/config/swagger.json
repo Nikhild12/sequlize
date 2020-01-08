@@ -1639,6 +1639,18 @@
                         "name": "to_date",
                         "type": "string",
                         "format": "date"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "encounterType",
+                        "type": "integer",
+                        "required": true
                     }
                 ],
                 "produces": [
@@ -4293,6 +4305,9 @@
                             "type": "number"
                         },
                         "encounter_priority_uuid": {
+                            "type": "number"
+                        },
+                        "department_uuid":{
                             "type": "number"
                         }
                     }
