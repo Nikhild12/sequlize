@@ -61,6 +61,14 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            ventilator_date: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
+            ventilator_time: {
+                type: DataTypes.TIME,
+                allowNull: true,
+            },
             ventilator_mode_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
