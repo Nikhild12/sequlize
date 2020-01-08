@@ -137,7 +137,6 @@ const tmpmstrController = () => {
         await templateTransaction.rollback();
       }
     }
-
   };
 
   const _updateTemplateById = async (req, res) => {
@@ -214,7 +213,6 @@ const tmpmstrController = () => {
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(templateMasterNewTempDetailsReqData, { returning: true });
           return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { new_temp_dtls } });
         }
-
       } else {
         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
@@ -266,7 +264,6 @@ function getTemplateData(fetchedData) {
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
-
     };
 
     fetchedData.forEach((tD) => {
@@ -361,7 +358,6 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
     detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction }, { returning: true })];
-
   });
   return masterDetailsPromise;
 }
@@ -620,7 +616,6 @@ function getTempData(temp_type_id, result) {
 
 async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction) {
 
-
   templateMasterReqData = emr_utility.createIsActiveAndStatus(templateMasterReqData, userUUID);
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
 
@@ -634,7 +629,6 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true, transaction: templateTransaction });
   return { "templateMasterReqData": templateMasterCreatedData, "templateMasterDetailsReqData": dtls_result };
 }
-
 
 const nameExists = (temp_name, userUUID) => {
 
