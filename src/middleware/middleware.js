@@ -26,7 +26,7 @@ const middleware = () => {
     };
 
     const multerDynamicUpload = (destinationPath) => {
-        console.log('\n destinationPath...',destinationPath);
+        //console.log('\n destinationPath...',destinationPath);
         
         let { writeFilePath } = createFolder(destinationPath);
         return multer.diskStorage({ //multers disk storage settings
