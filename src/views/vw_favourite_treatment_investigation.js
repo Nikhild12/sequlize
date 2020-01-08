@@ -1,54 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
-    const VM_FAVOURITE_TREATMENT_KIT = sequelize.define(
-        'vw_favourite_treatment_kit',
+
+    const VW_FAVOURITE_TREATMENT_INVESTIGATION = sequelize.define(
+        'vw_favourite_treatment_investigation',
         {
 
-            fm_uuid: {
+            tk_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true
-
-            },
-            fm_name: {
-
-                type: DataTypes.STRING(255)
-
-            },
-            fm_dept: {
-
-                type: DataTypes.INTEGER
-
-            },
-            fm_userid: {
-
-                type: DataTypes.INTEGER
-
-            },
-            fm_favourite_type_uuid: {
-
-                type: DataTypes.INTEGER
-
-            },
-            fm_active: {
-
-                type: DataTypes.BOOLEAN
-
-            },
-            fm_public: {
-
-                type: DataTypes.BOOLEAN
-
-            },
-
-            fm_status: {
-
-                type: DataTypes.BOOLEAN
-
-            },
-            tk_uuid: {
-
-                type: DataTypes.INTEGER
 
             },
             tk_code: {
@@ -65,11 +25,43 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER
 
+            },
+            tk_status: {
+                type: DataTypes.BOOLEAN
+            },
+            tk_active: {
+                type: DataTypes.BOOLEAN
+            },
+            tkim_test_master_uuid: {
+
+                type: DataTypes.INTEGER
+
+            },
+            tkim_treatment_kit_uuid: {
+
+                type: DataTypes.INTEGER
+
+            },
+            tm_code: {
+
+                type: DataTypes.STRING(255)
+
+            },
+            tm_name: {
+
+                type: DataTypes.STRING(255)
+
+            },
+            tm_description: {
+
+                type: DataTypes.STRING(255)
+
             }
         },
         {
             freezeTableName: true
         }
     );
-    return VM_FAVOURITE_TREATMENT_KIT;
+
+    return VW_FAVOURITE_TREATMENT_INVESTIGATION;
 };

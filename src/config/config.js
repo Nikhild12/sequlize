@@ -52,6 +52,8 @@ const config = {
     logging: envVars.PG_DB_LOGGING,
     wso2_logurl: envVars.WSO2_LOG_URL,
     requestDate: new Date(), //Logging
+    fileServerPath:  envVars.FILE_SERVER_PATH,
+    serverStoragePath: envVars.SERVER_STORAGE_PATH,
 };
 
 module.exports = config;
