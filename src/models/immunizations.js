@@ -17,16 +17,28 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            condition_uuid: {
+            route_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            referrence_link: {
-                type: DataTypes.STRING(250),
+            frequency_uuid: {
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
-            instruction: {
-                type: DataTypes.STRING(250),
+            duration:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            period_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            instruction_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            schedule_flag_uuid:{
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
             status: {
