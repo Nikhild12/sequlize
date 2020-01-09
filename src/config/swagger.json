@@ -3266,7 +3266,7 @@
                     "200": {
                         "description": "Fetched Treatment Kit Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getTreatmentKit"
+                            "$ref": "#/definitions/getTreatmentKitById"
                         }
                     }
                 },
