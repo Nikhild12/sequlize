@@ -9,6 +9,7 @@ router.route("/getimmunization").post(immunizationsCtrl.getimmunization);
 router.route("/getimmunizationById").post(immunizationsCtrl.getimmunizationById);
 router.route("/deleteimmunizationById").post(immunizationsCtrl.deleteimmunizationById);
 router.route("/updateimmunizationById").post(immunizationsCtrl.updateimmunizationById);
+router.route("/searchimmuization").post(immunizationsCtrl.searchimmuization);
 
 
 
