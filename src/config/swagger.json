@@ -3338,14 +3338,12 @@
         }
     },
     "definitions": {
-        "searchimmuization":{
+        "searchimmuization": {
             "type": "object",
             "properties": {
-                
-                    "searchValue": {
-                        "type": "string"
-                    }
-               
+                "searchValue": {
+                    "type": "string"
+                }
             }
         },
         "deleteNoteTemplate": {
@@ -3655,19 +3653,19 @@
                 "frequency_uuid": {
                     "type": "integer"
                 },
-                "duration":{
-                    "type": "integer" 
+                "duration": {
+                    "type": "integer"
                 },
-                "period_uuid":{
-                    "type": "integer" 
+                "period_uuid": {
+                    "type": "integer"
                 },
                 "instruction_uuid": {
                     "type": "integer"
                 },
-                "schedule_flag_uuid":{
+                "schedule_flag_uuid": {
                     "type": "integer"
                 },
-                "is_default":{
+                "is_default": {
                     "type": "integer"
                 },
                 "status": {
@@ -3696,19 +3694,19 @@
                 "frequency_uuid": {
                     "type": "integer"
                 },
-                "duration":{
-                    "type": "integer" 
+                "duration": {
+                    "type": "integer"
                 },
-                "period_uuid":{
-                    "type": "integer" 
+                "period_uuid": {
+                    "type": "integer"
                 },
                 "instruction_uuid": {
                     "type": "integer"
                 },
-                "schedule_flag_uuid":{
+                "schedule_flag_uuid": {
                     "type": "integer"
                 },
-                "is_default":{
+                "is_default": {
                     "type": "integer"
                 },
                 "status": {
@@ -3765,19 +3763,19 @@
                 "frequency_uuid": {
                     "type": "integer"
                 },
-                "duration":{
-                    "type": "integer" 
+                "duration": {
+                    "type": "integer"
                 },
-                "period_uuid":{
-                    "type": "integer" 
+                "period_uuid": {
+                    "type": "integer"
                 },
                 "instruction_uuid": {
                     "type": "integer"
                 },
-                "schedule_flag_uuid":{
+                "schedule_flag_uuid": {
                     "type": "integer"
                 },
-                "is_default":{
+                "is_default": {
                     "type": "integer"
                 },
                 "status": {
@@ -4003,9 +4001,10 @@
                 "allergy_description": {
                     "type": "string"
                 },
-                "allergy_source_uuid":{
-                    "type": "integer"},
-                "allergy_severity_uuid":{
+                "allergy_source_uuid": {
+                    "type": "integer"
+                },
+                "allergy_severity_uuid": {
                     "type": "integer"
                 },
                 "generic_uuid": {
@@ -4043,9 +4042,10 @@
                 "allergy_description": {
                     "type": "string"
                 },
-                "allergy_source_uuid":{
-                    "type": "integer"},
-                "allergy_severity_uuid":{
+                "allergy_source_uuid": {
+                    "type": "integer"
+                },
+                "allergy_severity_uuid": {
                     "type": "integer"
                 },
                 "generic_uuid": {
@@ -6211,6 +6211,9 @@
                 "treatment_id": {
                     "type": "integer"
                 },
+                "treatment_active": {
+                    "type": "boolean"
+                },
                 "drug_details": {
                     "type": "array",
                     "items": {
@@ -6376,6 +6379,9 @@
                         "type": "boolean"
                     },
                     "favourite_type_id": {
+                        "type": "integer"
+                    },
+                    "favourite_display_order": {
                         "type": "integer"
                     }
                 }

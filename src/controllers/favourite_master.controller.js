@@ -82,6 +82,7 @@ const treatmentKitAtt = [
     'fm_active',
     'fm_public',
     'fm_status',
+    'fm_display_order',
     'tk_uuid',
     'tk_code',
     'tk_name',
@@ -704,7 +705,9 @@ function getAllTreatmentFavsInReadable(treatFav) {
             favourite_code: t.tk_code,
             treatment_kit_id: t.tk_uuid,
             favourite_active: t.fm_active,
-            favourite_type_id: t.fm_favourite_type_uuid
+            favourite_type_id: t.fm_favourite_type_uuid,
+            favourite_active: t.fm_active,
+            favourite_display_order: t.fm_display_order
         };
     });
 }
@@ -712,12 +715,13 @@ function getAllTreatmentFavsInReadable(treatFav) {
 function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
     let favouritesByIdResponse = {};
 
-    const { name, code, id } = getTreatmentDetails(treatFav);
+    const { name, code, id, active } = getTreatmentDetails(treatFav);
 
     // treatment Details
     favouritesByIdResponse.treatment_name = name;
     favouritesByIdResponse.treatment_code = code;
     favouritesByIdResponse.treatment_id = id;
+    favouritesByIdResponse.treatment_active = active;
 
     // Drug Details
     if (treatFav && treatFav.length > 0 && (treatFav[0] && treatFav[0].length)) {
@@ -828,7 +832,7 @@ function getLabDetailsFromTreatment(lab) {
 }
 
 function getTreatmentDetails(treatFav) {
-    let name, code, id;
+    let name, code, id, active;
     let argLength = treatFav.length;
     while (!name) {
         const selectedArray = treatFav[argLength - 1];
@@ -836,10 +840,11 @@ function getTreatmentDetails(treatFav) {
             name = selectedArray[0].tk_name;
             code = selectedArray[0].tk_code;
             id = selectedArray[0].tk_uuid;
+            active = selectedArray[0].tk_active
         }
         argLength--;
     }
-    return { name, code, id };
+    return { name, code, id, active };
 }
 
 function getTreatmentFavByIdPromise(treatmentId) {
