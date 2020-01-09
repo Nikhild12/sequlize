@@ -95,6 +95,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 defaultValue: 0
             },
+            diet_master_uuid: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
+            diet_category_uuid: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
+            diet_frequency_uuid: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
             drug_instruction_uuid: {
 
                 type: DataTypes.INTEGER,

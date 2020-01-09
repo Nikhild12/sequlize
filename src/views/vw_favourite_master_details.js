@@ -127,6 +127,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             d_description: {
                 type: DataTypes.STRING(500)
+            },
+            tsmd_diet_master_uuid:{
+                type: DataTypes.INTEGER
             }
         }
 
