@@ -788,7 +788,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReferenceById": {
+        "/api/commonReference/getReferenceById": {
             "post": {
                 "description": "get Reference Details",
                 "parameters": [
@@ -826,7 +826,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/addReference": {
+        "/api/commonReference/addReference": {
             "post": {
                 "description": "Inserted Successfully",
                 "parameters": [
@@ -864,7 +864,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/updateReference": {
+        "/api/commonReference/updateReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -902,7 +902,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/deleteReference": {
+        "/api/commonReference/deleteReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -940,7 +940,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReference": {
+        "/api/commonReference/getReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -1937,7 +1937,45 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful"
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitForFav"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/favourite/getTreatmentKitFavouriteById": {
+            "get": {
+                "description": "To get Treatment favourite by Id",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "treatmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitById"
+                        }
                     },
                     "400": {
                         "description": "Sorry! Something Went Wrong"
@@ -3252,7 +3290,7 @@
                     "200": {
                         "description": "Fetched Treatment Kit Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getTreatmentKit"
+                            "$ref": "#/definitions/getTreatmentKitById"
                         }
                     }
                 },
@@ -5340,7 +5378,7 @@
         "deleteDiagnosis": {
             "type": "object",
             "properties": {
-                "Id": {
+                "Diagnosis_id": {
                     "type": "integer"
                 }
             }
@@ -6067,21 +6105,183 @@
                 }
             }
         },
-        "getTreatmentKit": {
+        "getTreatmentKitById": {
+            "type": "object",
+            "properties": {
+                "treatment_name": {
+                    "type": "string"
+                },
+                "treatment_code": {
+                    "type": "string"
+                },
+                "treatment_id": {
+                    "type": "integer"
+                },
+                "drug_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "drug_name": {
+                                "type": "string"
+                            },
+                            "drug_code": {
+                                "type": "string"
+                            },
+                            "drug_id": {
+                                "type": "integer"
+                            },
+                            "drug_quantity": {
+                                "type": "integer"
+                            },
+                            "drug_duration": {
+                                "type": "integer"
+                            },
+                            "drug_route_name": {
+                                "type": "string"
+                            },
+                            "drug_route_code": {
+                                "type": "string"
+                            },
+                            "drug_route_id": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_name": {
+                                "type": "string"
+                            },
+                            "drug_frequency_id": {
+                                "type": "integer"
+                            },
+                            "drug_frequency_code": {
+                                "type": "string"
+                            },
+                            "drug_frequency_display": {
+                                "type": "string"
+                            },
+                            "drug_period_name": {
+                                "type": "string"
+                            },
+                            "drug_period_id": {
+                                "type": "integer"
+                            },
+                            "drug_period_code": {
+                                "type": "string"
+                            },
+                            "drug_instruction_code": {
+                                "type": "string"
+                            },
+                            "drug_instruction_name": {
+                                "type": "string"
+                            },
+                            "drug_instruction_id": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "diagnosis_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "diagnosis_id": {
+                                "type": "integer"
+                            },
+                            "diagnosis_name": {
+                                "type": "string"
+                            },
+                            "diagnosis_code": {
+                                "type": "string"
+                            },
+                            "diagnosis_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "investigation_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "investigation_id": {
+                                "type": "integer"
+                            },
+                            "investigation_name": {
+                                "type": "string"
+                            },
+                            "investigation_code": {
+                                "type": "string"
+                            },
+                            "investigation_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "radiology_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "radiology_id": {
+                                "type": "integer"
+                            },
+                            "radiology_name": {
+                                "type": "string"
+                            },
+                            "radiology_code": {
+                                "type": "string"
+                            },
+                            "radiology_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "lab_details_details": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "lab_id": {
+                                "type": "integer"
+                            },
+                            "lab_name": {
+                                "type": "string"
+                            },
+                            "lab_code": {
+                                "type": "string"
+                            },
+                            "lab_description": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "getTreatmentKitForFav": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "treatment_kit_id": {
+                    "favourite_id": {
                         "type": "integer"
                     },
-                    "treatment_code": {
-                        "type": "integer"
-                    },
-                    "treatment_name": {
+                    "favourite_name": {
                         "type": "string"
                     },
-                    "treatment_type_id": {
+                    "treatment_kit_type_id": {
+                        "type": "integer"
+                    },
+                    "favourite_code": {
+                        "type": "string"
+                    },
+                    "favourite_active": {
+                        "type": "boolean"
+                    },
+                    "favourite_type_id": {
                         "type": "integer"
                     }
                 }

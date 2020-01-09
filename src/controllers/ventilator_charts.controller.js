@@ -49,7 +49,9 @@ const _getventilatorbypatientid = async (req, res) => {
         if (user_uuid && patient_uuid) {
             const data = await ventilatorTbl.findAll({
                 where:{
-                    patient_uuid: patient_uuid
+                    patient_uuid: patient_uuid,
+                    is_active: 1,
+                    status: 1
                 }
             },{ returning: true });
 
@@ -97,11 +99,38 @@ const _updateventilatorbypatientid = async (req, res) => {
     }
 };
 
+const _deleteVentilatorDetails = async (req, res) => {
+
+    // plucking data req body
+    const { ventilator_uuid } = req.query;
+    const {user_uuid} = req.headers;
+
+    try {
+        if (ventilator_uuid && user_uuid) {
+            const updatedVenlitorData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
+
+            const updatedVenlator = await ventilatorTbl.update(updatedVenlitorData,
+                { where: { uuid: ventilator_uuid } });
+
+            if (updatedVenlator) {
+                return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
+            }
+
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+    } catch (ex) {
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+};
+
+
 
 return {
     createVentilator: _createVentilator,
     getventilatorbypatientid: _getventilatorbypatientid,
-    updateventilatorbypatientid: _updateventilatorbypatientid 
+    updateventilatorbypatientid: _updateventilatorbypatientid,
+    deleteVentilatorDetails: _deleteVentilatorDetails 
 };
 };
 

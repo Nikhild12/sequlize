@@ -32,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            comments:{
+                type: DataTypes.STRING
+            },
             referrence_link: {
                 type: DataTypes.STRING
             },

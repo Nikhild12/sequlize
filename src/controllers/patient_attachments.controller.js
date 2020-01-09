@@ -25,7 +25,7 @@ const patientAttachmentsController = () => {
     */
 
 
-    const _deleteAttachmentDetails = async (req, res) => {
+   const _deleteAttachmentDetails = async (req, res) => {
 
         // plucking data req body
         const { attachment_uuid } = req.query;
@@ -214,7 +214,7 @@ const patientAttachmentsController = () => {
                     } else {
                         attachmentData.consultation_uuid = userUUID;
                         attachmentData.is_active = attachmentData.status = true;
-                        attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD');
+                        attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
                         attachmentData.created_by = attachmentData.modified_by = userUUID;
                         attachmentData.created_date = attachmentData.modified_date = new Date();
                         attachmentData.file_path = req.files[0].path;
