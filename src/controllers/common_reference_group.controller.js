@@ -9,13 +9,13 @@ var Op = Sequelize.Op;
 
 
 const commonReferenceGroupController = () => {
-	/**
-	 * Returns jwt token if valid username and password is provided
-	 * @param req
-	 * @param res
-	 * @param next
-	 * @returns {*}
-	 */
+    /**
+     * Returns jwt token if valid username and password is provided
+     * @param req
+     * @param res
+     * @param next
+     * @returns {*}
+     */
 
     /*=============== Gender API's================*/
 
@@ -23,122 +23,134 @@ const commonReferenceGroupController = () => {
         const postData = req.body;
 
         const table_name = req.body.table_name;
-    
+
+        if (table_name && db[table_name]) {
+            const common_tbl = db[table_name];
 
 
-        const common_tbl = db[table_name];
-     
-
-        let sortField = 'name';
-        let sortOrder = 'ASC';
-        let pageNo = 0;
-        const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-        if (postData.pageNo) {
-            let temp = parseInt(postData.pageNo);
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
+            let sortField = 'name';
+            let sortOrder = 'ASC';
+            let pageNo = 0;
+            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            if (postData.pageNo) {
+                let temp = parseInt(postData.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
             }
-        }
-        if (postData.sortField) {
-            sortField = postData.sortField;
-        }
+            if (postData.sortField) {
+                sortField = postData.sortField;
+            }
 
-        if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
-            sortOrder = postData.sortOrder;
-        }
+            if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
+                sortOrder = postData.sortOrder;
+            }
 
-        const offset = pageNo * itemsPerPage;
-        var postingData;
+            const offset = pageNo * itemsPerPage;
+            var postingData;
+            var query1;
+            try {
+                postingData = {
+                    offset: offset,
+                    limit: itemsPerPage,
+                    order: [
+                        [sortField, sortOrder],
+                    ],
+                };
 
-        // var query;
-
-        var query1;
-
-
-        try {
-            postingData = {
-                offset: offset,
-                limit: itemsPerPage,
-                order: [
-                    [sortField, sortOrder],
-                ],
-            };
-
-            if (postData.name != null && postData.name != "") {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [{
-                            query1,
+                if (postData.name != null && postData.name != "") {
+                    if (query1 != null) {
+                        query1 = {
+                            [Op.and]: [{
+                                query1,
+                                [Op.or]: [
+                                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
+                                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
+                                ]
+                            }]
+                        };
+                    } else {
+                        query1 = {
                             [Op.or]: [
                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
                             ]
-                        }]
-                    };
-                }
-                else {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
-                        ]
-                    };
+                        };
+                    }
+
+
+
                 }
 
-                console.log("queryN",query1);
-                
-            }
+                if (postData.status != null && postData.status != "") {
+                    if (query1 != null) {
+                        query1 = {
+                            [Op.and]: [
+                                query1,
+                                Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
+                            ]
+                        };
+                    } else {
+                        query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
+                    }
 
-            if (postData.status != null && postData.status != "") {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [
-                            query1,
-                            Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
-                        ]
-                    };
                 }
-                else {
-                    query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
-                }
-                console.log("queryS",query1);
-            }
-            if (query1 == null) {
-                if (postData.search != null && postData.search != "") {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
-                        ]
-                    };
-                }
-                console.log("querys",query1);
-            }
-            if (query1 != null && query1 != "") {
-                postingData['where'] = query1;
-            }
-            /* gender Data */
-            console.log("\n");
-            console.log("DATA QUERY",postingData['where']);
-            console.log("\n");
-            
+                if (query1 == null) {
+                    if (postData.search != null && postData.search != "") {
+                        query1 = {
+                            [Op.or]: [
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
+                            ]
+                        };
+                    }
 
-            await common_tbl.findAndCountAll(postingData).then((data) => {
+                }
+                if (query1 != null && query1 != "") {
+                    postingData['where'] = query1;
+                }
+                /* gender Data */
+
+
+                await common_tbl.findAndCountAll(postingData).then((data) => {
+                        return res
+                            .status(httpStatus.OK)
+                            .json({
+                                statusCode: 200,
+                                req: '',
+                                responseContents: data.rows,
+                                totalRecords: data.count
+                            });
+                    })
+                    .catch(err => {
+                        return res
+                            .status(httpStatus.OK)
+                            .json({
+                                statusCode: 500,
+                                msg: "Reference Data's not found",
+                                req: '',
+                                error: err
+                            });
+                    });
+            } catch (err) {
+                const errorMsg = err.errors ? err.errors[0].message : err.message;
                 return res
-                    .status(httpStatus.OK)
-                    .json({ statusCode: 200, req: '', responseContents: data.rows, totalRecords: data.count });
-            })
-                .catch(err => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({ statusCode: 500, msg: "Reference Data's not found", req: '', error: err });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
+                    .status(httpStatus.INTERNAL_SERVER_ERROR)
+                    .json({
+                        statusCode: 500,
+                        msg: errorMsg
+                    });
+            }
+        } else {
             return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({ statusCode: 500, msg: errorMsg });
+            .status(httpStatus.BAD_REQUEST)
+            .json({
+                statusCode: 400,
+                msg: "Please Provied Vaild Table Name"
+            });
         }
+
+
     };
 
     const getReferenceById = async (req, res, next) => {
@@ -147,31 +159,46 @@ const commonReferenceGroupController = () => {
         // const table_name = "department";
         const table_name = postData.table_name;
         const common_tbl = db[table_name];
-        console.log("START",common_tbl);
+        
         try {
             /* gender Data */
 
 
             await common_tbl.findOne({
-                
-                where: { uuid: postData.Id }
 
-            })
+                    where: {
+                        uuid: postData.Id
+                    }
+
+                })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContent: data, totalRecords: data.length });
+                        .json({
+                            statusCode: 200,
+                            req: '',
+                            responseContent: data,
+                            totalRecords: data.length
+                        });
                 })
                 .catch(err => {
                     return res
                         .status(httpStatus.OK)
-                        .json({ statusCode: 500, msg: "Reference Data's not found", req: '', error: err });
+                        .json({
+                            statusCode: 500,
+                            msg: "Reference Data's not found",
+                            req: '',
+                            error: err
+                        });
                 });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({ statusCode: 500, msg: errorMsg });
+                .json({
+                    statusCode: 500,
+                    msg: errorMsg
+                });
         }
     };
     const addReference = async (req, res, next) => {
@@ -184,26 +211,26 @@ const commonReferenceGroupController = () => {
             if (postData) {
                 common_tbl.findAll({
                     where: {
-                      [Op.or]: [{
-                        code: postData.code
-                        },
-                        {
-                            name: postData.name
-                        }
-                      ]
+                        [Op.or]: [{
+                                code: postData.code
+                            },
+                            {
+                                name: postData.name
+                            }
+                        ]
                     }
-                  }).then(async (result) =>{
+                }).then(async (result) => {
                     if (result.length != 0) {
                         return res.send({
                             statusCode: 400,
-                          status: "error",
-                          msg: "Record already Found. Please enter common reference group"
+                            status: "error",
+                            msg: "Record already Found. Please enter common reference group"
                         });
-                      } else{
+                    } else {
                         await common_tbl.create(postData, {
                             returning: true
                         }).then(data => {
-            
+
                             res.send({
                                 statusCode: 200,
                                 msg: "Inserted common reference group details Successfully",
@@ -211,16 +238,16 @@ const commonReferenceGroupController = () => {
                                 responseContents: data
                             });
                         }).catch(err => {
-            
+
                             res.send({
                                 status: "failed",
                                 msg: "failed to common reference group details",
                                 error: err
                             });
                         });
-                      }
-                  });
-    
+                    }
+                });
+
                 // await common_tbl.create(dynamicField(postData, table_name, 1), {
                 //     returning: true,
                 //     plain: true
@@ -281,12 +308,14 @@ const commonReferenceGroupController = () => {
         try {
 
 
-            console.log("DATA", postData);
+           
             await common_tbl.update(dynamicField(postData, table_name, 0), {
                 // name: postData.name,
-                where: { uuid: postData.Id }
+                where: {
+                    uuid: postData.Id
+                }
             }).then((data) => {
-                console.log("DATA", data);
+                
 
                 res.send({
                     statusCode: 200,
@@ -317,7 +346,7 @@ const commonReferenceGroupController = () => {
     const deleteReference = async (req, res, next) => {
         const postData = req.body;
         const table_name = postData.table_name;
-        // const table_name = "department";
+       
         const common_tbl = db[table_name];
         postData.modified_by = req.headers.user_uuid;
         try {
@@ -328,9 +357,11 @@ const commonReferenceGroupController = () => {
                     is_active: postData.is_active,
                     modified_by: postData.modified_by
                 }, {
-                    where: { uuid: postData.uuid }
+                    where: {
+                        uuid: postData.uuid
+                    }
                 }).then((data) => {
-                    console.log('sucessmsg', data);
+                   
                     res.send({
                         statusCode: 200,
                         msg: "Deleted Successfully",
@@ -339,22 +370,23 @@ const commonReferenceGroupController = () => {
                         totalRecords: data.length
                     });
                 }).catch(err => {
-                    console.log('errormsg', err);
+                    
                     res.send({
                         status: "failed",
                         msg: "failed to delete data",
                         error: err
                     });
                 });
-            }
-            else if (postData.id) {
+            } else if (postData.id) {
                 await common_tbl.update({
                     is_active: postData.is_active,
                     modified_by: postData.modified_by
                 }, {
-                    where: { uuid: postData.Id }
+                    where: {
+                        uuid: postData.Id
+                    }
                 }).then((data) => {
-                    console.log('sucessmsg', data);
+                   
                     res.send({
                         statusCode: 200,
                         msg: "Deleted Successfully",
@@ -363,15 +395,14 @@ const commonReferenceGroupController = () => {
                         totalRecords: data.length
                     });
                 }).catch(err => {
-                    console.log('errormsg', err);
+                    
                     res.send({
                         status: "failed",
                         msg: "failed to delete data",
                         error: err
                     });
                 });
-            }
-            else {
+            } else {
                 res.send({
                     status: 'failed',
                     msg: 'Please enter reference details'
@@ -415,8 +446,7 @@ const commonReferenceGroupController = () => {
                 modified_by: postData.modified_by,
                 icon: postData.icon,
             };
-        }
-        else {
+        } else {
             postingData = {
                 name: postData.name,
                 code: postData.code,
