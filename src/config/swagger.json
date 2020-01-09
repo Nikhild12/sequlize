@@ -788,7 +788,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReferenceById": {
+        "/api/commonReference/getReferenceById": {
             "post": {
                 "description": "get Reference Details",
                 "parameters": [
@@ -826,7 +826,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/addReference": {
+        "/api/commonReference/addReference": {
             "post": {
                 "description": "Inserted Successfully",
                 "parameters": [
@@ -864,7 +864,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/updateReference": {
+        "/api/commonReference/updateReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -902,7 +902,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/deleteReference": {
+        "/api/commonReference/deleteReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -940,7 +940,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReference": {
+        "/api/commonReference/getReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -5351,7 +5351,7 @@
         "deleteDiagnosis": {
             "type": "object",
             "properties": {
-                "Id": {
+                "Diagnosis_id": {
                     "type": "integer"
                 }
             }
