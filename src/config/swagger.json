@@ -462,6 +462,44 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/immunizations/searchimmuization": {
+            "post": {
+                "description": "Fetch Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/searchimmuization"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Immunizations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/searchimmuization"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/immunizations/getimmunization": {
             "post": {
                 "description": "To get Successfully",
@@ -3300,6 +3338,16 @@
         }
     },
     "definitions": {
+        "searchimmuization":{
+            "type": "object",
+            "properties": {
+                
+                    "searchValue": {
+                        "type": "string"
+                    }
+               
+            }
+        },
         "deleteNoteTemplate": {
             "type": "object",
             "properties": {
@@ -3601,14 +3649,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration":{
+                    "type": "integer" 
+                },
+                "period_uuid":{
+                    "type": "integer" 
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid":{
+                    "type": "integer"
+                },
+                "is_default":{
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3630,14 +3690,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration":{
+                    "type": "integer" 
+                },
+                "period_uuid":{
+                    "type": "integer" 
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid":{
+                    "type": "integer"
+                },
+                "is_default":{
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3687,14 +3759,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration":{
+                    "type": "integer" 
+                },
+                "period_uuid":{
+                    "type": "integer" 
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid":{
+                    "type": "integer"
+                },
+                "is_default":{
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3919,6 +4003,11 @@
                 "allergy_description": {
                     "type": "string"
                 },
+                "allergy_source_uuid":{
+                    "type": "integer"},
+                "allergy_severity_uuid":{
+                    "type": "integer"
+                },
                 "generic_uuid": {
                     "type": "integer"
                 },
@@ -3953,6 +4042,11 @@
                 },
                 "allergy_description": {
                     "type": "string"
+                },
+                "allergy_source_uuid":{
+                    "type": "integer"},
+                "allergy_severity_uuid":{
+                    "type": "integer"
                 },
                 "generic_uuid": {
                     "type": "integer"
