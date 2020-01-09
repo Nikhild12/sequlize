@@ -69,7 +69,7 @@ const Encounter = () => {
     const { patientId, doctorId, from_date, to_date, departmentId, encounterType } = req.query;
 
     try {
-      const is_mobile_request = doctorId === 0 && departmentId === 0 && encounterType === 0;
+      const is_mobile_request = (doctorId === 0 || doctorId == 0) && (departmentId == 0 || departmentId === 0) && (encounterType == 0 || encounterType === 0);
       if (user_uuid && patientId && is_mobile_request && from_date && to_date) {
         const encounterData = await encounter_tbl.findAll(getEncounterQuery(patientId, from_date, to_date));
         return res.status(200).send({
