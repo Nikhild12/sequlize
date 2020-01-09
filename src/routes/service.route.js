@@ -38,6 +38,8 @@ const treatmentKitRoute = require('./treatment.kit.routes');
 
 const emrHisSetCtrl = require('./emr.history.settings.routes');
 
+const ventilatorRoute = require('./ventilator_charts.route');
+
 const serviceRouter = express.Router();
 
 // EMR Work Flow Settings Routes
@@ -101,5 +103,8 @@ serviceRouter.use('/treatment-kit', treatmentKitRoute);
 
 // EMR History Settings Routes
 serviceRouter.use('/emr-history-settings', emrHisSetCtrl);
+
+//EMR Critical Care Routes
+serviceRouter.use('/ventilator-charts', ventilatorRoute);
 
 module.exports = serviceRouter;

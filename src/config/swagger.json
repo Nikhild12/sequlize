@@ -33,13 +33,13 @@
         "/api/notetemplate/createNoteTemplate": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "add",
@@ -71,13 +71,13 @@
         "/api/notetemplate/deleteNoteTemplate": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "delete",
@@ -109,15 +109,13 @@
         "/api/notetemplate/getNoteTemplate": {
             "post": {
                 "description": "Get Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-                    
-                   
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -141,13 +139,13 @@
         "/api/notetemplate/getNoteTemplateById": {
             "post": {
                 "description": "Get By Id Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "Note_Template_Id",
@@ -156,7 +154,6 @@
                             "$ref": "#/definitions/getNoteTemplateById"
                         }
                     }
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -180,13 +177,13 @@
         "/api/notetemplate/updateNoteTemplate": {
             "post": {
                 "description": "update Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "Upadate",
@@ -195,7 +192,6 @@
                             "$ref": "#/definitions/updateNoteTemplate"
                         }
                     }
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -2877,10 +2873,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Fetched Successfully",
-                        "schema": {
-                            "$ref": "#/definitions/getAllVitalsMaster"
-                        }
+                        "description": "Fetched Successfully"
                     }
                 },
                 "x-auth-type": "Application & Application User",
@@ -3273,7 +3266,7 @@
                     "200": {
                         "description": "Fetched Treatment Kit Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getTreatmentKit"
+                            "$ref": "#/definitions/getTreatmentKitById"
                         }
                     }
                 },
@@ -3283,6 +3276,136 @@
         }
     },
     "definitions": {
+        "deleteNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updateNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getNoteTemplateById": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "modified_by": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "modified_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "createNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+            }
+        },
         "getvitalslonicById": {
             "type": "object",
             "properties": {
@@ -4403,8 +4526,15 @@
                         "department_uuid": {
                             "type": "integer"
                         },
+                        "diagnosis_uuid": {
+                            "type": "integer"
+                        },
                         "display_order": {
                             "type": "integer"
+                        },
+                        "revision": {
+                            "type": "boolean",
+                            "example": true
                         },
                         "is_active": {
                             "type": "boolean",
@@ -4453,6 +4583,10 @@
                             },
                             "display_order": {
                                 "type": "integer"
+                            },
+                            "revision": {
+                                "type": "boolean",
+                                "example": true
                             },
                             "is_active": {
                                 "type": "boolean",
@@ -5885,96 +6019,61 @@
                     }
                 },
                 "treatment_kit_drug": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "item_master_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_route_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_frequency_uuid": {
-                                "type": "integer"
-                            },
-                            "duration": {
-                                "type": "string"
-                            },
-                            "duration_period_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_instruction_uuid": {
-                                "type": "integer"
-                            },
-                            "quantity": {
-                                "type": "string"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "item_master_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_route_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_frequency_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "string"
+                        },
+                        "duration_period_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_instruction_uuid": {
+                            "type": "integer"
+                        },
+                        "quantity": {
+                            "type": "string"
                         }
                     }
                 },
                 "treatment_kit_lab": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_investigation": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_radiology": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_diagnosis": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "diagnosis_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "diagnosis_uuid": {
+                            "type": "integer"
                         }
-                    }
-                }
-            }
-        },
-        "getTreatmentKit": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "treatment_kit_id": {
-                        "type": "integer"
-                    },
-                    "treatment_code": {
-                        "type": "integer"
-                    },
-                    "treatment_name": {
-                        "type": "string"
-                    },
-                    "treatment_type_id": {
-                        "type": "integer"
                     }
                 }
             }

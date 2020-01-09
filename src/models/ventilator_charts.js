@@ -61,6 +61,14 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            ventilator_date: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
+            ventilator_time: {
+                type: DataTypes.TIME,
+                allowNull: true,
+            },
             ventilator_mode_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -73,6 +81,68 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     min: 0
                 }
+            },
+            rate: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            tv: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            mv: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            ps: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            signatory:{
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            peak_press:{
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            peep: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            mean_press: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            fio2: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            fio2_percent_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                    },
+                    min: 0
+                }
+            },
+            is_suction: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                //allowNull: false
+            },
+            posture: {
+                type: DataTypes.STRING(225),
+                allowNull: true
+            },
+            comments: {
+                type: DataTypes.STRING(225),
+                allowNull: true
             },
             
             is_active: {
