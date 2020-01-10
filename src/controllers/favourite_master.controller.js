@@ -548,7 +548,8 @@ const TickSheetMasterController = () => {
         updateFavouriteById: _updateFavouriteById,
         deleteFavourite: _deleteFavourite,
         getTreatmentKitFavourite: _getTreatmentKitFavourite,
-        getTreatmentFavById: _getTreatmentFavById
+        getTreatmentFavById: _getTreatmentFavById,
+        // createFavouriteDiet: _cerateFavouriteDiet
 
     };
 
@@ -685,6 +686,11 @@ function getSearchValueBySearchKey(details, search_key) {
             return {
                 search_key: 'tsmd_treatment_kit_uuid',
                 search_value: details.treatment_kit_uuid
+            };
+        case 'diet':
+            return {
+                search_key: 'tsmd_diet_master_uuid',
+                search_value: details.diet_master_uuid
             };
         case 'drug':
         default:

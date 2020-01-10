@@ -4862,10 +4862,6 @@
                         "display_order": {
                             "type": "integer"
                         },
-                        "revision": {
-                            "type": "boolean",
-                            "example": true
-                        },
                         "is_active": {
                             "type": "boolean",
                             "example": true
@@ -4902,8 +4898,7 @@
                                 "type": "integer"
                             },
                             "duration": {
-                                "type": "string",
-                                "example": "1 month"
+                                "type": "integer"
                             },
                             "duration_period_uuid": {
                                 "type": "integer"
@@ -4914,15 +4909,23 @@
                             "display_order": {
                                 "type": "integer"
                             },
-                            "revision": {
-                                "type": "boolean",
-                                "example": true
-                            },
                             "is_active": {
                                 "type": "boolean",
                                 "example": true
                             },
                             "treatment_kit_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_master_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_category_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_frequency_uuid": {
+                                "type": "integer"
+                            },
+                            "quantity": {
                                 "type": "integer"
                             }
                         }
