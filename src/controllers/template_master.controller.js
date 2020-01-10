@@ -753,6 +753,14 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
         table_name: tempmstrTbl,
         query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id),
       };
+      case "9":
+      return {
+        table_name: vw_template,
+        query: {
+          where: getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id),
+          attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
+        }
+      };
   }
 }
 

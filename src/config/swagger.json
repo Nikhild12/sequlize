@@ -33,13 +33,13 @@
         "/api/notetemplate/createNoteTemplate": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "add",
@@ -71,13 +71,13 @@
         "/api/notetemplate/deleteNoteTemplate": {
             "post": {
                 "description": "Inserted Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "delete",
@@ -109,15 +109,13 @@
         "/api/notetemplate/getNoteTemplate": {
             "post": {
                 "description": "Get Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     }
-                    
-                   
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -141,13 +139,13 @@
         "/api/notetemplate/getNoteTemplateById": {
             "post": {
                 "description": "Get By Id Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "Note_Template_Id",
@@ -156,7 +154,6 @@
                             "$ref": "#/definitions/getNoteTemplateById"
                         }
                     }
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -180,13 +177,13 @@
         "/api/notetemplate/updateNoteTemplate": {
             "post": {
                 "description": "update Successfully",
-                "parameters": [{
+                "parameters": [
+                    {
                         "in": "header",
                         "name": "user_uuid",
                         "required": true,
                         "type": "integer"
                     },
-                    
                     {
                         "in": "body",
                         "name": "Upadate",
@@ -195,7 +192,6 @@
                             "$ref": "#/definitions/updateNoteTemplate"
                         }
                     }
-                    
                 ],
                 "produces": [
                     "application/json",
@@ -459,6 +455,44 @@
                         "description": "get Successfully",
                         "schema": {
                             "$ref": "#/definitions/addimmunization"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/immunizations/searchimmuization": {
+            "post": {
+                "description": "Fetch Successfully",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/searchimmuization"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Immunizations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/searchimmuization"
                         }
                     }
                 },
@@ -792,7 +826,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReferenceById": {
+        "/api/commonReference/getReferenceById": {
             "post": {
                 "description": "get Reference Details",
                 "parameters": [
@@ -830,7 +864,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/addReference": {
+        "/api/commonReference/addReference": {
             "post": {
                 "description": "Inserted Successfully",
                 "parameters": [
@@ -868,7 +902,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/updateReference": {
+        "/api/commonReference/updateReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -906,7 +940,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/deleteReference": {
+        "/api/commonReference/deleteReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -944,7 +978,7 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
-        "/api/CommonReference/getReference": {
+        "/api/commonReference/getReference": {
             "post": {
                 "description": "Reference Details Inserted Successfully",
                 "parameters": [
@@ -1554,6 +1588,18 @@
                         "name": "to_date",
                         "type": "string",
                         "format": "date"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "encounterType",
+                        "type": "integer",
+                        "required": true
                     }
                 ],
                 "produces": [
@@ -1639,6 +1685,18 @@
                         "name": "to_date",
                         "type": "string",
                         "format": "date"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "encounterType",
+                        "type": "integer",
+                        "required": true
                     }
                 ],
                 "produces": [
@@ -2877,10 +2935,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Fetched Successfully",
-                        "schema": {
-                            "$ref": "#/definitions/getAllVitalsMaster"
-                        }
+                        "description": "Fetched Successfully"
                     }
                 },
                 "x-auth-type": "Application & Application User",
@@ -3273,7 +3328,188 @@
                     "200": {
                         "description": "Fetched Treatment Kit Successfully",
                         "schema": {
-                            "$ref": "#/definitions/getTreatmentKit"
+                            "$ref": "#/definitions/getTreatmentKitById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/create": {
+            "post": {
+                "description": "To create Patient Allergy",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "patientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/patientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergies": {
+            "get": {
+                "description": "To get all patient Allergy History",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergies"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergiesById": {
+            "get": {
+                "description": "To get a patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetch Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergiesById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/delete": {
+            "put": {
+                "description": "Deleted Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deletePatientAllergy"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/updatePatientAllergy": {
+            "put": {
+                "description": "To Update Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "UpadtePatientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
                         }
                     }
                 },
@@ -3283,6 +3519,144 @@
         }
     },
     "definitions": {
+        "searchimmuization": {
+            "type": "object",
+            "properties": {
+                "searchValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "deleteNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updateNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getNoteTemplateById": {
+            "type": "object",
+            "properties": {
+                "Note_temp_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "modified_by": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "modified_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "createNoteTemplate": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note_template_type_uuid": {
+                    "type": "integer"
+                },
+                "facility_uuid": {
+                    "type": "integer"
+                },
+                "department_uuid": {
+                    "type": "integer"
+                },
+                "note_type_uuid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "integer"
+                },
+                "revision": {
+                    "type": "integer"
+                }
+            }
+        },
         "getvitalslonicById": {
             "type": "object",
             "properties": {
@@ -3454,14 +3828,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration": {
+                    "type": "integer"
+                },
+                "period_uuid": {
+                    "type": "integer"
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid": {
+                    "type": "integer"
+                },
+                "is_default": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3483,14 +3869,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration": {
+                    "type": "integer"
+                },
+                "period_uuid": {
+                    "type": "integer"
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid": {
+                    "type": "integer"
+                },
+                "is_default": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3540,14 +3938,26 @@
                 "description": {
                     "type": "string"
                 },
-                "condition_uuid": {
+                "route_uuid": {
                     "type": "integer"
                 },
-                "referrence_link": {
-                    "type": "string"
+                "frequency_uuid": {
+                    "type": "integer"
                 },
-                "instruction": {
-                    "type": "string"
+                "duration": {
+                    "type": "integer"
+                },
+                "period_uuid": {
+                    "type": "integer"
+                },
+                "instruction_uuid": {
+                    "type": "integer"
+                },
+                "schedule_flag_uuid": {
+                    "type": "integer"
+                },
+                "is_default": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -3772,6 +4182,12 @@
                 "allergy_description": {
                     "type": "string"
                 },
+                "allergy_source_uuid": {
+                    "type": "integer"
+                },
+                "allergy_severity_uuid": {
+                    "type": "integer"
+                },
                 "generic_uuid": {
                     "type": "integer"
                 },
@@ -3806,6 +4222,12 @@
                 },
                 "allergy_description": {
                     "type": "string"
+                },
+                "allergy_source_uuid": {
+                    "type": "integer"
+                },
+                "allergy_severity_uuid": {
+                    "type": "integer"
                 },
                 "generic_uuid": {
                     "type": "integer"
@@ -4294,6 +4716,9 @@
                         },
                         "encounter_priority_uuid": {
                             "type": "number"
+                        },
+                        "department_uuid": {
+                            "type": "number"
                         }
                     }
                 },
@@ -4403,6 +4828,9 @@
                         "department_uuid": {
                             "type": "integer"
                         },
+                        "diagnosis_uuid": {
+                            "type": "integer"
+                        },
                         "display_order": {
                             "type": "integer"
                         },
@@ -4442,8 +4870,7 @@
                                 "type": "integer"
                             },
                             "duration": {
-                                "type": "string",
-                                "example": "1 month"
+                                "type": "integer"
                             },
                             "duration_period_uuid": {
                                 "type": "integer"
@@ -4459,6 +4886,18 @@
                                 "example": true
                             },
                             "treatment_kit_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_master_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_category_uuid": {
+                                "type": "integer"
+                            },
+                            "diet_frequency_uuid": {
+                                "type": "integer"
+                            },
+                            "quantity": {
                                 "type": "integer"
                             }
                         }
@@ -5217,7 +5656,7 @@
         "deleteDiagnosis": {
             "type": "object",
             "properties": {
-                "Id": {
+                "Diagnosis_id": {
                     "type": "integer"
                 }
             }
@@ -5885,96 +6324,61 @@
                     }
                 },
                 "treatment_kit_drug": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "item_master_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_route_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_frequency_uuid": {
-                                "type": "integer"
-                            },
-                            "duration": {
-                                "type": "string"
-                            },
-                            "duration_period_uuid": {
-                                "type": "integer"
-                            },
-                            "drug_instruction_uuid": {
-                                "type": "integer"
-                            },
-                            "quantity": {
-                                "type": "string"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "item_master_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_route_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_frequency_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "string"
+                        },
+                        "duration_period_uuid": {
+                            "type": "integer"
+                        },
+                        "drug_instruction_uuid": {
+                            "type": "integer"
+                        },
+                        "quantity": {
+                            "type": "string"
                         }
                     }
                 },
                 "treatment_kit_lab": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_investigation": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_radiology": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "test_master_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "test_master_uuid": {
+                            "type": "integer"
                         }
                     }
                 },
                 "treatment_kit_diagnosis": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "diagnosis_uuid": {
-                                "type": "integer"
-                            }
+                    "type": "object",
+                    "properties": {
+                        "diagnosis_uuid": {
+                            "type": "integer"
                         }
-                    }
-                }
-            }
-        },
-        "getTreatmentKit": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "treatment_kit_id": {
-                        "type": "integer"
-                    },
-                    "treatment_code": {
-                        "type": "integer"
-                    },
-                    "treatment_name": {
-                        "type": "string"
-                    },
-                    "treatment_type_id": {
-                        "type": "integer"
                     }
                 }
             }
@@ -5990,6 +6394,9 @@
                 },
                 "treatment_id": {
                     "type": "integer"
+                },
+                "treatment_active": {
+                    "type": "boolean"
                 },
                 "drug_details": {
                     "type": "array",
@@ -6157,6 +6564,107 @@
                     },
                     "favourite_type_id": {
                         "type": "integer"
+                    },
+                    "favourite_display_order": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "patientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "updatePatientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
+                        }
                     }
                 }
             }

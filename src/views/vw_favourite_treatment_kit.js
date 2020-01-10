@@ -46,6 +46,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN
 
             },
+            fm_display_order: {
+
+                type: DataTypes.INTEGER
+
+            },
             tk_uuid: {
 
                 type: DataTypes.INTEGER

@@ -35,10 +35,10 @@ app.use(express.static(path.join(__dirname, "../src/assets")));
 //app.use(bodyParser.urlencoded({ extended: false }));
 
 // Enabling Log only for dev
-if (config.env === 'develoment') {
-	app.use(logger('dev'));
-}
-
+// if (config.env === 'develoment') {
+	
+// }
+app.use(logger('tiny'));
 // Initialzing Index Route to Express Middleware
 app.use('/', indexRoute);
 

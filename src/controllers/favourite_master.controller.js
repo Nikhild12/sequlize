@@ -82,6 +82,7 @@ const treatmentKitAtt = [
     'fm_active',
     'fm_public',
     'fm_status',
+    'fm_display_order',
     'tk_uuid',
     'tk_code',
     'tk_name',
@@ -145,7 +146,7 @@ let getTreatmentKitRadiologyAtt = [
     'tkrm_treatment_kit_uuid'
 ];
 
-getTreatmentKitRadiologyAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitRadiologyAtt]
+getTreatmentKitRadiologyAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitRadiologyAtt];
 
 
 let getTreatmentKitLabAtt = [
@@ -156,7 +157,7 @@ let getTreatmentKitLabAtt = [
     'tklm_treatment_kit_uuid'
 ];
 
-getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt]
+getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
@@ -207,7 +208,7 @@ function getTreatmentKitByIdQuery(treatmentId) {
         tk_uuid: treatmentId,
         tk_status: emr_constants.IS_ACTIVE,
         tk_active: emr_constants.IS_ACTIVE
-    }
+    };
 }
 
 function getFavouriteQueryForDuplicate(dept_id, user_id, searchKey, searchvalue, fav_type_id) {
@@ -537,7 +538,7 @@ const TickSheetMasterController = () => {
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
         }
-    }
+    };
 
     return {
 
@@ -547,7 +548,8 @@ const TickSheetMasterController = () => {
         updateFavouriteById: _updateFavouriteById,
         deleteFavourite: _deleteFavourite,
         getTreatmentKitFavourite: _getTreatmentKitFavourite,
-        getTreatmentFavById: _getTreatmentFavById
+        getTreatmentFavById: _getTreatmentFavById,
+        // createFavouriteDiet: _cerateFavouriteDiet
 
     };
 
@@ -685,6 +687,11 @@ function getSearchValueBySearchKey(details, search_key) {
                 search_key: 'tsmd_treatment_kit_uuid',
                 search_value: details.treatment_kit_uuid
             };
+        case 'diet':
+            return {
+                search_key: 'tsmd_diet_master_uuid',
+                search_value: details.diet_master_uuid
+            };
         case 'drug':
         default:
             return {
@@ -704,44 +711,47 @@ function getAllTreatmentFavsInReadable(treatFav) {
             favourite_code: t.tk_code,
             treatment_kit_id: t.tk_uuid,
             favourite_active: t.fm_active,
-            favourite_type_id: t.fm_favourite_type_uuid
-        }
+            favourite_type_id: t.fm_favourite_type_uuid,
+            favourite_active: t.fm_active,
+            favourite_display_order: t.fm_display_order
+        };
     });
 }
 
 function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
     let favouritesByIdResponse = {};
 
-    const { name, code, id } = getTreatmentDetails(treatFav);
+    const { name, code, id, active } = getTreatmentDetails(treatFav);
 
     // treatment Details
     favouritesByIdResponse.treatment_name = name;
     favouritesByIdResponse.treatment_code = code;
     favouritesByIdResponse.treatment_id = id;
+    favouritesByIdResponse.treatment_active = active;
 
     // Drug Details
     if (treatFav && treatFav.length > 0 && (treatFav[0] && treatFav[0].length)) {
-        favouritesByIdResponse.drug_details = getDrugDetailsFromTreatment(treatFav[0])
+        favouritesByIdResponse.drug_details = getDrugDetailsFromTreatment(treatFav[0]);
     }
 
     // Diagnosis Details
     if (treatFav && treatFav.length > 0 && (treatFav[1] && treatFav[1].length)) {
-        favouritesByIdResponse.diagnosis_details = getDiagnosisDetailsFromTreatment(treatFav[1])
+        favouritesByIdResponse.diagnosis_details = getDiagnosisDetailsFromTreatment(treatFav[1]);
     }
 
     // Investigation Details
     if (treatFav && treatFav.length > 0 && (treatFav[2] && treatFav[2].length)) {
-        favouritesByIdResponse.investigation_details = getInvestigationDetailsFromTreatment(treatFav[2])
+        favouritesByIdResponse.investigation_details = getInvestigationDetailsFromTreatment(treatFav[2]);
     }
 
     // Radiology Details
     if (treatFav && treatFav.length > 0 && (treatFav[3] && treatFav[3].length)) {
-        favouritesByIdResponse.radiology_details = getRadiologyDetailsFromTreatment(treatFav[3])
+        favouritesByIdResponse.radiology_details = getRadiologyDetailsFromTreatment(treatFav[3]);
     }
 
     // Lab Details
     if (treatFav && treatFav.length > 0 && (treatFav[4] && treatFav[4].length)) {
-        favouritesByIdResponse.lab_details = getLabDetailsFromTreatment(treatFav[4])
+        favouritesByIdResponse.lab_details = getLabDetailsFromTreatment(treatFav[4]);
     }
 
     return favouritesByIdResponse;
@@ -779,7 +789,7 @@ function getDrugDetailsFromTreatment(drugArray) {
             drug_instruction_name: d.di_name,
             drug_instruction_id: d.tkd_drug_instruction_uuid
 
-        }
+        };
     });
 }
 
@@ -790,7 +800,7 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
             diagnosis_name: di.td_name,
             diagnosis_code: di.td_code,
             diagnosis_description: di.td_description
-        }
+        };
     });
 }
 
@@ -801,7 +811,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
             investigation_name: iv.tm_name,
             investigation_code: iv.tm_name,
             investigation_description: iv.tm_name
-        }
+        };
     });
 }
 
@@ -812,7 +822,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
             radiology_name: r.tm_name,
             radiology_code: r.tm_name,
             radiology_description: r.tm_name
-        }
+        };
     });
 }
 
@@ -823,12 +833,12 @@ function getLabDetailsFromTreatment(lab) {
             lab_name: l.tm_name,
             lab_code: l.tm_name,
             lab_description: l.tm_name
-        }
+        };
     });
 }
 
 function getTreatmentDetails(treatFav) {
-    let name, code, id;
+    let name, code, id, active;
     let argLength = treatFav.length;
     while (!name) {
         const selectedArray = treatFav[argLength - 1];
@@ -836,10 +846,11 @@ function getTreatmentDetails(treatFav) {
             name = selectedArray[0].tk_name;
             code = selectedArray[0].tk_code;
             id = selectedArray[0].tk_uuid;
+            active = selectedArray[0].tk_active
         }
         argLength--;
     }
-    return { name, code, id };
+    return { name, code, id, active };
 }
 
 function getTreatmentFavByIdPromise(treatmentId) {
