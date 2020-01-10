@@ -6554,11 +6554,11 @@
                         "type": "object",
                         "properties": {
                             "from_date": {
-                                "type": "date",
+                                "type": "string",
                                 "example": "2019-11-08 05:03:00"
                             },
                             "to_date": {
-                                "type": "date",
+                                "type": "string",
                                 "example": "2019-11-08 05:03:00"
                             },
                             "ccc_uuid": {
@@ -6566,7 +6566,7 @@
                                 "example": 1
                             },
                             "observed_value": {
-                                "type": "decimal",
+                                "type": "integer",
                                 "example": 1.2
                             },
                             "comments": {
