@@ -20,31 +20,33 @@ const ventilatorchartsController = () => {
 
 
     const _createVentilator = async (req, res) => {
-        let {user_uuid} = req.headers;
-        let postdata = req.body;
+        
         try {
-            if (user_uuid && postdata) {
-                        postdata.is_active = postdata.status = true;
-                        postdata.ventilator_date = moment(postdata.ventilator_date).format('YYYY-MM-DD HH:mm:ss');
-                        console.log(postdata.ventilator_date);
-                        postdata.ventilator_time = moment(postdata.ventilator_date).format('YYYY-MM-DD HH:mm:ss');
-                        console.log(postdata.ventilator_time);
-                        postdata.created_by = postdata.modified_by = user_uuid;
-                        postdata.created_date = postdata.modified_date = new Date();
-                        postdata.revision = 1;
-                        const createdData = await ventilatorTbl.create(postdata, { returning: true });
-                        if (createdData){
-                          res.send({ "status": 200, "Ventilator data": createdData, "message": "Inserted Successfully " });
-                        }
-            } else {
-                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); 
-                }
+
+            let {user_uuid} = req.headers;
+            let postdata = req.body;
+            
+                if (user_uuid && postdata) {
+                            postdata.is_active = postdata.status = true;
+                            postdata.ventilator_date = moment(postdata.ventilator_date).format('YYYY-MM-DD HH:mm:ss');
+                            postdata.ventilator_time = moment(postdata.ventilator_date).format('YYYY-MM-DD HH:mm:ss');
+                            postdata.created_by = postdata.modified_by = user_uuid;
+                            postdata.created_date = postdata.modified_date = new Date();
+                            postdata.revision = 1;
+                            const createdData = await ventilatorTbl.create(postdata, { returning: true });
+                            if (createdData){
+                            res.send({ "status": 200, "Ventilator data": createdData, "message": "Inserted Successfully " });
+                            }
+                } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); 
+                    }
         }catch (ex) {
             res.send({ "status": 400, "message": ex.message });
         }
     };
 
 const _getventilatorbypatientid = async (req, res) => {
+    
     let { user_uuid } = req.headers;
     let {patient_uuid} = req.query;
 
@@ -76,24 +78,26 @@ const _getventilatorbypatientid = async (req, res) => {
 };
 
 const _updateventilatorbypatientid = async (req, res) => {
-    let { user_uuid } = req.headers;
-    let {patient_uuid} = req.query;
-    let postdata = req.body;
-    let selector = { 
-        where: { patient_uuid: patient_uuid }
-      };
-      
+    
     try {
-        if (user_uuid && patient_uuid) {
-            const data = await ventilatorTbl.update(postdata,selector, {returning: true});
+        // plucking data req body
+        let { user_uuid } = req.headers;
+        let {patient_uuid} = req.query;
+        let postdata = req.body;
+        let selector = { 
+            where: { patient_uuid: patient_uuid }
+        };
+        
+            if (user_uuid && patient_uuid) {
+                const data = await ventilatorTbl.update(postdata,selector, {returning: true});
 
-            if (data) {
-                res.send({ "status": 200, "message": "updated Successfully " });
+                if (data) {
+                    res.send({ "status": 200, "message": "updated Successfully " });
+                }
             }
-        }
-        else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-        }
+            else {
+                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+            }
     } catch (err) {
         const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
