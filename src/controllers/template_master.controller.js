@@ -11,6 +11,7 @@ const tempmstrdetailsTbl = db.template_master_details;
 const vitalMasterTbl = db.vital_masters;
 const vw_template = db.vw_template_master_details;
 const vw_lab = db.vw_lab_template;
+const vw_diet = db.vw_template_master_diet;
 
 const tmpmstrController = () => {
 	/**
@@ -695,7 +696,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       };
     case "9":
       return {
-        table_name: vw_template,
+        table_name: vw_diet,
         query: {
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
