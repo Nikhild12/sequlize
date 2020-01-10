@@ -14,4 +14,5 @@ favouriteRoute.route('/updateFavouriteById').put(favouriteController.updateFavou
 favouriteRoute.route('/delete').put(favouriteController.deleteFavourite);
 favouriteRoute.route('/getTreatmentKitFavourite').get(favouriteController.getTreatmentKitFavourite);
 favouriteRoute.route('/getTreatmentKitFavouriteById').get(favouriteController.getTreatmentFavById);
+favouriteRoute.route('/getDietFavourite').get(favouriteController.getFavouriteDiet);
 module.exports = favouriteRoute;
