@@ -3589,6 +3589,42 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/ventilator-charts/getventilatorbypatientid": {
+            "get": {
+                "summary": "List patient ventilator data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "patient_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getventilatorbypatientid"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
     },
     "definitions": {
@@ -6821,6 +6857,17 @@
                             }
                         }
                     }
+                }
+            }
+        },
+        "getventilatorbypatientid": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "patient_uuid":{
+                    "type": "integer"
                 }
             }
         }
