@@ -6709,7 +6709,7 @@
                 }
             }
         },
-        "deletePatientAllergies": {
+        "deletePatientAllergy": {
             "type": "object",
             "properties": {
                 "user_uuid": {
