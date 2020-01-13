@@ -8,6 +8,8 @@ var Op = Sequelize.Op;
 const moment = require('moment');
 
 const ventilatorTbl = db.ventilator_charts;
+const cccTbl = db.critical_care_charts;
+const cctypeTbl = db.critical_care_types;
 
 const ventilatorchartsController = () => {
     /**
@@ -35,6 +37,7 @@ const ventilatorchartsController = () => {
                     item.facility_uuid = data1.facility_uuid;
                     item.encounter_type_uuid = data1.encounter_type_uuid;
                     item.ventilator_mode_uuid = data1.ventilator_mode_uuid;
+                    item.comments = data1.comments;
                     item.modified_by = 0;
                     item.is_active = item.status = 1;
                     item.revision = 1;
@@ -65,7 +68,25 @@ const ventilatorchartsController = () => {
                         patient_uuid: patient_uuid,
                         is_active: 1,
                         status: 1
-                    }
+                    },
+                    
+                    include: [
+                    {
+                        model: cccTbl,
+                        as: 'critical_care_charts',
+                        attributes: ['uuid', 'code', 'name', 'description'],
+                        where: { is_active: 1, status: 1 },
+
+                            include: [
+                            {
+                                model: cctypeTbl,
+                                as: 'critical_care_types',
+                                attributes: ['uuid', 'code', 'name'],
+                                where: { is_active: 1, status: 1 },
+                            },]
+
+                    },]
+                    
                 }, { returning: true });
 
                 if (data) {

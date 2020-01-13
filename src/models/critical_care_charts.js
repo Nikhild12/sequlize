@@ -1,96 +1,74 @@
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const ventilator_charts = sequelize.define(
-        "ventilator_charts",
+    const critical_care_charts = sequelize.define(
+        "critical_care_charts",
         {
             uuid: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            patient_uuid: {
+            critical_care_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('critical_care_type_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('critical_care_type_uuid')
                     },
                     min: 0
                 }
             },
-            encounter_uuid: {
+            code: {
+                type: DataTypes.STRING(50),
+                allowNull: true
+            },
+            name: {
+                type: DataTypes.STRING(100),
+                allowNull: true
+            },
+            description:{
+                type: DataTypes.STRING(500),
+                allowNull: true
+            },
+            critical_care_uom_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('critical_care_uom_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('critical_care_uom_uuid')
                     },
                     min: 0
                 }
             },
-            facility_uuid: {
+            mnemonic_code_master_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
                     },
                     min: 0
                 }
             },
-            encounter_type_uuid: {
+            loinc_code_master_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
-                    },
-                    min: 0
-                }
-            },
-            from_date: {
-                type: DataTypes.DATE,
-                allowNull: true,
-            },
-            to_date: {
-                type: DataTypes.DATE,
-                allowNull: true,
-            },
-            ventilator_mode_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
-                    },
-                    min: 0
-                }
-            },
-            ccc_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
                     },
                     min: 0
                 }
@@ -98,10 +76,6 @@ module.exports = (sequelize, DataTypes) => {
             comments: {
                 type: DataTypes.STRING(225),
                 allowNull: true
-            },
-            observed_value:{
-                type: DataTypes.DECIMAL(16,2),
-                allowNull: false,
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -137,7 +111,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            tableName: "ventilator_charts",
+            tableName: "critical_care_charts",
             indexes: [
                 {
                     fields: ["uuid"]
@@ -146,12 +120,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    ventilator_charts.associate =  models => {
-        ventilator_charts.belongsTo(models.critical_care_charts , {
-            foreignKey:"ccc_uuid",
-            as:'critical_care_charts'
+    critical_care_charts.associate =  models => {
+        critical_care_charts.belongsTo(models.critical_care_types , {
+            foreignKey:"critical_care_type_uuid",
+            as:'critical_care_types'
         });
     };
 
-    return ventilator_charts;
+    return critical_care_charts;
 };

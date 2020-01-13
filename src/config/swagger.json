@@ -3614,6 +3614,80 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/ventilator-charts/create": {
+            "post": {
+                "description": "To Create a ventilator data for the patient",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "create ventilator",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createventilator"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Insertion failed"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/ventilator-charts/getventilatorbypatientid": {
+            "get": {
+                "summary": "List patient ventilator data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "patient_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getventilatorbypatientid"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
     },
     "definitions": {
@@ -6972,6 +7046,75 @@
                             "type": "integer"
                         }
                     }
+                }
+            }
+        },
+        "createventilator": {
+            "type": "object",
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "encounter_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "facility_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "encounter_type_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "ventilator_mode_uuid": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "comments": {
+                            "type": "string",
+                            "example": "enter some thing"
+                        }
+                    }
+                },
+                "observed_data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "from_date": {
+                                "type": "string",
+                                "example": "2019-11-08 05:03:00"
+                            },
+                            "to_date": {
+                                "type": "string",
+                                "example": "2019-11-08 05:03:00"
+                            },
+                            "ccc_uuid": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "observed_value": {
+                                "type": "integer",
+                                "example": 1.2
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "getventilatorbypatientid": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "patient_uuid":{
+                    "type": "integer"
                 }
             }
         }
