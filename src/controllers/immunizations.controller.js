@@ -1,13 +1,64 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
 const _ = require("lodash");
-
+const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 
 
 const immunizationsTbl = db.immunizations;
 
+
+function getimmunizationsFilterByQuery(searchBy, searchValue) {
+    searchBy = searchBy.toLowerCase();
+    switch (searchBy) {
+        case 'filterbythree':
+
+            return {
+                is_active: emr_const.IS_ACTIVE,
+                    status: emr_const.IS_ACTIVE,
+                    [Op.or]: [{
+                            name: {
+                                [Op.like]: `%${searchValue}%`
+                            }
+                        }
+                        
+                    ]
+            };
+
+
+        case 'immunizationId':
+        default:
+            searchValue = +searchValue;
+            return {
+                is_active: emr_const.IS_ACTIVE,
+                    status: emr_const.IS_ACTIVE,
+                    uuid: searchValue
+            };
+    }
+}
+
+function getimmunizationsDataAttributes() {
+    return [
+        'uuid',
+        
+        'name',
+        'description',
+        'route_uuid',
+        'frequency_uuid',
+        'duration',
+        'period_uuid',
+        'instruction_uuid',
+        'schedule_flag_uuid',
+        'is_active',
+        'status',
+        'revision',
+        'created_by',
+        'created_date',
+        'modified_by',
+        'modified_date'
+    ];
+}
 const immunizationsController = () => {
     /**
      * Returns jwt token if valid username and password is provided
@@ -16,6 +67,7 @@ const immunizationsController = () => {
      * @param next
      * @returns {*}
      */
+   
 
 
     const getimmunization = async (req, res, next) => {
@@ -68,10 +120,6 @@ const immunizationsController = () => {
                         },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
                     }
 
                 ]
@@ -254,13 +302,60 @@ const immunizationsController = () => {
         });
 
     };
+    const searchimmuization = async (req, res, next) => {
+        const {
+            user_uuid
+        } = req.headers;
+        const {
+            searchValue
+        } = req.body;
+
+
+        if (user_uuid && searchValue) {
+
+            try {
+                const page = searchValue.page ? searchValue.page : 1;
+                const itemsPerPage = searchValue.limit ? searchValue.limit : 50;
+                const offset = (page - 1) * itemsPerPage;
+                const immunizationsData = await immunizationsTbl.findAll({
+                    where: getimmunizationsFilterByQuery("filterbythree", searchValue),
+                    attributes: getimmunizationsDataAttributes(),
+                    offset: offset,
+                    limit: itemsPerPage
+                });
+
+                if (immunizationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: "Fetched immunizationsData Data Successfully",
+                        responseContents: immunizationsData,
+
+                    });
+                }
+            } catch (error) {
+               
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: error.message
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found'
+            });
+        }
+    };
+
+  
     // --------------------------------------------return----------------------------------
     return {
         postimmunization,
         getimmunization,
         getimmunizationById,
         deleteimmunizationById,
-        updateimmunizationById
+        updateimmunizationById,
+        searchimmuization,
 
     };
 };

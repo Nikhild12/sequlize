@@ -61,13 +61,13 @@ const allergyMasterController = () => {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
+                    allergey_code: {
                             [Op.like]: '%' + getsearch.search + '%',
                         },
 
 
                     }, {
-                        code: {
+                        allergy_name: {
                             [Op.like]: '%' + getsearch.search + '%',
                         },
                     }

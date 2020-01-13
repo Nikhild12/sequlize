@@ -117,7 +117,7 @@ const diagnosisController = () => {
                     });
                 }
             } catch (error) {
-                console.log(error.message);
+               
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: error.message
@@ -161,7 +161,7 @@ const diagnosisController = () => {
                     });
                 }
             } catch (error) {
-                console.log(error.message);
+               
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: error.message
@@ -222,7 +222,7 @@ const diagnosisController = () => {
                     });
                 }
             } catch (ex) {
-                console.log(ex.message);
+               
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: ex.message
@@ -271,14 +271,12 @@ const diagnosisController = () => {
             where: {
                status:1
             },
-            attributes: getDiagnosisAttributes(),
+            attributes: getDiagnosisAttributes()
 
-            include: [{
-                model: diagnosisversionTb,
-                attributes: ['uuid', 'code', 'name']
-            }]
+            
 
         };
+        
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
@@ -305,9 +303,9 @@ const diagnosisController = () => {
 
 
                 .then((findData) => {
-
+                   
                     return res
-
+                  
                         .status(httpStatus.OK)
                         .json({
                             message: "success",
@@ -318,9 +316,10 @@ const diagnosisController = () => {
                         });
                 })
                 .catch(err => {
-                    console.log('\n err...success else', err);
+                   
 
-                    return res
+                    return res;
+                    console.log('\n err...', err)
                         .status(httpStatus.OK)
                         .json({
                             message: "error",
@@ -329,7 +328,7 @@ const diagnosisController = () => {
                         });
                 });
         } catch (err) {
-            console.log('\n catch err...INTERNAL_SERVER_ERROR', err);
+           
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)

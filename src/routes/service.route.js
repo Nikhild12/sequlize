@@ -18,7 +18,8 @@ const chiefComplaintsRoutes = require("./chiefComplaints.route");
 const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
-const common_reference_group = require('./commonReference.route');
+const vitallonicRoutes = require("./vital_loinc.route");
+
 const diagnosisRoutes = require("./diagnosis.route");
 const diagnosisVersionRoutes = require("./diagnosis_version.route");
 const diagnosisTypeRoutes = require("./diagnosis_type.route");
@@ -28,6 +29,7 @@ const diagnosisRegionRoutes = require("./diagnosis_region.route");
 const bodysiteRoutes = require("./body_site.route");
 const emrrefereneRoutes = require("./emr_reference_group.route");
 const commonRouter = require("./commonReference.route");
+const notetemplateRoutes = require("./note_templates.route");
 
 
 const chiefComplaintsRouter = require('./chief.complaints.route');
@@ -36,6 +38,8 @@ const treatmentKitRoute = require('./treatment.kit.routes');
 
 const emrHisSetCtrl = require('./emr.history.settings.routes');
 const profilesRouter = require('./profiles.route');
+
+const ventilatorRoute = require('./ventilator_charts.route');
 
 const serviceRouter = express.Router();
 
@@ -72,6 +76,8 @@ serviceRouter.use('/immunizations', immunizationsRoutes);
 
 // Vital Master Routes
 serviceRouter.use('/vitalMaster', vitalMasterRoutes);
+serviceRouter.use('/vitalLonic', vitallonicRoutes);
+serviceRouter.use('/notetemplate', notetemplateRoutes);
 
 // Diagnosis Routes
 serviceRouter.use('/diagnosis', diagnosisRoutes);
@@ -82,9 +88,9 @@ serviceRouter.use('/diagnosisGrade', diagnosisGradeRoutes);
 serviceRouter.use('/diagnosisRegion', diagnosisRegionRoutes);
 serviceRouter.use('/bodysite', bodysiteRoutes);
 serviceRouter.use('/bodyside', bodysiteRoutes);
-serviceRouter.use('/commonReference',common_reference_group);
-serviceRouter.use('/Reference',emrrefereneRoutes);
-serviceRouter.use('/CommonReference',commonRouter);
+
+serviceRouter.use('/Reference', emrrefereneRoutes);
+serviceRouter.use('/commonReference', commonRouter);
 
 
 // Chief Complaints Routes
@@ -101,5 +107,7 @@ serviceRouter.use('/emr-history-settings', emrHisSetCtrl);
 
 // EMR Profiles Routes
 serviceRouter.use('/profiles', profilesRouter);
+//EMR Critical Care Routes
+serviceRouter.use('/ventilator-charts', ventilatorRoute);
 
 module.exports = serviceRouter;
