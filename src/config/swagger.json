@@ -1988,6 +1988,41 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/favourite/getDietFavourite": {
+            "get": {
+                "description": "To get list of Diet favourites",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitForFav"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/favourite/getTreatmentKitFavouriteById": {
             "get": {
                 "description": "To get Treatment favourite by Id",
@@ -3397,6 +3432,187 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/patient-allergy/create": {
+            "post": {
+                "description": "To create Patient Allergy",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "patientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/patientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergies": {
+            "get": {
+                "description": "To get all patient Allergy History",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergies"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergiesById": {
+            "get": {
+                "description": "To get a patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetch Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergiesById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/delete": {
+            "put": {
+                "description": "Deleted Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deletePatientAllergy"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/updatePatientAllergy": {
+            "put": {
+                "description": "To Update Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "UpadtePatientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
             }
         }
     },
@@ -6632,6 +6848,128 @@
                             "modified_date": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "patientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "getPatientAllergies": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getPatientAllergiesById": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "deletePatientAllergy": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updatePatientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
                         }
                     }
                 }

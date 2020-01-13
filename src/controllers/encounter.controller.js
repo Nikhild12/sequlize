@@ -103,9 +103,13 @@ const Encounter = () => {
     const is_all_req_fields_in_enc_is_pres = encounter && encounter.encounter_type_uuid && encounter.patient_uuid && encounter.department_uuid;
     const is_all_req_fields_in_encDoc_is_pres = encounterDoctor && encounterDoctor.doctor_uuid && encounterDoctor.department_uuid;
 
+    console.log('Request start');
+
     if (user_uuid && is_all_req_fields_in_enc_is_pres && is_all_req_fields_in_encDoc_is_pres && encounterDoctor) {
       const { encounter_type_uuid, patient_uuid } = encounter;
       const { doctor_uuid, department_uuid } = encounterDoctor;
+
+      console.log('Request Fetched From Encounter and ENcounter Doctor');
       // Assigning     
       encounter = emr_utility.createIsActiveAndStatus(encounter, user_uuid);
       encounter.is_active_encounter = emr_constants.IS_ACTIVE;
@@ -115,27 +119,34 @@ const Encounter = () => {
       encounterDoctor.patient_uuid = encounter.patient_uuid;
       encounterDoctor.consultation_start_date = new Date();
 
+      console.log('Request Assigned to Encounter and ENcounter Doctor');
       try {
 
         // if Encounter Type is 2 then check
         // for active encounter for type 1 if exists
         // closing it
         encounterTransaction = await sequelizeDb.sequelize.transaction();
-
+        console.log('Request Transaction Started');
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
         encounterData = await getEncounterQueryByPatientId(patient_uuid, encounter_type_uuid);
+
+        console.log('Request Got Prev Encounter for Patient');
         is_enc_avail = encounterData && encounterData.length > 0;
         if (is_enc_avail) {
           encounterDoctorData = await getEncounterDoctorsQueryByPatientId(encounterData[0].uuid, doctor_uuid, department_uuid);
+
+          console.log('Request Got Prev Encounter Doctor for Patient');
         }
 
 
         is_enc_doc_avail = encounterDoctorData && encounterDoctorData.length > 0;
-
+        console.log('Request Avail for Encounter Doc');
         if (encounter_type_uuid === 2) {
+          
           if (encounterData && encounterData.length > 0) {
+            console.log('Request Entered for Encounter type 2');
             encounterPromise = [
               ...encounterPromise,
               encounter_tbl.update(
@@ -157,6 +168,7 @@ const Encounter = () => {
             ];
           }
         } else if (encounter_type_uuid === 1 && is_enc_avail && is_enc_doc_avail) {
+          console.log('Request returned for already existing');
           return res.status(400)
             .send({
               code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER
@@ -164,27 +176,33 @@ const Encounter = () => {
         }
 
         if (!is_enc_avail) {
+          console.log('Request creating for insert encounter');
           encounterPromise = [
             ...encounterPromise,
             encounter_tbl.create(encounter, { returning: true, transaction: encounterTransaction })
           ];
         }
-
+        console.log('Request all promise');
         const createdEncounterData = await Promise.all(encounterPromise);
+        console.log('Request success for all promise');
 
         if (createdEncounterData) {
+          console.log('Request started for enc doc');
           if (is_enc_avail && !is_enc_doc_avail) {
             encounter.uuid = encounterDoctor.encounter_uuid = encounterData[0].uuid;
           } else {
             encounter.uuid = encounterDoctor.encounter_uuid = getCreatedEncounterId(createdEncounterData);
           }
 
+          console.log('Request started for insert enc doc');
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
             encounterDoctor,
             { returning: true, transaction: encounterTransaction }
           );
           encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+          console.log('Request inserted succ for enc doc');
           await encounterTransaction.commit();
+          console.log('Request success for transaction commit');
           encounterTransStatus = true;
           return res.status(200)
             .send({
@@ -193,17 +211,23 @@ const Encounter = () => {
         }
       } catch (ex) {
         console.log(ex);
+        console.log('Request start for transaction rollback');
         if (encounterTransaction) {
           await encounterTransaction.rollback();
           encounterTransStatus = true;
         }
+        console.log('Request success for transaction rollback');
+
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
+        console.log('Request start for transaction finall rollback');
         if (encounterTransaction && !encounterTransStatus) {
           encounterTransaction.rollback();
         }
+        console.log('Request success for transaction finall rollback');
       }
     } else {
+      console.log('Request sent for bad req');
       return res.status(400).send({
         code: httpStatus[400],
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`

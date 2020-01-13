@@ -39,6 +39,7 @@ const treatmentKitRoute = require('./treatment.kit.routes');
 const emrHisSetCtrl = require('./emr.history.settings.routes');
 const profilesRouter = require('./profiles.route');
 
+const patientAllergieRoute = require('./patient_allergies.route')
 const ventilatorRoute = require('./ventilator_charts.route');
 
 const serviceRouter = express.Router();
@@ -101,6 +102,10 @@ serviceRouter.use('/chiefComplaintCategory', chiefComplaintCategoryRoutes);
 
 // Treatment Kit Routes
 serviceRouter.use('/treatment-kit', treatmentKitRoute);
+
+//Patient Allergy History Routes
+
+serviceRouter.use('/patient-allergy', patientAllergieRoute)
 
 // EMR History Settings Routes
 serviceRouter.use('/emr-history-settings', emrHisSetCtrl);
