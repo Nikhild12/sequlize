@@ -1988,6 +1988,41 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/favourite/getDietFavourite": {
+            "get": {
+                "description": "To get list of Diet favourites",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "departmentId",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "favourite"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful",
+                        "schema": {
+                            "$ref": "#/definitions/getTreatmentKitForFav"
+                        }
+                    },
+                    "400": {
+                        "description": "Sorry! Something Went Wrong"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/favourite/getTreatmentKitFavouriteById": {
             "get": {
                 "description": "To get Treatment favourite by Id",

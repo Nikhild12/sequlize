@@ -11,6 +11,7 @@ const tempmstrdetailsTbl = db.template_master_details;
 const vitalMasterTbl = db.vital_masters;
 const vw_template = db.vw_template_master_details;
 const vw_lab = db.vw_lab_template;
+const vw_diet = db.vw_template_master_diet;
 
 const tmpmstrController = () => {
 	/**
@@ -333,6 +334,35 @@ function getTemplateListData(fetchedData) {
   }
 }
 
+function getTemplateListData1(fetchedData) {
+  let templateList = [], diet_details = [];
+
+  if (fetchedData && fetchedData.length > 0) {
+
+    fetchedData.forEach((tD) => {
+      templateList = [...templateList,
+      {
+        temp_details: {
+          template_id: tD.dataValues.tm_uuid,
+          template_name: tD.dataValues.tm_name,
+
+          template_department: tD.dataValues.tm_dept,
+          user_uuid: tD.dataValues.tm_userid,
+          display_order: tD.dataValues.tm_display_order,
+          template_desc: tD.dataValues.tm_description,
+        },
+        diet_details: [...diet_details, ...getDietListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
+      }
+      ];
+    });
+    let uniq = {};
+    let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
+    return { "templates_list": temp_list };
+  }
+  else {
+    return {};
+  }
+}
 
 // function for updating the data for template master details
 function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, user_uuid, templateTransaction) {
@@ -452,6 +482,36 @@ function getDrugsListForTemplate(fetchedData, template_id) {
     });
   }
   return drug_list;
+}
+
+function getDietListForTemplate(fetchedData, template_id) {
+
+  let diet_list = [];
+  const filteredData = fetchedData.filter((fD) => {
+    return fD.dataValues.tm_uuid === template_id;
+  });
+
+  if (filteredData && filteredData.length > 0) {
+    filteredData.forEach((dD) => {
+      diet_list = [...diet_list,
+      {
+        template_details_uuid: dD.tmd_uuid,
+        diet_name: dD.dm_name,
+        diet_code: dD.dm_code,
+        //drug_id: dD.im_uuid,
+
+        diet_category_name: dD.dc_name,
+        diet_category_code: dD.dc_code,
+
+        diet_frequency_code: dD.df_name,
+        diet_frequency_code: dD.df_code,
+        diet_display_order: dD.tmd_display_order,
+
+        }
+      ];
+    });
+  }
+  return diet_list;
 }
 
 function getLabListData(fetchedData) {
@@ -607,7 +667,7 @@ function getTempData(temp_type_id, result) {
     case "3":
       return getLabListData(result);
     case "9":
-      return getTemplateListData(result);
+      return getTemplateListData1(result);
     default:
       let templateDetails = result;
       return { templateDetails };
@@ -695,7 +755,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       };
     case "9":
       return {
-        table_name: vw_template,
+        table_name: vw_diet,
         query: {
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
@@ -755,7 +815,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
       };
       case "9":
       return {
-        table_name: vw_template,
+        table_name: vw_diet,
         query: {
           where: getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
@@ -780,5 +840,9 @@ function getTemplateDetailsData(temp_type_id, list) {
     case "4":
       fetchdata = getTempData(temp_type_id, list);
       return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
-  }
+    case "9":
+        fetchdata = getTempData(temp_type_id, list);
+        return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
+    }
+
 }

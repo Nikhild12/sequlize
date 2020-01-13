@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('template_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
                     },
                     min: 0
                 }
@@ -27,10 +27,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
                     },
                     min: 0
                 }
@@ -40,10 +40,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
                     min: 0
                 }
@@ -53,20 +53,20 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
                     },
                     min: 0
                 }
             },
-            ventilator_date: {
+            from_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-            ventilator_time: {
-                type: DataTypes.TIME,
+            to_date: {
+                type: DataTypes.DATE,
                 allowNull: true,
             },
             ventilator_mode_uuid: {
@@ -74,77 +74,35 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
                     },
                     min: 0
                 }
             },
-            rate: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            tv: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            mv: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            ps: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            signatory:{
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            peak_press:{
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            peep: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            mean_press: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            fio2: {
-                type: DataTypes.STRING(225),
-                allowNull: true
-            },
-            fio2_percent_uuid: {
+            ccc_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('item_master_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
                     },
                     min: 0
                 }
-            },
-            is_suction: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1,
-                //allowNull: false
-            },
-            posture: {
-                type: DataTypes.STRING(225),
-                allowNull: true
             },
             comments: {
                 type: DataTypes.STRING(225),
                 allowNull: true
             },
-            
+            observed_value:{
+                type: DataTypes.DECIMAL(16,2),
+                allowNull: false,
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,

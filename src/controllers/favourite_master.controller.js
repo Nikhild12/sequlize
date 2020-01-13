@@ -18,9 +18,12 @@ const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnos
 const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
+const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 
 // Utility Service Import
 const emr_utility = require('../services/utility.service');
+
+const emr_attributes_diet = require('../attributes/favourite.diet');
 
 // Constants Import
 const emr_constants = require('../config/constants');
@@ -197,6 +200,17 @@ function getTreatmentQuery(dept_id, user_uuid) {
         fm_active: active_boolean,
         fm_status: active_boolean,
         fm_favourite_type_uuid: 8,
+        [Op.or]: [
+            { "fm_dept": { [Op.eq]: dept_id }, "fm_public": { [Op.eq]: 1 } }, { "fm_userid": { [Op.eq]: user_uuid } }
+        ]
+    };
+}
+
+function getDietFavouriteQuery(dept_id, user_uuid) {
+    return {
+        fm_active: active_boolean,
+        fm_status: active_boolean,
+        fm_favourite_type_uuid: 9,
         [Op.or]: [
             { "fm_dept": { [Op.eq]: dept_id }, "fm_public": { [Op.eq]: 1 } }, { "fm_userid": { [Op.eq]: user_uuid } }
         ]
@@ -540,6 +554,35 @@ const TickSheetMasterController = () => {
         }
     };
 
+    const _getFavouriteDiet = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { departmentId } = req.query;
+
+        if (user_uuid && departmentId) {
+
+            try {
+
+                const dietFav = await vmTreatmentFavouriteDiet.findAll(
+                    {
+                        attributes: emr_attributes_diet.favouriteDietAttributes,
+                        where: getDietFavouriteQuery(departmentId, user_uuid)
+                    }
+                );
+
+                const favouriteList = getAllDietFavsInReadableFormat(dietFav);
+                const returnMessage = dietFav && dietFav.length > 0 ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+                return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: returnMessage, responseContents: favouriteList, responseContentLength: favouriteList.length });
+            } catch (error) {
+
+                console.log(`Exception Happened ${error}`);
+                return res.status(400).send({ code: httpStatus[400], message: error.message });
+
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+        }
+    };
+
     return {
 
         createTickSheetMaster: _createTickSheetMaster,
@@ -549,7 +592,7 @@ const TickSheetMasterController = () => {
         deleteFavourite: _deleteFavourite,
         getTreatmentKitFavourite: _getTreatmentKitFavourite,
         getTreatmentFavById: _getTreatmentFavById,
-        // createFavouriteDiet: _cerateFavouriteDiet
+        getFavouriteDiet: _getFavouriteDiet
 
     };
 
@@ -879,5 +922,36 @@ function getTreatmentFavByIdPromise(treatmentId) {
         ]
     );
 }
+
+
+function getAllDietFavsInReadableFormat(dietFav) {
+    return dietFav.map((df) => {
+        return {
+            favourite_id: df.fm_uuid,
+            favourite_name: df.tk_name,
+            favourite_code: df.tk_code,
+            favourite_active: df.fm_active,
+            favourite_type_id: df.fm_favourite_type_uuid,
+            favourite_active: df.fm_active,
+            favourite_display_order: df.fm_display_order,
+
+            // Diet Master
+            diet_master_id: df.fmd_diet_master_uuid,
+            diet_master_name: df.dm_name,
+            diet_master_code: df.dm_code,
+
+            // Diet Frequency
+            diet_frequency_id: df.fmd_diet_frequency_uuid,
+            diet_frequency_name: df.df_name,
+            diet_frequency_code: df.df_code,
+
+            // Diet Category
+            diet_category_id: df.fmd_diet_category_uuid,
+            diet_category_name: df.dc_name,
+            diet_category_code: df.dc_code,
+        };
+    });
+}
+
 
 
