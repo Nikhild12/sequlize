@@ -3371,6 +3371,69 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/profiles/create": {
+            "post": {
+                "summary": "To create OPNotes profile Details ",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Profiles",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profiles"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/profiles/getAll": {
+            "get": {
+                "description": "To get All Profiles",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get All Profiles",
+                        "schema": {
+                            "$ref": "#/definitions/allProfiles"
+                        }
+                    }
+                }
+            }
+        },
         "/api/patient-allergy/create": {
             "post": {
                 "description": "To create Patient Allergy",
@@ -6676,6 +6739,190 @@
                     },
                     "favourite_display_order": {
                         "type": "integer"
+                    }
+                }
+            }
+        },
+        "profiles": {
+            "type": "object",
+            "properties": {
+                "profiles": {
+                    "type": "object",
+                    "properties": {
+                        "profile_type_uuid": {
+                            "type": "integer"
+                        },
+                        "profile_code": {
+                            "type": "string"
+                        },
+                        "profile_name": {
+                            "type": "string"
+                        },
+                        "profile_description": {
+                            "type": "string"
+                        },
+                        "facility_uuid": {
+                            "type": "integer"
+                        },
+                        "department_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "sections": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "section_type_uuid": {
+                                "type": "integer"
+                            },
+                            "section_note_type_uuid": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "sref": {
+                                "type": "string"
+                            },
+                            "display_order": {
+                                "type": "integer"
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "category_type_uuid": {
+                                            "type": "integer"
+                                        },
+                                        "concepts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "value_type_uuid": {
+                                                        "type": "integer"
+                                                    },
+                                                    "is_mandatory": {
+                                                        "type": "string"
+                                                    },
+                                                    "display_order": {
+                                                        "type": "integer"
+                                                    },
+                                                    "is_multiple": {
+                                                        "type": "string"
+                                                    },
+                                                    "category_concept_values": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "category_concept_uuid": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "value_code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "value_name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "display_order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "allProfiles": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "responseContents": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "uuid": {
+                                "type": "integer"
+                            },
+                            "profile_type_uuid": {
+                                "type": "integer"
+                            },
+                            "profile_code": {
+                                "type": "string"
+                            },
+                            "profile_name": {
+                                "type": "string"
+                            },
+                            "profile_description": {
+                                "type": "string"
+                            },
+                            "facility_uuid": {
+                                "type": "integer"
+                            },
+                            "department_uuid": {
+                                "type": "integer"
+                            },
+                            "is_active": {
+                                "type": "boolean"
+                            },
+                            "status": {
+                                "type": "boolean"
+                            },
+                            "revision": {
+                                "type": "integer"
+                            },
+                            "created_by": {
+                                "type": "integer"
+                            },
+                            "modified_by": {
+                                "type": "integer"
+                            },
+                            "created_date": {
+                                "type": "string"
+                            },
+                            "modified_date": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
