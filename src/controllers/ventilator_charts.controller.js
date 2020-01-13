@@ -69,23 +69,24 @@ const ventilatorchartsController = () => {
                         is_active: 1,
                         status: 1
                     },
-                    include: [
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
+                    
+                                 
+                                include: [
+                                    {
+                                        model: cccTbl,
+                                        as: 'critical_care_charts',
+                                        attributes: ['uuid', 'code', 'name', 'description'],
+                                        where: { is_active: 1, status: 1 },
 
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 }
-                                },]
+                                        include: [
+                                            {
+                                                model: cctypeTbl,
+                                                as: 'critical_care_types',
+                                                attributes: ['uuid', 'code', 'name'],
+                                                where: { is_active: 1, status: 1 },
+                                             },]
 
-
-                        },]
+                                            },]
                     
                 }, { returning: true });
 
