@@ -37,6 +37,7 @@ const chiefDurationRoute = require('./chief_complaints_duration.route');
 const treatmentKitRoute = require('./treatment.kit.routes');
 
 const emrHisSetCtrl = require('./emr.history.settings.routes');
+const profilesRouter = require('./profiles.route');
 
 const patientAllergieRoute = require('./patient_allergies.route')
 const ventilatorRoute = require('./ventilator_charts.route');
@@ -109,6 +110,8 @@ serviceRouter.use('/patient-allergy', patientAllergieRoute)
 // EMR History Settings Routes
 serviceRouter.use('/emr-history-settings', emrHisSetCtrl);
 
+// EMR Profiles Routes
+serviceRouter.use('/profiles', profilesRouter);
 //EMR Critical Care Routes
 serviceRouter.use('/ventilator-charts', ventilatorRoute);
 
