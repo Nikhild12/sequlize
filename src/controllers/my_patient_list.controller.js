@@ -141,7 +141,7 @@ function getMyPatientListResponseForUIFormat(myPatientList) {
   return myPatientList.map(pL => {
     return {
       patient_id: pL.patient_uuid,
-      first_name: pL.pa_pa_first_name,
+      first_name: pL.pa_first_name,
       last_name: pL.pa_last_name,
       middle_name: pL.pa_middle_name,
       age: pL.pa_age,
