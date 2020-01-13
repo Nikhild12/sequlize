@@ -25,6 +25,7 @@ module.exports = Object.freeze({
     FETCHED_FAVOURITES_SUCCESSFULLY: 'Feteched Favourites Successfully',
     NO_RECORD_FOUND: 'No Record Found',
     NO_CONTENT_MESSAGE: 'No Content Found or record could be deleted',
+    MY_PATIENT_LIST: 'My Patient List fetched successfully',
 
     GetpleaseProvideMsg: function (columnname) {
         let returnProvideMsg = 'Please provide';
