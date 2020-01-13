@@ -3371,6 +3371,250 @@
                 "x-throttling-tier": "Unlimited"
             }
         },
+        "/api/profiles/create": {
+            "post": {
+                "summary": "To create OPNotes profile Details ",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Profiles",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profiles"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/profiles/getAll": {
+            "get": {
+                "description": "To get All Profiles",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get All Profiles",
+                        "schema": {
+                            "$ref": "#/definitions/allProfiles"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/patient-allergy/create": {
+            "post": {
+                "description": "To create Patient Allergy",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "patientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/patientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inserted Successfully"
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergies": {
+            "get": {
+                "description": "To get all patient Allergy History",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergies"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/getPatientAllergiesById": {
+            "get": {
+                "description": "To get a patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetch Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/getPatientAllergiesById"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/delete": {
+            "put": {
+                "description": "Deleted Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/deletePatientAllergy"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/patient-allergy/updatePatientAllergy": {
+            "put": {
+                "description": "To Update Patient Allergy Data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "body",
+                        "name": "UpadtePatientAllergy",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "PatientAllergyHistory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successfully",
+                        "schema": {
+                            "$ref": "#/definitions/updatePatientAllergy"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
         "/api/ventilator-charts/create": {
             "post": {
                 "description": "To Create a ventilator data for the patient",
@@ -3408,7 +3652,75 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/ventilator-charts/getventilatorbypatientid": {
+            "get": {
+                "summary": "List patient ventilator data",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "patient_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getventilatorbypatientid"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
+        },
+        "/api/ventilator-charts/getcccdetails": {
+            "get": {
+                "summary": "List critical care chart details",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getcccdetails"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
+    
+    
     },
     "definitions": {
         "searchimmuization": {
@@ -6463,58 +6775,308 @@
                 }
             }
         },
-        "getDietForFav": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "favourite_id": {
-                        "type": "integer"
-                    },
-                    "favourite_name": {
-                        "type": "string"
-                    },
-                    "treatment_kit_type_id": {
-                        "type": "integer"
-                    },
-                    "favourite_code": {
-                        "type": "string"
-                    },
-                    "favourite_active": {
-                        "type": "boolean"
-                    },
-                    "favourite_type_id": {
-                        "type": "integer"
-                    },
-                    "favourite_display_order": {
-                        "type": "integer"
-                    },
-                    "diet_master_id": {
-                        "type": "integer"
-                    },
-                    "diet_master_name": {
-                        "type": "string"
-                    },
-                    "diet_master_code": {
-                        "type": "string"
-                    },
-                    "diet_frequency_id": {
-                        "type": "integer"
-                    },
-                    "diet_frequency_name": {
-                        "type": "string"
-                    },
-                    "diet_frequency_code": {
-                        "type": "string"
-                    },
-                    "diet_category_id": {
-                        "type": "integer"
-                    },
-                    "diet_category_name": {
-                        "type": "string"
-                    },
-                    "diet_category_code": {
-                        "type": "string"
+        "profiles": {
+            "type": "object",
+            "properties": {
+                "profiles": {
+                    "type": "object",
+                    "properties": {
+                        "profile_type_uuid": {
+                            "type": "integer"
+                        },
+                        "profile_code": {
+                            "type": "string"
+                        },
+                        "profile_name": {
+                            "type": "string"
+                        },
+                        "profile_description": {
+                            "type": "string"
+                        },
+                        "facility_uuid": {
+                            "type": "integer"
+                        },
+                        "department_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "sections": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "section_type_uuid": {
+                                "type": "integer"
+                            },
+                            "section_note_type_uuid": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "sref": {
+                                "type": "string"
+                            },
+                            "display_order": {
+                                "type": "integer"
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "category_type_uuid": {
+                                            "type": "integer"
+                                        },
+                                        "concepts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "value_type_uuid": {
+                                                        "type": "integer"
+                                                    },
+                                                    "is_mandatory": {
+                                                        "type": "string"
+                                                    },
+                                                    "display_order": {
+                                                        "type": "integer"
+                                                    },
+                                                    "is_multiple": {
+                                                        "type": "string"
+                                                    },
+                                                    "category_concept_values": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "category_concept_uuid": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "value_code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "value_name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "display_order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "allProfiles": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "responseContents": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "uuid": {
+                                "type": "integer"
+                            },
+                            "profile_type_uuid": {
+                                "type": "integer"
+                            },
+                            "profile_code": {
+                                "type": "string"
+                            },
+                            "profile_name": {
+                                "type": "string"
+                            },
+                            "profile_description": {
+                                "type": "string"
+                            },
+                            "facility_uuid": {
+                                "type": "integer"
+                            },
+                            "department_uuid": {
+                                "type": "integer"
+                            },
+                            "is_active": {
+                                "type": "boolean"
+                            },
+                            "status": {
+                                "type": "boolean"
+                            },
+                            "revision": {
+                                "type": "integer"
+                            },
+                            "created_by": {
+                                "type": "integer"
+                            },
+                            "modified_by": {
+                                "type": "integer"
+                            },
+                            "created_date": {
+                                "type": "string"
+                            },
+                            "modified_date": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "patientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "getPatientAllergies": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "getPatientAllergiesById": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "deletePatientAllergy": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "updatePatientAllergy": {
+            "type": "object",
+            "properties": {
+                "patient_allergies": {
+                    "type": "object",
+                    "properties": {
+                        "patient_uuid": {
+                            "type": "integer"
+                        },
+                        "encounter_uuid": {
+                            "type": "integer"
+                        },
+                        "consultation_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_master_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_type_uuid": {
+                            "type": "integer"
+                        },
+                        "symptom": {
+                            "type": "string"
+                        },
+                        "allergy_severity_uuid": {
+                            "type": "integer"
+                        },
+                        "allergy_source_uuid": {
+                            "type": "integer"
+                        },
+                        "duration": {
+                            "type": "integer"
+                        },
+                        "period_uuid": {
+                            "type": "integer"
+                        },
+                        "comments": {
+                            "type": "string"
+                        },
+                        "performed_date": {
+                            "type": "string"
+                        },
+                        "patient_allergy_status_uuid": {
+                            "type": "integer"
+                        }
                     }
                 }
             }
@@ -6544,8 +7106,11 @@
                         "ventilator_mode_uuid": {
                             "type": "integer",
                             "example": 1
+                        },
+                        "comments": {
+                            "type": "string",
+                            "example": "enter some thing"
                         }
-                        
                     }
                 },
                 "observed_data": {
@@ -6568,15 +7133,34 @@
                             "observed_value": {
                                 "type": "integer",
                                 "example": 1.2
-                            },
-                            "comments": {
-                                "type": "string",
-                                "example": "enter some thing"
                             }
                         }
                     }
                 }
             }
+        },
+        "getventilatorbypatientid": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "patient_uuid":{
+                    "type": "integer"
+                }
+            }
+        },
+        "getcccdetails": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "patient_uuid":{
+                    "type": "integer"
+                }
+            }
         }
+
     }
 }

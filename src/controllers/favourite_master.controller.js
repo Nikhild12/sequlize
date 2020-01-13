@@ -889,7 +889,7 @@ function getTreatmentDetails(treatFav) {
             name = selectedArray[0].tk_name;
             code = selectedArray[0].tk_code;
             id = selectedArray[0].tk_uuid;
-            active = selectedArray[0].tk_active
+            active = selectedArray[0].tk_active;
         }
         argLength--;
     }

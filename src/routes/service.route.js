@@ -37,9 +37,10 @@ const treatmentKitRoute = require("./treatment.kit.routes");
 
 const emrHisSetCtrl = require("./emr.history.settings.routes");
 
-const ventilatorRoute = require("./ventilator_charts.route");
+const profilesRouter = require('./profiles.route');
 
-const myPatientListRoute = require("./my.patient-list-filters.route");
+const patientAllergieRoute = require('./patient_allergies.route')
+const ventilatorRoute = require('./ventilator_charts.route');
 
 const serviceRouter = express.Router();
 
@@ -79,17 +80,18 @@ serviceRouter.use("/vitalLonic", vitallonicRoutes);
 serviceRouter.use("/notetemplate", notetemplateRoutes);
 
 // Diagnosis Routes
-serviceRouter.use("/diagnosis", diagnosisRoutes);
-serviceRouter.use("/diagnosisType", diagnosisTypeRoutes);
-serviceRouter.use("/diagnosisVersion", diagnosisVersionRoutes);
-serviceRouter.use("/diagnosisCategory", diagnosisCategoryRoutes);
-serviceRouter.use("/diagnosisGrade", diagnosisGradeRoutes);
-serviceRouter.use("/diagnosisRegion", diagnosisRegionRoutes);
-serviceRouter.use("/bodysite", bodysiteRoutes);
-serviceRouter.use("/bodyside", bodysiteRoutes);
+serviceRouter.use('/diagnosis', diagnosisRoutes);
+serviceRouter.use('/diagnosisType', diagnosisTypeRoutes);
+serviceRouter.use('/diagnosisVersion', diagnosisVersionRoutes);
+serviceRouter.use('/diagnosisCategory', diagnosisCategoryRoutes);
+serviceRouter.use('/diagnosisGrade', diagnosisGradeRoutes);
+serviceRouter.use('/diagnosisRegion', diagnosisRegionRoutes);
+serviceRouter.use('/bodysite', bodysiteRoutes);
+serviceRouter.use('/bodyside', bodysiteRoutes);
 
-serviceRouter.use("/Reference", emrrefereneRoutes);
-serviceRouter.use("/commonReference", commonRouter);
+serviceRouter.use('/Reference', emrrefereneRoutes);
+serviceRouter.use('/commonReference', commonRouter);
+
 
 // Chief Complaints Routes
 serviceRouter.use("/chiefComplaints", chiefComplaintsRoutes);
@@ -100,9 +102,15 @@ serviceRouter.use("/chiefComplaintCategory", chiefComplaintCategoryRoutes);
 // Treatment Kit Routes
 serviceRouter.use("/treatment-kit", treatmentKitRoute);
 
+//Patient Allergy History Routes
+
+serviceRouter.use('/patient-allergy', patientAllergieRoute)
+
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 
+// EMR Profiles Routes
+serviceRouter.use('/profiles', profilesRouter);
 //EMR Critical Care Routes
 serviceRouter.use("/ventilator-charts", ventilatorRoute);
 
