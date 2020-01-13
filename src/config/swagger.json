@@ -3688,7 +3688,39 @@
                 "x-auth-type": "Application & Application User",
                 "x-throttling-tier": "Unlimited"
             }
+        },
+        "/api/ventilator-charts/getcccdetails": {
+            "get": {
+                "summary": "List critical care chart details",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "user_uuid",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "tags": [
+                    "CriticalCare"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucessful operation",
+                        "schema": {
+                            "$ref": "#/definitions/getcccdetails"
+                        }
+                    }
+                },
+                "x-auth-type": "Application & Application User",
+                "x-throttling-tier": "Unlimited"
+            }
         }
+    
+    
     },
     "definitions": {
         "searchimmuization": {
@@ -7117,6 +7149,18 @@
                     "type": "integer"
                 }
             }
+        },
+        "getcccdetails": {
+            "type": "object",
+            "properties": {
+                "user_uuid": {
+                    "type": "integer"
+                },
+                "patient_uuid":{
+                    "type": "integer"
+                }
+            }
         }
+
     }
 }

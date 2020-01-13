@@ -8,5 +8,6 @@ router.route("/getventilatorbypatientid").get(ventilatorCtrl.getventilatorbypati
 router.route("/updateventilatorbypatientid").put(ventilatorCtrl.updateventilatorbypatientid);
 router.route("/deleteVentilatorDetails").put(ventilatorCtrl.deleteVentilatorDetails);
 router.route("/getventilatorcomparedata").get(ventilatorCtrl.getventilatorcomparedata);
+router.route("/getcccdetails").get(ventilatorCtrl.getcccdetails);
 //router.route("/deleteAttachmentDetails").put(patientattachmentCtrl.deleteAttachmentDetails);
 module.exports = router;
