@@ -35,6 +35,7 @@ const ventilatorchartsController = () => {
                     item.facility_uuid = data1.facility_uuid;
                     item.encounter_type_uuid = data1.encounter_type_uuid;
                     item.ventilator_mode_uuid = data1.ventilator_mode_uuid;
+                    item.comments = data1.comments;
                     item.modified_by = 0;
                     item.is_active = item.status = 1;
                     item.revision = 1;
@@ -66,6 +67,7 @@ const ventilatorchartsController = () => {
                         is_active: 1,
                         status: 1
                     }
+                    
                 }, { returning: true });
 
                 if (data) {
