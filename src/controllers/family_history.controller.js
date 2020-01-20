@@ -183,7 +183,7 @@ const Family_History = () => {
     updateFamilyHistory: _updateFamilyHistory
   };
 
-}
+};
 
 module.exports = Family_History();
 

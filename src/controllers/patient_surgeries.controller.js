@@ -57,7 +57,7 @@ const Surgery_History = () => {
 
   };
 
-}
+};
 
 module.exports = Surgery_History();
 
