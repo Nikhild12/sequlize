@@ -1,49 +1,35 @@
-
-
 module.exports = (sequelize, DataTypes) => {
-    const immunization_schedule = sequelize.define(
-        "immunization_schedule", {
+    const speciality_sketches = sequelize.define(
+        "speciality_sketches", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
             },
-           
-            schedule_uuid: {
+            // 1 to 21 columns
+            code: {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            immunization_uuid: {
+            name: {
+                type: DataTypes.STRING(250),
+                allowNull: true
+            },
+            department_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            immunization_name: {
+            description: {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            immunization_schedule_flag_uuid: {
-                type: DataTypes.INTEGER,
+            sketch_name: {
+                type: DataTypes.STRING,
                 allowNull: true
             },
-            immunization_route_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            immunization_dosage_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            duration: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            immunization_period_uuid: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            display_order: {
-                type: DataTypes.STRING(250),
+            sketch_path: {
+                type: DataTypes.STRING,
                 allowNull: true
             },
             status: {
@@ -62,15 +48,12 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            
             modified_by: {
                 type: DataTypes.INTEGER,
-                allowNull: true,
-                defaultValue: 0
+                allowNull: true
             },
-           
         }, {
-            tableName: "immunization_schedule",
+            tableName: "speciality_sketches",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -79,5 +62,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return immunization_schedule;
+    return speciality_sketches;
 };
