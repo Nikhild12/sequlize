@@ -90,9 +90,11 @@ const ventilatorchartsController = () => {
                 }, { returning: true });
 
                 if (data) {
+                    console.log("fetched sucessfylly");
+                    const vdata = getventilatorData(data);
                     return res
                         .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: data });
+                        .json({ statusCode: 200, req: '', responseContents: vdata });
                 }
             }
             else {
@@ -114,7 +116,7 @@ const ventilatorchartsController = () => {
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
 
-            if (user_uuid) {
+            if (user_uuid ) {
 
                 const data = await Promise.all(updatevetilatordata(ventilatorTbl, data1, data2, user_uuid));
                 if (data) {
@@ -168,19 +170,36 @@ const ventilatorchartsController = () => {
                         patient_uuid: patient_uuid,
                         is_active: 1,
                         status: 1,
-                        ventilator_date: {
+                        from_date: {
                             [Op.and]: [
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('ventilator_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('ventilator_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
                             ]
                         }
-                    }
+                    },
+                    include: [
+                        {
+                            model: cccTbl,
+                            as: 'critical_care_charts',
+                            attributes: ['uuid', 'code', 'name', 'description'],
+                            where: { is_active: 1, status: 1 },
+
+                            include: [
+                                {
+                                    model: cctypeTbl,
+                                    as: 'critical_care_types',
+                                    attributes: ['uuid', 'code', 'name'],
+                                    where: { is_active: 1, status: 1 },
+                                },]
+
+                        },]
                 }, { returning: true });
 
                 if (data) {
+                    const vdata = getventilatorData(data);
                     return res
                         .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: data });
+                        .json({ statusCode: 200, req: '', responseContents: vdata });
                 }
             }
             else {
@@ -285,3 +304,46 @@ function updatevetilatordata(ventilatorTbl, data1, data2, user_uuid) {
     });
     return updatePromise;
 }
+
+function getventilatorData(fetchedData) {
+    let vList = [];
+  
+    if (fetchedData && fetchedData.length > 0) {
+      ventilator_details = {
+        patient_uuid: fetchedData[0].dataValues.patient_uuid,
+        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+  
+        temfacility_uuid: fetchedData[0].dataValues.temfacility_uuid,
+        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+        ventilator_mode_uuid: fetchedData[0].dataValues.ventilator_mode_uuid,
+        comments: fetchedData[0].dataValues.comments,
+      };
+  
+      fetchedData.forEach((tD) => {
+        //   console.log("td---",tD);
+        //   console.log("td-----",tD.dataValues.uuid);
+        //   console.log("cc charts-----",tD.critical_care_charts.uuid);
+        //   console.log("care types----",tD.critical_care_charts.critical_care_types.uuid);
+        vList = [...vList,
+        {
+          ventilator_uuid: tD.dataValues.uuid,
+          ventilator_date: tD.dataValues.from_date,
+          
+          ccc_uuid: tD.critical_care_charts.uuid,
+          ccc_code: tD.critical_care_charts.code,
+          ccc_name: tD.critical_care_charts.name,
+          ccc_desc: tD.critical_care_charts.description,
+  
+          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
+          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
+          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
+          
+          }
+        ];
+      });
+      return { "ventilator_details": ventilator_details, "observed_values": vList };
+    }
+    else {
+      return {};
+    }
+  }
