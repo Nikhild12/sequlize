@@ -30,6 +30,7 @@ const bodysiteRoutes = require("./body_site.route");
 const emrrefereneRoutes = require("./emr_reference_group.route");
 const commonRouter = require("./commonReference.route");
 const notetemplateRoutes = require("./note_templates.route");
+const proceduresRoutes = require("./procedures.route");
 
 const chiefComplaintsRouter = require("./chief.complaints.route");
 const chiefDurationRoute = require("./chief_complaints_duration.route");
@@ -76,6 +77,8 @@ serviceRouter.use("/immunizationSchedule", immunizationScheduleRoutes);
 serviceRouter.use("/immunizations", immunizationsRoutes);
 
 // Vital Master Routes
+
+serviceRouter.use('/procedures', proceduresRoutes);
 serviceRouter.use("/vitalMaster", vitalMasterRoutes);
 serviceRouter.use("/vitalLonic", vitallonicRoutes);
 serviceRouter.use("/notetemplate", notetemplateRoutes);
