@@ -1,49 +1,30 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-    const immunization_schedule = sequelize.define(
-        "immunization_schedule", {
+    const procedure_note_templates = sequelize.define(
+        "procedure_note_templates", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
             },
+            // 1 to 21 columns
+            procedure_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
            
-            schedule_uuid: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            immunization_uuid: {
+            note_template_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            immunization_name: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            immunization_schedule_flag_uuid: {
+            note_template_type_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            immunization_route_uuid: {
+            display_order:{
                 type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            immunization_dosage_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            duration: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            immunization_period_uuid: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            display_order: {
-                type: DataTypes.STRING(250),
                 allowNull: true
             },
             status: {
@@ -54,23 +35,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            is_active: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1
-            },
+           
             created_by: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            
             modified_by: {
                 type: DataTypes.INTEGER,
-                allowNull: true,
-                defaultValue: 0
+                allowNull: true
             },
            
         }, {
-            tableName: "immunization_schedule",
+            tableName: "procedure_note_templates",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -79,5 +55,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return immunization_schedule;
+    return procedure_note_templates;
 };

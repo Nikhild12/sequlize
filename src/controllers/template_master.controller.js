@@ -82,8 +82,10 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
+        //console.log("temp list --------",templateList);
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
+          //console.log("fetched data", templateData);
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
@@ -218,7 +220,7 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
     } catch (ex) {
-      console.log('ex', ex);
+      //console.log('ex', ex);
       return res.status(400).send({ code: httpStatus[400], message: ex.message });
     }
   };
@@ -336,8 +338,9 @@ function getTemplateListData(fetchedData) {
 
 function getTemplateListData1(fetchedData) {
   let templateList = [], diet_details = [];
-
+//console.log("3.fetched data", fetchedData);
   if (fetchedData && fetchedData.length > 0) {
+    //console.log("fetched data length --------",fetchedData.length);
 
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
@@ -355,8 +358,11 @@ function getTemplateListData1(fetchedData) {
       }
       ];
     });
+    //console.log("template list----",templateList);
+    //console.log("diet details",templateList.diet_details[0]);
     let uniq = {};
     let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
+    //console.log("********* temp list", temp_list);
     return { "templates_list": temp_list };
   }
   else {
@@ -488,9 +494,9 @@ function getDietListForTemplate(fetchedData, template_id) {
 
   let diet_list = [];
   const filteredData = fetchedData.filter((fD) => {
-    return fD.dataValues.tm_uuid === template_id;
+    return fD.dataValues.tm_uuid == template_id;
   });
-
+//console.log("filterred data",filteredData);
   if (filteredData && filteredData.length > 0) {
     filteredData.forEach((dD) => {
       diet_list = [...diet_list,
@@ -511,6 +517,7 @@ function getDietListForTemplate(fetchedData, template_id) {
       ];
     });
   }
+  //console.log("diet list after filtered data",diet_list);
   return diet_list;
 }
 
@@ -659,6 +666,7 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
 }
 
 function getTempData(temp_type_id, result) {
+  //console.log("temp type id ---------------",temp_type_id);
   switch (temp_type_id) {
     case "1":
       return getTemplateListData(result);
@@ -842,7 +850,8 @@ function getTemplateDetailsData(temp_type_id, list) {
       return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
     case "9":
         fetchdata = getTempData(temp_type_id, list);
-        return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
-    }
+        return fetchdata;
+  
+      }
 
 }
