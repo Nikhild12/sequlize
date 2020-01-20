@@ -84,6 +84,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: true
       },
+      identified_date: {
+        type: DataTypes.DATE,
+        allowNull: true
+
+      },
+
       duration: {
 
         type: DataTypes.INTEGER,
@@ -158,6 +164,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  family_history.associate = models => {
+    family_history.belongsTo(models.periods, {
+      foreignKey: 'period_uuid',
+      as: 'periods'
+    });
+    family_history.belongsTo(models.family_relation_type, {
+      foreignKey: 'relation_type_uuid',
+      as: 'family_relation_type'
+    });
+  };
 
-  return family_history
+
+  return family_history;
 };
