@@ -30,6 +30,77 @@
     "application/file"
   ],
   "paths": {
+    "/api/proceduresNoteTemplate/getprocedures-note-template": {
+        "post": {
+            "description": "get Successfully",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }
+               
+               
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Procedures Note Template"
+            ],
+            "responses": {
+                "200": {
+                    "description": "get Successfully",
+                    "schema": {
+                        "$ref": "#/definitions/getprocedures-note-template"
+                    }
+                }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+        }
+    },
+    "/api/proceduresNoteTemplate/createprocdures-note-template": {
+        "post": {
+            "description": "Inserted Successfully",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "in": "body",
+                    "name": "add",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/createprocdures-note-template"
+                    }
+                }
+               
+               
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Procedures Note Template"
+            ],
+            "responses": {
+                "200": {
+                    "description": "get Successfully",
+                    "schema": {
+                        "$ref": "#/definitions/createprocdures-note-template"
+                    }
+                }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+        }
+    },
     "/api/procedures/createProcedures": {
         "post": {
             "description": "Inserted Successfully",
@@ -100,6 +171,7 @@
             "x-throttling-tier": "Unlimited"
         }
     },
+    
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -4101,6 +4173,52 @@
     }
   },
   "definitions": {
+      "createprocdures-note-template":{
+        "type": "object",
+        "properties": {
+            "procedure_uuid": {
+                "type": "integer"
+            },
+            "note_template_uuid": {
+                "type": "integer"
+            },
+            "procedure_scheme_uuid": {
+                "type": "integer"
+            },
+            "note_template_type_uuid": {
+                "type": "integer"
+            },
+            "display_order":{
+                "type": "integer"
+            },
+            "status":{
+                "type": "integer"
+            },
+            "revision": {
+                "type": "integer"
+            }
+        }  
+      },
+      "getprocedures-note-template":{
+        "type": "object",
+        "properties": {
+            "procedure_uuid": {
+                "type": "integer"
+            },
+            "note_template_uuid": {
+                "type": "integer"
+            },
+            "procedure_scheme_uuid": {
+                "type": "integer"
+            },
+            "note_template_type_uuid": {
+                "type": "integer"
+            },
+            "display_order":{
+                "type": "integer"
+            }
+        } 
+      },
     "getProcedures":{
         "type": "object",
         "properties": {
