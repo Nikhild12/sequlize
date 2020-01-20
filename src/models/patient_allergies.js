@@ -279,5 +279,5 @@ module.exports = (sequelize, DataTypes) => {
 
     };
 
-    return patient_allergies
+    return patient_allergies;
 };
