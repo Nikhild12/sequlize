@@ -111,11 +111,10 @@ const ventilatorchartsController = () => {
         try {
             // plucking data req body
             let { user_uuid } = req.headers;
-            let { patient_uuid } = req.query;
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
 
-            if (user_uuid && patient_uuid) {
+            if (user_uuid) {
 
                 const data = await Promise.all(updatevetilatordata(ventilatorTbl, data1, data2, user_uuid));
                 if (data) {

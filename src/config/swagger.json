@@ -4060,6 +4060,44 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/ventilator-charts/updateventilatorbypatientid": {
+      "put": {
+        "description": "To update a ventilator data for the patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "update ventilator",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateventilatorbypatientid"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -7793,6 +7831,64 @@
         "period_uuid": {
           "type": "integer",
           "example": 1
+        }
+      }
+    },
+    "updateventilatorbypatientid": {
+      "type": "object",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "properties": {
+            "patient_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "facility_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_type_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "ventilator_mode_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "comments": {
+              "type": "string",
+              "example": "enter some thing"
+            }
+          }
+        },
+        "observed_data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "ccc_uuid": {
+                "type": "integer",
+                "example": 1
+              },
+              "observed_value": {
+                "type": "integer",
+                "example": 1.2
+              }
+            }
+          }
         }
       }
     }
