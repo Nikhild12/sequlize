@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             // 1 to 21 columns
+            procedure_scheme_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
             code: {
                 type: DataTypes.STRING(250),
                 allowNull: true
@@ -19,21 +23,53 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            language:{
+            procedure_technique_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            display_order:{
+            procedure_version_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            color:{
+            procedure_region_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            procedure_type_uuid:{
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            Is_default:{
+            procedure_category_uuid:{
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
+            },
+            procedure_sub_category_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            operation_type_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            anaesthesia_type_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            speciality_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            equipment_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            body_site_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            duration:{
+                type: DataTypes.INTEGER,
+                allowNull: true
             },
             status: {
                 type: DataTypes.BOOLEAN,
