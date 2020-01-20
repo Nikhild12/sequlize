@@ -21,6 +21,76 @@
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "application/file"],
   "paths": {
+    "/api/procedures/createProcedures": {
+        "post": {
+            "description": "Inserted Successfully",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                },
+                {
+                    "in": "body",
+                    "name": "add",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/createProcedures"
+                    }
+                }
+               
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Procedures"
+            ],
+            "responses": {
+                "200": {
+                    "description": "get Successfully",
+                    "schema": {
+                        "$ref": "#/definitions/createNoteTemplate"
+                    }
+                }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+        }
+    },
+    "/api/procedures/getProcedures": {
+        "post": {
+            "description": "Get Successfully",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "user_uuid",
+                    "required": true,
+                    "type": "integer"
+                }
+               
+            ],
+            "produces": [
+                "application/json",
+                "application/xml"
+            ],
+            "tags": [
+                "Procedures"
+            ],
+            "responses": {
+                "200": {
+                    "description": "get Successfully",
+                    "schema": {
+                        "$ref": "#/definitions/getProcedures"
+                    }
+                }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+        }
+    },
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -3318,6 +3388,145 @@
     }
   },
   "definitions": {
+    "getProcedures":{
+        "type": "object",
+        "properties": {
+            "procedure_scheme_uuid": {
+                "type": "integer"
+            },
+            "code": {
+                "type": "string"
+            },
+            "name": {
+                "type": "string"
+            },
+            "description":{
+                "type": "string"
+            },
+            "procedure_technique_uuid":{
+                "type": "integer"
+            },
+            "procedure_version_uuid":{
+                "type": "integer"
+            },
+            "procedure_region_uuid":{
+                "type": "integer"
+            },
+            "procedure_type_uuid":{
+                "type": "integer"
+            },
+            "procedure_category_uuid":{
+                "type": "integer"
+            },
+            "procedure_sub_category_uuid":{
+                "type": "integer"
+            },
+            "operation_type_uuid":{
+                "type": "integer"
+            },
+            "anaesthesia_type_uuid":{
+                "type": "integer"
+            },
+            "speciality_uuid":{
+                "type": "integer"
+            },
+            "equipment_uuid":{
+                "type": "integer"
+            },
+            "body_site_uuid":{
+                "type": "integer"
+            },
+            "duration":{
+                "type": "integer"
+            },
+           
+            "status": {
+                "type": "integer"
+            },
+            "is_active": {
+                "type": "integer"
+            },
+            "revision": {
+                "type": "integer"
+            },
+            "created_by": {
+                "type": "integer"
+            },
+            "modified_by": {
+                "type": "integer"
+            },
+            "created_date": {
+                "type": "string"
+            },
+            "modified_date": {
+                "type": "string"
+            }
+        }  
+    },
+
+    "createProcedures":{
+        "type": "object",
+        "properties": {
+            "procedure_scheme_uuid": {
+                "type": "integer"
+            },
+            "code": {
+                "type": "string"
+            },
+            "name": {
+                "type": "string"
+            },
+            "description":{
+                "type": "string"
+            },
+            "procedure_technique_uuid":{
+                "type": "integer"
+            },
+            "procedure_version_uuid":{
+                "type": "integer"
+            },
+            "procedure_region_uuid":{
+                "type": "integer"
+            },
+            "procedure_type_uuid":{
+                "type": "integer"
+            },
+            "procedure_category_uuid":{
+                "type": "integer"
+            },
+            "procedure_sub_category_uuid":{
+                "type": "integer"
+            },
+            "operation_type_uuid":{
+                "type": "integer"
+            },
+            "anaesthesia_type_uuid":{
+                "type": "integer"
+            },
+            "speciality_uuid":{
+                "type": "integer"
+            },
+            "equipment_uuid":{
+                "type": "integer"
+            },
+            "body_site_uuid":{
+                "type": "integer"
+            },
+            "duration":{
+                "type": "integer"
+            },
+           
+            "status": {
+                "type": "integer"
+            },
+            "is_active": {
+                "type": "integer"
+            },
+            "revision": {
+                "type": "integer"
+            }
+        }
+    },
     "searchimmuization": {
       "type": "object",
       "properties": {
