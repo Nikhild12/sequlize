@@ -262,6 +262,14 @@ function getFavouriteById(fav_id) {
   };
 }
 
+function getDietFavouriteById(fav_id) {
+  return {
+    fm_uuid: fav_id,
+    fm_active: active_boolean,
+    fm_status: active_boolean
+  };
+}
+
 const TickSheetMasterController = () => {
   /**
    *
@@ -442,7 +450,7 @@ const TickSheetMasterController = () => {
           } else if (favourite_type_id === 9) {
             tickSheetData = await vmTreatmentFavouriteDiet.findAll({
               attributes: emr_attributes_diet.favouriteDietAttributes,
-              where: getFavouriteById(favourite_id)
+              where: getDietFavouriteById(favourite_id)
             });
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
@@ -450,9 +458,19 @@ const TickSheetMasterController = () => {
               where: getFavouriteById(favourite_id)
             });
           }
+        } else {
+          tickSheetData = await vmTickSheetMasterTbl.findAll({
+            attributes: getFavouritesAttributes,
+            where: getFavouriteById(favourite_id)
+          });
         }
 
-        favouriteList = getFavouritesInList(tickSheetData);
+        if (favourite_type_id === 9) {
+          favouriteList = getAllDietFavsInReadableFormat(tickSheetData);
+        } else {
+          favouriteList = getFavouritesInList(tickSheetData);
+        }
+
         const returnMessage =
           favouriteList && favouriteList.length > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
