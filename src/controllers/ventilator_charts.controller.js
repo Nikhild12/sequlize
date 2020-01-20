@@ -69,24 +69,24 @@ const ventilatorchartsController = () => {
                         is_active: 1,
                         status: 1
                     },
-                    
+
                     include: [
-                    {
-                        model: cccTbl,
-                        as: 'critical_care_charts',
-                        attributes: ['uuid', 'code', 'name', 'description'],
-                        where: { is_active: 1, status: 1 },
+                        {
+                            model: cccTbl,
+                            as: 'critical_care_charts',
+                            attributes: ['uuid', 'code', 'name', 'description'],
+                            where: { is_active: 1, status: 1 },
 
                             include: [
-                            {
-                                model: cctypeTbl,
-                                as: 'critical_care_types',
-                                attributes: ['uuid', 'code', 'name'],
-                                where: { is_active: 1, status: 1 },
-                            },]
+                                {
+                                    model: cctypeTbl,
+                                    as: 'critical_care_types',
+                                    attributes: ['uuid', 'code', 'name'],
+                                    where: { is_active: 1, status: 1 },
+                                },]
 
-                    },]
-                    
+                        },]
+
                 }, { returning: true });
 
                 if (data) {
@@ -114,29 +114,10 @@ const ventilatorchartsController = () => {
             let { patient_uuid } = req.query;
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
-            //let postdata = req.body;
-            let selector = {
-                where: { patient_uuid: patient_uuid }
-            };
 
             if (user_uuid && patient_uuid) {
 
-                data2.forEach((item, index) => {
-                    item.patient_uuid = data1.patient_uuid;
-                    item.encounter_uuid = data1.encounter_uuid;
-                    item.facility_uuid = data1.facility_uuid;
-                    item.encounter_type_uuid = data1.encounter_type_uuid;
-                    item.ventilator_mode_uuid = data1.ventilator_mode_uuid;
-                    item.comments = data1.comments;
-                    item.modified_by = 0;
-                    item.is_active = item.status = 1;
-                    item.revision = 1;
-                    item.created_date = item.modified_date = new Date();
-                    item.created_by = user_uuid;
-                    //data = ventilatorTbl.update(data2, selector, {returning: true });
-                });
-                //const data = await ventilatorTbl.bulkUpdate(postdata, selector, { returning: true });
-                const data = await ventilatorTbl.update(data2, selector, {returning: true });
+                const data = await Promise.all(updatevetilatordata(ventilatorTbl, data1, data2, user_uuid));
                 if (data) {
                     res.send({ "status": 200, "message": "updated Successfully " });
                 }
@@ -222,21 +203,21 @@ const ventilatorchartsController = () => {
         try {
             if (user_uuid) {
                 const data = await cccTbl.findAll({
-                    attributes: ['uuid','code','name','description','critical_care_type_uuid'],
+                    attributes: ['uuid', 'code', 'name', 'description', 'critical_care_type_uuid'],
                     where: {
                         //patient_uuid: patient_uuid,
                         is_active: 1,
                         status: 1
                     },
-                    
+
                     include: [
-                            {
-                                model: cctypeTbl,
-                                as: 'critical_care_types',
-                                attributes: ['uuid', 'code', 'name'],
-                                where: { is_active: 1, status: 1 },
-                            },]
-                    
+                        {
+                            model: cctypeTbl,
+                            as: 'critical_care_types',
+                            attributes: ['uuid', 'code', 'name'],
+                            where: { is_active: 1, status: 1 },
+                        },]
+
                 }, { returning: true });
 
                 if (data) {
@@ -255,7 +236,6 @@ const ventilatorchartsController = () => {
                 .json({ status: "error", msg: errorMsg });
         }
     };
-
 
     return {
         createVentilator: _createVentilator,
@@ -284,4 +264,25 @@ async function create_ventilator(user_uuid, data1, data2) {
     });
     const dtls_result = await ventilatorTbl.bulkCreate(data2, { returning: true });
     return { "Ventilator Data": dtls_result };
+}
+
+function updatevetilatordata(ventilatorTbl, data1, data2, user_uuid) {
+    let updatePromise = [];
+
+    data2.forEach((item) => {
+        item.patient_uuid = data1.patient_uuid;
+        item.encounter_uuid = data1.encounter_uuid;
+        item.facility_uuid = data1.facility_uuid;
+        item.encounter_type_uuid = data1.encounter_type_uuid;
+        item.ventilator_mode_uuid = data1.ventilator_mode_uuid;
+        item.comments = data1.comments;
+        item.modified_by = 0;
+        item.is_active = item.status = 1;
+        item.revision = 1;
+        item.created_date = item.modified_date = new Date();
+        item.created_by = user_uuid;
+        updatePromise = [...updatePromise,
+        ventilatorTbl.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
+    });
+    return updatePromise;
 }
