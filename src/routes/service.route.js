@@ -42,6 +42,7 @@ const profilesRouter = require("./profiles.route");
 
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require('./family_history.route');
+const surgeryHistoryRoute = require('./patient_surgeries.route');
 const ventilatorRoute = require("./ventilator_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -113,6 +114,11 @@ serviceRouter.use('/patient-allergy', patientAllergieRoute);
 // Family History Routes
 
 serviceRouter.use('/family-history', familyHistoryRoute);
+
+// Surgery History Routes
+
+serviceRouter.use('/surgery-history', surgeryHistoryRoute);
+
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);

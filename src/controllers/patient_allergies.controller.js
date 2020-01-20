@@ -39,7 +39,7 @@ const Patient_Allergies = () => {
       try {
 
         const savePatientAllergyData = await patientAllergiesTbl.create(patient_allergies, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully' });
+        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: patient_allergies });
       }
       catch (ex) {
         console.log('Exception happened', ex);
@@ -56,12 +56,17 @@ const Patient_Allergies = () => {
 
   const _getPatientAllergies = async (req, res) => {
     const { user_uuid } = req.headers;
+    let pageNo = 0;
+    const itemsPerPage = 10;
+    const offset = pageNo * itemsPerPage;
 
     try {
 
       if (user_uuid) {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
+            offset: offset,
+            limit: itemsPerPage,
             order: [['performed_date', 'DESC']],
             attributes: ['performed_date', 'duration'],
             where: { created_by: user_uuid },
