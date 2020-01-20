@@ -38,25 +38,25 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: true
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: true
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -74,6 +74,13 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+    section_category_map.associate = models => {
+        section_category_map.belongsTo(models.categories, {
+            foreignKey: 'category_uuid',
+            as: 'categories'
+        });
+    };
+
     return section_category_map;
 };
