@@ -61,6 +61,45 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            diet_master_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_master_uuid')
+                    },
+                    min: 0
+                }
+            },
+            diet_category_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_category_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_category_uuid')
+                    },
+                    min: 0
+                }
+            },
+            diet_frequency_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_frequency_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('diet_frequency_uuid')
+                    },
+                    min: 0
+                }
+            },
             item_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
