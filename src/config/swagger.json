@@ -4012,7 +4012,7 @@
     },
     "/api/family-history/getFamilyHistoryById": {
       "get": {
-        "description": "To get a patient Allergy Data",
+        "description": "To get a Family History Data",
         "parameters": [
           {
             "in": "header",
@@ -4341,6 +4341,154 @@
         "responses": {
           "200": {
             "description": "Deleted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/create": {
+      "post": {
+        "description": "To Create a surgery history",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create surgeryHistory ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createSurgeryHistory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/getSurgeryHistory": {
+      "get": {
+        "description": "To get Surgery History",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getSurgeryHistory"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/getSurgeryById": {
+      "get": {
+        "description": "To get a surgery History Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch Successfully",
+            "schema": {
+              "$ref": "#/definitions/getSurgeryHistoryById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/updateSurgery": {
+      "put": {
+        "description": "To Update Surgery History Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpadteSurgeryHistory",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateSurgeryHistory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateSurgeryHistory"
+            }
           }
         },
         "x-auth-type": "Application & Application User",
@@ -8223,6 +8371,104 @@
       "properties": {
         "uuid": {
           "type": "integer"
+        }
+      }
+    },
+    "createSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "consultation_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "procedure_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "surgery_name": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "surgery_description": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "performed_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
+    "getSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getSurgeryHistoryById": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "consultation_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "procedure_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "surgery_name": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "surgery_description": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "performed_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
         }
       }
     }
