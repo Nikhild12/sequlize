@@ -31,147 +31,141 @@
   ],
   "paths": {
     "/api/proceduresNoteTemplate/getprocedures-note-template": {
-        "post": {
+      "post": {
+        "description": "get Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
+        "responses": {
+          "200": {
             "description": "get Successfully",
-            "parameters": [
-                {
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }
-               
-               
-            ],
-            "produces": [
-                "application/json",
-                "application/xml"
-            ],
-            "tags": [
-                "Procedures Note Template"
-            ],
-            "responses": {
-                "200": {
-                    "description": "get Successfully",
-                    "schema": {
-                        "$ref": "#/definitions/getprocedures-note-template"
-                    }
-                }
-            },
-            "x-auth-type": "Application & Application User",
-            "x-throttling-tier": "Unlimited"
-        }
+            "schema": {
+              "$ref": "#/definitions/getprocedures-note-template"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     },
     "/api/proceduresNoteTemplate/createprocdures-note-template": {
-        "post": {
-            "description": "Inserted Successfully",
-            "parameters": [
-                {
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }, {
-                    "in": "body",
-                    "name": "add",
-                    "required": true,
-                    "schema": {
-                        "$ref": "#/definitions/createprocdures-note-template"
-                    }
-                }
-               
-               
-            ],
-            "produces": [
-                "application/json",
-                "application/xml"
-            ],
-            "tags": [
-                "Procedures Note Template"
-            ],
-            "responses": {
-                "200": {
-                    "description": "get Successfully",
-                    "schema": {
-                        "$ref": "#/definitions/createprocdures-note-template"
-                    }
-                }
-            },
-            "x-auth-type": "Application & Application User",
-            "x-throttling-tier": "Unlimited"
-        }
+      "post": {
+        "description": "Inserted Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createprocdures-note-template"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/createprocdures-note-template"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     },
     "/api/procedures/createProcedures": {
-        "post": {
-            "description": "Inserted Successfully",
-            "parameters": [
-                {
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                },
-                {
-                    "in": "body",
-                    "name": "add",
-                    "required": true,
-                    "schema": {
-                        "$ref": "#/definitions/createProcedures"
-                    }
-                }
-               
-            ],
-            "produces": [
-                "application/json",
-                "application/xml"
-            ],
-            "tags": [
-                "Procedures"
-            ],
-            "responses": {
-                "200": {
-                    "description": "get Successfully",
-                    "schema": {
-                        "$ref": "#/definitions/createNoteTemplate"
-                    }
-                }
-            },
-            "x-auth-type": "Application & Application User",
-            "x-throttling-tier": "Unlimited"
-        }
+      "post": {
+        "description": "Inserted Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createProcedures"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/createNoteTemplate"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     },
     "/api/procedures/getProcedures": {
-        "post": {
-            "description": "Get Successfully",
-            "parameters": [
-                {
-                    "in": "header",
-                    "name": "user_uuid",
-                    "required": true,
-                    "type": "integer"
-                }
-               
-            ],
-            "produces": [
-                "application/json",
-                "application/xml"
-            ],
-            "tags": [
-                "Procedures"
-            ],
-            "responses": {
-                "200": {
-                    "description": "get Successfully",
-                    "schema": {
-                        "$ref": "#/definitions/getProcedures"
-                    }
-                }
-            },
-            "x-auth-type": "Application & Application User",
-            "x-throttling-tier": "Unlimited"
-        }
+      "post": {
+        "description": "Get Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProcedures"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     },
-    
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -2221,7 +2215,6 @@
             "name": "favourite_type_id",
             "type": "integer"
           }
-          
         ],
         "tags": [
           "favourite"
@@ -3556,7 +3549,7 @@
     },
     "/api/profiles/getAll": {
       "get": {
-        "description": "To get All Profiles",
+        "summary": "To get all the Profile Details ",
         "parameters": [
           {
             "in": "header",
@@ -4248,193 +4241,295 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/profiles/add": {
+      "post": {
+        "summary": "To create  profile Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profilesAdd"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/profiles/getById": {
+      "post": {
+        "summary": "To get profile Details by Id ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProfileById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/profiles/delete": {
+      "put": {
+        "summary": "To delete  profile Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteProfiles"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
-      "createprocdures-note-template":{
-        "type": "object",
-        "properties": {
-            "procedure_uuid": {
-                "type": "integer"
-            },
-            "note_template_uuid": {
-                "type": "integer"
-            },
-            "procedure_scheme_uuid": {
-                "type": "integer"
-            },
-            "note_template_type_uuid": {
-                "type": "integer"
-            },
-            "display_order":{
-                "type": "integer"
-            },
-            "status":{
-                "type": "integer"
-            },
-            "revision": {
-                "type": "integer"
-            }
-        }  
-      },
-      "getprocedures-note-template":{
-        "type": "object",
-        "properties": {
-            "procedure_uuid": {
-                "type": "integer"
-            },
-            "note_template_uuid": {
-                "type": "integer"
-            },
-            "procedure_scheme_uuid": {
-                "type": "integer"
-            },
-            "note_template_type_uuid": {
-                "type": "integer"
-            },
-            "display_order":{
-                "type": "integer"
-            }
-        } 
-      },
-    "getProcedures":{
-        "type": "object",
-        "properties": {
-            "procedure_scheme_uuid": {
-                "type": "integer"
-            },
-            "code": {
-                "type": "string"
-            },
-            "name": {
-                "type": "string"
-            },
-            "description":{
-                "type": "string"
-            },
-            "procedure_technique_uuid":{
-                "type": "integer"
-            },
-            "procedure_version_uuid":{
-                "type": "integer"
-            },
-            "procedure_region_uuid":{
-                "type": "integer"
-            },
-            "procedure_type_uuid":{
-                "type": "integer"
-            },
-            "procedure_category_uuid":{
-                "type": "integer"
-            },
-            "procedure_sub_category_uuid":{
-                "type": "integer"
-            },
-            "operation_type_uuid":{
-                "type": "integer"
-            },
-            "anaesthesia_type_uuid":{
-                "type": "integer"
-            },
-            "speciality_uuid":{
-                "type": "integer"
-            },
-            "equipment_uuid":{
-                "type": "integer"
-            },
-            "body_site_uuid":{
-                "type": "integer"
-            },
-            "duration":{
-                "type": "integer"
-            },
-           
-            "status": {
-                "type": "integer"
-            },
-            "is_active": {
-                "type": "integer"
-            },
-            "revision": {
-                "type": "integer"
-            },
-            "created_by": {
-                "type": "integer"
-            },
-            "modified_by": {
-                "type": "integer"
-            },
-            "created_date": {
-                "type": "string"
-            },
-            "modified_date": {
-                "type": "string"
-            }
-        }  
-    },
-
-    "createProcedures":{
-        "type": "object",
-        "properties": {
-            "procedure_scheme_uuid": {
-                "type": "integer"
-            },
-            "code": {
-                "type": "string"
-            },
-            "name": {
-                "type": "string"
-            },
-            "description":{
-                "type": "string"
-            },
-            "procedure_technique_uuid":{
-                "type": "integer"
-            },
-            "procedure_version_uuid":{
-                "type": "integer"
-            },
-            "procedure_region_uuid":{
-                "type": "integer"
-            },
-            "procedure_type_uuid":{
-                "type": "integer"
-            },
-            "procedure_category_uuid":{
-                "type": "integer"
-            },
-            "procedure_sub_category_uuid":{
-                "type": "integer"
-            },
-            "operation_type_uuid":{
-                "type": "integer"
-            },
-            "anaesthesia_type_uuid":{
-                "type": "integer"
-            },
-            "speciality_uuid":{
-                "type": "integer"
-            },
-            "equipment_uuid":{
-                "type": "integer"
-            },
-            "body_site_uuid":{
-                "type": "integer"
-            },
-            "duration":{
-                "type": "integer"
-            },
-           
-            "status": {
-                "type": "integer"
-            },
-            "is_active": {
-                "type": "integer"
-            },
-            "revision": {
-                "type": "integer"
-            }
+    "createprocdures-note-template": {
+      "type": "object",
+      "properties": {
+        "procedure_uuid": {
+          "type": "integer"
+        },
+        "note_template_uuid": {
+          "type": "integer"
+        },
+        "procedure_scheme_uuid": {
+          "type": "integer"
+        },
+        "note_template_type_uuid": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
         }
+      }
+    },
+    "getprocedures-note-template": {
+      "type": "object",
+      "properties": {
+        "procedure_uuid": {
+          "type": "integer"
+        },
+        "note_template_uuid": {
+          "type": "integer"
+        },
+        "procedure_scheme_uuid": {
+          "type": "integer"
+        },
+        "note_template_type_uuid": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        }
+      }
+    },
+    "getProcedures": {
+      "type": "object",
+      "properties": {
+        "procedure_scheme_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "procedure_technique_uuid": {
+          "type": "integer"
+        },
+        "procedure_version_uuid": {
+          "type": "integer"
+        },
+        "procedure_region_uuid": {
+          "type": "integer"
+        },
+        "procedure_type_uuid": {
+          "type": "integer"
+        },
+        "procedure_category_uuid": {
+          "type": "integer"
+        },
+        "procedure_sub_category_uuid": {
+          "type": "integer"
+        },
+        "operation_type_uuid": {
+          "type": "integer"
+        },
+        "anaesthesia_type_uuid": {
+          "type": "integer"
+        },
+        "speciality_uuid": {
+          "type": "integer"
+        },
+        "equipment_uuid": {
+          "type": "integer"
+        },
+        "body_site_uuid": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "created_by": {
+          "type": "integer"
+        },
+        "modified_by": {
+          "type": "integer"
+        },
+        "created_date": {
+          "type": "string"
+        },
+        "modified_date": {
+          "type": "string"
+        }
+      }
+    },
+    "createProcedures": {
+      "type": "object",
+      "properties": {
+        "procedure_scheme_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "procedure_technique_uuid": {
+          "type": "integer"
+        },
+        "procedure_version_uuid": {
+          "type": "integer"
+        },
+        "procedure_region_uuid": {
+          "type": "integer"
+        },
+        "procedure_type_uuid": {
+          "type": "integer"
+        },
+        "procedure_category_uuid": {
+          "type": "integer"
+        },
+        "procedure_sub_category_uuid": {
+          "type": "integer"
+        },
+        "operation_type_uuid": {
+          "type": "integer"
+        },
+        "anaesthesia_type_uuid": {
+          "type": "integer"
+        },
+        "speciality_uuid": {
+          "type": "integer"
+        },
+        "equipment_uuid": {
+          "type": "integer"
+        },
+        "body_site_uuid": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
     },
     "searchimmuization": {
       "type": "object",
@@ -7494,22 +7589,7 @@
         "profiles": {
           "type": "object",
           "properties": {
-            "profile_type_uuid": {
-              "type": "integer"
-            },
-            "profile_code": {
-              "type": "string"
-            },
-            "profile_name": {
-              "type": "string"
-            },
-            "profile_description": {
-              "type": "string"
-            },
-            "facility_uuid": {
-              "type": "integer"
-            },
-            "department_uuid": {
+            "profile_uuid": {
               "type": "integer"
             }
           }
@@ -8103,6 +8183,45 @@
       "type": "object",
       "properties": {
         "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "profilesAdd": {
+      "type": "object",
+      "properties": {
+        "profile_type_uuid": {
+          "type": "integer"
+        },
+        "profile_code": {
+          "type": "string"
+        },
+        "profile_name": {
+          "type": "string"
+        },
+        "profile_description": {
+          "type": "string"
+        },
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getProfileById": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "deleteProfiles": {
+      "type": "object",
+      "properties": {
+        "uuid": {
           "type": "integer"
         }
       }
