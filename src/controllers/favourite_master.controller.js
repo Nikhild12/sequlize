@@ -24,6 +24,8 @@ const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
+const vwFavouriteInvestigation = sequelizeDb.vw_favourite_investigation;
+
 // Utility Service Import
 const emr_utility = require("../services/utility.service");
 
@@ -32,6 +34,9 @@ const emr_attributes_diet = require("../attributes/favourite.diet");
 
 // Favourite Radiology Attributes
 const emr_attributes_radiology = require("../attributes/favourite_radiology");
+
+// Favourite Radiology Attributes
+const emr_attributes_investigation = require("../attributes/vw_favourite_investigation");
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -427,6 +432,14 @@ const TickSheetMasterController = () => {
             attributes: emr_attributes_radiology.radiolodyAttributes,
             where: getFavouriteRadiologyQuery(user_uuid, fav_type_id)
           });
+        } else if (fav_type_id === 7) {
+          favouriteData = await vwFavouriteInvestigation.findAll({
+            attributes: emr_attributes_investigation.investigationAttributes,
+            where: emr_attributes_investigation.getFavouriteInvestigationQuery(
+              user_uuid,
+              fav_type_id
+            )
+          });
         } else {
           favouriteData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
@@ -436,6 +449,10 @@ const TickSheetMasterController = () => {
 
         if (fav_type_id === 3) {
           favouriteList = emr_attributes_radiology.getRadiologyResponse(
+            favouriteData
+          );
+        } else if (fav_type_id === 7) {
+          favouriteList = emr_attributes_investigation.getInvestigationResponse(
             favouriteData
           );
         } else {
@@ -494,6 +511,11 @@ const TickSheetMasterController = () => {
               attributes: emr_attributes_radiology.radiolodyAttributes,
               where: getFavouriteByIdQuery(favourite_id)
             });
+          } else if (favourite_type_id === 7) {
+            tickSheetData = await vwFavouriteInvestigation.findAll({
+              attributes: emr_attributes_investigation.investigationAttributes,
+              where: getFavouriteByIdQuery(favourite_id)
+            });
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
               attributes: getFavouritesAttributes,
@@ -511,6 +533,10 @@ const TickSheetMasterController = () => {
           favouriteList = getAllDietFavsInReadableFormat(tickSheetData);
         } else if (favourite_type_id === 3) {
           favouriteList = emr_attributes_radiology.getRadiologyResponse(
+            tickSheetData
+          );
+        } else if (favourite_type_id === 7) {
+          favouriteList = emr_attributes_investigation.getInvestigationResponse(
             tickSheetData
           );
         } else {
