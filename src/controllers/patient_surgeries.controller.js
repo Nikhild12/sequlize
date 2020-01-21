@@ -11,6 +11,7 @@ const emr_constants = require('../config/constants');
 
 
 const surgicalDetailsTbl = sequelizeDb.patient_surgeries;
+const vw_surgical_details = sequelizeDb.vw_surgical_details;
 
 
 const Surgery_History = () => {
@@ -47,13 +48,80 @@ const Surgery_History = () => {
 
   };
 
+  const _getSurgeryHistory = async (req, res) => {
+    const { user_uuid } = req.headers;
+    try {
+      if (user_uuid) {
+        const surgeryHistory = await vw_surgical_details.findAll({
+          order: [['ps_performed_date', 'DESC']],
+          attributes: ['institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments'],
+        },
+          { returning: true }
+        );
+        return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryHistory });
 
+      } else {
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      }
+    }
+    catch (err) {
+      console.log('Exception happened', err);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err });
+    }
+  };
+
+  const _getSurgeryHistoryById = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { uuid } = req.query;
+    try {
+      if (user_uuid && uuid) {
+        const surgeryData = await surgicalDetailsTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
+        return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryData });
+      } else {
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      }
+
+    }
+    catch (err) {
+      console.log('Exception Happened', err);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+
+  };
+
+  const _updateSurgeryHistory = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { uuid } = req.query;
+    let postData = req.body;
+    let selector = {
+      where: { uuid: uuid }
+    };
+    try {
+      if (user_uuid && uuid) {
+        const data = await surgicalDetailsTbl.update(postData, selector, { returing: true });
+        if (data) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', requestContent: data });
+        }
+      } else {
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+
+      }
+    }
+    catch (ex) {
+      console.log('Exception happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+
+    }
+  };
 
 
 
   return {
 
-    addSurgery: _addSurgery
+    addSurgery: _addSurgery,
+    getSurgeryHistory: _getSurgeryHistory,
+    getSurgeryHistoryById: _getSurgeryHistoryById,
+    updateSurgeryHistory: _updateSurgeryHistory
 
   };
 

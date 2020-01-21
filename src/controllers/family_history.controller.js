@@ -111,6 +111,7 @@ const Family_History = () => {
       }
     }
     catch (ex) {
+      console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
   };
