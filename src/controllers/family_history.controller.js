@@ -37,7 +37,7 @@ const Family_History = () => {
 
       try {
         await familyHistoryTbl.create(familyHistory, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully' });
+        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: familyHistory });
 
       }
       catch (ex) {
@@ -53,11 +53,17 @@ const Family_History = () => {
 
   const _getFamilyHistory = async (req, res) => {
     const { user_uuid } = req.headers;
+    let pageNo = 0;
+    const itemsPerPage = 10;
+    const offset = pageNo * itemsPerPage;
+
     if (user_uuid) {
       try {
         const familyHistoryData = await familyHistoryTbl.findAll({
+          offset: offset,
+          limit: itemsPerPage,
           order: [['identified_date', 'DESC']],
-          attributes: ['identified_date', 'duration', 'disease_name'],
+          attributes: ['uuid', 'identified_date', 'duration', 'disease_name'],
           where: { created_by: user_uuid },
           include: [
             {
@@ -148,7 +154,8 @@ const Family_History = () => {
       if (user_uuid && uuid) {
         const data = await familyHistoryTbl.update(postdata, selector, { returning: true });
         if (data) {
-          res.send({ "status": 200, "message": "updated Successfully " });
+          return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
+
         }
 
         else {
@@ -176,7 +183,7 @@ const Family_History = () => {
     updateFamilyHistory: _updateFamilyHistory
   };
 
-}
+};
 
 module.exports = Family_History();
 

@@ -73,6 +73,15 @@ const ventilatorchartsController = () => {
 
                     include: [
                         {
+                            model: vmodeTbl,
+                            as: 'ventilator_modes',
+                            attributes: ['uuid', 'code', 'name'],
+                            where: {
+                                is_active: 1,
+                                status: 1
+                            }
+                        },
+                        {
                             model: cccTbl,
                             as: 'critical_care_charts',
                             attributes: ['uuid', 'code', 'name', 'description'],
@@ -179,6 +188,15 @@ const ventilatorchartsController = () => {
                         }
                     },
                     include: [
+                        {
+                            model: vmodeTbl,
+                            as: 'ventilator_modes',
+                            attributes: ['uuid', 'code', 'name'],
+                            where: {
+                                is_active: 1,
+                                status: 1
+                            }
+                        },
                         {
                             model: cccTbl,
                             as: 'critical_care_charts',
@@ -349,9 +367,11 @@ function getventilatorData(fetchedData) {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
   
-        temfacility_uuid: fetchedData[0].dataValues.temfacility_uuid,
+        facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
         ventilator_mode_uuid: fetchedData[0].dataValues.ventilator_mode_uuid,
+        ventilator_mode_code: fetchedData[0].ventilator_modes.code,
+        ventilator_mode_name: fetchedData[0].ventilator_modes.name,
         comments: fetchedData[0].dataValues.comments,
       };
   
