@@ -4012,7 +4012,7 @@
     },
     "/api/family-history/getFamilyHistoryById": {
       "get": {
-        "description": "To get a patient Allergy Data",
+        "description": "To get a Family History Data",
         "parameters": [
           {
             "in": "header",
@@ -4347,6 +4347,154 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/surgery-history/create": {
+      "post": {
+        "description": "To Create a surgery history",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create surgeryHistory ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createSurgeryHistory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/getSurgeryHistory": {
+      "get": {
+        "description": "To get Surgery History",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getSurgeryHistory"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/getSurgeryById": {
+      "get": {
+        "description": "To get a surgery History Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch Successfully",
+            "schema": {
+              "$ref": "#/definitions/getSurgeryHistoryById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-history/updateSurgery": {
+      "put": {
+        "description": "To Update Surgery History Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpadteSurgeryHistory",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateSurgeryHistory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateSurgeryHistory"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/abg-charts/create": {
       "post": {
         "description": "To Create abg data for the patient",
@@ -4414,6 +4562,92 @@
             "description": "sucessful operation",
             "schema": {
               "$ref": "#/definitions/getabgbypatientid"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/abg-charts/updateabgbypatientid": {
+      "put": {
+        "description": "To update a ventilator data for the patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "update ventilator",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateabgbypatientid"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/abg-charts/getabgcomparedata": {
+      "get": {
+        "summary": "List patient ventilator data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getabgcomparedata"
             }
           }
         },
@@ -8300,6 +8534,104 @@
         }
       }
     },
+    "createSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "consultation_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "procedure_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "surgery_name": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "surgery_description": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "performed_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
+    "getSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getSurgeryHistoryById": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateSurgeryHistory": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "consultation_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "procedure_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "surgery_name": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "surgery_description": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "performed_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
     "createabg": {
       "type": "object",
       "properties": {
@@ -8355,6 +8687,71 @@
       }
     },
     "getabgbypatientid": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateabgbypatientid": {
+      "type": "object",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "properties": {
+            "patient_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "facility_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_type_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "comments": {
+              "type": "string",
+              "example": "enter some thing"
+            }
+          }
+        },
+        "observed_data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "ccc_uuid": {
+                "type": "integer",
+                "example": 1
+              },
+              "observed_value": {
+                "type": "integer",
+                "example": 1.2
+              }
+            }
+          }
+        }
+      }
+    },
+    "getabgcomparedata": {
       "type": "object",
       "properties": {
         "user_uuid": {
