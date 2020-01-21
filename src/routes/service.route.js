@@ -45,6 +45,8 @@ const familyHistoryRoute = require('./family_history.route');
 const ventilatorRoute = require("./ventilator_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
+// const myPatientListRoute = require("./my.patient-list-filters.route");
+const specialitySketcheRoute = require("./speciality_Sketches.route");
 const serviceRouter = express.Router();
 
 // EMR Work Flow Settings Routes
@@ -124,5 +126,8 @@ serviceRouter.use("/ventilator-charts", ventilatorRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
+
+//speciality Routes
+serviceRouter.use("/speciality", specialitySketcheRoute);
 
 module.exports = serviceRouter;

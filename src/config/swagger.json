@@ -30,6 +30,45 @@
     "application/file"
   ],
   "paths": {
+    "/api/procedures/deleteProcedures": {
+      "post": {
+          "description": "deleted Successfully",
+          "parameters": [
+              {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+              },
+              {
+                  "in": "body",
+                  "name": "Id",
+                  "required": true,
+                  "schema": {
+                      "$ref": "#/definitions/deleteProcedures"
+                  }
+              }
+             
+          ],
+          "produces": [
+              "application/json",
+              "application/xml"
+          ],
+          "tags": [
+              "Procedures"
+          ],
+          "responses": {
+              "200": {
+                  "description": "get Successfully",
+                  "schema": {
+                      "$ref": "#/definitions/createNoteTemplate"
+                  }
+              }
+          },
+          "x-auth-type": "Application & Application User",
+          "x-throttling-tier": "Unlimited"
+      }
+  },
     "/api/procedures/createProcedures": {
         "post": {
             "description": "Inserted Successfully",
@@ -4098,9 +4137,193 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/speciality/createSpeciality": {
+      "post": {
+        "description": "To Create a Speciality Sketch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create Speciality",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createSpeciality"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/speciality/getSpecialityById": {
+      "post": {
+        "description": "To get a Speciality Sketches Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Speciality_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getSpecialityById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch Successfully",
+            "schema": {
+              "$ref": "#/definitions/getChiefMasterById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/speciality/updateSpecialityById": {
+      "post": {
+        "description": "To Update Speciality Master Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpadteSpeciality",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateSpecialityById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateSpecialityById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/speciality/getAllSpeciality": {
+      "post": {
+        "description": "To get All Speciality",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All getAllSpeciality",
+            "schema": {
+              "$ref": "#/definitions/getAllSpeciality"
+            }
+          }
+        }
+      }
+    },
+    "/api/speciality/deleteSpeciality": {
+      "post": {
+        "description": "To Delete Speciality Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Speciality_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteSpeciality"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted Successfully"
+          }
+        }
+      }
     }
+   
   },
   "definitions": {
+    "deleteProcedures":{
+      "type": "object",
+        "properties": {
+          "Procedures_id":{
+            "type": "integer"
+          }
+        }
+    },
     "getProcedures":{
         "type": "object",
         "properties": {
@@ -7891,6 +8114,90 @@
           }
         }
       }
+    },
+    "createSpeciality":{
+      "type": "object",
+      "properties": {
+          "code": {
+              "type": "string"
+          },
+          "name": {
+              "type": "string"
+          },
+          "department_uuid":{
+            "type": "integer"
+        },
+          "description":{
+              "type": "string"
+          },
+          
+          "sketch_name":{
+              "type": "string"
+          },
+          "sketch_path":{
+              "type": "string"
+          },
+          "status": {
+              "type": "integer"
+          },
+          "revision": {
+              "type": "integer"
+          }
+      }
+  },
+  "getSpecialityById": {
+    "type": "object",
+    "properties": {
+      "Speciality_id": {
+        "type": "integer"
+      }
     }
+  },
+  "updateSpecialityById": {
+    "type": "object",
+    "properties": {
+      "Speciality_id": {
+        "type": "integer"
+      },
+      "code": {
+        "type": "string"
+    },
+    "name": {
+        "type": "string"
+    },
+    "department_uuid":{
+      "type": "integer"
+  },
+    "description":{
+        "type": "string"
+    },
+    
+    "sketch_name":{
+        "type": "string"
+    },
+    "sketch_path":{
+        "type": "string"
+    },
+    "status": {
+        "type": "integer"
+    },
+    "revision": {
+        "type": "integer"
+    }
+    }
+  },
+  "getAllSpeciality": {
+      "type": "object",
+      "properties": {
+    }
+  },
+  "deleteSpeciality":{
+    "type": "object",
+      "properties": {
+        "Speciality_id":{
+          "type": "integer"
+        }
+      }
   }
+}
 }
