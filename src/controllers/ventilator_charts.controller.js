@@ -10,6 +10,7 @@ const moment = require('moment');
 const ventilatorTbl = db.ventilator_charts;
 const cccTbl = db.critical_care_charts;
 const cctypeTbl = db.critical_care_types;
+const vmodeTbl = db.ventilator_modes;
 
 const ventilatorchartsController = () => {
     /**
@@ -255,13 +256,48 @@ const ventilatorchartsController = () => {
         }
     };
 
+    const _getventilatormodes = async (req, res) => {
+
+        let { user_uuid } = req.headers;
+        //let { patient_uuid } = req.query;
+
+        try {
+            if (user_uuid) {
+                const data = await vmodeTbl.findAll({
+                    attributes: ['uuid', 'code', 'name'],
+                    where: {
+                        //patient_uuid: patient_uuid,
+                        is_active: 1,
+                        status: 1
+                    }
+                }, { returning: true });
+
+                if (data) {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({ statusCode: 200, req: '', responseContents: data });
+                }
+            }
+            else {
+                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+            }
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({ status: "error", msg: errorMsg });
+        }
+    };
+
+
     return {
         createVentilator: _createVentilator,
         getventilatorbypatientid: _getventilatorbypatientid,
         updateventilatorbypatientid: _updateventilatorbypatientid,
         deleteVentilatorDetails: _deleteVentilatorDetails,
         getventilatorcomparedata: _getventilatorcomparedata,
-        getcccdetails: _getcccdetails
+        getcccdetails: _getcccdetails,
+        getventilatormodes: _getventilatormodes
     };
 };
 

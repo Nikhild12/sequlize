@@ -68,7 +68,7 @@ const Patient_Allergies = () => {
             offset: offset,
             limit: itemsPerPage,
             order: [['performed_date', 'DESC']],
-            attributes: ['performed_date', 'duration'],
+            attributes: ['uuid', 'performed_date', 'duration'],
             where: { created_by: user_uuid },
             include: [
               {

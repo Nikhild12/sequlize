@@ -4218,6 +4218,36 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/ventilator-charts/getventilatormodes": {
+      "get": {
+        "summary": "List ventilator modes data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatormodes"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -8065,6 +8095,14 @@
           "type": "integer"
         },
         "patient_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getventilatormodes": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
           "type": "integer"
         }
       }

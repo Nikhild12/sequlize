@@ -63,7 +63,7 @@ const Family_History = () => {
           offset: offset,
           limit: itemsPerPage,
           order: [['identified_date', 'DESC']],
-          attributes: ['identified_date', 'duration', 'disease_name'],
+          attributes: ['uuid', 'identified_date', 'duration', 'disease_name'],
           where: { created_by: user_uuid },
           include: [
             {
