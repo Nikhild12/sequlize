@@ -22,11 +22,16 @@ const vmTreatmentFavouriteRadiology =
   sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
+const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
 // Utility Service Import
 const emr_utility = require("../services/utility.service");
 
+// Favourite Diet Attributes
 const emr_attributes_diet = require("../attributes/favourite.diet");
+
+// Favourite Radiology Attributes
+const emr_attributes_radiology = require("../attributes/favourite_radiology");
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -262,11 +267,21 @@ function getFavouriteById(fav_id) {
   };
 }
 
-function getDietFavouriteById(fav_id) {
+function getFavouriteByIdQuery(fav_id) {
   return {
     fm_uuid: fav_id,
     fm_active: active_boolean,
     fm_status: active_boolean
+  };
+}
+
+function getFavouriteRadiologyQuery(user_id, fav_type_id) {
+  return {
+    fm_favourite_type_uuid: fav_type_id,
+    fm_status: active_boolean,
+    fm_active: active_boolean,
+    fm_userid: user_id,
+    rtm_uuid: neQuery
   };
 }
 
@@ -393,18 +408,40 @@ const TickSheetMasterController = () => {
    */
   const _getFavourites = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { dept_id, fav_type_id } = req.query;
+    let { dept_id, fav_type_id } = req.query;
 
     if (user_uuid && dept_id && fav_type_id) {
+      fav_type_id = +fav_type_id;
+      if (isNaN(fav_type_id)) {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: emr_constants.PROPER_FAV_ID
+        });
+      }
       let favouriteList = [];
 
       try {
-        const tickSheetData = await vmTickSheetMasterTbl.findAll({
-          attributes: getFavouritesAttributes,
-          where: getFavouriteQuery(dept_id, user_uuid, fav_type_id)
-        });
+        let favouriteData;
+        if (fav_type_id === 3) {
+          favouriteData = await vmFavouriteRadiology.findAll({
+            attributes: emr_attributes_radiology.radiolodyAttributes,
+            where: getFavouriteRadiologyQuery(user_uuid, fav_type_id)
+          });
+        } else {
+          favouriteData = await vmTickSheetMasterTbl.findAll({
+            attributes: getFavouritesAttributes,
+            where: getFavouriteQuery(dept_id, user_uuid, fav_type_id)
+          });
+        }
 
-        favouriteList = getFavouritesInList(tickSheetData);
+        if (fav_type_id === 3) {
+          favouriteList = emr_attributes_radiology.getRadiologyResponse(
+            favouriteData
+          );
+        } else {
+          favouriteList = getFavouritesInList(favouriteData);
+        }
+
         const returnMessage =
           favouriteList && favouriteList.length > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
@@ -445,12 +482,17 @@ const TickSheetMasterController = () => {
           if (isNaN(favourite_type_id)) {
             return res.status(400).send({
               code: httpStatus[400],
-              message: "Please provide proper favourite Type Id"
+              message: emr_constants.PROPER_FAV_ID
             });
           } else if (favourite_type_id === 9) {
             tickSheetData = await vmTreatmentFavouriteDiet.findAll({
               attributes: emr_attributes_diet.favouriteDietAttributes,
-              where: getDietFavouriteById(favourite_id)
+              where: getFavouriteByIdQuery(favourite_id)
+            });
+          } else if (favourite_type_id === 3) {
+            tickSheetData = await vmFavouriteRadiology.findAll({
+              attributes: emr_attributes_radiology.radiolodyAttributes,
+              where: getFavouriteByIdQuery(favourite_id)
             });
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
@@ -467,6 +509,10 @@ const TickSheetMasterController = () => {
 
         if (favourite_type_id === 9) {
           favouriteList = getAllDietFavsInReadableFormat(tickSheetData);
+        } else if (favourite_type_id === 3) {
+          favouriteList = emr_attributes_radiology.getRadiologyResponse(
+            tickSheetData
+          );
         } else {
           favouriteList = getFavouritesInList(tickSheetData);
         }
@@ -1110,6 +1156,7 @@ function getAllDietFavsInReadableFormat(dietFav) {
       diet_master_id: df.fmd_diet_master_uuid,
       diet_master_name: df.dm_name,
       diet_master_code: df.dm_code,
+      diet_quantity: df.fmd_quantity,
 
       // Diet Frequency
       diet_frequency_id: df.fmd_diet_frequency_uuid,
