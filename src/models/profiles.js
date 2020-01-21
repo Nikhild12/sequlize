@@ -34,70 +34,70 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.STRING,
                 allowNull: false
-              /*  validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_code')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_code')
-                    }
-                }*/
+                /*  validate: {
+                      notNull: {
+                          msg: emr_constants.GetpleaseProvideMsg('profile_code')
+                      },
+                      notEmpty: {
+                          msg: emr_constants.GetpleaseProvideMsg('profile_code')
+                      }
+                  }*/
 
             },
             profile_name: {
 
                 type: DataTypes.STRING,
                 allowNull: false
-               /* validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_name')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_name')
-                    }
-                }*/
+                /* validate: {
+                     notNull: {
+                         msg: emr_constants.GetpleaseProvideMsg('profile_name')
+                     },
+                     notEmpty: {
+                         msg: emr_constants.GetpleaseProvideMsg('profile_name')
+                     }
+                 }*/
 
             },
             profile_description: {
 
                 type: DataTypes.STRING,
                 allowNull: true
-                       
+
             },
             facility_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false
-             /*   validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
-                    },
-                    notEmpty: {
-                        msg:emr_constants.GetpleaseProvideMsg('facility_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('facility_uuid')
-                    }
-                } */
+                /*   validate: {
+                       notNull: {
+                           msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                       },
+                       notEmpty: {
+                           msg:emr_constants.GetpleaseProvideMsg('facility_uuid')
+                       },
+                       min: {
+                           args: [1],
+                           msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+                       }
+                   } */
 
             },
             department_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false
-              /*  validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('department_uuid')
-                    }
-                } */
+                /*  validate: {
+                      notNull: {
+                          msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                      },
+                      notEmpty: {
+                          msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                      },
+                      min: {
+                          args: [1],
+                          msg: emr_constants.GetZeroValidationMessage('department_uuid')
+                      }
+                  } */
 
             },
             is_active: {
@@ -108,24 +108,24 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -143,6 +143,14 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+
+    profiles.associate = models => {
+        profiles.hasMany(models.profile_sections, {
+            foreignKey: 'profile_uuid',
+            as: 'profile_sections'
+        });
+    };
+
     return profiles;
 };

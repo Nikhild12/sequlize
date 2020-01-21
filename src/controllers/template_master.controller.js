@@ -12,6 +12,7 @@ const vitalMasterTbl = db.vital_masters;
 const vw_template = db.vw_template_master_details;
 const vw_lab = db.vw_lab_template;
 const vw_diet = db.vw_template_master_diet;
+const vw_ris = db.vw_ris_template;
 
 const tmpmstrController = () => {
 	/**
@@ -131,13 +132,14 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (err) {
-      await templateTransaction.rollback();
-      templateTransStatus = true;
+      //await templateTransaction.rollback();
+      //templateTransStatus = true;
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
     }
     finally {
       if (templateTransaction && !templateTransStatus) {
         await templateTransaction.rollback();
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
     }
   };
@@ -554,6 +556,39 @@ function getLabListData(fetchedData) {
   }
 }
 
+function getRisListData(fetchedData) {
+  let templateList = [], lab_details = [];
+
+  if (fetchedData && fetchedData.length > 0) {
+
+    fetchedData.forEach((tD) => {
+      templateList = [...templateList,
+      {
+        temp_details: {
+          template_id: tD.dataValues.tm_uuid,
+          template_name: tD.dataValues.tm_name,
+          template_department: tD.dataValues.tm_department_uuid,
+          user_uuid: tD.dataValues.tm_user_uuid,
+          template_description: tD.dataValues.tm_description,
+          template_displayorder: tD.dataValues.tm_display_order,
+          template_type_uuid: tD.dataValues.tm_template_type_uuid,
+          template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
+          template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
+        },
+
+        lab_details: [...lab_details, ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
+      }
+      ];
+    });
+    let uniq = {};
+    let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
+    return { "templates_lab_list": temp_list };
+  }
+  else {
+    return {};
+  }
+}
+
 function getLabListForTemplate(fetchedData, template_id) {
 
   let lab_list = [];
@@ -573,6 +608,32 @@ function getLabListForTemplate(fetchedData, template_id) {
         lab_test_status: lD.ltm_status[0] === 1 ? true : false,
         lab_test_is_active: lD.ltm_is_active[0] === 1 ? true : false,
         lab_type_uuid: lD.ltm_lab_master_type_uuid
+      }
+      ];
+    });
+  }
+  return lab_list;
+}
+
+function getRisListForTemplate(fetchedData, template_id) {
+
+  let lab_list = [];
+  const filteredData = fetchedData.filter((fD) => {
+    return fD.dataValues.tm_uuid === template_id;
+  });
+
+  if (filteredData && filteredData.length > 0) {
+    filteredData.forEach((lD) => {
+      lab_list = [...lab_list,
+      {
+        template_details_uuid: lD.tmd_uuid,
+        lab_test_uuid: lD.rtm_uuid,
+        lab_code: lD.rtm_code,
+        lab_name: lD.rtm_name,
+        lab_test_description: lD.rtm_description,
+        lab_test_status: lD.rtm_status[0] === 1 ? true : false,
+        lab_test_is_active: lD.rtm_is_active[0] === 1 ? true : false,
+        lab_type_uuid: lD.rtm_lab_master_type_uuid
       }
       ];
     });
@@ -673,7 +734,7 @@ function getTempData(temp_type_id, result) {
     case "2":
       return getLabListData(result);
     case "3":
-      return getLabListData(result);
+      return getRisListData(result);
     case "9":
       return getTemplateListData1(result);
     default:
@@ -742,13 +803,13 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       };
     case "3":
       return {
-        table_name: vw_lab,
+        table_name: vw_ris,
         query: {
           where: {
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            ltm_lab_master_type_uuid: 2,
+            rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
@@ -801,14 +862,14 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
       };
     case "3":
       return {
-        table_name: vw_lab,
+        table_name: vw_ris,
         query: {
           where: {
             tm_uuid: temp_id,
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            ltm_lab_master_type_uuid: 2,
+            rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,

@@ -38,25 +38,25 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: true
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: true
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -74,6 +74,14 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+
+    profile_sections.associate = models => {
+        profile_sections.belongsTo(models.sections, {
+            foreignKey: 'section_uuid',
+            as: 'sections'
+        });
+    };
+
     return profile_sections;
 };

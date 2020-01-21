@@ -31,6 +31,7 @@ const emrrefereneRoutes = require("./emr_reference_group.route");
 const commonRouter = require("./commonReference.route");
 const notetemplateRoutes = require("./note_templates.route");
 const proceduresRoutes = require("./procedures.route");
+const procedureNoteTemplatesRoutes = require("./procedure_note_templates.route");
 
 const chiefComplaintsRouter = require("./chief.complaints.route");
 const chiefDurationRoute = require("./chief_complaints_duration.route");
@@ -42,6 +43,7 @@ const profilesRouter = require("./profiles.route");
 
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require('./family_history.route');
+const surgeryHistoryRoute = require('./patient_surgeries.route');
 const ventilatorRoute = require("./ventilator_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -79,7 +81,9 @@ serviceRouter.use("/immunizations", immunizationsRoutes);
 
 // Vital Master Routes
 
-serviceRouter.use('/procedures', proceduresRoutes);
+serviceRouter.use("/procedures", proceduresRoutes);
+serviceRouter.use("/proceduresNoteTemplate", procedureNoteTemplatesRoutes);
+
 serviceRouter.use("/vitalMaster", vitalMasterRoutes);
 serviceRouter.use("/vitalLonic", vitallonicRoutes);
 serviceRouter.use("/notetemplate", notetemplateRoutes);
@@ -113,6 +117,11 @@ serviceRouter.use('/patient-allergy', patientAllergieRoute);
 // Family History Routes
 
 serviceRouter.use('/family-history', familyHistoryRoute);
+
+// Surgery History Routes
+
+serviceRouter.use('/surgery-history', surgeryHistoryRoute);
+
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
