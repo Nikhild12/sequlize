@@ -4346,6 +4346,80 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/abg-charts/create": {
+      "post": {
+        "description": "To Create abg data for the patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create abg",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createabg"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/abg-charts/getabgbypatientid": {
+      "get": {
+        "summary": "List patient abg data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getabgbypatientid"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -8222,6 +8296,71 @@
       "type": "object",
       "properties": {
         "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "createabg": {
+      "type": "object",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "properties": {
+            "patient_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "facility_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "encounter_type_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "comments": {
+              "type": "string",
+              "example": "enter some thing"
+            }
+          }
+        },
+        "observed_data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "ccc_uuid": {
+                "type": "integer",
+                "example": 1
+              },
+              "observed_value": {
+                "type": "integer",
+                "example": 1.2
+              }
+            }
+          }
+        }
+      }
+    },
+    "getabgbypatientid": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
           "type": "integer"
         }
       }
