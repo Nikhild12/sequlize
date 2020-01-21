@@ -105,20 +105,19 @@ const profilesController = () => {
 
     });
     // creating profile 
-    if (user_uuid && profiles && profiles.profile_code && profiles.profile_name) {
-
+    if (user_uuid && profiles && profiles.profile_uuid) {
       if (checkProfiles(req)) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send treatment Kit along with One widget details' });
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send userId and profile details' });
       }
       try {
         let profileSave = [];
-        const duplicateProfilesRecord = await findDuplicateProfilesByCodeAndName(profiles);
+        //const duplicateProfilesRecord = await findDuplicateProfilesByCodeAndName(profiles);
         //   if (duplicateProfilesRecord && duplicateProfilesRecord.length > 0) {
         //        return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateProfilesRecord) });
         // }
-        profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
+        // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
         // Profiles save
-        const createdProfileData = await profilesTbl.create(profiles, { returning: true });
+        //const createdProfileData = await profilesTbl.create(profiles, { returning: true });
 
         //   creating sections 
         if (sections && Array.isArray(sections) && sections.length > 0) {
@@ -135,7 +134,7 @@ const profilesController = () => {
           // Profile and Sections mapping
           sections.forEach((item, idx) => {
 
-            item.profile_uuid = createdProfileData.uuid;
+            item.profile_uuid = profiles.profile_uuid;
             item.section_uuid = createdSectionData[idx].uuid;
             item = emr_utility.assignDefaultValuesAndUUIdToObject(item, sections, user_uuid);
           });
@@ -372,16 +371,18 @@ const profilesController = () => {
                     where: { is_active: 1, status: 1 },
 
                     include: [{
-                      model: categoryConceptsTbl,
-                      as: 'category_concepts',
-                      attributes: ['uuid', 'category_uuid', 'concept_uuid'],
-                      where: { is_active: 1, status: 1 },
+
                       include: [{
                         model: conceptsTbl,
                         as: 'concepts',
                         attributes: ['uuid', 'code', 'name', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
                         where: { is_active: 1, status: 1 },
                       }],
+                      model: categoryConceptsTbl,
+                      as: 'category_concepts',
+                      attributes: ['uuid', 'category_uuid', 'concept_uuid'],
+                      where: { is_active: 1, status: 1 },
+
                       include: [{
                         model: categoryConceptValuesTbl,
                         as: 'category_concept_values',
@@ -413,12 +414,42 @@ const profilesController = () => {
 
   };
 
+
+  const _addProfiles = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    let profiles = req.body;
+
+    if (user_uuid) {
+
+      profiles.is_active = profiles.status = true;
+      profiles.created_by = profiles.modified_by = user_uuid;
+      profiles.created_date = profiles.modified_date = new Date();
+      profiles.revision = 1;
+
+      try {
+        await profilesTbl.create(profiles, { returing: true });
+        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully' });
+
+      }
+      catch (ex) {
+        console.log('Exception happened', ex);
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+      }
+    } else {
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+    }
+
+  };
+
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
     deleteProfiles: _deleteProfiles,
     getProfileById: _getProfileById,
-    updateProfiles: _updateProfiles
+    updateProfiles: _updateProfiles,
+    addProfiles: _addProfiles
 
 
   };
@@ -448,9 +479,7 @@ function getDuplicateMsg(record) {
 
 
 function checkProfiles(req) {
-
   const { profiles, sections, categories, concepts } = req.body;
-
   return !checkSections(sections) &&
     !checkCategories(categories) &&
     !checkConcepts(concepts);
@@ -464,11 +493,13 @@ function checkSections(sections) {
 }
 
 function checkCategories(categories) {
+
   return categories && Array.isArray(categories) && categories.length > 0;
 }
 
 
 function checkConcepts(concepts) {
+
   return concepts && Array.isArray(concepts) && concepts.length > 0;
 }
 
