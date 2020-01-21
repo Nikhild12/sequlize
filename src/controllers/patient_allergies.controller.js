@@ -50,7 +50,7 @@ const Patient_Allergies = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
     }
 
-  }
+  };
 
 
 
@@ -124,7 +124,7 @@ const Patient_Allergies = () => {
       console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
-  }
+  };
 
 
 
@@ -147,7 +147,7 @@ const Patient_Allergies = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
 
     }
-  }
+  };
 
 
   const _updatePatientAllergy = async (req, res) => {
@@ -171,7 +171,7 @@ const Patient_Allergies = () => {
           allergy_source_uuid: patient_allergies.allergy_source_uuid,
           duration: patient_allergies.duration,
           period_uuid: patient_allergies.period_uuid
-        }
+        };
         const data = await patientAllergiesTbl.update(allergy_data, { where: { uuid: uuid } });
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContent: data });
@@ -187,7 +187,7 @@ const Patient_Allergies = () => {
     } else {
       return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO_USER_ID} ${emr_constants.NO_REQUEST_PARAM}` });
     }
-  }
+  };
 
   const _deletePatientAllergy = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -214,7 +214,7 @@ const Patient_Allergies = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
 
     }
-  }
+  };
 
   return {
 
@@ -225,7 +225,7 @@ const Patient_Allergies = () => {
     getPatientAllergiesByUserId: _getPatientAllergiesByUserId
   };
 
-}
+};
 
 module.exports = Patient_Allergies();
 

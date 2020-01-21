@@ -4170,6 +4170,84 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/ventilator-charts/getventilatorcomparedata": {
+      "get": {
+        "summary": "List patient ventilator data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatorcomparedata"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ventilator-charts/getventilatormodes": {
+      "get": {
+        "summary": "List ventilator modes data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatormodes"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -8007,6 +8085,25 @@
               }
             }
           }
+        }
+      }
+    },
+    "getventilatorcomparedata": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getventilatormodes": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
         }
       }
     }

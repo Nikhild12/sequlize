@@ -27,13 +27,13 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.STRING,
                 allowNull: true
-    
+
             },
             description: {
 
                 type: DataTypes.STRING,
                 allowNull: true
-                       
+
             },
             sref: {
 
@@ -55,24 +55,24 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -90,6 +90,14 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+
+    sections.associate = models => {
+        sections.hasMany(models.section_category_map, {
+            foreignKey: 'section_uuid',
+            as: 'section_category_map'
+        });
+    };
+
     return sections;
 };

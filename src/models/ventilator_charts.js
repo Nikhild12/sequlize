@@ -151,6 +151,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:"ccc_uuid",
             as:'critical_care_charts'
         });
+        ventilator_charts.belongsTo(models.ventilator_modes , {
+            foreignKey:"ventilator_mode_uuid",
+            as:'ventilator_modes'
+        });
     };
 
     return ventilator_charts;

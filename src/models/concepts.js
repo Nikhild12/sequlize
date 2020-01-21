@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.STRING,
                 allowNull: true
-                       
+
             },
             value_type_uuid: {
 
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             is_multiple: {
-             
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
@@ -63,24 +63,24 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -98,6 +98,13 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+    concepts.associate = models => {
+        concepts.hasMany(models.category_concepts, {
+            foreignKey: 'concept_uuid',
+            as: 'category_concepts'
+        });
+    };
+
     return concepts;
 };
