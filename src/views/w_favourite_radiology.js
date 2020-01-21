@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const VW_FAVOURITE_MASTER_DIET = sequelize.define(
-    "vw_favourite_master_diet",
+  const VW_FAVOURITE_RADIOLOGY = sequelize.define(
+    "vw_favourite_radiology",
     {
       fm_uuid: {
         type: DataTypes.INTEGER,
@@ -8,9 +8,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true
       },
       fm_name: {
-        type: DataTypes.STRING(255)
-      },
-      fm_code: {
         type: DataTypes.STRING(255)
       },
       fm_dept: {
@@ -28,42 +25,23 @@ module.exports = (sequelize, DataTypes) => {
       fm_public: {
         type: DataTypes.BOOLEAN
       },
-
       fm_status: {
         type: DataTypes.BOOLEAN
       },
       fm_display_order: {
         type: DataTypes.INTEGER
       },
-      fmd_diet_master_uuid: {
+      rtm_uuid: {
         type: DataTypes.INTEGER
       },
-      fmd_diet_frequency_uuid: {
+      rtm_code: {
         type: DataTypes.INTEGER
       },
-      fmd_diet_category_uuid: {
+      rtm_name: {
         type: DataTypes.INTEGER
       },
-      fmd_quantity: {
+      rtm_description: {
         type: DataTypes.INTEGER
-      },
-      dm_code: {
-        type: DataTypes.STRING(255)
-      },
-      dm_name: {
-        type: DataTypes.STRING(255)
-      },
-      df_code: {
-        type: DataTypes.STRING(255)
-      },
-      df_name: {
-        type: DataTypes.STRING(255)
-      },
-      dc_code: {
-        type: DataTypes.STRING(255)
-      },
-      dc_name: {
-        type: DataTypes.STRING(255)
       }
     },
     {
@@ -71,5 +49,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return VW_FAVOURITE_MASTER_DIET;
+  return VW_FAVOURITE_RADIOLOGY;
 };
