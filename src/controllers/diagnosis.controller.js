@@ -117,7 +117,7 @@ const diagnosisController = () => {
                     });
                 }
             } catch (error) {
-               
+
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: error.message
@@ -134,24 +134,24 @@ const diagnosisController = () => {
         const {
             user_uuid
         } = req.headers;
-        const {
-            searchValue
-        } = req.body;
-
-
+        const searchValue = req.body;
         if (user_uuid && searchValue) {
-
             try {
-                const page = searchValue.page ? searchValue.page : 1;
-                const itemsPerPage = searchValue.limit ? searchValue.limit : 50;
-                const offset = (page - 1) * itemsPerPage;
+                let pageNo = 0;
+                const itemsPerPage = searchValue.paginationSize ? searchValue.paginationSize : 10;
+                if (searchValue.pageNo) {
+                    let temp = parseInt(searchValue.pageNo);
+                    if (temp && (temp != NaN)) {
+                        pageNo = temp;
+                    }
+                }
+                const offset = pageNo * itemsPerPage;
                 const diagnosisData = await diagnosisTbl.findAll({
-                    where: getDiagnosisFilterByQuery("filterbythree", searchValue),
+                    where: getDiagnosisFilterByQuery("filterbythree", searchValue.search),
                     attributes: getDiagnosisAttributes().splice(0, 3),
                     offset: offset,
                     limit: itemsPerPage
                 });
-
                 if (diagnosisData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
@@ -161,7 +161,6 @@ const diagnosisController = () => {
                     });
                 }
             } catch (error) {
-               
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: error.message
@@ -222,7 +221,7 @@ const diagnosisController = () => {
                     });
                 }
             } catch (ex) {
-               
+
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: ex.message
@@ -269,14 +268,14 @@ const diagnosisController = () => {
             offset: offset,
             limit: itemsPerPage,
             where: {
-               status:1
+                status: 1
             },
             attributes: getDiagnosisAttributes()
 
-            
+
 
         };
-        
+
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
@@ -295,7 +294,7 @@ const diagnosisController = () => {
                 ]
             };
         }
-       
+
 
 
         try {
@@ -303,9 +302,9 @@ const diagnosisController = () => {
 
 
                 .then((findData) => {
-                   
+
                     return res
-                  
+
                         .status(httpStatus.OK)
                         .json({
                             message: "success",
@@ -316,7 +315,7 @@ const diagnosisController = () => {
                         });
                 })
                 .catch(err => {
-                   
+
 
                     return res;
                     console.log('\n err...', err)
@@ -324,11 +323,11 @@ const diagnosisController = () => {
                         .json({
                             message: "error",
                             err: err,
-                             req: ''
+                            req: ''
                         });
                 });
         } catch (err) {
-           
+
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)

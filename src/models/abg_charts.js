@@ -1,8 +1,8 @@
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const ventilator_charts = sequelize.define(
-        "ventilator_charts",
+    const abg_charts = sequelize.define(
+        "abg_charts",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -69,19 +69,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-            ventilator_mode_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('ventilator_mode_uuid')
-                    },
-                    min: 0
-                }
-            },
             ccc_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -137,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            tableName: "ventilator_charts",
+            tableName: "abg_charts",
             indexes: [
                 {
                     fields: ["uuid"]
@@ -146,16 +133,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    ventilator_charts.associate =  models => {
-        ventilator_charts.belongsTo(models.critical_care_charts , {
+    abg_charts.associate =  models => {
+        abg_charts.belongsTo(models.critical_care_charts , {
             foreignKey:"ccc_uuid",
             as:'critical_care_charts'
         });
-        ventilator_charts.belongsTo(models.ventilator_modes , {
-            foreignKey:"ventilator_mode_uuid",
-            as:'ventilator_modes'
-        });
+        
     };
 
-    return ventilator_charts;
+    return abg_charts;
 };
