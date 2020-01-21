@@ -53,15 +53,10 @@ const Family_History = () => {
 
   const _getFamilyHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    let pageNo = 0;
-    const itemsPerPage = 10;
-    const offset = pageNo * itemsPerPage;
 
     if (user_uuid) {
       try {
         const familyHistoryData = await familyHistoryTbl.findAll({
-          offset: offset,
-          limit: itemsPerPage,
           order: [['identified_date', 'DESC']],
           attributes: ['uuid', 'identified_date', 'duration', 'disease_name'],
           where: { created_by: user_uuid },

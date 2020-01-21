@@ -56,17 +56,12 @@ const Patient_Allergies = () => {
 
   const _getPatientAllergies = async (req, res) => {
     const { user_uuid } = req.headers;
-    let pageNo = 0;
-    const itemsPerPage = 10;
-    const offset = pageNo * itemsPerPage;
 
     try {
 
       if (user_uuid) {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
-            offset: offset,
-            limit: itemsPerPage,
             order: [['performed_date', 'DESC']],
             attributes: ['uuid', 'performed_date', 'duration'],
             where: { created_by: user_uuid },
