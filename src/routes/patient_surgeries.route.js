@@ -8,4 +8,7 @@ const surgeryHistoryController = require('../controllers/patient_surgeries.contr
 const surgeryHistoryRoute = express.Router();
 
 surgeryHistoryRoute.route('/create').post(surgeryHistoryController.addSurgery);
+surgeryHistoryRoute.route('/getSurgeryHistory').get(surgeryHistoryController.getSurgeryHistory);
+surgeryHistoryRoute.route('/getSurgeryById').get(surgeryHistoryController.getSurgeryHistoryById);
+surgeryHistoryRoute.route('/updateSurgery').put(surgeryHistoryController.updateSurgeryHistory);
 module.exports = surgeryHistoryRoute;
