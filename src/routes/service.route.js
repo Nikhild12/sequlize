@@ -44,7 +44,9 @@ const profilesRouter = require("./profiles.route");
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require('./family_history.route');
 const surgeryHistoryRoute = require('./patient_surgeries.route');
+
 const ventilatorRoute = require("./ventilator_charts.route");
+const abgRoute = require("./abg_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 const serviceRouter = express.Router();
@@ -130,6 +132,7 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 serviceRouter.use("/profiles", profilesRouter);
 //EMR Critical Care Routes
 serviceRouter.use("/ventilator-charts", ventilatorRoute);
+serviceRouter.use("/abg-charts", abgRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
