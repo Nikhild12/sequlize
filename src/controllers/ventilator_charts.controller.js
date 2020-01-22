@@ -52,6 +52,7 @@ const ventilatorchartsController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const data = await ventilatorTbl.findAll({
+                    order: [['from_date', 'DESC']],
                     where: {
                         patient_uuid: patient_uuid,
                         is_active: 1,
@@ -162,6 +163,7 @@ const ventilatorchartsController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const data = await ventilatorTbl.findAll({
+                    order: [['from_date', 'DESC']],
                     where: {
                         patient_uuid: patient_uuid,
                         is_active: 1,
