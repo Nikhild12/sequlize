@@ -51,42 +51,9 @@ const ventilatorchartsController = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const data = await ventilatorTbl.findAll({
-                    order: [['from_date', 'DESC']],
-                    where: {
-                        patient_uuid: patient_uuid,
-                        is_active: 1,
-                        status: 1
-                    },
-
-                    include: [
-                        {
-                            model: vmodeTbl,
-                            as: 'ventilator_modes',
-                            attributes: ['uuid', 'code', 'name'],
-                            where: {
-                                is_active: 1,
-                                status: 1
-                            }
-                        },
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
-
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 },
-                                },]
-
-                        },]
-
-                }, { returning: true });
-
+                const {table_name, query} = getVquery(patient_uuid);
+                const data = await table_name.findAll(query);
+                
                 if (data) {
                     const vdata = getventilatorData(data);
                     return res
@@ -162,46 +129,10 @@ const ventilatorchartsController = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const data = await ventilatorTbl.findAll({
-                    order: [['from_date', 'DESC']],
-                    where: {
-                        patient_uuid: patient_uuid,
-                        is_active: 1,
-                        status: 1,
-                        from_date: {
-                            [Op.and]: [
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                            ]
-                        }
-                    },
-                    include: [
-                        {
-                            model: vmodeTbl,
-                            as: 'ventilator_modes',
-                            attributes: ['uuid', 'code', 'name'],
-                            where: {
-                                is_active: 1,
-                                status: 1
-                            }
-                        },
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
 
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 },
-                                },]
-
-                        },]
-                }, { returning: true });
-
+                const {table_name, query} = getVCquery(patient_uuid, from_date, to_date);
+                const data = await table_name.findAll(query);
+                
                 if (data) {
                     const vdata = getventilatorData(data);
                     return res
@@ -385,3 +316,92 @@ function getventilatorData(fetchedData) {
       return {};
     }
   }
+
+  function getVquery(patient_uuid) {
+    
+    return {
+      table_name: ventilatorTbl,
+      query: {
+        order: [['from_date', 'DESC']],
+        where: {
+            patient_uuid: patient_uuid,
+            is_active: 1,
+            status: 1
+        },
+
+        include: [
+            {
+                model: vmodeTbl,
+                as: 'ventilator_modes',
+                attributes: ['uuid', 'code', 'name'],
+                where: {
+                    is_active: 1,
+                    status: 1
+                }
+            },
+            {
+                model: cccTbl,
+                as: 'critical_care_charts',
+                attributes: ['uuid', 'code', 'name', 'description'],
+                where: { is_active: 1, status: 1 },
+
+                include: [
+                    {
+                        model: cctypeTbl,
+                        as: 'critical_care_types',
+                        attributes: ['uuid', 'code', 'name'],
+                        where: { is_active: 1, status: 1 },
+                    },]
+
+            },]
+
+        }
+      };
+    }
+
+    function getVCquery(patient_uuid, from_date, to_date) {
+    
+        return {
+          table_name: ventilatorTbl,
+          query: {
+            order: [['from_date', 'DESC']],
+                    where: {
+                        patient_uuid: patient_uuid,
+                        is_active: 1,
+                        status: 1,
+                        from_date: {
+                            [Op.and]: [
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                            ]
+                        }
+                    },
+                    include: [
+                        {
+                            model: vmodeTbl,
+                            as: 'ventilator_modes',
+                            attributes: ['uuid', 'code', 'name'],
+                            where: {
+                                is_active: 1,
+                                status: 1
+                            }
+                        },
+                        {
+                            model: cccTbl,
+                            as: 'critical_care_charts',
+                            attributes: ['uuid', 'code', 'name', 'description'],
+                            where: { is_active: 1, status: 1 },
+
+                            include: [
+                                {
+                                    model: cctypeTbl,
+                                    as: 'critical_care_types',
+                                    attributes: ['uuid', 'code', 'name'],
+                                    where: { is_active: 1, status: 1 },
+                                },]
+
+                        },]
+                }
+
+          };
+        }
