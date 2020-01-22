@@ -4236,7 +4236,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["encounter"],
+        "tags": ["Encounter"],
         "responses": {
           "200": {
             "description": "sucessful operation"
