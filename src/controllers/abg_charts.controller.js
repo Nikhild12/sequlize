@@ -52,6 +52,7 @@ const abgchartsController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const data = await abgTbl.findAll({
+                    order: [['from_date', 'DESC']],
                     where: {
                         patient_uuid: patient_uuid,
                         is_active: 1,
@@ -130,6 +131,7 @@ const abgchartsController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const data = await abgTbl.findAll({
+                    order: [['from_date', 'DESC']],
                     where: {
                         patient_uuid: patient_uuid,
                         is_active: 1,
