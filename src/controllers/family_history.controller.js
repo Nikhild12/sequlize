@@ -53,13 +53,14 @@ const Family_History = () => {
 
   const _getFamilyHistory = async (req, res) => {
     const { user_uuid } = req.headers;
+    let { patient_uuid } = req.query;
 
-    if (user_uuid) {
+    if (user_uuid && patient_uuid) {
       try {
         const familyHistoryData = await familyHistoryTbl.findAll({
           order: [['identified_date', 'DESC']],
           attributes: ['uuid', 'identified_date', 'duration', 'disease_name'],
-          where: { created_by: user_uuid, is_active: 1, status: 1 },
+          where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
           include: [
             {
               model: periodsTbl,

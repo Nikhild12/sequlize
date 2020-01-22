@@ -55,6 +55,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
 
       },
+      ps_patient_uuid: {
+
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+
+      },
       p_uuid: {
 
         type: DataTypes.INTEGER,
