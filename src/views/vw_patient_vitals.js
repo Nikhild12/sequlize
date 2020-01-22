@@ -91,6 +91,28 @@ module.exports = (sequelize, DataTypes) => {
                 values: ["0", "1"],
                 defaultValue: "1"
             },
+            pv_created_date:{
+                type: DataTypes.DATE,
+            },
+            d_name:{
+                type: DataTypes.STRING(100),
+            },
+            u_first_name:{
+                type: DataTypes.STRING(255),
+            },
+            u_middle_name:{
+                type: DataTypes.STRING(255),
+            },
+            u_last_name:{
+                type: DataTypes.STRING(255),
+            },
+            et_code:{
+                type: DataTypes.STRING(8),
+            },
+            et_name:{
+                type: DataTypes.STRING(255),
+            }
+
         },
         {
             freezeTableName: true,

@@ -101,7 +101,10 @@ module.exports = (sequelize, DataTypes) => {
             dc_name: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
-            }            
+            },
+            tmd_quantity:{
+                 type: DataTypes.INTEGER
+             }
         },
         {
             tableName: "vw_template_master_diet",
