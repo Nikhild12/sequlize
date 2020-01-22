@@ -51,6 +51,7 @@ const abgRoute = require("./abg_charts.route");
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
 const specialitySketcheRoute = require("./speciality_Sketches.route");
+const cccRoute = require("./cccMaster.route");
 const serviceRouter = express.Router();
 
 // EMR Work Flow Settings Routes
@@ -141,5 +142,9 @@ serviceRouter.use("/my-patient-list", myPatientListRoute);
 
 //speciality Routes
 serviceRouter.use("/speciality", specialitySketcheRoute);
+
+//CCC Master Routes
+serviceRouter.use("/ccc", cccRoute);
+
 
 module.exports = serviceRouter;
