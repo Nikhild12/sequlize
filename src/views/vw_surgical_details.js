@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const VM_SURGICAL_DETAILS = sequelize.define(
+  const VW_SURGICAL_DETAILS = sequelize.define(
     "vw_surgical_details",
     {
       institution_uuid: {
@@ -110,5 +110,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return VM_SURGICAL_DETAILS;
+  return VW_SURGICAL_DETAILS;
 };

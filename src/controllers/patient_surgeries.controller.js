@@ -17,7 +17,7 @@ const vw_surgical_details = sequelizeDb.vw_surgical_details;
 const Surgery_History = () => {
 
   /**
-     * Adding Family History
+     * Adding Surgery History
      * @param {*} req 
      * @param {*} res 
      */
