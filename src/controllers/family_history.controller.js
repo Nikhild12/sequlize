@@ -59,7 +59,7 @@ const Family_History = () => {
         const familyHistoryData = await familyHistoryTbl.findAll({
           order: [['identified_date', 'DESC']],
           attributes: ['uuid', 'identified_date', 'duration', 'disease_name'],
-          where: { created_by: user_uuid },
+          where: { created_by: user_uuid, is_active: 1, status: 1 },
           include: [
             {
               model: periodsTbl,

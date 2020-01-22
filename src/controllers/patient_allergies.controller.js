@@ -64,7 +64,7 @@ const Patient_Allergies = () => {
           {
             order: [['performed_date', 'DESC']],
             attributes: ['uuid', 'performed_date', 'duration'],
-            where: { created_by: user_uuid },
+            where: { created_by: user_uuid, is_active: 1, status: 1 },
             include: [
               {
                 model: encounterTbl,
