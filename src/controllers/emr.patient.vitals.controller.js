@@ -221,7 +221,6 @@ function patientVitalsList(getHistoryPatientVitals) {
                 //vital master values
                 vital_name: pV.vm_name,
 
-
                 // uom master table values
                 uom_code: pV.um_code,
                 uom_name: pV.um_name,
