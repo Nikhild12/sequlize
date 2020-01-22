@@ -255,7 +255,9 @@ function getPPVQuery(user_uuid, patient_uuid, department_uuid) {
             'd_name',
             'u_first_name',
             'u_middle_name',
-            'u_last_name'
+            'u_last_name',
+            'et_code',
+            'et_name'
         ],
         limit: 10,
         where: { vm_active: emrConstants.IS_ACTIVE, vm_status: emrConstants.IS_ACTIVE, pv_doctor_uuid: user_uuid, pv_patient_uuid: patient_uuid, pv_department_uuid: department_uuid },
@@ -267,23 +269,20 @@ function PPVitalsList(getHistoryPatientVitals) {
     let patient_vitals_list = [], PV_list = []; 
     if (getHistoryPatientVitals && getHistoryPatientVitals.length > 0) {
 
-        getHistoryPatientVitals.forEach((pV) => {
-            patient_vitals_list = [...patient_vitals_list,
-            {
-                doc_data:{
-                    patient_uuid: pV.pv_patient_uuid,
-                    created_date: pV.pv_created_date,
-                    created_by_firstname: pV.u_first_name,
-                    created_by_middlename: pV.u_middle_name,
-                    created_by_lastlename: pV.u_last_name
-                },
-                PV_list: [...PV_list, ...getPVlist(getHistoryPatientVitals, pV.pv_patient_uuid)]
-            }
-        ];
-            
+        patient_vitals_list = getHistoryPatientVitals.map((pV) => {
+            return {
+                patient_uuid: pV.pv_patient_uuid,
+                created_date: pV.pv_created_date,
+                created_by_firstname: pV.u_first_name,
+                created_by_middlename: pV.u_middle_name,
+                created_by_lastlename: pV.u_last_name,
+                encounter_type_code:pV.et_code,
+                encounter_type_name:pV.et_name,
+                PV_list: [...PV_list, ...getPVlist(getHistoryPatientVitals, pV.pv_patient_uuid, pV.pv_created_date)]
+            };
         });
         let uniq = {};
-        let PPV_list = patient_vitals_list.filter(obj => !uniq[obj.doc_data.patient_uuid] && (uniq[obj.doc_data.patient_uuid] = true));
+        let PPV_list = patient_vitals_list.filter(obj => (!uniq[obj.created_date] && (uniq[obj.created_date] = true)));
         return { "PPV_list": PPV_list };
     }
     else{
@@ -291,17 +290,16 @@ function PPVitalsList(getHistoryPatientVitals) {
     }
 }
 
-function getPVlist(fetchedData, p_id) {
+function getPVlist(fetchedData, p_id,created_date) {
 
     let pv_list = [];
     const filteredData = fetchedData.filter((fD) => {
-      return fD.dataValues.pv_patient_uuid === p_id;
+      return (fD.dataValues.pv_patient_uuid === p_id && fD.dataValues.pv_created_date === created_date);
     });
   
     if (filteredData && filteredData.length > 0) {
-      filteredData.forEach((pV) => {
-        pv_list = [...pv_list,
-            {
+        pv_list = filteredData.map((pV) => {
+         return {
                 // patient vital values
                 patient_vital_uuid: pV.pv_uuid,
                 patient_facility_uuid: pV.pv_facility_uuid,
@@ -316,10 +314,8 @@ function getPVlist(fetchedData, p_id) {
                     
                 // uom master table values
                 uom_code: pV.um_code,
-                uom_name: pV.um_name,
-            }
-                    
-        ];
+                uom_name: pV.um_name
+            };
       });
     }
     return pv_list;

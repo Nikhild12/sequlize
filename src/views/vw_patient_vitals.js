@@ -106,6 +106,12 @@ module.exports = (sequelize, DataTypes) => {
             u_last_name:{
                 type: DataTypes.STRING(255),
             },
+            et_code:{
+                type: DataTypes.STRING(8),
+            },
+            et_name:{
+                type: DataTypes.STRING(255),
+            }
 
         },
         {

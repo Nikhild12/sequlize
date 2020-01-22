@@ -4245,6 +4245,41 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/emr-patient-vitals/getPreviousPatientVitals": {
+      "get": {
+        "description": "To get a EMR Previous Patient Vitals",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "department_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRPatientVitals"],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully",
+            "schema": {
+              "$ref": "#/definitions/emrPreviousPatientVitals"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -8433,6 +8468,58 @@
         },
         "patient_uuid": {
           "type": "integer"
+        }
+      }
+    },
+    "emrPreviousPatientVitals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "vital_name": {
+            "type": "string",
+            "example": "BP"
+          },
+          "vital_value": {
+            "type": "string",
+            "example": "BP"
+          },
+          "vital_performed_date": {
+            "type": "string",
+            "example": "2019-12-06 17:32:17"
+          },
+          "vital_value_type_uuid": {
+            "type": "number",
+            "example": 1
+          },
+          "vital_type_uuid": {
+            "type": "number",
+            "example": 1
+          },
+          "vital_master_uuid": {
+            "type": "number",
+            "example": 1
+          },
+          "patient_vital_uuid": {
+            "type": "number",
+            "example": 1
+          },
+          "uom_code": {
+            "type": "string",
+            "example": "BP"
+          },
+          "uom_name": {
+            "type": "string",
+            "example": "BP"
+          },
+          "patient_uuid": {
+            "type": "number",
+            "example": 1
+          },
+          "doctor_uuid": {
+            "type": "number",
+            "example": 1
+          }
         }
       }
     }
