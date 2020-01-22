@@ -51,34 +51,8 @@ const abgchartsController = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const data = await abgTbl.findAll({
-                    order: [['from_date', 'DESC']],
-                    where: {
-                        patient_uuid: patient_uuid,
-                        is_active: 1,
-                        status: 1
-                    },
-
-                    include: [
-                       
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
-
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 },
-                                },]
-
-                        },]
-
-                }, { returning: true });
-
+                const {table_name, query} = getabgquery(patient_uuid);
+                const data = await table_name.findAll(query);
                 if (data) {
                     const adata = getabgData(data);
                     return res
@@ -129,38 +103,10 @@ const abgchartsController = () => {
         let { patient_uuid, from_date, to_date } = req.query;
 
         try {
-            if (user_uuid && patient_uuid) {
-                const data = await abgTbl.findAll({
-                    order: [['from_date', 'DESC']],
-                    where: {
-                        patient_uuid: patient_uuid,
-                        is_active: 1,
-                        status: 1,
-                        from_date: {
-                            [Op.and]: [
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                            ]
-                        }
-                    },
-                    include: [
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
-
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 },
-                                },]
-
-                        },]
-                }, { returning: true });
-
+            if (user_uuid && patient_uuid && from_date && to_date) {
+        
+                const {table_name, query} = getabgcomparequery(patient_uuid,from_date,to_date);
+                const data = await table_name.findAll(query);
                 if (data) {
                     const vdata = getabgData(data);
                     return res
@@ -266,3 +212,75 @@ function getabgData(fetchedData) {
       return {};
     }
   }
+
+  function getabgcomparequery(patient_uuid,from_date,to_date) {
+    
+        return {
+          table_name: abgTbl,
+          query: {
+                    order: [['from_date', 'DESC']],
+                    where: {
+                        patient_uuid: patient_uuid,
+                        is_active: 1,
+                        status: 1,
+                        from_date: {
+                            [Op.and]: [
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                            ]
+                        }
+                    },
+                    include: [
+                        {
+                            model: cccTbl,
+                            as: 'critical_care_charts',
+                            attributes: ['uuid', 'code', 'name', 'description'],
+                            where: { is_active: 1, status: 1 },
+
+                            include: [
+                                {
+                                    model: cctypeTbl,
+                                    as: 'critical_care_types',
+                                    attributes: ['uuid', 'code', 'name'],
+                                    where: { is_active: 1, status: 1 },
+                                },]
+
+                        },]
+                }
+
+          };
+        }
+ 
+        function getabgquery(patient_uuid) {
+    
+            return {
+              table_name: abgTbl,
+              query: {
+                        order: [['from_date', 'DESC']],
+                        where: {
+                            patient_uuid: patient_uuid,
+                            is_active: 1,
+                            status: 1,
+                            },
+                        include: [
+                            {
+                                model: cccTbl,
+                                as: 'critical_care_charts',
+                                attributes: ['uuid', 'code', 'name', 'description'],
+                                where: { is_active: 1, status: 1 },
+    
+                                include: [
+                                    {
+                                        model: cctypeTbl,
+                                        as: 'critical_care_types',
+                                        attributes: ['uuid', 'code', 'name'],
+                                        where: { is_active: 1, status: 1 },
+                                    },]
+    
+                            },]
+                    }
+    
+              };
+            }
+    
+  

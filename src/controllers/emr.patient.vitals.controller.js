@@ -102,11 +102,38 @@ const EMRPatientVitals = () => {
         return res.status(400).send({ code: httpStatus[400], message: ex.message });
     }
     };
+
+    const _getPreviousPatientVitals = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { patient_uuid, department_uuid} = req.query;
+        
+        try {
+            
+            if (user_uuid && patient_uuid && department_uuid > 0) {
+
+                    let getPPV = await vw_patientVitalsTbl.findAll(getPPVQuery(user_uuid, patient_uuid, department_uuid), { returning: true });
+                    return res.status(200).send({ code: httpStatus.OK, message: "Fetched EMR Previous Patient Vital Details  Successfully", responseContents: PPVitalsList(getPPV) });
+            }
+            
+            else {
+                    return res.status(400).send({ code: httpStatus[400], message: "No Request Params Found" });
+            }
+        
+        }
+        
+    catch (ex) {
+        return res.status(400).send({ code: httpStatus[400], message: ex.message });
+    }
+    };
+    
+
+
     return {
         createPatientVital: _createPatientVital,
         getVitalsByTemplateID: _getVitalsByTemplateID,
         getPatientVitals: _getPatientVitals,
         getHistoryPatientVitals: _getHistoryPatientVitals,
+        getPreviousPatientVitals: _getPreviousPatientVitals
 
     };
 };
@@ -208,3 +235,93 @@ function patientVitalsList(getHistoryPatientVitals) {
     }
     return patient_vitals_list;
 }
+
+function getPPVQuery(user_uuid, patient_uuid, department_uuid) {
+    // user_uuid == doctor_uuid
+    let query = {
+        order: [['pv_performed_date', 'DESC']],
+        attributes: [
+            'pv_uuid',
+            'pv_vital_master_uuid',
+            'pv_vital_type_uuid',
+            'pv_vital_value_type_uuid',
+            'pv_vital_value',
+            'pv_doctor_uuid',
+            'pv_patient_uuid',
+            'pv_performed_date',
+            'vm_name',
+            'um_code',
+            'um_name',
+            'pv_created_date',
+            'd_name',
+            'u_first_name',
+            'u_middle_name',
+            'u_last_name'
+        ],
+        limit: 10,
+        where: { vm_active: emrConstants.IS_ACTIVE, vm_status: emrConstants.IS_ACTIVE, pv_doctor_uuid: user_uuid, pv_patient_uuid: patient_uuid, pv_department_uuid: department_uuid },
+    };
+    return query;
+}
+
+function PPVitalsList(getHistoryPatientVitals) {
+    let patient_vitals_list = [], PV_list = []; 
+    if (getHistoryPatientVitals && getHistoryPatientVitals.length > 0) {
+
+        getHistoryPatientVitals.forEach((pV) => {
+            patient_vitals_list = [...patient_vitals_list,
+            {
+                doc_data:{
+                    patient_uuid: pV.pv_patient_uuid,
+                    created_date: pV.pv_created_date,
+                    created_by_firstname: pV.u_first_name,
+                    created_by_middlename: pV.u_middle_name,
+                    created_by_lastlename: pV.u_last_name
+                },
+                PV_list: [...PV_list, ...getPVlist(getHistoryPatientVitals, pV.pv_patient_uuid)]
+            }
+        ];
+            
+        });
+        let uniq = {};
+        let PPV_list = patient_vitals_list.filter(obj => !uniq[obj.doc_data.patient_uuid] && (uniq[obj.doc_data.patient_uuid] = true));
+        return { "PPV_list": PPV_list };
+    }
+    else{
+        return {};
+    }
+}
+
+function getPVlist(fetchedData, p_id) {
+
+    let pv_list = [];
+    const filteredData = fetchedData.filter((fD) => {
+      return fD.dataValues.pv_patient_uuid === p_id;
+    });
+  
+    if (filteredData && filteredData.length > 0) {
+      filteredData.forEach((pV) => {
+        pv_list = [...pv_list,
+            {
+                // patient vital values
+                patient_vital_uuid: pV.pv_uuid,
+                patient_facility_uuid: pV.pv_facility_uuid,
+                vital_value: pV.pv_vital_value,
+                vital_performed_date: pV.pv_performed_date,
+                vital_value_type_uuid: pV.pv_vital_value_type_uuid,
+                vital_type_uuid: pV.pv_vital_type_uuid,
+                vital_master_uuid: pV.pv_vital_master_uuid,
+            
+                //vital master values
+                vital_name: pV.vm_name,
+                    
+                // uom master table values
+                uom_code: pV.um_code,
+                uom_name: pV.um_name,
+            }
+                    
+        ];
+      });
+    }
+    return pv_list;
+  }
