@@ -13,6 +13,7 @@ emrPatientVitalRoute.route('/create').post(emrPatientVitalsController.createPati
 emrPatientVitalRoute.route('/getVitalsByTemplateID').get(emrPatientVitalsController.getVitalsByTemplateID);
 emrPatientVitalRoute.route('/getPatientVitals').get(emrPatientVitalsController.getPatientVitals);
 emrPatientVitalRoute.route('/getHistoryPatientVitals').get(emrPatientVitalsController.getHistoryPatientVitals);
+emrPatientVitalRoute.route('/getPreviousPatientVitals').get(emrPatientVitalsController.getPreviousPatientVitals);
 
 // emrPatientVitalRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
 // emrPatientVitalRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);

@@ -1177,6 +1177,7 @@ function getAllDietFavsInReadableFormat(dietFav) {
       favourite_type_id: df.fm_favourite_type_uuid,
       favourite_active: df.fm_active,
       favourite_display_order: df.fm_display_order,
+      department_id: df.fm_dept,
 
       // Diet Master
       diet_master_id: df.fmd_diet_master_uuid,
