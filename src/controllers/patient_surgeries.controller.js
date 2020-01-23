@@ -53,7 +53,7 @@ const Surgery_History = () => {
     let { patient_uuid } = req.query;
 
     try {
-      if (user_uuid) {
+      if (user_uuid && patient_uuid) {
         const surgeryHistory = await vw_surgical_details.findAll({
           order: [['ps_performed_date', 'DESC']],
           attributes: ['ps_uuid', 'institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments'],
