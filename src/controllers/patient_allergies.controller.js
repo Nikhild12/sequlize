@@ -40,8 +40,7 @@ const Patient_Allergies = () => {
 
         const savePatientAllergyData = await patientAllergiesTbl.create(patient_allergies, { returing: true });
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: patient_allergies });
-      }
-      catch (ex) {
+      } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
 
@@ -65,7 +64,6 @@ const Patient_Allergies = () => {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
             order: [['performed_date', 'DESC']],
-            attributes: ['uuid', 'performed_date', 'duration', 'patient_uuid'],
             where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
             include: [
               {
@@ -121,8 +119,7 @@ const Patient_Allergies = () => {
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
       }
-    }
-    catch (ex) {
+    } catch (ex) {
       console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
@@ -137,15 +134,14 @@ const Patient_Allergies = () => {
 
     try {
 
-      if (user_uuid) {
-        const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
+      if (user_uuid && uuid) {
+        const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
         return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
       }
-    }
-    catch (ex) {
-
+    } catch (ex) {
+      console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
 
     }
@@ -181,8 +177,7 @@ const Patient_Allergies = () => {
         else {
           return res.status(400).send({ code: httpStatus[400], message: 'Update Failed' });
         }
-      }
-      catch (ex) {
+      } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
@@ -206,8 +201,7 @@ const Patient_Allergies = () => {
 
         }
 
-      }
-      catch (ex) {
+      } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
 

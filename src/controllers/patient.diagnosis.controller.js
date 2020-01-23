@@ -115,44 +115,64 @@ const PatientDiagnsis = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const patientDiagnosisHistory = await patient_diagnosis_tbl.findAll({
-                    attributes: ['uuid', 'performed_date', 'comments'],
-                    where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
-                    include: [
-                        {
-                            model: encounter_type_tbl,
-                            as: 'encounter_type',
-                            attributes: ['uuid', 'name'],
-                            where: { is_active: 1, status: 1 }
-
-                        },
-                        {
-                            model: diagnosis_tbl,
-                            attributes: ['uuid', 'name'],
-                            where: { is_active: 1, status: 1 }
-                        }
-                    ]
-                });
+                const patientDiagnosisHistory = await getPatientDiagnosisHistory(patient_uuid);
                 return res.status(200).send({ code: httpStatus.OK, responseContent: patientDiagnosisHistory });
             } else {
                 return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
-
             }
-
-        }
-        catch (ex) {
+        } catch (ex) {
             console.log('Exception happened', ex);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
         }
     };
+
     const _getPatientDiagnosisHistoryById = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { uuid } = req.query;
+        try {
+            if (user_uuid) {
+                const patientDiagnosisData = await patient_diagnosis_tbl.findOne({ where: { uuid: uuid } }, { returning: true });
+                return res.status(200).send({ code: httpStatus.OK, responseContent: patientDiagnosisData });
+            } else {
+                return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+            }
+        } catch (err) {
+            console.log('Exception happened', ex);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+
+        }
 
     };
+
+    const _updatePatientDiagnosisHistory = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { uuid } = req.query;
+        let postData = req.body;
+        let selector = {
+            where: { uuid: uuid }
+        };
+
+        try {
+            if (user_uuid && uuid) {
+                const diagnosisData = await patient_diagnosis_tbl.update(postData, selector, { returning: true });
+                if (diagnosisData == 1) {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
+                }
+            } else {
+                return res.status(400).send({ code: httpStatus[400], message: 'No Request Body Found' });
+            }
+        } catch (ex) {
+            console.log('Exception happened', ex);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
     return {
         createPatientDiagnosis: _createPatientDiagnosis,
         getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
         getPatientDiagnosisHistory: _getPatientDiagnosisHistory,
-        getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById
+        getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById,
+        updatePatientDiagnosisHistory: _updatePatientDiagnosisHistory
 
     };
 };
@@ -268,4 +288,31 @@ function getPatientData(responseData) {
             diagnosis_is_snomed: rD.is_snomed[0] === 1 ? true : false
         };
     });
+}
+
+function getPatientDiagnosisHistory(patient_uuid) {
+    let query = {
+        order: [['performed_date', 'DESC']],
+        where: {
+            patient_uuid: patient_uuid,
+            is_active: 1,
+            status: 1
+        },
+        include: [
+            {
+                model: encounter_type_tbl,
+                as: 'encounter_type',
+                attributes: ['uuid', 'name'],
+                where: { is_active: 1, status: 1 }
+
+            },
+            {
+                model: diagnosis_tbl,
+                attributes: ['uuid', 'name'],
+                where: { is_active: 1, status: 1 }
+            }
+        ]
+    };
+
+    return patient_diagnosis_tbl.findAll(query);
 }
