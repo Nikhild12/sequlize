@@ -17,45 +17,134 @@ module.exports = (sequelize, DataTypes) => {
             patient_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('patient_uuid')
+                    },
 
+                }
             },
 
             encounter_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+                    },
+
+                }
 
             },
             consultation_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('consultation_uuid')
+                    },
+
+                }
 
 
             },
             immunization_schedule_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('immunization_schedule_uuid')
+                    },
 
+                }
 
             },
             schedule_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('schedule_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('schedule_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('schedule_uuid')
+                    },
+
+                }
 
             },
             immunization_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('immunization_uuid')
+                    },
+
+                }
             },
             immunization_schedule_flag_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_flag_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_flag_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('immunization_schedule_flag_uuid')
+                    },
+
+                }
 
             },
 
@@ -67,12 +156,38 @@ module.exports = (sequelize, DataTypes) => {
             route_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('route_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('route_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('route_uuid')
+                    },
+
+                }
             },
             immunization_dosage_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('immunization_dosage_uuid')
+                    },
+
+                }
 
             },
             duration: {
@@ -99,13 +214,39 @@ module.exports = (sequelize, DataTypes) => {
             immunization_schedule_status_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_status_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_status_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('immunization_schedule_status_uuid')
+                    },
+
+                }
 
             },
             facility_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                    },
+                    min: {
+                        args: [0],
+                        msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+                    },
+
+                }
 
             },
             comments: {
