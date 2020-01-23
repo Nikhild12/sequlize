@@ -9,5 +9,6 @@ const PatientDiagnosisRoutes = express.Router();
 
 PatientDiagnosisRoutes.route('/create').post(PatientDiagnosisCtrl.createPatientDiagnosis);
 PatientDiagnosisRoutes.route('/getByFilters').get(PatientDiagnosisCtrl.getPatientDiagnosisByFilters);
+PatientDiagnosisRoutes.route('/getDiagnosisHistory').get(PatientDiagnosisCtrl.getPatientDiagnosisHistory);
 
 module.exports = PatientDiagnosisRoutes;

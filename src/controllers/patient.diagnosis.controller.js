@@ -13,6 +13,7 @@ var Op = Sequelize.Op;
 
 const patient_diagnosis_tbl = sequelizeDb.patient_diagnosis;
 const diagnosis_tbl = sequelizeDb.diagnosis;
+const encounter_type_tbl = sequelizeDb.encounter_type;
 
 const emr_constants = require('../config/constants');
 const utilityService = require('../services/utility.service');
@@ -85,32 +86,74 @@ const PatientDiagnsis = () => {
     const _getPatientDiagnosisFilters = async (req, res) => {
 
         try {
-        const { user_uuid } = req.headers;
-        const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
+            const { user_uuid } = req.headers;
+            const { searchKey, searchValue, patientId, departmentId, facility_uuid, from_date, to_date } = req.query;
 
-        if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
-            const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
-            //console.log("----------",patientDiagnosisData);
-            return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
-            //console.log("----------",patientDiagnosisData);
-            //return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: patientDiagnosisData });
-            
-        }
-        
-        else if (user_uuid && searchKey && searchValue && patientId && departmentId) {
+            if (user_uuid && searchKey && searchValue && patientId && departmentId && facility_uuid && from_date, to_date) {
+                const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery1(searchKey, searchValue, patientId, departmentId, user_uuid, facility_uuid, from_date, to_date));
+                //console.log("----------",patientDiagnosisData);
+                return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
+                //console.log("----------",patientDiagnosisData);
+                //return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: patientDiagnosisData });
+
+            }
+
+            else if (user_uuid && searchKey && searchValue && patientId && departmentId) {
                 const patientDiagnosisData = await patient_diagnosis_tbl.findAll(getPatientFiltersQuery(searchKey, searchValue, patientId, departmentId, user_uuid));
                 return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: getPatientData(patientDiagnosisData) });
-        } else {
-            return res.status(422).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
-        }
+            } else {
+                return res.status(422).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+            }
         } catch (ex) {
-        return res.status(422).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-    }
+            return res.status(422).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
     };
 
+    const _getPatientDiagnosisHistory = async (req, res) => {
+        const { user_uuid } = req.headers;
+        let { patient_uuid } = req.query;
+
+        try {
+            if (user_uuid && patient_uuid) {
+                const patientDiagnosisHistory = await patient_diagnosis_tbl.findAll({
+                    attributes: ['uuid', 'performed_date', 'comments'],
+                    where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
+                    include: [
+                        {
+                            model: encounter_type_tbl,
+                            as: 'encounter_type',
+                            attributes: ['uuid', 'name'],
+                            where: { is_active: 1, status: 1 }
+
+                        },
+                        {
+                            model: diagnosis_tbl,
+                            attributes: ['uuid', 'name'],
+                            where: { is_active: 1, status: 1 }
+                        }
+                    ]
+                });
+                return res.status(200).send({ code: httpStatus.OK, responseContent: patientDiagnosisHistory });
+            } else {
+                return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+
+            }
+
+        }
+        catch (ex) {
+            console.log('Exception happened', ex);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+        }
+    };
+    const _getPatientDiagnosisHistoryById = async (req, res) => {
+
+    };
     return {
         createPatientDiagnosis: _createPatientDiagnosis,
-        getPatientDiagnosisByFilters: _getPatientDiagnosisFilters
+        getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
+        getPatientDiagnosisHistory: _getPatientDiagnosisHistory,
+        getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById
+
     };
 };
 
@@ -146,9 +189,9 @@ function getPatientFiltersQuery(key, value, pId, dId, uId, from_date, to_date) {
                 limit: +value,
                 attributes: getPatientDiagnosisAttributes(),
                 order: [['uuid', 'DESC']]
-                };
+            };
             break;
-        
+
         default:
             break;
     }
@@ -164,7 +207,7 @@ function getPatientFiltersQuery(key, value, pId, dId, uId, from_date, to_date) {
         patient_uuid: pId,
         performed_by: uId
     };
-    
+
     filtersQuery.attributes = getPatientDiagnosisAttributes();
     Object.assign(filtersQuery.where, utilityService.getActiveAndStatusObject(emr_constants.IS_ACTIVE));
     return filtersQuery;
@@ -175,12 +218,12 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
     let filtersQuery = {};
     switch (key) {
         case 'date':
-                filtersQuery = {
-                    attributes: getPatientDiagnosisAttributes(),
-                    order: [['uuid', 'DESC']]
-                };
-                               
-                break;
+            filtersQuery = {
+                attributes: getPatientDiagnosisAttributes(),
+                order: [['uuid', 'DESC']]
+            };
+
+            break;
         default:
             break;
     }
@@ -197,12 +240,12 @@ function getPatientFiltersQuery1(key, value, pId, dId, uId, facility_uuid, from_
         patient_uuid: pId,
         facility_uuid: facility_uuid,
         performed_date: {
-             [Op.and]: [
-                 Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                 Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-             ] 
-             }
-        
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+            ]
+        }
+
     };
 
     filtersQuery.attributes = getPatientDiagnosisAttributes();
