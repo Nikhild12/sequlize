@@ -148,11 +148,6 @@ module.exports = (sequelize, DataTypes) => {
 
             },
 
-            immunization_name: {
-                type: DataTypes.STRING(255),
-                allowNull: false
-            },
-
             route_uuid: {
 
                 type: DataTypes.INTEGER,
