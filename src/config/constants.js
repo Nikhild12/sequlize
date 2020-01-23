@@ -87,6 +87,8 @@ module.exports = Object.freeze({
   GetMinimumMessage: function(columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
+      case "encounter_uuid":
+        return `Encounter Id ${lengthMessage}`;
       case "doctor_uuid":
         return `Doctor Id ${lengthMessage}`;
       case "encounter_type_uuid":
@@ -109,6 +111,14 @@ module.exports = Object.freeze({
         return `Drug Instruction Id ${lengthMessage}`;
       case "quantity":
         return `Drug Quantity ${lengthMessage}`;
+      case "role_uuid":
+        return `Role Id ${lengthMessage}`;
+      case "context_uuid":
+        return `Context Id ${lengthMessage} `;
+      case "activity_uuid":
+        return `Activity Id ${lengthMessage}`;
+      case "context_activity_map_uuid":
+        return `Context Activity Map Id ${lengthMessage}`;
       default:
         return `Value ${lengthMessage}`;
     }
@@ -117,6 +127,8 @@ module.exports = Object.freeze({
   GetZeroValidationMessage: function(columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
+      case "encounter_uuid":
+        return `Encounter Id ${validationMessage}`;
       case "doctor_uuid":
         return `Doctor Id ${validationMessage}`;
       case "encounter_type_uuid":
@@ -143,6 +155,14 @@ module.exports = Object.freeze({
         return `Drug Instruction Id ${validationMessage}`;
       case "quantity":
         return `Drug Quantity ${validationMessage}`;
+      case "role_uuid":
+        return `Role Id ${validationMessage}`;
+      case "context_uuid":
+        return `Context Id ${validationMessage} `;
+      case "activity_uuid":
+        return `Activity Id ${validationMessage}`;
+      case "context_activity_map_uuid":
+        return `Context Activity Map Id ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
     }
