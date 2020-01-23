@@ -1298,6 +1298,29 @@
         }
       }
     },
+    "/api/discharge-summary/getDischargeSummarySettingsByUserId": {
+      "get": {
+        "description": "To get a Discharge Summary Settings By User Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["DischargeSummarySettings"],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDischargeSummarySettings"
+            }
+          }
+        }
+      }
+    },
     "/api/emr-workflow-settings/create": {
       "post": {
         "description": "To Create a EMR Workflow for the Master",
@@ -5630,6 +5653,48 @@
             "type": "integer"
           },
           "ews_is_active": {
+            "type": "boolean"
+          },
+          "activity_code": {
+            "type": "string"
+          },
+          "activity_icon": {
+            "type": "string"
+          },
+          "activity_name": {
+            "type": "string"
+          },
+          "activity_id": {
+            "type": "integer"
+          },
+          "activity_route_url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "getDischargeSummarySettings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "display_order": {
+            "type": "integer"
+          },
+          "discharge_summary_id": {
+            "type": "integer"
+          },
+          "facility_uuid": {
+            "type": "integer"
+          },
+          "role_uuid": {
+            "type": "integer"
+          },
+          "user_uuid": {
+            "type": "integer"
+          },
+          "dss_is_active": {
             "type": "boolean"
           },
           "activity_code": {

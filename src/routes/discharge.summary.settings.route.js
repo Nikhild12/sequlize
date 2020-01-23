@@ -11,4 +11,8 @@ dischargeSummaryRoute
   .route("/create")
   .post(dischargeCtrl.createDischargeSummarySettings);
 
+  dischargeSummaryRoute
+  .route("/getDischargeSummarySettingsByUserId")
+  .get(dischargeCtrl.getDischargeSummarySettingsdUserId);
+
 module.exports = dischargeSummaryRoute;
