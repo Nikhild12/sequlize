@@ -235,8 +235,6 @@ function attachUUIDTORequestedData(createdData, requestedData) {
 function getEMRData(emr_data) {
   let emr_array = [];
 
-  console.log(emr_data);
-
   emr_data.forEach(e => {
     emr_array = [
       ...emr_array,
