@@ -69,26 +69,52 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-            ccc_uuid: {
+            cc_chart_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('cc_chart_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('ccc_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('cc_chart_uuid')
                     },
                     min: 0
                 }
             },
-            comments: {
-                type: DataTypes.STRING(225),
-                allowNull: true
+            cc_concept_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('cc_concept_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('cc_concept_uuid')
+                    },
+                    min: 0
+                }
+            },
+            cc_concept_value_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('cc_concept_value_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('cc_concept_value_uuid')
+                    },
+                    min: 0
+                }
             },
             observed_value:{
                 type: DataTypes.DECIMAL(16,2),
                 allowNull: false,
+            },
+            comments: {
+                type: DataTypes.STRING(225),
+                allowNull: true
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -135,7 +161,7 @@ module.exports = (sequelize, DataTypes) => {
 
     abg_charts.associate =  models => {
         abg_charts.belongsTo(models.critical_care_charts , {
-            foreignKey:"ccc_uuid",
+            foreignKey:"ccc_cc_chart_uuid",
             as:'critical_care_charts'
         });
         

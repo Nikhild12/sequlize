@@ -7,11 +7,11 @@ var Op = Sequelize.Op;
 
 const moment = require('moment');
 
-const abgTbl = db.abg_charts;
+const bpTbl = db.bp_charts;
 const cccTbl = db.critical_care_charts;
 const cctypeTbl = db.critical_care_types;
 
-const abgchartsController = () => {
+const bpchartsController = () => {
     /**
     * Returns jwt token if valid username and password is provided
     * @param req
@@ -21,7 +21,7 @@ const abgchartsController = () => {
     */
 
 
-    const _createabg = async (req, res) => {
+    const _createbp = async (req, res) => {
 
         try {
 
@@ -31,10 +31,10 @@ const abgchartsController = () => {
 
             if (user_uuid && data1 && data2) {
 
-                const createdData = create_abg(user_uuid, data1, data2);
+                const createdData = create_bp(user_uuid, data1, data2);
 
                 if (createdData) {
-                    res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
+                    res.send({ "status": 200, "bp_data": data2, "message": "Inserted Successfully " });
                 }
             } else {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
@@ -44,17 +44,17 @@ const abgchartsController = () => {
         }
     };
 
-    const _getabgbypatientid = async (req, res) => {
+    const _getbpbypatientid = async (req, res) => {
 
         let { user_uuid } = req.headers;
         let { patient_uuid } = req.query;
 
         try {
             if (user_uuid && patient_uuid) {
-                const {table_name, query} = getabgquery(patient_uuid);
+                const {table_name, query} = getbpquery(patient_uuid);
                 const data = await table_name.findAll(query);
                 if (data) {
-                    const adata = getabgData(data);
+                    const adata = getbpData(data);
                     return res
                         .status(httpStatus.OK)
                         .json({ statusCode: 200, req: '', responseContents: adata });
@@ -71,7 +71,7 @@ const abgchartsController = () => {
         }
     };
 
-    const _updateabgbypatientid = async (req, res) => {
+    const _updatebpbypatientid = async (req, res) => {
 
         try {
             // plucking data req body
@@ -81,7 +81,7 @@ const abgchartsController = () => {
 
             if (user_uuid ) {
 
-                const data = await Promise.all(updateabgdata(abgTbl, data1, data2, user_uuid));
+                const data = await Promise.all(updatebpdata(bpTbl, data1, data2, user_uuid));
                 if (data) {
                     res.send({ "status": 200, "message": "updated Successfully " });
                 }
@@ -98,17 +98,17 @@ const abgchartsController = () => {
     };
 
     
-    const _getabgcomparedata = async (req, res) => {
+    const _getbpcomparedata = async (req, res) => {
         let { user_uuid } = req.headers;
         let { patient_uuid, from_date, to_date } = req.query;
 
         try {
             if (user_uuid && patient_uuid && from_date && to_date) {
         
-                const {table_name, query} = getabgcomparequery(patient_uuid,from_date,to_date);
+                const {table_name, query} = getbpcomparequery(patient_uuid,from_date,to_date);
                 const data = await table_name.findAll(query);
                 if (data) {
-                    const vdata = getabgData(data);
+                    const vdata = getbpData(data);
                     return res
                         .status(httpStatus.OK)
                         .json({ statusCode: 200, req: '', responseContents: vdata });
@@ -126,17 +126,17 @@ const abgchartsController = () => {
     };
 
 return {
-        createabg: _createabg,
-        getabgbypatientid: _getabgbypatientid,
-        updateabgbypatientid: _updateabgbypatientid,
-        getabgcomparedata: _getabgcomparedata,
+        createbp: _createbp,
+        getbpbypatientid: _getbpbypatientid,
+        updatebpbypatientid: _updatebpbypatientid,
+        getbpcomparedata: _getbpcomparedata,
         
     };
 };
 
-module.exports = abgchartsController();
+module.exports = bpchartsController();
 
-async function create_abg(user_uuid, data1, data2) {
+async function create_bp(user_uuid, data1, data2) {
 
     data2.forEach((item, index) => {
         item.patient_uuid = data1.patient_uuid;
@@ -151,11 +151,11 @@ async function create_abg(user_uuid, data1, data2) {
         item.created_by = user_uuid;
     });
     
-    const dtls_result = await abgTbl.bulkCreate(data2, { returning: true });
-    return { "abg_Data": dtls_result };
+    const dtls_result = await bpTbl.bulkCreate(data2, { returning: true });
+    return { "bp_Data": dtls_result };
 }
 
-function updateabgdata(abgTbl, data1, data2, user_uuid) {
+function updatebpdata(bpTbl, data1, data2, user_uuid) {
     let updatePromise = [];
 
     data2.forEach((item) => {
@@ -170,16 +170,16 @@ function updateabgdata(abgTbl, data1, data2, user_uuid) {
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        abgTbl.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
+        bpTbl.update(item, { where: { patient_uuid: item.patient_uuid, cc_chart_uuid: item.cc_chart_uuid } }, { returning: true })];
     });
     return updatePromise;
 }
 
-function getabgData(fetchedData) {
-    let abgList = [];
+function getbpData(fetchedData) {
+    let bpList = [];
   
     if (fetchedData && fetchedData.length > 0) {
-      abg_details = {
+      bp_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
   
@@ -189,16 +189,17 @@ function getabgData(fetchedData) {
       };
   
       fetchedData.forEach((tD) => {
-        abgList = [...abgList,
+        bpList = [...bpList,
         {
-          abg_uuid: tD.dataValues.uuid,
-          abg_date: tD.dataValues.from_date,
-          abg_observed_value: tD.dataValues.observed_value,
+          bp_uuid: tD.dataValues.uuid,
+          bp_date: tD.dataValues.from_date,
           
-          ccc_uuid: tD.critical_care_charts.uuid,
-          ccc_code: tD.critical_care_charts.code,
-          ccc_name: tD.critical_care_charts.name,
-          ccc_desc: tD.critical_care_charts.description,
+          bp_observed_value: tD.dataValues.observed_value,
+          
+          cc_chart_uuid: tD.critical_care_charts.uuid,
+          cc_chart_code: tD.critical_care_charts.code,
+          cc_chart_name: tD.critical_care_charts.name,
+          cc_chart_desc: tD.critical_care_charts.description,
   
           critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
           critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
@@ -206,17 +207,17 @@ function getabgData(fetchedData) {
           }
         ];
       });
-      return { "abg_details": abg_details, "observed_values": abgList };
+      return { "bp_details": bp_details, "observed_values": bpList };
     }
     else {
       return {};
     }
   }
 
-  function getabgcomparequery(patient_uuid,from_date,to_date) {
+  function getbpcomparequery(patient_uuid,from_date,to_date) {
     
         return {
-          table_name: abgTbl,
+          table_name: bpTbl,
           query: {
                     order: [['from_date', 'DESC']],
                     where: {
@@ -251,10 +252,10 @@ function getabgData(fetchedData) {
           };
         }
  
-        function getabgquery(patient_uuid) {
+        function getbpquery(patient_uuid) {
     
             return {
-              table_name: abgTbl,
+              table_name: bpTbl,
               query: {
                         order: [['from_date', 'DESC']],
                         where: {
