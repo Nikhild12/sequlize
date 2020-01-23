@@ -5086,11 +5086,17 @@
     },
     "/api/immunization/getAll": {
       "get": {
-        "summary": "To get all Patient immunization schedule Details ",
+        "summary": "To get patient Immunization schedules",
         "parameters": [
           {
             "in": "header",
             "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
             "required": true,
             "type": "integer"
           }
@@ -5104,12 +5110,14 @@
         ],
         "responses": {
           "200": {
-            "description": "get All PatientImmunization ",
+            "description": "get All PatientImmunization",
             "schema": {
               "$ref": "#/definitions/allPatientImmunization"
             }
           }
-        }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
       }
     },
     "/api/referal-history/getReferralHistory": {
