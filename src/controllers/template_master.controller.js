@@ -504,15 +504,20 @@ function getDietListForTemplate(fetchedData, template_id) {
       diet_list = [...diet_list,
       {
         template_details_uuid: dD.tmd_uuid,
+        
+        diet_id: dD.tmd_diet_master_uuid,
         diet_name: dD.dm_name,
         diet_code: dD.dm_code,
         //drug_id: dD.im_uuid,
 
+        diet_category_id: dD.tmd_diet_category_uuid,
         diet_category_name: dD.dc_name,
         diet_category_code: dD.dc_code,
 
+        diet_frequency_id:dD.tmd_diet_frequency_uuid,
         diet_frequency_name: dD.df_name,
         diet_frequency_code: dD.df_code,
+        
         diet_display_order: dD.tmd_display_order,
 
         quantity: dD.tmd_quantity

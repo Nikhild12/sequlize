@@ -232,7 +232,7 @@ const ventilatorchartsController = () => {
         deleteVentilatorDetails: _deleteVentilatorDetails,
         getventilatorcomparedata: _getventilatorcomparedata,
         getcccdetails: _getcccdetails,
-        getventilatormodes: _getventilatormodes
+        //getventilatormodes: _getventilatormodes
     };
 };
 
