@@ -29,9 +29,19 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
 
             },
-            pis_immunization_name: {
+            i_name: {
 
                 type: DataTypes.STRING
+
+            },
+            i_is_active: {
+
+                type: DataTypes.BOOLEAN
+
+            },
+            i_status: {
+
+                type: DataTypes.BOOLEAN
 
             },
             pis_immunization_date: {

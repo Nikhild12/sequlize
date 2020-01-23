@@ -137,11 +137,11 @@ const patient_immunization_Schedules = () => {
 
             if (user_uuid) {
                 const immunizationData = await viewPatientImmunzationSchedulesTbl.findAll({
-                    attributes: ['pis_immunization_date', 'et_name', 'pis_immunization_name', 'f_name', 'pis_comments'],
-                    where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, f_is_active: 1, f_status: 1 }
+                    attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
+                    where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
 
                 });
-                return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: immunizationData });
+                return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Patient Immunzation Schedules Details successfully', responseContents: immunizationData });
             }
             else {
                 return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
