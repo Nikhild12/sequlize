@@ -5548,6 +5548,9 @@
         "note_type_uuid": {
           "type": "integer"
         },
+        "data_template":{
+          "type": "string"
+        },
         "status": {
           "type": "integer"
         },
