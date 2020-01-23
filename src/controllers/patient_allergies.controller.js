@@ -56,15 +56,17 @@ const Patient_Allergies = () => {
 
   const _getPatientAllergies = async (req, res) => {
     const { user_uuid } = req.headers;
+    let { patient_uuid } = req.query;
+
 
     try {
 
-      if (user_uuid) {
+      if (user_uuid && patient_uuid) {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
             order: [['performed_date', 'DESC']],
-            attributes: ['uuid', 'performed_date', 'duration'],
-            where: { created_by: user_uuid },
+            attributes: ['uuid', 'performed_date', 'duration', 'patient_uuid'],
+            where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
             include: [
               {
                 model: encounterTbl,

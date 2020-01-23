@@ -3794,6 +3794,12 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
           }
         ],
         "produces": [
@@ -4162,6 +4168,12 @@
           {
             "in": "header",
             "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
             "required": true,
             "type": "integer"
           }
@@ -4567,6 +4579,12 @@
           {
             "in": "header",
             "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
             "required": true,
             "type": "integer"
           }
@@ -5092,6 +5110,42 @@
             }
           }
         }
+      }
+    },
+    "/api/referal-history/getReferralHistory": {
+      "get": {
+        "description": "To get Family History",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientReferralHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getReferralHistory"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
       }
     }
   },
@@ -9475,6 +9529,17 @@
         "display_order": {
           "type": "integer",
           "example": 1
+        }
+      }
+    },
+    "getReferralHistory": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
         }
       }
     }
