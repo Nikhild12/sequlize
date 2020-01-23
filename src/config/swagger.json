@@ -3862,31 +3862,7 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    "/api/ventilator-charts/getventilatormodes": {
-      "get": {
-        "summary": "List ventilator modes data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getventilatormodes"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
+    
     "/api/profiles/add": {
       "post": {
         "summary": "To create  profile Details ",
@@ -4210,7 +4186,7 @@
     },
     "/api/abg-charts/getabgcomparedata": {
       "get": {
-        "summary": "List patient ventilator data",
+        "summary": "List patient abg data",
         "parameters": [
           {
             "in": "header",
@@ -8186,11 +8162,7 @@
               "type": "integer",
               "example": 1
             },
-            "ventilator_mode_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
+           "comments": {
               "type": "string",
               "example": "enter some thing"
             }
@@ -8422,11 +8394,7 @@
               "type": "integer",
               "example": 1
             },
-            "ventilator_mode_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
+           "comments": {
               "type": "string",
               "example": "enter some thing"
             }
@@ -8469,14 +8437,7 @@
         }
       }
     },
-    "getventilatormodes": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        }
-      }
-    },
+ 
     "profilesAdd": {
       "type": "object",
       "properties": {
@@ -8817,10 +8778,7 @@
         "immunization_uuid": {
           "type": "integer"
         },
-        "immunization_name": {
-          "type": "string"
-        },
-        "immunization_schedule_flag_uuid": {
+       "immunization_schedule_flag_uuid": {
           "type": "integer"
         },
         "route_uuid": {
@@ -8898,11 +8856,7 @@
           "type": "integer",
           "example": "enter some thing"
         },
-        "immunization_name": {
-          "type": "string",
-          "example": "enter some date"
-        },
-        "immunization_schedule_flag_uuid": {
+       "immunization_schedule_flag_uuid": {
           "type": "integer",
           "example": 1
         },
