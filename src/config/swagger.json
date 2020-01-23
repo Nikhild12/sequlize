@@ -3475,7 +3475,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-Ventilator"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3506,7 +3506,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-Ventilator"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3531,7 +3531,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-Ventilator"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3806,7 +3806,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-Ventilator"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3849,7 +3849,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-Ventilator"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4107,7 +4107,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-abg"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -4138,7 +4138,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-abg"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4171,7 +4171,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-abg"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -4214,7 +4214,7 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "tags": ["CriticalCare-abg"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -8181,7 +8181,15 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "ccc_uuid": {
+              "cc_chart_uuid":{
+                "type": "integer",
+                "example": 1
+              },
+		        	"cc_concept_uuid":{
+                "type": "integer",
+                "example": 1
+              },
+			        "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
               },
@@ -8413,7 +8421,15 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "ccc_uuid": {
+              "cc_chart_uuid":{
+                "type": "integer",
+                "example": 1
+              },
+		        	"cc_concept_uuid":{
+                "type": "integer",
+                "example": 1
+              },
+			        "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
               },
