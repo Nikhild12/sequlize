@@ -162,6 +162,6 @@ const patient_immunization_Schedules = () => {
         getAllPatientImmunizationSchedules: _getAllPatientImmunizationSchedules
 
     };
-}
+};
 
 module.exports = patient_immunization_Schedules();
