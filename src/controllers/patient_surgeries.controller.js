@@ -56,7 +56,7 @@ const Surgery_History = () => {
       if (user_uuid && patient_uuid) {
         const surgeryHistory = await vw_surgical_details.findAll({
           order: [['ps_performed_date', 'DESC']],
-          attributes: ['ps_uuid', 'institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments'],
+          attributes: ['ps_uuid', 'institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments', 'ps_patient_uuid'],
           where: { ps_patient_uuid: patient_uuid, ps_created_by: user_uuid, ps_is_active: 1, ps_status: 1, ps_is_active: 1, ps_status: 1, institution_is_active: 1, institution_status: 1 },
 
         },

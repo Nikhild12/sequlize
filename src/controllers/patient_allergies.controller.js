@@ -65,7 +65,7 @@ const Patient_Allergies = () => {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
             order: [['performed_date', 'DESC']],
-            attributes: ['uuid', 'performed_date', 'duration'],
+            attributes: ['uuid', 'performed_date', 'duration', 'patient_uuid'],
             where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
             include: [
               {
