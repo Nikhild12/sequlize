@@ -12,6 +12,7 @@ const emr_constants = require('../config/constants');
 const emr_utility = require('../services/utility.service');
 
 const patientImmunizationSchedulesTbl = sequelizeDb.patient_immunization_schedules;
+const viewPatientImmunzationSchedulesTbl = sequelizeDb.vw_patient_immunization_schedules;
 
 const patient_immunization_Schedules = () => {
 
@@ -131,11 +132,15 @@ const patient_immunization_Schedules = () => {
     const _getAllPatientImmunizationSchedules = async (req, res) => {
 
         const { user_uuid } = req.headers;
-
+        const { patient_uuid } = req.query;
         try {
 
             if (user_uuid) {
-                const immunizationData = await patientImmunizationSchedulesTbl.findAll();
+                const immunizationData = await viewPatientImmunzationSchedulesTbl.findAll({
+                    attributes: ['pis_immunization_date', 'et_name', 'pis_immunization_name', 'f_name', 'pis_comments'],
+                    where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, f_is_active: 1, f_status: 1 }
+
+                });
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: immunizationData });
             }
             else {
