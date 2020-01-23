@@ -1,8 +1,8 @@
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const abg_charts = sequelize.define(
-        "abg_charts",
+    const dialysis_charts = sequelize.define(
+        "dialysis_charts",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -150,7 +150,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            tableName: "abg_charts",
+            tableName: "dialysis_charts",
             indexes: [
                 {
                     fields: ["uuid"]
@@ -159,13 +159,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    abg_charts.associate =  models => {
-        abg_charts.belongsTo(models.critical_care_charts , {
+    dialysis_charts.associate =  models => {
+        dialysis_charts.belongsTo(models.critical_care_charts , {
             foreignKey:"cc_chart_uuid",
             as:'critical_care_charts'
         });
         
     };
 
-    return abg_charts;
+    return dialysis_charts;
 };
