@@ -48,6 +48,7 @@ const referralHistoryRoute = require('./patient_referral.route');
 
 const ventilatorRoute = require("./ventilator_charts.route");
 const abgRoute = require("./abg_charts.route");
+const bpRoute = require("./bp_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -139,9 +140,11 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 
 // EMR Profiles Routes
 serviceRouter.use("/profiles", profilesRouter);
+
 //EMR Critical Care Routes
 serviceRouter.use("/ventilator-charts", ventilatorRoute);
 serviceRouter.use("/abg-charts", abgRoute);
+serviceRouter.use("/bp-charts", bpRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
