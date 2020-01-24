@@ -58,7 +58,8 @@ const Family_History = () => {
     if (user_uuid && patient_uuid) {
       try {
         const familyHistoryData = await familyHistoryTbl.findAll({
-          order: [['identified_date', 'DESC']],
+          limit: 10,
+          order: [['uuid', 'DESC']],
           where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
           include: [
             {
