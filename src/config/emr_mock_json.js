@@ -361,6 +361,65 @@ const _patientVisitHistoryJson = [
   }
 ];
 
+const _patientChiefComplaintsJson = [
+  {
+    patient_chief_complaint_id: 1,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    chief_complaint_id: 1,
+    chief_complaint_name: "Fever",
+    chief_complaint_code: "Fever",
+    chief_complaint_duration_id: 1,
+    chief_complaint_duration_name: "Days",
+    chief_complaint_duration_code: "Days"
+  },
+  {
+    patient_chief_complaint_id: 2,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    chief_complaint_id: 1,
+    chief_complaint_name: "cold",
+    chief_complaint_code: "cold",
+    chief_complaint_duration_id: 1,
+    chief_complaint_duration_name: "Days",
+    chief_complaint_duration_code: "Days"
+  },
+  {
+    patient_chief_complaint_id: 3,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    chief_complaint_id: 1,
+    chief_complaint_name: "dengue",
+    chief_complaint_code: "dengue",
+    chief_complaint_duration_id: 1,
+    chief_complaint_duration_name: "Days",
+    chief_complaint_duration_code: "Days"
+  },
+  {
+    patient_chief_complaint_id: 5,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    chief_complaint_id: 1,
+    chief_complaint_name: "diarrhoea",
+    chief_complaint_code: "diarrhoea",
+    chief_complaint_duration_id: 1,
+    chief_complaint_duration_name: "Days",
+    chief_complaint_duration_code: "Days"
+  },
+  {
+    patient_chief_complaint_id: 6,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    chief_complaint_id: 1,
+    chief_complaint_name: "malaria",
+    chief_complaint_code: "malaria",
+    chief_complaint_duration_id: 1,
+    chief_complaint_duration_name: "Days",
+    chief_complaint_duration_code: "Days"
+  }
+];
+
 module.exports = {
-  patientVisitHistoryJson: _patientVisitHistoryJson
+  patientVisitHistoryJson: _patientVisitHistoryJson,
+  patientChiefComplaintsJson: _patientChiefComplaintsJson
 };
