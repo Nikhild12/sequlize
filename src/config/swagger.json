@@ -128,7 +128,7 @@
       "x-throttling-tier": "Unlimited"
     }
   },
-  "/api/notetemplate/updateProceduresById": {
+  "/api/procedures/updateProceduresById": {
     "post": {
       "description": "Get By Id Successfully",
       "parameters": [
@@ -166,44 +166,6 @@
       "x-throttling-tier": "Unlimited"
     }
   },
-  "/api/notetemplate/getProceduresById": {
-    "post": {
-      "description": "Get By Id Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
-        },
-        {
-          "in": "body",
-          "name": "Procedure_Id",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
-          }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
-          }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },  
 
     "/api/speciality/createSpeciality": {
       "post": {
