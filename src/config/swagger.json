@@ -9195,9 +9195,6 @@
         "immunization_uuid": {
           "type": "integer"
         },
-        "immunization_name": {
-          "type": "string"
-        },
         "immunization_schedule_flag_uuid": {
           "type": "integer"
         },
@@ -9276,10 +9273,6 @@
           "type": "integer",
           "example": "enter some thing"
         },
-        "immunization_name": {
-          "type": "string",
-          "example": "enter some date"
-        },
         "immunization_schedule_flag_uuid": {
           "type": "integer",
           "example": 1
@@ -9315,8 +9308,16 @@
         "display_order": {
           "type": "integer",
           "example": 1
-        }
+        },
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "comments": {
+          "type": "string",
+          "example": 1
       }
+    }
     },
     "getReferralHistory": {
       "type": "object",
