@@ -19,6 +19,7 @@ const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
 const vitallonicRoutes = require("./vital_loinc.route");
+const dischargeSummaryRoute = require("./discharge.summary.settings.route");
 
 const diagnosisRoutes = require("./diagnosis.route");
 const diagnosisVersionRoutes = require("./diagnosis_version.route");
@@ -42,12 +43,16 @@ const emrHisSetCtrl = require("./emr.history.settings.routes");
 const profilesRouter = require("./profiles.route");
 
 const patientAllergieRoute = require("./patient_allergies.route");
-const familyHistoryRoute = require('./family_history.route');
-const surgeryHistoryRoute = require('./patient_surgeries.route');
-const referralHistoryRoute = require('./patient_referral.route');
+const familyHistoryRoute = require("./family_history.route");
+const surgeryHistoryRoute = require("./patient_surgeries.route");
+const referralHistoryRoute = require("./patient_referral.route");
 
+//EMR CRITICAL CARE CHARTS ROUTES
 const ventilatorRoute = require("./ventilator_charts.route");
 const abgRoute = require("./abg_charts.route");
+const bpRoute = require("./bp_charts.route");
+const dialysisRoute = require("./dialysis_charts.route");
+const diabetesRoute = require("./diabetes_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -120,28 +125,32 @@ serviceRouter.use("/treatment-kit", treatmentKitRoute);
 
 //Patient Allergy History Routes
 
-serviceRouter.use('/patient-allergy', patientAllergieRoute);
+serviceRouter.use("/patient-allergy", patientAllergieRoute);
 
 // Family History Routes
 
-serviceRouter.use('/family-history', familyHistoryRoute);
+serviceRouter.use("/family-history", familyHistoryRoute);
 
 // Surgery History Routes
 
-serviceRouter.use('/surgery-history', surgeryHistoryRoute);
+serviceRouter.use("/surgery-history", surgeryHistoryRoute);
 
 // Referral History Routes
 
-serviceRouter.use('/referal-history', referralHistoryRoute);
+serviceRouter.use("/referal-history", referralHistoryRoute);
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 
 // EMR Profiles Routes
 serviceRouter.use("/profiles", profilesRouter);
+
 //EMR Critical Care Routes
 serviceRouter.use("/ventilator-charts", ventilatorRoute);
 serviceRouter.use("/abg-charts", abgRoute);
+serviceRouter.use("/bp-charts", bpRoute);
+serviceRouter.use("/dialysis-charts",dialysisRoute);
+serviceRouter.use("/diabetes-charts",diabetesRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
@@ -151,5 +160,8 @@ serviceRouter.use("/speciality", specialitySketcheRoute);
 
 //EMR Patient Immunization Schedules  Routes
 serviceRouter.use("/immunization", patientImmunizationRoute);
+
+// Discharge Summary Settings
+serviceRouter.use("/discharge-summary", dischargeSummaryRoute);
 
 module.exports = serviceRouter;

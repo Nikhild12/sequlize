@@ -31,7 +31,7 @@ const abgchartsController = () => {
 
             if (user_uuid && data1 && data2) {
 
-                const createdData = create_ventilator(user_uuid, data1, data2);
+                const createdData = create_abg(user_uuid, data1, data2);
 
                 if (createdData) {
                     res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
@@ -136,7 +136,7 @@ return {
 
 module.exports = abgchartsController();
 
-async function create_ventilator(user_uuid, data1, data2) {
+async function create_abg(user_uuid, data1, data2) {
 
     data2.forEach((item, index) => {
         item.patient_uuid = data1.patient_uuid;
