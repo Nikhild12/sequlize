@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tmd_display_order: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             tmd_active:{
                 type: DataTypes.ENUM,
                 allowNull: false,
