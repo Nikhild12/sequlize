@@ -1825,6 +1825,31 @@
         }
       }
     },
+    "/api/emr-patient-vitals/getMockJson": {
+      "get": {
+        "description": "To get a EMR Patient Vitals",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched"
+          }
+        }
+      }
+    },
     "/api/emr-patient-vitals/getHistoryPatientVitals": {
       "get": {
         "description": "To get a EMR History Patient Vitals",
@@ -2099,6 +2124,31 @@
         "responses": {
           "200": {
             "description": "Successfully Inserted Patient Diagnosis"
+          }
+        }
+      }
+    },
+    "/api/patient-diagnosis/getMockJson": {
+      "get": {
+        "description": "To get Patient Diagnosis",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Patient Diagnosis"
           }
         }
       }

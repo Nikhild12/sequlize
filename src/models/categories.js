@@ -87,11 +87,11 @@ module.exports = (sequelize, DataTypes) => {
     );
 
 
-    categories.associate = models => {
-        categories.hasMany(models.category_concepts, {
-            foreignKey: 'category_uuid',
-            as: 'category_concepts'
-        });
-    };
+    // categories.associate = models => {
+    //     categories.hasMany(models.category_concepts, {
+    //         foreignKey: 'category_uuid',
+    //         as: 'category_concepts'
+    //     });
+    // };
     return categories;
 };

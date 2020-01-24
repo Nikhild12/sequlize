@@ -63,6 +63,11 @@ const specialitySketcheRoute = require("./speciality_Sketches.route");
 
 const patientImmunizationRoute = require("./patient_immunization_schedules.route");
 
+//OPNotes sections routes
+const sectionsRouter = require("./sections.route");
+
+//OPNotes categories routes
+const categoriesRouter = require("./categories.route");
 const serviceRouter = express.Router();
 
 // EMR Work Flow Settings Routes
@@ -170,4 +175,11 @@ serviceRouter.use("/immunization", patientImmunizationRoute);
 // Discharge Summary Settings
 serviceRouter.use("/discharge-summary", dischargeSummaryRoute);
 
+// EMR section Routes
+serviceRouter.use("/sections", sectionsRouter);
+
+// EMR categories Routes
+serviceRouter.use("/categories", categoriesRouter);
+
 module.exports = serviceRouter;
+
