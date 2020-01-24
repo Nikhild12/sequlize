@@ -21,6 +21,190 @@
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "application/file"],
   "paths": {
+     
+   "/api/notetemplate/notetemplateType": {
+    "post": {
+      "description": "Get Successfully",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "produces": [
+        "application/json",
+        "application/xml"
+      ],
+      "tags": [
+        "Note Template"
+      ],
+      "responses": {
+        "200": {
+          "description": "get Successfully",
+          "schema": {
+            "$ref": "#/definitions/notetemplateType"
+          }
+        }
+      },
+      "x-auth-type": "Application & Application User",
+      "x-throttling-tier": "Unlimited"
+    }
+  },
+"/api/procedures/deleteProcedures":{
+    "post": {
+      "description": "Inserted Successfully",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "body",
+          "name": "delete",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/deleteProcedures"
+          }
+        }
+      ],
+      "produces": [
+        "application/json",
+        "application/xml"
+      ],
+      "tags": [
+        "Procedures"
+      ],
+      "responses": {
+        "200": {
+          "description": "get Successfully",
+          "schema": {
+            "$ref": "#/definitions/deleteProcedures"
+          }
+        }
+      },
+      "x-auth-type": "Application & Application User",
+      "x-throttling-tier": "Unlimited"
+    }
+  },
+  "/api/procedures/getProceduresById": {
+    "post": {
+      "description": "Get By Id Successfully",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "body",
+          "name": "Procedure_Id",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/getProceduresById"
+          }
+        }
+      ],
+      "produces": [
+        "application/json",
+        "application/xml"
+      ],
+      "tags": [
+        "Procedures"
+      ],
+      "responses": {
+        "200": {
+          "description": "get Successfully",
+          "schema": {
+            "$ref": "#/definitions/getProceduresById"
+          }
+        }
+      },
+      "x-auth-type": "Application & Application User",
+      "x-throttling-tier": "Unlimited"
+    }
+  },
+  "/api/notetemplate/updateProceduresById": {
+    "post": {
+      "description": "Get By Id Successfully",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "body",
+          "name": "Procedure_Id",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/updateProceduresById"
+          }
+        }
+      ],
+      "produces": [
+        "application/json",
+        "application/xml"
+      ],
+      "tags": [
+        "Procedures"
+      ],
+      "responses": {
+        "200": {
+          "description": "get Successfully",
+          "schema": {
+            "$ref": "#/definitions/updateProceduresById"
+          }
+        }
+      },
+      "x-auth-type": "Application & Application User",
+      "x-throttling-tier": "Unlimited"
+    }
+  },
+  "/api/notetemplate/getProceduresById": {
+    "post": {
+      "description": "Get By Id Successfully",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "body",
+          "name": "Procedure_Id",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/getProceduresById"
+          }
+        }
+      ],
+      "produces": [
+        "application/json",
+        "application/xml"
+      ],
+      "tags": [
+        "Procedures"
+      ],
+      "responses": {
+        "200": {
+          "description": "get Successfully",
+          "schema": {
+            "$ref": "#/definitions/getProceduresById"
+          }
+        }
+      },
+      "x-auth-type": "Application & Application User",
+      "x-throttling-tier": "Unlimited"
+    }
+  },  
+
     "/api/speciality/createSpeciality": {
       "post": {
         "description": "To Create a Speciality Sketch",
@@ -4441,6 +4625,91 @@
     }
   },
   "definitions": {
+    "deleteProcedures": {
+      "type": "object",
+      "properties": {
+        "Procedures_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "getProceduresById": {
+      "type": "object",
+      "properties": {
+        "Procedures_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateProceduresById": {
+      "type": "object",
+      "properties": {
+        "Procedures_id": {
+          "type": "integer"
+        },
+        "procedure_scheme_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "procedure_technique_uuid": {
+          "type": "integer"
+        },
+        "procedure_version_uuid": {
+          "type": "integer"
+        },
+        "procedure_region_uuid": {
+          "type": "integer"
+        },
+        "procedure_type_uuid": {
+          "type": "integer"
+        },
+        "procedure_category_uuid": {
+          "type": "integer"
+        },
+        "procedure_sub_category_uuid": {
+          "type": "integer"
+        },
+        "operation_type_uuid": {
+          "type": "integer"
+        },
+        "anaesthesia_type_uuid": {
+          "type": "integer"
+        },
+        "speciality_uuid": {
+          "type": "integer"
+        },
+        "equipment_uuid": {
+          "type": "integer"
+        },
+        "body_site_uuid": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
+    "notetemplateType": {
+      "type": "object",
+      "properties": {}
+    },
     "createSpeciality": {
       "type": "object",
       "properties": {
