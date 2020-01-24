@@ -7,7 +7,7 @@ const Op = Sequelize.Op;
 
 
 
-
+const templateTypeTbl = db.template_type;
 const noteTemplatesTbl = db.note_templates;
 
 const noteTemplatesController = () => {
@@ -217,7 +217,39 @@ const noteTemplatesController = () => {
         });
         
     };
-  
+    const getnoteTemplatesrType = async (req, res, next) => {
+        const postData = req.body;
+        try {
+
+            const page = postData.page ? postData.page : 1;
+            const itemsPerPage = postData.limit ? postData.limit : 10;
+            const offset = (page - 1) * itemsPerPage;
+            await templateTypeTbl.findOne({
+                    where: {
+                        name: 'Lab'
+                    }
+                })
+                .then((data) => {
+                    noteTemplatesTbl.findAll({
+                        where: {
+                            note_template_type_uuid: data.dataValues.uuid
+                        }})
+                        .then((data1) => {
+                            console.log('sf',data1)
+                            res.send(data1)
+                        })
+            })
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
 
     const getnoteTemplatesrById = async (req, res, next) => {
         const postData = req.body;
@@ -261,6 +293,7 @@ const noteTemplatesController = () => {
         getnoteTemplates,
         updatenoteTemplatesById,
         deletenoteTemplatesr,
+        getnoteTemplatesrType,
 
         getnoteTemplatesrById
     };
