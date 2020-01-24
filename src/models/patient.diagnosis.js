@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
                     },
                     min: {
-                        args: [0],
+                        args: 1,
                         msg: emr_constants.GetZeroValidationMessage('patient_uuid')
                     },
 
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
                     },
                     min: {
-                        args: [0],
+                        args: 1,
                         msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
                     }
                 }
