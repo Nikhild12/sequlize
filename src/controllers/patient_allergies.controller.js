@@ -63,7 +63,8 @@ const Patient_Allergies = () => {
       if (user_uuid && patient_uuid) {
         const patientAllergyData = await patientAllergiesTbl.findAll(
           {
-            order: [['performed_date', 'DESC']],
+            limit: 10,
+            order: [['uuid', 'DESC']],
             where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
             include: [
               {

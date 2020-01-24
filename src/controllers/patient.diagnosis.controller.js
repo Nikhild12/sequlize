@@ -110,7 +110,7 @@ const PatientDiagnsis = () => {
           departmentId &&
           facility_uuid &&
           from_date,
-        to_date)
+          to_date)
       ) {
         const patientDiagnosisData = await patient_diagnosis_tbl.findAll(
           getPatientFiltersQuery1(
@@ -166,32 +166,7 @@ const PatientDiagnsis = () => {
     }
   };
 
-  const _getPatientDiagnosisHistory = async (req, res) => {
-    const { user_uuid } = req.headers;
-    let { patient_uuid } = req.query;
 
-    try {
-      if (user_uuid && patient_uuid) {
-        const patientDiagnosisHistory = await getPatientDiagnosisHistory(
-          patient_uuid
-        );
-        return res.status(200).send({
-          code: httpStatus.OK,
-          responseContent: patientDiagnosisHistory
-        });
-      } else {
-        return res.status(400).send({
-          code: httpStatus.UNAUTHORIZED,
-          message: emr_constants.NO_USER_ID
-        });
-      }
-    } catch (ex) {
-      console.log("Exception happened", ex);
-      return res
-        .status(400)
-        .send({ code: httpStatus.BAD_REQUEST, message: ex });
-    }
-  };
 
   const _getPatientDiagnosisHistoryById = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -294,7 +269,6 @@ const PatientDiagnsis = () => {
   return {
     createPatientDiagnosis: _createPatientDiagnosis,
     getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
-    getPatientDiagnosisHistory: _getPatientDiagnosisHistory,
     getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById,
     updatePatientDiagnosisHistory: _updatePatientDiagnosisHistory,
     getMobileMockAPI: _getMobileMockAPI,

@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
           },
           min: {
-            args: [0],
+            args: 1,
             msg: emr_constants.GetZeroValidationMessage('patient_uuid')
           },
 
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
           },
           min: {
-            args: [0],
+            args: 1,
             msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
           }
         }
@@ -55,6 +55,18 @@ module.exports = (sequelize, DataTypes) => {
 
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('consultation_uuid')
+          }
+        }
 
 
       },
@@ -64,14 +76,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('relation_type_uuid')
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('relation_type_uuid')
           },
           min: {
-            args: [0],
-            msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('relation_type_uuid')
           }
         }
       },
@@ -86,7 +98,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       identified_date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: true,
+        validate: {
+          isDate: true
+        }
 
       },
 
@@ -109,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetpleaseProvideMsg('period_uuid')
           },
           min: {
-            args: [0],
+            args: 1,
             msg: emr_constants.GetZeroValidationMessage('period_uuid')
           }
         }
