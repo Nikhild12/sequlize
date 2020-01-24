@@ -938,7 +938,10 @@ function getFavouriteMasterDetailsUpdateData(
     modified_by: user_uuid,
     modified_date: new Date(),
     chief_complaint_uuid: favouritMasterDetailsTbl.chief_complaint_id,
-    vital_master_uuid: favouritMasterDetailsTbl.vital_master_id
+    vital_master_uuid: favouritMasterDetailsTbl.vital_master_id,
+    diet_frequency_uuid: favouriteMasterReqData.diet_frequency_uuid,
+    diet_category_uuid: favouriteMasterReqData.diet_category_uuid,
+    quantity: favouriteMasterReqData.quantity
   };
 }
 

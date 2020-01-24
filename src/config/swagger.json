@@ -7067,6 +7067,18 @@
         },
         "vital_master_id": {
           "type": "integer"
+        },
+        "diet_frequency_uuid":{
+          "type": "integer",
+          "example":0
+        },
+        "diet_category_uuid":{
+          "type": "integer",
+          "example":0
+        },
+        "quantity":{
+          "type": "integer",
+          "example":0
         }
       }
     },
