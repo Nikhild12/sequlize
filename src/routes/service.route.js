@@ -48,13 +48,6 @@ const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
 
 //EMR CRITICAL CARE CHARTS ROUTES
-const ventilatorRoute = require("./ventilator_charts.route");
-const abgRoute = require("./abg_charts.route");
-const bpRoute = require("./bp_charts.route");
-const dialysisRoute = require("./dialysis_charts.route");
-const diabetesRoute = require("./diabetes_charts.route");
-const monitorRoute = require('./monitor_charts.route');
-const inoutRoute = require('./in_out_take_charts.route');
 const CCCRoute = require('./CC_charts.route');
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -154,13 +147,6 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 serviceRouter.use("/profiles", profilesRouter);
 
 //EMR Critical Care Routes
-serviceRouter.use("/ventilator-charts", ventilatorRoute);
-serviceRouter.use("/abg-charts", abgRoute);
-serviceRouter.use("/bp-charts", bpRoute);
-serviceRouter.use("/dialysis-charts",dialysisRoute);
-serviceRouter.use("/diabetes-charts",diabetesRoute);
-serviceRouter.use("/monitor-charts",monitorRoute);
-serviceRouter.use("/inouttake-charts",inoutRoute);
 serviceRouter.use("/CC-charts",CCCRoute);
 
 // My Patient List Routes
