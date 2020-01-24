@@ -1825,6 +1825,31 @@
         }
       }
     },
+    "/api/emr-patient-vitals/getMockJson": {
+      "get": {
+        "description": "To get a EMR Patient Vitals",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched"
+          }
+        }
+      }
+    },
     "/api/emr-patient-vitals/getHistoryPatientVitals": {
       "get": {
         "description": "To get a EMR History Patient Vitals",
