@@ -466,8 +466,38 @@ const _patientVitalsJson = [
   }
 ];
 
+const _patientDiagnosisJson = [
+  {
+    patient_vitals_id: 1,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    diagnosis_id: 1,
+    diagnosis_name: "Typhoid meningitis",
+    diagnosis_code: "Typhoid meningitis",
+    diagnosis_value_type_id: 1
+  },
+  {
+    patient_diagnosis_id: 2,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    diagnosis_id: 2,
+    diagnosis_name: "Typhoid fever",
+    diagnosis_code: "Typhoid fever",
+    diagnosis_value_type_id: 1
+  },
+  {
+    patient_diagnosis_id: 3,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    diagnosis_id: 3,
+    diagnosis_name: "Cholera, unspecified",
+    diagnosis_code: "Cholera, unspecified"
+  }
+];
+
 module.exports = {
   patientVisitHistoryJson: _patientVisitHistoryJson,
   patientChiefComplaintsJson: _patientChiefComplaintsJson,
-  patientVitalsJson: _patientVitalsJson
+  patientVitalsJson: _patientVitalsJson,
+  patientDiagnosisJson: _patientDiagnosisJson
 };

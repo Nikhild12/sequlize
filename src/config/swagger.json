@@ -2128,6 +2128,31 @@
         }
       }
     },
+    "/api/patient-diagnosis/getMockJson": {
+      "get": {
+        "description": "To get Patient Diagnosis",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Patient Diagnosis"
+          }
+        }
+      }
+    },
     "/api/patient-diagnosis/getByFilters": {
       "get": {
         "description": "To get list of Patient Diagnosis By Filters",
