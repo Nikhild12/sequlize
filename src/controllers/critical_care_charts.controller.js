@@ -36,12 +36,12 @@ const CCchartsController = () => {
             let { critical_care_type } = req.query;
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
-            let createdData1,createdData2, createdData3, createdData4, createdData5, createdData6, createdData7 ;
+            let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
             if (user_uuid && data1 && data2 && critical_care_type) {
 
                 switch (critical_care_type) {
                     case "1":
-                        createdData1 = create_CC(ventilatorTbl,user_uuid, data1, data2);
+                        createdData1 = create_CC(ventilatorTbl, user_uuid, data1, data2);
                         break;
                     case "2":
                         createdData2 = create_CC(abgTbl, user_uuid, data1, data2);
@@ -50,7 +50,7 @@ const CCchartsController = () => {
                         createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
                         break;
                     case "4":
-                        createdData4 = create_CC(in_out_takeTbl,user_uuid, data1, data2);
+                        createdData4 = create_CC(in_out_takeTbl, user_uuid, data1, data2);
                         break;
                     case "5":
                         createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
@@ -66,19 +66,19 @@ const CCchartsController = () => {
                 //const createdData = create_ventilator(user_uuid, data1, data2);
                 if (createdData1) {
                     res.send({ "status": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
-                } else if (createdData2){
+                } else if (createdData2) {
                     res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData3){
+                } else if (createdData3) {
                     res.send({ "status": 200, "monitor_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData4){
+                } else if (createdData4) {
                     res.send({ "status": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData5){
+                } else if (createdData5) {
                     res.send({ "status": 200, "bp_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData6){
+                } else if (createdData6) {
                     res.send({ "status": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData7){
+                } else if (createdData7) {
                     res.send({ "status": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
-                } 
+                }
 
             } else {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
@@ -92,50 +92,62 @@ const CCchartsController = () => {
 
         let { user_uuid } = req.headers;
         let { patient_uuid, critical_care_type } = req.query;
-        let data1,data2;
+        let data1, data2, data3, data4, data5, data6, data7, vdata;
 
         try {
-            if (user_uuid && patient_uuid) {
-                
+            if (user_uuid && patient_uuid && critical_care_type) {
+
                 switch (critical_care_type) {
                     case "1":
-                        //let {query} = getCCquery(critical_care_type, patient_uuid);
-                        data1 = await ventilatorTbl.findAll(getCCquery(critical_care_type, patient_uuid));
+                        data1 = await ventilatorTbl.findAll(getCCquery(patient_uuid));
                         break;
                     case "2":
-                        //let {query} = getCCquery(critical_care_type, patient_uuid);
-                        data2 = await abgTbl.findAll(getCCquery(critical_care_type, patient_uuid));
+                        data2 = await abgTbl.findAll(getCCquery(patient_uuid));
                         break;
-                    // case "3":
-                    //     createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
-                    //     break;
-                    // case "4":
-                    //     createdData4 = create_CC(in_out_takeTbl,user_uuid, data1, data2);
-                    //     break;
-                    // case "5":
-                    //     createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
-                    //     break;
-                    // case "6":
-                    //     createdData6 = create_CC(diabetesTbl, user_uuid, data1, data2);
-                    //     break;
-                    // case "7":
-                    //     createdData7 = create_CC(dialysisTbl, user_uuid, data1, data2);
-                    //     break;
+                    case "3":
+                        data3 = await monitorTbl.findAll(getCCquery(patient_uuid));
+                        break;
+                    case "4":
+                        data4 = await in_out_takeTbl.findAll(getCCquery(patient_uuid));
+                        break;
+                    case "5":
+                        data5 = await bpTbl.findAll(getCCquery(patient_uuid));
+                        break;
+                    case "6":
+                        data6 = await diabetesTbl.findAll(getCCquery(patient_uuid));
+                        break;
+                    case "7":
+                        data7 = await dialysisTbl.findAll(getCCquery(patient_uuid));
+                        break;
                 }
-            
-          
-                
+
                 if (data1) {
-                    const vdata = getventilatorData(data1);
-                    return res
-                        .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: vdata });
+                    vdata = getventilatorData(data1);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                 }
-                else if(data2){
-                    const vdata = getabgData(data2);
-                    return res
-                        .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: vdata });
+                else if (data2) {
+                    vdata = getabgData(data2);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data3) {
+                    vdata = getmonitorData(data3);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data4) {
+                    vdata = getinoutData(data4);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data5) {
+                    vdata = getbpData(data5);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data6) {
+                    vdata = getdiabetesData(data6);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data7) {
+                    vdata = getdialysisData(data7);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                 }
             }
             else {
@@ -143,24 +155,47 @@ const CCchartsController = () => {
             }
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({ status: "error", msg: errorMsg });
+            return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
         }
     };
 
-    const _updateventilatorbypatientid = async (req, res) => {
+    const _updateCCCbypatientid = async (req, res) => {
 
         try {
             // plucking data req body
             let { user_uuid } = req.headers;
+            let { critical_care_type } = req.query;
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
+            let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
+            
+            if (user_uuid && data1 && data2 && critical_care_type) {
 
-            if (user_uuid ) {
+                switch (critical_care_type) {
+                    case "1":
+                        createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
+                        break;
+                    case "2":
+                        createdData2 = await Promise.all(updateCCCdata(abgTbl, data1, data2, user_uuid));
+                        break;
+                    case "3":
+                        createdData3 = await Promise.all(updateCCCdata(monitorTbl, data1, data2, user_uuid));
+                        break;
+                    case "4":
+                        createdData4 = await Promise.all(updateCCCdata(in_out_takeTbl, data1, data2, user_uuid));
+                        break;
+                    case "5":
+                        createdData5 = await Promise.all(updateCCCdata(bpTbl, data1, data2, user_uuid));
+                        break;
+                    case "6":
+                        createdData6 = await Promise.all(updateCCCdata(diabetesTbl, data1, data2, user_uuid));
+                        break;
+                    case "7":
+                        createdData7 = await Promise.all(updateCCCdata(dialysisTbl, data1, data2, user_uuid));
+                        break;
+                }
 
-                const data = await Promise.all(updatevetilatordata(ventilatorTbl, data1, data2, user_uuid));
-                if (data) {
+                if (createdData1 || createdData2 || createdData3 || createdData4 || createdData5 || createdData6 || createdData7) {
                     res.send({ "status": 200, "message": "updated Successfully " });
                 }
             }
@@ -169,9 +204,7 @@ const CCchartsController = () => {
             }
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({ status: "error", msg: errorMsg });
+            return res .status(httpStatus.INTERNAL_SERVER_ERROR) .json({ status: "error", msg: errorMsg });
         }
     };
 
@@ -200,21 +233,67 @@ const CCchartsController = () => {
         }
     };
 
-    const _getventilatorcomparedata = async (req, res) => {
+    const _getCCCcomparedata = async (req, res) => {
         let { user_uuid } = req.headers;
-        let { patient_uuid, from_date, to_date } = req.query;
-
+        let { patient_uuid, critical_care_type, from_date, to_date } = req.query;
+        let data1, data2, data3, data4, data5, data6, data7, vdata;
+        
         try {
             if (user_uuid && patient_uuid) {
 
-                const {table_name, query} = getVCquery(patient_uuid, from_date, to_date);
-                const data = await table_name.findAll(query);
                 
-                if (data) {
-                    const vdata = getventilatorData(data);
-                    return res
-                        .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: vdata });
+                const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                switch (critical_care_type) {
+                    case "1":
+                        data1 = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "2":
+                        data2 = await abgTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "3":
+                        data3 = await monitorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "4":
+                        data4 = await in_out_takeTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "5":
+                        data5 = await bpTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "6":
+                        data6 = await diabetesTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                    case "7":
+                        data7 = await dialysisTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                        break;
+                }
+
+                if (data1) {
+                    vdata = getventilatorData(data1);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data2) {
+                    vdata = getabgData(data2);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data3) {
+                    vdata = getmonitorData(data3);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data4) {
+                    vdata = getinoutData(data4);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data5) {
+                    vdata = getbpData(data5);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data6) {
+                    vdata = getdiabetesData(data6);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                }
+                else if (data7) {
+                    vdata = getdialysisData(data7);
+                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                 }
             }
             else {
@@ -231,8 +310,7 @@ const CCchartsController = () => {
     const _getcccdetails = async (req, res) => {
 
         let { user_uuid } = req.headers;
-        //let { patient_uuid } = req.query;
-
+        
         try {
             if (user_uuid) {
                 const data = await cccTbl.findAll({
@@ -269,14 +347,14 @@ const CCchartsController = () => {
                 .json({ status: "error", msg: errorMsg });
         }
     };
-  
+
 
     return {
         createCCC: _createCCC,
         getCCCbypatientid: _getCCCbypatientid,
-        updateventilatorbypatientid: _updateventilatorbypatientid,
-        deleteVentilatorDetails: _deleteVentilatorDetails,
-        getventilatorcomparedata: _getventilatorcomparedata,
+        updateCCCbypatientid: _updateCCCbypatientid,
+        //deleteVentilatorDetails: _deleteVentilatorDetails,
+        getCCCcomparedata: _getCCCcomparedata,
         getcccdetails: _getcccdetails,
     };
 };
@@ -298,7 +376,7 @@ async function create_CC(tablename, user_uuid, data1, data2) {
     return { "Ventilator Data": dtls_result };
 }
 
-function updatevetilatordata(ventilatorTbl, data1, data2, user_uuid) {
+function updateCCCdata(tablename, data1, data2, user_uuid) {
     let updatePromise = [];
 
     data2.forEach((item) => {
@@ -313,56 +391,56 @@ function updatevetilatordata(ventilatorTbl, data1, data2, user_uuid) {
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        ventilatorTbl.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
+        tablename.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
     });
     return updatePromise;
 }
 
 function getventilatorData(fetchedData) {
     let vList = [];
-  
+
     if (fetchedData && fetchedData.length > 0) {
-      ventilator_details = {
-        patient_uuid: fetchedData[0].dataValues.patient_uuid,
-        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-  
-        facility_uuid: fetchedData[0].dataValues.facility_uuid,
-        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-        comments: fetchedData[0].dataValues.comments,
-      };
-  
-      fetchedData.forEach((tD) => {
-        vList = [...vList,
-        {
-          ventilator_uuid: tD.dataValues.uuid,
-          ventilator_date: tD.dataValues.from_date,
-          ventilator_observed_value: tD.dataValues.observed_value,
-          
-          ccc_uuid: tD.critical_care_charts.uuid,
-          ccc_code: tD.critical_care_charts.code,
-          ccc_name: tD.critical_care_charts.name,
-          ccc_desc: tD.critical_care_charts.description,
-  
-          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-          
-          }
-        ];
-      });
-      return { "ventilator_details": ventilator_details, "observed_values": vList };
+        ventilator_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        fetchedData.forEach((tD) => {
+            vList = [...vList,
+            {
+                ventilator_uuid: tD.dataValues.uuid,
+                ventilator_date: tD.dataValues.from_date,
+                ventilator_observed_value: tD.dataValues.observed_value,
+
+                ccc_uuid: tD.critical_care_charts.uuid,
+                ccc_code: tD.critical_care_charts.code,
+                ccc_name: tD.critical_care_charts.name,
+                ccc_desc: tD.critical_care_charts.description,
+
+                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
+
+            }
+            ];
+        });
+        return { "ventilator_details": ventilator_details, "observed_values": vList };
     }
     else {
-      return {};
+        return {};
     }
-  }
+}
 
-  
- function getCCquery(patient_uuid) {
-    
+
+function getCCquery(patient_uuid) {
+
     return {
-      //table_name: ventilatorTbl,
-      
+        //table_name: ventilatorTbl,
+
         order: [['from_date', 'DESC']],
         where: {
             patient_uuid: patient_uuid,
@@ -371,7 +449,7 @@ function getventilatorData(fetchedData) {
         },
 
         include: [
-            
+
             {
                 model: cccTbl,
                 as: 'critical_care_charts',
@@ -387,83 +465,268 @@ function getventilatorData(fetchedData) {
                     },]
 
             },]
-     
-      };
-    }
 
-    function getVCquery(patient_uuid, from_date, to_date) {
-    
-        return {
-          table_name: ventilatorTbl,
-          query: {
-            order: [['from_date', 'DESC']],
-                    where: {
-                        patient_uuid: patient_uuid,
-                        is_active: 1,
-                        status: 1,
-                        from_date: {
-                            [Op.and]: [
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                                Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                            ]
-                        }
-                    },
-                    include: [
-                        
-                        {
-                            model: cccTbl,
-                            as: 'critical_care_charts',
-                            attributes: ['uuid', 'code', 'name', 'description'],
-                            where: { is_active: 1, status: 1 },
+    };
+}
 
-                            include: [
-                                {
-                                    model: cctypeTbl,
-                                    as: 'critical_care_types',
-                                    attributes: ['uuid', 'code', 'name'],
-                                    where: { is_active: 1, status: 1 },
-                                },]
+function getCquery(patient_uuid, from_date, to_date) {
 
-                        },]
-                }
-
-          };
-        }
-        function getabgData(fetchedData) {
-            let abgList = [];
-          
-            if (fetchedData && fetchedData.length > 0) {
-              abg_details = {
-                patient_uuid: fetchedData[0].dataValues.patient_uuid,
-                encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-          
-                facility_uuid: fetchedData[0].dataValues.facility_uuid,
-                encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-                comments: fetchedData[0].dataValues.comments,
-              };
-          
-              fetchedData.forEach((tD) => {
-                abgList = [...abgList,
-                {
-                  abg_uuid: tD.dataValues.uuid,
-                  abg_date: tD.dataValues.from_date,
-                  abg_observed_value: tD.dataValues.observed_value,
-                  
-                  ccc_uuid: tD.critical_care_charts.uuid,
-                  ccc_code: tD.critical_care_charts.code,
-                  ccc_name: tD.critical_care_charts.name,
-                  ccc_desc: tD.critical_care_charts.description,
-          
-                  critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-                  critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-                  critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-                  }
-                ];
-              });
-              return { "abg_details": abg_details, "observed_values": abgList };
-            }
-            else {
-              return {};
-            }
-          }
+    return {
         
+            order: [['from_date', 'DESC']],
+            where: {
+                patient_uuid: patient_uuid,
+                is_active: 1,
+                status: 1,
+                from_date: {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                        Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                    ]
+                }
+            },
+            include: [
+
+                {
+                    model: cccTbl,
+                    as: 'critical_care_charts',
+                    attributes: ['uuid', 'code', 'name', 'description'],
+                    where: { is_active: 1, status: 1 },
+
+                    include: [
+                        {
+                            model: cctypeTbl,
+                            as: 'critical_care_types',
+                            attributes: ['uuid', 'code', 'name'],
+                            where: { is_active: 1, status: 1 },
+                        },]
+
+                },]
+        
+    };
+}
+function getabgData(fetchedData) {
+    let abgList = [];
+
+    if (fetchedData && fetchedData.length > 0) {
+        abg_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        fetchedData.forEach((tD) => {
+            abgList = [...abgList,
+            {
+                abg_uuid: tD.dataValues.uuid,
+                abg_date: tD.dataValues.from_date,
+                abg_observed_value: tD.dataValues.observed_value,
+
+                ccc_uuid: tD.critical_care_charts.uuid,
+                ccc_code: tD.critical_care_charts.code,
+                ccc_name: tD.critical_care_charts.name,
+                ccc_desc: tD.critical_care_charts.description,
+
+                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
+            }
+            ];
+        });
+        return { "abg_details": abg_details, "observed_values": abgList };
+    }
+    else {
+        return {};
+    }
+}
+function getmonitorData(fetchedData) {
+    let monitorList = [];
+
+    if (fetchedData && fetchedData.length > 0) {
+        monitor_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        fetchedData.forEach((tD) => {
+            monitorList = [...monitorList,
+            {
+                monitor_uuid: tD.dataValues.uuid,
+                monitor_date: tD.dataValues.from_date,
+                monitor_observed_value: tD.dataValues.observed_value,
+
+                ccc_uuid: tD.critical_care_charts.uuid,
+                ccc_code: tD.critical_care_charts.code,
+                ccc_name: tD.critical_care_charts.name,
+                ccc_desc: tD.critical_care_charts.description,
+
+                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
+            }
+            ];
+        });
+        return { "monitor_details": monitor_details, "observed_values": monitorList };
+    }
+    else {
+        return {};
+    }
+}
+function getinoutData(fetchedData) {
+    let in_out_takeList = [];
+  
+    if (fetchedData && fetchedData.length > 0) {
+      in_out_take_details = {
+        patient_uuid: fetchedData[0].dataValues.patient_uuid,
+        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+  
+        facility_uuid: fetchedData[0].dataValues.facility_uuid,
+        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+        comments: fetchedData[0].dataValues.comments,
+      };
+  
+      fetchedData.forEach((tD) => {
+        in_out_takeList = [...in_out_takeList,
+        {
+          in_out_take_uuid: tD.dataValues.uuid,
+          in_out_take_date: tD.dataValues.from_date,
+          in_out_take_observed_value: tD.dataValues.observed_value,
+          
+          ccc_uuid: tD.critical_care_charts.uuid,
+          ccc_code: tD.critical_care_charts.code,
+          ccc_name: tD.critical_care_charts.name,
+          ccc_desc: tD.critical_care_charts.description,
+  
+          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
+          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
+          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
+          }
+        ];
+      });
+      return { "in_out_take_details": in_out_take_details, "observed_values": in_out_takeList };
+    }
+    else {
+      return {};
+    }
+  }
+  function getdiabetesData(fetchedData) {
+    let diabetesList = [];
+  
+    if (fetchedData && fetchedData.length > 0) {
+      diabetes_details = {
+        patient_uuid: fetchedData[0].dataValues.patient_uuid,
+        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+  
+        facility_uuid: fetchedData[0].dataValues.facility_uuid,
+        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+        comments: fetchedData[0].dataValues.comments,
+      };
+  
+      fetchedData.forEach((tD) => {
+        diabetesList = [...diabetesList,
+        {
+          diabetes_uuid: tD.dataValues.uuid,
+          diabetes_date: tD.dataValues.from_date,
+          
+          diabetes_observed_value: tD.dataValues.observed_value,
+          
+          cc_chart_uuid: tD.critical_care_charts.uuid,
+          cc_chart_code: tD.critical_care_charts.code,
+          cc_chart_name: tD.critical_care_charts.name,
+          cc_chart_desc: tD.critical_care_charts.description,
+  
+          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
+          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
+          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
+          }
+        ];
+      });
+      return { "diabetes_details": diabetes_details, "observed_values": diabetesList };
+    }
+    else {
+      return {};
+    }
+  }
+  function getdialysisData(fetchedData) {
+    let dialysisList = [];
+  
+    if (fetchedData && fetchedData.length > 0) {
+      dialysis_details = {
+        patient_uuid: fetchedData[0].dataValues.patient_uuid,
+        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+  
+        facility_uuid: fetchedData[0].dataValues.facility_uuid,
+        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+        comments: fetchedData[0].dataValues.comments,
+      };
+  
+      fetchedData.forEach((tD) => {
+        dialysisList = [...dialysisList,
+        {
+          dialysis_uuid: tD.dataValues.uuid,
+          dialysis_date: tD.dataValues.from_date,
+          
+          dialysis_observed_value: tD.dataValues.observed_value,
+          
+          cc_chart_uuid: tD.critical_care_charts.uuid,
+          cc_chart_code: tD.critical_care_charts.code,
+          cc_chart_name: tD.critical_care_charts.name,
+          cc_chart_desc: tD.critical_care_charts.description,
+  
+          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
+          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
+          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
+          }
+        ];
+      });
+      return { "dialysis_details": dialysis_details, "observed_values": dialysisList };
+    }
+    else {
+      return {};
+    }
+  }
+  function getbpData(fetchedData) {
+    let bpList = [];
+  
+    if (fetchedData && fetchedData.length > 0) {
+      bp_details = {
+        patient_uuid: fetchedData[0].dataValues.patient_uuid,
+        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+  
+        facility_uuid: fetchedData[0].dataValues.facility_uuid,
+        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+        comments: fetchedData[0].dataValues.comments,
+      };
+  
+      fetchedData.forEach((tD) => {
+        bpList = [...bpList,
+        {
+          bp_uuid: tD.dataValues.uuid,
+          bp_date: tD.dataValues.from_date,
+          
+          bp_observed_value: tD.dataValues.observed_value,
+          
+          cc_chart_uuid: tD.critical_care_charts.uuid,
+          cc_chart_code: tD.critical_care_charts.code,
+          cc_chart_name: tD.critical_care_charts.name,
+          cc_chart_desc: tD.critical_care_charts.description,
+  
+          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
+          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
+          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
+          }
+        ];
+      });
+      return { "bp_details": bp_details, "observed_values": bpList };
+    }
+    else {
+      return {};
+    }
+  }

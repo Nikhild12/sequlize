@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.route("/create").post(CCCCtrl.createCCC);
 router.route("/getCCCbypatientid").get(CCCCtrl.getCCCbypatientid);
-//router.route("/updateabgbypatientid").put(abgCtrl.updateabgbypatientid);
-//router.route("/getabgcomparedata").get(abgCtrl.getabgcomparedata);
+router.route("/updateCCCbypatientid").put(CCCCtrl.updateCCCbypatientid);
+router.route("/getCCCcomparedata").get(CCCCtrl.getCCCcomparedata);
+router.route("/getcccdetails").get(CCCCtrl.getcccdetails);
 module.exports = router;
