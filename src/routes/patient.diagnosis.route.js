@@ -12,5 +12,6 @@ PatientDiagnosisRoutes.route('/getByFilters').get(PatientDiagnosisCtrl.getPatien
 PatientDiagnosisRoutes.route('/getPatientDiagnosisById').get(PatientDiagnosisCtrl.getPatientDiagnosisHistoryById);
 PatientDiagnosisRoutes.route('/updatePatientDiagnosis').put(PatientDiagnosisCtrl.updatePatientDiagnosisHistory);
 PatientDiagnosisRoutes.route('/getMockJson').get(PatientDiagnosisCtrl.getMobileMockAPI);
+PatientDiagnosisRoutes.route('/updateById').put(PatientDiagnosisCtrl.deletePatientDiagnosisById);
 
 module.exports = PatientDiagnosisRoutes;
