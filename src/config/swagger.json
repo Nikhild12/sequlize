@@ -1832,6 +1832,27 @@
         }
       }
     },
+
+    "/api/patient-chief-complaints/getMockJson": {
+      "get": {
+        "description": "To get Patient chief Complaints",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientChiefComplaints"],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully"
+          }
+        }
+      }
+    },
     "/api/emr-patient-vitals/create": {
       "post": {
         "description": "To Create a EMR Patient Vitals",

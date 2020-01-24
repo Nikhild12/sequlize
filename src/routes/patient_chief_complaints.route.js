@@ -9,5 +9,7 @@ const PatientChiefCompRoutes = express.Router();
 
 PatientChiefCompRoutes.route('/create').post(PatientChiefComplaints.createChiefComplaints);
 PatientChiefCompRoutes.route('/getByFilters').get(PatientChiefComplaints.getPatientChiefComplaints);
+PatientChiefCompRoutes.route('/getMockJson').get(PatientChiefComplaints.getMobileMockAPI);
+
 
 module.exports = PatientChiefCompRoutes;
