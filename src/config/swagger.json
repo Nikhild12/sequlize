@@ -1484,67 +1484,6 @@
         }
       }
     },
-    "/api/discharge-summary/create": {
-      "post": {
-        "description": "To Create a Discharge Summary Settings",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "createDischargeSummary",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/createDischargeSummary"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "DischargeSummarySettings"
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully Inserted Discharge Summary Settings"
-          }
-        }
-      }
-    },
-    "/api/discharge-summary/getDischargeSummarySettingsByUserId": {
-      "get": {
-        "description": "To get a Discharge Summary Settings By User Id",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "DischargeSummarySettings"
-        ],
-        "responses": {
-          "200": {
-            "description": "Fetched Successfully",
-            "schema": {
-              "$ref": "#/definitions/getDischargeSummarySettings"
-            }
-          }
-        }
-      }
-    },
     "/api/emr-workflow-settings/create": {
       "post": {
         "description": "To Create a EMR Workflow for the Master",
@@ -1832,6 +1771,27 @@
         }
       }
     },
+
+    "/api/patient-chief-complaints/getMockJson": {
+      "get": {
+        "description": "To get Patient chief Complaints",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientChiefComplaints"],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully"
+          }
+        }
+      }
+    },
     "/api/emr-patient-vitals/create": {
       "post": {
         "description": "To Create a EMR Patient Vitals",
@@ -1861,6 +1821,31 @@
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Patient Vitals"
+          }
+        }
+      }
+    },
+    "/api/emr-patient-vitals/getMockJson": {
+      "get": {
+        "description": "To get a EMR Patient Vitals",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched"
           }
         }
       }
@@ -2139,6 +2124,31 @@
         "responses": {
           "200": {
             "description": "Successfully Inserted Patient Diagnosis"
+          }
+        }
+      }
+    },
+    "/api/patient-diagnosis/getMockJson": {
+      "get": {
+        "description": "To get Patient Diagnosis",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Patient Diagnosis"
           }
         }
       }
@@ -3998,6 +4008,110 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/ventilator-charts/create": {
+      "post": {
+        "description": "To Create a ventilator data for the patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create ventilator",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createventilator"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ventilator-charts/getventilatorbypatientid": {
+      "get": {
+        "summary": "List patient ventilator data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatorbypatientid"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ventilator-charts/getcccdetails": {
+      "get": {
+        "summary": "List critical care chart details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getcccdetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/my-patient-list/getMyPatientList": {
       "get": {
         "summary": "Get List of my patient for the doctor",
@@ -4270,6 +4384,122 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/ventilator-charts/updateventilatorbypatientid": {
+      "put": {
+        "description": "To update a ventilator data for the patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "update ventilator",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateventilatorbypatientid"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ventilator-charts/getventilatorcomparedata": {
+      "get": {
+        "summary": "List patient ventilator data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatorcomparedata"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ventilator-charts/getventilatormodes": {
+      "get": {
+        "summary": "List ventilator modes data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
+        "responses": {
+          "200": {
+            "description": "sucessful operation",
+            "schema": {
+              "$ref": "#/definitions/getventilatormodes"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/profiles/add": {
       "post": {
         "summary": "To create  profile Details ",
@@ -4529,196 +4759,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    "/api/ventilator-charts/create": {
-      "post": {
-        "description": "To Create a ventilator data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "create ventilator",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/createventilator"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-Ventilator"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/ventilator-charts/getventilatorbypatientid": {
-      "get": {
-        "summary": "List patient ventilator data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-Ventilator"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getventilatorbypatientid"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/ventilator-charts/updateventilatorbypatientid": {
-      "put": {
-        "description": "To update a ventilator data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "update ventilator",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateventilatorbypatientid"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-Ventilator"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/ventilator-charts/getventilatorcomparedata": {
-      "get": {
-        "summary": "List patient ventilator data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "from_date",
-            "type": "string",
-            "format": "date"
-          },
-          {
-            "in": "query",
-            "name": "to_date",
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-Ventilator"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getventilatorcomparedata"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/ventilator-charts/getcccdetails": {
-      "get": {
-        "summary": "List critical care chart details",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-Ventilator"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getcccdetails"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
     "/api/abg-charts/create": {
       "post": {
         "description": "To Create abg data for the patient",
@@ -4743,7 +4783,7 @@
           "application/xml"
         ],
         "tags": [
-          "CriticalCare-abg"
+          "CriticalCare"
         ],
         "responses": {
           "200": {
@@ -4779,7 +4819,7 @@
           "application/xml"
         ],
         "tags": [
-          "CriticalCare-abg"
+          "CriticalCare"
         ],
         "responses": {
           "200": {
@@ -4795,7 +4835,7 @@
     },
     "/api/abg-charts/updateabgbypatientid": {
       "put": {
-        "description": "To update a abg data for the patient",
+        "description": "To update a ventilator data for the patient",
         "parameters": [
           {
             "in": "header",
@@ -4817,7 +4857,7 @@
           "application/xml"
         ],
         "tags": [
-          "CriticalCare-abg"
+          "CriticalCare"
         ],
         "responses": {
           "200": {
@@ -4833,7 +4873,7 @@
     },
     "/api/abg-charts/getabgcomparedata": {
       "get": {
-        "summary": "List patient abg data",
+        "summary": "List patient ventilator data",
         "parameters": [
           {
             "in": "header",
@@ -4865,493 +4905,13 @@
           "application/xml"
         ],
         "tags": [
-          "CriticalCare-abg"
+          "CriticalCare"
         ],
         "responses": {
           "200": {
             "description": "sucessful operation",
             "schema": {
               "$ref": "#/definitions/getabgcomparedata"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/bp-charts/create": {
-      "post": {
-        "description": "To Create bp data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "create abg",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/createbp"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-bp"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/bp-charts/getbpbypatientid": {
-      "get": {
-        "summary": "List patient bp data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-bp"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getbpbypatientid"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/bp-charts/updateabgbypatientid": {
-      "put": {
-        "description": "To update a bp data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "update ventilator",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updatebpbypatientid"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-bp"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/bp-charts/getbpcomparedata": {
-      "get": {
-        "summary": "List patient bp data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "from_date",
-            "type": "string",
-            "format": "date"
-          },
-          {
-            "in": "query",
-            "name": "to_date",
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-bp"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getbpcomparedata"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/dialysis-charts/create": {
-      "post": {
-        "description": "To Create dialysis data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "create dialysis",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/createdialysis"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-dialysis"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/dialysis-charts/getdialysisbypatientid": {
-      "get": {
-        "summary": "List patient dialysis data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-dialysis"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getdialysisbypatientid"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/dialysis-charts/updatedialysisbypatientid": {
-      "put": {
-        "description": "To update a dialysis data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "update ventilator",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updatedialysisbypatientid"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-dialysis"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/dialysis-charts/getdialysiscomparedata": {
-      "get": {
-        "summary": "List patient dialysis data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "from_date",
-            "type": "string",
-            "format": "date"
-          },
-          {
-            "in": "query",
-            "name": "to_date",
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-dialysis"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getdialysiscomparedata"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/diabetes-charts/create": {
-      "post": {
-        "description": "To Create diabetes data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "create abg",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/creatediabetes"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-diabetes"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/diabetes-charts/getdiabetesbypatientid": {
-      "get": {
-        "summary": "List patient diabetes data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-diabetes"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getdiabetesbypatientid"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/diabetes-charts/updatediabetesbypatientid": {
-      "put": {
-        "description": "To update a diabetes data for the patient",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "body",
-            "name": "update ventilator",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updatediabetesbypatientid"
-            }
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-diabetes"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Insertion failed"
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/diabetes-charts/getdiabetescomparedata": {
-      "get": {
-        "summary": "List patient diabetes data",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "from_date",
-            "type": "string",
-            "format": "date"
-          },
-          {
-            "in": "query",
-            "name": "to_date",
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare-diabetes"
-        ],
-        "responses": {
-          "200": {
-            "description": "sucessful operation",
-            "schema": {
-              "$ref": "#/definitions/getdiabetescomparedata"
             }
           }
         },
@@ -5633,7 +5193,7 @@
     },
     "/api/referal-history/getReferralHistory": {
       "get": {
-        "description": "To get Refferal History",
+        "description": "To get Family History",
         "parameters": [
           {
             "in": "header",
@@ -5660,78 +5220,6 @@
             "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getReferralHistory"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/patient-diagnosis/getPatientDiagnosis": {
-      "get": {
-        "description": "To get Patient Diagnosis History",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "patient_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
-        "responses": {
-          "200": {
-            "description": "get Successfully",
-            "schema": {
-              "$ref": "#/definitions/getPatientDiagnosisHistory"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
-      }
-    },
-    "/api/patient-diagnosis/getPatientDiagnosisById": {
-      "get": {
-        "description": "To get a Patient Diagnosis history",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "query",
-            "name": "uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
-        "responses": {
-          "200": {
-            "description": "Fetch Successfully",
-            "schema": {
-              "$ref": "#/definitions/getPatientDiagnosisById"
             }
           }
         },
@@ -6130,6 +5618,9 @@
         },
         "note_type_uuid": {
           "type": "integer"
+        },
+        "data_template":{
+          "type": "string"
         },
         "status": {
           "type": "integer"
@@ -6758,42 +6249,6 @@
         }
       }
     },
-    "createDischargeSummary": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "facility_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "department_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "role_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "context_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "context_activity_map_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "activity_uuid": {
-            "type": "integer",
-            "example": 1
-          },
-          "display_order": {
-            "type": "integer",
-            "example": 1
-          }
-        }
-      }
-    },
     "createEMR": {
       "type": "array",
       "items": {
@@ -6873,47 +6328,6 @@
             "type": "integer"
           },
           "ews_is_active": {
-            "type": "boolean"
-          },
-          "activity_code": {
-            "type": "string"
-          },
-          "activity_icon": {
-            "type": "string"
-          },
-          "activity_name": {
-            "type": "string"
-          },
-          "activity_id": {
-            "type": "integer"
-          },
-          "activity_route_url": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "getDischargeSummarySettings": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "display_order": {
-            "type": "integer"
-          },
-          "discharge_summary_id": {
-            "type": "integer"
-          },
-          "facility_uuid": {
-            "type": "integer"
-          },
-          "role_uuid": {
-            "type": "integer"
-          },
-          "user_uuid": {
-            "type": "integer"
-          },
-          "dss_is_active": {
             "type": "boolean"
           },
           "activity_code": {
@@ -9446,6 +8860,10 @@
               "type": "integer",
               "example": 1
             },
+            "ventilator_mode_uuid": {
+              "type": "integer",
+              "example": 1
+            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -9465,15 +8883,7 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
+              "ccc_uuid": {
                 "type": "integer",
                 "example": 1
               },
@@ -9686,6 +9096,10 @@
               "type": "integer",
               "example": 1
             },
+            "ventilator_mode_uuid": {
+              "type": "integer",
+              "example": 1
+            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -9705,15 +9119,7 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
+              "ccc_uuid": {
                 "type": "integer",
                 "example": 1
               },
@@ -9733,6 +9139,14 @@
           "type": "integer"
         },
         "patient_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getventilatormodes": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
           "type": "integer"
         }
       }
@@ -9915,15 +9329,7 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
+              "ccc_uuid": {
                 "type": "integer",
                 "example": 1
               },
@@ -9988,15 +9394,7 @@
                 "type": "string",
                 "example": "2019-11-08 05:03:00"
               },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
+              "ccc_uuid": {
                 "type": "integer",
                 "example": 1
               },
@@ -10010,444 +9408,6 @@
       }
     },
     "getabgcomparedata": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "createbp": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getbpbypatientid": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "updatebpbypatientid": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getbpcomparedata": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "createdialysis": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getdialysisbypatientid": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "updatedialysisbypatientid": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getdialysiscomparedata": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "creatediabetes": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getdiabetesbypatientid": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "updatediabetesbypatientid": {
-      "type": "object",
-      "properties": {
-        "headers": {
-          "type": "object",
-          "properties": {
-            "patient_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "facility_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "encounter_type_uuid": {
-              "type": "integer",
-              "example": 1
-            },
-            "comments": {
-              "type": "string",
-              "example": "enter some thing"
-            }
-          }
-        },
-        "observed_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "cc_chart_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "cc_concept_value_uuid": {
-                "type": "integer",
-                "example": 1
-              },
-              "observed_value": {
-                "type": "integer",
-                "example": 1.2
-              }
-            }
-          }
-        }
-      }
-    },
-    "getdiabetescomparedata": {
       "type": "object",
       "properties": {
         "user_uuid": {
@@ -10531,6 +9491,9 @@
         "immunization_uuid": {
           "type": "integer"
         },
+        "immunization_name": {
+          "type": "string"
+        },
         "immunization_schedule_flag_uuid": {
           "type": "integer"
         },
@@ -10609,6 +9572,10 @@
           "type": "integer",
           "example": "enter some thing"
         },
+        "immunization_name": {
+          "type": "string",
+          "example": "enter some date"
+        },
         "immunization_schedule_flag_uuid": {
           "type": "integer",
           "example": 1
@@ -10654,33 +9621,6 @@
           "type": "integer"
         },
         "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "getPatientDiagnosisHistory": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        },
-        "patient_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "getPatientDiagnosisById": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
-          "type": "integer"
-        }
-      }
-    },
-    "allPatientImmunization": {
-      "type": "object",
-      "properties": {
-        "user_uuid": {
           "type": "integer"
         }
       }
