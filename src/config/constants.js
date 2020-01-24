@@ -31,6 +31,7 @@ module.exports = Object.freeze({
   FETCHD_PROFILES_SUCCESSFULLY: " Fetched Profile Details Successfully",
   FETCHD_PROFILES_FAIL: " No Record Found ",
   PROPER_FAV_ID: "Please provide proper favourite Type Id",
+  DELETE_SUCCESSFUL: "Deleted Successfully",
 
   GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";

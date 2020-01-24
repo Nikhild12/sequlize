@@ -268,13 +268,37 @@ const PatientDiagnsis = () => {
     }
   };
 
+  const _deletePatientDiagnosisById = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { diagnosisId } = req.body;
+
+    if (user_uuid && diagnosisId) {
+      const updateData = await deletePatientDiagnosisById(diagnosisId);
+      let deleteResponseMessage = emr_constants.DELETE_SUCCESSFUL;
+      if (updateData && !updateData[0]) {
+        deleteResponseMessage = emr_constants.NO_CONTENT_MESSAGE;
+      }
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: deleteResponseMessage,
+        responseContent: updateData
+      });
+    } else {
+      return res.status(422).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   return {
     createPatientDiagnosis: _createPatientDiagnosis,
     getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
     getPatientDiagnosisHistory: _getPatientDiagnosisHistory,
     getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById,
     updatePatientDiagnosisHistory: _updatePatientDiagnosisHistory,
-    getMobileMockAPI: _getMobileMockAPI
+    getMobileMockAPI: _getMobileMockAPI,
+    deletePatientDiagnosisById: _deletePatientDiagnosisById
   };
 };
 
@@ -434,4 +458,16 @@ function getPatientDiagnosisHistory(patient_uuid) {
   };
 
   return patient_diagnosis_tbl.findAll(query);
+}
+
+async function deletePatientDiagnosisById(diagnosisId) {
+  return await patient_diagnosis_tbl.update(
+    {
+      status: emr_constants.IS_IN_ACTIVE,
+      is_active: emr_constants.IS_IN_ACTIVE
+    },
+    {
+      where: { uuid: diagnosisId }
+    }
+  );
 }
