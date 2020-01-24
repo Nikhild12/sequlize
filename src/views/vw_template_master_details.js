@@ -52,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tmd_display_order: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             tmd_test_master_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
