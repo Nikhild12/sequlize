@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             },
             data_template:{
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(250),
                 allowNull: true
             },
                  
