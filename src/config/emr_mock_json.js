@@ -370,7 +370,7 @@ const _patientChiefComplaintsJson = [
     chief_complaint_name: "Fever",
     chief_complaint_code: "Fever",
     chief_complaint_duration_id: 1,
-    chief_complaint_duration_name: "Days",
+    vital_value_type_name: "Days",
     chief_complaint_duration_code: "Days"
   },
   {
@@ -419,7 +419,55 @@ const _patientChiefComplaintsJson = [
   }
 ];
 
+const _patientVitalsJson = [
+  {
+    patient_vitals_id: 1,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    vital_id: 1,
+    vital_name: "SUGAR",
+    vital_code: "SUGAR",
+    vital_value_type_id: 1,
+    vital_value_type_name: "Image",
+    vital_value_type_code: "Image"
+  },
+  {
+    patient_vitals_id: 2,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    vital_id: 1,
+    vital_name: "BP",
+    vital_code: "BP",
+    vital_value_type_id: 1,
+    vital_value_type_name: "Image",
+    vital_value_type_code: "Image"
+  },
+  {
+    patient_vitals_id: 3,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    vital_id: 1,
+    vital_name: "WHITE BLOOD",
+    vital_code: "WHITE BLOOD",
+    vital_value_type_id: 1,
+    vital_value_type_name: "NUMBER",
+    vital_value_type_code: "NUMBER"
+  },
+  {
+    patient_vitals_id: 5,
+    encounter_id: 192,
+    encounter_type_id: 1,
+    vital_id: 1,
+    vital_name: "BMI",
+    vital_code: "BMI",
+    vital_value_type_id: 1,
+    vital_value_type_name: "Days",
+    vital_value_type_code: "Days"
+  }
+];
+
 module.exports = {
   patientVisitHistoryJson: _patientVisitHistoryJson,
-  patientChiefComplaintsJson: _patientChiefComplaintsJson
+  patientChiefComplaintsJson: _patientChiefComplaintsJson,
+  patientVitalsJson: _patientVitalsJson
 };
