@@ -27,18 +27,24 @@
       "description": "Get Successfully",
       "parameters": [
         {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
-        },
-        {
           "in": "body",
           "name": "type",
           "required": true,
           "schema": {
             "$ref": "#/definitions/getnotetemplatebytype"
           }
+        },
+        {
+          "in": "header",
+          "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "header",
+          "name": "facility_uuid",
+          "required": true,
+          "type": "integer"
         }
       ],
       "produces": [

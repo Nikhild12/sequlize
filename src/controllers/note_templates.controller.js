@@ -274,6 +274,7 @@ const noteTemplatesController = () => {
                 .then((data) => {
                     noteTemplatesTbl.findAll({
                         where: {
+                            facility_uuid: req.headers.facility_uuid,
                             note_template_type_uuid: data.dataValues.uuid
                         }})
                         .then((data1) => {
