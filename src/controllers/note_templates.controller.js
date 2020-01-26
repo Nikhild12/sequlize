@@ -54,14 +54,16 @@ const noteTemplatesController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{is_active: 1}
+            where: {
+                is_active: 1
+            }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                    allergey_code: {
+                        allergey_code: {
                             [Op.like]: '%' + getsearch.search + '%',
                         },
 
@@ -125,22 +127,22 @@ const noteTemplatesController = () => {
 
             noteTemplatesTbl.findAll({
                 where: {
-                  [Op.or]: [{
-                    code: postData.code
-                    },
-                    {
-                       name: postData.name
-                    }
-                  ]
+                    [Op.or]: [{
+                            code: postData.code
+                        },
+                        {
+                            name: postData.name
+                        }
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please ente Note Template"
+                        status: "error",
+                        msg: "Record already Found. Please ente Note Template"
                     });
-                  } else{
+                } else {
                     await noteTemplatesTbl.create(postData, {
                         returning: true
                     }).then(data => {
@@ -159,8 +161,8 @@ const noteTemplatesController = () => {
                             error: err
                         });
                     });
-                  }
-              });
+                }
+            });
 
 
         } else {
@@ -254,12 +256,12 @@ const noteTemplatesController = () => {
 
     const getNoteTemplateByType = async (req, res, next) => {
         const postData = req.body;
-        if(!postData.type) {
+        if (!postData.type) {
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
                 .json({
                     status: "info",
-                    msg: 'Required type: LAB'
+                    msg: 'Required type: <note_type_name>'
                 });
         }
         try {
@@ -272,17 +274,33 @@ const noteTemplatesController = () => {
                     }
                 })
                 .then((data) => {
+                    if (!data) {
+                        return res
+                            .status(httpStatus.INTERNAL_SERVER_ERROR)
+                            .json({
+                                status: "info",
+                                msg: 'Required type: <note_type_name>'
+                            });
+                    }
                     noteTemplatesTbl.findAll({
-                        where: {
-                            facility_uuid: req.headers.facility_uuid,
-                            note_template_type_uuid: data.dataValues.uuid
-                        }})
-                        .then((data1) => {
-                            console.log('sf',data1)
-                            res.send(data1)
+                            where: {
+                                facility_uuid: req.headers.facility_uuid,
+                                note_template_type_uuid: data.dataValues.uuid
+                            }
                         })
-            })
+                        .then((data1) => {
+                            console.log('sf', data1);
+                            return res
+                                .status(httpStatus.OK)
+                                .json({
+                                    message: "success",
+                                    statusCode: 200,
+                                    responseContents: data1 || [],
+                                    totalRecords: data1.length
 
+                                });
+                        });
+                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
