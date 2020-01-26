@@ -118,8 +118,8 @@ const noteTemplatesController = () => {
     const postnoteTemplates = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-       
-        
+
+
 
         if (postData) {
 
@@ -144,7 +144,7 @@ const noteTemplatesController = () => {
                     await noteTemplatesTbl.create(postData, {
                         returning: true
                     }).then(data => {
-        
+
                         res.send({
                             statusCode: 200,
                             msg: "Inserted Note Template details Successfully",
@@ -152,7 +152,7 @@ const noteTemplatesController = () => {
                             responseContents: data
                         });
                     }).catch(err => {
-        
+
                         res.send({
                             status: "failed",
                             msg: "failed to Note Template details",
@@ -162,16 +162,15 @@ const noteTemplatesController = () => {
                   }
               });
 
-          
+
         } else {
-            
+
             res.send({
                 status: 'failed',
                 msg: 'Please enter Note Template details'
             });
         }
     };
-
 
     const deletenoteTemplatesr = async (req, res, next) => {
         const postData = req.body;
@@ -215,40 +214,7 @@ const noteTemplatesController = () => {
                 responseContents: data
             });
         });
-        
-    };
-    const getnoteTemplatesrType = async (req, res, next) => {
-        const postData = req.body;
-        try {
 
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await templateTypeTbl.findOne({
-                    where: {
-                        name: 'Lab'
-                    }
-                })
-                .then((data) => {
-                    noteTemplatesTbl.findAll({
-                        where: {
-                            note_template_type_uuid: data.dataValues.uuid
-                        }})
-                        .then((data1) => {
-                            console.log('sf',data1)
-                            res.send(data1)
-                        })
-            })
-
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
     };
 
     const getnoteTemplatesrById = async (req, res, next) => {
@@ -286,16 +252,56 @@ const noteTemplatesController = () => {
         }
     };
 
+    const getNoteTemplateByType = async (req, res, next) => {
+        const postData = req.body;
+        if(!postData.type) {
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "info",
+                    msg: 'Required type: LAB'
+                });
+        }
+        try {
+            const page = postData.page ? postData.page : 1;
+            const itemsPerPage = postData.limit ? postData.limit : 10;
+            const offset = (page - 1) * itemsPerPage;
+            await templateTypeTbl.findOne({
+                    where: {
+                        name: postData.type
+                    }
+                })
+                .then((data) => {
+                    noteTemplatesTbl.findAll({
+                        where: {
+                            note_template_type_uuid: data.dataValues.uuid
+                        }})
+                        .then((data1) => {
+                            console.log('sf',data1)
+                            res.send(data1)
+                        })
+            })
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+
     // --------------------------------------------return----------------------------------
     return {
-
         postnoteTemplates,
         getnoteTemplates,
         updatenoteTemplatesById,
         deletenoteTemplatesr,
-        getnoteTemplatesrType,
-
-        getnoteTemplatesrById
+        getnoteTemplatesrById,
+        getNoteTemplateByType
     };
 };
 

@@ -21,8 +21,8 @@
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "application/file"],
   "paths": {
-     
-   "/api/notetemplate/notetemplateType": {
+
+   "/api/notetemplate/getnotetemplatebytype": {
     "post": {
       "description": "Get Successfully",
       "parameters": [
@@ -44,7 +44,7 @@
         "200": {
           "description": "get Successfully",
           "schema": {
-            "$ref": "#/definitions/notetemplateType"
+            "$ref": "#/definitions/getnotetemplatebytype"
           }
         }
       },
@@ -4668,9 +4668,13 @@
         }
       }
     },
-    "notetemplateType": {
+    "getnotetemplatebytype": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
     },
     "createSpeciality": {
       "type": "object",
