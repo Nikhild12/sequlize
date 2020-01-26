@@ -31,6 +31,14 @@
           "name": "user_uuid",
           "required": true,
           "type": "integer"
+        },
+        {
+          "in": "body",
+          "name": "type",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/getnotetemplatebytype"
+          }
         }
       ],
       "produces": [
