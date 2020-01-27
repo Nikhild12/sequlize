@@ -122,7 +122,9 @@ const CCchartsController = () => {
                 }
 
                 if (data1) {
+                    //console.log("before organise", data1);
                     vdata = getventilatorData(data1);
+                    //console.log("vdata----",vdata);
                     return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                 }
                 else if (data2) {
@@ -367,13 +369,13 @@ async function create_CC(tablename, user_uuid, data1, data2) {
         item.patient_uuid = data1.patient_uuid;
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
-        item.from_date = data1.from_date;
-        item.to_date = data1.to_date;
         item.comments = data1.comments;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.modified_by = 0;
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
+        item.is_active = item.status = 1;
+        item.revision = 1;
     });
     const dtls_result = await tablename.bulkCreate(data2, { returning: true });
     return { "Ventilator Data": dtls_result };
@@ -386,8 +388,6 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
         item.patient_uuid = data1.patient_uuid;
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
-        item.from_date = data1.from_date;
-        item.to_date = data1.to_date;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.comments = data1.comments;
         item.modified_by = user_uuid;
@@ -402,45 +402,69 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
 }
 
 function getventilatorData(fetchedData) {
-    let vList = [];
+    let vList = []; dList=[];
 
     if (fetchedData && fetchedData.length > 0) {
         ventilator_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            ventilator_date: fetchedData[0].dataValues.from_date,
-
+            
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
         };
 
-        fetchedData.forEach((tD) => {
-            vList = [...vList,
-            {
-                ventilator_uuid: tD.dataValues.uuid,
-                ventilator_observed_value: tD.dataValues.observed_value,
-
-                ccc_uuid: tD.critical_care_charts.uuid,
-                ccc_code: tD.critical_care_charts.code,
-                ccc_name: tD.critical_care_charts.name,
-                ccc_desc: tD.critical_care_charts.description,
-
-                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
-                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
-                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
-
-            }
-            ];
+        vList = fetchedData.map((tD) => {
+            return{
+                 ventilator_date: tD.dataValues.from_date,
+                 dList: [...dList,
+                          ...getvdList(fetchedData,tD.patient_uuid,tD.from_date)
+                    ]
+            };
         });
-        return { "ventilator_details": ventilator_details, "observed_values": vList };
+        let uniq = {};
+        let fV_list = vList.filter(
+        obj => !uniq[obj.ventilator_date] && (uniq[obj.ventilator_date] = true )
+           );
+    
+        return { "ventilator_details": ventilator_details, "observed_values": fV_list };
     }
     else {
         return {};
     }
 }
 
+function getvdList(fetchedData, p_id, from_date) {
+    let vd_list = [];
+    const filteredData = fetchedData.filter(fD => {
+      return (
+        fD.dataValues.patient_uuid == p_id &&
+        fD.dataValues.from_date == from_date
+      );
+    });
+  //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+      vd_list = filteredData.map(pV => {
+        return {
+            ventilator_date: pV.dataValues.from_date,
+            ventilator_uuid: pV.dataValues.uuid,
+            ventilator_observed_value: pV.dataValues.observed_value,
 
+            ccc_uuid: pV.critical_care_charts.uuid,
+            ccc_code: pV.critical_care_charts.code,
+            ccc_name: pV.critical_care_charts.name,
+            ccc_desc: pV.critical_care_charts.description,
+
+            critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+            critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+            critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+        };
+      });
+    }
+    //console.log(vd_list);   
+    return vd_list;
+  }
+  
 function getCCquery(patient_uuid) {
 
     return {
@@ -517,7 +541,7 @@ function getabgData(fetchedData) {
         abg_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            abg_date: fetchedData[0].dataValues.from_date,
+            //abg_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -528,7 +552,7 @@ function getabgData(fetchedData) {
             abgList = [...abgList,
             {
                 abg_uuid: tD.dataValues.uuid,
-                //abg_date: tD.dataValues.from_date,
+                abg_date: tD.dataValues.from_date,
                 abg_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
@@ -555,7 +579,7 @@ function getmonitorData(fetchedData) {
         monitor_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            monitor_date: fetchedData[0].dataValues.from_date,
+            //monitor_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -566,7 +590,7 @@ function getmonitorData(fetchedData) {
             monitorList = [...monitorList,
             {
                 monitor_uuid: tD.dataValues.uuid,
-                //monitor_date: tD.dataValues.from_date,
+                monitor_date: tD.dataValues.from_date,
                 monitor_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
@@ -593,7 +617,7 @@ function getinoutData(fetchedData) {
       in_out_take_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        inouttake_date: fetchedData[0].dataValues.from_date,
+        //inouttake_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -604,7 +628,7 @@ function getinoutData(fetchedData) {
         in_out_takeList = [...in_out_takeList,
         {
           in_out_take_uuid: tD.dataValues.uuid,
-          //in_out_take_date: tD.dataValues.from_date,
+          in_out_take_date: tD.dataValues.from_date,
           in_out_take_observed_value: tD.dataValues.observed_value,
           
           ccc_uuid: tD.critical_care_charts.uuid,
@@ -631,7 +655,7 @@ function getinoutData(fetchedData) {
       diabetes_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        diabetes_date: fetchedData[0].dataValues.from_date,
+        //diabetes_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -642,7 +666,7 @@ function getinoutData(fetchedData) {
         diabetesList = [...diabetesList,
         {
           diabetes_uuid: tD.dataValues.uuid,
-          //diabetes_date: tD.dataValues.from_date,
+          diabetes_date: tD.dataValues.from_date,
           diabetes_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,
@@ -669,7 +693,7 @@ function getinoutData(fetchedData) {
       dialysis_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        dialysis_date: fetchedData[0].dataValues.from_date,
+        //dialysis_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -680,7 +704,7 @@ function getinoutData(fetchedData) {
         dialysisList = [...dialysisList,
         {
           dialysis_uuid: tD.dataValues.uuid,
-          //dialysis_date: tD.dataValues.from_date,
+          dialysis_date: tD.dataValues.from_date,
           dialysis_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,
@@ -707,7 +731,7 @@ function getinoutData(fetchedData) {
       bp_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        bp_date: fetchedData[0].dataValues.from_date,
+        //bp_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -718,7 +742,7 @@ function getinoutData(fetchedData) {
         bpList = [...bpList,
         {
           bp_uuid: tD.dataValues.uuid,
-          //bp_date: tD.dataValues.from_date,
+          bp_date: tD.dataValues.from_date,
           bp_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,
