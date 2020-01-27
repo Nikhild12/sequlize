@@ -484,13 +484,14 @@ function getCCquery(patient_uuid) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-
+                required:false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
+                        required:false,
                     },]
 
             },]
@@ -521,13 +522,14 @@ function getCquery(patient_uuid, from_date, to_date) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-
+                required:false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
+                        required:false,
                     },]
 
             },]
