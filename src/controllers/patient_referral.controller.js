@@ -21,6 +21,8 @@ const Referral_History = () => {
     try {
       if (user_uuid && patient_uuid) {
         const referralHistory = await vw_patient_referral.findAll({
+          limit: 10,
+          order: [['pr_uuid', 'DESC']],
           attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'd_uuid', 'd_name', 'f_uuid', 'f_name',],
           where: { pr_patient_uuid: patient_uuid }
         }, { returning: true });
