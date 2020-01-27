@@ -170,7 +170,7 @@ const CCchartsController = () => {
             let data1 = req.body.headers;
             let data2 = req.body.observed_data;
             let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
-            
+
             if (user_uuid && data1 && data2 && critical_care_type) {
 
                 switch (critical_care_type) {
@@ -206,7 +206,7 @@ const CCchartsController = () => {
             }
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res .status(httpStatus.INTERNAL_SERVER_ERROR) .json({ status: "error", msg: errorMsg });
+            return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
         }
     };
 
@@ -239,11 +239,11 @@ const CCchartsController = () => {
         let { user_uuid } = req.headers;
         let { patient_uuid, critical_care_type, from_date, to_date } = req.query;
         let data1, data2, data3, data4, data5, data6, data7, vdata;
-        
+
         try {
             if (user_uuid && patient_uuid) {
 
-                
+
                 const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
                 switch (critical_care_type) {
                     case "1":
@@ -312,7 +312,7 @@ const CCchartsController = () => {
     const _getcccdetails = async (req, res) => {
 
         let { user_uuid } = req.headers;
-        
+
         try {
             if (user_uuid) {
                 const data = await cccTbl.findAll({
@@ -402,31 +402,31 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
 }
 
 function getventilatorData(fetchedData) {
-    let vList = []; dList=[];
+    let vList = []; dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         ventilator_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            
+
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
         };
 
         vList = fetchedData.map((tD) => {
-            return{
-                 ventilator_date: tD.dataValues.from_date,
-                 dList: [...dList,
-                          ...getvdList(fetchedData,tD.patient_uuid,tD.from_date)
-                    ]
+            return {
+                ventilator_date: tD.dataValues.from_date,
+                dList: [...dList,
+                ...getvdList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
             };
         });
         let uniq = {};
         let fV_list = vList.filter(
-        obj => !uniq[obj.ventilator_date] && (uniq[obj.ventilator_date] = true )
-           );
-    
+            obj => !uniq[obj.ventilator_date] && (uniq[obj.ventilator_date] = true)
+        );
+
         return { "ventilator_details": ventilator_details, "observed_values": fV_list };
     }
     else {
@@ -437,34 +437,34 @@ function getventilatorData(fetchedData) {
 function getvdList(fetchedData, p_id, from_date) {
     let vd_list = [];
     const filteredData = fetchedData.filter(fD => {
-      return (
-        fD.dataValues.patient_uuid == p_id &&
-        fD.dataValues.from_date == from_date
-      );
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
     });
-  //console.log(filteredData);
+    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
-      vd_list = filteredData.map(pV => {
-        return {
-            ventilator_date: pV.dataValues.from_date,
-            ventilator_uuid: pV.dataValues.uuid,
-            ventilator_observed_value: pV.dataValues.observed_value,
+        vd_list = filteredData.map(pV => {
+            return {
+                ventilator_date: pV.dataValues.from_date,
+                ventilator_uuid: pV.dataValues.uuid,
+                ventilator_observed_value: pV.dataValues.observed_value,
 
-            ccc_uuid: pV.critical_care_charts.uuid,
-            ccc_code: pV.critical_care_charts.code,
-            ccc_name: pV.critical_care_charts.name,
-            ccc_desc: pV.critical_care_charts.description,
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
 
-            critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
-            critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
-            critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
-        };
-      });
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
     }
     //console.log(vd_list);   
     return vd_list;
-  }
-  
+}
+
 function getCCquery(patient_uuid) {
 
     return {
@@ -501,37 +501,37 @@ function getCCquery(patient_uuid) {
 function getCquery(patient_uuid, from_date, to_date) {
 
     return {
-        
-            order: [['from_date', 'DESC']],
-            where: {
-                patient_uuid: patient_uuid,
-                is_active: 1,
-                status: 1,
-                from_date: {
-                    [Op.and]: [
-                        Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                        Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                    ]
-                }
-            },
-            include: [
 
-                {
-                    model: cccTbl,
-                    as: 'critical_care_charts',
-                    attributes: ['uuid', 'code', 'name', 'description'],
-                    where: { is_active: 1, status: 1 },
+        order: [['from_date', 'DESC']],
+        where: {
+            patient_uuid: patient_uuid,
+            is_active: 1,
+            status: 1,
+            from_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('from_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        },
+        include: [
 
-                    include: [
-                        {
-                            model: cctypeTbl,
-                            as: 'critical_care_types',
-                            attributes: ['uuid', 'code', 'name'],
-                            where: { is_active: 1, status: 1 },
-                        },]
+            {
+                model: cccTbl,
+                as: 'critical_care_charts',
+                attributes: ['uuid', 'code', 'name', 'description'],
+                where: { is_active: 1, status: 1 },
 
-                },]
-        
+                include: [
+                    {
+                        model: cctypeTbl,
+                        as: 'critical_care_types',
+                        attributes: ['uuid', 'code', 'name'],
+                        where: { is_active: 1, status: 1 },
+                    },]
+
+            },]
+
     };
 }
 function getabgData(fetchedData) {
@@ -547,33 +547,59 @@ function getabgData(fetchedData) {
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
         };
-
-        fetchedData.forEach((tD) => {
-            abgList = [...abgList,
-            {
-                abg_uuid: tD.dataValues.uuid,
+        abgList = fetchedData.map((tD) => {
+            return {
                 abg_date: tD.dataValues.from_date,
-                abg_observed_value: tD.dataValues.observed_value,
-
-                ccc_uuid: tD.critical_care_charts.uuid,
-                ccc_code: tD.critical_care_charts.code,
-                ccc_name: tD.critical_care_charts.name,
-                ccc_desc: tD.critical_care_charts.description,
-
-                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
-                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
-                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
-            }
-            ];
+                dList: [...dList,
+                ...getadList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
         });
-        return { "abg_details": abg_details, "observed_values": abgList };
+        let uniq = {};
+        let ab_list = abgList.filter(
+            obj => !uniq[obj.abg_date] && (uniq[obj.abg_date] = true)
+        );
+
+        return { "abg_details": abg_details, "observed_values": ab_list };
     }
     else {
         return {};
     }
 }
+
+function getadList(fetchedData, p_id, from_date) {
+    let ad_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        ad_list = filteredData.map(pV => {
+            return {
+                abg_date: pV.dataValues.from_date,
+                abg_uuid: pV.dataValues.uuid,
+                abg_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return ad_list;
+}
+
 function getmonitorData(fetchedData) {
-    let monitorList = [];
+    let mList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         monitor_details = {
@@ -586,179 +612,311 @@ function getmonitorData(fetchedData) {
             comments: fetchedData[0].dataValues.comments,
         };
 
-        fetchedData.forEach((tD) => {
-            monitorList = [...monitorList,
-            {
-                monitor_uuid: tD.dataValues.uuid,
+        mList = fetchedData.map((tD) => {
+            return {
                 monitor_date: tD.dataValues.from_date,
-                monitor_observed_value: tD.dataValues.observed_value,
-
-                ccc_uuid: tD.critical_care_charts.uuid,
-                ccc_code: tD.critical_care_charts.code,
-                ccc_name: tD.critical_care_charts.name,
-                ccc_desc: tD.critical_care_charts.description,
-
-                critical_care_type_uuid: tD.critical_care_charts.critical_care_types.uuid,
-                critical_care_type_code: tD.critical_care_charts.critical_care_types.code,
-                critical_care_type_name: tD.critical_care_charts.critical_care_types.name,
-            }
-            ];
+                dList: [...dList,
+                ...getmdList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
         });
-        return { "monitor_details": monitor_details, "observed_values": monitorList };
+        let uniq = {};
+        let mtr_list = mList.filter(
+            obj => !uniq[obj.monitor_date] && (uniq[obj.monitor_date] = true)
+        );
+        return { "monitor_details": monitor_details, "observed_values": mtr_list };
     }
     else {
         return {};
     }
 }
+
+function getmdList(fetchedData, p_id, from_date) {
+    let md_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        md_list = filteredData.map(pV => {
+            return {
+                monitor_date: pV.dataValues.from_date,
+                monitor_uuid: pV.dataValues.uuid,
+                monitor_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return md_list;
+}
+
+
 function getinoutData(fetchedData) {
-    let in_out_takeList = [];
-  
+    let ioList = [];
+
     if (fetchedData && fetchedData.length > 0) {
-      in_out_take_details = {
-        patient_uuid: fetchedData[0].dataValues.patient_uuid,
-        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        //inouttake_date: fetchedData[0].dataValues.from_date,
-  
-        facility_uuid: fetchedData[0].dataValues.facility_uuid,
-        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-        comments: fetchedData[0].dataValues.comments,
-      };
-  
-      fetchedData.forEach((tD) => {
-        in_out_takeList = [...in_out_takeList,
-        {
-          in_out_take_uuid: tD.dataValues.uuid,
-          in_out_take_date: tD.dataValues.from_date,
-          in_out_take_observed_value: tD.dataValues.observed_value,
-          
-          ccc_uuid: tD.critical_care_charts.uuid,
-          ccc_code: tD.critical_care_charts.code,
-          ccc_name: tD.critical_care_charts.name,
-          ccc_desc: tD.critical_care_charts.description,
-  
-          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-          }
-        ];
-      });
-      return { "in_out_take_details": in_out_take_details, "observed_values": in_out_takeList };
+        in_out_take_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            //inouttake_date: fetchedData[0].dataValues.from_date,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        ioList = fetchedData.map((tD) => {
+            return {
+                iot_date: tD.dataValues.from_date,
+                dList: [...dList,
+                ...getioList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
+        });
+        let uniq = {};
+        let iot_list = ioList.filter(
+            obj => !uniq[obj.iot_date] && (uniq[obj.iot_date] = true)
+        );
+        return { "in_out_take_details": in_out_take_details, "observed_values": iot_list };
     }
     else {
-      return {};
+        return {};
     }
-  }
-  function getdiabetesData(fetchedData) {
-    let diabetesList = [];
-  
+}
+
+function getioList(fetchedData, p_id, from_date) {
+    let io_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        io_list = filteredData.map(pV => {
+            return {
+                iot_date: pV.dataValues.from_date,
+                iot_uuid: pV.dataValues.uuid,
+                iot_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return io_list;
+}
+
+function getdiabetesData(fetchedData) {
+    let dbList = [];
+
     if (fetchedData && fetchedData.length > 0) {
-      diabetes_details = {
-        patient_uuid: fetchedData[0].dataValues.patient_uuid,
-        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        //diabetes_date: fetchedData[0].dataValues.from_date,
-  
-        facility_uuid: fetchedData[0].dataValues.facility_uuid,
-        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-        comments: fetchedData[0].dataValues.comments,
-      };
-  
-      fetchedData.forEach((tD) => {
-        diabetesList = [...diabetesList,
-        {
-          diabetes_uuid: tD.dataValues.uuid,
-          diabetes_date: tD.dataValues.from_date,
-          diabetes_observed_value: tD.dataValues.observed_value,
-          
-          cc_chart_uuid: tD.critical_care_charts.uuid,
-          cc_chart_code: tD.critical_care_charts.code,
-          cc_chart_name: tD.critical_care_charts.name,
-          cc_chart_desc: tD.critical_care_charts.description,
-  
-          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-          }
-        ];
-      });
-      return { "diabetes_details": diabetes_details, "observed_values": diabetesList };
+        diabetes_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            //diabetes_date: fetchedData[0].dataValues.from_date,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        dbList = fetchedData.map((tD) => {
+            return {
+                db_date: tD.dataValues.from_date,
+                dList: [...dList,
+                ...getdbList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
+        });
+        let uniq = {};
+        let db_list = dbList.filter(
+            obj => !uniq[obj.db_date] && (uniq[obj.db_date] = true)
+        );
+        return { "diabetes details": in_out_take_details, "observed_values": db_list };
     }
     else {
-      return {};
+        return {};
     }
-  }
-  function getdialysisData(fetchedData) {
-    let dialysisList = [];
-  
+}
+
+function getdbList(fetchedData, p_id, from_date) {
+    let db_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        db_list = filteredData.map(pV => {
+            return {
+                db_date: pV.dataValues.from_date,
+                db_uuid: pV.dataValues.uuid,
+                db_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return db_list;
+}
+
+
+function getdialysisData(fetchedData) {
+    let dlList = [];
+
     if (fetchedData && fetchedData.length > 0) {
-      dialysis_details = {
-        patient_uuid: fetchedData[0].dataValues.patient_uuid,
-        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        //dialysis_date: fetchedData[0].dataValues.from_date,
-  
-        facility_uuid: fetchedData[0].dataValues.facility_uuid,
-        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-        comments: fetchedData[0].dataValues.comments,
-      };
-  
-      fetchedData.forEach((tD) => {
-        dialysisList = [...dialysisList,
-        {
-          dialysis_uuid: tD.dataValues.uuid,
-          dialysis_date: tD.dataValues.from_date,
-          dialysis_observed_value: tD.dataValues.observed_value,
-          
-          cc_chart_uuid: tD.critical_care_charts.uuid,
-          cc_chart_code: tD.critical_care_charts.code,
-          cc_chart_name: tD.critical_care_charts.name,
-          cc_chart_desc: tD.critical_care_charts.description,
-  
-          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-          }
-        ];
-      });
-      return { "dialysis_details": dialysis_details, "observed_values": dialysisList };
+        dialysis_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            //dialysis_date: fetchedData[0].dataValues.from_date,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        dlList = fetchedData.map((tD) => {
+            return {
+                dl_date: tD.dataValues.from_date,
+                dList: [...dList,
+                ...getdlList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
+        });
+        let uniq = {};
+        let dl_list = dlList.filter(
+            obj => !uniq[obj.dl_date] && (uniq[obj.dl_date] = true)
+        );
+        return { "dialysis details": in_out_take_details, "observed_values": dl_list };
     }
     else {
-      return {};
+        return {};
     }
-  }
-  function getbpData(fetchedData) {
+}
+
+function getdlList(fetchedData, p_id, from_date) {
+    let dl_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        dl_list = filteredData.map(pV => {
+            return {
+                dl_date: pV.dataValues.from_date,
+                dl_uuid: pV.dataValues.uuid,
+                dl_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return dl_list;
+}
+
+
+function getbpData(fetchedData) {
     let bpList = [];
-  
+
     if (fetchedData && fetchedData.length > 0) {
-      bp_details = {
-        patient_uuid: fetchedData[0].dataValues.patient_uuid,
-        encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-        //bp_date: fetchedData[0].dataValues.from_date,
-  
-        facility_uuid: fetchedData[0].dataValues.facility_uuid,
-        encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
-        comments: fetchedData[0].dataValues.comments,
-      };
-  
-      fetchedData.forEach((tD) => {
-        bpList = [...bpList,
-        {
-          bp_uuid: tD.dataValues.uuid,
-          bp_date: tD.dataValues.from_date,
-          bp_observed_value: tD.dataValues.observed_value,
-          
-          cc_chart_uuid: tD.critical_care_charts.uuid,
-          cc_chart_code: tD.critical_care_charts.code,
-          cc_chart_name: tD.critical_care_charts.name,
-          cc_chart_desc: tD.critical_care_charts.description,
-  
-          critical_care_type_uuid : tD.critical_care_charts.critical_care_types.uuid,
-          critical_care_type_code : tD.critical_care_charts.critical_care_types.code,
-          critical_care_type_name : tD.critical_care_charts.critical_care_types.name,
-          }
-        ];
-      });
-      return { "bp_details": bp_details, "observed_values": bpList };
+        bp_details = {
+            patient_uuid: fetchedData[0].dataValues.patient_uuid,
+            encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            //bp_date: fetchedData[0].dataValues.from_date,
+
+            facility_uuid: fetchedData[0].dataValues.facility_uuid,
+            encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
+            comments: fetchedData[0].dataValues.comments,
+        };
+
+        bpList = fetchedData.map((tD) => {
+            return {
+                bp_date: tD.dataValues.from_date,
+                dList: [...dList,
+                ...getdlList(fetchedData, tD.patient_uuid, tD.from_date)
+                ]
+            };
+        });
+        let uniq = {};
+        let bp_list = bpList.filter(
+            obj => !uniq[obj.bp_date] && (uniq[obj.bp_date] = true)
+        );
+        return { "bp details": in_out_take_details, "observed_values": bp_list };
     }
     else {
-      return {};
+        return {};
     }
-  }
+}
+
+function getbpList(fetchedData, p_id, from_date) {
+    let bp_list = [];
+    const filteredData = fetchedData.filter(fD => {
+        return (
+            fD.dataValues.patient_uuid == p_id &&
+            fD.dataValues.from_date == from_date
+        );
+    });
+    //console.log(filteredData);
+    if (filteredData && filteredData.length > 0) {
+        bp_list = filteredData.map(pV => {
+            return {
+                bp_date: pV.dataValues.from_date,
+                bp_uuid: pV.dataValues.uuid,
+                bp_observed_value: pV.dataValues.observed_value,
+
+                ccc_uuid: pV.critical_care_charts.uuid,
+                ccc_code: pV.critical_care_charts.code,
+                ccc_name: pV.critical_care_charts.name,
+                ccc_desc: pV.critical_care_charts.description,
+
+                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
+                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
+                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+            };
+        });
+    }
+    //console.log(vd_list);   
+    return bp_list;
+}
