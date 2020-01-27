@@ -39,6 +39,9 @@ const chiefDurationRoute = require("./chief_complaints_duration.route");
 const treatmentKitRoute = require("./treatment.kit.routes");
 
 const emrHisSetCtrl = require("./emr.history.settings.routes");
+const bodySideRoute = require("./body_side.route");
+
+const surgeryPositionRoute = require("./surgery.position.route");
 
 const profilesRouter = require("./profiles.route");
 
@@ -48,11 +51,12 @@ const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
 
 //EMR CRITICAL CARE CHARTS ROUTES
-const CCCRoute = require('./CC_charts.route');
+const CCCRoute = require("./CC_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
 const specialitySketcheRoute = require("./speciality_Sketches.route");
+const cccRoute = require("./cccMaster.route");
 
 const patientImmunizationRoute = require("./patient_immunization_schedules.route");
 
@@ -147,13 +151,16 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 serviceRouter.use("/profiles", profilesRouter);
 
 //EMR Critical Care Routes
-serviceRouter.use("/CC-charts",CCCRoute);
+serviceRouter.use("/CC-charts", CCCRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
 
 //speciality Routes
 serviceRouter.use("/speciality", specialitySketcheRoute);
+
+//CCC Master Routes
+serviceRouter.use("/ccc", cccRoute);
 
 //EMR Patient Immunization Schedules  Routes
 serviceRouter.use("/immunization", patientImmunizationRoute);
@@ -167,5 +174,10 @@ serviceRouter.use("/sections", sectionsRouter);
 // EMR categories Routes
 serviceRouter.use("/categories", categoriesRouter);
 
-module.exports = serviceRouter;
+// Body Sides Routes
+serviceRouter.use("/body-side", bodySideRoute);
 
+// Surgery Position Routes
+serviceRouter.use("/surgery-position", surgeryPositionRoute);
+
+module.exports = serviceRouter;
