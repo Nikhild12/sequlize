@@ -68,7 +68,6 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
 
-
       },
       relation_type_uuid: {
 
@@ -86,6 +85,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetZeroValidationMessage('relation_type_uuid')
           }
         }
+
       },
 
       disease_name: {
