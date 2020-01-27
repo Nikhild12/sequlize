@@ -41,6 +41,7 @@ const treatmentKitRoute = require("./treatment.kit.routes");
 const emrHisSetCtrl = require("./emr.history.settings.routes");
 const bodySideRoute = require("./body_side.route");
 
+const surgeryPositionRoute = require("./surgery.position.route");
 
 const profilesRouter = require("./profiles.route");
 
@@ -50,7 +51,7 @@ const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
 
 //EMR CRITICAL CARE CHARTS ROUTES
-const CCCRoute = require('./CC_charts.route');
+const CCCRoute = require("./CC_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
@@ -150,7 +151,7 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 serviceRouter.use("/profiles", profilesRouter);
 
 //EMR Critical Care Routes
-serviceRouter.use("/CC-charts",CCCRoute);
+serviceRouter.use("/CC-charts", CCCRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
@@ -176,7 +177,7 @@ serviceRouter.use("/categories", categoriesRouter);
 // Body Sides Routes
 serviceRouter.use("/body-side", bodySideRoute);
 
-
+// Surgery Position Routes
+serviceRouter.use("/surgery-position", surgeryPositionRoute);
 
 module.exports = serviceRouter;
-
