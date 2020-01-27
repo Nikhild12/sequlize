@@ -39,6 +39,8 @@ const chiefDurationRoute = require("./chief_complaints_duration.route");
 const treatmentKitRoute = require("./treatment.kit.routes");
 
 const emrHisSetCtrl = require("./emr.history.settings.routes");
+const bodySideRoute = require("./body_side.route");
+
 
 const profilesRouter = require("./profiles.route");
 
@@ -170,6 +172,11 @@ serviceRouter.use("/sections", sectionsRouter);
 
 // EMR categories Routes
 serviceRouter.use("/categories", categoriesRouter);
+
+// Body Sides Routes
+serviceRouter.use("/body-side", bodySideRoute);
+
+
 
 module.exports = serviceRouter;
 
