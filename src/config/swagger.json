@@ -8594,14 +8594,6 @@
               "type": "integer",
               "example": 1
             },
-            "from_date": {
-              "type": "string",
-              "example": "2019-11-08 05:03:00"
-            },
-            "to_date": {
-              "type": "string",
-              "example": "2019-11-08 05:03:00"
-            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -8624,6 +8616,14 @@
               "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
+              },
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
               },
               "observed_value": {
                 "type": "integer",
@@ -8834,14 +8834,6 @@
               "type": "integer",
               "example": 1
             },
-            "from_date": {
-              "type": "string",
-              "example": "2019-11-08 05:03:00"
-            },
-            "to_date": {
-              "type": "string",
-              "example": "2019-11-08 05:03:00"
-            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -8864,6 +8856,14 @@
               "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
+              },
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
               },
               "observed_value": {
                 "type": "integer",
