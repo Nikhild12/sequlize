@@ -395,7 +395,7 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        tablename.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
+        tablename.update(item, { where: { patient_uuid: item.patient_uuid, cc_chart_uuid: item.cc_chart_uuid } }, { returning: true })];
     });
     return updatePromise;
 }
