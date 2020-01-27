@@ -369,6 +369,7 @@ async function create_CC(tablename, user_uuid, data1, data2) {
         item.facility_uuid = data1.facility_uuid;
         item.from_date = data1.from_date;
         item.to_date = data1.to_date;
+        item.comments = data1.comments;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.modified_by = 0;
         item.created_date = item.modified_date = new Date();
@@ -418,7 +419,6 @@ function getventilatorData(fetchedData) {
             vList = [...vList,
             {
                 ventilator_uuid: tD.dataValues.uuid,
-                
                 ventilator_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
