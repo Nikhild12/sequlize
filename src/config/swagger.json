@@ -331,6 +331,181 @@
         }
       }
     },
+    "/api/ccc/addCccMaster": {
+      "post": {
+        "description": "To Create a Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create Ccc",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addCccMaster"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/getCccMasterById": {
+      "post": {
+        "description": "To get a Ccc Master Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Ccc_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getCccMasterById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch Successfully",
+            "schema": {
+              "$ref": "#/definitions/getChiefMasterById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/updateCccMasterById": {
+      "post": {
+        "description": "To Update Ccc Master Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpadteCcc",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateCccMasterById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateCccMasterById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/getAllCccMaster": {
+      "post": {
+        "description": "To get All Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Ccc Master",
+            "schema": {
+              "$ref": "#/definitions/getAllCccMaster"
+            }
+          }
+        }
+      }
+    },
+    "/api/ccc/deleteCccMaster": {
+      "post": {
+        "description": "To Delete Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Ccc_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteCccMaster"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted Successfully"
+          }
+        }
+      }
+    },
     "/api/proceduresNoteTemplate/getprocedures-note-template": {
       "post": {
         "description": "get Successfully",
@@ -4601,6 +4776,99 @@
     }
   },
   "definitions": {
+    "addCccMaster":{
+      "type": "object",
+      "properties": {
+        "critical_care_type_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "critical_care_uom_uuid": {
+          "type": "integer"
+        },
+        "mnemonic_code_master_uuid": {
+          "type": "integer"
+        },
+        "loinc_code_master_uuid": {
+          "type": "integer"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
+  "getCccMasterById": {
+    "type": "object",
+    "properties": {
+      "Ccc_id": {
+        "type": "integer"
+      }
+    }
+  },
+  "updateCccMasterById": {
+    "type": "object",
+    "properties": {
+      "Ccc_id": {
+        "type": "integer"
+      },
+      "critical_care_type_uuid": {
+        "type": "integer"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "critical_care_uom_uuid": {
+        "type": "integer"
+      },
+      "mnemonic_code_master_uuid": {
+        "type": "integer"
+      },
+      "loinc_code_master_uuid": {
+        "type": "integer"
+      },
+      "comments": {
+        "type": "string"
+      },
+      "status": {
+        "type": "integer"
+      },
+      "revision": {
+        "type": "integer"
+      }
+    }
+  },
+  "getAllCccMaster": {
+      "type": "object",
+      "properties": { }
+  },
+  "deleteCccMaster":{
+    "type": "object",
+      "properties": {
+        "Ccc_id":{
+          "type": "integer"
+        }
+      }
+  },
     "deleteProcedures": {
       "type": "object",
       "properties": {
