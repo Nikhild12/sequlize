@@ -21,165 +21,144 @@
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "application/file"],
   "paths": {
-
-   "/api/notetemplate/getnotetemplatebytype": {
-    "post": {
-      "description": "Get Successfully",
-      "parameters": [
-        {
-          "in": "body",
-          "name": "type",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/getnotetemplatebytype"
+    "/api/notetemplate/getnotetemplatebytype": {
+      "post": {
+        "description": "Get Successfully",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getnotetemplatebytype"
+            }
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getnotetemplatebytype"
+            }
           }
         },
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/deleteProcedures": {
+      "post": {
+        "description": "Inserted Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures"
+            }
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures"
+            }
+          }
         },
-        {
-          "in": "header",
-          "name": "facility_uuid",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Note Template"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/getnotetemplatebytype"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/getProceduresById": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedure_Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProceduresById"
+            }
           }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-"/api/procedures/deleteProcedures":{
-    "post": {
-      "description": "Inserted Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProceduresById"
+            }
+          }
         },
-        {
-          "in": "body",
-          "name": "delete",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/deleteProcedures"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/updateProceduresById": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedure_Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateProceduresById"
+            }
           }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/deleteProcedures"
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateProceduresById"
+            }
           }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-  "/api/procedures/getProceduresById": {
-    "post": {
-      "description": "Get By Id Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
         },
-        {
-          "in": "body",
-          "name": "Procedure_Id",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
-          }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
-          }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-  "/api/procedures/updateProceduresById": {
-    "post": {
-      "description": "Get By Id Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
-        },
-        {
-          "in": "body",
-          "name": "Procedure_Id",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/updateProceduresById"
-          }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/updateProceduresById"
-          }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
 
     "/api/speciality/createSpeciality": {
       "post": {
@@ -350,13 +329,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -388,13 +362,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -426,13 +395,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -456,13 +420,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "get All Ccc Master",
@@ -492,13 +451,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "deleted Successfully"
@@ -4773,10 +4727,49 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/body-side/get-list": {
+      "get": {
+        "description": "To get List of Body Side",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["BodySide"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
-    "addCccMaster":{
+    "getBodySide": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "addCccMaster": {
       "type": "object",
       "properties": {
         "critical_care_type_uuid": {
@@ -4811,64 +4804,64 @@
         }
       }
     },
-  "getCccMasterById": {
-    "type": "object",
-    "properties": {
-      "Ccc_id": {
-        "type": "integer"
-      }
-    }
-  },
-  "updateCccMasterById": {
-    "type": "object",
-    "properties": {
-      "Ccc_id": {
-        "type": "integer"
-      },
-      "critical_care_type_uuid": {
-        "type": "integer"
-      },
-      "code": {
-        "type": "string"
-      },
-      "name": {
-        "type": "string"
-      },
-      "description": {
-        "type": "string"
-      },
-      "critical_care_uom_uuid": {
-        "type": "integer"
-      },
-      "mnemonic_code_master_uuid": {
-        "type": "integer"
-      },
-      "loinc_code_master_uuid": {
-        "type": "integer"
-      },
-      "comments": {
-        "type": "string"
-      },
-      "status": {
-        "type": "integer"
-      },
-      "revision": {
-        "type": "integer"
-      }
-    }
-  },
-  "getAllCccMaster": {
+    "getCccMasterById": {
       "type": "object",
-      "properties": { }
-  },
-  "deleteCccMaster":{
-    "type": "object",
       "properties": {
-        "Ccc_id":{
+        "Ccc_id": {
           "type": "integer"
         }
       }
-  },
+    },
+    "updateCccMasterById": {
+      "type": "object",
+      "properties": {
+        "Ccc_id": {
+          "type": "integer"
+        },
+        "critical_care_type_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "critical_care_uom_uuid": {
+          "type": "integer"
+        },
+        "mnemonic_code_master_uuid": {
+          "type": "integer"
+        },
+        "loinc_code_master_uuid": {
+          "type": "integer"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
+    "getAllCccMaster": {
+      "type": "object",
+      "properties": {}
+    },
+    "deleteCccMaster": {
+      "type": "object",
+      "properties": {
+        "Ccc_id": {
+          "type": "integer"
+        }
+      }
+    },
     "deleteProcedures": {
       "type": "object",
       "properties": {
@@ -9237,7 +9230,7 @@
         }
       }
     },
-    "deleteDiagnosisById":{
+    "deleteDiagnosisById": {
       "type": "object",
       "properties": {
         "diagnosisId": {
