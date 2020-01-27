@@ -367,6 +367,8 @@ async function create_CC(tablename, user_uuid, data1, data2) {
         item.patient_uuid = data1.patient_uuid;
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
+        item.from_date = data1.from_date;
+        item.to_date = data1.to_date;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.modified_by = 0;
         item.created_date = item.modified_date = new Date();
@@ -383,15 +385,17 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
         item.patient_uuid = data1.patient_uuid;
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
+        item.from_date = data1.from_date;
+        item.to_date = data1.to_date;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.comments = data1.comments;
-        item.modified_by = 0;
+        item.modified_by = user_uuid;
         item.is_active = item.status = 1;
         item.revision = 1;
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        tablename.update(item, { where: { patient_uuid: item.patient_uuid, ccc_uuid: item.ccc_uuid } }, { returning: true })];
+        tablename.update(item, { where: { patient_uuid: item.patient_uuid, cc_chart_uuid: item.cc_chart_uuid } }, { returning: true })];
     });
     return updatePromise;
 }
@@ -403,6 +407,7 @@ function getventilatorData(fetchedData) {
         ventilator_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            ventilator_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -413,7 +418,7 @@ function getventilatorData(fetchedData) {
             vList = [...vList,
             {
                 ventilator_uuid: tD.dataValues.uuid,
-                ventilator_date: tD.dataValues.from_date,
+                
                 ventilator_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
@@ -512,6 +517,7 @@ function getabgData(fetchedData) {
         abg_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            abg_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -522,7 +528,7 @@ function getabgData(fetchedData) {
             abgList = [...abgList,
             {
                 abg_uuid: tD.dataValues.uuid,
-                abg_date: tD.dataValues.from_date,
+                //abg_date: tD.dataValues.from_date,
                 abg_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
@@ -549,6 +555,7 @@ function getmonitorData(fetchedData) {
         monitor_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+            monitor_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -559,7 +566,7 @@ function getmonitorData(fetchedData) {
             monitorList = [...monitorList,
             {
                 monitor_uuid: tD.dataValues.uuid,
-                monitor_date: tD.dataValues.from_date,
+                //monitor_date: tD.dataValues.from_date,
                 monitor_observed_value: tD.dataValues.observed_value,
 
                 ccc_uuid: tD.critical_care_charts.uuid,
@@ -586,6 +593,7 @@ function getinoutData(fetchedData) {
       in_out_take_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+        inouttake_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -596,7 +604,7 @@ function getinoutData(fetchedData) {
         in_out_takeList = [...in_out_takeList,
         {
           in_out_take_uuid: tD.dataValues.uuid,
-          in_out_take_date: tD.dataValues.from_date,
+          //in_out_take_date: tD.dataValues.from_date,
           in_out_take_observed_value: tD.dataValues.observed_value,
           
           ccc_uuid: tD.critical_care_charts.uuid,
@@ -623,6 +631,7 @@ function getinoutData(fetchedData) {
       diabetes_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+        diabetes_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -633,8 +642,7 @@ function getinoutData(fetchedData) {
         diabetesList = [...diabetesList,
         {
           diabetes_uuid: tD.dataValues.uuid,
-          diabetes_date: tD.dataValues.from_date,
-          
+          //diabetes_date: tD.dataValues.from_date,
           diabetes_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,
@@ -661,6 +669,7 @@ function getinoutData(fetchedData) {
       dialysis_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+        dialysis_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -671,8 +680,7 @@ function getinoutData(fetchedData) {
         dialysisList = [...dialysisList,
         {
           dialysis_uuid: tD.dataValues.uuid,
-          dialysis_date: tD.dataValues.from_date,
-          
+          //dialysis_date: tD.dataValues.from_date,
           dialysis_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,
@@ -699,6 +707,7 @@ function getinoutData(fetchedData) {
       bp_details = {
         patient_uuid: fetchedData[0].dataValues.patient_uuid,
         encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
+        bp_date: fetchedData[0].dataValues.from_date,
   
         facility_uuid: fetchedData[0].dataValues.facility_uuid,
         encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -709,8 +718,7 @@ function getinoutData(fetchedData) {
         bpList = [...bpList,
         {
           bp_uuid: tD.dataValues.uuid,
-          bp_date: tD.dataValues.from_date,
-          
+          //bp_date: tD.dataValues.from_date,
           bp_observed_value: tD.dataValues.observed_value,
           
           cc_chart_uuid: tD.critical_care_charts.uuid,

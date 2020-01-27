@@ -21,14 +21,28 @@
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "application/file"],
   "paths": {
-     
-   "/api/notetemplate/notetemplateType": {
+
+   "/api/notetemplate/getnotetemplatebytype": {
     "post": {
       "description": "Get Successfully",
       "parameters": [
         {
+          "in": "body",
+          "name": "type",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/getnotetemplatebytype"
+          }
+        },
+        {
           "in": "header",
           "name": "user_uuid",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "in": "header",
+          "name": "facility_uuid",
           "required": true,
           "type": "integer"
         }
@@ -44,7 +58,7 @@
         "200": {
           "description": "get Successfully",
           "schema": {
-            "$ref": "#/definitions/notetemplateType"
+            "$ref": "#/definitions/getnotetemplatebytype"
           }
         }
       },
@@ -4668,9 +4682,13 @@
         }
       }
     },
-    "notetemplateType": {
+    "getnotetemplatebytype": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
     },
     "createSpeciality": {
       "type": "object",
@@ -8315,6 +8333,14 @@
               "type": "integer",
               "example": 1
             },
+            "from_date": {
+              "type": "string",
+              "example": "2019-11-08 05:03:00"
+            },
+            "to_date": {
+              "type": "string",
+              "example": "2019-11-08 05:03:00"
+            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -8326,14 +8352,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
               "cc_chart_uuid": {
                 "type": "integer",
                 "example": 1
@@ -8555,6 +8573,14 @@
               "type": "integer",
               "example": 1
             },
+            "from_date": {
+              "type": "string",
+              "example": "2019-11-08 05:03:00"
+            },
+            "to_date": {
+              "type": "string",
+              "example": "2019-11-08 05:03:00"
+            },
             "comments": {
               "type": "string",
               "example": "enter some thing"
@@ -8566,14 +8592,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
               "cc_chart_uuid": {
                 "type": "integer",
                 "example": 1
