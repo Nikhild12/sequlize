@@ -938,7 +938,10 @@ function getFavouriteMasterDetailsUpdateData(
     modified_by: user_uuid,
     modified_date: new Date(),
     chief_complaint_uuid: favouritMasterDetailsTbl.chief_complaint_id,
-    vital_master_uuid: favouritMasterDetailsTbl.vital_master_id
+    vital_master_uuid: favouritMasterDetailsTbl.vital_master_id,
+    diet_frequency_uuid: favouriteMasterReqData.diet_frequency_uuid,
+    diet_category_uuid: favouriteMasterReqData.diet_category_uuid,
+    quantity: favouriteMasterReqData.quantity
   };
 }
 
@@ -1177,6 +1180,7 @@ function getAllDietFavsInReadableFormat(dietFav) {
       favourite_type_id: df.fm_favourite_type_uuid,
       favourite_active: df.fm_active,
       favourite_display_order: df.fm_display_order,
+      department_id: df.fm_dept,
 
       // Diet Master
       diet_master_id: df.fmd_diet_master_uuid,

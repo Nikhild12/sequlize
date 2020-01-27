@@ -55,6 +55,7 @@ const sequelize = new Sequelize(
   define: {
     timestamps: true
   },
+  // logging:console.log,
   dialectOptions: {
     // useUTC: false, //for reading from database
     dateStrings: true,

@@ -162,13 +162,14 @@ const tmpmstrController = () => {
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction: templateTransaction }, { returning: true, plain: true });
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction:templateTransaction }, {returning: true, plain: true });
           const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid, templateTransaction));
           await templateTransaction.commit();
           templateTransStatus = true;
 
           if (temp_mas && temp_mas_dtls) {
-
+            //await templateTransaction.commit();
+            //templateTransStatus = true;
             return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
           }
         } else {
@@ -275,6 +276,7 @@ function getTemplateData(fetchedData) {
       templateList = [...templateList,
       {
         template_details_id: tD.tmd_uuid,
+        template_details_displayorder:tD.tmd_display_order,
 
         drug_name: tD.im_name,
         drug_code: tD.im_code,
@@ -384,6 +386,9 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.item_master_uuid = mD.drug_id,
       mD.drug_route_uuid = mD.drug_route_uuid,
       mD.drug_frequency_uuid = mD.drug_frequency_uuid,
+      mD.diet_master_uuid= mD.diet_master_uuid,
+      mD.diet_catagory_uuid= mD.diet_catagory_uuid,
+      mD.diet_frequency_uuid= mD.diet_frequency_uuid,
       mD.display_order = mD.display_order,
       mD.duration = mD.drug_duration,
       mD.duration_period_uuid = mD.drug_period_uuid,
@@ -395,7 +400,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.revision = mD.revision,
       mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
-    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction }, { returning: true })];
+    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction},{ returning: true })];
   });
   return masterDetailsPromise;
 }
@@ -415,6 +420,9 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
         drug_route_uuid: tD.drug_route_uuid,
         drug_frequency_uuid: tD.drug_frequency_uuid,
         duration: tD.drug_duration,
+        diet_master_uuid: tD.diet_master_uuid,
+        diet_catagory_uuid: tD.diet_catagory_uuid,
+        diet_frequency_uuid: tD.diet_frequency_uuid,
         duration_period_uuid: tD.drug_period_uuid,
         drug_instruction_uuid: tD.drug_instruction_uuid,
         display_order: tD.display_order,
@@ -464,6 +472,8 @@ function getDrugsListForTemplate(fetchedData, template_id) {
       drug_list = [...drug_list,
       {
         template_details_uuid: dD.tmd_uuid,
+        template_details_displayorder: dD.tmd_display_order,
+
         drug_name: dD.im_name,
         drug_code: dD.im_code,
         drug_id: dD.im_uuid,
@@ -504,16 +514,24 @@ function getDietListForTemplate(fetchedData, template_id) {
       diet_list = [...diet_list,
       {
         template_details_uuid: dD.tmd_uuid,
+        template_details_displayorder: dD.tmd_display_order,
+        
+        diet_id: dD.tmd_diet_master_uuid,
         diet_name: dD.dm_name,
         diet_code: dD.dm_code,
         //drug_id: dD.im_uuid,
 
+        diet_category_id: dD.tmd_diet_category_uuid,
         diet_category_name: dD.dc_name,
         diet_category_code: dD.dc_code,
 
-        diet_frequency_code: dD.df_name,
+        diet_frequency_id:dD.tmd_diet_frequency_uuid,
+        diet_frequency_name: dD.df_name,
         diet_frequency_code: dD.df_code,
+        
         diet_display_order: dD.tmd_display_order,
+
+        quantity: dD.tmd_quantity
 
         }
       ];
@@ -601,6 +619,7 @@ function getLabListForTemplate(fetchedData, template_id) {
       lab_list = [...lab_list,
       {
         template_details_uuid: lD.tmd_uuid,
+        template_details_displayorder: lD.tmd_display_order,
         lab_test_uuid: lD.ltm_uuid,
         lab_code: lD.ltm_code,
         lab_name: lD.ltm_name,
@@ -627,6 +646,7 @@ function getRisListForTemplate(fetchedData, template_id) {
       lab_list = [...lab_list,
       {
         template_details_uuid: lD.tmd_uuid,
+        template_details_displayorder: lD.tmd_display_order,
         lab_test_uuid: lD.rtm_uuid,
         lab_code: lD.rtm_code,
         lab_name: lD.rtm_name,

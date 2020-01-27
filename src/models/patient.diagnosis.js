@@ -1,3 +1,5 @@
+const emr_constants = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
 
     const PATIENT_DIAGNOSIS = sequelize.define(
@@ -7,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             uuid: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
+                allowNull: false,
                 autoIncrement: true
             },
             facility_uuid: {
@@ -16,13 +19,50 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
             },
             patient_uuid: {
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                allowNull: false,
+
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+                    },
+                    min: {
+                        args: 1,
+                        msg: emr_constants.GetZeroValidationMessage('patient_uuid')
+                    },
+
+                }
             },
             encounter_uuid: {
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+                    },
+                    min: {
+                        args: 1,
+                        msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+                    }
+                }
+            },
+            encounter_doctor_uuid: {
+                type: DataTypes.INTEGER,
+
+            },
+            treatment_kit_uuid: {
+                type: DataTypes.INTEGER,
+
             },
             encounter_type_uuid: {
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+
             },
             consultation_uuid: {
                 type: DataTypes.INTEGER
@@ -118,6 +158,10 @@ module.exports = (sequelize, DataTypes) => {
     PATIENT_DIAGNOSIS.associate = model => {
         PATIENT_DIAGNOSIS.belongsTo(model.diagnosis, {
             foreignKey: "diagnosis_uuid"
+        });
+        PATIENT_DIAGNOSIS.belongsTo(model.encounter_type, {
+            foreignKey: 'encounter_type_uuid',
+            as: 'encounter_type'
         });
     };
     return PATIENT_DIAGNOSIS;

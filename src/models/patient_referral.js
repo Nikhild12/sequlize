@@ -3,8 +3,8 @@ const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
 
-  const family_history = sequelize.define(
-    'family_history',
+  const patient_referral = sequelize.define(
+    'patient_referral',
     {
       uuid: {
 
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
           },
           min: {
-            args: 1,
+            args: [0],
             msg: emr_constants.GetZeroValidationMessage('patient_uuid')
           },
 
@@ -46,89 +46,97 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
           },
           min: {
-            args: 1,
+            args: [0],
             msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
           }
         }
       },
-      consultation_uuid: {
+      encounter_type_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('consultation_uuid')
-          }
-        }
-
+        defaultValue: 0
 
       },
-      relation_type_uuid: {
+      referral_date: {
 
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('relation_type_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('relation_type_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('relation_type_uuid')
-          }
-        }
-      },
-
-      disease_name: {
-        type: DataTypes.STRING(100),
-        allowNull: true
-      },
-      disease_description: {
-        type: DataTypes.STRING(500),
-        allowNull: true
-      },
-      identified_date: {
         type: DataTypes.DATE,
-        allowNull: true,
-        validate: {
-          isDate: true
-        }
+        allowNull: true
 
       },
+      is_reviewed: {
 
-      duration: {
-
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
         allowNull: false
 
       },
-      period_uuid: {
+      facility_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
+
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('period_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('period_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
           },
           min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('period_uuid')
-          }
-        }
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+          },
 
+        }
+      },
+      department_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+          },
+          min: {
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('department_uuid')
+          },
+
+        }
+      },
+      comments: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
+      referral_type_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+
+      },
+      referral_facility_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+
+      },
+      referral_deptartment_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+
+      },
+      referral_comments: {
+        type: DataTypes.STRING(500),
+        allowNull: true
       },
 
       is_active: {
@@ -170,7 +178,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'family_history',
+      tableName: 'patient_referral',
       createdAt: 'created_date',
       updatedAt: 'modified_date',
       indexes: [{
@@ -179,17 +187,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  family_history.associate = models => {
-    family_history.belongsTo(models.periods, {
-      foreignKey: 'period_uuid',
-      as: 'periods'
-    });
-    family_history.belongsTo(models.family_relation_type, {
-      foreignKey: 'relation_type_uuid',
-      as: 'family_relation_type'
-    });
-  };
-
-
-  return family_history;
+  return patient_referral;
 };

@@ -7,7 +7,7 @@ const Op = Sequelize.Op;
 
 
 
-
+const templateTypeTbl = db.template_type;
 const noteTemplatesTbl = db.note_templates;
 
 const noteTemplatesController = () => {
@@ -54,14 +54,16 @@ const noteTemplatesController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{is_active: 1}
+            where: {
+                is_active: 1
+            }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                    allergey_code: {
+                        allergey_code: {
                             [Op.like]: '%' + getsearch.search + '%',
                         },
 
@@ -118,33 +120,33 @@ const noteTemplatesController = () => {
     const postnoteTemplates = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-       
-        
+
+
 
         if (postData) {
 
             noteTemplatesTbl.findAll({
                 where: {
-                  [Op.or]: [{
-                    code: postData.code
-                    },
-                    {
-                       name: postData.name
-                    }
-                  ]
+                    [Op.or]: [{
+                            code: postData.code
+                        },
+                        {
+                            name: postData.name
+                        }
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please ente Note Template"
+                        status: "error",
+                        msg: "Record already Found. Please ente Note Template"
                     });
-                  } else{
+                } else {
                     await noteTemplatesTbl.create(postData, {
                         returning: true
                     }).then(data => {
-        
+
                         res.send({
                             statusCode: 200,
                             msg: "Inserted Note Template details Successfully",
@@ -152,26 +154,25 @@ const noteTemplatesController = () => {
                             responseContents: data
                         });
                     }).catch(err => {
-        
+
                         res.send({
                             status: "failed",
                             msg: "failed to Note Template details",
                             error: err
                         });
                     });
-                  }
-              });
+                }
+            });
 
-          
+
         } else {
-            
+
             res.send({
                 status: 'failed',
                 msg: 'Please enter Note Template details'
             });
         }
     };
-
 
     const deletenoteTemplatesr = async (req, res, next) => {
         const postData = req.body;
@@ -215,9 +216,8 @@ const noteTemplatesController = () => {
                 responseContents: data
             });
         });
-        
+
     };
-  
 
     const getnoteTemplatesrById = async (req, res, next) => {
         const postData = req.body;
@@ -254,15 +254,73 @@ const noteTemplatesController = () => {
         }
     };
 
+    const getNoteTemplateByType = async (req, res, next) => {
+        const postData = req.body;
+        if (!postData.type) {
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "info",
+                    msg: 'Required type: <note_type_name>'
+                });
+        }
+        try {
+            const page = postData.page ? postData.page : 1;
+            const itemsPerPage = postData.limit ? postData.limit : 10;
+            const offset = (page - 1) * itemsPerPage;
+            await templateTypeTbl.findOne({
+                    where: {
+                        name: postData.type
+                    }
+                })
+                .then((data) => {
+                    if (!data) {
+                        return res
+                            .status(httpStatus.INTERNAL_SERVER_ERROR)
+                            .json({
+                                status: "info",
+                                msg: 'Required type: <note_type_name>'
+                            });
+                    }
+                    noteTemplatesTbl.findAll({
+                            where: {
+                                facility_uuid: req.headers.facility_uuid,
+                                note_template_type_uuid: data.dataValues.uuid
+                            }
+                        })
+                        .then((data1) => {
+                            console.log('sf', data1);
+                            return res
+                                .status(httpStatus.OK)
+                                .json({
+                                    message: "success",
+                                    statusCode: 200,
+                                    responseContents: data1 || [],
+                                    totalRecords: data1.length
+
+                                });
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+
     // --------------------------------------------return----------------------------------
     return {
-
         postnoteTemplates,
         getnoteTemplates,
         updatenoteTemplatesById,
         deletenoteTemplatesr,
-
-        getnoteTemplatesrById
+        getnoteTemplatesrById,
+        getNoteTemplateByType
     };
 };
 
