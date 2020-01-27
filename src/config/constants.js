@@ -32,8 +32,9 @@ module.exports = Object.freeze({
   FETCHD_PROFILES_FAIL: " No Record Found ",
   PROPER_FAV_ID: "Please provide proper favourite Type Id",
   DELETE_SUCCESSFUL: "Deleted Successfully",
+  TREATMENT_REQUIRED: "Please send treatment Kit along with One widget details",
 
-  GetpleaseProvideMsg: function (columnname) {
+  GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "facility_uuid":
@@ -89,7 +90,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetMinimumMessage: function (columnname) {
+  GetMinimumMessage: function(columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -134,7 +135,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function (columnname) {
+  GetZeroValidationMessage: function(columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
