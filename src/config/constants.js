@@ -33,6 +33,7 @@ module.exports = Object.freeze({
   PROPER_FAV_ID: "Please provide proper favourite Type Id",
   DELETE_SUCCESSFUL: "Deleted Successfully",
   TREATMENT_REQUIRED: "Please send treatment Kit along with One widget details",
+  SURGERY_POSITION:"Surgery Position fetched successfully",
 
   GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
