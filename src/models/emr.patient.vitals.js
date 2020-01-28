@@ -1,5 +1,6 @@
+const emr_constants = require('../config/constants');
 module.exports = (sequelize, DataTypes) => {
-    const emr_constants = require('../config/constants');
+    
     const patient_vitals = sequelize.define(
         "patient_vitals",
         {
