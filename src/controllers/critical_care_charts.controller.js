@@ -244,7 +244,7 @@ const CCchartsController = () => {
             if (user_uuid && patient_uuid) {
 
 
-                const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                //const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
                 switch (critical_care_type) {
                     case "1":
                         data1 = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
