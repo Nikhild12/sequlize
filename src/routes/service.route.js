@@ -44,11 +44,12 @@ const bodySideRoute = require("./body_side.route");
 const surgeryPositionRoute = require("./surgery.position.route");
 
 const profilesRouter = require("./profiles.route");
-
+// Patient History routes
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require("./family_history.route");
 const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
+const patientTransferRoute = require("./patient_transfer.route");
 
 //EMR CRITICAL CARE CHARTS ROUTES
 const CCCRoute = require("./CC_charts.route");
@@ -143,6 +144,10 @@ serviceRouter.use("/surgery-history", surgeryHistoryRoute);
 // Referral History Routes
 
 serviceRouter.use("/referal-history", referralHistoryRoute);
+
+// Patient Transfer ROutes
+
+serviceRouter.use("/patient-transfer", patientTransferRoute);
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);

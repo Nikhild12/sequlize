@@ -28,7 +28,7 @@ const Patient_Transfer = () => {
         return res.status(404).send({ code: httpStatus.NOT_FOUND, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
       }
       await assignDefault(patientTransferData, user_uuid);
-      await patientTransferTbl.create(patientReferralData, { returning: true });
+      await patientTransferTbl.create(patientTransferData, { returning: true });
       return res.status(200).send({ code: httpStatus.OK, message: 'Inserted Success' });
     } catch (ex) {
       console.log('Exception Happened');
@@ -44,11 +44,11 @@ const Patient_Transfer = () => {
 };
 module.exports = Patient_Transfer();
 
-async function assignDefault(patientReferralData, user_uuid) {
-  patientReferralData.is_active = patientReferralData.status = true;
-  patientReferralData.created_by = patientReferralData.modified_by = user_uuid;
-  patientReferralData.created_date = patientReferralData.modified_date = new Date();
-  patientReferralData.revision = 1;
-  patientReferralData.referred_by = user_uuid;
-  return patientReferralData;
+async function assignDefault(patientTransferData, user_uuid) {
+  patientTransferData.is_active = patientTransferData.status = true;
+  patientTransferData.created_by = patientTransferData.modified_by = user_uuid;
+  patientTransferData.created_date = patientTransferData.modified_date = new Date();
+  patientTransferData.revision = 1;
+  patientTransferData.referred_by = user_uuid;
+  return patientTransferData;
 }

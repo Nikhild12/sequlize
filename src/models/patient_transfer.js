@@ -138,7 +138,19 @@ module.exports = (sequelize, DataTypes) => {
 
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('transfer_department_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('transfer_department_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('transfer_department_uuid')
+          },
+
+        }
 
 
       },
