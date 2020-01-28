@@ -36,13 +36,15 @@ module.exports = Object.freeze({
   SURGERY_POSITION: "Surgery Position fetched successfully",
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
 
-  GetpleaseProvideMsg: function(columnname) {
+  GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
       case "department_uuid":
         return `${returnProvideMsg} Department Id`;
+      case "transfer_department_uuid":
+        return `${returnProvideMsg} Transfer Department Id`;
       case "role_uuid":
         return `${returnProvideMsg} Role Id`;
       case "context_uuid":
@@ -92,7 +94,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetMinimumMessage: function(columnname) {
+  GetMinimumMessage: function (columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -137,7 +139,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function(columnname) {
+  GetZeroValidationMessage: function (columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -150,6 +152,8 @@ module.exports = Object.freeze({
         return `Patient Id ${validationMessage}`;
       case "department_uuid":
         return `Department Id ${validationMessage}`;
+      case "transfer_department_uuid":
+        return `Transfer Department Id ${validationMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${validationMessage}`;
       case "facility_uuid":

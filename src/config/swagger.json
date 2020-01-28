@@ -159,7 +159,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-
     "/api/speciality/createSpeciality": {
       "post": {
         "description": "To Create a Speciality Sketch",
@@ -1801,7 +1800,6 @@
         }
       }
     },
-
     "/api/patient-chief-complaints/getMockJson": {
       "get": {
         "description": "To get Patient chief Complaints",
@@ -4267,7 +4265,7 @@
       }
     },
     "/api/profiles/getById": {
-      "post": {
+      "get": {
         "summary": "To get profile Details by Id ",
         "parameters": [
           {
@@ -4277,19 +4275,20 @@
             "type": "integer"
           },
           {
-            "in": "body",
-            "name": "uuid",
+            "in": "query",
+            "name": "p_uuid",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/getProfileById"
-            }
+            "type": "integer"
           }
         ],
         "produces": ["application/json", "application/xml"],
         "tags": ["Profiles"],
         "responses": {
           "200": {
-            "description": "get Successfully"
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProfileById"
+            }
           }
         },
         "x-auth-type": "Application & Application User",
@@ -4699,7 +4698,7 @@
     },
     "/api/referal-history/getReferralHistory": {
       "get": {
-        "description": "To get Family History",
+        "description": "To get Referral History",
         "parameters": [
           {
             "in": "header",
@@ -4715,13 +4714,46 @@
           }
         ],
         "produces": ["application/json", "application/xml"],
-        "tags": ["PatientReferralHistory"],
+        "tags": ["PatientReferral"],
         "responses": {
           "200": {
             "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getReferralHistory"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/referal-history/createPatientReferral": {
+      "post": {
+        "description": "To Create Patient Referral",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientReferral ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientReferral"
+            }
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientReferral"],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -4766,6 +4798,76 @@
         ],
         "produces": ["application/json", "application/xml"],
         "tags": ["SurgeryPosition"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-transfer/create": {
+      "post": {
+        "description": "To Create Patient Transfer",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientTransfer ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientTransfer"
+            }
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientTransfer"],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/getProceduresByFilter": {
+      "get": {
+        "description": "To get List of Procedures",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "searchKey",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchValue",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures          "],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -6239,10 +6341,6 @@
             "type": "integer",
             "example": 1
           },
-          "performed_date": {
-            "type": "string",
-            "example": "2019-11-21"
-          },
           "vital_group_uuid": {
             "type": "integer",
             "example": 1
@@ -6294,10 +6392,6 @@
           "comments": {
             "type": "string",
             "example": "1000"
-          },
-          "revision": {
-            "type": "integer",
-            "example": 1
           }
         }
       }
@@ -8870,6 +8964,10 @@
           "items": {
             "type": "object",
             "properties": {
+              "ventilator_uuid": {
+                "type": "integer",
+                "example": 1
+              },
               "cc_chart_uuid": {
                 "type": "integer",
                 "example": 1
@@ -8936,8 +9034,202 @@
     "getProfileById": {
       "type": "object",
       "properties": {
-        "uuid": {
-          "type": "integer"
+        "responseContents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "p_uuid": {
+                "type": "integer"
+              },
+              "p_profile_code": {
+                "type": "string"
+              },
+              "p_profile_name": {
+                "type": "string"
+              },
+              "p_profile_description": {
+                "type": "string"
+              },
+              "p_profile_type_uuid": {
+                "type": "integer"
+              },
+              "p_facility_uuid": {
+                "type": "integer"
+              },
+              "p_department_uuid": {
+                "type": "integer"
+              },
+              "p_status": {
+                "type": "boolean"
+              },
+              "p_is_active": {
+                "type": "boolean"
+              },
+              "ps_uuid": {
+                "type": "integer"
+              },
+              "ps_profile_uuid": {
+                "type": "integer"
+              },
+              "ps_section_uuid": {
+                "type": "integer"
+              },
+              "ps_activity_uuid": {
+                "type": "integer"
+              },
+              "ps_display_order": {
+                "type": "integer"
+              },
+              "ps_status": {
+                "type": "boolean"
+              },
+              "ps_is_active": {
+                "type": "boolean"
+              },
+              "f_uuid": {
+                "type": "integer"
+              },
+              "f_name": {
+                "type": "string"
+              },
+              "f_status": {
+                "type": "boolean"
+              },
+              "f_is_active": {
+                "type": "boolean"
+              },
+              "d_uuid": {
+                "type": "integer"
+              },
+              "d_name": {
+                "type": "string"
+              },
+              "d_status": {
+                "type": "boolean"
+              },
+              "d_is_active": {
+                "type": "boolean"
+              },
+              "s_uuid": {
+                "type": "integer"
+              },
+              "s_section_type_uuid": {
+                "type": "integer"
+              },
+              "s_section_note_type_uuid": {
+                "type": "integer"
+              },
+              "s_name": {
+                "type": "string"
+              },
+              "s_description": {
+                "type": "string"
+              },
+              "s_sref": {
+                "type": "string"
+              },
+              "s_display_order": {
+                "type": "integer"
+              },
+              "s_status": {
+                "type": "boolean"
+              },
+              "s_is_active": {
+                "type": "boolean"
+              },
+              "c_code": {
+                "type": "string"
+              },
+              "c_name": {
+                "type": "string"
+              },
+              "c_description": {
+                "type": "string"
+              },
+              "c_category_type_uuid": {
+                "type": "integer"
+              },
+              "c_status": {
+                "type": "boolean"
+              },
+              "c_is_active": {
+                "type": "boolean"
+              },
+              "pscc_uuid": {
+                "type": "integer"
+              },
+              "pscc_code": {
+                "type": "string"
+              },
+              "pscc_name": {
+                "type": "string"
+              },
+              "pscc_value_type_uuid": {
+                "type": "integer"
+              },
+              "pscc_profile_section_category_uuid": {
+                "type": "integer"
+              },
+              "pscc_description": {
+                "type": "string"
+              },
+              "pscc_is_mandatory": {
+                "type": "boolean"
+              },
+              "pscc_is_multiple": {
+                "type": "boolean"
+              },
+              "pscc_display_order": {
+                "type": "integer"
+              },
+              "pscc_status": {
+                "type": "boolean"
+              },
+              "pscc_is_active": {
+                "type": "boolean"
+              },
+              "psc_uuid": {
+                "type": "integer"
+              },
+              "psc_profile_section_uuid": {
+                "type": "integer"
+              },
+              "psc_category_uuid": {
+                "type": "integer"
+              },
+              "psc_display_order": {
+                "type": "integer"
+              },
+              "psc_is_active": {
+                "type": "boolean"
+              },
+              "psc_status": {
+                "type": "boolean"
+              },
+              "psccv_uuid": {
+                "type": "integer"
+              },
+              "psccv_profile_section_category_concept_uuid": {
+                "type": "integer"
+              },
+              "psccv_value_code": {
+                "type": "string"
+              },
+              "psccv_value_name": {
+                "type": "string"
+              },
+              "psccv_display_order": {
+                "type": "integer"
+              },
+              "psccv_is_active": {
+                "type": "boolean"
+              },
+              "psccv_status": {
+                "type": "boolean"
+              }
+            }
+          }
         }
       }
     },
@@ -9244,6 +9536,14 @@
         }
       }
     },
+    "allPatientImmunization": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
     "getReferralHistory": {
       "type": "object",
       "properties": {
@@ -9255,11 +9555,113 @@
         }
       }
     },
+    "createPatientReferral": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referred_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "referral_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_deptartment_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
     "deleteDiagnosisById": {
       "type": "object",
       "properties": {
         "diagnosisId": {
           "type": "integer"
+        }
+      }
+    },
+    "createPatientTransfer": {
+      "type": "object",
+      "properties": {
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "transfer_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_ward_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_comments": {
+          "type": "string",
+          "example": "enter some thing"
         }
       }
     }

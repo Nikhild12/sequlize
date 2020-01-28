@@ -1,270 +1,295 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
-const sequelizeDb = require('../config/sequelize');
+const sequelizeDb = require("../config/sequelize");
 // const sequelizeDb = require('../config/sequelize');
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
-
-
 
 const proceduresTbl = db.procedures;
 
+// Constants Import
+const emr_constants = require("../config/constants");
+
+// Procedures Attributes
+const proceduresAttributes = require("../attributes/procedure");
+
 const proceduresController = () => {
-    /**
-     * Returns jwt token if valid username and password is provided
-     * @param req
-     * @param res
-     * @param next
-     * @returns {*}
-     */
+  /**
+   * Returns jwt token if valid username and password is provided
+   * @param req
+   * @param res
+   * @param next
+   * @returns {*}
+   */
 
-    const getprocedures = async (req, res, next) => {
-        let getsearch = req.body;
+  const getprocedures = async (req, res, next) => {
+    let getsearch = req.body;
 
-        let pageNo = 0;
-        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
-        let sortOrder = 'DESC';
+    let pageNo = 0;
+    const itemsPerPage = getsearch.paginationSize
+      ? getsearch.paginationSize
+      : 10;
+    let sortField = "created_date";
+    let sortOrder = "DESC";
 
-        if (getsearch.pageNo) {
-            let temp = parseInt(getsearch.pageNo);
+    if (getsearch.pageNo) {
+      let temp = parseInt(getsearch.pageNo);
 
+      if (temp && temp != NaN) {
+        pageNo = temp;
+      }
+    }
 
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
-        }
+    const offset = pageNo * itemsPerPage;
 
-        const offset = pageNo * itemsPerPage;
+    if (getsearch.sortField) {
+      sortField = getsearch.sortField;
+    }
 
-
-        if (getsearch.sortField) {
-
-            sortField = getsearch.sortField;
-        }
-
-        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-            sortOrder = getsearch.sortOrder;
-        }
-        let findQuery = {
-            offset: offset,
-            limit: itemsPerPage,
-            order: [
-                [sortField, sortOrder],
-            ],
-            where:{is_active: 1}
-        };
-
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-
-            findQuery.where = {
-                [Op.or]: [{
-                    code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-
-
-                    }, {
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
-
-                ]
-            };
-        }
-
-
-        try {
-            await proceduresTbl.findAndCountAll(findQuery)
-
-
-                .then((findData) => {
-
-                    return res
-
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "success",
-                            statusCode: 200,
-                            responseContents: (findData.rows ? findData.rows : []),
-                            totalRecords: (findData.count ? findData.count : 0),
-
-                        });
-                })
-                .catch(err => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "error",
-                            err: err,
-                            req: ''
-                        });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    message: "error",
-                });
-        }
-
-
+    if (
+      getsearch.sortOrder &&
+      (getsearch.sortOrder == "ASC" || getsearch.sortOrder == "DESC")
+    ) {
+      sortOrder = getsearch.sortOrder;
+    }
+    let findQuery = {
+      offset: offset,
+      limit: itemsPerPage,
+      order: [[sortField, sortOrder]],
+      where: { is_active: 1 }
     };
 
-    const postprocedures = async (req, res, next) => {
-        const postData = req.body;
-        postData.created_by = req.headers.user_uuid;
-       
-        
+    if (getsearch.search && /\S/.test(getsearch.search)) {
+      findQuery.where = {
+        [Op.or]: [
+          {
+            code: {
+              [Op.like]: "%" + getsearch.search + "%"
+            }
+          },
+          {
+            name: {
+              [Op.like]: "%" + getsearch.search + "%"
+            }
+          }
+        ]
+      };
+    }
 
-        if (postData) {
+    try {
+      await proceduresTbl
+        .findAndCountAll(findQuery)
 
-            proceduresTbl.findAll({
-                where: {
-                  [Op.or]: [{
-                   code: postData.code
-                    },
-                    {
-                        name: postData.name
-                    }
-                  ]
-                }
-              }).then(async (result) =>{
-                if (result.length != 0) {
-                    return res.send({
-                        statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter procedures Master"
-                    });
-                  } else{
-                    await proceduresTbl.create(postData, {
-                        returning: true
-                    }).then(data => {
-        
-                        res.send({
-                            statusCode: 200,
-                            msg: "Inserted procedures Master details Successfully",
-                            req: postData,
-                            responseContents: data
-                        });
-                    }).catch(err => {
-        
-                        res.send({
-                            status: "failed",
-                            msg: "failed to procedures Master details",
-                            error: err
-                        });
-                    });
-                  }
+        .then(findData => {
+          return res.status(httpStatus.OK).json({
+            message: "success",
+            statusCode: 200,
+            responseContents: findData.rows ? findData.rows : [],
+            totalRecords: findData.count ? findData.count : 0
+          });
+        })
+        .catch(err => {
+          return res.status(httpStatus.OK).json({
+            message: "error",
+            err: err,
+            req: ""
+          });
+        });
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "error"
+      });
+    }
+  };
+
+  const postprocedures = async (req, res, next) => {
+    const postData = req.body;
+    postData.created_by = req.headers.user_uuid;
+
+    if (postData) {
+      proceduresTbl
+        .findAll({
+          where: {
+            [Op.or]: [
+              {
+                code: postData.code
+              },
+              {
+                name: postData.name
+              }
+            ]
+          }
+        })
+        .then(async result => {
+          if (result.length != 0) {
+            return res.send({
+              statusCode: 400,
+              status: "error",
+              msg: "Record already Found. Please enter procedures Master"
+            });
+          } else {
+            await proceduresTbl
+              .create(postData, {
+                returning: true
+              })
+              .then(data => {
+                res.send({
+                  statusCode: 200,
+                  msg: "Inserted procedures Master details Successfully",
+                  req: postData,
+                  responseContents: data
+                });
+              })
+              .catch(err => {
+                res.send({
+                  status: "failed",
+                  msg: "failed to procedures Master details",
+                  error: err
+                });
               });
-
-          
-        } else {
-            
-            res.send({
-                status: 'failed',
-                msg: 'Please enter procedures Master details'
-            });
-        }
-    };
-
-
-    const deleteprocedures = async (req, res, next) => {
-        const postData = req.body;
-
-        await proceduresTbl.update({
-            is_active: 0
-        }, {
-            where: {
-                uuid: postData.Procedures_id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
+          }
         });
-    };
+    } else {
+      res.send({
+        status: "failed",
+        msg: "Please enter procedures Master details"
+      });
+    }
+  };
 
-    const updateproceduresId = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await proceduresTbl.update(
-            postData, {
-                where: {
-                    uuid: postData.Procedures_id
-                }
-            }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
-        
-    };
-  
+  const deleteprocedures = async (req, res, next) => {
+    const postData = req.body;
 
-    const getproceduresById = async (req, res, next) => {
-        const postData = req.body;
-        try {
-
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await proceduresTbl.findOne({
-                    where: {
-                        uuid: postData.Procedures_id
-                    },
-                    offset: offset,
-                    limit: itemsPerPage
-                })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
-
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
+    await proceduresTbl
+      .update(
+        {
+          is_active: 0
+        },
+        {
+          where: {
+            uuid: postData.Procedures_id
+          }
         }
-    };
+      )
+      .then(data => {
+        res.send({
+          statusCode: 200,
+          msg: "Deleted Successfully",
+          req: postData,
+          responseContents: data
+        });
+      })
+      .catch(err => {
+        res.send({
+          status: "failed",
+          msg: "failed to delete data",
+          error: err
+        });
+      });
+  };
 
-    // --------------------------------------------return----------------------------------
-    return {
+  const updateproceduresId = async (req, res, next) => {
+    const postData = req.body;
+    postData.modified_by = req.headers.user_uuid;
+    await proceduresTbl
+      .update(postData, {
+        where: {
+          uuid: postData.Procedures_id
+        }
+      })
+      .then(data => {
+        res.send({
+          statusCode: 200,
+          msg: "Updated Successfully",
+          req: postData,
+          responseContents: data
+        });
+      });
+  };
 
-        postprocedures,
-        getprocedures,
-        updateproceduresId,
-        deleteprocedures,
+  const getproceduresById = async (req, res, next) => {
+    const postData = req.body;
+    try {
+      const page = postData.page ? postData.page : 1;
+      const itemsPerPage = postData.limit ? postData.limit : 10;
+      const offset = (page - 1) * itemsPerPage;
+      await proceduresTbl
+        .findOne({
+          where: {
+            uuid: postData.Procedures_id
+          },
+          offset: offset,
+          limit: itemsPerPage
+        })
+        .then(data => {
+          return res.status(httpStatus.OK).json({
+            statusCode: 200,
+            req: "",
+            responseContents: data
+          });
+        });
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        status: "error",
+        msg: errorMsg
+      });
+    }
+  };
 
-        getproceduresById
-    };
+  const _getProceduresByFilters = async (req, res) => {
+    const { user_uuid } = req.headers;
+
+    const { searchKey, searchValue } = req.query;
+
+    if (user_uuid && searchKey && searchValue) {
+      try {
+        const pQuery = proceduresAttributes.getSearchQueryFromSearchKey(
+          searchKey,
+          searchValue
+        );
+        const procedureSearchData = await proceduresTbl.findAll(pQuery);
+        const responseMessage =
+          procedureSearchData && procedureSearchData.length > 0
+            ? emr_constants.PROCEDURE_FETCHED
+            : emr_constants.NO_RECORD_FOUND;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: responseMessage,
+          responseContents: procedureSearchData.map(bS => {
+            return {
+              code: bS.code,
+              name: bS.name,
+              uuid: bS.uuid
+            };
+          }),
+          responseLength: procedureSearchData.length
+        });
+      } catch (error) {
+        console.log("Exception happened", error);
+        return res
+          .status(400)
+          .send({ code: httpStatus.BAD_REQUEST, message: error });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
+  // --------------------------------------------return----------------------------------
+  return {
+    postprocedures,
+    getprocedures,
+    updateproceduresId,
+    deleteprocedures,
+
+    getproceduresById,
+    getProceduresByFilters: _getProceduresByFilters
+  };
 };
-
 
 module.exports = proceduresController();
