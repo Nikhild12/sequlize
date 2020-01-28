@@ -5398,7 +5398,7 @@
     },
     "/api/referal-history/getReferralHistory": {
       "get": {
-        "description": "To get Family History",
+        "description": "To get Referral History",
         "parameters": [
           {
             "in": "header",
@@ -5418,7 +5418,7 @@
           "application/xml"
         ],
         "tags": [
-          "PatientReferralHistory"
+          "PatientReferral"
         ],
         "responses": {
           "200": {
@@ -5426,6 +5426,44 @@
             "schema": {
               "$ref": "#/definitions/getReferralHistory"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/referal-history/createPatientReferral": {
+      "post": {
+        "description": "To Create Patient Referral",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientReferral ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientReferral"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientReferral"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -5486,6 +5524,44 @@
             "schema": {
               "$ref": "#/definitions/getBodySide"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-transfer/create": {
+      "post": {
+        "description": "To Create Patient Transfer",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientTransfer ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientTransfer"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTransfer"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -6953,10 +7029,6 @@
             "type": "integer",
             "example": 1
           },
-          "performed_date": {
-            "type": "string",
-            "example": "2019-11-21"
-          },
           "vital_group_uuid": {
             "type": "integer",
             "example": 1
@@ -7008,10 +7080,6 @@
           "comments": {
             "type": "string",
             "example": "1000"
-          },
-          "revision": {
-            "type": "integer",
-            "example": 1
           }
         }
       }
@@ -10175,11 +10243,113 @@
         }
       }
     },
+    "createPatientReferral": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referred_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "referral_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_deptartment_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
     "deleteDiagnosisById": {
       "type": "object",
       "properties": {
         "diagnosisId": {
           "type": "integer"
+        }
+      }
+    },
+    "createPatientTransfer": {
+      "type": "object",
+      "properties": {
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "transfer_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_ward_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_comments": {
+          "type": "string",
+          "example": "enter some thing"
         }
       }
     }
