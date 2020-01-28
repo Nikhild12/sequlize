@@ -136,7 +136,6 @@ const profilesController = () => {
           sItem.section_uuid = sectionsDetails[sIdx].section_uuid;
           sItem = emr_utility.assignDefaultValuesAndUUIdToObject(sItem, profilesSectionInfoDetails, user_uuid);
         });
-        console.log('profilesSectionInfoDetails==', profilesSectionInfoDetails);
         const createdProfileSectionData = await profileSectionsTbl.bulkCreate(profilesSectionInfoDetails, { returning: true });
 
         // Profile_Section_category mapping
@@ -301,6 +300,25 @@ const profilesController = () => {
   };
 
 
+  const _getAllValueTypes = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+
+    try {
+      if (user_uuid) {
+        const valuesData = await valueTypesTbl.findAll();
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: valuesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex.message);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -308,6 +326,8 @@ const profilesController = () => {
     getProfileById: _getProfileById,
     //updateProfiles: _updateProfiles,
     // addProfiles: _addProfiles
+    getAllValueTypes: _getAllValueTypes
+
 
 
   };

@@ -14,5 +14,6 @@ profilesRoute.route('/delete').put(profilesController.deleteProfiles);
 profilesRoute.route('/getById').get(profilesController.getProfileById);
 //profilesRoute.route('/update').get(profilesController.updateProfiles);
 //profilesRoute.route('/add').post(profilesController.addProfiles);
+profilesRoute.route('/getAllValueTypes').get(profilesController.getAllValueTypes);
 
 module.exports = profilesRoute;
