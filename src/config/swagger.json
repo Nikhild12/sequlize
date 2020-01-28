@@ -4913,9 +4913,7 @@
             "in": "query",
             "name": "p_uuid",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/getProfileById"
-            }
+            "type": "integer"
           }
         ],
         "produces": [
@@ -4927,7 +4925,10 @@
         ],
         "responses": {
           "200": {
-            "description": "get Successfully"
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProfileById"
+            }
           }
         },
         "x-auth-type": "Application & Application User",
@@ -9653,7 +9654,6 @@
     "getProfileById": {
       "type": "object",
       "properties": {
-        "type": "integer",
         "responseContents": {
           "type": "array",
           "items": {
@@ -10153,6 +10153,14 @@
         "comments": {
           "type": "string",
           "example": 1
+        }
+      }
+    },
+    "allPatientImmunization": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
         }
       }
     },
