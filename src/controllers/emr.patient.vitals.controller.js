@@ -17,6 +17,8 @@ const emr_mock_json = require("../config/emr_mock_json");
 
 const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
+    
+    if (Object.keys(req.body).length != 0) {
     const emrPatientVitalReqData = req.body;
     const { user_uuid } = req.headers;
 
@@ -27,10 +29,11 @@ const EMRPatientVitals = () => {
         emrPatientVitalReqData.length > 0
       ) {
         emrPatientVitalReqData.forEach(eRD => {
-          eRD.performed_date = new Date(eRD.performed_date);
+          eRD.performed_date = new Date();
           eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
           eRD.is_active = eRD.status = true;
           eRD.created_date = eRD.modified_date = new Date();
+          eRD.revision = 1;
         });
         const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
           emrPatientVitalReqData,
@@ -52,11 +55,14 @@ const EMRPatientVitals = () => {
         }
       }
     } catch (ex) {
-      console.log("-----", ex);
+      //console.log("-----", ex);
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
+  } else {
+    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
   const _getVitalsByTemplateID = async (req, res) => {
     const { template_id } = req.query;
