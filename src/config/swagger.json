@@ -3814,7 +3814,7 @@
             "type": "integer"
           },
           {
-            "in": "query",
+            "in": "header",
             "name": "critical_care_type",
             "required": true,
             "type": "integer"
