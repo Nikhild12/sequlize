@@ -66,7 +66,7 @@ const Patient_Allergies = () => {
           return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
         }
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID}` });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
       console.log('Exception happened', ex);
@@ -85,7 +85,7 @@ const Patient_Allergies = () => {
         const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
         return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID}` });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
       console.log('Exception happened', ex);
@@ -115,7 +115,7 @@ const Patient_Allergies = () => {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
     } else {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO_USER_ID} ${emr_constants.NO_REQUEST_PARAM}` });
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
 
