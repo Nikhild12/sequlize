@@ -149,6 +149,7 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
+      console.log("temp requested data", templateMasterReqData);
 
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(user_uuid, req.body.new_details);
@@ -244,6 +245,7 @@ module.exports = tmpmstrController();
 function getTemplateMasterUpdateData(user_uuid, templateMasterReqData) {
 
   return {
+    uuid: templateMasterReqData.template_id,
     name: templateMasterReqData.name,
     is_public: templateMasterReqData.is_public,
     description: templateMasterReqData.description,
@@ -801,6 +803,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_template,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
@@ -809,6 +812,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_lab,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: {
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
@@ -825,6 +829,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_ris,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: {
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
@@ -846,6 +851,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_diet,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
