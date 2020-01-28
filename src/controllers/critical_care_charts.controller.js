@@ -30,62 +30,67 @@ const CCchartsController = () => {
 
     const _createCCC = async (req, res) => {
 
-        try {
+        if (Object.keys(req.body).length != 0) {
+            try {
 
-            let { user_uuid } = req.headers;
-            let { critical_care_type } = req.query;
-            let data1 = req.body.headers;
-            let data2 = req.body.observed_data;
-            let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
-            if (user_uuid && data1 && data2 && critical_care_type) {
+                let { user_uuid } = req.headers;
+                let { critical_care_type } = req.query;
+                let data1 = req.body.headers;
+                let data2 = req.body.observed_data;
+                let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
+                if (user_uuid && data1 && data2 && critical_care_type) {
 
-                switch (critical_care_type) {
-                    case "1":
-                        createdData1 = create_CC(ventilatorTbl, user_uuid, data1, data2);
-                        break;
-                    case "2":
-                        createdData2 = create_CC(abgTbl, user_uuid, data1, data2);
-                        break;
-                    case "3":
-                        createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
-                        break;
-                    case "4":
-                        createdData4 = create_CC(in_out_takeTbl, user_uuid, data1, data2);
-                        break;
-                    case "5":
-                        createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
-                        break;
-                    case "6":
-                        createdData6 = create_CC(diabetesTbl, user_uuid, data1, data2);
-                        break;
-                    case "7":
-                        createdData7 = create_CC(dialysisTbl, user_uuid, data1, data2);
-                        break;
+                    switch (critical_care_type) {
+                        case "1":
+                            createdData1 = create_CC(ventilatorTbl, user_uuid, data1, data2);
+                            break;
+                        case "2":
+                            createdData2 = create_CC(abgTbl, user_uuid, data1, data2);
+                            break;
+                        case "3":
+                            createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
+                            break;
+                        case "4":
+                            createdData4 = create_CC(in_out_takeTbl, user_uuid, data1, data2);
+                            break;
+                        case "5":
+                            createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
+                            break;
+                        case "6":
+                            createdData6 = create_CC(diabetesTbl, user_uuid, data1, data2);
+                            break;
+                        case "7":
+                            createdData7 = create_CC(dialysisTbl, user_uuid, data1, data2);
+                            break;
+                    }
+
+                    //const createdData = create_ventilator(user_uuid, data1, data2);
+                    if (createdData1) {
+                        res.send({ "status": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData2) {
+                        res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData3) {
+                        res.send({ "status": 200, "monitor_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData4) {
+                        res.send({ "status": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData5) {
+                        res.send({ "status": 200, "bp_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData6) {
+                        res.send({ "status": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData7) {
+                        res.send({ "status": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
+                    }
+
+                } else {
+                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
                 }
-
-                //const createdData = create_ventilator(user_uuid, data1, data2);
-                if (createdData1) {
-                    res.send({ "status": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
-                } else if (createdData2) {
-                    res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData3) {
-                    res.send({ "status": 200, "monitor_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData4) {
-                    res.send({ "status": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData5) {
-                    res.send({ "status": 200, "bp_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData6) {
-                    res.send({ "status": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
-                } else if (createdData7) {
-                    res.send({ "status": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
-                }
-
-            } else {
-                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+            } catch (ex) {
+                res.send({ "status": 400, "message": ex.message });
             }
-        } catch (ex) {
-            res.send({ "status": 400, "message": ex.message });
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
+
     };
 
     const _getCCCbypatientid = async (req, res) => {
@@ -163,50 +168,54 @@ const CCchartsController = () => {
 
     const _updateCCCbypatientid = async (req, res) => {
 
-        try {
-            // plucking data req body
-            let { user_uuid } = req.headers;
-            let { critical_care_type } = req.query;
-            let data1 = req.body.headers;
-            let data2 = req.body.observed_data;
-            let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
+        if (Object.keys(req.body).length != 0) {
+            try {
+                // plucking data req body
+                let { user_uuid } = req.headers;
+                let { critical_care_type } = req.query;
+                let data1 = req.body.headers;
+                let data2 = req.body.observed_data;
+                let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
-            if (user_uuid && data1 && data2 && critical_care_type) {
+                if (user_uuid && data1 && data2 && critical_care_type) {
 
-                switch (critical_care_type) {
-                    case "1":
-                        createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
-                        break;
-                    case "2":
-                        createdData2 = await Promise.all(updateCCCdata(abgTbl, data1, data2, user_uuid));
-                        break;
-                    case "3":
-                        createdData3 = await Promise.all(updateCCCdata(monitorTbl, data1, data2, user_uuid));
-                        break;
-                    case "4":
-                        createdData4 = await Promise.all(updateCCCdata(in_out_takeTbl, data1, data2, user_uuid));
-                        break;
-                    case "5":
-                        createdData5 = await Promise.all(updateCCCdata(bpTbl, data1, data2, user_uuid));
-                        break;
-                    case "6":
-                        createdData6 = await Promise.all(updateCCCdata(diabetesTbl, data1, data2, user_uuid));
-                        break;
-                    case "7":
-                        createdData7 = await Promise.all(updateCCCdata(dialysisTbl, data1, data2, user_uuid));
-                        break;
+                    switch (critical_care_type) {
+                        case "1":
+                            createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
+                            break;
+                        case "2":
+                            createdData2 = await Promise.all(updateCCCdata(abgTbl, data1, data2, user_uuid));
+                            break;
+                        case "3":
+                            createdData3 = await Promise.all(updateCCCdata(monitorTbl, data1, data2, user_uuid));
+                            break;
+                        case "4":
+                            createdData4 = await Promise.all(updateCCCdata(in_out_takeTbl, data1, data2, user_uuid));
+                            break;
+                        case "5":
+                            createdData5 = await Promise.all(updateCCCdata(bpTbl, data1, data2, user_uuid));
+                            break;
+                        case "6":
+                            createdData6 = await Promise.all(updateCCCdata(diabetesTbl, data1, data2, user_uuid));
+                            break;
+                        case "7":
+                            createdData7 = await Promise.all(updateCCCdata(dialysisTbl, data1, data2, user_uuid));
+                            break;
+                    }
+
+                    if (createdData1 || createdData2 || createdData3 || createdData4 || createdData5 || createdData6 || createdData7) {
+                        res.send({ "status": 200, "message": "updated Successfully " });
+                    }
                 }
-
-                if (createdData1 || createdData2 || createdData3 || createdData4 || createdData5 || createdData6 || createdData7) {
-                    res.send({ "status": 200, "message": "updated Successfully " });
+                else {
+                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
                 }
+            } catch (err) {
+                const errorMsg = err.errors ? err.errors[0].message : err.message;
+                return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
             }
-            else {
-                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-            }
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
     };
 
@@ -484,14 +493,14 @@ function getCCquery(patient_uuid) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-                required:false,
+                required: false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
-                        required:false,
+                        required: false,
                     },]
 
             },]
@@ -522,14 +531,14 @@ function getCquery(patient_uuid, from_date, to_date) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-                required:false,
+                required: false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
-                        required:false,
+                        required: false,
                     },]
 
             },]

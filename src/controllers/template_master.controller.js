@@ -103,7 +103,7 @@ const tmpmstrController = () => {
   };
 
   const _createTemplate = async (req, res) => {
-
+  if (Object.keys(req.body).length != 0){
     try {
       // plucking data req body
       const templateMasterReqData = req.body.headers;
@@ -142,6 +142,9 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
     }
+  }else {
+    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
 
   const _updateTemplateById = async (req, res) => {
@@ -149,7 +152,7 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
-      console.log("temp requested data", templateMasterReqData);
+      //console.log("temp requested data", templateMasterReqData);
 
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(user_uuid, req.body.new_details);
