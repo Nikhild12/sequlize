@@ -260,6 +260,47 @@ const profilesController = () => {
 
   };
 
+  const _updateProfiles = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const profilesReqData = req.body;
+    //const profilesUpdateData = getProfilesUpdateData(user_uuid, profilesReqData);
+
+    if (user_uuid && profilesReqData) {
+      try {
+        // const updatingRecord = await profilesTbl.update(profilesUpdateData, {
+        //   where: {
+        //     uuid: profilesUpdateData.uuid,
+        //     status: emr_constants.IS_ACTIVE,
+        //     is_active: emr_constants.IS_ACTIVE
+        //   }
+        // });
+        //const updatedProfilesData = await Promise.all(getProfilesUpdateData(user_uuid, profilesReqData))
+        // if (updatingRecord && updatingRecord.length === 0) {
+        //   return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
+        // }
+
+        // const updatedProfilesData = await Promise.all([
+        // profilesTbl.update(profilesUpdateData, { where: { uuid: profilesUpdateData.uuid } }),
+        //sectionsTbl.update(sectionsUpdateData, { where: { uuid: sectionsUpdateData.uuid } }),
+
+        //  ]);
+
+
+        if (updatedProfilesData) {
+          return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: profilesReqData });
+        }
+
+      } catch (ex) {
+
+        console.log(`Exception Happened ${ex}`);
+        return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+      }
+
+    }
+  };
+
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -342,3 +383,116 @@ function getSectionsUpdateData(user_uuid, profilesReqData) {
   };
 
 }
+
+// const getProfilesUpdateData = async (user_uuid, profilesReqData) => {
+//   let profilesUpdateData = profilesReqData.profiles;
+//   let updatePromise = [];
+//   let data = {
+//     uuid: profilesUpdateData.uuid,
+//     profile_code: profilesUpdateData.profile_code,
+//     profile_name: profilesUpdateData.profile_name,
+//     profile_description: profilesUpdateData.profile_description,
+//     department_uuid: profilesUpdateData.department_uuid,
+//     facility_uuid: profilesUpdateData.facility_uuid,
+//     profile_type_uuid: profilesUpdateData.profile_type_uuid,
+//     modified_by: user_uuid,
+//     modified_date: new Date(),
+//     is_active: emr_constants.IS_ACTIVE,
+//     status: emr_constants.IS_ACTIVE,
+//     updatePromise=[...updatePromise,
+//     profilesTbl.update(profilesUpdateData, { where: { uuid: profilesUpdateData.uuid } }),
+//       //profileSectionsTbl.update(sectionsUpdateData, { where: { uuid: sectionsUpdateData.uuid } }),
+//     ]
+//   };
+
+//   let sectionsDetails = profilesReqData.profiles.sections;
+//   let profilesSectionInfoDetails = [];
+//   sectionsDetails.forEach((item, section_idx) => {
+//     let profilesSectionInfo = item.profilesSectionInfo;
+//     profilesSectionInfo.forEach((item, idx) => {
+//       profilesSectionInfoDetails = [...profilesSectionInfoDetails, {
+//         profileSection_uuid: profilesSectionInfoDetails[idx].uuid,
+//         activity_uuid: item.activity_uuid,
+//         display_order: item.display_order,
+//         section_uuid: sectionsDetails[section_idx].section_uuid,
+//         profile_uuid: profilesUpdateData.uuid,
+//         updatePromise=[...updatePromise,
+//         profileSectionsTbl.update(profilesSectionInfoDetails, sectionsDetails, { where: { uuid: profilesSectionInfoDetails[idx].uuid } }),
+//         ]
+//       }];
+//     });
+//   });
+
+//   //profilesSectionCategoryDetails
+//   let profilesSectionCategoryInfoDetails = [];
+//   sectionsDetails.forEach((item, section_idx) => {
+//     let profilesSectionInfo = item.profilesSectionInfo;
+//     profilesSectionInfo.forEach((caItem, caIdx) => {
+//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
+//       profilesSectionCategoryInfo.forEach((item, idx) => {
+//         profilesSectionCategoryInfoDetails = [...profilesSectionCategoryInfoDetails, {
+//           profileSectionCategory_uuid: profilesSectionCategoryInfoDetails[idx].uuid,
+//           display_order: item.display_order,
+//           category_uuid: profilesSectionCategoryInfo[caIdx].category_uuid,
+//           profile_section_uuid: profilesSectionCategoryInfoDetails[idx].profile_section_uuid,
+//           updatePromise=[...updatePromise,
+//           profileSectionCategoriesTbl.update(profilesSectionCategoryInfoDetails, { where: { uuid: profilesSectionCategoryInfoDetails[idx].uuid } }),
+//           ]
+//         }];
+//       });
+//     })
+//   });
+
+
+
+//   //profilesSectionCategoryConceptDetails
+//   let profilesSectionCategoryConceptInfoDetails = [];
+//   sectionsDetails.forEach((sItem, section_idx) => {
+//     let profilesSectionInfo = sItem.profilesSectionInfo;
+//     profilesSectionInfo.forEach((caItem, caIdx) => {
+//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
+//       profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
+//         let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
+//         profileSectionCategoryConceptsInfo.forEach((item, idx) => {
+//           profilesSectionCategoryConceptInfoDetails = [...profilesSectionCategoryConceptInfoDetails, {
+//             profilesSectionCategoryConcept_uuid: profilesSectionCategoryConceptInfoDetails[idx].uuid,
+//             profile_section_category_uuid: profileSectionCategoryConceptsInfo[conIdx].uuid,
+//             code: item.code,
+//             name: item.name,
+//             description: item.description,
+//             value_type_uuid: item.value_type_uuid,
+//             is_multiple: item.is_multiple,
+//             is_mandatory: item.is_mandatory,
+//             display_order: item.display_order,
+//             updatePromise=[...updatePromise,
+//             profileSectionCategoryConceptsTbl.update(profilesSectionCategoryInfoDetails, { where: { uuid: profilesSectionCategoryInfoDetails[idx].uuid } })
+//             ]
+//           }];
+//         });
+//       })
+//     })
+//   });
+
+//   //profilesSectionCategoryConceptValuesDetails
+//   let profilesSectionCategoryConceptValuesInfoDetails = [];
+//   sectionsDetails.forEach((sItem, section_idx) => {
+//     let profilesSectionInfo = sItem.profilesSectionInfo;
+//     profilesSectionInfo.forEach((caItem, caIdx) => {
+//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
+//       profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
+//         let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
+//         profileSectionCategoryConceptsInfo.forEach((vItem, idx) => {
+//           let profileSectionCategoryConceptValuesInfo = vItem.profileSectionCategoryConceptValuesInfo;
+//           profileSectionCategoryConceptValuesInfo.forEach((item, idx) => {
+//             profilesSectionCategoryConceptValuesInfoDetails = [...profilesSectionCategoryConceptValuesInfoDetails, {
+//               value_code: item.value_code,
+//               value_name: item.value_name,
+//               display_order: item.display_order,
+//               sectionIdx: section_idx
+//             }];
+//           });
+//         });
+//       });
+//     });
+//   });
+// }
