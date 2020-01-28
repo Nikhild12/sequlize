@@ -30,12 +30,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            activity_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false
-
-            },
 
             is_active: {
 
