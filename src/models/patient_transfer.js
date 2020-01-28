@@ -3,8 +3,8 @@ const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
 
-  const patient_referral = sequelize.define(
-    'patient_referral',
+  const patient_transfer = sequelize.define(
+    'patient_transfer',
     {
       uuid: {
 
@@ -14,6 +14,74 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
 
       },
+      patient_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('patient_uuid')
+          },
+
+        }
+      },
+      encounter_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+          }
+        }
+      },
+      encounter_type_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('encounter_type_uuid')
+          }
+        }
+
+      },
+      transfer_date: {
+
+        type: DataTypes.DATE,
+        allowNull: true
+
+      },
+      is_reviewed: {
+
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+        allowNull: false
+
+      },
+
       facility_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -48,91 +116,45 @@ module.exports = (sequelize, DataTypes) => {
 
         }
       },
-      patient_uuid: {
-
-        type: DataTypes.INTEGER,
-        allowNull: false,
-
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('patient_uuid')
-          },
-
-        }
-      },
-      encounter_type_uuid: {
-
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
-          }
-        }
-
-      },
-      encounter_uuid: {
-
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
-          }
-        }
-      },
-
-      referred_by: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
-      referred_date: {
-
-        type: DataTypes.DATE,
-        allowNull: true
-
-      },
       comments: {
         type: DataTypes.STRING(255),
         allowNull: true
       },
-      referral_type_uuid: {
+      transfer_type_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
 
       },
-      referral_facility_uuid: {
+      transfer_facility_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
 
       },
-      referral_deptartment_uuid: {
+      transfer_department_uuid: {
+
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('transfer_department_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('transfer_department_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('transfer_department_uuid')
+          },
+
+        }
+
+
+      },
+      transfer_ward_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -140,15 +162,7 @@ module.exports = (sequelize, DataTypes) => {
 
 
       },
-      is_reviewed: {
-
-        type: DataTypes.BOOLEAN,
-        defaultValue: 1,
-        allowNull: false
-
-      },
-
-      referral_comments: {
+      transfer_comments: {
         type: DataTypes.STRING(500),
         allowNull: true
       },
@@ -192,7 +206,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'patient_referral',
+      tableName: 'patient_transfer',
       createdAt: 'created_date',
       updatedAt: 'modified_date',
       indexes: [{
@@ -201,5 +215,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return patient_referral;
+  return patient_transfer;
 };

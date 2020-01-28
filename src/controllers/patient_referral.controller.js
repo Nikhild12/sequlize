@@ -15,6 +15,13 @@ const vw_patient_referral = sequelizeDb.vw_patient_referral_history;
 
 
 const Referral_History = () => {
+
+  /**
+   * getReferralHistory
+   * @param {*} req 
+   * @param {*} res 
+   */
+
   const _getReferralHistory = async (req, res) => {
     const { user_uuid } = req.headers;
     const { patient_uuid } = req.query;
@@ -38,11 +45,44 @@ const Referral_History = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err });
     }
   };
+
+  /**
+    * Adding Patient References
+    * @param {*} req 
+    * @param {*} res 
+    */
+  const _createPatientReferral = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let patientReferralData = req.body;
+
+    try {
+      if (!user_uuid && !patientReferralData) {
+        return res.status(404).send({ code: httpStatus.NOT_FOUND, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+      }
+      await assignDefault(patientReferralData, user_uuid);
+      await patientReferralTbl.create(patientReferralData, { returning: true });
+      return res.status(200).send({ code: httpStatus.OK, message: 'Inserted Success' });
+    } catch (ex) {
+      console.log('Exception happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
-    getReferralHistory: _getReferralHistory
+    getReferralHistory: _getReferralHistory,
+    createPatientReferral: _createPatientReferral
   };
 
 };
 
 
 module.exports = Referral_History();
+
+async function assignDefault(patientReferralData, user_uuid) {
+  patientReferralData.is_active = patientReferralData.status = true;
+  patientReferralData.created_by = patientReferralData.modified_by = user_uuid;
+  patientReferralData.created_date = patientReferralData.modified_date = new Date();
+  patientReferralData.revision = 1;
+  patientReferralData.referred_by = user_uuid;
+  return patientReferralData;
+}
