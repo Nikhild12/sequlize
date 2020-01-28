@@ -143,7 +143,7 @@ serviceRouter.use("/surgery-history", surgeryHistoryRoute);
 
 // Referral History Routes
 
-serviceRouter.use("/referal-history", referralHistoryRoute);
+serviceRouter.use("/patient-referral", referralHistoryRoute);
 
 // Patient Transfer ROutes
 

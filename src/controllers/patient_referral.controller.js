@@ -27,17 +27,11 @@ const Referral_History = () => {
     const { patient_uuid } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await vw_patient_referral.findAll({
-          limit: 10,
-          order: [['pr_uuid', 'DESC']],
-          attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'd_uuid', 'd_name', 'f_uuid', 'f_name',],
-          where: { pr_patient_uuid: patient_uuid }
-        }, { returning: true });
-        return res.status(200).send({ code: httpStatus.OK, responseContent: referralHistory });
+        const referralHistory = await getReferralData(patient_uuid);
+        return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContent: referralHistory });
 
-      }
-      else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      } else {
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     }
     catch (err) {
@@ -85,4 +79,13 @@ async function assignDefault(patientReferralData, user_uuid) {
   patientReferralData.revision = 1;
   patientReferralData.referred_by = user_uuid;
   return patientReferralData;
+}
+
+async function getReferralData(patient_uuid) {
+  return vw_patient_referral.findAll({
+    limit: 10,
+    order: [['pr_uuid', 'DESC']],
+    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'd_uuid', 'd_name', 'f_uuid', 'f_name',],
+    where: { pr_patient_uuid: patient_uuid }
+  }, { returning: true });
 }
