@@ -244,7 +244,7 @@ const CCchartsController = () => {
             if (user_uuid && patient_uuid) {
 
 
-                const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
+                //const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
                 switch (critical_care_type) {
                     case "1":
                         data1 = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
@@ -396,7 +396,7 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        tablename.update(item, { where: { patient_uuid: item.patient_uuid, cc_chart_uuid: item.cc_chart_uuid } }, { returning: true })];
+        tablename.update(item, { where: { uuid: item.ventilator_uuid } }, { returning: true })];
     });
     return updatePromise;
 }
@@ -484,13 +484,14 @@ function getCCquery(patient_uuid) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-
+                required:false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
+                        required:false,
                     },]
 
             },]
@@ -521,13 +522,14 @@ function getCquery(patient_uuid, from_date, to_date) {
                 as: 'critical_care_charts',
                 attributes: ['uuid', 'code', 'name', 'description'],
                 where: { is_active: 1, status: 1 },
-
+                required:false,
                 include: [
                     {
                         model: cctypeTbl,
                         as: 'critical_care_types',
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
+                        required:false,
                     },]
 
             },]
