@@ -171,8 +171,8 @@ const CCchartsController = () => {
         if (Object.keys(req.body).length != 0) {
             try {
                 // plucking data req body
-                let { user_uuid } = req.headers;
-                let { critical_care_type } = req.query;
+                let { user_uuid, critical_care_type } = req.headers;
+                //let { critical_care_type } = req.query;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
