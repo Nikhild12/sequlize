@@ -546,7 +546,7 @@ function getCquery(patient_uuid, from_date, to_date) {
     };
 }
 function getabgData(fetchedData) {
-    let abgList = [];
+    let abgList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         abg_details = {
@@ -610,7 +610,7 @@ function getadList(fetchedData, p_id, from_date) {
 }
 
 function getmonitorData(fetchedData) {
-    let mList = [];
+    let mList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         monitor_details = {
@@ -675,7 +675,7 @@ function getmdList(fetchedData, p_id, from_date) {
 
 
 function getinoutData(fetchedData) {
-    let ioList = [];
+    let ioList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         in_out_take_details = {
@@ -739,7 +739,7 @@ function getioList(fetchedData, p_id, from_date) {
 }
 
 function getdiabetesData(fetchedData) {
-    let dbList = [];
+    let dbList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         diabetes_details = {
@@ -804,7 +804,7 @@ function getdbList(fetchedData, p_id, from_date) {
 
 
 function getdialysisData(fetchedData) {
-    let dlList = [];
+    let dlList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         dialysis_details = {
@@ -869,7 +869,7 @@ function getdlList(fetchedData, p_id, from_date) {
 
 
 function getbpData(fetchedData) {
-    let bpList = [];
+    let bpList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         bp_details = {
