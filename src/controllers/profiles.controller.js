@@ -63,7 +63,7 @@ const profilesController = () => {
             category_uuid: profilesSectionCategoryInfo[caIdx].category_uuid
           }];
         });
-      })
+      });
     });
 
     //profilesSectionCategoryConceptDetails
@@ -85,8 +85,8 @@ const profilesController = () => {
               display_order: item.display_order
             }];
           });
-        })
-      })
+        });
+      });
     });
 
     //profilesSectionCategoryConceptValuesDetails
@@ -134,21 +134,21 @@ const profilesController = () => {
           sItem = emr_utility.assignDefaultValuesAndUUIdToObject(sItem, profilesSectionInfoDetails, user_uuid);
         });
         const createdProfileSectionData = await profileSectionsTbl.bulkCreate(profilesSectionInfoDetails, { returning: true });
-
+        //console.log('profilessections');
         // Profile_Section_category mapping
         profilesSectionCategoryInfoDetails.forEach((cItem, cIdx) => {
           cItem.profile_section_uuid = createdProfileSectionData[cIdx].uuid;
           cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, profilesSectionCategoryInfoDetails, user_uuid);
         });
         const createdProfileSectionCategoryData = await profileSectionCategoriesTbl.bulkCreate(profilesSectionCategoryInfoDetails, { returning: true });
-
+        // console.log('createdProfileSectionCategory');
         // Profile_Section_category_concepts mapping
         profilesSectionCategoryConceptInfoDetails.forEach((cItem, cIdx) => {
           cItem.profile_section_category_uuid = createdProfileSectionCategoryData[cIdx].uuid;
           cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, profilesSectionCategoryConceptInfoDetails, user_uuid);
         });
         createdProfileSectionCategoryConceptData = await profileSectionCategoryConceptsTbl.bulkCreate(profilesSectionCategoryConceptInfoDetails, { returning: true });
-
+        //console.log('createdProfileSectionCategoryConcept');
         // Profile_Section_category_concept_Values mapping
         profilesSectionCategoryConceptValuesInfoDetails.forEach((vItem, vIdx) => {
 
@@ -156,6 +156,7 @@ const profilesController = () => {
           vItem = emr_utility.assignDefaultValuesAndUUIdToObject(vItem, profilesSectionCategoryConceptValuesInfoDetails, user_uuid);
 
         });
+        //console.log('profilesSectionCategoryConceptValuesDetails');
         profileSave = [...profileSave, profileSectionCategoryConceptValuesTbl.bulkCreate(profilesSectionCategoryConceptValuesInfoDetails, { returning: true })];
 
         await Promise.all(profileSave);
@@ -229,21 +230,20 @@ const profilesController = () => {
        * @param {*} req 
        * @param {*} res 
        */
-      const _getProfileById = async (req, res) => {
+  const _getProfileById = async (req, res) => {
 
     const { user_uuid } = req.headers;
-    const { p_uuid, p_profile_code, profile_name, department_uuid } = req.query;
-    if (user_uuid && p_uuid) {
+    const { profile_uuid, p_profile_code, profile_name, department_uuid } = req.query;
+    if (user_uuid && profile_uuid) {
       try {
 
         const profileList = await ProfilesViewTbl.findAll({
-          where: { p_uuid: p_uuid },
+          where: { p_uuid: profile_uuid },
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         });
         if (profileList) {
           const profileData = getProfileDetailsData(profileList);
-          console.log('profileData==', profileData);
-          return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
+          return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'profiles Details fetched succesfully', responseContents: profileData });
 
         }
         else {
@@ -386,7 +386,7 @@ function checkProfiles(req) {
     !checkprofilesSectionInfo(profilesSectionInfo) &&
     !checkprofilesSectionCategoryInfo(profilesSectionCategoryInfo) &&
     !checkprofileSectionCategoryConceptsInfo(profileSectionCategoryConceptsInfo) &&
-    !checkprofileSectionCategoryConceptValuesInfo(profileSectionCategoryConceptValuesInfo);;
+    !checkprofileSectionCategoryConceptValuesInfo(profileSectionCategoryConceptValuesInfo);
 
 }
 
@@ -560,7 +560,7 @@ function getProfileDetailsData(profileList) {
       department_uuid: profileList[0].dataValues.p_department_uuid,
       status: profileList[0].dataValues.p_status,
       is_active: profileList[0].dataValues.p_is_active
-    }
+    };
 
     profileList.forEach((pD) => {
       sections = [...sections,
@@ -608,7 +608,7 @@ function getProfileDetailsData(profileList) {
             }]
           }]
         }]
-      }]
+      }];
     });
     return { "profileDetails": profiles, "sectionList": sections };
   }
