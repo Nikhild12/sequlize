@@ -894,7 +894,7 @@ function getbpData(fetchedData) {
         let bp_list = bpList.filter(
             obj => !uniq[obj.bp_date] && (uniq[obj.bp_date] = true)
         );
-        return { "bp details": in_out_take_details, "observed_values": bp_list };
+        return { "bp details": bp_details, "observed_values": bp_list };
     }
     else {
         return {};
