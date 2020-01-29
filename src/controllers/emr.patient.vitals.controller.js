@@ -23,20 +23,30 @@ const EMRPatientVitals = () => {
       const emrPatientVitalReqData = req.body;
       const { user_uuid } = req.headers;
       if (Object.keys(req.body).length != 0) {
-
+        
+        //validating the keys in req.body
         for (let detail of req.body) {
-          let body_details_validation_result = validate.validate(detail, ['facility_uuid', 'department_uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'consultation_uuid', 'vital_group_uuid', 'vital_type_uuid', 'vital_master_uuid', 'vital_qualifier_uuid', 'vital_value_type_uuid', 'vital_uom_uuid', 'patient_vital_status_uuid']); 
+          let body_details_validation_result = validate.validate(detail, ['facility_uuid', 'department_uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'consultation_uuid', 'vital_group_uuid', 'vital_type_uuid', 'vital_master_uuid', 'vital_qualifier_uuid', 'vital_value_type_uuid', 'vital_uom_uuid', 'patient_vital_status_uuid']);
           if (!body_details_validation_result.status) {
-            //throw ({ error_type: "validation", errors: body_details_validation_result.errors });
-            return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });  
+            return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });
           }
         }
-        
+        //checking for existing patient vitals
+        for (let exit of req.body) {
+          const exists = await PVexists(exit.patient_uuid, exit.vital_master_uuid);
+
+          if (exists && exists.length > 0) {
+            return res.status(400).send({ code: httpStatus[400], message: "vitals for the patient already exists" });
+          }
+        }
         if (
           user_uuid &&
           emrPatientVitalReqData &&
           emrPatientVitalReqData.length > 0
         ) {
+          //const exists = await PVexists(emrPatientVitalReqData.patient_uuid,emrPatientVitalReqData.vital_master_uuid);
+
+
           emrPatientVitalReqData.forEach(eRD => {
             eRD.performed_date = new Date();
             eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
@@ -65,7 +75,7 @@ const EMRPatientVitals = () => {
         }
 
       } else {
-        return res.status(400).send({ code: httpStatus[400], message: " Request Body Found" });
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (ex) {
       //console.log("-----", ex);
@@ -453,3 +463,20 @@ function getPVlist(fetchedData, p_id, created_date) {
   }
   return pv_list;
 }
+
+const PVexists = (PID, vital_master_uuid) => {
+  //console.log ("pvexits callback----------",PVexists);
+  if (PID != undefined) {
+    return new Promise((resolve, reject) => {
+      let value = emr_patientvitals_Tbl.findAll({
+        attributes: ['patient_uuid', 'vital_master_uuid', 'is_active', 'status'],
+        where: { patient_uuid: PID, vital_master_uuid: vital_master_uuid }
+      }); if (value) {
+        //console.log("------value-----",value);
+        resolve(value);
+        return value;
+      }
+      else { reject({ 'message': 'PV does not existed' }); }
+    });
+  }
+};
