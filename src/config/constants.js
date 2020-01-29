@@ -35,6 +35,7 @@ module.exports = Object.freeze({
   TREATMENT_REQUIRED: "Please send treatment Kit along with One widget details",
   SURGERY_POSITION: "Surgery Position fetched successfully",
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
+  INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
