@@ -23,7 +23,7 @@ const validate_header = (header) => {
 };
 
 const send = (errors) => {
-    console.log(errors);
+    //console.log(errors);
     if (errors) {
         errors += " Must Be Provided";
         return {status:false,errors};
