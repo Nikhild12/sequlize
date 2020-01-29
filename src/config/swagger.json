@@ -9694,7 +9694,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "ventilator_uuid": {
+              "uuid": {
                 "type": "integer",
                 "example": 1
               },
