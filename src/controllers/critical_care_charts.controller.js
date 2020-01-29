@@ -33,8 +33,8 @@ const CCchartsController = () => {
         if (Object.keys(req.body).length != 0) {
             try {
 
-                let { user_uuid } = req.headers;
-                let { critical_care_type } = req.query;
+                let { user_uuid, critical_care_type } = req.headers;
+                //let { critical_care_type } = req.query;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
@@ -171,8 +171,8 @@ const CCchartsController = () => {
         if (Object.keys(req.body).length != 0) {
             try {
                 // plucking data req body
-                let { user_uuid } = req.headers;
-                let { critical_care_type } = req.query;
+                let { user_uuid, critical_care_type } = req.headers;
+                //let { critical_care_type } = req.query;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
@@ -405,7 +405,7 @@ function updateCCCdata(tablename, data1, data2, user_uuid) {
         item.created_date = item.modified_date = new Date();
         item.created_by = user_uuid;
         updatePromise = [...updatePromise,
-        tablename.update(item, { where: { uuid: item.ventilator_uuid } }, { returning: true })];
+        tablename.update(item, { where: { uuid: item.uuid } }, { returning: true })];
     });
     return updatePromise;
 }
@@ -546,7 +546,7 @@ function getCquery(patient_uuid, from_date, to_date) {
     };
 }
 function getabgData(fetchedData) {
-    let abgList = [];
+    let abgList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         abg_details = {
@@ -610,7 +610,7 @@ function getadList(fetchedData, p_id, from_date) {
 }
 
 function getmonitorData(fetchedData) {
-    let mList = [];
+    let mList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         monitor_details = {
@@ -675,7 +675,7 @@ function getmdList(fetchedData, p_id, from_date) {
 
 
 function getinoutData(fetchedData) {
-    let ioList = [];
+    let ioList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         in_out_take_details = {
@@ -739,7 +739,7 @@ function getioList(fetchedData, p_id, from_date) {
 }
 
 function getdiabetesData(fetchedData) {
-    let dbList = [];
+    let dbList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         diabetes_details = {
@@ -764,7 +764,7 @@ function getdiabetesData(fetchedData) {
         let db_list = dbList.filter(
             obj => !uniq[obj.db_date] && (uniq[obj.db_date] = true)
         );
-        return { "diabetes details": in_out_take_details, "observed_values": db_list };
+        return { "diabetes details": diabetes_details, "observed_values": db_list };
     }
     else {
         return {};
@@ -804,7 +804,7 @@ function getdbList(fetchedData, p_id, from_date) {
 
 
 function getdialysisData(fetchedData) {
-    let dlList = [];
+    let dlList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         dialysis_details = {
@@ -829,7 +829,7 @@ function getdialysisData(fetchedData) {
         let dl_list = dlList.filter(
             obj => !uniq[obj.dl_date] && (uniq[obj.dl_date] = true)
         );
-        return { "dialysis details": in_out_take_details, "observed_values": dl_list };
+        return { "dialysis details": dialysis_details, "observed_values": dl_list };
     }
     else {
         return {};
@@ -869,7 +869,7 @@ function getdlList(fetchedData, p_id, from_date) {
 
 
 function getbpData(fetchedData) {
-    let bpList = [];
+    let bpList = [], dList = [];
 
     if (fetchedData && fetchedData.length > 0) {
         bp_details = {
@@ -894,7 +894,7 @@ function getbpData(fetchedData) {
         let bp_list = bpList.filter(
             obj => !uniq[obj.bp_date] && (uniq[obj.bp_date] = true)
         );
-        return { "bp details": in_out_take_details, "observed_values": bp_list };
+        return { "bp details": bp_details, "observed_values": bp_list };
     }
     else {
         return {};

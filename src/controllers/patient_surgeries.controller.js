@@ -39,21 +39,21 @@ const Surgery_History = () => {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
       }
     } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
 
   };
 
   const _getSurgeryHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { patient_uuid } = req.query;
+    const { patient_uuid } = req.query;
 
     try {
       if (user_uuid && patient_uuid) {
         const surgeryHistory = await patientSurgeryHistory(patient_uuid, user_uuid);
-        return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryHistory });
+        return res.status(200).send({ code: httpStatus.OK, message: 'Patient Surgery History Fetched Successfully', responseContent: surgeryHistory });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     }
     catch (err) {
@@ -70,7 +70,7 @@ const Surgery_History = () => {
         const surgeryData = await surgicalDetailsTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
         return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryData });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     }
     catch (err) {
@@ -94,7 +94,7 @@ const Surgery_History = () => {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', requestContent: data });
         }
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM}  ${emr_constants.FOUND}` });
 
       }
     }

@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
                     },
-                    min: 0
+                    
                 }
             },
             department_uuid: {
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
                     },
-                    min: 0
+                    
                 }
             },
             patient_uuid: {
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('patient_uuid')
                     },
-                    min: 0
+                    
                 }
             },
             encounter_uuid: {
