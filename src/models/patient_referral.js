@@ -129,14 +129,38 @@ module.exports = (sequelize, DataTypes) => {
 
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('referral_facility_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('referral_facility_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('referral_facility_uuid')
+          },
+
+        }
 
       },
       referral_deptartment_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('referral_deptartment_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('referral_deptartment_uuid')
+          },
+          min: {
+            args: 1,
+            msg: emr_constants.GetZeroValidationMessage('referral_deptartment_uuid')
+          },
+
+        }
 
 
       },
