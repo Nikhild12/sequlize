@@ -764,7 +764,7 @@ function getdiabetesData(fetchedData) {
         let db_list = dbList.filter(
             obj => !uniq[obj.db_date] && (uniq[obj.db_date] = true)
         );
-        return { "diabetes details": in_out_take_details, "observed_values": db_list };
+        return { "diabetes details": diabetes_details, "observed_values": db_list };
     }
     else {
         return {};
@@ -829,7 +829,7 @@ function getdialysisData(fetchedData) {
         let dl_list = dlList.filter(
             obj => !uniq[obj.dl_date] && (uniq[obj.dl_date] = true)
         );
-        return { "dialysis details": in_out_take_details, "observed_values": dl_list };
+        return { "dialysis details": dialysis_details, "observed_values": dl_list };
     }
     else {
         return {};
@@ -894,7 +894,7 @@ function getbpData(fetchedData) {
         let bp_list = bpList.filter(
             obj => !uniq[obj.bp_date] && (uniq[obj.bp_date] = true)
         );
-        return { "bp details": in_out_take_details, "observed_values": bp_list };
+        return { "bp details": bp_details, "observed_values": bp_list };
     }
     else {
         return {};
