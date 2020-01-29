@@ -41,8 +41,12 @@ module.exports = Object.freeze({
     switch (columnname) {
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
+      case "referral_facility_uuid":
+        return `${returnProvideMsg} Referral Facility Id`;
       case "department_uuid":
         return `${returnProvideMsg} Department Id`;
+      case "referral_deptartment_uuid":
+        return `${returnProvideMsg} Referral Department Id`;
       case "transfer_department_uuid":
         return `${returnProvideMsg} Transfer Department Id`;
       case "role_uuid":
@@ -87,6 +91,8 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} Consultation Id`;
       case "relation_type_uuid":
         return `${returnProvideMsg} Relation Type Id`;
+      case "transfer_facility_uuid":
+        return `${returnProvideMsg} Transfer Facility Id`;
       case "quantity":
         return `${returnProvideMsg} Drug Quantity`;
       default:
@@ -107,6 +113,8 @@ module.exports = Object.freeze({
         return `Patient Id ${lengthMessage}`;
       case "facility_uuid":
         return `Facility Id ${lengthMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${lengthMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${lengthMessage}`;
       case "treatment_kit_type_uuid":
@@ -152,12 +160,16 @@ module.exports = Object.freeze({
         return `Patient Id ${validationMessage}`;
       case "department_uuid":
         return `Department Id ${validationMessage}`;
+      case "referral_deptartment_uuid":
+        return `Referral Department Id ${validationMessage}`;
       case "transfer_department_uuid":
         return `Transfer Department Id ${validationMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${validationMessage}`;
       case "facility_uuid":
         return `Facility Id ${validationMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${validationMessage}`;
       case "diagnosis_uuid":
         return `Diagnosis Id ${validationMessage}`;
       case "test_master_uuid":
@@ -182,6 +194,8 @@ module.exports = Object.freeze({
         return `Activity Id ${validationMessage}`;
       case "context_activity_map_uuid":
         return `Context Activity Map Id ${validationMessage}`;
+      case "transfer_facility_uuid":
+        return `Transfer Facility Id ${validationMessage}`;
       case "relation_type_uuid":
         return `Relation Type Id ${validationMessage}`;
       default:
