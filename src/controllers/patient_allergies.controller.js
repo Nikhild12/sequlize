@@ -140,7 +140,7 @@ const Patient_Allergies = () => {
 
       }
     } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND}` });
 
     }
   };
