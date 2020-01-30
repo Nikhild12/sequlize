@@ -34,79 +34,64 @@ const profilesController = () => {
    * @param {*} req 
    * @param {*} res 
    */
-
   const _createProfileOpNotes = async (req, res) => {
     const { user_uuid } = req.headers;
     let { profiles } = req.body;
     let sectionsDetails = profiles.sections;
-    let profilesSectionInfoDetails = [];
+    let sectionsInfoDetails = [];
+
     //profileSectionDetails
     sectionsDetails.forEach((item, section_idx) => {
-      let profilesSectionInfo = item.profilesSectionInfo;
-      profilesSectionInfo.forEach((item, idx) => {
-        profilesSectionInfoDetails = [...profilesSectionInfoDetails, {
-          activity_uuid: item.activity_uuid,
-          display_order: item.display_order
-        }];
-      });
+      sectionsInfoDetails = [...sectionsInfoDetails, {
+        activity_uuid: item.activity_uuid,
+        display_order: item.display_order
+      }];
     });
 
     //profilesSectionCategoryDetails
-    let profilesSectionCategoryInfoDetails = [];
+    let CategoryInfoDetails = [];
     sectionsDetails.forEach((item, section_idx) => {
-      let profilesSectionInfo = item.profilesSectionInfo;
-      profilesSectionInfo.forEach((caItem, caIdx) => {
-        let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-        profilesSectionCategoryInfo.forEach((item, idx) => {
-          profilesSectionCategoryInfoDetails = [...profilesSectionCategoryInfoDetails, {
-            display_order: item.display_order,
-            category_uuid: profilesSectionCategoryInfo[caIdx].category_uuid
+      let categories = item.categories;
+      categories.forEach((caItem, caIdx) => {
+        CategoryInfoDetails = [...CategoryInfoDetails, {
+          display_order: item.display_order,
+          category_uuid: categories[caIdx].category_uuid
+        }];
+      });
+    });
+    //profilesSectionCategoryConceptDetails
+    let conceptInfoDetails = [];
+    sectionsDetails.forEach((sItem, section_idx) => {
+      let categories = sItem.categories;
+      categories.forEach((caItem, caIdx) => {
+        let concepts = caItem.concepts;
+        concepts.forEach((item, idx) => {
+          conceptInfoDetails = [...conceptInfoDetails, {
+            code: item.code,
+            name: item.name,
+            description: item.description,
+            value_type_uuid: item.value_type_uuid,
+            is_multiple: item.is_multiple,
+            is_mandatory: item.is_mandatory,
+            display_order: item.display_order
           }];
         });
       });
     });
-
-    //profilesSectionCategoryConceptDetails
-    let profilesSectionCategoryConceptInfoDetails = [];
+    //profilesSectionCategoryConcept ValueType  Details
+    let ValuesInfoDetails = [];
     sectionsDetails.forEach((sItem, section_idx) => {
-      let profilesSectionInfo = sItem.profilesSectionInfo;
-      profilesSectionInfo.forEach((caItem, caIdx) => {
-        let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-        profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
-          let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
-          profileSectionCategoryConceptsInfo.forEach((item, idx) => {
-            profilesSectionCategoryConceptInfoDetails = [...profilesSectionCategoryConceptInfoDetails, {
-              code: item.code,
-              name: item.name,
-              description: item.description,
-              value_type_uuid: item.value_type_uuid,
-              is_multiple: item.is_multiple,
-              is_mandatory: item.is_mandatory,
+      let categories = sItem.categories;
+      categories.forEach((caItem, caIdx) => {
+        let concepts = caItem.concepts;
+        concepts.forEach((item, idx) => {
+          let conceptvalues = item.conceptvalues;
+          conceptvalues.forEach((item, idx) => {
+            ValuesInfoDetails = [...ValuesInfoDetails, {
+              value_code: item.value_code,
+              value_name: item.value_name,
               display_order: item.display_order
             }];
-          });
-        });
-      });
-    });
-
-    //profilesSectionCategoryConceptValuesDetails
-    let profilesSectionCategoryConceptValuesInfoDetails = [];
-    sectionsDetails.forEach((sItem, section_idx) => {
-      let profilesSectionInfo = sItem.profilesSectionInfo;
-      profilesSectionInfo.forEach((caItem, caIdx) => {
-        let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-        profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
-          let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
-          profileSectionCategoryConceptsInfo.forEach((vItem, idx) => {
-            let profileSectionCategoryConceptValuesInfo = vItem.profileSectionCategoryConceptValuesInfo;
-            profileSectionCategoryConceptValuesInfo.forEach((item, idx) => {
-              profilesSectionCategoryConceptValuesInfoDetails = [...profilesSectionCategoryConceptValuesInfoDetails, {
-                value_code: item.value_code,
-                value_name: item.value_name,
-                display_order: item.display_order,
-                sectionIdx: section_idx
-              }];
-            });
           });
         });
       });
@@ -124,41 +109,40 @@ const profilesController = () => {
         //        return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateProfilesRecord) });
         // }
         profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
+
         //Profiles save
         const createdProfileData = await profilesTbl.create(profiles, { returning: true });
 
         // Profile and Sections mapping
-        profilesSectionInfoDetails.forEach((sItem, sIdx) => {
+        sectionsInfoDetails.forEach((sItem, sIdx) => {
           sItem.profile_uuid = createdProfileData.uuid;
           sItem.section_uuid = sectionsDetails[sIdx].section_uuid;
-          sItem = emr_utility.assignDefaultValuesAndUUIdToObject(sItem, profilesSectionInfoDetails, user_uuid);
+          sItem = emr_utility.assignDefaultValuesAndUUIdToObject(sItem, sectionsInfoDetails, user_uuid);
         });
-        const createdProfileSectionData = await profileSectionsTbl.bulkCreate(profilesSectionInfoDetails, { returning: true });
-        //console.log('profilessections');
+        const createdProfileSectionData = await profileSectionsTbl.bulkCreate(sectionsInfoDetails, { returning: true });
+
         // Profile_Section_category mapping
-        profilesSectionCategoryInfoDetails.forEach((cItem, cIdx) => {
+        CategoryInfoDetails.forEach((cItem, cIdx) => {
           cItem.profile_section_uuid = createdProfileSectionData[cIdx].uuid;
-          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, profilesSectionCategoryInfoDetails, user_uuid);
+          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, CategoryInfoDetails, user_uuid);
         });
-        const createdProfileSectionCategoryData = await profileSectionCategoriesTbl.bulkCreate(profilesSectionCategoryInfoDetails, { returning: true });
-        // console.log('createdProfileSectionCategory');
+        const createdProfileSectionCategoryData = await profileSectionCategoriesTbl.bulkCreate(CategoryInfoDetails, { returning: true });
+
         // Profile_Section_category_concepts mapping
-        profilesSectionCategoryConceptInfoDetails.forEach((cItem, cIdx) => {
+        conceptInfoDetails.forEach((cItem, cIdx) => {
           cItem.profile_section_category_uuid = createdProfileSectionCategoryData[cIdx].uuid;
-          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, profilesSectionCategoryConceptInfoDetails, user_uuid);
+          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, conceptInfoDetails, user_uuid);
         });
-        createdProfileSectionCategoryConceptData = await profileSectionCategoryConceptsTbl.bulkCreate(profilesSectionCategoryConceptInfoDetails, { returning: true });
-        //console.log('createdProfileSectionCategoryConcept');
+        createdProfileSectionCategoryConceptData = await profileSectionCategoryConceptsTbl.bulkCreate(conceptInfoDetails, { returning: true });
+
         // Profile_Section_category_concept_Values mapping
-        profilesSectionCategoryConceptValuesInfoDetails.forEach((vItem, vIdx) => {
-
+        ValuesInfoDetails.forEach((vItem, vIdx) => {
           vItem.profile_section_category_concept_uuid = createdProfileSectionCategoryConceptData[vIdx].uuid;
-          vItem = emr_utility.assignDefaultValuesAndUUIdToObject(vItem, profilesSectionCategoryConceptValuesInfoDetails, user_uuid);
+          vItem = emr_utility.assignDefaultValuesAndUUIdToObject(vItem, ValuesInfoDetails, user_uuid);
 
         });
-        //console.log('profilesSectionCategoryConceptValuesDetails');
-        profileSave = [...profileSave, profileSectionCategoryConceptValuesTbl.bulkCreate(profilesSectionCategoryConceptValuesInfoDetails, { returning: true })];
 
+        profileSave = [...profileSave, profileSectionCategoryConceptValuesTbl.bulkCreate(ValuesInfoDetails, { returning: true })];
         await Promise.all(profileSave);
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, reqContents: req.body });
       } catch (ex) {
@@ -173,17 +157,14 @@ const profilesController = () => {
 
   };
 
-
   // Get All the Profiles
   const _getAllProfiles = async (req, res) => {
 
     const { user_uuid } = req.headers;
 
     try {
-      console.log('user_uuid==', user_uuid);
       if (user_uuid) {
         const profilesData = await profilesTbl.findAll();
-        console.log('profilesData==', profilesData);
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: profilesData });
       }
       else {
@@ -195,7 +176,6 @@ const profilesController = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
 
   // Delete Profiles
   const _deleteProfiles = async (req, res) => {
@@ -257,6 +237,12 @@ const profilesController = () => {
     }
 
   };
+
+  /**
+      * update profiles
+      * @param {*} req 
+      * @param {*} res 
+      */
   const _updateProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
     const profilesReqData = req.body;
@@ -297,7 +283,11 @@ const profilesController = () => {
     }
   };
 
-
+  /**
+        * Get All  valueTypes
+        * @param {*} req 
+        * @param {*} res 
+        */
   const _getAllValueTypes = async (req, res) => {
 
     const { user_uuid } = req.headers;
@@ -316,7 +306,11 @@ const profilesController = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
+  /**
+         * OPNotes main template save
+         * @param {*} req 
+         * @param {*} res 
+         */
   const _addProfiles = async (req, res) => {
 
     const { user_uuid } = req.headers;
@@ -428,120 +422,6 @@ function getSectionsUpdateData(user_uuid, profilesReqData) {
   };
 
 }
-
-// const getProfilesUpdateData = async (user_uuid, profilesReqData) => {
-//   let profilesUpdateData = profilesReqData.profiles;
-//   let updatePromise = [];
-//   let data = {
-//     uuid: profilesUpdateData.uuid,
-//     profile_code: profilesUpdateData.profile_code,
-//     profile_name: profilesUpdateData.profile_name,
-//     profile_description: profilesUpdateData.profile_description,
-//     department_uuid: profilesUpdateData.department_uuid,
-//     facility_uuid: profilesUpdateData.facility_uuid,
-//     profile_type_uuid: profilesUpdateData.profile_type_uuid,
-//     modified_by: user_uuid,
-//     modified_date: new Date(),
-//     is_active: emr_constants.IS_ACTIVE,
-//     status: emr_constants.IS_ACTIVE,
-//     updatePromise=[...updatePromise,
-//     profilesTbl.update(profilesUpdateData, { where: { uuid: profilesUpdateData.uuid } }),
-//       //profileSectionsTbl.update(sectionsUpdateData, { where: { uuid: sectionsUpdateData.uuid } }),
-//     ]
-//   };
-
-//   let sectionsDetails = profilesReqData.profiles.sections;
-//   let profilesSectionInfoDetails = [];
-//   sectionsDetails.forEach((item, section_idx) => {
-//     let profilesSectionInfo = item.profilesSectionInfo;
-//     profilesSectionInfo.forEach((item, idx) => {
-//       profilesSectionInfoDetails = [...profilesSectionInfoDetails, {
-//         profileSection_uuid: profilesSectionInfoDetails[idx].uuid,
-//         activity_uuid: item.activity_uuid,
-//         display_order: item.display_order,
-//         section_uuid: sectionsDetails[section_idx].section_uuid,
-//         profile_uuid: profilesUpdateData.uuid,
-//         updatePromise=[...updatePromise,
-//         profileSectionsTbl.update(profilesSectionInfoDetails, sectionsDetails, { where: { uuid: profilesSectionInfoDetails[idx].uuid } }),
-//         ]
-//       }];
-//     });
-//   });
-
-//   //profilesSectionCategoryDetails
-//   let profilesSectionCategoryInfoDetails = [];
-//   sectionsDetails.forEach((item, section_idx) => {
-//     let profilesSectionInfo = item.profilesSectionInfo;
-//     profilesSectionInfo.forEach((caItem, caIdx) => {
-//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-//       profilesSectionCategoryInfo.forEach((item, idx) => {
-//         profilesSectionCategoryInfoDetails = [...profilesSectionCategoryInfoDetails, {
-//           profileSectionCategory_uuid: profilesSectionCategoryInfoDetails[idx].uuid,
-//           display_order: item.display_order,
-//           category_uuid: profilesSectionCategoryInfo[caIdx].category_uuid,
-//           profile_section_uuid: profilesSectionCategoryInfoDetails[idx].profile_section_uuid,
-//           updatePromise=[...updatePromise,
-//           profileSectionCategoriesTbl.update(profilesSectionCategoryInfoDetails, { where: { uuid: profilesSectionCategoryInfoDetails[idx].uuid } }),
-//           ]
-//         }];
-//       });
-//     })
-//   });
-
-
-
-//   //profilesSectionCategoryConceptDetails
-//   let profilesSectionCategoryConceptInfoDetails = [];
-//   sectionsDetails.forEach((sItem, section_idx) => {
-//     let profilesSectionInfo = sItem.profilesSectionInfo;
-//     profilesSectionInfo.forEach((caItem, caIdx) => {
-//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-//       profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
-//         let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
-//         profileSectionCategoryConceptsInfo.forEach((item, idx) => {
-//           profilesSectionCategoryConceptInfoDetails = [...profilesSectionCategoryConceptInfoDetails, {
-//             profilesSectionCategoryConcept_uuid: profilesSectionCategoryConceptInfoDetails[idx].uuid,
-//             profile_section_category_uuid: profileSectionCategoryConceptsInfo[conIdx].uuid,
-//             code: item.code,
-//             name: item.name,
-//             description: item.description,
-//             value_type_uuid: item.value_type_uuid,
-//             is_multiple: item.is_multiple,
-//             is_mandatory: item.is_mandatory,
-//             display_order: item.display_order,
-//             updatePromise=[...updatePromise,
-//             profileSectionCategoryConceptsTbl.update(profilesSectionCategoryInfoDetails, { where: { uuid: profilesSectionCategoryInfoDetails[idx].uuid } })
-//             ]
-//           }];
-//         });
-//       })
-//     })
-//   });
-
-//   //profilesSectionCategoryConceptValuesDetails
-//   let profilesSectionCategoryConceptValuesInfoDetails = [];
-//   sectionsDetails.forEach((sItem, section_idx) => {
-//     let profilesSectionInfo = sItem.profilesSectionInfo;
-//     profilesSectionInfo.forEach((caItem, caIdx) => {
-//       let profilesSectionCategoryInfo = caItem.profilesSectionCategoryInfo;
-//       profilesSectionCategoryInfo.forEach((conItem, conIdx) => {
-//         let profileSectionCategoryConceptsInfo = conItem.profileSectionCategoryConceptsInfo;
-//         profileSectionCategoryConceptsInfo.forEach((vItem, idx) => {
-//           let profileSectionCategoryConceptValuesInfo = vItem.profileSectionCategoryConceptValuesInfo;
-//           profileSectionCategoryConceptValuesInfo.forEach((item, idx) => {
-//             profilesSectionCategoryConceptValuesInfoDetails = [...profilesSectionCategoryConceptValuesInfoDetails, {
-//               value_code: item.value_code,
-//               value_name: item.value_name,
-//               display_order: item.display_order,
-//               sectionIdx: section_idx
-//             }];
-//           });
-//         });
-//       });
-//     });
-//   });
-// }
-
 
 function getProfileDetailsData(profileList) {
   let profiles;
