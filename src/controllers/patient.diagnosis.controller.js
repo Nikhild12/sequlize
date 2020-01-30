@@ -445,6 +445,7 @@ async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
     pD.is_chronic = pD.is_chronic || emr_constants.IS_ACTIVE;
 
     pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
+    pD.performed_by = user_uuid;
   });
 
   return await patient_diagnosis_tbl.bulkCreate(patientsDiagnosisData, {
