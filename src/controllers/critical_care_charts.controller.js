@@ -1,7 +1,7 @@
 const httpStatus = require("http-status");
 
 const db = require("../config/sequelize");
-
+const validate = require("../config/validate");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 
@@ -27,17 +27,28 @@ const CCchartsController = () => {
     @returns {}
     */
 
-
     const _createCCC = async (req, res) => {
 
         if (Object.keys(req.body).length != 0) {
             try {
 
                 let { user_uuid, critical_care_type } = req.headers;
-                //let { critical_care_type } = req.query;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
+
+                const body_header_validation_result = validate.validate(data1, ['patient_uuid', 'encounter_uuid', 'facility_uuid', 'encounter_type_uuid']);
+                if (!body_header_validation_result.status) {
+                    return res.status(400).send({ code: httpStatus[400], message: body_header_validation_result.errors });
+                }
+
+                for (let detail of data2) {
+                    let body_details_validation_result = validate.validate(detail, ['cc_chart_uuid', 'cc_concept_uuid', 'cc_concept_value_uuid', 'from_date', 'observed_value']);
+                    if (!body_details_validation_result.status) {
+                        return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });
+                    }
+                }
+
                 if (user_uuid && data1 && data2 && critical_care_type) {
 
                     switch (critical_care_type) {
@@ -64,7 +75,6 @@ const CCchartsController = () => {
                             break;
                     }
 
-                    //const createdData = create_ventilator(user_uuid, data1, data2);
                     if (createdData1) {
                         res.send({ "status": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
                     } else if (createdData2) {
@@ -127,9 +137,7 @@ const CCchartsController = () => {
                 }
 
                 if (data1) {
-                    //console.log("before organise", data1);
                     vdata = getventilatorData(data1);
-                    //console.log("vdata----",vdata);
                     return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                 }
                 else if (data2) {
@@ -170,17 +178,23 @@ const CCchartsController = () => {
 
         if (Object.keys(req.body).length != 0) {
             try {
-                // plucking data req body
                 let { user_uuid, critical_care_type } = req.headers;
-                //let { critical_care_type } = req.query;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
+                //let updatepos;
+                //console.log("----------------",data2);
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
                 if (user_uuid && data1 && data2 && critical_care_type) {
 
                     switch (critical_care_type) {
                         case "1":
+                            
+                            //console.log("-------",updatepos);
+                            //let abc = updateonCdate(ventilatorTbl, data2[0].uuid)
+                            // if (abc){ 
+                            //     console.log("-------");
+                            //     return res.status(400).send({ code: httpStatus[400], message: "update notpossible" });}
                             createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
                             break;
                         case "2":
@@ -204,7 +218,7 @@ const CCchartsController = () => {
                     }
 
                     if (createdData1 || createdData2 || createdData3 || createdData4 || createdData5 || createdData6 || createdData7) {
-                        res.send({ "status": 200, "message": "updated Successfully " });
+                       return res.send({ "status": 200, "message": "updated Successfully " });
                     }
                 }
                 else {
@@ -252,8 +266,6 @@ const CCchartsController = () => {
         try {
             if (user_uuid && patient_uuid) {
 
-
-                //const data = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
                 switch (critical_care_type) {
                     case "1":
                         data1 = await ventilatorTbl.findAll(getCquery(patient_uuid, from_date, to_date));
@@ -327,7 +339,6 @@ const CCchartsController = () => {
                 const data = await cccTbl.findAll({
                     attributes: ['uuid', 'code', 'name', 'description', 'critical_care_type_uuid'],
                     where: {
-                        //patient_uuid: patient_uuid,
                         is_active: 1,
                         status: 1
                     },
@@ -451,7 +462,6 @@ function getvdList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         vd_list = filteredData.map(pV => {
             return {
@@ -470,14 +480,12 @@ function getvdList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return vd_list;
 }
 
 function getCCquery(patient_uuid) {
 
     return {
-        //table_name: ventilatorTbl,
 
         order: [['from_date', 'DESC']],
         where: {
@@ -552,7 +560,6 @@ function getabgData(fetchedData) {
         abg_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //abg_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -586,7 +593,6 @@ function getadList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         ad_list = filteredData.map(pV => {
             return {
@@ -605,7 +611,6 @@ function getadList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return ad_list;
 }
 
@@ -616,7 +621,6 @@ function getmonitorData(fetchedData) {
         monitor_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //monitor_date: fetchedData[0].dataValues.from_date,
 
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
@@ -650,7 +654,6 @@ function getmdList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         md_list = filteredData.map(pV => {
             return {
@@ -669,7 +672,6 @@ function getmdList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return md_list;
 }
 
@@ -681,8 +683,6 @@ function getinoutData(fetchedData) {
         in_out_take_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //inouttake_date: fetchedData[0].dataValues.from_date,
-
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
@@ -715,7 +715,6 @@ function getioList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         io_list = filteredData.map(pV => {
             return {
@@ -734,7 +733,6 @@ function getioList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return io_list;
 }
 
@@ -745,8 +743,6 @@ function getdiabetesData(fetchedData) {
         diabetes_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //diabetes_date: fetchedData[0].dataValues.from_date,
-
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
@@ -779,7 +775,6 @@ function getdbList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         db_list = filteredData.map(pV => {
             return {
@@ -798,7 +793,6 @@ function getdbList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return db_list;
 }
 
@@ -810,8 +804,6 @@ function getdialysisData(fetchedData) {
         dialysis_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //dialysis_date: fetchedData[0].dataValues.from_date,
-
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
@@ -844,7 +836,6 @@ function getdlList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         dl_list = filteredData.map(pV => {
             return {
@@ -863,7 +854,6 @@ function getdlList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return dl_list;
 }
 
@@ -875,8 +865,6 @@ function getbpData(fetchedData) {
         bp_details = {
             patient_uuid: fetchedData[0].dataValues.patient_uuid,
             encounter_uuid: fetchedData[0].dataValues.encounter_uuid,
-            //bp_date: fetchedData[0].dataValues.from_date,
-
             facility_uuid: fetchedData[0].dataValues.facility_uuid,
             encounter_type_uuid: fetchedData[0].dataValues.encounter_type_uuid,
             comments: fetchedData[0].dataValues.comments,
@@ -909,7 +897,6 @@ function getbpList(fetchedData, p_id, from_date) {
             fD.dataValues.from_date == from_date
         );
     });
-    //console.log(filteredData);
     if (filteredData && filteredData.length > 0) {
         bp_list = filteredData.map(pV => {
             return {
@@ -928,6 +915,21 @@ function getbpList(fetchedData, p_id, from_date) {
             };
         });
     }
-    //console.log(vd_list);   
     return bp_list;
+}
+
+async function updateonCdate(tname, u_id, res) {
+    //console.log("updated------",tname,u_id);
+    let currentDate =  moment(new Date()).format('YYYY-MM-DD');
+    //currentDate = await formatDate(currentDate);
+   const fetchData = await tname.findOne({
+       where: {uuid: u_id}}, {returning: true}
+   );//
+           fetchedDate = moment(fetchData.from_date).format('YYYY-MM-DD');
+           console.log("dates",currentDate,fetchedDate);
+           if (fetchedDate != currentDate) {
+               console.log("if console");
+               return false;
+           }
+
 }
