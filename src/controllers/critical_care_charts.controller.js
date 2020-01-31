@@ -181,9 +181,8 @@ const CCchartsController = () => {
                 let { user_uuid, critical_care_type } = req.headers;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
-                let cdate = moment(new Date()).format('YYYY-MM-DD');
-                //let updatepos;
-                //console.log("----------------",data2);
+                //let cdate = moment(new Date()).format('YYYY-MM-DD');
+                
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
                 if (user_uuid && data1 && data2 && critical_care_type) {
@@ -217,7 +216,7 @@ const CCchartsController = () => {
                     }
 
                     if (createdData1 || createdData2 || createdData3 || createdData4 || createdData5 || createdData6 || createdData7) {
-                       return res.send({ "status": 200, "message": "updated Successfully " });
+                        return res.send({ "status": 200, "message": "updated Successfully " });
                     }
                 }
                 else {
@@ -552,6 +551,7 @@ function getCquery(patient_uuid, from_date, to_date) {
 
     };
 }
+
 function getabgData(fetchedData) {
     let abgList = [], dList = [];
 
@@ -920,18 +920,7 @@ function getbpList(fetchedData, p_id, from_date) {
 async function updateonCdate(tname, u_id) {
     //console.log(tname, u_id);
     return tname.findOne({
-        where: {uuid: u_id}}, {returning: true}
+        where: { uuid: u_id }
+    }, { returning: true }
     );
-        
-        //console.log("updated------",tname,u_id);
-    //let currentDate =  moment(new Date()).format('YYYY-MM-DD');
-    //currentDate = await formatDate(currentDate);
-   //
-        //    fetchedDate = moment(fetchData.from_date).format('YYYY-MM-DD');
-        //    console.log("dates",currentDate,fetchedDate);
-        //    if (fetchedDate != currentDate) {
-        //        console.log("if console");
-        //        return false;
-        //    }
-
 }
