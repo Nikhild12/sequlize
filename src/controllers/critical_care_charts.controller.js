@@ -181,6 +181,7 @@ const CCchartsController = () => {
                 let { user_uuid, critical_care_type } = req.headers;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
+                let cdate = moment(new Date()).format('YYYY-MM-DD');
                 //let updatepos;
                 //console.log("----------------",data2);
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
@@ -189,12 +190,10 @@ const CCchartsController = () => {
 
                     switch (critical_care_type) {
                         case "1":
-                            
-                            //console.log("-------",updatepos);
-                            //let abc = updateonCdate(ventilatorTbl, data2[0].uuid)
-                            // if (abc){ 
-                            //     console.log("-------");
-                            //     return res.status(400).send({ code: httpStatus[400], message: "update notpossible" });}
+                            // let abc = await updateonCdate(ventilatorTbl, data2[0].uuid);
+                            // fetchedDate = moment(abc.dataValues.from_date).format('YYYY-MM-DD');
+                            // if (fetchedDate != cdate){ 
+                            //      return res.status(400).send({ code: httpStatus[400], message: "update notpossible" });}
                             createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
                             break;
                         case "2":
@@ -918,18 +917,21 @@ function getbpList(fetchedData, p_id, from_date) {
     return bp_list;
 }
 
-async function updateonCdate(tname, u_id, res) {
-    //console.log("updated------",tname,u_id);
-    let currentDate =  moment(new Date()).format('YYYY-MM-DD');
+async function updateonCdate(tname, u_id) {
+    //console.log(tname, u_id);
+    return tname.findOne({
+        where: {uuid: u_id}}, {returning: true}
+    );
+        
+        //console.log("updated------",tname,u_id);
+    //let currentDate =  moment(new Date()).format('YYYY-MM-DD');
     //currentDate = await formatDate(currentDate);
-   const fetchData = await tname.findOne({
-       where: {uuid: u_id}}, {returning: true}
-   );//
-           fetchedDate = moment(fetchData.from_date).format('YYYY-MM-DD');
-           console.log("dates",currentDate,fetchedDate);
-           if (fetchedDate != currentDate) {
-               console.log("if console");
-               return false;
-           }
+   //
+        //    fetchedDate = moment(fetchData.from_date).format('YYYY-MM-DD');
+        //    console.log("dates",currentDate,fetchedDate);
+        //    if (fetchedDate != currentDate) {
+        //        console.log("if console");
+        //        return false;
+        //    }
 
 }
