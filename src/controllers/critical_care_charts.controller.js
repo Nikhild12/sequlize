@@ -873,7 +873,7 @@ function getbpData(fetchedData) {
             return {
                 bp_date: tD.dataValues.from_date,
                 dList: [...dList,
-                ...getdlList(fetchedData, tD.patient_uuid, tD.from_date)
+                ...getbpList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
             };
         });
