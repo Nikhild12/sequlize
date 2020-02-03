@@ -68,6 +68,10 @@ const sectionsRouter = require("./sections.route");
 const categoriesRouter = require("./categories.route");
 const serviceRouter = express.Router();
 
+
+//Discharge summary
+const dischargeSummary = require("./discharge_summary.route");
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -184,5 +188,8 @@ serviceRouter.use("/body-side", bodySideRoute);
 
 // Surgery Position Routes
 serviceRouter.use("/surgery-position", surgeryPositionRoute);
+
+// Discharge Summary Routes
+serviceRouter.use("/discharge-summary",dischargeSummary);
 
 module.exports = serviceRouter;

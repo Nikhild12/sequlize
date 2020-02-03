@@ -256,6 +256,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'encounter_uuid',
             as: 'encounter'
         });
+        
+
 
         patient_allergies.belongsTo(models.allergy_source, {
             foreignKey: 'allergy_source_uuid'
@@ -269,6 +271,11 @@ module.exports = (sequelize, DataTypes) => {
         patient_allergies.belongsTo(models.allergy_masters, {
             foreignKey: 'allergy_master_uuid',
             as: 'allergy_masters'
+        });
+
+        patient_allergies.belongsTo(models.allergy_type, {
+            foreignKey: 'allergy_type_uuid',
+            as: 'allergy_type'
         });
 
         patient_allergies.belongsTo(models.periods, {
