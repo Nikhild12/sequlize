@@ -38,15 +38,15 @@ const patient_discharge_summary = () => {
     const { user_uuid } = req.headers;
     const { patient_uuid, doctor_uuid, encounter_uuid } = req.query;
 
-    if (patient_uuid  && encounter_uuid && user_uuid) {
+    if (patient_uuid && encounter_uuid && user_uuid) {
       try {
         //check patient admitted or not in IP MANAGEMENT
 
         //get patient allergy details
         const patient_allergy_res = await getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
-    
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res} });
+
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res } });
 
       }
       catch (ex) {
@@ -57,9 +57,37 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
+
+  const _saveDischargeDetials = async (req, res) => {
+
+    if (Object.keys(req.body).length != 0) {
+      try {
+
+        const { user_uuid } = req.headers;
+        const { patient_uuid } = req.body.query;
+        const discharge_data = req.body;
+
+        if (user_uuid && patient_uuid && discharge_data) {
+
+        }
+        else {
+          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+      }catch (err){
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
+      }
+    } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+
+  };
+
+
+
   return {
     getDischargeDetails: _getDischargeDetails
   };
+
 };
 
 module.exports = patient_discharge_summary();
