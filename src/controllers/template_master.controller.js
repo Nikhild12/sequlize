@@ -83,10 +83,10 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-        //console.log("temp list --------",templateList);
+        
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
-          //console.log("fetched data", templateData);
+        
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
@@ -103,48 +103,48 @@ const tmpmstrController = () => {
   };
 
   const _createTemplate = async (req, res) => {
-  if (Object.keys(req.body).length != 0){
-    try {
-      // plucking data req body
-      const templateMasterReqData = req.body.headers;
-      const templateMasterDetailsReqData = req.body.details;
-      let userUUID = req.headers.user_uuid;
-      let temp_name = templateMasterReqData.name;
-      let temp_type_id = templateMasterReqData.template_type_uuid;
+    if (Object.keys(req.body).length != 0) {
+      try {
+        // plucking data req body
+        const templateMasterReqData = req.body.headers;
+        const templateMasterDetailsReqData = req.body.details;
+        let userUUID = req.headers.user_uuid;
+        let temp_name = templateMasterReqData.name;
+        let temp_type_id = templateMasterReqData.template_type_uuid;
 
-      templateTransaction = await db.sequelize.transaction();
-      const exists = await nameExists(temp_name, userUUID);
+        templateTransaction = await db.sequelize.transaction();
+        const exists = await nameExists(temp_name, userUUID);
 
-      if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
-        return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
-      }
-      else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
-
-        let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
-        if (createData) {
-          await templateTransaction.commit();
-          templateTransStatus = true;
-          return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
+        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+          return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
         }
-      } else {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
-        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-      }
-    } catch (err) {
-      //await templateTransaction.rollback();
-      //templateTransStatus = true;
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
-    }
-    finally {
-      if (templateTransaction && !templateTransStatus) {
-        await templateTransaction.rollback();
+        else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
+
+          let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
+          if (createData) {
+            await templateTransaction.commit();
+            templateTransStatus = true;
+            return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
+          }
+        } else {
+          await templateTransaction.rollback();
+          templateTransStatus = true;
+          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+      } catch (err) {
+        //await templateTransaction.rollback();
+        //templateTransStatus = true;
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
+      finally {
+        if (templateTransaction && !templateTransStatus) {
+          await templateTransaction.rollback();
+          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
+        }
+      }
+    } else {
+      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
-  }else {
-    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-  }
   };
 
   const _updateTemplateById = async (req, res) => {
@@ -152,8 +152,7 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
-      //console.log("temp requested data", templateMasterReqData);
-
+      
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(user_uuid, req.body.new_details);
       const templateMasterUpdateData = getTemplateMasterUpdateData(user_uuid, templateMasterReqData);
@@ -166,7 +165,7 @@ const tmpmstrController = () => {
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction:templateTransaction }, {returning: true, plain: true });
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction: templateTransaction }, { returning: true, plain: true });
           const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid, templateTransaction));
           await templateTransaction.commit();
           templateTransStatus = true;
@@ -227,8 +226,7 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
     } catch (ex) {
-      //console.log('ex', ex);
-      return res.status(400).send({ code: httpStatus[400], message: ex.message });
+        return res.status(400).send({ code: httpStatus[400], message: ex.message });
     }
   };
 
@@ -281,7 +279,7 @@ function getTemplateData(fetchedData) {
       templateList = [...templateList,
       {
         template_details_id: tD.tmd_uuid,
-        template_details_displayorder:tD.tmd_display_order,
+        template_details_displayorder: tD.tmd_display_order,
 
         drug_name: tD.im_name,
         drug_code: tD.im_code,
@@ -347,10 +345,9 @@ function getTemplateListData(fetchedData) {
 
 function getTemplateListData1(fetchedData) {
   let templateList = [], diet_details = [];
-//console.log("3.fetched data", fetchedData);
+  
   if (fetchedData && fetchedData.length > 0) {
-    //console.log("fetched data length --------",fetchedData.length);
-
+    
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
       {
@@ -367,11 +364,10 @@ function getTemplateListData1(fetchedData) {
       }
       ];
     });
-    //console.log("template list----",templateList);
-    //console.log("diet details",templateList.diet_details[0]);
+
     let uniq = {};
     let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
-    //console.log("********* temp list", temp_list);
+
     return { "templates_list": temp_list };
   }
   else {
@@ -391,9 +387,9 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.item_master_uuid = mD.drug_id,
       mD.drug_route_uuid = mD.drug_route_uuid,
       mD.drug_frequency_uuid = mD.drug_frequency_uuid,
-      mD.diet_master_uuid= mD.diet_master_uuid,
-      mD.diet_catagory_uuid= mD.diet_catagory_uuid,
-      mD.diet_frequency_uuid= mD.diet_frequency_uuid,
+      mD.diet_master_uuid = mD.diet_master_uuid,
+      mD.diet_catagory_uuid = mD.diet_catagory_uuid,
+      mD.diet_frequency_uuid = mD.diet_frequency_uuid,
       mD.display_order = mD.display_order,
       mD.duration = mD.drug_duration,
       mD.duration_period_uuid = mD.drug_period_uuid,
@@ -405,7 +401,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.revision = mD.revision,
       mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
-    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction},{ returning: true })];
+    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction }, { returning: true })];
   });
   return masterDetailsPromise;
 }
@@ -513,36 +509,34 @@ function getDietListForTemplate(fetchedData, template_id) {
   const filteredData = fetchedData.filter((fD) => {
     return fD.dataValues.tm_uuid == template_id;
   });
-//console.log("filterred data",filteredData);
+
   if (filteredData && filteredData.length > 0) {
     filteredData.forEach((dD) => {
       diet_list = [...diet_list,
       {
         template_details_uuid: dD.tmd_uuid,
         template_details_displayorder: dD.tmd_display_order,
-        
+
         diet_id: dD.tmd_diet_master_uuid,
         diet_name: dD.dm_name,
         diet_code: dD.dm_code,
-        //drug_id: dD.im_uuid,
 
         diet_category_id: dD.tmd_diet_category_uuid,
         diet_category_name: dD.dc_name,
         diet_category_code: dD.dc_code,
 
-        diet_frequency_id:dD.tmd_diet_frequency_uuid,
+        diet_frequency_id: dD.tmd_diet_frequency_uuid,
         diet_frequency_name: dD.df_name,
         diet_frequency_code: dD.df_code,
-        
+
         diet_display_order: dD.tmd_display_order,
 
         quantity: dD.tmd_quantity
-
-        }
+      }
       ];
     });
   }
-  //console.log("diet list after filtered data",diet_list);
+
   return diet_list;
 }
 
@@ -752,7 +746,7 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
 }
 
 function getTempData(temp_type_id, result) {
-  //console.log("temp type id ---------------",temp_type_id);
+
   switch (temp_type_id) {
     case "1":
       return getTemplateListData(result);
@@ -911,7 +905,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
         table_name: tempmstrTbl,
         query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id),
       };
-      case "9":
+    case "9":
       return {
         table_name: vw_diet,
         query: {
@@ -939,9 +933,9 @@ function getTemplateDetailsData(temp_type_id, list) {
       fetchdata = getTempData(temp_type_id, list);
       return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
     case "9":
-        fetchdata = getTempData(temp_type_id, list);
-        return fetchdata;
-  
-      }
+      fetchdata = getTempData(temp_type_id, list);
+      return fetchdata;
+
+  }
 
 }
