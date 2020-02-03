@@ -249,7 +249,7 @@ function getPatinetVitalQuery(patient_uuid, doctor_uuid, encounter_uuid) {
       vm_active: emr_constants.IS_ACTIVE,
       vm_status: emr_constants.IS_ACTIVE,
       pv_encounter_uuid: encounter_uuid,
-      pv_doctor_uuid: doctor_uuid,
+      //pv_doctor_uuid: doctor_uuid,
       pv_patient_uuid: patient_uuid,
     }
   };
