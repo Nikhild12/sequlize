@@ -1,6 +1,6 @@
 // Package Import
 const httpStatus = require('http-status');
-const rp = require('request-promise');
+
 // Sequelizer Import
 const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
@@ -21,7 +21,7 @@ const periodsTbl = sequelizeDb.periods;
 
 // Patient Vitals View Import
 
-const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals
+const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
@@ -35,10 +35,10 @@ const patient_discharge_summary = () => {
    * @param {*} req 
    * @param {*} res 
    */
-    const { user_uuid, authorization } = req.headers;
+    const { user_uuid } = req.headers;
     const { patient_uuid, doctor_uuid, encounter_uuid } = req.query;
 
-    if (patient_uuid && doctor_uuid && encounter_uuid && user_uuid && authorization) {
+    if (patient_uuid  && encounter_uuid && user_uuid) {
       try {
         //check patient admitted or not in IP MANAGEMENT
 
@@ -46,7 +46,7 @@ const patient_discharge_summary = () => {
         const patient_allergy_res = await getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
     
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "lab": patient_lab_res, "Radiology": patient_radiology_res, "Diet": patient_diet_res } });
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res} });
 
       }
       catch (ex) {
@@ -56,11 +56,11 @@ const patient_discharge_summary = () => {
     else {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
-  }
+  };
   return {
     getDischargeDetails: _getDischargeDetails
-  }
-}
+  };
+};
 
 module.exports = patient_discharge_summary();
 // GET PATIENT ALLERGY DETAILS START
@@ -169,7 +169,7 @@ async function getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid) {
 }
 
 function getAllergyInfo(result) {
-  let res = []
+  let res = [];
   if (result && result.length > 0) {
     res = result.map((item) => {
       return {
@@ -201,7 +201,7 @@ function getAllergyInfo(result) {
         periods_code: item.periods && item.periods != null ? item.periods.code : "",
         periods_name: item.periods && item.periods != null ? item.periods.name : "",
 
-      }
+      };
     });
   }
   return res;
