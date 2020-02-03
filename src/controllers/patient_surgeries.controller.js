@@ -88,7 +88,7 @@ const Surgery_History = () => {
       where: { uuid: uuid }
     };
     try {
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postData) {
         const data = await surgicalDetailsTbl.update(postData, selector, { returing: true });
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', requestContent: data });

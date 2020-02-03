@@ -100,7 +100,7 @@ const PatientDiagnsis = () => {
           departmentId &&
           facility_uuid &&
           from_date,
-        to_date)
+          to_date)
       ) {
         const patientDiagnosisData = await patient_diagnosis_tbl.findAll(
           getPatientFiltersQuery1(
@@ -184,14 +184,23 @@ const PatientDiagnsis = () => {
 
   const _updatePatientDiagnosisHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { uuid } = req.query;
+    const { uuid, patient_uuid, department_uuid } = req.query;
     let postData = req.body;
     let selector = {
-      where: { uuid: uuid }
+      where: {
+        uuid: uuid, patient_uuid: patient_uuid, department_uuid: department_uuid
+      }
     };
-
     try {
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postData) {
+        let fetchedData = await patient_diagnosis_tbl.findOne(selector);
+        let fetchedDate = fetchedData.condition_date;
+        fetchedDate = moment(fetchedDate).format('YYYY-MM-DD');
+        let currentDate = moment(Date.now()).format('YYYY-MM-DD');
+        if (fetchedDate != currentDate) {
+          return res.status(400).send({ code: httpStatus[400], message: 'Only today date able to update' });
+        }
+
         const diagnosisData = await patient_diagnosis_tbl.update(
           postData,
           selector,
