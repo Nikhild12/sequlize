@@ -54,13 +54,13 @@
           "application/xml"
         ],
         "tags": [
-          "Note Template"
+          "Ccc Master"
         ],
         "responses": {
           "200": {
             "description": "get Successfully",
             "schema": {
-              "$ref": "#/definitions/getnotetemplatebytype"
+              "$ref": "#/definitions/getcccmasterbytype"
             }
           }
         },
