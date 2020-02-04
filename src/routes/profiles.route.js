@@ -12,7 +12,7 @@ profilesRoute.route('/create').post(profilesController.createProfileOpNotes);
 profilesRoute.route('/getAll').get(profilesController.getAllProfiles);
 profilesRoute.route('/delete').put(profilesController.deleteProfiles);
 profilesRoute.route('/getById').get(profilesController.getProfileById);
-//profilesRoute.route('/update').get(profilesController.updateProfiles);
+profilesRoute.route('/update').put(profilesController.updateProfiles);
 profilesRoute.route('/add').post(profilesController.addProfiles);
 profilesRoute.route('/getAllValueTypes').get(profilesController.getAllValueTypes);
 
