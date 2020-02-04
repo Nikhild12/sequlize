@@ -66,6 +66,10 @@ const sectionsRouter = require("./sections.route");
 
 //OPNotes categories routes
 const categoriesRouter = require("./categories.route");
+
+//patient certificate routes
+const certificateRouter = require("./patient_certificates.route");
+
 const serviceRouter = express.Router();
 
 
@@ -190,6 +194,10 @@ serviceRouter.use("/body-side", bodySideRoute);
 serviceRouter.use("/surgery-position", surgeryPositionRoute);
 
 // Discharge Summary Routes
-serviceRouter.use("/discharge-summary",dischargeSummary);
+serviceRouter.use("/discharge-summary", dischargeSummary);
+
+// patient certificate Routes
+serviceRouter.use("/certificates", certificateRouter);
+
 
 module.exports = serviceRouter;

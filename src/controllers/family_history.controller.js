@@ -123,12 +123,12 @@ const Family_History = () => {
       let selector = {
         where: { uuid: uuid }
       };
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postdata) {
         const [updated] = await familyHistoryTbl.update(postdata, selector, { returning: true });
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
         } else {
-          return res.status(400).send({ code: httpStatus[400], message: 'No Request Body Found' });
+          return res.status(400).send({ code: httpStatus[400], message: 'No UserId or No Request Body Found' });
         }
       }
     }

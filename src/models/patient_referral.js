@@ -73,14 +73,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('encounter_uuid')
+            msg: emr_constants.GetpleaseProvideMsg('encounter_type_uuid')
           },
           min: {
             args: 1,
-            msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+            msg: emr_constants.GetZeroValidationMessage('encounter_type_uuid')
           }
         }
 

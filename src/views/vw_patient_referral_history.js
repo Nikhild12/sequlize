@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
 
       },
+      rd_name: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+
+      },
       d_is_active: {
 
         type: DataTypes.BOOLEAN,
@@ -89,6 +94,11 @@ module.exports = (sequelize, DataTypes) => {
 
       },
       f_name: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+
+      },
+      rf_name: {
         type: DataTypes.STRING(100),
         allowNull: true
 

@@ -34,127 +34,105 @@ const profilesController = () => {
    * @param {*} req 
    * @param {*} res 
    */
+
   const _createProfileOpNotes = async (req, res) => {
     const { user_uuid } = req.headers;
     let { profiles } = req.body;
     let sectionsDetails = profiles.sections;
-    let sectionsInfoDetails = [];
 
-    //profileSectionDetails
-    sectionsDetails.forEach((item, section_idx) => {
-      sectionsInfoDetails = [...sectionsInfoDetails, {
-        activity_uuid: item.activity_uuid,
-        display_order: item.display_order
-      }];
-    });
-
-    //profilesSectionCategoryDetails
-    let CategoryInfoDetails = [];
-    sectionsDetails.forEach((item, section_idx) => {
-      let categories = item.categories;
-      categories.forEach((caItem, caIdx) => {
-        CategoryInfoDetails = [...CategoryInfoDetails, {
-          display_order: item.display_order,
-          category_uuid: categories[caIdx].category_uuid
-        }];
-      });
-    });
-    //profilesSectionCategoryConceptDetails
-    let conceptInfoDetails = [];
-    sectionsDetails.forEach((sItem, section_idx) => {
-      let categories = sItem.categories;
-      categories.forEach((caItem, caIdx) => {
-        let concepts = caItem.concepts;
-        concepts.forEach((item, idx) => {
-          conceptInfoDetails = [...conceptInfoDetails, {
-            code: item.code,
-            name: item.name,
-            description: item.description,
-            value_type_uuid: item.value_type_uuid,
-            is_multiple: item.is_multiple,
-            is_mandatory: item.is_mandatory,
-            display_order: item.display_order
-          }];
-        });
-      });
-    });
-    //profilesSectionCategoryConcept ValueType  Details
-    let ValuesInfoDetails = [];
-    sectionsDetails.forEach((sItem, section_idx) => {
-      let categories = sItem.categories;
-      categories.forEach((caItem, caIdx) => {
-        let concepts = caItem.concepts;
-        concepts.forEach((item, idx) => {
-          let conceptvalues = item.conceptvalues;
-          conceptvalues.forEach((item, idx) => {
-            ValuesInfoDetails = [...ValuesInfoDetails, {
-              value_code: item.value_code,
-              value_name: item.value_name,
-              display_order: item.display_order
-            }];
-          });
-        });
-      });
-    });
-
-    // creating profile 
+    // creating profile
     if (user_uuid && profiles.profile_code && profiles.profile_name) {
-      // if (checkProfiles(req)) {
-      //   return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send userId and profile details' });
-      // }
       try {
-        let profileSave = [];
-        // const duplicateProfilesRecord = await findDuplicateProfilesByCodeAndName(profiles);
-        //   if (duplicateProfilesRecord && duplicateProfilesRecord.length > 0) {
-        //        return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateProfilesRecord) });
-        // }
+        let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [];
         profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
-
         //Profiles save
-        const createdProfileData = await profilesTbl.create(profiles, { returning: true });
+        const profileResponse = await profilesTbl.create(profiles, { returning: true });
 
         // Profile and Sections mapping
-        sectionsInfoDetails.forEach((sItem, sIdx) => {
-          sItem.profile_uuid = createdProfileData.uuid;
-          sItem.section_uuid = sectionsDetails[sIdx].section_uuid;
-          sItem = emr_utility.assignDefaultValuesAndUUIdToObject(sItem, sectionsInfoDetails, user_uuid);
+        for (let i = 0; i < sectionsDetails.length; i++) {
+          const element = sectionsDetails[i];
+          profileSectionSave.push({
+            profile_uuid: profileResponse.uuid,
+            section_uuid: element.section_uuid,
+            activity_uuid: element.activity_uuid,
+            display_order: element.display_order
+          });
+        }
+        if (profileSectionSave.length > 0) {
+          var profileSectionResponse = await profileSectionsTbl.bulkCreate(profileSectionSave);
+          for (let i = 0; i < sectionsDetails.length; i++) {
+            for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+              const element = sectionsDetails[i].categories[j];
+              CategorySave.push({
+                profile_section_uuid: profileSectionResponse[i].uuid,
+                category_uuid: element.category_uuid,
+                display_order: element.display_order
+              })
+            }
+          }
+          // profile_ Sections_categories mapping
+          if (CategorySave.length > 0) {
+            var categoriesResponse = await profileSectionCategoriesTbl.bulkCreate(CategorySave);
+            var index = 0;
+            for (let i = 0; i < sectionsDetails.length; i++) {
+              for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                index++;
+                for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                  const element = sectionsDetails[i].categories[j].concepts[k];
+                  ConceptsSave.push({
+                    profile_section_category_uuid: categoriesResponse[index - 1].uuid,
+                    code: element.code,
+                    name: element.name,
+                    description: element.description,
+                    value_type_uuid: element.value_type_uuid,
+                    is_mandatory: element.is_mandatory,
+                    display_order: element.display_order,
+                    is_multiple: element.is_multiple
+                  })
+                }
+              }
+            }
+            // profile_ Sections_categories_concepts mapping
+            if (ConceptsSave.length > 0) {
+              var conceptResponse = await profileSectionCategoryConceptsTbl.bulkCreate(ConceptsSave);
+              var index = 0;
+              for (let i = 0; i < sectionsDetails.length; i++) {
+                for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                  for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                    index++;
+                    for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
+                      const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
+                      conceptValuesSave.push({
+                        profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
+                        value_code: element.value_code,
+                        value_name: element.value_name,
+                        display_order: element.display_order
+                      });
+                    }
+                  }
+                }
+              }
+              // profile_ Sections_categories_concept_values mapping
+              if (conceptValuesSave.length > 0) {
+                var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(conceptValuesSave);
+              }
+            }
+          }
+        }
+        return res.status(200).send({
+          code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, responseContents: {
+            profileResponse: profileResponse, profileSectionResponse: profileSectionResponse, categoriesResponse: categoriesResponse,
+            conceptResponse: conceptResponse,
+            conceptValuesResponse: conceptValuesResponse
+          }
         });
-        const createdProfileSectionData = await profileSectionsTbl.bulkCreate(sectionsInfoDetails, { returning: true });
-
-        // Profile_Section_category mapping
-        CategoryInfoDetails.forEach((cItem, cIdx) => {
-          cItem.profile_section_uuid = createdProfileSectionData[cIdx].uuid;
-          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, CategoryInfoDetails, user_uuid);
-        });
-        const createdProfileSectionCategoryData = await profileSectionCategoriesTbl.bulkCreate(CategoryInfoDetails, { returning: true });
-
-        // Profile_Section_category_concepts mapping
-        conceptInfoDetails.forEach((cItem, cIdx) => {
-          cItem.profile_section_category_uuid = createdProfileSectionCategoryData[cIdx].uuid;
-          cItem = emr_utility.assignDefaultValuesAndUUIdToObject(cItem, conceptInfoDetails, user_uuid);
-        });
-        createdProfileSectionCategoryConceptData = await profileSectionCategoryConceptsTbl.bulkCreate(conceptInfoDetails, { returning: true });
-
-        // Profile_Section_category_concept_Values mapping
-        ValuesInfoDetails.forEach((vItem, vIdx) => {
-          vItem.profile_section_category_concept_uuid = createdProfileSectionCategoryConceptData[vIdx].uuid;
-          vItem = emr_utility.assignDefaultValuesAndUUIdToObject(vItem, ValuesInfoDetails, user_uuid);
-
-        });
-
-        profileSave = [...profileSave, profileSectionCategoryConceptValuesTbl.bulkCreate(ValuesInfoDetails, { returning: true })];
-        await Promise.all(profileSave);
-        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, reqContents: req.body });
-      } catch (ex) {
+      }
+      catch (ex) {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-
       }
     } else {
-
       return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-
     }
-
   };
 
   // Get All the Profiles
