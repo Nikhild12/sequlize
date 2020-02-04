@@ -57,8 +57,7 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
-
-  /*
+/*
   const _saveDischargeDetials = async (req, res) => {
 
     if (Object.keys(req.body).length != 0) {
@@ -89,8 +88,8 @@ const patient_discharge_summary = () => {
 
     try {
       if (user_uuid && patient_uuid ) {
-        let getPPV = await Dischargetable.findAll(
-          getPDCQuery(user_uuid, patient_uuid, department_uuid),
+        let getPPV = await encounterTbl.findAll(
+          getPDCQuery(user_uuid, patient_uuid),
           { returning: true }
         );
         return res
@@ -381,30 +380,21 @@ function getPVlist(fetchedData, p_id, created_date) {
 }
 // GET PATIENT VITALS DETAILS END
 
-/*
+
 function getPDCQuery(user_uuid, patient_uuid, department_uuid) {
   // user_uuid == doctor_uuid
   let query = {
-    order: [["pv_performed_date", "DESC"]],
+    order: [["discharge_date", "DESC"]],
     attributes: [
-      "pv_uuid",
-      "pv_vital_master_uuid",
-      "pv_vital_type_uuid",
-      "pv_vital_value_type_uuid",
-      "pv_vital_value",
-      "pv_doctor_uuid",
-      "pv_patient_uuid",
-      "pv_performed_date",
-      "vm_name",
-      "um_code",
-      "um_name",
-      "pv_created_date",
-      "d_name",
-      "u_first_name",
-      "u_middle_name",
-      "u_last_name",
-      "et_code",
-      "et_name"
+      'patient_uuid',
+      'facility_uuid',
+      'department_uuid',
+      'encounter_type_uuid',
+      'admission_uuid',
+      'discharge_type_uuid',
+      'discharge_date',
+
+      
     ],
     limit: 10,
     where: {
@@ -482,4 +472,3 @@ function getDClist(fetchedData, p_id, created_date) {
   }
   return pv_list;
 }
-*/
