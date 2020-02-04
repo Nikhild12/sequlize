@@ -58,6 +58,7 @@ const patient_discharge_summary = () => {
     }
   };
 
+  /*
   const _saveDischargeDetials = async (req, res) => {
 
     if (Object.keys(req.body).length != 0) {
@@ -82,7 +83,34 @@ const patient_discharge_summary = () => {
 
   };
 
+  const _getPreviousDischargeDetials = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid } = req.query;
 
+    try {
+      if (user_uuid && patient_uuid ) {
+        let getPPV = await Dischargetable.findAll(
+          getPDCQuery(user_uuid, patient_uuid, department_uuid),
+          { returning: true }
+        );
+        return res
+          .status(200)
+          .send({
+            code: httpStatus.OK,
+            message: "Fetched Patient Discharge Details  Successfully",
+            responseContents: PDCList(getPPV)
+          });
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Params Found" });
+      }
+    } catch (ex) {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: ex.message });
+    }
+  };*/
 
   return {
     getDischargeDetails: _getDischargeDetails
@@ -353,5 +381,105 @@ function getPVlist(fetchedData, p_id, created_date) {
 }
 // GET PATIENT VITALS DETAILS END
 
+/*
+function getPDCQuery(user_uuid, patient_uuid, department_uuid) {
+  // user_uuid == doctor_uuid
+  let query = {
+    order: [["pv_performed_date", "DESC"]],
+    attributes: [
+      "pv_uuid",
+      "pv_vital_master_uuid",
+      "pv_vital_type_uuid",
+      "pv_vital_value_type_uuid",
+      "pv_vital_value",
+      "pv_doctor_uuid",
+      "pv_patient_uuid",
+      "pv_performed_date",
+      "vm_name",
+      "um_code",
+      "um_name",
+      "pv_created_date",
+      "d_name",
+      "u_first_name",
+      "u_middle_name",
+      "u_last_name",
+      "et_code",
+      "et_name"
+    ],
+    limit: 10,
+    where: {
+      vm_active: emrConstants.IS_ACTIVE,
+      vm_status: emrConstants.IS_ACTIVE,
+      pv_doctor_uuid: user_uuid,
+      pv_patient_uuid: patient_uuid,
+      pv_department_uuid: department_uuid
+    }
+  };
+  return query;
+}
+function PDCList(getHistoryPatientVitals) {
+  let patient_vitals_list = [],
+    PV_list = [];
+  if (getHistoryPatientVitals && getHistoryPatientVitals.length > 0) {
+    patient_vitals_list = getHistoryPatientVitals.map(pV => {
+      return {
+        patient_uuid: pV.pv_patient_uuid,
+        created_date: pV.pv_created_date,
+        created_by_firstname: pV.u_first_name,
+        created_by_middlename: pV.u_middle_name,
+        created_by_lastlename: pV.u_last_name,
+        encounter_type_code: pV.et_code,
+        encounter_type_name: pV.et_name,
+        PV_list: [
+          ...PV_list,
+          ...getDClist(
+            getHistoryPatientVitals,
+            pV.pv_patient_uuid,
+            pV.pv_created_date
+          )
+        ]
+      };
+    });
+    let uniq = {};
+    let PPV_list = patient_vitals_list.filter(
+      obj => !uniq[obj.created_date] && (uniq[obj.created_date] = true)
+    );
+    return { PPV_list: PPV_list };
+  } else {
+    return {};
+  }
+}
 
+function getDClist(fetchedData, p_id, created_date) {
+  let pv_list = [];
+  const filteredData = fetchedData.filter(fD => {
+    return (
+      fD.dataValues.pv_patient_uuid === p_id &&
+      fD.dataValues.pv_created_date === created_date
+    );
+  });
 
+  if (filteredData && filteredData.length > 0) {
+    pv_list = filteredData.map(pV => {
+      return {
+        // patient vital values
+        patient_vital_uuid: pV.pv_uuid,
+        patient_facility_uuid: pV.pv_facility_uuid,
+        vital_value: pV.pv_vital_value,
+        vital_performed_date: pV.pv_performed_date,
+        vital_value_type_uuid: pV.pv_vital_value_type_uuid,
+        vital_type_uuid: pV.pv_vital_type_uuid,
+        vital_master_uuid: pV.pv_vital_master_uuid,
+
+        //vital master values
+        vital_name: pV.vm_name,
+
+        // uom master table values
+        uom_code: pV.um_code,
+        uom_name: pV.um_name
+      };
+    });
+  }
+  return pv_list;
+}
+*/
