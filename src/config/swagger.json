@@ -47,7 +47,7 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
-          },
+          }
         ],
         "produces": [
           "application/json",
