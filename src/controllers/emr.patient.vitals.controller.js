@@ -32,13 +32,13 @@ const EMRPatientVitals = () => {
           }
         }
         //checking for existing patient vitals
-        for (let exit of req.body) {
+       /* for (let exit of req.body) {
           const exists = await PVexists(exit.patient_uuid, exit.vital_master_uuid);
 
           if (exists && exists.length > 0) {
             return res.status(400).send({ code: httpStatus[400], message: "vitals for the patient already exists" });
           }
-        }
+        }*/
         if (
           user_uuid &&
           emrPatientVitalReqData &&
