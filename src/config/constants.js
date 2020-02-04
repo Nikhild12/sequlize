@@ -96,6 +96,10 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} Transfer Facility Id`;
       case "quantity":
         return `${returnProvideMsg} Drug Quantity`;
+      case "admission_status_uuid":
+        return `${returnProvideMsg} admission_status_uuid`;
+      case "encounter_type_uuid":
+        return `${returnProvideMsg} encounter_type_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -199,6 +203,9 @@ module.exports = Object.freeze({
         return `Transfer Facility Id ${validationMessage}`;
       case "relation_type_uuid":
         return `Relation Type Id ${validationMessage}`;
+      case "admission_status_uuid":
+        return `admission status uuid ${validationMessage}`;
+
       default:
         return `Value ${validationMessage}`;
     }
