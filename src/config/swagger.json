@@ -30,6 +30,44 @@
     "application/file"
   ],
   "paths": {
+    "/api/ccc/getcccmasterbytype": {
+      "post": {
+        "description": "Get Successfully",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getcccmasterbytype"
+            }
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getnotetemplatebytype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/notetemplate/getnotetemplatebytype": {
       "post": {
         "description": "Get Successfully",
@@ -5684,6 +5722,14 @@
     }
   },
   "definitions": {
+    "getcccmasterbytype":{
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "getBodySide": {
       "type": "object",
       "properties": {
