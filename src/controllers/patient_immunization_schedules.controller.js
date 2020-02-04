@@ -88,7 +88,6 @@ const patient_immunization_Schedules = () => {
             };
             if (user_uuid && uuid) {
                 const data = await patientImmunizationSchedulesTbl.update(postdata, selector, { returning: true });
-                console.log('data==', data);
                 if (data) {
                     return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
 

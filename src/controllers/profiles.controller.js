@@ -11,22 +11,14 @@ const emr_utility = require('../services/utility.service');
 
 //Initialize profile opNotes
 const profilesTbl = db.profiles;
-const profileUsersTbl = db.profile_users;
-const profileTypesTbl = db.profile_types;
-const sectionTypesTbl = db.section_types;
-const sectionNoteTypesTbl = db.section_note_types;
-const sectionsTbl = db.sections;
-const categoriesTbl = db.categories;
 const valueTypesTbl = db.value_types;
-const conceptsTbl = db.concepts;
 const profileSectionsTbl = db.profile_sections;
-const visitTypeTbl = db.visit_type;
 const profileSectionCategoriesTbl = db.profile_section_categories;
 const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
 const ProfilesViewTbl = db.vw_op_notes_details;
 const sectionCategoryEntriesTbl = db.section_category_entries;
-//const Q = require('q');
+const Q = require('q');
 
 const profilesController = () => {
   /**
@@ -221,46 +213,64 @@ const profilesController = () => {
       * @param {*} req 
       * @param {*} res 
       */
+
   const _updateProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
-    const profilesReqData = req.body;
-    //const profilesUpdateData = getProfilesUpdateData(user_uuid, profilesReqData);
-
-    if (user_uuid && profilesReqData) {
+    const { profiles } = req.body;
+    if (user_uuid && profiles) {
       try {
-        // const updatingRecord = await profilesTbl.update(profilesUpdateData, {
-        //   where: {
-        //     uuid: profilesUpdateData.uuid,
-        //     status: emr_constants.IS_ACTIVE,
-        //     is_active: emr_constants.IS_ACTIVE
-        //   }
-        // });
-        //const updatedProfilesData = await Promise.all(getProfilesUpdateData(user_uuid, profilesReqData))
-        // if (updatingRecord && updatingRecord.length === 0) {
-        //   return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
-        // }
+        let bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
+        return res.send({ status: 'success', statusCode: 200, msg: 'success', responseContents: bulkUpdateProfileResponse });
+      } catch (err) {
+        return res.send({ status: 'error', statusCode: 400, msg: 'failed', error: err.message });
+      }
+    } else {
+      return res.send({ status: 'error', statusCode: 400, msg: 'Authentication error or profile detail should not be empty' });
+    }
+  }
+  const bulkUpdateProfile = async (req) => {
+    var deferred = new Q.defer();
+    var profileData = req;
+    var profileDetailsUpdate = [];
+    for (let i = 0; i < profileData.profiles.sections.length; i++) {
+      const element = profileData.profiles.sections[i];
+      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
 
-        // const updatedProfilesData = await Promise.all([
-        // profilesTbl.update(profilesUpdateData, { where: { uuid: profilesUpdateData.uuid } }),
-        //sectionsTbl.update(sectionsUpdateData, { where: { uuid: sectionsUpdateData.uuid } }),
+      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
+        const element = profileData.profiles.sections[i].categories[j];
+        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
 
-        //  ]);
+        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
+          const element = profileData.profiles.sections[i].categories[j].concepts[k];
+          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_bulkUpdateProfileuuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
 
-
-        if (updatedProfilesData) {
-          return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: profilesReqData });
+          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
+            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
+            profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+          }
+        }
+      }
+    }
+    if (profileDetailsUpdate.length > 0) {
+      var response = await Q.allSettled(profileDetailsUpdate);
+      if (response.length > 0) {
+        var responseMsg = [];
+        for (let i = 0; i < response.length; i++) {
+          const element = response[i];
+          if (element.state == "rejected") {
+            responseMsg.push(element.reason);
+          }
         }
 
-      } catch (ex) {
-
-        console.log(`Exception Happened ${ex}`);
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
-
+        if (responseMsg.length == 0) {
+          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
+        } else {
+          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
+        }
       }
-
     }
-  };
-
+    return deferred.promise;
+  }
   /**
         * Get All  valueTypes
         * @param {*} req 
@@ -302,7 +312,7 @@ const profilesController = () => {
       profiles.revision = 1;
 
       try {
-        const profileData = await sectionCategoryEntriesTbl.create(profiles, { returing: true });
+        const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, { returing: true });
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', reqContents: req.body });
 
       }
@@ -321,7 +331,7 @@ const profilesController = () => {
     getAllProfiles: _getAllProfiles,
     deleteProfiles: _deleteProfiles,
     getProfileById: _getProfileById,
-    //updateProfiles: _updateProfiles,
+    updateProfiles: _updateProfiles,
     addProfiles: _addProfiles,
     getAllValueTypes: _getAllValueTypes
 
