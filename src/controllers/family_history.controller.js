@@ -56,7 +56,7 @@ const Family_History = () => {
       if (user_uuid && patient_uuid) {
         const familyHistoryData = await getFamilyHistory(patient_uuid);
         if (familyHistoryData.length <= 0) {
-          return res.status(400).send({ code: 400, message: emr_constants.NO_RECORD_FOUND });
+          return res.status(200).send({ code: 200, message: emr_constants.NO_RECORD_FOUND });
         }
         return res.status(200).send({ code: httpStatus.OK, message: 'FamilyHistory Details Fetched Successfully', responseContent: familyHistoryData });
       } else {
@@ -80,7 +80,7 @@ const Family_History = () => {
       if (user_uuid && uuid) {
         const familyData = await familyHistoryTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
         if (!familyData) {
-          return res.status(400).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
+          return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {

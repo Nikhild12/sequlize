@@ -40,6 +40,10 @@ module.exports = Object.freeze({
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
+      case "encounter_uuid":
+        return `${returnProvideMsg} Encounter Id`;
+      case "period_uuid":
+        return `${returnProvideMsg} Period Id`;
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
       case "referral_facility_uuid":
