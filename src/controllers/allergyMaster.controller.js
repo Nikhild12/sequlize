@@ -176,35 +176,39 @@ const allergyMasterController = () => {
 
 
     const deleteAlleryMaster = async (req, res, next) => {
-        const postData = req.body;
-        if (postData.Allergy_id <= 0) {
-            return res.status(400).send({ code: 400, message: 'Please provide Valid id' });
+        if (Object.keys(req.body).length != 0) {
+            const postData = req.body;
+            if (postData.Allergy_id <= 0) {
+                return res.status(400).send({ code: 400, message: 'Please provide Valid id' });
+
+            }
+
+            await allergyMastersTbl.update({
+                is_active: 0
+            }, {
+                where: {
+                    uuid: postData.Allergy_id
+                }
+            }).then((data) => {
+                res.send({
+                    statusCode: 200,
+                    msg: "Deleted Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+                console.log(err.message);
+                res.send({
+                    status: "failed",
+                    msg: "failed to delete data",
+                    error: err.message
+                });
+            });
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
 
         }
-
-        await allergyMastersTbl.update({
-            is_active: 0
-        }, {
-            where: {
-                uuid: postData.Allergy_id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            console.log(err.message);
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err.message
-            });
-        });
     };
-
     const updateAlleryMasterById = async (req, res, next) => {
         if (Object.keys(req.body).length != 0) {
             const postData = req.body;
