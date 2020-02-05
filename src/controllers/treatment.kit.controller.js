@@ -18,7 +18,7 @@ const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
-
+const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
 // Treatment Kit Filters Query Function
 const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
     searchBy = searchBy.toLowerCase();
@@ -221,10 +221,56 @@ const TreatMent_Kit = () => {
 
     };
 
+    // Get All  TreatmentKit List
+    const _getAllTreatmentKit = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        let getsearch = req.body;
+
+        try {
+            let pageNo = 0;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
+
+
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+
+            const offset = pageNo * itemsPerPage;
+
+
+            if (user_uuid) {
+                const treatmentKitData = await treatmentKitViewTbl.findAll(
+                    {
+                        offset: offset,
+                        limit: itemsPerPage
+                    }
+                );
+                if (treatmentKitData) {
+                    const response = treatmentKitResponse(treatmentKitData);
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched TreatmentKit Details successfully', responseContents: response });
+                }
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
+
     return {
 
         createTreatmentKit: _createTreatmentKit,
-        getTreatmentKitByFilters: _getTreatmentKitByFilters
+        getTreatmentKitByFilters: _getTreatmentKitByFilters,
+        getAllTreatmentKit: _getAllTreatmentKit
 
     };
 
@@ -297,3 +343,18 @@ function getFilterTreatmentKitResponse(argument) {
 
 
 
+function treatmentKitResponse(treatmentKitData) {
+    return treatmentKitData.map((tk) => {
+        return {
+            uuid: tk.tk_uuid,
+            code: tk.tk_code,
+            name: tk.tk_name,
+            share: tk.tk_is_public,
+            department: tk.d_name,
+            department_uuid: tk.d_uuid,
+            doctor_uuid: tk.u_uuid,
+            createdBy: tk.u_first_name + ' ' + tk.u_middle_name + '' + tk.u_last_name,
+            status: tk.u_status
+        }
+    })
+}

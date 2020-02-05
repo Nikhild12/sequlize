@@ -9,6 +9,7 @@ const Op = Sequelize.Op;
 // EMR Constants Import
 const emr_constants = require('../config/constants');
 const patientCertificatesTbl = sequelizeDb.patient_certificates;
+const patientCertificateViewTbl = sequelizeDb.vw_patient_certificate;
 
 const CertificatesController = () => {
 
@@ -45,10 +46,9 @@ const CertificatesController = () => {
       */
     const _getPatientCertificates = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { patient_uuid } = req.query;
 
         try {
-            if (user_uuid && patient_uuid) {
+            if (user_uuid) {
                 const certificatesData = await patientCertificateViewTbl.findAll();
                 return res.status(200).send({ code: httpStatus.OK, responseContent: certificatesData });
             } else {
@@ -80,4 +80,18 @@ async function assignDefault(certificates, user_uuid) {
     certificates.created_date = certificates.modified_date = new Date();
     certificates.revision = 1;
     return certificates;
+}
+
+function certificateResponse(certificatesData) {
+    return treatmentKitData.map((pc) => {
+        return {
+            uuid: pc.tk_uuid,
+            code: pc.tk_code,
+            name: pc.tk_name,
+            share: pc.tk_is_public,
+            department: pc.d_name,
+            createdBy: pc.u_first_name + ' ' + pc.u_middle_name + '' + pc.u_last_name,
+            status: pc.u_status
+        }
+    })
 }
