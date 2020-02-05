@@ -9,4 +9,6 @@ const treatmentKitRoute = express.Router();
 
 treatmentKitRoute.route('/create').post(treatmentKitController.createTreatmentKit);
 treatmentKitRoute.route('/getByFilters').get(treatmentKitController.getTreatmentKitByFilters);
+treatmentKitRoute.route('/getAll').get(treatmentKitController.getAllTreatmentKit);
+
 module.exports = treatmentKitRoute;

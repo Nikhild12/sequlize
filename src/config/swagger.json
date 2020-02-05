@@ -5755,7 +5755,7 @@
     }
   },
   "definitions": {
-    "getcccmasterbytype":{
+    "getcccmasterbytype": {
       "type": "object",
       "properties": {
         "type": {
@@ -9310,70 +9310,62 @@
                   "section_uuid": {
                     "type": "integer"
                   },
-                  "profilesSectionInfo": {
+                  "activity_uuid": {
+                    "type": "integer"
+                  },
+                  "display_order": {
+                    "type": "integer"
+                  },
+                  "categories": {
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
-                        "activity_uuid": {
+                        "category_uuid": {
                           "type": "integer"
                         },
                         "display_order": {
                           "type": "integer"
                         },
-                        "profilesSectionCategoryInfo": {
+                        "concepts": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "category_uuid": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "value_type_uuid": {
                                 "type": "integer"
+                              },
+                              "is_mandatory": {
+                                "type": "string"
                               },
                               "display_order": {
                                 "type": "integer"
                               },
-                              "profileSectionCategoryConceptsInfo": {
+                              "is_multiple": {
+                                "type": "string"
+                              },
+                              "conceptvalues": {
                                 "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
-                                    "code": {
+                                    "value_code": {
                                       "type": "string"
                                     },
-                                    "name": {
-                                      "type": "string"
-                                    },
-                                    "description": {
-                                      "type": "string"
-                                    },
-                                    "value_type_uuid": {
-                                      "type": "integer"
-                                    },
-                                    "is_mandatory": {
+                                    "value_name": {
                                       "type": "string"
                                     },
                                     "display_order": {
                                       "type": "integer"
-                                    },
-                                    "is_multiple": {
-                                      "type": "string"
-                                    },
-                                    "profileSectionCategoryConceptValuesInfo": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "object",
-                                        "properties": {
-                                          "value_code": {
-                                            "type": "string"
-                                          },
-                                          "value_name": {
-                                            "type": "string"
-                                          },
-                                          "display_order": {
-                                            "type": "integer"
-                                          }
-                                        }
-                                      }
                                     }
                                   }
                                 }
