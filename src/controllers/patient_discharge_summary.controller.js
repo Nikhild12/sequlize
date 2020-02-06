@@ -64,20 +64,41 @@ const patient_discharge_summary = () => {
       try {
 
         const { user_uuid } = req.headers;
-        const { patient_uuid } = req.body.query;
-        const discharge_data = req.body;
+        const discharge_headers = req.body.headers;
+        const discharge_details = req.body.details;
+        const ec_updateData = {
+          discharge_type_uuid: discharge_headers.dischare_type_uuid,
+          discharge_date: discharge_headers.discharge_date,
+          modified_by: userUUID,
+          modified_date: new Date()
+        };
 
-        if (user_uuid && patient_uuid && discharge_data) {
+        if (user_uuid && discharge_headers && discharge_details) {
+
+          const ec_updated = await encounterTbl.update(ec_updateData,
+            {
+              where: {
+                facility_uuid: discharge_headers.facility_uuid,
+                encounter_uuid: discharge_headers.encounter_uuid,
+                patient_uuid: discharge_headers.patient_uuid,
+                encounter_type_uuid: discharge_headers.encounter_type_uuid
+              }
+            }
+          );
+            if (ec_updated){
+              return res.status(200).send({ code: httpStatus[200], message: "updated sucessfully" });
+            }
+
 
         }
         else {
           return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
-      }catch (err){
+      } catch (err) {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
     } else {
-        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
 
   };
@@ -87,7 +108,7 @@ const patient_discharge_summary = () => {
     const { patient_uuid } = req.query;
 
     try {
-      if (user_uuid && patient_uuid ) {
+      if (user_uuid && patient_uuid) {
         let getPPV = await encounterTbl.findAll(
           getPDCQuery(user_uuid, patient_uuid),
           { returning: true }
@@ -394,7 +415,7 @@ function getPDCQuery(user_uuid, patient_uuid, department_uuid) {
       'discharge_type_uuid',
       'discharge_date',
 
-      
+
     ],
     limit: 10,
     where: {
