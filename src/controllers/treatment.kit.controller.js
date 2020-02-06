@@ -225,16 +225,15 @@ const TreatMent_Kit = () => {
     const _getAllTreatmentKit = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        let getsearch = req.body;
 
         try {
+            let getsearch = req.body;
             let pageNo = 0;
             const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-
+            let sortField = 'tk_uuid';
+            let sortOrder = 'DESC';
             if (getsearch.pageNo) {
                 let temp = parseInt(getsearch.pageNo);
-
-
                 if (temp && (temp != NaN)) {
                     pageNo = temp;
                 }
@@ -242,17 +241,70 @@ const TreatMent_Kit = () => {
 
             const offset = pageNo * itemsPerPage;
 
+            if (getsearch.sortField) {
+
+                sortField = getsearch.sortField;
+            }
+
+            if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+                sortOrder = getsearch.sortOrder;
+            }
+
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: { tk_is_active: 1 }
+            };
+
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+
+                findQuery.where = {
+                    [Op.or]: [{
+                        tk_code: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+
+
+                    }, {
+                        tk_name: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+                    }
+
+                    ]
+                };
+            }
+            if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
+
+                findQuery.where = {
+                    u_first_name: {
+                        [Op.like]: '%' + getsearch.createdBy + '%',
+                    }
+                }
+
+
+
+            }
+            if (typeof getsearch.depertmentId == 'number') {
+                findQuery.where['d_uuid'] = getsearch.depertmentId;
+            }
+            if (typeof getsearch.share == 'boolean') {
+                findQuery.where['tk_is_public'] = getsearch.share;
+            }
+            if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+                findQuery.where['tk_status'] = getsearch.status;
+            }
 
             if (user_uuid) {
-                const treatmentKitData = await treatmentKitViewTbl.findAll(
-                    {
-                        offset: offset,
-                        limit: itemsPerPage
-                    }
-                );
+                const treatmentKitData = await treatmentKitViewTbl.findAndCountAll(findQuery);
+                console.log(treatmentKitData)
                 if (treatmentKitData) {
-                    const response = treatmentKitResponse(treatmentKitData);
-                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched TreatmentKit Details successfully', responseContents: response });
+                    // const response = await treatmentKitResponse(treatmentKitData);
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched TreatmentKit Details successfully', responseContents: treatmentKitData });
                 }
             }
             else {
@@ -264,7 +316,6 @@ const TreatMent_Kit = () => {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
-
 
     return {
 
