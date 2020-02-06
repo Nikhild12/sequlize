@@ -57,6 +57,9 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
         moment().format("YYYY-MM-DD")
       )
     ];
+  } else if(etypeId === 2 || etypeId === '2'){
+    delete encounterQuery.include[0].where.doctor_uuid;
+    delete encounterQuery.include[0].where.department_uuid;
   }
   return encounterQuery;
 }
