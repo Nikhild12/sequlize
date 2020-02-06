@@ -179,7 +179,7 @@ const allergyMasterController = () => {
         if (Object.keys(req.body).length != 0) {
             const postData = req.body;
             if (postData.Allergy_id <= 0) {
-                return res.status(400).send({ code: 400, message: 'Please provide Valid id' });
+                return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
 
             }
 
@@ -245,7 +245,10 @@ const allergyMasterController = () => {
     const getAlleryMasterById = async (req, res, next) => {
         const postData = req.body;
         try {
+            if (postData.Allergy_id <= 0) {
+                return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
 
+            }
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
@@ -258,7 +261,7 @@ const allergyMasterController = () => {
             })
                 .then((data) => {
                     if (!data) {
-                        return res.status(httpStatus.OK).json({ statusCode: 404, message: emr_constants.NO_RECORD_FOUND });
+                        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
                     }
                     return res
                         .status(httpStatus.OK)
