@@ -2470,6 +2470,39 @@
         }
       }
     },
+    "/api/encounter/updateECdischarge": {
+      "put": {
+        "description": "To update a Encounter For Patient discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateEncounter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateEncounter"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Inserted Encounter"
+          }
+        }
+      }
+    },
     "/api/patient-diagnosis/create": {
       "post": {
         "description": "To create Patient Diagnosis",
@@ -5719,6 +5752,197 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/encounter/delete-by-id": {
+      "put": {
+        "summary": "To get List of patient detials to discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/certificates/create": {
+      "post": {
+        "summary": "To Create Patient certficates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Create Patient certficates ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientCertficates"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientCertficates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/certificates/GetAll": {
+      "get": {
+        "summary": "To get List of patient Certificates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientCertficates"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/treatment-kit/getAll": {
+      "get": {
+        "description": "To get List of  patient treatmentkit details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "recordsPerPage",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchPageNo",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchSortBy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchSortOrder",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "createdBy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "depertmentId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "share",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchLetters",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TreatmentKit"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -6872,9 +7096,6 @@
         },
         "is_active": {
           "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
         }
       }
     },
@@ -7415,6 +7636,29 @@
               "type": "number"
             }
           }
+        }
+      }
+    },
+    "updateEncounter": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "number"
+        },
+        "encounter_uuid": {
+          "type": "number"
+        },
+        "encounter_type_uuid": {
+          "type": "number"
+        },
+        "patient_uuid": {
+          "type": "number"
+        },
+        "discharge_type_uuid": {
+          "type": "number"
+        },
+        "discharge_date": {
+          "type": "string"
         }
       }
     },
@@ -9851,40 +10095,85 @@
       }
     },
     "profilesAdd": {
-      "type": "object",
-      "properties": {
-        "patient_uuid": {
-          "type": "integer"
-        },
-        "encounter_uuid": {
-          "type": "integer"
-        },
-        "encounter_doctor_uuid": {
-          "type": "integer"
-        },
-        "consultation_uuid": {
-          "type": "integer"
-        },
-        "section_uuid": {
-          "type": "integer"
-        },
-        "category_uuid": {
-          "type": "integer"
-        },
-        "concept_uuid": {
-          "type": "integer"
-        },
-        "ip_casesheet_uuid": {
-          "type": "integer"
-        },
-        "ip_casesheet_user_uuid": {
-          "type": "integer"
-        },
-        "ot_register_uuid": {
-          "type": "integer"
-        },
-        "physio_register_uuid": {
-          "type": "integer"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "patient_uuid": {
+            "type": "integer"
+          },
+          "encounter_uuid": {
+            "type": "integer"
+          },
+          "encounter_doctor_uuid": {
+            "type": "integer"
+          },
+          "consultation_uuid": {
+            "type": "integer"
+          },
+          "profile_type_uuid": {
+            "type": "integer"
+          },
+          "profile_uuid": {
+            "type": "integer"
+          },
+          "section_uuid": {
+            "type": "integer"
+          },
+          "section_key": {
+            "type": "string"
+          },
+          "activity_uuid": {
+            "type": "integer"
+          },
+          "profile_section_uuid": {
+            "type": "integer"
+          },
+          "category_uuid": {
+            "type": "integer"
+          },
+          "category_key": {
+            "type": "string"
+          },
+          "profile_section_category_uuid": {
+            "type": "integer"
+          },
+          "concept_uuid": {
+            "type": "integer"
+          },
+          "concept_key": {
+            "type": "string"
+          },
+          "profile_section_category_concept_uuid": {
+            "type": "integer"
+          },
+          "term_key": {
+            "type": "string"
+          },
+          "profile_section_category_concept_value_uuid": {
+            "type": "integer"
+          },
+          "result_value": {
+            "type": "integer"
+          },
+          "result_value_rich_text": {
+            "type": "string"
+          },
+          "result_value_json": {
+            "type": "string"
+          },
+          "result_binary": {
+            "type": "string"
+          },
+          "result_path": {
+            "type": "string"
+          },
+          "entry_date": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          }
         }
       }
     },
@@ -10331,6 +10620,59 @@
     "getDischargeDetails": {
       "type": "object",
       "properties": {}
+    },
+    "patientCertficates": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        },
+        "encounter_uuid": {
+          "type": "integer"
+        },
+        "ward_master_uuid": {
+          "type": "integer"
+        },
+        "admission_status_uuid": {
+          "type": "integer"
+        },
+        "discharge_type_uuid": {
+          "type": "integer"
+        },
+        "doctor_uuid": {
+          "type": "integer"
+        },
+        "data_template": {
+          "type": "string"
+        },
+        "note_type_uuid": {
+          "type": "integer"
+        },
+        "note_template_uuid": {
+          "type": "integer"
+        },
+        "certified_by": {
+          "type": "integer"
+        },
+        "certificate_status_uuid": {
+          "type": "integer"
+        },
+        "released_to_patient": {
+          "type": "integer"
+        },
+        "released_by": {
+          "type": "integer"
+        },
+        "aproved_by": {
+          "type": "integer"
+        }
+      }
     }
   }
 }
