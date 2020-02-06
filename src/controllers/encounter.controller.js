@@ -415,9 +415,9 @@ const Encounter = () => {
     const {user_uuid} = req.headers;
     const updatedata = req.body;
     const ec_updateData = {
-      discharge_type_uuid: req.body.dischare_type_uuid,
+      discharge_type_uuid: req.body.discharge_type_uuid,
       discharge_date: req.body.discharge_date,
-      modified_by: userUUID,
+      modified_by: user_uuid,
       modified_date: new Date()
     };
     try{
@@ -425,10 +425,10 @@ const Encounter = () => {
       const ec_updated = await encounter_tbl.update(ec_updateData,
         {
           where: {
-            facility_uuid: discharge_headers.facility_uuid,
-            encounter_uuid: discharge_headers.encounter_uuid,
-            patient_uuid: discharge_headers.patient_uuid,
-            encounter_type_uuid: discharge_headers.encounter_type_uuid
+            facility_uuid: updatedata.facility_uuid,
+            uuid: updatedata.encounter_uuid,
+            patient_uuid: updatedata.patient_uuid,
+            encounter_type_uuid: updatedata.encounter_type_uuid
           }
         }
       );
