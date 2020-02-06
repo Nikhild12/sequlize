@@ -2470,6 +2470,39 @@
         }
       }
     },
+    "/api/encounter/updateECdischarge": {
+      "put": {
+        "description": "To update a Encounter For Patient discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateEncounter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateEncounter"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Inserted Encounter"
+          }
+        }
+      }
+    },
     "/api/patient-diagnosis/create": {
       "post": {
         "description": "To create Patient Diagnosis",
@@ -5719,6 +5752,39 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/encounter/delete-by-id": {
+      "put": {
+        "summary": "To get List of patient detials to discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -7417,6 +7483,31 @@
           }
         }
       }
+    },
+    "updateEncounter": {
+      "type": "object",
+      "properties": {
+            "facility_uuid": {
+              "type": "number"
+            },
+            "encounter_uuid": {
+              "type": "number"
+            },
+            
+            "encounter_type_uuid": {
+              "type": "number"
+            },
+            "patient_uuid": {
+              "type": "number"
+            },
+            
+            "discharge_type_uuid": {
+              "type": "number"
+            },
+            "discharge_date": {
+              "type": "string"
+            }
+        }
     },
     "createPatientDiagnosis": {
       "type": "array",
