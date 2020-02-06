@@ -16,6 +16,7 @@ EncounterRoutes.route("/get-visit-history").get(
   Encounter.getVisitHistoryByPatientId
 );
 EncounterRoutes.route("/delete-by-id").put(Encounter.deleteEncounterById);
+EncounterRoutes.route("/updateECdischarge").put(Encounter.updateECdischarge);
 
 
 module.exports = EncounterRoutes;

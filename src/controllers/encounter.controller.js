@@ -411,11 +411,50 @@ const Encounter = () => {
     }
   };
 
+  const _updateECdischarge = async (req,res) => {
+    const {user_uuid} = req.headers;
+    const updatedata = req.body;
+    const ec_updateData = {
+      discharge_type_uuid: req.body.dischare_type_uuid,
+      discharge_date: req.body.discharge_date,
+      modified_by: userUUID,
+      modified_date: new Date()
+    };
+    try{
+    if (user_uuid && updatedata){
+      const ec_updated = await encounter_tbl.update(ec_updateData,
+        {
+          where: {
+            facility_uuid: discharge_headers.facility_uuid,
+            encounter_uuid: discharge_headers.encounter_uuid,
+            patient_uuid: discharge_headers.patient_uuid,
+            encounter_type_uuid: discharge_headers.encounter_type_uuid
+          }
+        }
+      );
+        if (ec_updated){
+          return res.status(200).send({ code: httpStatus[200], message: "updated sucessfully" });
+        }
+    
+    }else{
+      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+    }catch(ex){
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+    
+    };
+    
+    
+     
+    
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
     getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
-    deleteEncounterById: _deleteEncounterById
+    deleteEncounterById: _deleteEncounterById,
+    updateECdischarge: _updateECdischarge
   };
 };
 
