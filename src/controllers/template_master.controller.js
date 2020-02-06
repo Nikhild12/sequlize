@@ -161,14 +161,14 @@ const tmpmstrController = () => {
       try {
         if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
 
-          templateTransaction = await db.sequelize.transaction();
+          //templateTransaction = await db.sequelize.transaction();
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction: templateTransaction }, { returning: true, plain: true });
-          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid, templateTransaction));
-          await templateTransaction.commit();
-          templateTransStatus = true;
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }}, { returning: true, plain: true });
+          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid));
+          // await templateTransaction.commit();
+          // templateTransStatus = true;
 
           if (temp_mas && temp_mas_dtls) {
             //await templateTransaction.commit();
@@ -176,20 +176,20 @@ const tmpmstrController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
           }
         } else {
-          await templateTransaction.rollback();
-          templateTransStatus = true;
+          // await templateTransaction.rollback();
+          // templateTransStatus = true;
           return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
         }
       } catch (ex) {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
+        // await templateTransaction.rollback();npm 
+        // templateTransStatus = true;
         return res.status(400).send({ code: httpStatus[400], message: ex.message });
       }
-      finally {
-        if (templateTransaction && !templateTransStatus) {
-          await templateTransaction.rollback();
-        }
-      }
+      // finally {
+      //   if (templateTransaction && !templateTransStatus) {
+      //     await templateTransaction.rollback();
+      //   }
+      // }
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
