@@ -227,13 +227,20 @@ const TreatMent_Kit = () => {
         const { user_uuid } = req.headers;
 
         try {
-            let getsearch = req.body;
+            // let paginationSize = req.query.paginationSize;
+            let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, createdBy, depertmentId, share, status, searchLetters } = req.query;
             let pageNo = 0;
-            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+            if (recordsPerPage) {
+                let records = parseInt(recordsPerPage);
+                if (records && (records != NaN)) {
+                    recordsPerPage = records;
+                }
+            }
+            let itemsPerPage = recordsPerPage ? recordsPerPage : 10;
             let sortField = 'tk_uuid';
             let sortOrder = 'DESC';
-            if (getsearch.pageNo) {
-                let temp = parseInt(getsearch.pageNo);
+            if (searchPageNo) {
+                let temp = parseInt(searchPageNo);
                 if (temp && (temp != NaN)) {
                     pageNo = temp;
                 }
@@ -241,14 +248,15 @@ const TreatMent_Kit = () => {
 
             const offset = pageNo * itemsPerPage;
 
-            if (getsearch.sortField) {
 
-                sortField = getsearch.sortField;
+            if (searchSortBy) {
+
+                sortField = searchSortBy;
             }
 
-            if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+            if (searchSortOrder && ((searchSortOrder == 'ASC') || (searchSortOrder == 'DESC'))) {
 
-                sortOrder = getsearch.sortOrder;
+                sortOrder = searchSortOrder;
             }
 
             let findQuery = {
@@ -260,50 +268,88 @@ const TreatMent_Kit = () => {
                 where: { tk_is_active: 1 }
             };
 
-            if (getsearch.search && /\S/.test(getsearch.search)) {
+            if (searchName && /\S/.test(searchName)) {
 
                 findQuery.where = {
                     [Op.or]: [{
                         tk_code: {
-                            [Op.like]: '%' + getsearch.search + '%',
+                            [Op.like]: '%' + searchName + '%',
                         },
 
 
                     }, {
                         tk_name: {
-                            [Op.like]: '%' + getsearch.search + '%',
+                            [Op.like]: '%' + searchName + '%',
                         },
                     }
 
                     ]
                 };
             }
-            if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
+            if (createdBy && /\S/.test(createdBy)) {
 
                 findQuery.where = {
                     u_first_name: {
-                        [Op.like]: '%' + getsearch.createdBy + '%',
+                        [Op.like]: '%' + createdBy + '%',
                     }
                 }
 
 
 
             }
-            if (typeof getsearch.depertmentId == 'number') {
-                findQuery.where['d_uuid'] = getsearch.depertmentId;
+            if (typeof depertmentId == 'string') {
+                findQuery.where['d_uuid'] = parseInt(depertmentId);
             }
-            if (typeof getsearch.share == 'boolean') {
-                findQuery.where['tk_is_public'] = getsearch.share;
+            if (typeof share == 'boolean') {
+                findQuery.where['tk_is_public'] = share;
             }
-            if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-                findQuery.where['tk_status'] = getsearch.status;
+            if (typeof status == 'boolean') {
+                findQuery.where['tk_status'] = status;
             }
+            if (searchLetters && /\S/.test(searchLetters)) {
+                Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            tk_code: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+                        {
+                            tk_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+
+                        },
+                        {
+                            d_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+                        {
+                            tk_is_public: {
+                                [Op.eq]: searchLetters,
+                            }
+                        },
+                        {
+                            u_first_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+
+                        {
+                            tk_status: {
+                                [Op.eq]: searchLetters,
+                            }
+                        }
+
+                    ]
+                });
+            }
+
 
             if (user_uuid) {
                 const treatmentKitData = await treatmentKitViewTbl.findAndCountAll(findQuery);
-                console.log(treatmentKitData)
                 if (treatmentKitData) {
-                    // const response = await treatmentKitResponse(treatmentKitData);
                     return res.status(200).send({ code: httpStatus.OK, message: 'Fetched TreatmentKit Details successfully', responseContents: treatmentKitData });
                 }
             }
