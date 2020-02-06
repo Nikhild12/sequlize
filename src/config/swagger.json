@@ -684,34 +684,47 @@
     },
     "/api/procedures/getProcedures": {
       "post": {
-        "description": "Get Successfully",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
-        "responses": {
-          "200": {
-            "description": "get Successfully",
-            "schema": {
-              "$ref": "#/definitions/getProcedures"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
+      "description": "get list Procedure",
+      "parameters": [
+      {
+      "in": "body",
+      "name": "getlistProcedureMaster",
+      "required": true,
+      "schema": {
+      "$ref": "#/definitions/getProcedures"
       }
-    },
+      },
+      {
+      "name": "user_uuid",
+      "in": "header",
+      "description": "an authorization header",
+      "required": true,
+      "type": "string"
+      }
+      ],
+      "produces": [
+      "application/json",
+      "application/xml"
+      ],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "type": "object"
+      }
+      },
+      "403": {
+      "description": "You do not have necessary permissions for the resource",
+      "schema": {
+      "type": "object"
+      }
+      }
+      },
+      "tags": [
+        "Procedures"
+      ]
+      }
+  },
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -6280,6 +6293,10 @@
     "getProcedures": {
       "type": "object",
       "properties": {
+        "search":{
+          "type":"string",
+          "example":""
+        },
         "procedure_scheme_uuid": {
           "type": "integer"
         },
