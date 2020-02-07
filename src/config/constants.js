@@ -209,5 +209,11 @@ module.exports = Object.freeze({
       default:
         return `Value ${validationMessage}`;
     }
+  },
+  getEncounterType(id){
+    switch(id){
+      case 1: return "OP"
+      case 2: return "IP"
+    }
   }
 });

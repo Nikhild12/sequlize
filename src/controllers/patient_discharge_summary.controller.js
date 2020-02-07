@@ -6,7 +6,13 @@ const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
 
 //  Tables Import
+//patient diagnosis
+const patient_diagnosisTbl = sequelizeDb.patient_diagnosis;
+const diagnosisTbl = sequelizeDb.diagnosis;
 
+const vw_patient_cheif_complaintsTbl = sequelizeDb.vw_patient_cheif_complaints;
+
+// patient allergy
 const patient_allergyTbl = sequelizeDb.patient_allergies;
 
 //Encounter Tables Import
@@ -20,7 +26,6 @@ const allergyTypeTbl = sequelizeDb.allergy_type;
 const periodsTbl = sequelizeDb.periods;
 
 // Patient Vitals View Import
-
 const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals;
 
 // EMR Constants Import
@@ -45,8 +50,11 @@ const patient_discharge_summary = () => {
         //get patient allergy details
         const patient_allergy_res = await getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
+        const patient_cheif_complaint_res = await getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid);
+        const patient_diagnosis_res = await getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid);
 
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res } });
+        // const patinet_treatmentKit_res =  await getPatienyTreatmentKit(patient_uuid, doctor_uuid, encounter_uuid);
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res } });
 
       }
       catch (ex) {
@@ -57,59 +65,59 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
-/*
-  const _saveDischargeDetials = async (req, res) => {
-
-    if (Object.keys(req.body).length != 0) {
-      try {
-
-        const { user_uuid } = req.headers;
-        const { patient_uuid } = req.body.query;
-        const discharge_data = req.body;
-
-        if (user_uuid && patient_uuid && discharge_data) {
-
+  /*
+    const _saveDischargeDetials = async (req, res) => {
+  
+      if (Object.keys(req.body).length != 0) {
+        try {
+  
+          const { user_uuid } = req.headers;
+          const { patient_uuid } = req.body.query;
+          const discharge_data = req.body;
+  
+          if (user_uuid && patient_uuid && discharge_data) {
+  
+          }
+          else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+          }
+        }catch (err){
+          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
-        else {
-          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-        }
-      }catch (err){
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
-      }
-    } else {
-        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-    }
-
-  };
-
-  const _getPreviousDischargeDetials = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const { patient_uuid } = req.query;
-
-    try {
-      if (user_uuid && patient_uuid ) {
-        let getPPV = await encounterTbl.findAll(
-          getPDCQuery(user_uuid, patient_uuid),
-          { returning: true }
-        );
-        return res
-          .status(200)
-          .send({
-            code: httpStatus.OK,
-            message: "Fetched Patient Discharge Details  Successfully",
-            responseContents: PDCList(getPPV)
-          });
       } else {
+          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
+  
+    };
+  
+    const _getPreviousDischargeDetials = async (req, res) => {
+      const { user_uuid } = req.headers;
+      const { patient_uuid } = req.query;
+  
+      try {
+        if (user_uuid && patient_uuid ) {
+          let getPPV = await encounterTbl.findAll(
+            getPDCQuery(user_uuid, patient_uuid),
+            { returning: true }
+          );
+          return res
+            .status(200)
+            .send({
+              code: httpStatus.OK,
+              message: "Fetched Patient Discharge Details  Successfully",
+              responseContents: PDCList(getPPV)
+            });
+        } else {
+          return res
+            .status(400)
+            .send({ code: httpStatus[400], message: "No Request Params Found" });
+        }
+      } catch (ex) {
         return res
           .status(400)
-          .send({ code: httpStatus[400], message: "No Request Params Found" });
+          .send({ code: httpStatus[400], message: ex.message });
       }
-    } catch (ex) {
-      return res
-        .status(400)
-        .send({ code: httpStatus[400], message: ex.message });
-    }
-  };*/
+    };*/
 
   return {
     getDischargeDetails: _getDischargeDetails
@@ -131,6 +139,7 @@ async function getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid) {
       'period_uuid', 'performed_date', 'performed_by',
       'patient_allergy_status_uuid'
     ],
+    order: [['performed_date', 'DESC']],
     where: {
       patient_uuid: patient_uuid,
       // doctor_uuid:doctor_uuid, 
@@ -276,7 +285,7 @@ async function getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid) {
 function getPatinetVitalQuery(patient_uuid, doctor_uuid, encounter_uuid) {
   // user_uuid == doctor_uuid
   let query = {
-    order: [["pv_performed_date", "DESC"]],
+    order: [["pv_uuid", "DESC"]],
     attributes: [
       "pv_uuid",
       "pv_encounter_uuid",
@@ -298,7 +307,9 @@ function getPatinetVitalQuery(patient_uuid, doctor_uuid, encounter_uuid) {
       "u_middle_name",
       "u_last_name",
       "et_code",
-      "et_name"
+      "et_name",
+      "f_uuid",
+      "f_name"
     ],
     where: {
       vm_active: emr_constants.IS_ACTIVE,
@@ -324,6 +335,8 @@ function PPVitalsList(getPatientVitals) {
         doctor_middlename: pV.u_middle_name,
         doctor_lastlename: pV.u_last_name,
         department_name: pV.d_name,
+        institution_uuid:pV.f_uuid,
+        institution_name:pV.f_name,
         encounter_type_code: pV.et_code,
         encounter_type_name: pV.et_name,
         PV_list: [
@@ -394,7 +407,7 @@ function getPDCQuery(user_uuid, patient_uuid, department_uuid) {
       'discharge_type_uuid',
       'discharge_date',
 
-      
+
     ],
     limit: 10,
     where: {
@@ -472,3 +485,120 @@ function getDClist(fetchedData, p_id, created_date) {
   }
   return pv_list;
 }
+
+async function getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid) {
+
+  
+  let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
+    where: {
+      pcc_encounter_uuid: encounter_uuid,
+      pcc_patient_uuid: patient_uuid,
+      pcc_is_active: emr_constants.IS_ACTIVE,
+      pcc_status: emr_constants.IS_ACTIVE
+    },
+    order: [["pcc_uuid", "DESC"]],
+   
+  }, { returning: true });
+  //  return patient_cc_res;
+  let data = await getPatientChiefComplaintsOrganizeData(patient_cc_res);
+
+
+  return data;
+
+}
+
+function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
+  let cc_result=[];
+
+  if (patient_cc_res.length > 0) {
+    cc_result = patient_cc_res.map((item) => {
+      return {
+        patient_cheif_complaint_uuid: item.pcc_uuid,
+        created_date: item.pcc_created_date,
+        patient_uuid: item.pcc_patient_uuid,
+        institution_uuid:item.f_uuid,
+        institution: item.f_name,
+        department_uuid:item.d_uuid,
+        department: item.d_name,
+        encounter_uuid: item.pcc_encounter_uuid,
+        encounter_type_uuid:item.pcc_encounter_type_uuid,
+        encounter_type: emr_constants.getEncounterType(item.pcc_encounter_type_uuid),
+        consultation_uuid: item.pcc_consultation_uuid,
+        chief_complaint_duration: item.pcc_chief_complaint_duration,
+        performed_by: item.u_first_name,
+        chief_complaint_details: [...getCheifComplaintList(patient_cc_res, item.pcc_patient_uuid, item.pcc_created_date)]
+      };
+    });
+  }
+  return cc_result;
+}
+function getCheifComplaintList(arr, patient_uuid, created_date) {
+  let filtered_data = arr.filter((item) => {
+    return (
+      item.pcc_patient_uuid === patient_uuid &&
+      item.pcc_created_date === created_date
+    );
+  });
+  let data = filtered_data.map((item) => {
+    return {
+      cheif_complaint_uuid: item.pcc_chief_complaint_uuid,
+      cheif_complaint_code: item.cc_code,
+      cheif_complaint_name: item.cc_name,
+      cheif_complaint_desc: item.cc_description,
+      cheif_complaint_performed_date: item.pcc_performed_date,
+
+      chief_complaint_duration_period_uuid: item.pcc_chief_complaint_duration_period_uuid ,
+      chief_complaint_duration_period_code: item.ccdp_code,
+      chief_complaint_duration_period_name: item.ccdp_name,
+    }
+  });
+  return data;
+}
+
+async function getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid) {
+  const diagnosis_res = await patient_diagnosisTbl.findAll({
+    where: {
+      patient_uuid: patient_uuid,
+      encounter_uuid: encounter_uuid,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE
+    },
+    order: [['uuid', 'DESC']],
+    include: [{
+      model: diagnosisTbl,
+      attributes: ['uuid', 'code', 'name', 'description'],
+      where: {
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE
+      }
+
+    }]
+  }, { returning: true });
+  const data = await getGetDiagnosis(diagnosis_res);
+  return data;
+};
+function getGetDiagnosis(diagnosis_res) {
+  let diagnosis_result = [];
+  if (diagnosis_res && diagnosis_res.length > 0) {
+    diagnosis_result = diagnosis_res.map((item) => {
+      return {
+        patient_diagnosis_uuid: item.uuid,
+        facility_uuid: item.facility_uuid,
+        department_uuid: item.department_uuid,
+        patient_uuid: item.patient_uuid,
+        encounter_uuid: item.encounter_uuid,
+        encounter_type:emr_constants.getEncounterType(item.encounter_type_uuid),
+        diagnosis_uuid: item.diagnosis_uuid,
+        performed_by: item.performed_by,
+        performed_date: item.performed_date,
+        diagnosis_uuid: item.diagnosis_uuid,
+        diagnosis_type: "ICD 10",
+        diagnosis_code: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.code : "",
+        diagnosis_name: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.name : "",
+        diagnosis_desc: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.description : "",
+      }
+    });
+  }
+  return diagnosis_result;
+}
+

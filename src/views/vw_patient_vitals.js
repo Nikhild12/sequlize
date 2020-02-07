@@ -111,6 +111,20 @@ module.exports = (sequelize, DataTypes) => {
             },
             et_name:{
                 type: DataTypes.STRING(255),
+            },
+            f_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            f_name: {
+                type: DataTypes.STRING(100),
+            },
+            f_is_active: {
+                type: DataTypes.BOOLEAN,
+
+            },
+            f_status: {
+                type: DataTypes.BOOLEAN,
+
             }
 
         },
