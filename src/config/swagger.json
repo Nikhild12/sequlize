@@ -5983,7 +5983,7 @@
     },
     "addCccMaster": {
       "type": "object",
-      "properties": {
+      "body": {
         "critical_care_type_uuid": {
           "type": "integer"
         },
@@ -6013,6 +6013,42 @@
         },
         "revision": {
           "type": "integer"
+        }
+      },"body1":{
+        "concept_code":{
+          "type": "string"
+        },
+        "concept_name":{
+          "type": "string"
+        },
+         "cc_chart_uuid": {
+          "type": "integer"
+        },
+        "value_type_uuid": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        },
+        "is_default": {
+          "type": "integer"
+        },
+        "status":  {
+          "type": "integer"
+        },
+         "revision":  {
+          "type": "integer"
+        },
+        "body2":{
+          "concept_value":{
+            "type": "string"
+          },
+          "value_from":{
+            "type": "integer"
+          },
+          "value_to":{
+            "type": "integer"
+          }
         }
       }
     },
