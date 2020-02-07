@@ -684,34 +684,47 @@
     },
     "/api/procedures/getProcedures": {
       "post": {
-        "description": "Get Successfully",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "user_uuid",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
-        "responses": {
-          "200": {
-            "description": "get Successfully",
-            "schema": {
-              "$ref": "#/definitions/getProcedures"
-            }
-          }
-        },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
+      "description": "get list Procedure",
+      "parameters": [
+      {
+      "in": "body",
+      "name": "getlistProcedureMaster",
+      "required": true,
+      "schema": {
+      "$ref": "#/definitions/getProcedures"
       }
-    },
+      },
+      {
+      "name": "user_uuid",
+      "in": "header",
+      "description": "an authorization header",
+      "required": true,
+      "type": "string"
+      }
+      ],
+      "produces": [
+      "application/json",
+      "application/xml"
+      ],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "type": "object"
+      }
+      },
+      "403": {
+      "description": "You do not have necessary permissions for the resource",
+      "schema": {
+      "type": "object"
+      }
+      }
+      },
+      "tags": [
+        "Procedures"
+      ]
+      }
+  },
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -5971,35 +5984,92 @@
     "addCccMaster": {
       "type": "object",
       "properties": {
-        "critical_care_type_uuid": {
-          "type": "integer"
+        "body": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string",
+              "example": "say somthing about related to fever"
+            },
+            "critical_care_uom_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "mnemonic_code_master_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "loinc_code_master_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "revision": {
+              "type": "boolean",
+              "example": true
+            },
+            "status": {
+              "type": "boolean",
+              "example": true
+            }
+          }
         },
-        "code": {
-          "type": "string"
+        "body1": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept_code": {
+                "type": "string"
+              },
+              "concept_name": {
+                "type": "string"
+              },
+              "cc_chart_uuid": {
+                "type": "integer"
+              },
+              "value_type_uuid": {
+                "type": "integer"
+              },
+              "display_order": {
+                "type": "integer"
+              },
+              "drug_frequency_uuid": {
+                "type": "integer"
+              },
+              "is_default": {
+                "type": "integer"
+              },
+              "revision": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "boolean"
+              }
+            }
+          }
         },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "critical_care_uom_uuid": {
-          "type": "integer"
-        },
-        "mnemonic_code_master_uuid": {
-          "type": "integer"
-        },
-        "loinc_code_master_uuid": {
-          "type": "integer"
-        },
-        "comments": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
+        "body2": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept_value": {
+                "type": "string"
+              },
+              "value_from": {
+                "type": "string"
+              },
+              "value_to": {
+                "type": "integer"
+              }
+            }
+          }
         }
       }
     },
@@ -6280,6 +6350,10 @@
     "getProcedures": {
       "type": "object",
       "properties": {
+        "search":{
+          "type":"string",
+          "example":""
+        },
         "procedure_scheme_uuid": {
           "type": "integer"
         },
