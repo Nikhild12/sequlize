@@ -684,47 +684,47 @@
     },
     "/api/procedures/getProcedures": {
       "post": {
-      "description": "get list Procedure",
-      "parameters": [
-      {
-      "in": "body",
-      "name": "getlistProcedureMaster",
-      "required": true,
-      "schema": {
-      "$ref": "#/definitions/getProcedures"
+        "description": "get list Procedure",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "getlistProcedureMaster",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProcedures"
+            }
+          },
+          {
+            "name": "user_uuid",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "You do not have necessary permissions for the resource",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "tags": [
+          "Procedures"
+        ]
       }
-      },
-      {
-      "name": "user_uuid",
-      "in": "header",
-      "description": "an authorization header",
-      "required": true,
-      "type": "string"
-      }
-      ],
-      "produces": [
-      "application/json",
-      "application/xml"
-      ],
-      "responses": {
-      "200": {
-      "description": "successful operation",
-      "schema": {
-      "type": "object"
-      }
-      },
-      "403": {
-      "description": "You do not have necessary permissions for the resource",
-      "schema": {
-      "type": "object"
-      }
-      }
-      },
-      "tags": [
-        "Procedures"
-      ]
-      }
-  },
+    },
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -4248,7 +4248,7 @@
       }
     },
     "/api/profiles/getAll": {
-      "get": {
+      "post": {
         "summary": "To get all the Profile Details ",
         "parameters": [
           {
@@ -4256,6 +4256,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/allProfiles"
+            }
           }
         ],
         "produces": [
@@ -4267,10 +4275,7 @@
         ],
         "responses": {
           "200": {
-            "description": "get All Profiles",
-            "schema": {
-              "$ref": "#/definitions/allProfiles"
-            }
+            "description": "get All Profiles"
           }
         }
       }
@@ -5918,7 +5923,7 @@
           },
           {
             "in": "query",
-            "name": "depertmentId",
+            "name": "departmentId",
             "required": false,
             "type": "string"
           },
@@ -6348,9 +6353,9 @@
     "getProcedures": {
       "type": "object",
       "properties": {
-        "search":{
-          "type":"string",
-          "example":""
+        "search": {
+          "type": "string",
+          "example": ""
         },
         "procedure_scheme_uuid": {
           "type": "integer"
@@ -9669,61 +9674,29 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "code": {
+        "recordsPerPage": {
           "type": "integer"
         },
-        "message": {
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchSortBy": {
           "type": "string"
         },
-        "responseContents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "uuid": {
-                "type": "integer"
-              },
-              "profile_type_uuid": {
-                "type": "integer"
-              },
-              "profile_code": {
-                "type": "string"
-              },
-              "profile_name": {
-                "type": "string"
-              },
-              "profile_description": {
-                "type": "string"
-              },
-              "facility_uuid": {
-                "type": "integer"
-              },
-              "department_uuid": {
-                "type": "integer"
-              },
-              "is_active": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              },
-              "revision": {
-                "type": "integer"
-              },
-              "created_by": {
-                "type": "integer"
-              },
-              "modified_by": {
-                "type": "integer"
-              },
-              "created_date": {
-                "type": "string"
-              },
-              "modified_date": {
-                "type": "string"
-              }
-            }
-          }
+        "searchSortOrder": {
+          "type": "string"
+        },
+        "searchName": {
+          "type": "string"
+        },
+        "depertmentId": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchLetters": {
+          "type": "string"
         }
       }
     },
@@ -10743,6 +10716,9 @@
         },
         "aproved_by": {
           "type": "integer"
+        },
+        "approved_on": {
+          "type": "string"
         }
       }
     }
