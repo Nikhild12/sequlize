@@ -94,10 +94,6 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('ward_master_uuid')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('ward_master_uuid')
                     }
                 }
 
@@ -118,14 +114,8 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('admission_status_uuid')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('admission_status_uuid')
-                    },
-
+                    }
                 }
-
             },
             discharged_date: {
 
@@ -150,14 +140,8 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('discharge_type_uuid')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('discharge_type_uuid')
-                    },
-
+                    }
                 }
-
 
             },
             doctor_uuid: {
@@ -194,8 +178,8 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     min: {
                         args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('note_type_uuid')
-                    },
+                        msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+                    }
 
                 }
 
@@ -214,11 +198,9 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     min: {
                         args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('note_template_uuid')
-                    },
-
+                        msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+                    }
                 }
-
 
             },
             certificate_status_uuid: {
@@ -231,15 +213,9 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('certificate_status_uuid')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('certificate_status_uuid')
-                    },
+                    }
 
                 }
-
-
             },
             released_to_patient: {
 
@@ -251,15 +227,9 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     notEmpty: {
                         msg: emr_constants.GetpleaseProvideMsg('released_to_patient')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('released_to_patient')
-                    },
+                    }
 
                 }
-
-
             },
 
             released_on: {

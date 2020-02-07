@@ -228,7 +228,7 @@ const TreatMent_Kit = () => {
 
         try {
             // let paginationSize = req.query.paginationSize;
-            let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, createdBy, depertmentId, share, status, searchLetters } = req.query;
+            let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, createdBy, departmentId, share, status, searchLetters } = req.query;
             let pageNo = 0;
             if (recordsPerPage) {
                 let records = parseInt(recordsPerPage);
@@ -297,8 +297,8 @@ const TreatMent_Kit = () => {
 
 
             }
-            if (typeof depertmentId == 'string') {
-                findQuery.where['d_uuid'] = parseInt(depertmentId);
+            if (typeof departmentId == 'string') {
+                findQuery.where['d_uuid'] = parseInt(departmentId);
             }
             if (typeof share == 'boolean') {
                 findQuery.where['tk_is_public'] = share;
