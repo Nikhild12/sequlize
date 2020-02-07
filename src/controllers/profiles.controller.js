@@ -18,6 +18,8 @@ const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
 const ProfilesViewTbl = db.vw_op_notes_details;
 const sectionCategoryEntriesTbl = db.section_category_entries;
+const sectionsTbl = db.sections;
+const categoriesTbl = db.categories;
 const Q = require('q');
 
 const profilesController = () => {
@@ -134,7 +136,7 @@ const profilesController = () => {
 
     try {
       // let paginationSize = req.query.paginationSize;
-      let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, departmentId, status, searchLetters } = req.query;
+      let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, departmentId, status, searchLetters } = req.body;
       let pageNo = 0;
       if (recordsPerPage) {
         let records = parseInt(recordsPerPage);
@@ -256,10 +258,6 @@ const profilesController = () => {
     }
   };
 
-
-
-
-
   // const _getAllProfiles = async (req, res) => {
 
   //   const { user_uuid } = req.headers;
@@ -280,6 +278,8 @@ const profilesController = () => {
   // };
 
   // Delete Profiles
+
+
   const _deleteProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.body;
@@ -312,34 +312,116 @@ const profilesController = () => {
        * @param {*} req 
        * @param {*} res 
        */
+  // const _getProfileById = async (req, res) => {
+
+  //   const { user_uuid } = req.headers;
+  //   const { profile_uuid, p_profile_code, profile_name, department_uuid } = req.query;
+  //   if (user_uuid && profile_uuid) {
+  //     try {
+
+  //       const profileList = await ProfilesViewTbl.findAll({
+  //         where: { p_uuid: profile_uuid },
+  //         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
+  //       });
+  //       // console.log('profileList====', profileList);
+  //       if (profileList) {
+  //         const profileData = getProfileDetailsData(profileList);
+  //         return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'profiles Details fetched succesfully', responseContents: profileData });
+
+  //       }
+  //       else {
+  //         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or request Found" });
+  //       }
+  //     } catch (ex) {
+  //       console.log(`Exception Happened ${ex}`);
+  //       return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
+  //     }
+  //   }
+
+  // };
+
+  /**
+  * Get profiles By Id,name and department
+  @param {} req
+  @param {} res
+  */
+
   const _getProfileById = async (req, res) => {
 
     const { user_uuid } = req.headers;
-    const { profile_uuid, p_profile_code, profile_name, department_uuid } = req.query;
-    if (user_uuid && profile_uuid) {
+    const { uuid, profile_code, profile_name, department_uuid } = req.query;
+    if (user_uuid && uuid) {
       try {
 
-        const profileList = await ProfilesViewTbl.findAll({
-          where: { p_uuid: profile_uuid },
-          attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
-        });
-        // console.log('profileList====', profileList);
-        if (profileList) {
-          const profileData = getProfileDetailsData(profileList);
-          return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'profiles Details fetched succesfully', responseContents: profileData });
+        const profileData = await profilesTbl.findAll({
+          attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+          where: { uuid: uuid, is_active: 1, status: 1 },
+          include: [
+            {
+              model: profileSectionsTbl,
+              as: 'profile_sections',
+              attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+              where: { is_active: 1, status: 1 },
 
-        }
-        else {
-          return res.status(400).send({ code: httpStatus[400], message: "No Request headers or request Found" });
-        }
+              include: [{
+                model: sectionsTbl,
+                as: 'sections',
+                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+                where: { is_active: 1, status: 1 },
+
+                include: [{
+                  model: profileSectionCategoriesTbl,
+                  as: 'profile_section_categories',
+                  attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+                  where: { is_active: 1, status: 1 },
+
+                  include: [{
+                    model: categoriesTbl,
+                    as: 'categories',
+                    attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+                    where: { is_active: 1, status: 1 },
+
+                    include: [{
+
+                      include: [{
+                        model: profileSectionCategoryConceptsTbl,
+                        as: 'profile_section_category_concepts',
+                        attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+                        where: { is_active: 1, status: 1 },
+                      }],
+
+                      include: [{
+                        model: profileSectionCategoryConceptValuesTbl,
+                        as: 'profile_section_category_concept_values',
+                        attributes: ['uuid', 'category_concept_uuid', 'value_code', 'value_name'],
+                        where: { is_active: 1, status: 1 },
+                      }]
+
+                    }]
+
+                  }]
+
+                }]
+
+              }]
+            }]
+        });
+
+        return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
+
       } catch (ex) {
+
         console.log(`Exception Happened ${ex}`);
         return res.status(400).send({ code: httpStatus[400], message: ex.message });
 
       }
+    } else {
+      return res.status(400).send({ code: httpStatus[400], message: "No Request headers or request Found" });
     }
 
   };
+
 
   /**
       * update profiles

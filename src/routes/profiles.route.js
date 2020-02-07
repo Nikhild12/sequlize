@@ -9,7 +9,7 @@ const profilesRoute = Express.Router();
 
 //profilesRoute.route('/getByFilters').get(profilesController.getProfilesByFilters);
 profilesRoute.route('/create').post(profilesController.createProfileOpNotes);
-profilesRoute.route('/getAll').get(profilesController.getAllProfiles);
+profilesRoute.route('/getAll').post(profilesController.getAllProfiles);
 profilesRoute.route('/delete').put(profilesController.deleteProfiles);
 profilesRoute.route('/getById').get(profilesController.getProfileById);
 profilesRoute.route('/update').put(profilesController.updateProfiles);
