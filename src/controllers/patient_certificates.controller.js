@@ -46,10 +46,10 @@ const CertificatesController = () => {
       */
     const _getPatientCertificates = async (req, res) => {
         const { user_uuid } = req.headers;
-
+        const { pc_patient_uuid } = req.query;
         try {
             if (user_uuid) {
-                const certificatesData = await patientCertificateViewTbl.findAll();
+                const certificatesData = await patientCertificateViewTbl.findAll(pc_patient_uuid);
                 return res.status(200).send({ code: httpStatus.OK, responseContent: certificatesData });
             } else {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });

@@ -36,10 +36,15 @@ module.exports = Object.freeze({
   SURGERY_POSITION: "Surgery Position fetched successfully",
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
   INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
+  UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
+      case "encounter_uuid":
+        return `${returnProvideMsg} Encounter Id`;
+      case "period_uuid":
+        return `${returnProvideMsg} Period Id`;
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
       case "referral_facility_uuid":
@@ -100,6 +105,9 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} admission_status_uuid`;
       case "encounter_type_uuid":
         return `${returnProvideMsg} encounter_type_uuid`;
+      case "note_type_uuid":
+        return `${returnProvideMsg} note_type_uuid`;
+
       default:
         return `${returnProvideMsg} required Fields`;
     }

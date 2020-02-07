@@ -36,6 +36,18 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
+            profile_type_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
+            profile_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
             section_uuid: {
 
                 type: DataTypes.INTEGER,
@@ -48,6 +60,18 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
 
             },
+            activity_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
+            profile_section_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
             category_uuid: {
 
                 type: DataTypes.INTEGER,
@@ -58,6 +82,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
 
+            },
+            profile_section_category_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+
+            profile_section_category_concept_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
             },
             concept_uuid: {
 
@@ -77,13 +112,20 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
 
             },
-            term_name: {
+
+            profile_section_category_concept_value_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
+            result_value: {
 
                 type: DataTypes.STRING,
                 allowNull: true
 
             },
-            result_value: {
+            result_value_rich_text: {
 
                 type: DataTypes.STRING,
                 allowNull: true
@@ -108,42 +150,6 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             entry_date: {
-
-                type: DataTypes.STRING,
-                allowNull: true
-
-            },
-            ip_casesheet_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false
-
-            },
-            ip_casesheet_user_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false
-
-            },
-            ip_casesheet_date: {
-
-                type: DataTypes.STRING,
-                allowNull: true
-
-            },
-            ot_register_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false
-
-            },
-            physio_register_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false
-
-            },
-            result_value_rich_text: {
 
                 type: DataTypes.STRING,
                 allowNull: true

@@ -19,7 +19,6 @@ const cccMasterController = () => {
 
     const getAllcccMaster = async (req, res, next) => {
         let getsearch = req.body;
-        console.log("get all ccc master   ")
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
         let sortField = 'created_date';
@@ -109,16 +108,14 @@ const cccMasterController = () => {
             .json({
                 statusCode: 200,
                 req: '',
-                responseContents: data
+                responseContents: (data.rows ? data.rows : [])
             });
 
     };
 
     const postcccMaster = async (req, res, next) => {
-        // return res.send("hello hwo r ar");
         try {
             if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
-                // throw new Error("Validation Error: You need to send data");
             }
             const { user_uuid, facility_uuid } = req.headers;
 
@@ -130,6 +127,7 @@ const cccMasterController = () => {
 
                 transaction = await db.sequelize.transaction();
 
+                //Body Request
                 const postData = req.body;
                 const postDatabody = req.body.body;
                 const postDatabody1 = req.body.body1;
@@ -146,41 +144,36 @@ const cccMasterController = () => {
                 postData.name = postData.fieldname;
 
 
-                // return res.send(postDatabody);
                 let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true, transaction });
 
-                postDatabody1.cc_chart_uuid = ccc_master_output.uuid
+                postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid
                 // postDatabody1.concept_name = ccc_master_output.name
                 // postDatabody1.concept_code = ccc_master_output.code
-                postDatabody1.is_multiple = 1;
-                postDatabody1.is_default = 1;
-                postDatabody1.display_order = 1;
-                postDatabody1.is_active = 1;
-                postDatabody1.status = 1;
-                postDatabody1.revision = 1;
+                // postDatabody1.is_multiple = 1;
+                // postDatabody1.is_default = 1;
+                // postDatabody1.display_order = 1;
+                // postDatabody1.is_active = 1;
+                // postDatabody1.status = 1;
+                // postDatabody1.revision = 1;
                 postDatabody1.created_by = user_uuid;
                 postDatabody1.modified_by = 0;
                 postDatabody1.created_by = req.headers.user_uuid
                 let concept_output = await conceptTbl.create(postDatabody1, { returning: true, transaction })
-                console.log(postDatabody1.uuid, 'concept');
+                console.log(concept_output, 'concept');
 
 
                 postDatabody2.forEach((pD) => {
-                    // pD = createIsActiveAndStatus(pD, user_uuid);
-                    // pD.annual_wellness_package_uuid = packageData.uuid;
-                    // pD.cc_concept_uuid
                     pD.cc_concept_uuid = concept_output.uuid
-                    pD.display_order = 1;
-                    pD.is_default = 1;
-                    pD.is_active = 1;
-                    pD.status = 1;
-                    pD.revision = 1;
-                    // pD.created_by = user_uuid;
+                    // pD.display_order = 1;
+                    // pD.is_default = 1;
+                    // pD.is_active = 1;
+                    // pD.status = 1;
+                    // pD.revision = 1;
+                    pD.created_by = user_uuid;
                     pD.modified_by = 0;
                     pD.created_by = req.headers.user_uuid
-                    pD.concept_value = 44;
+                    // pD.concept_value = 44;
                 });
-                // return res.send(postDatabody2);
                 let concept_detail_output = await conceptdetailsTbl.bulkCreate(postDatabody2, { returning: true, transaction });
 
                 await transaction.commit();

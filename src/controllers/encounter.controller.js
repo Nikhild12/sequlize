@@ -57,6 +57,9 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
         moment().format("YYYY-MM-DD")
       )
     ];
+  } else if(etypeId === 2 || etypeId === '2'){
+    delete encounterQuery.include[0].where.doctor_uuid;
+    delete encounterQuery.include[0].where.department_uuid;
   }
   return encounterQuery;
 }
@@ -301,9 +304,9 @@ const Encounter = () => {
           return new Date(b.encounter_date) - new Date(a.encounter_date);
         });
         let visit_history = [];
-        if (+(page_no) === 0 && +(page_size) === 10) {
+        if (+page_no === 0 && +page_size === 10) {
           visit_history = mockJson.slice(0, 10);
-        } else if (+(page_no) === 1 && +(page_size) === 10) {
+        } else if (+page_no === 1 && +page_size === 10) {
           visit_history = mockJson.slice(10, 20);
         }
         return res.status(200).send({
@@ -331,10 +334,130 @@ const Encounter = () => {
     }
   };
 
+  const _deleteEncounterById = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { encounterId } = req.query;
+
+    let enDelTransaction;
+    let enDelTransStatus = false;
+    if (user_uuid && encounterId && !isNaN(+encounterId)) {
+      let encounterPromise = [];
+      try {
+        enDelTransaction = await sequelizeDb.sequelize.transaction();
+        encounterPromise = [
+          ...encounterPromise,
+          encounter_tbl.update(
+            {
+              is_active_encounter: emr_constants.IS_IN_ACTIVE,
+              is_active: emr_constants.IS_IN_ACTIVE,
+              status: emr_constants.IS_IN_ACTIVE
+            },
+            {
+              where: { uuid: encounterId },
+              transaction: enDelTransaction
+            }
+          ),
+          encounter_doctors_tbl.update(
+            {
+              encounter_doctor_status: emr_constants.IS_IN_ACTIVE,
+              is_active: emr_constants.IS_IN_ACTIVE,
+              status: emr_constants.IS_IN_ACTIVE
+            },
+            {
+              where: { encounter_uuid: encounterId },
+              transaction: enDelTransaction
+            }
+          )
+        ];
+
+        let deleteEnPromise = await Promise.all(encounterPromise);
+        const isAllDeleted = deleteEnPromise.every(d => {
+          return d === 1;
+        });
+
+        if (isAllDeleted) {
+          await enDelTransaction.commit();
+        } else {
+          await enDelTransaction.rollback();
+        }
+
+        enDelTransStatus = true;
+        deleteEnPromise = [].concat.apply([], deleteEnPromise);
+
+        const responseMessage = isAllDeleted
+          ? emr_constants.UPDATED_ENC_SUCCESS
+          : emr_constants.NO_RECORD_FOUND;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: responseMessage
+        });
+      } catch (ex) {
+        console.log(ex);
+        if (enDelTransaction) {
+          await enDelTransaction.rollback();
+          enDelTransStatus = true;
+        }
+
+        return res
+          .status(400)
+          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      } finally {
+        if (enDelTransaction && !enDelTransStatus) {
+          enDelTransaction.rollback();
+        }
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
+  const _updateECdischarge = async (req,res) => {
+    const {user_uuid} = req.headers;
+    const updatedata = req.body;
+    const ec_updateData = {
+      discharge_type_uuid: req.body.discharge_type_uuid,
+      discharge_date: req.body.discharge_date,
+      modified_by: user_uuid,
+      modified_date: new Date()
+    };
+    try{
+    if (user_uuid && updatedata){
+      const ec_updated = await encounter_tbl.update(ec_updateData,
+        {
+          where: {
+            facility_uuid: updatedata.facility_uuid,
+            uuid: updatedata.encounter_uuid,
+            patient_uuid: updatedata.patient_uuid,
+            encounter_type_uuid: updatedata.encounter_type_uuid
+          }
+        }
+      );
+        if (ec_updated){
+          return res.status(200).send({ code: httpStatus[200], message: "updated sucessfully" });
+        }
+    
+    }else{
+      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+    }catch(ex){
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+    
+    };
+    
+    
+     
+    
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
-    getVisitHistoryByPatientId: _getVisitHistoryByPatientId
+    getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
+    deleteEncounterById: _deleteEncounterById,
+    updateECdischarge: _updateECdischarge
   };
 };
 

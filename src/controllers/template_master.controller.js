@@ -161,14 +161,14 @@ const tmpmstrController = () => {
       try {
         if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
 
-          templateTransaction = await db.sequelize.transaction();
+          //templateTransaction = await db.sequelize.transaction();
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction: templateTransaction }, { returning: true, plain: true });
-          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid, templateTransaction));
-          await templateTransaction.commit();
-          templateTransStatus = true;
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }}, { returning: true, plain: true });
+          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid));
+          // await templateTransaction.commit();
+          // templateTransStatus = true;
 
           if (temp_mas && temp_mas_dtls) {
             //await templateTransaction.commit();
@@ -176,20 +176,20 @@ const tmpmstrController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
           }
         } else {
-          await templateTransaction.rollback();
-          templateTransStatus = true;
+          // await templateTransaction.rollback();
+          // templateTransStatus = true;
           return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
         }
       } catch (ex) {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
+        // await templateTransaction.rollback();npm 
+        // templateTransStatus = true;
         return res.status(400).send({ code: httpStatus[400], message: ex.message });
       }
-      finally {
-        if (templateTransaction && !templateTransStatus) {
-          await templateTransaction.rollback();
-        }
-      }
+      // finally {
+      //   if (templateTransaction && !templateTransStatus) {
+      //     await templateTransaction.rollback();
+      //   }
+      // }
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
@@ -388,7 +388,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.drug_route_uuid = mD.drug_route_uuid,
       mD.drug_frequency_uuid = mD.drug_frequency_uuid,
       mD.diet_master_uuid = mD.diet_master_uuid,
-      mD.diet_catagory_uuid = mD.diet_catagory_uuid,
+      mD.diet_category_uuid = mD.diet_category_uuid,
       mD.diet_frequency_uuid = mD.diet_frequency_uuid,
       mD.display_order = mD.display_order,
       mD.duration = mD.drug_duration,
@@ -422,7 +422,7 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
         drug_frequency_uuid: tD.drug_frequency_uuid,
         duration: tD.drug_duration,
         diet_master_uuid: tD.diet_master_uuid,
-        diet_catagory_uuid: tD.diet_catagory_uuid,
+        diet_category_uuid: tD.diet_category_uuid,
         diet_frequency_uuid: tD.diet_frequency_uuid,
         duration_period_uuid: tD.drug_period_uuid,
         drug_instruction_uuid: tD.drug_instruction_uuid,
