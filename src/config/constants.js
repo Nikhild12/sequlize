@@ -38,7 +38,7 @@ module.exports = Object.freeze({
   INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
   UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
 
-  GetpleaseProvideMsg: function(columnname) {
+  GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "encounter_uuid":
@@ -105,12 +105,15 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} admission_status_uuid`;
       case "encounter_type_uuid":
         return `${returnProvideMsg} encounter_type_uuid`;
+      case "note_type_uuid":
+        return `${returnProvideMsg} note_type_uuid`;
+
       default:
         return `${returnProvideMsg} required Fields`;
     }
   },
 
-  GetMinimumMessage: function(columnname) {
+  GetMinimumMessage: function (columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -157,7 +160,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function(columnname) {
+  GetZeroValidationMessage: function (columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":

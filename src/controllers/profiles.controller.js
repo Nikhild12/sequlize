@@ -133,12 +133,121 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
 
     try {
+      // let paginationSize = req.query.paginationSize;
+      let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, departmentId, status, searchLetters } = req.query;
+      let pageNo = 0;
+      if (recordsPerPage) {
+        let records = parseInt(recordsPerPage);
+        if (records && (records != NaN)) {
+          recordsPerPage = records;
+        }
+      }
+      let itemsPerPage = recordsPerPage ? recordsPerPage : 10;
+      let sortField = 'uuid';
+      let sortOrder = 'DESC';
+      if (searchPageNo) {
+        let temp = parseInt(searchPageNo);
+        if (temp && (temp != NaN)) {
+          pageNo = temp;
+        }
+      }
+
+      const offset = pageNo * itemsPerPage;
+
+
+      if (searchSortBy) {
+
+        sortField = searchSortBy;
+      }
+
+      if (searchSortOrder && ((searchSortOrder == 'ASC') || (searchSortOrder == 'DESC'))) {
+
+        sortOrder = searchSortOrder;
+      }
+
+      let findQuery = {
+        offset: offset,
+        limit: itemsPerPage,
+        order: [
+          [sortField, sortOrder],
+        ],
+        where: { p_is_active: 1 }
+      };
+
+      if (searchName && /\S/.test(searchName)) {
+
+        findQuery.where = {
+          [Op.or]: [{
+            profile_code: {
+              [Op.like]: '%' + searchName + '%',
+            },
+
+
+          }, {
+            profile_name: {
+              [Op.like]: '%' + searchName + '%',
+            },
+          }
+
+          ]
+        };
+      }
+      // if (createdBy && /\S/.test(createdBy)) {
+
+      //   findQuery.where = {
+      //     u_first_name: {
+      //       [Op.like]: '%' + createdBy + '%',
+      //     }
+      //   }
+      // }
+      if (typeof departmentId == 'string') {
+        findQuery.where['d_uuid'] = parseInt(departmentId);
+      }
+      // if (typeof share == 'boolean') {
+      //   findQuery.where['tk_is_public'] = share;
+      // }
+      if (typeof status == 'boolean') {
+        findQuery.where['tk_status'] = status;
+      }
+      if (searchLetters && /\S/.test(searchLetters)) {
+        Object.assign(findQuery.where, {
+          [Op.or]: [
+            {
+              p_profile_code: {
+                [Op.like]: '%' + searchLetters + '%',
+              }
+            },
+            {
+              p_profile_name: {
+                [Op.like]: '%' + searchLetters + '%',
+              }
+
+            },
+            {
+              d_name: {
+                [Op.like]: '%' + searchLetters + '%',
+              }
+            },
+            {
+              p_status: {
+                [Op.eq]: searchLetters,
+              }
+            }
+
+          ]
+        });
+      }
+
+
       if (user_uuid) {
-        const profilesData = await profilesTbl.findAll();
-        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: profilesData });
+        const profileData = await ProfilesViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
+        );
+        if (profileData) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Fetched profile Details successfully', responseContents: profileData });
+        }
       }
       else {
-        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
       }
     } catch (ex) {
 
@@ -146,6 +255,29 @@ const profilesController = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
+
+
+
+
+  // const _getAllProfiles = async (req, res) => {
+
+  //   const { user_uuid } = req.headers;
+
+  //   try {
+  //     if (user_uuid) {
+  //       const profilesData = await profilesTbl.findAll();
+  //       return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: profilesData });
+  //     }
+  //     else {
+  //       return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+  //     }
+  //   } catch (ex) {
+
+  //     console.log(ex.message);
+  //     return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+  //   }
+  // };
 
   // Delete Profiles
   const _deleteProfiles = async (req, res) => {
@@ -191,6 +323,7 @@ const profilesController = () => {
           where: { p_uuid: profile_uuid },
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         });
+        // console.log('profileList====', profileList);
         if (profileList) {
           const profileData = getProfileDetailsData(profileList);
           return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'profiles Details fetched succesfully', responseContents: profileData });
@@ -411,7 +544,7 @@ function getSectionsUpdateData(user_uuid, profilesReqData) {
 
 }
 
-function getProfileDetailsData(profileList) {
+function getProfileDetailsData_old(profileList) {
   let profiles;
   let sections = [];
   let categoryList = [];
@@ -483,4 +616,283 @@ function getProfileDetailsData(profileList) {
   else {
     return {};
   }
+}
+
+
+// function getProfileDetailsData_delete(profileList) {
+//   let profiles;
+//   let sections = [];
+//   let categoryList = [];
+//   let conceptsList = [];
+//   let valueTypesList = [];
+//   if (profileList.length > 0) {
+//     profiles = {
+//       profile_id: profileList[0].dataValues.p_uuid,
+//       profile_name: profileList[0].dataValues.p_profile_name,
+//       profile_code: profileList[0].dataValues.p_profile_code,
+//       profile_description: profileList[0].dataValues.p_profile_description,
+//       profile_type_uuid: profileList[0].dataValues.p_profile_type_uuid,
+//       facility_uuid: profileList[0].dataValues.p_facility_uuid,
+//       department_uuid: profileList[0].dataValues.p_department_uuid,
+//       status: profileList[0].dataValues.p_status,
+//       is_active: profileList[0].dataValues.p_is_active
+//     };
+
+//     profileList.forEach((pD) => {
+//       sections = [...sections,
+//       {
+//         section_uuid: pD.s_uuid,
+//         section_type_uuid: pD.s_section_type_uuid,
+//         section_note_type_uuid: pD.s_section_note_type_uuid,
+//         section_name: pD.s_name,
+//         section_description: pD.s_description,
+//         section_sref: pD.s_sref,
+//         section_display_order: pD.s_display_order,
+//         section_status: pD.s_status,
+//         section_is_active: pD.s_is_active[0] === 1 ? true : false,
+//         categoryList: [...categoryList,
+//         {
+//           category_code: pD.c_code,
+//           category_name: pD.c_name,
+//           category_description: pD.c_description,
+//           category_type_uuid: pD.c_category_type_uuid,
+//           category_description: pD.c_description,
+//           category_status: pD.c_status,
+//           category_is_active: pD.c_is_active[0] === 1 ? true : false,
+//           conceptsList: [...conceptsList,
+//           {
+//             concept_uuid: pD.pscc_uuid,
+//             concept_code: pD.pscc_code,
+//             concept_name: pD.pscc_name,
+//             pscc_value_type_uuid: pD.pscc_value_type_uuid,
+//             pscc_profile_section_category_uuid: pD.pscc_profile_section_category_uuid,
+//             pscc_description: pD.pscc_description,
+//             pscc_is_mandatory: pD.pscc_is_mandatory,
+//             pscc_is_multiple: pD.pscc_is_multiple,
+//             pscc_display_order: pD.pscc_display_order,
+//             pscc_status: pD.pscc_status,
+//             pscc_is_active: pD.pscc_is_active[0] === 1 ? true : false,
+//             valueTypesList: [...valueTypesList,
+//             {
+//               valueType_uuid: pD.psccv_uuid,
+//               concept_code: pD.psccv_profile_section_category_concept_uuid,
+//               value_code: pD.psccv_value_code,
+//               value_name: pD.psccv_value_name,
+//               psccv_display_order: pD.psccv_display_order,
+//               psccv_status: pD.psccv_status,
+//               psccv_is_active: pD.psccv_is_active[0] === 1 ? true : false
+//             }]
+//           }]
+//         }]
+//       }];
+//     });
+//     return { "profileDetails": profiles, "sectionList": sections };
+//   }
+//   else {
+//     return {};
+//   }
+// }
+
+
+// function getProfileDetailsData(profileList) {
+//   let profiles;
+//   let sections = [];
+//   let categoryList = [];
+//   let conceptsList = [];
+//   let valueTypesList = [];
+//   // console.log('profilesList==', profileList);
+//   // console.log('profileList.length==', profileList.length);
+
+//   for (let i = 0; i < profileList.length; i++) {
+//     const element = profileList[i];
+//     profiles = {
+//       profile_id: profileList[0].dataValues.p_uuid,
+//       profile_name: profileList[0].dataValues.p_profile_name,
+//       profile_code: profileList[0].dataValues.p_profile_code,
+//       profile_description: profileList[0].dataValues.p_profile_description,
+//       profile_type_uuid: profileList[0].dataValues.p_profile_type_uuid,
+//       facility_uuid: profileList[0].dataValues.p_facility_uuid,
+//       department_uuid: profileList[0].dataValues.p_department_uuid,
+//       status: profileList[0].dataValues.p_status,
+//       is_active: profileList[0].dataValues.p_is_active
+//     }
+//     for (let j = 0; j < profileList.length; j++) {
+//       sections = [...sections,
+//       {
+//         section_uuid: profileList[0].dataValues.s_uuid,
+//         section_type_uuid: profileList[0].dataValues.s_section_type_uuid,
+//         section_note_type_uuid: profileList[0].dataValues.s_section_note_type_uuid,
+//         section_name: profileList[0].dataValues.s_name,
+//         section_description: profileList[0].dataValues.s_description,
+//         section_sref: profileList[0].dataValues.s_sref,
+//         section_display_order: profileList[0].dataValues.s_display_order,
+//         section_status: profileList[0].dataValues.s_status,
+//         section_is_active: profileList[0].dataValues.s_is_active[0] === 1 ? true : false,
+
+//         for(let k = 0; k <profileList.length; k++) {
+
+//       }
+//     }]
+//     console.log('sections==', sections);
+//   }
+//   console.log('profiles==', profiles);
+
+// }
+// }
+
+function getProfileDetailsData_delete(profileList) {
+  let profiles;
+  let sections = [];
+  let categoryList = [];
+  let conceptsList = [];
+  let valueTypesList = [];
+  if (profileList.length > 0) {
+    profiles = {
+      profile_id: profileList[0].dataValues.p_uuid,
+      profile_name: profileList[0].dataValues.p_profile_name,
+      profile_code: profileList[0].dataValues.p_profile_code,
+      profile_description: profileList[0].dataValues.p_profile_description,
+      profile_type_uuid: profileList[0].dataValues.p_profile_type_uuid,
+      facility_uuid: profileList[0].dataValues.p_facility_uuid,
+      department_uuid: profileList[0].dataValues.p_department_uuid,
+      status: profileList[0].dataValues.p_status,
+      is_active: profileList[0].dataValues.p_is_active
+    };
+
+    profileList.forEach((pD) => {
+      sections = [...sections,
+      {
+        section_uuid: pD.s_uuid,
+        section_type_uuid: pD.s_section_type_uuid,
+        section_note_type_uuid: pD.s_section_note_type_uuid,
+        section_name: pD.s_name,
+        section_description: pD.s_description,
+        section_sref: pD.s_sref,
+        section_display_order: pD.s_display_order,
+        section_status: pD.s_status,
+        section_is_active: pD.s_is_active[0] === 1 ? true : false,
+        categoryList: [...categoryList,
+        {
+          category_code: pD.c_code,
+          category_name: pD.c_name,
+          category_description: pD.c_description,
+          category_type_uuid: pD.c_category_type_uuid,
+          category_description: pD.c_description,
+          category_status: pD.c_status,
+          category_is_active: pD.c_is_active[0] === 1 ? true : false,
+          conceptsList: [...conceptsList,
+          {
+            concept_uuid: pD.pscc_uuid,
+            concept_code: pD.pscc_code,
+            concept_name: pD.pscc_name,
+            pscc_value_type_uuid: pD.pscc_value_type_uuid,
+            pscc_profile_section_category_uuid: pD.pscc_profile_section_category_uuid,
+            pscc_description: pD.pscc_description,
+            pscc_is_mandatory: pD.pscc_is_mandatory,
+            pscc_is_multiple: pD.pscc_is_multiple,
+            pscc_display_order: pD.pscc_display_order,
+            pscc_status: pD.pscc_status,
+            pscc_is_active: pD.pscc_is_active[0] === 1 ? true : false,
+            valueTypesList: [...valueTypesList,
+            {
+              valueType_uuid: pD.psccv_uuid,
+              concept_code: pD.psccv_profile_section_category_concept_uuid,
+              value_code: pD.psccv_value_code,
+              value_name: pD.psccv_value_name,
+              psccv_display_order: pD.psccv_display_order,
+              psccv_status: pD.psccv_status,
+              psccv_is_active: pD.psccv_is_active[0] === 1 ? true : false
+            }]
+          }]
+        }]
+      }];
+    });
+    return { "profileDetails": profiles, "sectionList": sections };
+  }
+  else {
+    return {};
+  }
+}
+
+
+function getProfileDetailsData(profileList) {
+  let profiles;
+  let sections = [];
+  let categoryList = [];
+  let conceptsList = [];
+  let valueTypesList = [];
+  // console.log('profilesList==', profileList);
+  // console.log('profileList.length==', profileList.length);
+
+  for (let m = 0; m < profileList.length; m++) {
+    profiles = {
+      profile_id: profileList[0].dataValues.p_uuid,
+      profile_name: profileList[0].dataValues.p_profile_name,
+      profile_code: profileList[0].dataValues.p_profile_code,
+      profile_description: profileList[0].dataValues.p_profile_description,
+      profile_type_uuid: profileList[0].dataValues.p_profile_type_uuid,
+      facility_uuid: profileList[0].dataValues.p_facility_uuid,
+      department_uuid: profileList[0].dataValues.p_department_uuid,
+      status: profileList[0].dataValues.p_status,
+      is_active: profileList[0].dataValues.p_is_active
+    };
+    for (let i = 0; i < profileList.length; i++) {
+      sections.push({
+        section_uuid: profileList[0].dataValues.s_uuid,
+        section_type_uuid: profileList[0].dataValues.s_section_type_uuid,
+        section_note_type_uuid: profileList[0].dataValues.s_section_note_type_uuid,
+        section_name: profileList[0].dataValues.s_name,
+        section_description: profileList[0].dataValues.s_description,
+        section_sref: profileList[0].dataValues.s_sref,
+        section_display_order: profileList[0].dataValues.s_display_order,
+        section_status: profileList[0].dataValues.s_status,
+        section_is_active: profileList[0].dataValues.s_is_active[0] === 1 ? true : false,
+      })
+      for (let j = 0; j < profileList.length; j++) {
+        categoryList.push({
+          category_code: profileList[0].dataValues.c_code,
+          category_name: profileList[0].dataValues.c_name,
+          category_description: profileList[0].dataValues.c_description,
+          category_type_uuid: profileList[0].dataValues.c_category_type_uuid,
+          category_description: profileList[0].dataValues.c_description,
+          category_status: profileList[0].dataValues.c_status,
+          category_is_active: profileList[0].dataValues.c_is_active[0] === 1 ? true : false,
+        })
+        for (let k = 0; k < profileList.length; k++) {
+          conceptsList.push({
+            concept_uuid: profileList[0].dataValues.pscc_uuid,
+            concept_code: profileList[0].dataValues.pscc_code,
+            concept_name: profileList[0].dataValues.pscc_name,
+            pscc_value_type_uuid: profileList[0].dataValues.pscc_value_type_uuid,
+            pscc_profile_section_category_uuid: profileList[0].dataValues.pscc_profile_section_category_uuid,
+            pscc_description: profileList[0].dataValues.pscc_description,
+            pscc_is_mandatory: profileList[0].dataValues.pscc_is_mandatory,
+            pscc_is_multiple: profileList[0].dataValues.pscc_is_multiple,
+            pscc_display_order: profileList[0].dataValues.pscc_display_order,
+            pscc_status: profileList[0].dataValues.pscc_status,
+            pscc_is_active: profileList[0].dataValues.pscc_is_active[0] === 1 ? true : false,
+          })
+          for (let l = 0; l < profileList.length; l++) {
+            // const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
+            valueTypesList.push({
+              valueType_uuid: profileList[0].dataValues.psccv_uuid,
+              concept_code: profileList[0].dataValues.psccv_profile_section_category_concept_uuid,
+              value_code: profileList[0].dataValues.psccv_value_code,
+              value_name: profileList[0].dataValues.psccv_value_name,
+              psccv_display_order: profileList[0].dataValues.psccv_display_order,
+              psccv_status: profileList[0].dataValues.psccv_status,
+              psccv_is_active: profileList[0].dataValues.psccv_is_active[0] === 1 ? true : false
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // console.log('profiles==', profiles);
+  // console.log('sections==', sections);
+  console.log('categoryList==', categoryList);
+  //console.log('conceptsList==', conceptsList);
+  //console.log('valueTypesList==', valueTypesList);
+
 }
