@@ -7,7 +7,7 @@ const encounterRouter = require("./encounter.route");
 const encounterTypeRouter = require("./encounter.type.route");
 const patientDiagnosisRouter = require("./patient.diagnosis.route");
 const patientAttachmentsRouter = require("./patient_attachments.route");
-//const serviceRoute = express.Router();
+const patientTreatmentRoute = require("./patient_treatment.route");
 
 const favouriteRoutes = require("./favourite_master_route");
 const templateRoutes = require("./template_master.route");
@@ -184,5 +184,9 @@ serviceRouter.use("/body-side", bodySideRoute);
 
 // Surgery Position Routes
 serviceRouter.use("/surgery-position", surgeryPositionRoute);
+
+// Patient Treatment Routes
+serviceRouter.use("/patient-treatment", patientTreatmentRoute);
+
 
 module.exports = serviceRouter;

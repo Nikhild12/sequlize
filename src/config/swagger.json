@@ -17,18 +17,9 @@
       "description": "API for EMR Data"
     }
   ],
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "consumes": [
-    "application/json",
-    "multipart/form-data"
-  ],
-  "produces": [
-    "application/json",
-    "application/file"
-  ],
+  "schemes": ["http", "https"],
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json", "application/file"],
   "paths": {
     "/api/notetemplate/getnotetemplatebytype": {
       "post": {
@@ -55,13 +46,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -93,13 +79,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -131,13 +112,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -169,13 +145,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -207,13 +178,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Speciality Sketches"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Speciality Sketches"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -245,13 +211,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Speciality Sketches"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Speciality Sketches"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -283,13 +244,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Speciality Sketches"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Speciality Sketches"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -313,13 +269,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Speciality Sketches"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Speciality Sketches"],
         "responses": {
           "200": {
             "description": "get All getAllSpeciality",
@@ -349,13 +300,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Speciality Sketches"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Speciality Sketches"],
         "responses": {
           "200": {
             "description": "deleted Successfully"
@@ -382,13 +328,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -420,13 +361,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -458,13 +394,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -488,13 +419,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "get All Ccc Master",
@@ -524,13 +450,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Ccc Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Ccc Master"],
         "responses": {
           "200": {
             "description": "deleted Successfully"
@@ -549,13 +470,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -587,13 +503,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -625,13 +536,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -655,13 +561,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Procedures"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -693,13 +594,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -731,13 +627,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -761,13 +652,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -799,13 +685,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -837,13 +718,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Note Template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Note Template"],
         "responses": {
           "200": {
             "description": "update Successfully",
@@ -875,13 +751,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Vitals Lonic"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Vitals Lonic"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -905,13 +776,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Vitals Lonic"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Vitals Lonic"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -943,13 +809,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Vitals Lonic"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Vitals Lonic"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -981,13 +842,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Vitals Lonic"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Vitals Lonic"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1019,13 +875,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Vitals Lonic"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Vitals Lonic"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1049,13 +900,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Reference"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Reference"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1087,13 +933,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1125,13 +966,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1155,13 +991,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1193,13 +1024,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1231,13 +1057,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "Delete Successfully",
@@ -1269,13 +1090,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations"],
         "responses": {
           "200": {
             "description": "update Successfully",
@@ -1307,13 +1123,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations Schedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations Schedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1337,13 +1148,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations Schedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations Schedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1375,13 +1181,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations Schedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations Schedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1413,13 +1214,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations Schedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations Schedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1451,13 +1247,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Immunizations Schedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Immunizations Schedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1489,13 +1280,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Common Reference Group"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Common Reference Group"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1527,13 +1313,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Common Reference Group"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Common Reference Group"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1565,13 +1346,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Common Reference Group"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Common Reference Group"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1603,13 +1379,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Common Reference Group"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Common Reference Group"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1641,13 +1412,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Common Reference Group"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Common Reference Group"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1679,13 +1445,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Allergy Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Allergy Master"],
         "responses": {
           "200": {
             "description": "Successfully Inserted allergy"
@@ -1704,13 +1465,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Allergy Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Allergy Master"],
         "responses": {
           "200": {
             "description": "get Allergy Master"
@@ -1737,13 +1493,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Allergy Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Allergy Master"],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -1770,13 +1521,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Allergy Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Allergy Master"],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1803,13 +1549,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Allergy Master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Allergy Master"],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1836,13 +1577,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRWorkflowSettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRWorkflowSettings"],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1869,13 +1605,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRWorkflowSettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRWorkflowSettings"],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -1902,13 +1633,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRWorkflowSettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRWorkflowSettings"],
         "responses": {
           "200": {
             "description": "Upadted Successfully"
@@ -1927,13 +1653,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRWorkflowSettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRWorkflowSettings"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -1963,13 +1684,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRHistorySettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRHistorySettings"],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1988,13 +1704,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRHistorySettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRHistorySettings"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2024,13 +1735,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRHistorySettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRHistorySettings"],
         "responses": {
           "200": {
             "description": "Upadted Successfully"
@@ -2057,13 +1763,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRHistorySettings"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRHistorySettings"],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -2090,13 +1791,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientChiefComplaints"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientChiefComplaints"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -2115,13 +1811,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientChiefComplaints"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientChiefComplaints"],
         "responses": {
           "200": {
             "description": "Fetched Successfully"
@@ -2148,13 +1839,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRPatientVitals"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRPatientVitals"],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Patient Vitals"
@@ -2173,13 +1859,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRPatientVitals"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRPatientVitals"],
         "responses": {
           "200": {
             "description": "Successfully Fetched"
@@ -2227,13 +1908,8 @@
             "format": "date"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRPatientVitals"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRPatientVitals"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2296,13 +1972,8 @@
             "required": true
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientChiefComplaints"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientChiefComplaints"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2332,13 +2003,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Encounter"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Encounter"],
         "responses": {
           "200": {
             "description": "Successfully Inserted Encounter"
@@ -2393,13 +2059,8 @@
             "required": true
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Encounter"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Encounter"],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter"
@@ -2418,13 +2079,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EncounterType"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EncounterType"],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter Type"
@@ -2451,13 +2107,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientDiagnosis"],
         "responses": {
           "200": {
             "description": "Successfully Inserted Patient Diagnosis"
@@ -2476,13 +2127,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientDiagnosis"],
         "responses": {
           "200": {
             "description": "Successfully Fetched Patient Diagnosis"
@@ -2542,13 +2188,8 @@
             "format": "date"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientDiagnosis"],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter Type"
@@ -2575,13 +2216,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientDiagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientDiagnosis"],
         "responses": {
           "200": {
             "description": "Successfully Deleted"
@@ -2614,13 +2250,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "favourite"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -2649,9 +2280,7 @@
             }
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful Delete",
@@ -2687,9 +2316,7 @@
             "type": "integer"
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2722,9 +2349,7 @@
             "type": "integer"
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2757,9 +2382,7 @@
             "type": "integer"
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2792,9 +2415,7 @@
             "type": "integer"
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2832,9 +2453,7 @@
             "type": "integer"
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2869,9 +2488,7 @@
             }
           }
         ],
-        "tags": [
-          "favourite"
-        ],
+        "tags": ["favourite"],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -2907,13 +2524,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "OK",
@@ -2955,13 +2567,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -2993,13 +2600,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "template"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3031,9 +2633,7 @@
             }
           }
         ],
-        "tags": [
-          "template"
-        ],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "Successful Delete"
@@ -3062,9 +2662,7 @@
             }
           }
         ],
-        "tags": [
-          "template"
-        ],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -3100,13 +2698,8 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3138,13 +2731,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3176,13 +2764,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -3214,13 +2797,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "get all datails Successfully",
@@ -3252,13 +2830,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "delete Successfully",
@@ -3290,13 +2863,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "updated Successfully",
@@ -3328,13 +2896,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Diagnosis"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Diagnosis"],
         "responses": {
           "200": {
             "description": "fetch the details Successfully",
@@ -3370,13 +2933,8 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3400,13 +2958,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsDuration"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsDuration"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3438,13 +2991,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsDuration"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsDuration"],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -3476,13 +3024,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -3506,13 +3049,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -3544,13 +3082,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -3582,13 +3115,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -3620,13 +3148,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "ChiefComplaintsMaster"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["ChiefComplaintsMaster"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -3658,13 +3181,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "vital_master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["vital_master"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3688,13 +3206,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "vital_master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["vital_master"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3718,13 +3231,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "vital_master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["vital_master"],
         "responses": {
           "200": {
             "description": "Fetched Successfully"
@@ -3745,13 +3253,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "vital_master"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["vital_master"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3783,9 +3286,7 @@
             }
           }
         ],
-        "tags": [
-          "template"
-        ],
+        "tags": ["template"],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -3809,13 +3310,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3845,13 +3341,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3875,13 +3366,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3953,13 +3439,8 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3989,14 +3470,8 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml",
-          "application/file"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml", "application/file"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4026,13 +3501,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "attachment"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["attachment"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4064,13 +3534,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "TreatmentKit"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["TreatmentKit"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4109,13 +3574,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "TreatmentKit"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["TreatmentKit"],
         "responses": {
           "200": {
             "description": "Fetched Treatment Kit Successfully",
@@ -4147,13 +3607,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Profiles"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Profiles"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4174,13 +3629,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Profiles"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Profiles"],
         "responses": {
           "200": {
             "description": "get All Profiles",
@@ -4210,13 +3660,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientAllergyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientAllergyHistory"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4243,13 +3688,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientAllergyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientAllergyHistory"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4279,13 +3719,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientAllergyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientAllergyHistory"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -4315,13 +3750,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientAllergyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientAllergyHistory"],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -4359,13 +3789,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientAllergyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientAllergyHistory"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -4403,13 +3828,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["CriticalCare"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -4445,13 +3865,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["CriticalCare"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4489,13 +3904,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["CriticalCare"],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -4543,13 +3953,8 @@
             "format": "date"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["CriticalCare"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4573,13 +3978,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "CriticalCare"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["CriticalCare"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4655,13 +4055,8 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "MyPatientList"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["MyPatientList"],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -4693,13 +4088,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "FamilyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["FamilyHistory"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4729,13 +4119,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "FamilyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["FamilyHistory"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4765,13 +4150,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "FamilyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["FamilyHistory"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -4801,13 +4181,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "FamilyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["FamilyHistory"],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -4845,13 +4220,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "FamilyHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["FamilyHistory"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -4883,13 +4253,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Profiles"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Profiles"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4916,13 +4281,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Profiles"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Profiles"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4954,13 +4314,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Profiles"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Profiles"],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -4989,13 +4344,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "SurgeryHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["SurgeryHistory"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -5025,13 +4375,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "SurgeryHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["SurgeryHistory"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5061,13 +4406,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "SurgeryHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["SurgeryHistory"],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -5105,13 +4445,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "SurgeryHistory"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["SurgeryHistory"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -5153,13 +4488,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "Encounter"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Encounter"],
         "responses": {
           "200": {
             "description": "sucessful operation"
@@ -5192,13 +4522,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "EMRPatientVitals"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["EMRPatientVitals"],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -5228,13 +4553,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientImmunizationSchedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientImmunizationSchedule"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -5261,13 +4581,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientImmunizationSchedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientImmunizationSchedule"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5297,13 +4612,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientImmunizationSchedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientImmunizationSchedule"],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -5341,13 +4651,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientImmunizationSchedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientImmunizationSchedule"],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -5377,13 +4682,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientImmunizationSchedule"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientImmunizationSchedule"],
         "responses": {
           "200": {
             "description": "get All PatientImmunization",
@@ -5413,13 +4713,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientReferral"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientReferral"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5451,13 +4746,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientReferral"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientReferral"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -5481,13 +4771,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "BodySide"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["BodySide"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5511,13 +4796,8 @@
             "type": "integer"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "SurgeryPosition"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["SurgeryPosition"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5549,13 +4829,8 @@
             }
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "tags": [
-          "PatientTransfer"
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientTransfer"],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -5591,13 +4866,47 @@
             "type": "string"
           }
         ],
-        "produces": [
-          "application/json",
-          "application/xml"
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Procedures"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-treatment/create": {
+      "post": {
+        "description": "To get List of Procedures",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "patientTreatment",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientTreatment"
+            }
+          }
         ],
-        "tags": [
-          "Procedures          "
-        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["PatientTreatment"],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -5612,6 +4921,43 @@
     }
   },
   "definitions": {
+    "patientTreatment":{
+      "type": "object",
+      "properties":{
+        "patientTreatment":{
+          "type": "object",
+          "properties":{
+            "facility_uuid":{
+              "type": "integer"
+            },
+            "department_uuid":{
+              "type": "integer"
+            },
+            "patient_uuid":{
+              "type": "integer"
+            },
+            "encounter_uuid":{
+              "type": "integer"
+            },
+            "encounter_type_uuid":{
+              "type": "integer"
+            },
+            "consultation_uuid":{
+              "type": "integer"
+            },
+            "treatment_kit_uuid":{
+              "type": "integer"
+            },
+            "treatment_status_uuid":{
+              "type": "integer"
+            },
+            "comments":{
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "getBodySide": {
       "type": "object",
       "properties": {

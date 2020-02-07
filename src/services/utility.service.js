@@ -1,6 +1,7 @@
 const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const moment = require("moment");
+const request = require("request");
 const Op = Sequelize.Op;
 
 const _getActiveAndStatusObject = is_active => {
@@ -71,10 +72,50 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
   };
 };
 
+const _postRequest = async (api, headers, data) => {
+  return new Promise((resolve, reject) => {
+    request.post(
+      {
+        uri: api,
+        headers: headers,
+        json: data
+      },
+      function(error, response, body) {
+        console.log("\n body...", body);
+
+        if (error) {
+          reject(error);
+        } else if (body && !body.status && !body.status === "error") {
+          if (
+            body.responseContent ||
+            body.responseContents ||
+            body.benefMembers
+          ) {
+            resolve(
+              body.responseContent || body.responseContents || body.benefMembers
+            );
+          } else if (body && body.status === "error") {
+            reject(body);
+          }
+        } else {
+          if (body.statusCode && body.statusCode === 200) {
+            resolve(
+              body.responseContent || body.responseContents || body.benefMembers
+            );
+          } else {
+            reject({});
+          }
+        }
+      }
+    );
+  });
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
   assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject,
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
-  getDateQueryBtwColumn: _getDateQueryBtwColumn
+  getDateQueryBtwColumn: _getDateQueryBtwColumn,
+  postRequest: _postRequest
 };
