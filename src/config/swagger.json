@@ -401,7 +401,7 @@
         }
       }
     },
-    "/api/ccc/addCccMaster": {
+    "/api/ccc/postcccMaster": {
       "post": {
         "description": "To Create a Ccc Master",
         "parameters": [
@@ -416,7 +416,7 @@
             "name": "create Ccc",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/addCccMaster"
+              "$ref": "#/definitions/postcccMaster"
             }
           }
         ],
@@ -5981,12 +5981,15 @@
         }
       }
     },
-    "addCccMaster": {
+    "postcccMaster": {
       "type": "object",
       "properties": {
         "body": {
           "type": "object",
           "properties": {
+            "critical_care_type_uuid":{
+              "type":"integer"
+            },
             "name": {
               "type": "string"
             },
@@ -6020,18 +6023,13 @@
           }
         },
         "body1": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
+          "type": "object",
+          "properties":{
               "concept_code": {
                 "type": "string"
               },
               "concept_name": {
                 "type": "string"
-              },
-              "cc_chart_uuid": {
-                "type": "integer"
               },
               "value_type_uuid": {
                 "type": "integer"
@@ -6051,8 +6049,8 @@
               "status": {
                 "type": "boolean"
               }
-            }
           }
+      
         },
         "body2": {
           "type": "array",
