@@ -1015,7 +1015,7 @@
     },
     "/api/vitalLonic/deletevitalslonic": {
       "post": {
-        "description": "Inserted Successfully",
+        "description": "Delete Successfully",
         "parameters": [
           {
             "in": "header",
@@ -1051,6 +1051,7 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    
     "/api/vitalLonic/getvitalslonicById": {
       "post": {
         "description": "Inserted Successfully",
@@ -3761,6 +3762,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/vitalMaster/deletevitals": {
+      "post": {
+        "description": "Delete Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+                ],
+        "responses": {
+          "200": {
+            "description": "delete Successfully",
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalMaster/getVitals": {
       "get": {
         "summary": "To get default vitals master List",
@@ -5964,6 +6003,14 @@
     }
   },
   "definitions": {
+    "deletevitals":{
+      "type": "object",
+      "properties": {
+        "vitals_id": {
+          "type": "integer"
+        }
+      }
+    },
     "getcccmasterbytype": {
       "type": "object",
       "properties": {
