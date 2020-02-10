@@ -286,12 +286,12 @@ const profilesController = () => {
   const _getProfileById = async (req, res) => {
 
     const { user_uuid } = req.headers;
-    const { uuid } = req.query;
-    if (user_uuid && uuid) {
+    const { profile_uuid } = req.query;
+    if (user_uuid && profile_uuid) {
       try {
         const profileData = await profilesTbl.findAll({
           attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
-          where: { uuid: uuid, is_active: 1, status: 1 },
+          where: { uuid: profile_uuid, is_active: 1, status: 1 },
           include: [
             {
               model: profileSectionsTbl,
