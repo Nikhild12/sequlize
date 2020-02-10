@@ -273,6 +273,7 @@ function getTemplateData(fetchedData) {
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
+      is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false
     };
 
     fetchedData.forEach((tD) => {
@@ -329,6 +330,8 @@ function getTemplateListData(fetchedData) {
           user_uuid: tD.dataValues.tm_userid,
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
+          is_public: tD.dataValues.tm_public[0] === 1 ? true : false
+          
         },
         drug_details: [...drug_details, ...getDrugsListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
@@ -359,6 +362,7 @@ function getTemplateListData1(fetchedData) {
           user_uuid: tD.dataValues.tm_userid,
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
+          is_public: tD.dataValues.tm_public[0] === 1 ? true : false
         },
         diet_details: [...diet_details, ...getDietListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
@@ -558,6 +562,7 @@ function getLabListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
+          is_public: tD.dataValues.tm_public === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getLabListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
@@ -591,6 +596,7 @@ function getRisListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
+          is_public: tD.dataValues.tm_public === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
