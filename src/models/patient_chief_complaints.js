@@ -7,6 +7,20 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
+            facility_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: true
+                }
+            },
+            department_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: true
+                }
+            },
             patient_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
