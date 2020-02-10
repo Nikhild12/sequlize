@@ -80,6 +80,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
+    profile_section_category_concept_values.associate = models => {
+        profile_section_category_concept_values.belongsTo(models.profile_section_category_concepts, {
+            foreignKey: 'profile_section_category_concept_uuid',
+            as: 'profile_section_category_concepts'
+        });
+    };
+
     return profile_section_category_concept_values;
 };
 
