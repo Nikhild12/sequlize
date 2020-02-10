@@ -4744,17 +4744,18 @@
           {
             "in": "query",
             "name": "from_date",
+            "required": true,
             "type": "string"
           },
           {
             "in": "query",
             "name": "to_date",
+            "required": true,
             "type": "string"
           },
           {
             "in": "body",
             "name": "get list of patientlist",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/getPatientListDetails"
             }
