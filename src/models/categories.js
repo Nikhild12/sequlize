@@ -86,12 +86,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
+    categories.associate = models => {
+        categories.hasMany(models.profile_section_categories, {
+            foreignKey: 'category_uuid',
+            as: 'profile_section_categories'
+        });
+    };
 
-    // categories.associate = models => {
-    //     categories.hasMany(models.category_concepts, {
-    //         foreignKey: 'category_uuid',
-    //         as: 'category_concepts'
-    //     });
-    // };
     return categories;
 };

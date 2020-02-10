@@ -4299,7 +4299,6 @@
           {
             "in": "body",
             "name": "Profiles",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/allProfiles"
             }
@@ -5038,7 +5037,7 @@
             "type": "integer"
           },
           {
-            "in": "query",
+            "in": "body",
             "name": "profile_uuid",
             "required": true,
             "type": "integer"
@@ -6039,8 +6038,8 @@
         "body": {
           "type": "object",
           "properties": {
-            "critical_care_type_uuid":{
-              "type":"integer"
+            "critical_care_type_uuid": {
+              "type": "integer"
             },
             "name": {
               "type": "string"
@@ -6076,33 +6075,32 @@
         },
         "body1": {
           "type": "object",
-          "properties":{
-              "concept_code": {
-                "type": "string"
-              },
-              "concept_name": {
-                "type": "string"
-              },
-              "value_type_uuid": {
-                "type": "integer"
-              },
-              "display_order": {
-                "type": "integer"
-              },
-              "drug_frequency_uuid": {
-                "type": "integer"
-              },
-              "is_default": {
-                "type": "integer"
-              },
-              "revision": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              }
+          "properties": {
+            "concept_code": {
+              "type": "string"
+            },
+            "concept_name": {
+              "type": "string"
+            },
+            "value_type_uuid": {
+              "type": "integer"
+            },
+            "display_order": {
+              "type": "integer"
+            },
+            "drug_frequency_uuid": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
+            }
           }
-      
         },
         "body2": {
           "type": "array",
@@ -9721,19 +9719,16 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "recordsPerPage": {
+        "paginationSize": {
           "type": "integer"
         },
-        "searchPageNo": {
+        "pageNo": {
           "type": "integer"
         },
-        "searchSortBy": {
+        "sortField": {
           "type": "string"
         },
-        "searchSortOrder": {
-          "type": "string"
-        },
-        "searchName": {
+        "sortOrder": {
           "type": "string"
         },
         "depertmentId": {
@@ -9742,7 +9737,7 @@
         "status": {
           "type": "string"
         },
-        "searchLetters": {
+        "searchKey": {
           "type": "string"
         }
       }

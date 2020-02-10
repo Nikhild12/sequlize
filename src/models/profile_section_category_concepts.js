@@ -106,6 +106,24 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
+
+    profile_section_category_concepts.associate = models => {
+        profile_section_category_concepts.belongsTo(models.profile_section_categories, {
+            foreignKey: 'profile_section_category_uuid',
+            as: 'profile_section_categories'
+        });
+    };
+
+    profile_section_category_concepts.associate = models => {
+        profile_section_category_concepts.belongsTo(models.profile_section_category_concept_values, {
+            foreignKey: 'uuid',
+            targetKey: 'profile_section_category_concept_uuid',
+
+            as: 'profile_section_category_concept_values'
+        });
+    };
+
+
     return profile_section_category_concepts;
 };
 

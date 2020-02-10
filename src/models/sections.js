@@ -91,11 +91,10 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-
     sections.associate = models => {
-        sections.hasMany(models.section_category_map, {
+        sections.hasMany(models.profile_sections, {
             foreignKey: 'section_uuid',
-            as: 'section_category_map'
+            as: 'profile_sections'
         });
     };
 
