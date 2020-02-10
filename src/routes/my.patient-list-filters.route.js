@@ -9,6 +9,6 @@ const myPatientListRouter = express.Router();
 
 myPatientListRouter
   .route("/getMyPatientList")
-  .get(mypatientListController.getMyPatientListByFilters);
+  .post(mypatientListController.getMyPatientListByFilters);
 
 module.exports = myPatientListRouter;
