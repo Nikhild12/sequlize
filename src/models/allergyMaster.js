@@ -29,56 +29,33 @@ module.exports = (sequelize, DataTypes) => {
         },
         allergy_source_uuid: {
             type: DataTypes.INTEGER
-
         },
-        allergy_severity_uuid: {
-            type: DataTypes.INTEGER
-
-        },
-
-        generic_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-
-        diet_item_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        item_master_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-
-
-        revision: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: 1
-
-        },
-        is_active: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: 1
-        },
-        created_by: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-
-        modified_by: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-
-    }, {
-        tableName: "allergy_masters",
-        createdAt: 'created_date',
-        updatedAt: 'modified_date',
-        indexes: [{
-            fields: ["uuid"]
-        }]
-    }
+            revision: {
+                type: DataTypes.STRING,
+                defaultValue: 1
+            },
+            is_active: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
+            },
+            created_by: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+           
+            modified_by: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            
+        }, {
+            tableName: "allergy_masters",
+            createdAt: 'created_date',
+            updatedAt: 'modified_date',
+            indexes: [{
+                fields: ["uuid"]
+            }]
+        }
     );
     allergy_masters.associate = models => {
         allergy_masters.belongsTo(models.allergy_type, {
