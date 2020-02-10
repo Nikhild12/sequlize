@@ -76,5 +76,21 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
+    profile_section_categories.associate = models => {
+        profile_section_categories.belongsTo(models.categories, {
+            foreignKey: 'category_uuid',
+            as: 'categories'
+        });
+        profile_section_categories.belongsTo(models.profile_sections, {
+            foreignKey: 'profile_section_uuid',
+            as: 'profile_sections'
+        });
+        profile_section_categories.belongsTo(models.profile_section_category_concepts, {
+            targetKey: 'profile_section_category_uuid',
+            foreignKey: 'uuid',
+            as: 'profile_section_category_concepts'
+        });
+    };
+
     return profile_section_categories;
 };

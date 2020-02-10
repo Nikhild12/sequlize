@@ -1051,7 +1051,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    
     "/api/vitalLonic/getvitalslonicById": {
       "post": {
         "description": "Inserted Successfully",
@@ -3787,7 +3786,7 @@
         ],
         "tags": [
           "vital_master"
-                ],
+        ],
         "responses": {
           "200": {
             "description": "delete Successfully",
@@ -4299,7 +4298,6 @@
           {
             "in": "body",
             "name": "Profiles",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/allProfiles"
             }
@@ -6000,10 +5998,45 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/profiles/update": {
+      "put": {
+        "summary": "To update OPNotes profile Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profilesUpdate"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
-    "deletevitals":{
+    "deletevitals": {
       "type": "object",
       "properties": {
         "vitals_id": {
@@ -6039,8 +6072,8 @@
         "body": {
           "type": "object",
           "properties": {
-            "critical_care_type_uuid":{
-              "type":"integer"
+            "critical_care_type_uuid": {
+              "type": "integer"
             },
             "name": {
               "type": "string"
@@ -6076,33 +6109,32 @@
         },
         "body1": {
           "type": "object",
-          "properties":{
-              "concept_code": {
-                "type": "string"
-              },
-              "concept_name": {
-                "type": "string"
-              },
-              "value_type_uuid": {
-                "type": "integer"
-              },
-              "display_order": {
-                "type": "integer"
-              },
-              "drug_frequency_uuid": {
-                "type": "integer"
-              },
-              "is_default": {
-                "type": "integer"
-              },
-              "revision": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              }
+          "properties": {
+            "concept_code": {
+              "type": "string"
+            },
+            "concept_name": {
+              "type": "string"
+            },
+            "value_type_uuid": {
+              "type": "integer"
+            },
+            "display_order": {
+              "type": "integer"
+            },
+            "drug_frequency_uuid": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
+            }
           }
-      
         },
         "body2": {
           "type": "array",
@@ -9721,19 +9753,16 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "recordsPerPage": {
+        "paginationSize": {
           "type": "integer"
         },
-        "searchPageNo": {
+        "pageNo": {
           "type": "integer"
         },
-        "searchSortBy": {
+        "sortField": {
           "type": "string"
         },
-        "searchSortOrder": {
-          "type": "string"
-        },
-        "searchName": {
+        "sortOrder": {
           "type": "string"
         },
         "depertmentId": {
@@ -9742,7 +9771,7 @@
         "status": {
           "type": "string"
         },
-        "searchLetters": {
+        "searchKey": {
           "type": "string"
         }
       }
@@ -10766,6 +10795,123 @@
         },
         "approved_on": {
           "type": "string"
+        }
+      }
+    },
+    "profilesUpdate": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "object",
+          "properties": {
+            "profile_type_uuid": {
+              "type": "integer"
+            },
+            "profile_code": {
+              "type": "string"
+            },
+            "profile_name": {
+              "type": "string"
+            },
+            "profile_description": {
+              "type": "string"
+            },
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "profile_sections_uuid": {
+                    "type": "integer"
+                  },
+                  "section_uuid": {
+                    "type": "integer"
+                  },
+                  "activity_uuid": {
+                    "type": "integer"
+                  },
+                  "display_order": {
+                    "type": "integer"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "profile_section_categories_uuid": {
+                          "type": "integer"
+                        },
+                        "category_uuid": {
+                          "type": "integer"
+                        },
+                        "display_order": {
+                          "type": "integer"
+                        },
+                        "concepts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "profile_section_category_concepts_uuid": {
+                                "type": "integer"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "value_type_uuid": {
+                                "type": "integer"
+                              },
+                              "is_mandatory": {
+                                "type": "string"
+                              },
+                              "display_order": {
+                                "type": "integer"
+                              },
+                              "is_multiple": {
+                                "type": "string"
+                              },
+                              "conceptvalues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "profile_section_category_concept_values_uuid": {
+                                      "type": "integer"
+                                    },
+                                    "value_code": {
+                                      "type": "string"
+                                    },
+                                    "value_name": {
+                                      "type": "string"
+                                    },
+                                    "display_order": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
