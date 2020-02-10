@@ -34,8 +34,7 @@ const MyPatientListController = () => {
       sort_field,
       searchKey,
       searchValue
-    } = req.query;
-
+    } = req.body;
     let defFromDate, defToDate;
     let isFromDateValid, isToDateValid;
     if (!from_date) {
