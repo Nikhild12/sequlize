@@ -562,7 +562,7 @@ function getLabListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
-          is_public: tD.dataValues.tm_public === 1 ? true : false
+          is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getLabListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
@@ -596,7 +596,7 @@ function getRisListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
-          is_public: tD.dataValues.tm_public === 1 ? true : false
+          is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)]

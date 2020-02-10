@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tm_is_public:{
+                type: DataTypes.ENUM,
+                allowNull: false,
+                values: ["0", "1"]
+            },
             tmd_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
