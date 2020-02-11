@@ -63,6 +63,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            pc_data_template: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+            pc_approved_on: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
+            pc_aproved_by: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             nt_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
