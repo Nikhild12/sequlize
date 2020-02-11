@@ -7735,6 +7735,12 @@
             },
             "session_type_uuid": {
               "type": "number"
+            },
+            "tat_start_time": {
+              "type": "string"
+            },
+            "tat_end_time": {
+              "type": "string"
             }
           }
         }

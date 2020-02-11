@@ -37,6 +37,11 @@ module.exports = Object.freeze({
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
   INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
   UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
+  PLEASE_PROVIDE: "Please Provide",
+  VALID_START_DATE: "a valid Start Date time",
+  VALID_END_DATE: "a valid End Date time",
+  START_DATE: "a Start Date time",
+  END_DATE: "a End Date time",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";

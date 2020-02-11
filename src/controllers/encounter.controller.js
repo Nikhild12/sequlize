@@ -57,7 +57,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
         moment().format("YYYY-MM-DD")
       )
     ];
-  } else if(etypeId === 2 || etypeId === '2'){
+  } else if (etypeId === 2 || etypeId === "2") {
     delete encounterQuery.include[0].where.doctor_uuid;
     delete encounterQuery.include[0].where.department_uuid;
   }
@@ -162,6 +162,24 @@ const Encounter = () => {
       const { encounter_type_uuid, patient_uuid } = encounter;
       const { doctor_uuid, department_uuid } = encounterDoctor;
 
+      const { tat_start_time, tat_end_time } = encounterDoctor;
+
+      if (tat_start_time && tat_end_time) {
+        if (
+          !moment(tat_start_time).isValid() ||
+          !moment(tat_end_time).isValid()
+        ) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+          });
+        }
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+        });
+      }
       // Assigning
       encounter = emr_utility.createIsActiveAndStatus(encounter, user_uuid);
       encounter.is_active_encounter = emr_constants.IS_ACTIVE;
@@ -414,8 +432,8 @@ const Encounter = () => {
     }
   };
 
-  const _updateECdischarge = async (req,res) => {
-    const {user_uuid} = req.headers;
+  const _updateECdischarge = async (req, res) => {
+    const { user_uuid } = req.headers;
     const updatedata = req.body;
     const ec_updateData = {
       discharge_type_uuid: req.body.discharge_type_uuid,
@@ -423,34 +441,32 @@ const Encounter = () => {
       modified_by: user_uuid,
       modified_date: new Date()
     };
-    try{
-    if (user_uuid && updatedata){
-      const ec_updated = await encounter_tbl.update(ec_updateData,
-        {
+    try {
+      if (user_uuid && updatedata) {
+        const ec_updated = await encounter_tbl.update(ec_updateData, {
           where: {
             facility_uuid: updatedata.facility_uuid,
             uuid: updatedata.encounter_uuid,
             patient_uuid: updatedata.patient_uuid,
             encounter_type_uuid: updatedata.encounter_type_uuid
           }
+        });
+        if (ec_updated) {
+          return res
+            .status(200)
+            .send({ code: httpStatus[200], message: "updated sucessfully" });
         }
-      );
-        if (ec_updated){
-          return res.status(200).send({ code: httpStatus[200], message: "updated sucessfully" });
-        }
-    
-    }else{
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
+    } catch (ex) {
+      return res
+        .status(400)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
-    }catch(ex){
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-    }
-    
-    };
-    
-    
-     
-    
+  };
 
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
