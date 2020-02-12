@@ -456,7 +456,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
   return newTempDtls;
 }
 
-
 //function for delete values from template details table when perform update action
 function removedTmpDetails(dtlsTbl, dtls, user_id) {
   let masterDetailsPromise = [];
@@ -955,7 +954,7 @@ function getTemplateDetailsData(temp_type_id, list) {
   }
 }
 
-
+//function for chechking display order allocated or not
 const dspExists = (display_order, userUUID) => {
 
   if (display_order !== undefined) {
@@ -971,19 +970,3 @@ const dspExists = (display_order, userUUID) => {
     });
   }
 };
-
-async function getdsporder(templateMasterReqData, userUUID) {
-
-  let reqdata = templateMasterReqData;
-  const fetched = await tempmstrTbl.findAll({
-    where: {
-      user_uuid: userUUID,
-      display_order: reqdata.display_order
-    }
-  });
-  if (fetched) {
-    //console.log("fetched------",fetched);
-    return fetched;
-  }
-
-}
