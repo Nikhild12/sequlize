@@ -9,6 +9,8 @@ const sequelizeDb = require('../config/sequelize');
 //patient diagnosis
 const patient_diagnosisTbl = sequelizeDb.patient_diagnosis;
 const diagnosisTbl = sequelizeDb.diagnosis;
+const dtypesTbl = sequelizeDb.discharge_type;
+const dttypesTbl = sequelizeDb.death_type;
 
 const vw_patient_cheif_complaintsTbl = sequelizeDb.vw_patient_cheif_complaints;
 
@@ -65,62 +67,57 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
-  /*
-    const _saveDischargeDetials = async (req, res) => {
   
-      if (Object.keys(req.body).length != 0) {
-        try {
-  
-          const { user_uuid } = req.headers;
-          const { patient_uuid } = req.body.query;
-          const discharge_data = req.body;
-  
-          if (user_uuid && patient_uuid && discharge_data) {
-  
-          }
-          else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-          }
-        }catch (err){
-          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
-        }
-      } else {
-          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-      }
-  
-    };
-  
-    const _getPreviousDischargeDetials = async (req, res) => {
-      const { user_uuid } = req.headers;
-      const { patient_uuid } = req.query;
-  
+  const _getDischargeType = async (req, res) => {
+    
+    const { user_uuid } = req.headers;
+    
+    if (user_uuid) {
       try {
-        if (user_uuid && patient_uuid ) {
-          let getPPV = await encounterTbl.findAll(
-            getPDCQuery(user_uuid, patient_uuid),
-            { returning: true }
-          );
-          return res
-            .status(200)
-            .send({
-              code: httpStatus.OK,
-              message: "Fetched Patient Discharge Details  Successfully",
-              responseContents: PDCList(getPPV)
-            });
-        } else {
-          return res
-            .status(400)
-            .send({ code: httpStatus[400], message: "No Request Params Found" });
+        
+        //get discharge types
+        const dTypes = await gettypes(dtypesTbl, user_uuid);
+        
+        if (dTypes){
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dTypes }, message: "discharge types fetched sucessfully" });
         }
-      } catch (ex) {
-        return res
-          .status(400)
-          .send({ code: httpStatus[400], message: ex.message });
       }
-    };*/
+      catch (ex) {
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    }
+    else {
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+    }
+  };
+  
+  const _getDeathType = async (req, res) => {
+    
+    const { user_uuid } = req.headers;
+    
+    if (user_uuid) {
+      try {
+        
+        //get discharge types
+        const dtTypes = await gettypes(dttypesTbl, user_uuid);
+        
+        if (dtTypes){
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dtTypes }, message: "discharge types fetched sucessfully" });
+        }
+      }
+      catch (ex) {
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    }
+    else {
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+    }
+  };
 
   return {
-    getDischargeDetails: _getDischargeDetails
+    getDischargeDetails: _getDischargeDetails,
+    getDischargeType: _getDischargeType,
+    getDeathType: _getDeathType
   };
 
 };
@@ -550,7 +547,7 @@ function getCheifComplaintList(arr, patient_uuid, created_date) {
       chief_complaint_duration_period_uuid: item.pcc_chief_complaint_duration_period_uuid ,
       chief_complaint_duration_period_code: item.ccdp_code,
       chief_complaint_duration_period_name: item.ccdp_name,
-    }
+    };
   });
   return data;
 }
@@ -576,7 +573,7 @@ async function getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid) {
   }, { returning: true });
   const data = await getGetDiagnosis(diagnosis_res);
   return data;
-};
+}
 function getGetDiagnosis(diagnosis_res) {
   let diagnosis_result = [];
   if (diagnosis_res && diagnosis_res.length > 0) {
@@ -596,9 +593,16 @@ function getGetDiagnosis(diagnosis_res) {
         diagnosis_code: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.code : "",
         diagnosis_name: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.name : "",
         diagnosis_desc: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.description : "",
-      }
+      };
     });
   }
   return diagnosis_result;
 }
 
+async function gettypes(tablename, user_uuid){
+  
+  let fetchedData = await tablename.findAll();
+  if (fetchedData){
+  return fetchedData;
+  }
+}
