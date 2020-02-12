@@ -71,10 +71,26 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
   };
 };
 
+const _checkTATIsPresent = array => {
+  return (isEveryEleTATHaving = array.every(pD => {
+    return pD.tat_start_time && pD.tat_end_time;
+  }));
+};
+
+const _checkTATIsValid = array => {
+  return array.every(pD => {
+    return (
+      moment(pD.tat_start_time).isValid() && moment(pD.tat_end_time).isValid()
+    );
+  });
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
   assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject,
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
-  getDateQueryBtwColumn: _getDateQueryBtwColumn
+  getDateQueryBtwColumn: _getDateQueryBtwColumn,
+  checkTATIsPresent: _checkTATIsPresent,
+  checkTATIsValid: _checkTATIsValid
 };

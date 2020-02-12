@@ -6791,6 +6791,12 @@
           },
           "revision": {
             "type": "integer"
+          },
+          "tat_start_time": {
+            "type":"string"
+          },
+          "tat_end_time": {
+            "type":"string"
           }
         }
       }
@@ -7134,6 +7140,12 @@
           },
           "patient_treatment_uuid": {
             "type": "number"
+          },
+          "tat_start_time":{
+            "type": "string"
+          },
+          "tat_end_time":{
+            "type": "string"
           }
         }
       }
