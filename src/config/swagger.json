@@ -5233,6 +5233,56 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/discharge-summary/getdischargetype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Patient-discharge-summary"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdischargetype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getdeathtype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Patient-discharge-summary"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdeathtype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -10046,6 +10096,14 @@
           "type": "string"
         }
       }
+    },
+    "getdischargetype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getdeathtype": {
+      "type": "object",
+      "properties": {}
     }
   }
 }
