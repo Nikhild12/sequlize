@@ -468,12 +468,54 @@ const Encounter = () => {
     }
   };
 
+  const _updateTATTimeInEncounterDoctor = async (req, res) => {
+    const { user_uuid } = req.headers;
+
+    const { encounterDoctorId, tat_end_time } = req.body;
+
+    const isValidEndTime = moment(tat_end_time).isValid();
+    if (user_uuid && encounterDoctorId && isValidEndTime) {
+      try {
+        const updatedEncounter = await encounter_doctors_tbl.update(
+          {
+            tat_end_time: tat_end_time,
+            modified_by: user_uuid,
+            modified_date: new Date()
+          },
+          {
+            where: { uuid: encounterDoctorId }
+          }
+        );
+
+        const returnMessage =
+          updatedEncounter[0] === 1
+            ? emr_constants.UPDATED_ENC_DOC_TAT_TIME
+            : emr_constants.NO_CONTENT_MESSAGE;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: returnMessage
+        });
+      } catch (ex) {
+        console.log(ex);
+        return res
+          .status(400)
+          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.PLEASE_PROVIDE} ${emr_constants.END_DATE}`
+      });
+    }
+  };
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
     getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
     deleteEncounterById: _deleteEncounterById,
-    updateECdischarge: _updateECdischarge
+    updateECdischarge: _updateECdischarge,
+    updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor
   };
 };
 
