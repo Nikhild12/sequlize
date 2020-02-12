@@ -113,10 +113,25 @@ const tmpmstrController = () => {
         let temp_type_id = templateMasterReqData.template_type_uuid;
 
         templateTransaction = await db.sequelize.transaction();
+        //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
+        //chechking display order allocation
+        const fetched = await tempmstrTbl.findAll({
+              where : {
+                user_uuid: userUUID,
+                display_order: templateMasterReqData.display_order,
+                is_active: 1,
+                status: 1
+              }
+          });
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+          //template already exits
           return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
+        }
+        else if(fetched && fetched.length > 0){
+          //template not exits and display order already allocated
+          return res.status(400).send({ code: httpStatus.OK, message: "display order already allocated" });
         }
         else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
@@ -139,7 +154,7 @@ const tmpmstrController = () => {
       finally {
         if (templateTransaction && !templateTransStatus) {
           await templateTransaction.rollback();
-          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
+          return res.status(400).send({ code: httpStatus.BAD_REQUEST});
         }
       }
     } else {
@@ -941,7 +956,22 @@ function getTemplateDetailsData(temp_type_id, list) {
     case "9":
       fetchdata = getTempData(temp_type_id, list);
       return fetchdata;
+    }
+}
 
-  }
-
+async function getdsporder(templateMasterReqData, userUUID){
+  
+  let reqdata = templateMasterReqData;
+  const fetched = await tempmstrTbl.findAll({
+      where : {
+        user_uuid: userUUID,
+        display_order: reqdata.display_order
+      }
+  });
+  if (fetched){
+    //console.log("fetched------",fetched);
+  return fetched;}
+else {
+  return {};
+}
 }
