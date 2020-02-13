@@ -20,21 +20,23 @@ const utilityService = require("../services/utility.service");
 
 // tbl
 const patientTreatmenttbl = sequelizeDb.patient_treatments;
+const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
+
 
 // Patient Treatment Attributes
 const patientTreatmentAttributes = require("../attributes/patient_treatment_attributes");
 
 const PatientTreatmentController = () => {
   const _createPatientTreatment = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const { patientTreatment } = req.body;
     const { patientDiagnosis, patientPrescription } = req.body;
-    const { patientLab, patientradiology, patientInvestigation } = req.body;
+    const { patientLab, patientRadiology, patientInvestigation } = req.body;
 
     let patientTransaction;
     let patientTransactionStatus = false;
     if (user_uuid && patientTreatment) {
-      if (patientTreatmentAttributes.checkPatientTreatmentBody(req)) {
+      if (!patientTreatmentAttributes.checkPatientTreatmentBody(req)) {
         return res.status(400).send({
           code: httpStatus.BAD_REQUEST,
           message: emr_constants.TREATMENT_REQUIRED
@@ -42,13 +44,14 @@ const PatientTreatmentController = () => {
       }
 
       let patientDgnsCreatedData;
-      let prescriptionCreated, labCreated;
+      let prescriptionCreated, labCreated, investigationCreated, radialogyCreated;
+
       try {
         // transaction Initialization
         patientTransaction = await sequelizeDb.sequelize.transaction();
-
         patientTreatment.treatment_given_by = user_uuid;
         patientTreatment.treatment_given_date = new Date();
+        patientTreatment.tat_start_time = new Date();
         const patientTKCreatedData = await patientTreatmenttbl.create(
           patientTreatment,
           {
@@ -56,7 +59,6 @@ const PatientTreatmentController = () => {
             transaction: patientTransaction
           }
         );
-
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
             p.is_snomed = p.is_snomed || emr_constants.IS_ACTIVE;
@@ -79,25 +81,40 @@ const PatientTreatmentController = () => {
             }
           );
         }
-        if (
-          patientTreatmentAttributes.isPrescriptionAvailable(
-            patientPrescription
-          )
-        ) {
-          patientPrescription.header.patient_treatment_uuid =
-            patientTKCreatedData.uuid;
+
+
+        if (patientTreatmentAttributes.isLabAvailable(patientLab)) {
+          patientLab.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+          patientLab.details.forEach((l) => {
+            l.patient_treatment_uuid = patientTKCreatedData.uuid;
+          });
+          labCreated = await patientTreatmentAttributes.createLabHelper(
+            req.headers,
+            patientLab
+          );
+        }
+        if (patientTreatmentAttributes.isPrescriptionAvailable(patientPrescription)) {
+          patientPrescription.header.patient_treatment_uuid = patientTKCreatedData.uuid;
           prescriptionCreated = await patientTreatmentAttributes.createPrescriptionHelper(
             req.headers,
             patientPrescription
           );
         }
+        if (patientTreatmentAttributes.isRadiologyAvailable(patientRadiology)) {
+          patientRadiology.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+          patientRadiology.details.forEach((r) => {
+            r.patient_treatment_uuid = patientTKCreatedData.uuid;
+          });
+          radialogyCreated = await patientTreatmentAttributes.createRadialogyHelper(req.headers, patientRadiology);
 
-        if (patientTreatmentAttributes.isLabAvailable(patientLab)) {
-          patientLab.header.patient_treatment_uuid = patientTKCreatedData.uuid;
-          labCreated = await patientTreatmentAttributes.createLabHelper(
-            req.headers,
-            patientLab
-          );
+
+        }
+        if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
+          patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+          patientInvestigation.details.forEach((i) => {
+            i.patient_treatment_uuid = patientTKCreatedData.uuid;
+          });
+          investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
         }
 
         await patientTransaction.commit();
@@ -107,8 +124,11 @@ const PatientTreatmentController = () => {
           message: emr_constants.INSERTED_PATIENT_TREATMENT,
           responseContents: {
             patientTKCreatedData,
+            patientDgnsCreatedData,
             prescriptionCreated,
-            labCreated
+            labCreated,
+            investigationCreated,
+            radialogyCreated
           }
         });
       } catch (error) {
@@ -119,19 +139,30 @@ const PatientTreatmentController = () => {
           patientTransactionStatus = true;
         }
 
-        console.log(labCreated);
+        if (labCreated) {
+          const id = labCreated[0].id;
+          await patientTreatmentAttributes.deleteLabHelper(req.headers, id);
+        }
+        if (radialogyCreated) {
+          const id = radialogyCreated[0].uuid;
+          await patientTreatmentAttributes.deleteRadialogyHelper(req.headers, id);
 
-        if (labCreated && labCreated.responseContents) {
-          const labResponse = labCreated.responseContents;
-          const id =
-            labResponse.length && labResponse.length > 0
-              ? labResponse[0].uuid
-              : labResponse.uuid;
-          await patientTreatmentAttributes.createLabHelper(id);
+        }
+        if (prescriptionCreated) {
+          // const prescriptionResponse = prescriptionCreated.responseContents;
+          // const id = prescriptionResponse.length && prescriptionResponse.length > 0 ? prescriptionResponse[0].uuid : labResponse.uuid;
+          // console.log(id);
+          const id = prescriptionCreated.prescription_details_result[0].uuid;
+          await patientTreatmentAttributes.deletePrescription(req.headers, id);
+        }
+
+        if (investigationCreated) {
+          const id = investigationCreated[0].uuid;
+          await patientTreatmentAttributes.deleteInvestigationHelper(req.headers, id);
         }
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: error });
+          .send({ code: httpStatus.BAD_REQUEST, message: 'Failed save data' });
       } finally {
         if (patientTransaction && !patientTransactionStatus) {
           patientTransaction.rollback();

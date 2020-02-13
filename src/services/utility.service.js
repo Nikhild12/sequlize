@@ -2,6 +2,7 @@ const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const moment = require("moment");
 const request = require("request");
+const rp = require('request-promise');
 const Op = Sequelize.Op;
 
 const _getActiveAndStatusObject = is_active => {
@@ -74,13 +75,14 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
 
 const _postRequest = async (api, headers, data) => {
   return new Promise((resolve, reject) => {
+    console.log("post", api)
     request.post(
       {
         uri: api,
         headers: headers,
         json: data
       },
-      function(error, response, body) {
+      function (error, response, body) {
         console.log("\n body...", body);
 
         if (error) {
@@ -89,18 +91,19 @@ const _postRequest = async (api, headers, data) => {
           if (
             body.responseContent ||
             body.responseContents ||
-            body.benefMembers
+            body.benefMembers ||
+            body.req
           ) {
             resolve(
-              body.responseContent || body.responseContents || body.benefMembers
+              body.responseContent || body.responseContents || body.benefMembers || body.req
             );
           } else if (body && body.status === "error") {
             reject(body);
           }
         } else {
-          if (body.statusCode && body.statusCode === 200) {
+          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
             resolve(
-              body.responseContent || body.responseContents || body.benefMembers
+              body.responseContent || body.responseContents || body.benefMembers || body.req
             );
           } else {
             reject({});
@@ -111,11 +114,44 @@ const _postRequest = async (api, headers, data) => {
   });
 };
 
+// const _putRequest = async (api, headers, data) => {
+//   return new Promise((resolve, reject) => {
+//     console.log("api@@@@@@@@@@@@@@@@", api, headers, data)
+
+//     request.put(
+//       {
+//         uri: api,
+//         headers: headers,
+//         json: data
+//       },
+
+//       function (error, response, body) {
+//         console.log("\n body...", body);
+//         console.log(error, "error")
+
+//       }
+//     );
+//   });
+// };
+const _putRequest = async (api, headers, data) => {
+  let options = {
+    uri: api,
+    headers: headers,
+    method: "PUT",
+    json: true,
+    body: {
+      Id: data
+    }
+  };
+  const result = await rp(options);
+  console.log(result);
+}
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
   assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject,
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
   getDateQueryBtwColumn: _getDateQueryBtwColumn,
-  postRequest: _postRequest
+  postRequest: _postRequest,
+  putRequest: _putRequest
 };

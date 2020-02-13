@@ -75,7 +75,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       encounter_type_uuid: {
         type: DataTypes.INTEGER
+      },
+      tat_start_time: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      tat_end_time: {
+        type: DataTypes.DATE,
+        allowNull: true
       }
+
     },
     {
       freezeTableName: true,

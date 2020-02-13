@@ -59,7 +59,16 @@ const config = {
   addAllLabDetails:
     envVars.BASE_URL + envVars.LAB_CONTEXT_PATH + envVars.ADD_LAB,
   deleteLabDetails:
-    envVars.BASE_URL + envVars.LAB_CONTEXT_PATH + envVars.dELETE_PRESCRIPTION
+    envVars.BASE_URL + envVars.LAB_CONTEXT_PATH + envVars.DELETE_PATH,
+  addAllRadialogyDetails:
+    envVars.BASE_URL + envVars.RADIALOGY_CONTEXT_PATH + envVars.ADD_RADIALOGY,
+  deleteRadialogyDetails:
+    envVars.BASE_URL + envVars.RADIALOGY_CONTEXT_PATH + envVars.DELETE_PATH,
+  addALLInvestDetails:
+    envVars.BASE_URL + envVars.INVEST_CONTEXT_PATH + envVars.ADD_INVEST,
+  deleteInvestDetails:
+    envVars.BASE_URL + envVars.INVEST_CONTEXT_PATH + envVars.DELETE_PATH,
+  deletePrescriptionDetails:
+    envVars.BASE_URL + envVars.INVENTORY_CONTEXT_PATH + envVars.DELETE_PRESCRIPTION
 };
-
 module.exports = config;
