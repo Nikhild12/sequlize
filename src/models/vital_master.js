@@ -61,7 +61,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
                 type: DataTypes.INTEGER,
-                allowNull: true,                
+                allowNull: true,  
+                defaultValue: 1,              
             },
             created_by: {
                 type: DataTypes.INTEGER,

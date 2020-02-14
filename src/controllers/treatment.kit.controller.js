@@ -18,7 +18,7 @@ const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
-
+const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
 // Treatment Kit Filters Query Function
 const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
     searchBy = searchBy.toLowerCase();
@@ -221,10 +221,153 @@ const TreatMent_Kit = () => {
 
     };
 
+    // Get All  TreatmentKit List
+    const _getAllTreatmentKit = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+
+        try {
+            // let paginationSize = req.query.paginationSize;
+            let { recordsPerPage, searchPageNo, searchSortBy, searchSortOrder, searchName, createdBy, departmentId, share, status, searchLetters } = req.query;
+            let pageNo = 0;
+            if (recordsPerPage) {
+                let records = parseInt(recordsPerPage);
+                if (records && (records != NaN)) {
+                    recordsPerPage = records;
+                }
+            }
+            let itemsPerPage = recordsPerPage ? recordsPerPage : 10;
+            let sortField = 'tk_uuid';
+            let sortOrder = 'DESC';
+            if (searchPageNo) {
+                let temp = parseInt(searchPageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+
+            const offset = pageNo * itemsPerPage;
+
+
+            if (searchSortBy) {
+
+                sortField = searchSortBy;
+            }
+
+            if (searchSortOrder && ((searchSortOrder == 'ASC') || (searchSortOrder == 'DESC'))) {
+
+                sortOrder = searchSortOrder;
+            }
+
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: { tk_is_active: 1 }
+            };
+
+            if (searchName && /\S/.test(searchName)) {
+
+                findQuery.where = {
+                    [Op.or]: [{
+                        tk_code: {
+                            [Op.like]: '%' + searchName + '%',
+                        },
+
+
+                    }, {
+                        tk_name: {
+                            [Op.like]: '%' + searchName + '%',
+                        },
+                    }
+
+                    ]
+                };
+            }
+            if (createdBy && /\S/.test(createdBy)) {
+
+                findQuery.where = {
+                    u_first_name: {
+                        [Op.like]: '%' + createdBy + '%',
+                    }
+                }
+
+
+
+            }
+            if (typeof departmentId == 'string') {
+                findQuery.where['d_uuid'] = parseInt(departmentId);
+            }
+            if (typeof share == 'boolean') {
+                findQuery.where['tk_is_public'] = share;
+            }
+            if (typeof status == 'boolean') {
+                findQuery.where['tk_status'] = status;
+            }
+            if (searchLetters && /\S/.test(searchLetters)) {
+                Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            tk_code: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+                        {
+                            tk_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+
+                        },
+                        {
+                            d_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+                        {
+                            tk_is_public: {
+                                [Op.eq]: searchLetters,
+                            }
+                        },
+                        {
+                            u_first_name: {
+                                [Op.like]: '%' + searchLetters + '%',
+                            }
+                        },
+
+                        {
+                            tk_status: {
+                                [Op.eq]: searchLetters,
+                            }
+                        }
+
+                    ]
+                });
+            }
+
+
+            if (user_uuid) {
+                const treatmentKitData = await treatmentKitViewTbl.findAndCountAll(findQuery);
+                if (treatmentKitData) {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched TreatmentKit Details successfully', responseContents: treatmentKitData });
+                }
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
     return {
 
         createTreatmentKit: _createTreatmentKit,
-        getTreatmentKitByFilters: _getTreatmentKitByFilters
+        getTreatmentKitByFilters: _getTreatmentKitByFilters,
+        getAllTreatmentKit: _getAllTreatmentKit
 
     };
 
@@ -297,3 +440,18 @@ function getFilterTreatmentKitResponse(argument) {
 
 
 
+function treatmentKitResponse(treatmentKitData) {
+    return treatmentKitData.map((tk) => {
+        return {
+            uuid: tk.tk_uuid,
+            code: tk.tk_code,
+            name: tk.tk_name,
+            share: tk.tk_is_public,
+            department: tk.d_name,
+            department_uuid: tk.d_uuid,
+            doctor_uuid: tk.u_uuid,
+            createdBy: tk.u_first_name + ' ' + tk.u_middle_name + '' + tk.u_last_name,
+            status: tk.u_status
+        }
+    })
+}

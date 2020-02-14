@@ -25,7 +25,7 @@ const patientAttachmentsController = () => {
     */
 
 
-   const _deleteAttachmentDetails = async (req, res) => {
+    const _deleteAttachmentDetails = async (req, res) => {
 
         // plucking data req body
         const { attachment_uuid } = req.query;
@@ -166,18 +166,6 @@ const patientAttachmentsController = () => {
         try {
             if (file_path && user_uuid) {
                 if (fs.existsSync(location)) {
-                    //    await res.download(location, function (err, success)
-                    //     {
-                    //         if (err){
-                    //            console.log("download failed");
-                    //         }
-                    //            else{ 
-                    //             console.log("download sucess");
-                    //            }
-                    //     }
-                    //     );
-
-                    //var file = __dirname + '/upload-folder/dramaticpenguin.MOV';
 
                     var filename = path.basename(location);
                     var mimetype = mime.lookup(location);
@@ -197,9 +185,6 @@ const patientAttachmentsController = () => {
 
     const uploadD = multer({ storage: middleware.multerDynamicUpload('') }).any();
 
-    // const uploadD = (req, res, err) => {
-    //     return middleware.multerupload('').single('upfile');
-    // };
     const _upload = async (req, res) => {
         let userUUID = req.headers.user_uuid;
         try {

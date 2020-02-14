@@ -55,7 +55,10 @@ const Family_History = () => {
     try {
       if (user_uuid && patient_uuid) {
         const familyHistoryData = await getFamilyHistory(patient_uuid);
-        return res.status(200).send({ code: httpStatus.OK, responseContent: familyHistoryData });
+        if (familyHistoryData.length <= 0) {
+          return res.status(200).send({ code: 200, message: emr_constants.NO_RECORD_FOUND });
+        }
+        return res.status(200).send({ code: httpStatus.OK, message: 'FamilyHistory Details Fetched Successfully', responseContent: familyHistoryData });
       } else {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
@@ -76,6 +79,9 @@ const Family_History = () => {
     try {
       if (user_uuid && uuid) {
         const familyData = await familyHistoryTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
+        if (!familyData) {
+          return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
+        }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -123,12 +129,12 @@ const Family_History = () => {
       let selector = {
         where: { uuid: uuid }
       };
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postdata) {
         const [updated] = await familyHistoryTbl.update(postdata, selector, { returning: true });
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
         } else {
-          return res.status(400).send({ code: httpStatus[400], message: 'No Request Body Found' });
+          return res.status(400).send({ code: httpStatus[400], message: 'No UserId or No Request Body Found' });
         }
       }
     }

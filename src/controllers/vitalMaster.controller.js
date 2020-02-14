@@ -213,7 +213,7 @@ const _deletevitals = async (req, res) => {
 
           const updateddiagnosissAsync = await Promise.all(
               [
-                  diagnosisTbl.update(updatedvitalsData, { where: { uuid: vitals_id } })
+                  vitalmstrTbl.update(updatedvitalsData, { where: { uuid: vitals_id } })
                  
               ]
           );

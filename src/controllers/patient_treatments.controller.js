@@ -149,9 +149,6 @@ const PatientTreatmentController = () => {
 
         }
         if (prescriptionCreated) {
-          // const prescriptionResponse = prescriptionCreated.responseContents;
-          // const id = prescriptionResponse.length && prescriptionResponse.length > 0 ? prescriptionResponse[0].uuid : labResponse.uuid;
-          // console.log(id);
           const id = prescriptionCreated.prescription_details_result[0].uuid;
           await patientTreatmentAttributes.deletePrescription(req.headers, id);
         }

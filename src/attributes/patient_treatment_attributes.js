@@ -113,13 +113,11 @@ const _deleteLabHelper = async id => {
     }
   );
 };
-const _deletePrescription = async ({ user_uuid, facility_uuid }, id) => {
+const _deletePrescription = async (user_uuid, id) => {
   return await utilityService.putRequest(
     config.deletePrescriptionDetails,
     {
       "content-type": "application/json",
-      facility_uuid: facility_uuid || 1,
-
       user_uuid: user_uuid,
       authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
     },

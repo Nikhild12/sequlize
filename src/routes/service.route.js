@@ -66,7 +66,15 @@ const sectionsRouter = require("./sections.route");
 
 //OPNotes categories routes
 const categoriesRouter = require("./categories.route");
+
+//patient certificate routes
+const certificateRouter = require("./patient_certificates.route");
+
 const serviceRouter = express.Router();
+
+
+//Discharge summary
+const dischargeSummary = require("./discharge_summary.route");
 
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
@@ -187,6 +195,11 @@ serviceRouter.use("/surgery-position", surgeryPositionRoute);
 
 // Patient Treatment Routes
 serviceRouter.use("/patient-treatment", patientTreatmentRoute);
+// Discharge Summary Routes
+serviceRouter.use("/discharge-summary", dischargeSummary);
+
+// patient certificate Routes
+serviceRouter.use("/certificates", certificateRouter);
 
 
 module.exports = serviceRouter;

@@ -85,7 +85,7 @@ async function getReferralData(patient_uuid) {
   return vw_patient_referral.findAll({
     limit: 10,
     order: [['pr_uuid', 'DESC']],
-    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'd_uuid', 'd_name', 'f_uuid', 'f_name',],
+    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
     where: { pr_patient_uuid: patient_uuid }
   }, { returning: true });
 }

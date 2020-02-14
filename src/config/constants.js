@@ -36,14 +36,29 @@ module.exports = Object.freeze({
   SURGERY_POSITION: "Surgery Position fetched successfully",
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
   INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
+  UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
+  PLEASE_PROVIDE: "Please Provide",
+  VALID_START_DATE: "a valid Start Date time",
+  VALID_END_DATE: "a valid End Date time",
+  START_DATE: "a Start Date time",
+  END_DATE: "a End Date time",
+  UPDATED_ENC_DOC_TAT_TIME: "Updated Tat End Time Successfully",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
+      case "encounter_uuid":
+        return `${returnProvideMsg} Encounter Id`;
+      case "period_uuid":
+        return `${returnProvideMsg} Period Id`;
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
+      case "referral_facility_uuid":
+        return `${returnProvideMsg} Referral Facility Id`;
       case "department_uuid":
         return `${returnProvideMsg} Department Id`;
+      case "referral_deptartment_uuid":
+        return `${returnProvideMsg} Referral Department Id`;
       case "transfer_department_uuid":
         return `${returnProvideMsg} Transfer Department Id`;
       case "role_uuid":
@@ -88,8 +103,17 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} Consultation Id`;
       case "relation_type_uuid":
         return `${returnProvideMsg} Relation Type Id`;
+      case "transfer_facility_uuid":
+        return `${returnProvideMsg} Transfer Facility Id`;
       case "quantity":
         return `${returnProvideMsg} Drug Quantity`;
+      case "admission_status_uuid":
+        return `${returnProvideMsg} admission_status_uuid`;
+      case "encounter_type_uuid":
+        return `${returnProvideMsg} encounter_type_uuid`;
+      case "note_type_uuid":
+        return `${returnProvideMsg} note_type_uuid`;
+
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -108,6 +132,8 @@ module.exports = Object.freeze({
         return `Patient Id ${lengthMessage}`;
       case "facility_uuid":
         return `Facility Id ${lengthMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${lengthMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${lengthMessage}`;
       case "treatment_kit_type_uuid":
@@ -153,12 +179,16 @@ module.exports = Object.freeze({
         return `Patient Id ${validationMessage}`;
       case "department_uuid":
         return `Department Id ${validationMessage}`;
+      case "referral_deptartment_uuid":
+        return `Referral Department Id ${validationMessage}`;
       case "transfer_department_uuid":
         return `Transfer Department Id ${validationMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${validationMessage}`;
       case "facility_uuid":
         return `Facility Id ${validationMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${validationMessage}`;
       case "diagnosis_uuid":
         return `Diagnosis Id ${validationMessage}`;
       case "test_master_uuid":
@@ -183,10 +213,21 @@ module.exports = Object.freeze({
         return `Activity Id ${validationMessage}`;
       case "context_activity_map_uuid":
         return `Context Activity Map Id ${validationMessage}`;
+      case "transfer_facility_uuid":
+        return `Transfer Facility Id ${validationMessage}`;
       case "relation_type_uuid":
         return `Relation Type Id ${validationMessage}`;
+      case "admission_status_uuid":
+        return `admission status uuid ${validationMessage}`;
+
       default:
         return `Value ${validationMessage}`;
+    }
+  },
+  getEncounterType(id){
+    switch(id){
+      case 1: return "OP"
+      case 2: return "IP"
     }
   }
 });
