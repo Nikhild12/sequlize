@@ -76,6 +76,18 @@ module.exports = (sequelize, DataTypes) => {
       encounter_type_uuid: {
         type: DataTypes.INTEGER
       },
+      treatment_kit_uuid: {
+        type: DataTypes.INTEGER
+      },
+      treatment_status_uuid: {
+        type: DataTypes.INTEGER
+      },
+      treatment_given_by: {
+        type: DataTypes.INTEGER
+      },
+      treatment_given_date: {
+        type: DataTypes.DATE
+      },
       tat_start_time: {
         type: DataTypes.DATE,
         allowNull: true
@@ -83,6 +95,30 @@ module.exports = (sequelize, DataTypes) => {
       tat_end_time: {
         type: DataTypes.DATE,
         allowNull: true
+      },
+      is_active: {
+
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+      },
+      revision: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+
+      created_by: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+
+      modified_by: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       }
 
     },

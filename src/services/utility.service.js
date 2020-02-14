@@ -157,19 +157,6 @@ const _putRequest = async (api, headers, data) => {
     );
   });
 };
-// const _putRequest = async (api, headers, data) => {
-//   let options = {
-//     uri: api,
-//     headers: headers,
-//     method: "PUT",
-//     json: true,
-//     body: {
-//       Id: data
-//     }
-//   };
-//   const result = await rp(options);
-//   console.log(result);
-// }
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
