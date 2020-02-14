@@ -143,8 +143,8 @@ const tmpmstrController = () => {
           return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
       } catch (err) {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
+        //await templateTransaction.rollback();
+        //templateTransStatus = true;
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
       finally {
