@@ -70,6 +70,9 @@ const categoriesRouter = require("./categories.route");
 //patient certificate routes
 const certificateRouter = require("./patient_certificates.route");
 
+//snomed details routes
+const smRouter = require("./snomed_details.route");
+
 const serviceRouter = express.Router();
 
 
@@ -200,6 +203,9 @@ serviceRouter.use("/discharge-summary", dischargeSummary);
 
 // patient certificate Routes
 serviceRouter.use("/certificates", certificateRouter);
+
+//snomed details Routes
+serviceRouter.use("/snomed", smRouter);
 
 
 module.exports = serviceRouter;

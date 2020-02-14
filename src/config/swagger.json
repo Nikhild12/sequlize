@@ -6073,6 +6073,37 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/snomed/getsnomeddetails": {
+      "get": {
+        "summary": "To get List of snomed detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Snomed-Details"],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomeddetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -10892,6 +10923,10 @@
       "properties": {}
     },
     "getdeathtype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomeddetails": {
       "type": "object",
       "properties": {}
     }
