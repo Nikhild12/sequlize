@@ -81,8 +81,15 @@ const PatientTreatmentController = () => {
             }
           );
         }
+        if (patientTreatmentAttributes.isPrescriptionAvailable(patientPrescription)) {
 
+          patientPrescription.header.patient_treatment_uuid = patientTKCreatedData.uuid;
 
+          prescriptionCreated = await patientTreatmentAttributes.createPrescriptionHelper(
+            req.headers,
+            patientPrescription
+          );
+        }
         if (patientTreatmentAttributes.isLabAvailable(patientLab)) {
           patientLab.header.patient_treatment_uuid = patientTKCreatedData.uuid;
           patientLab.details.forEach((l) => {
@@ -93,12 +100,12 @@ const PatientTreatmentController = () => {
             patientLab
           );
         }
-        if (patientTreatmentAttributes.isPrescriptionAvailable(patientPrescription)) {
-          patientPrescription.header.patient_treatment_uuid = patientTKCreatedData.uuid;
-          prescriptionCreated = await patientTreatmentAttributes.createPrescriptionHelper(
-            req.headers,
-            patientPrescription
-          );
+        if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
+          patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+          patientInvestigation.details.forEach((i) => {
+            i.patient_treatment_uuid = patientTKCreatedData.uuid;
+          });
+          investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
         }
         if (patientTreatmentAttributes.isRadiologyAvailable(patientRadiology)) {
           patientRadiology.header.patient_treatment_uuid = patientTKCreatedData.uuid;
@@ -109,13 +116,8 @@ const PatientTreatmentController = () => {
 
 
         }
-        if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
-          patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
-          patientInvestigation.details.forEach((i) => {
-            i.patient_treatment_uuid = patientTKCreatedData.uuid;
-          });
-          investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
-        }
+
+
 
         await patientTransaction.commit();
         patientTransactionStatus = true;
@@ -149,7 +151,7 @@ const PatientTreatmentController = () => {
 
         }
         if (prescriptionCreated) {
-          const id = prescriptionCreated.prescription_details_result[0].uuid;
+          const id = prescriptionCreated.prescription_result.uuid;
           await patientTreatmentAttributes.deletePrescription(req.headers, id);
         }
 

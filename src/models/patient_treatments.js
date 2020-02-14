@@ -118,7 +118,8 @@ module.exports = (sequelize, DataTypes) => {
 
       modified_by: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        defaultValue: 0,
+
       }
 
     },

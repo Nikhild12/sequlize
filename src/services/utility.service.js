@@ -113,56 +113,12 @@ const _postRequest = async (api, headers, data) => {
   });
 };
 
-const _putRequest = async (api, headers, data) => {
-  return new Promise((resolve, reject) => {
 
-    request.delete(
-      {
-        uri: api,
-        headers: headers,
-        json: data
-      },
-
-      function (error, response, body) {
-        console.log("\n body...", body);
-        console.log(error, "error")
-
-        if (error) {
-          reject(error);
-        } else if (body) {
-          if (
-            body.responseContent ||
-            body.responseContents ||
-            body.benefMembers ||
-            body.req
-          ) {
-            console.log("coming")
-            resolve(
-              body.responseContent || body.responseContents || body.benefMembers || body.req
-            );
-          } else if (body && body.status === "error") {
-            reject(body);
-          }
-        } else {
-          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
-            resolve(
-              body.responseContent || body.responseContents || body.benefMembers || body.req
-            );
-          } else {
-            reject({});
-          }
-        }
-
-      }
-    );
-  });
-};
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
   assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject,
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
   getDateQueryBtwColumn: _getDateQueryBtwColumn,
-  postRequest: _postRequest,
-  putRequest: _putRequest
+  postRequest: _postRequest
 };
