@@ -110,7 +110,7 @@ const tmpmstrController = () => {
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
-        let display_order = templateMasterReqData.display_order;
+        //let display_order = templateMasterReqData.display_order;
 
         templateTransaction = await db.sequelize.transaction();
 
@@ -118,17 +118,17 @@ const tmpmstrController = () => {
         const exists = await nameExists(temp_name, userUUID);
 
         //chechking display order allocation
-        const dspexists = await dspExists(display_order, userUUID);
+        //const dspexists = await dspExists(display_order, userUUID);
 
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res.status(400).send({ code: httpStatus[400], message: "Template name exists" });
         }
-        else if (dspexists && dspexists.length > 0) {
-          //template not exits and display order already allocated
-          return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
-        }
+        // else if (dspexists && dspexists.length > 0) {
+        //   //template not exits and display order already allocated
+        //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
+        // }
         else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
