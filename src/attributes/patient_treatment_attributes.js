@@ -1,6 +1,8 @@
 // Config Import
 const config = require("../config/config");
 const request = require('request');
+const rp = require('request-promise');
+
 // Utility Service
 const utilityService = require("../services/utility.service");
 
@@ -113,19 +115,35 @@ const _deleteLabHelper = async ({ facility_uuid, user_uuid }, id) => {
     }
   );
 };
+// const _deletePrescription = async (user_uuid, id) => {
+//   return await utilityService.putRequest(
+//     config.deletePrescriptionDetails,
+//     {
+//       "content-type": "application/json",
+//       user_uuid: user_uuid,
+//       authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+//     },
+//     {
+//       id
+//     }
+//   );
+// };
 const _deletePrescription = async (user_uuid, id) => {
-  return await utilityService.putRequest(
-    config.deletePrescriptionDetails,
-    {
-      "content-type": "application/json",
+  let options = {
+    uri: 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/deletePrescription',
+    headers: {
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: `Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2`
     },
-    {
-      id
+    method: 'PUT',
+    json: true,
+    body: {
+      "Id": id
     }
-  );
-};
+  };
+  const result = await rp(options);
+  console.log(result);
+}
 
 const _createInvestgationHelper = async ({ facility_uuid, user_uuid }, { header, details }) => {
   return await utilityService.postRequest(

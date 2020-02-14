@@ -6110,6 +6110,78 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/snomed/getsnomedparent": {
+      "get": {
+        "summary": "To get List of snomed parent detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedparentdetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomedchildren": {
+      "get": {
+        "summary": "To get List of snomed children detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedchildrendetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/patient-treatment/create": {
       "post": {
         "summary": "To create patient treatment Details ",
@@ -10973,6 +11045,14 @@
       "properties": {}
     },
     "getsnomeddetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedparentdetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedchildrendetails": {
       "type": "object",
       "properties": {}
     },
