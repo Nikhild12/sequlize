@@ -6091,14 +6091,60 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Snomed-Details"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getsnomeddetails"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-treatment/create": {
+      "post": {
+        "summary": "To create patient treatment Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientTreatment"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -10929,6 +10975,648 @@
     "getsnomeddetails": {
       "type": "object",
       "properties": {}
+    },
+    "patientTreatment": {
+      "type": "object",
+      "properties": {
+        "patientTreatment": {
+          "type": "object",
+          "properties": {
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "patient_uuid": {
+              "type": "integer"
+            },
+            "encounter_uuid": {
+              "type": "integer"
+            },
+            "encounter_type_uuid": {
+              "type": "integer"
+            },
+            "consultation_uuid": {
+              "type": "integer"
+            },
+            "treatment_kit_uuid": {
+              "type": "integer"
+            },
+            "treatment_status_uuid": {
+              "type": "integer"
+            },
+            "comments": {
+              "type": "string"
+            }
+          }
+        },
+        "patientDiagnosis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "facility_uuid": {
+                "type": "number"
+              },
+              "department_uuid": {
+                "type": "number"
+              },
+              "patient_uuid": {
+                "type": "number"
+              },
+              "encounter_uuid": {
+                "type": "number"
+              },
+              "encounter_type_uuid": {
+                "type": "number"
+              },
+              "consultation_uuid": {
+                "type": "number"
+              },
+              "diagnosis_uuid": {
+                "type": "number"
+              },
+              "condition_type_uuid": {
+                "type": "number"
+              },
+              "condition_status_uuid": {
+                "type": "number"
+              },
+              "category_uuid": {
+                "type": "number"
+              },
+              "type_uuid": {
+                "type": "number"
+              },
+              "grade_uuid": {
+                "type": "number"
+              },
+              "body_site_uuid": {
+                "type": "number"
+              },
+              "prescription_uuid": {
+                "type": "number"
+              },
+              "patient_treatment_uuid": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "patientPrescription": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "dispense_status_uuid": {
+                  "type": "number"
+                },
+                "prescription_status_uuid": {
+                  "type": "number"
+                },
+                "store_master_uuid": {
+                  "type": "number"
+                },
+                "patient_uuid": {
+                  "type": "number"
+                },
+                "department_uuid": {
+                  "type": "number"
+                },
+                "doctor_uuid": {
+                  "type": "number"
+                },
+                "encounter_uuid": {
+                  "type": "number"
+                },
+                "encounter_type_uuid": {
+                  "type": "number"
+                },
+                "treatment_kit_uuid": {
+                  "type": "number"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_master_uuid": {
+                    "type": "number"
+                  },
+                  "drug_route_uuid": {
+                    "type": "number"
+                  },
+                  "drug_frequency_uuid": {
+                    "type": "number"
+                  },
+                  "duration": {
+                    "type": "number"
+                  },
+                  "duration_period_uuid": {
+                    "type": "number"
+                  },
+                  "drug_instruction_uuid": {
+                    "type": "number"
+                  },
+                  "prescribed_quantity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientRadiology": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientInvestigation": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientLab": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

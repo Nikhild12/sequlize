@@ -99,7 +99,7 @@ const _createLabHelper = async (
   );
 };
 
-const _deleteLabHelper = async id => {
+const _deleteLabHelper = async ({ facility_uuid, user_uuid }, id) => {
   return await utilityService.postRequest(
     config.deleteLabDetails,
     {

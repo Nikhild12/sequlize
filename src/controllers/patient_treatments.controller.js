@@ -140,7 +140,7 @@ const PatientTreatmentController = () => {
         }
 
         if (labCreated) {
-          const id = labCreated[0].id;
+          const id = labCreated[0].uuid;
           await patientTreatmentAttributes.deleteLabHelper(req.headers, id);
         }
         if (radialogyCreated) {
