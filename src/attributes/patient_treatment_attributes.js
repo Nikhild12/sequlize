@@ -62,7 +62,7 @@ const _checkPatientTreatmentBody = req => {
 };
 
 const _createPrescriptionHelper = async (
-  { facility_uuid, user_uuid },
+  { facility_uuid, user_uuid, authorization },
   { header, details }
 ) => {
 
@@ -72,7 +72,7 @@ const _createPrescriptionHelper = async (
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      Authorization: authorization
     },
     {
       header: header,
@@ -83,7 +83,7 @@ const _createPrescriptionHelper = async (
 
 
 const _createLabHelper = async (
-  { facility_uuid, user_uuid },
+  { facility_uuid, user_uuid, authorization },
   { header, details }
 ) => {
   return await utilityService.postRequest(
@@ -92,7 +92,7 @@ const _createLabHelper = async (
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       header: header,
@@ -101,58 +101,57 @@ const _createLabHelper = async (
   );
 };
 
-const _deleteLabHelper = async ({ facility_uuid, user_uuid }, id) => {
+const _deleteLabHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
     config.deleteLabDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       id
     }
   );
 };
-// const _deletePrescription = async (user_uuid, id) => {
-//   return await utilityService.putRequest(
-//     config.deletePrescriptionDetails,
-//     {
-//       "content-type": "application/json",
-//       user_uuid: user_uuid,
-//       authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
-//     },
-//     {
-//       id
-//     }
-//   );
-// };
-const _deletePrescription = async (user_uuid, id) => {
+
+const _deletePrescription = async ({ user_uuid, authorization }, id) => {
   let options = {
-    uri: 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/deletePrescription',
+    uri: config.deletePrescriptionDetails,
     headers: {
       user_uuid: user_uuid,
-      authorization: `Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2`
+      authorization: authorization
     },
     method: 'PUT',
     json: true,
     body: {
-      "Id": id
+      Id: id
     }
   };
-  const result = await rp(options);
-  console.log(result);
+
+  try {
+    const result = await rp(options);
+    if (result) {
+      return result;
+
+    }
+  } catch (err) {
+    console.log(err, 'exception happened');
+    return err
+  }
+
 }
 
-const _createInvestgationHelper = async ({ facility_uuid, user_uuid }, { header, details }) => {
+
+const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
   return await utilityService.postRequest(
     config.addALLInvestDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       header: header,
@@ -161,14 +160,14 @@ const _createInvestgationHelper = async ({ facility_uuid, user_uuid }, { header,
   );
 };
 
-const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid }, id) => {
+const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
     config.deleteInvestDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       id
@@ -176,7 +175,7 @@ const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid }, id) => {
   );
 };
 
-const _createRadialogyHelper = async ({ facility_uuid, user_uuid }, { header, details }) => {
+const _createRadialogyHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
 
   return await utilityService.postRequest(
     config.addAllRadialogyDetails,
@@ -184,7 +183,7 @@ const _createRadialogyHelper = async ({ facility_uuid, user_uuid }, { header, de
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       header: header,
@@ -193,14 +192,14 @@ const _createRadialogyHelper = async ({ facility_uuid, user_uuid }, { header, de
   );
 };
 
-const _deleteRadialogyHelper = async ({ facility_uuid, user_uuid }, id) => {
+const _deleteRadialogyHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
     config.deleteRadialogyDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: `Bearer 36f22181-4a14-37b5-a0b9-d2c7c9721a5c`
+      authorization: authorization
     },
     {
       id
