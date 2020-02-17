@@ -74,6 +74,7 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
 };
 
 const _postRequest = async (api, headers, data) => {
+  console.log('headers', headers, 'data', data);
   return new Promise((resolve, reject) => {
     request.post(
       {
@@ -105,7 +106,7 @@ const _postRequest = async (api, headers, data) => {
               body.responseContent || body.responseContents || body.benefMembers || body.req
             );
           } else {
-            reject({});
+            reject(body);
           }
         }
       }
