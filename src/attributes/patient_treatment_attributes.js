@@ -132,6 +132,7 @@ const _deletePrescription = async ({ user_uuid, authorization }, id) => {
 
   try {
     const result = await rp(options);
+    console.log('precreption delete result', result);
     if (result) {
       return result;
 
