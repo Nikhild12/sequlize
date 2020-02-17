@@ -96,9 +96,9 @@ const _postRequest = async (api, headers, data) => {
             resolve(
               body.responseContent || body.responseContents || body.benefMembers || body.req
             );
-          } else if (body && body.status === "error") {
-            reject(body);
           }
+        } else if (body && body.status == "error") {
+          reject(body);
         } else {
           if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
             resolve(

@@ -134,7 +134,7 @@ const PatientTreatmentController = () => {
           }
         });
       } catch (error) {
-        console.log(error);
+        console.log(error, "Exception Happened");
 
         if (patientTransaction) {
           await patientTransaction.rollback();
@@ -161,7 +161,7 @@ const PatientTreatmentController = () => {
         }
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: 'Failed save data' });
+          .send({ code: httpStatus.BAD_REQUEST, message: error });
       } finally {
         if (patientTransaction && !patientTransactionStatus) {
           patientTransaction.rollback();
