@@ -92,7 +92,7 @@ const _createLabHelper = async (
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       header: header,
@@ -108,7 +108,7 @@ const _deleteLabHelper = async ({ facility_uuid, user_uuid, authorization }, id)
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       id
@@ -121,7 +121,7 @@ const _deletePrescription = async ({ user_uuid, authorization }, id) => {
     uri: config.deletePrescriptionDetails,
     headers: {
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     method: 'PUT',
     json: true,
@@ -152,7 +152,7 @@ const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorizati
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       header: header,
@@ -168,7 +168,7 @@ const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid, authorizat
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       id
@@ -184,7 +184,7 @@ const _createRadialogyHelper = async ({ facility_uuid, user_uuid, authorization 
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       header: header,
@@ -200,7 +200,7 @@ const _deleteRadialogyHelper = async ({ facility_uuid, user_uuid, authorization 
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      authorization: authorization
+      Authorization: authorization
     },
     {
       id
