@@ -87,7 +87,7 @@ const TreatMent_Kit = () => {
         if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
 
             if (checkTreatmentKit(req)) {
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send treatment Kit along with One widget details' });
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED });
             }
             try {
 

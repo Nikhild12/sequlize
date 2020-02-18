@@ -83,10 +83,10 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-        
+
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
-        
+
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
@@ -110,14 +110,25 @@ const tmpmstrController = () => {
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
-        let temp_type_id = templateMasterReqData.template_type_uuid;
+        //let display_order = templateMasterReqData.display_order;
 
         templateTransaction = await db.sequelize.transaction();
+
+        //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
+        //chechking display order allocation
+        //const dspexists = await dspExists(display_order, userUUID);
+
+
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
-          return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
+          //template already exits
+          return res.status(400).send({ code: httpStatus[400], message: "Template name exists" });
         }
+        // else if (dspexists && dspexists.length > 0) {
+        //   //template not exits and display order already allocated
+        //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
+        // }
         else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
@@ -139,7 +150,7 @@ const tmpmstrController = () => {
       finally {
         if (templateTransaction && !templateTransStatus) {
           await templateTransaction.rollback();
-          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
+          return res.status(400).send({ code: httpStatus.BAD_REQUEST });
         }
       }
     } else {
@@ -152,7 +163,7 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
-      
+
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(user_uuid, req.body.new_details);
       const templateMasterUpdateData = getTemplateMasterUpdateData(user_uuid, templateMasterReqData);
@@ -165,7 +176,7 @@ const tmpmstrController = () => {
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }}, { returning: true, plain: true });
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id } }, { returning: true, plain: true });
           const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid));
           // await templateTransaction.commit();
           // templateTransStatus = true;
@@ -226,7 +237,7 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
     } catch (ex) {
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
+      return res.status(400).send({ code: httpStatus[400], message: ex.message });
     }
   };
 
@@ -331,7 +342,7 @@ function getTemplateListData(fetchedData) {
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
           is_public: tD.dataValues.tm_public[0] === 1 ? true : false
-          
+
         },
         drug_details: [...drug_details, ...getDrugsListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
@@ -348,9 +359,9 @@ function getTemplateListData(fetchedData) {
 
 function getTemplateListData1(fetchedData) {
   let templateList = [], diet_details = [];
-  
+
   if (fetchedData && fetchedData.length > 0) {
-    
+
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
       {
@@ -444,7 +455,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
   }
   return newTempDtls;
 }
-
 
 //function for delete values from template details table when perform update action
 function removedTmpDetails(dtlsTbl, dtls, user_id) {
@@ -941,7 +951,22 @@ function getTemplateDetailsData(temp_type_id, list) {
     case "9":
       fetchdata = getTempData(temp_type_id, list);
       return fetchdata;
-
   }
-
 }
+
+//function for chechking display order allocated or not
+const dspExists = (display_order, userUUID) => {
+
+  if (display_order !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = tempmstrTbl.findAll({
+        attributes: ['user_uuid', 'display_order', 'is_active', 'status'],
+        where: { display_order: display_order, user_uuid: userUUID }
+      }); if (value) {
+        resolve(value);
+        return value;
+      }
+      else { reject({ 'message': 'not existed' }); }
+    });
+  }
+};
