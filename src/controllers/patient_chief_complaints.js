@@ -21,6 +21,8 @@ const encounter_tbl = sequelizeDb.encounter;
 
 const emr_constants = require("../config/constants");
 
+const utilityService = require("../services/utility.service");
+
 function getPatientSearchQuery(searchKey, searchValue) {
   let searchObject;
   searchKey = searchKey.toLowerCase();
@@ -105,6 +107,19 @@ const PatientChiefComplaints = () => {
     const chiefComplaintsData = req.body;
 
     if (chiefComplaintsData && chiefComplaintsData.length > 0 && user_uuid) {
+      if (utilityService.checkTATIsPresent(chiefComplaintsData)) {
+        if (!utilityService.checkTATIsValid(chiefComplaintsData)) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+          });
+        }
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+        });
+      }
       try {
         chiefComplaintsData.forEach(cD => {
           cD = emr_utility.createIsActiveAndStatus(cD, user_uuid);
@@ -195,7 +210,7 @@ const PatientChiefComplaints = () => {
         code: 200,
         message: "Records Fetched Successfully",
         response_content: emr_mock_json.patientChiefComplaintsJson
-     });
+      });
     } else {
       return res
         .status(422)

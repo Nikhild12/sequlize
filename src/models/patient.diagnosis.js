@@ -139,6 +139,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       modified_by: {
         type: DataTypes.INTEGER
+      },
+      tat_start_time: {
+        type: DataTypes.DATE
+      },
+      tat_end_time: {
+        type: DataTypes.DATE
       }
     },
     {
