@@ -1,6 +1,8 @@
 const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const moment = require("moment");
+const request = require("request");
+const rp = require("request-promise");
 const Op = Sequelize.Op;
 
 const _getActiveAndStatusObject = is_active => {
@@ -84,6 +86,55 @@ const _checkTATIsValid = array => {
     );
   });
 };
+const _postRequest = async (api, headers, data) => {
+  console.log("headers", headers, "data", data);
+  return new Promise((resolve, reject) => {
+    request.post(
+      {
+        uri: api,
+        headers: headers,
+        json: data
+      },
+      function(error, response, body) {
+        console.log("\n body...", body);
+
+        if (error) {
+          reject(error);
+        } else if (body && !body.status && !body.status === "error") {
+          if (
+            body.responseContent ||
+            body.responseContents ||
+            body.benefMembers ||
+            body.req
+          ) {
+            resolve(
+              body.responseContent ||
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
+            );
+          }
+        } else if (body && body.status == "error") {
+          reject(body);
+        } else {
+          if (
+            body.statusCode &&
+            (body.statusCode === 200 || body.statusCode === 201)
+          ) {
+            resolve(
+              body.responseContent ||
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
+            );
+          } else {
+            reject(body);
+          }
+        }
+      }
+    );
+  });
+};
 
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
@@ -92,5 +143,6 @@ module.exports = {
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
   getDateQueryBtwColumn: _getDateQueryBtwColumn,
   checkTATIsPresent: _checkTATIsPresent,
-  checkTATIsValid: _checkTATIsValid
+  checkTATIsValid: _checkTATIsValid,
+  postRequest: _postRequest
 };
