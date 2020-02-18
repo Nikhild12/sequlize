@@ -54,6 +54,20 @@ const PatientDiagnsis = () => {
         // if the bit is not set
         // setting it to `0`
 
+        if (utilityService.checkTATIsPresent(patientsDiagnosisData)) {
+          if (!utilityService.checkTATIsValid(patientsDiagnosisData)) {
+            return res.status(400).send({
+              code: httpStatus[400],
+              message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+            });
+          }
+        } else {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+          });
+        }
+
         const patientDiagnosisCreatedData = await _helperCreatePatientDiagnosis(
           patientsDiagnosisData,
           user_uuid
@@ -100,7 +114,7 @@ const PatientDiagnsis = () => {
           departmentId &&
           facility_uuid &&
           from_date,
-          to_date)
+        to_date)
       ) {
         const patientDiagnosisData = await patient_diagnosis_tbl.findAll(
           getPatientFiltersQuery1(
@@ -188,17 +202,22 @@ const PatientDiagnsis = () => {
     let postData = req.body;
     let selector = {
       where: {
-        uuid: uuid, patient_uuid: patient_uuid, department_uuid: department_uuid
+        uuid: uuid,
+        patient_uuid: patient_uuid,
+        department_uuid: department_uuid
       }
     };
     try {
       if (user_uuid && uuid && postData) {
         let fetchedData = await patient_diagnosis_tbl.findOne(selector);
         let fetchedDate = fetchedData.condition_date;
-        fetchedDate = moment(fetchedDate).format('YYYY-MM-DD');
-        let currentDate = moment(Date.now()).format('YYYY-MM-DD');
+        fetchedDate = moment(fetchedDate).format("YYYY-MM-DD");
+        let currentDate = moment(Date.now()).format("YYYY-MM-DD");
         if (fetchedDate != currentDate) {
-          return res.status(400).send({ code: httpStatus[400], message: 'Only today date able to update' });
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "Only today date able to update"
+          });
         }
 
         const diagnosisData = await patient_diagnosis_tbl.update(

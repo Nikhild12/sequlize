@@ -2,7 +2,7 @@ const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const moment = require("moment");
 const request = require("request");
-const rp = require('request-promise');
+const rp = require("request-promise");
 const Op = Sequelize.Op;
 
 const _getActiveAndStatusObject = is_active => {
@@ -73,8 +73,21 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
   };
 };
 
+const _checkTATIsPresent = array => {
+  return (isEveryEleTATHaving = array.every(pD => {
+    return pD.tat_start_time && pD.tat_end_time;
+  }));
+};
+
+const _checkTATIsValid = array => {
+  return array.every(pD => {
+    return (
+      moment(pD.tat_start_time).isValid() && moment(pD.tat_end_time).isValid()
+    );
+  });
+};
 const _postRequest = async (api, headers, data) => {
-  console.log('headers', headers, 'data', data);
+  console.log("headers", headers, "data", data);
   return new Promise((resolve, reject) => {
     request.post(
       {
@@ -82,7 +95,7 @@ const _postRequest = async (api, headers, data) => {
         headers: headers,
         json: data
       },
-      function (error, response, body) {
+      function(error, response, body) {
         console.log("\n body...", body);
 
         if (error) {
@@ -95,15 +108,24 @@ const _postRequest = async (api, headers, data) => {
             body.req
           ) {
             resolve(
-              body.responseContent || body.responseContents || body.benefMembers || body.req
+              body.responseContent ||
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
             );
           }
         } else if (body && body.status == "error") {
           reject(body);
         } else {
-          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
+          if (
+            body.statusCode &&
+            (body.statusCode === 200 || body.statusCode === 201)
+          ) {
             resolve(
-              body.responseContent || body.responseContents || body.benefMembers || body.req
+              body.responseContent ||
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
             );
           } else {
             reject(body);
@@ -114,12 +136,13 @@ const _postRequest = async (api, headers, data) => {
   });
 };
 
-
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
   assignDefaultValuesAndUUIdToObject: _assignDefaultValuesAndUUIdToObject,
   getFilterByThreeQueryForCodeAndName: _getFilterByThreeQueryForCodeAndName,
   getDateQueryBtwColumn: _getDateQueryBtwColumn,
+  checkTATIsPresent: _checkTATIsPresent,
+  checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest
 };
