@@ -8,7 +8,7 @@ router.route("/gettemplateByID").get(tempmastrCtrl.gettemplateByID);
 router.route("/gettempdetails").get(tempmastrCtrl.gettempdetails);
 router.route("/deleteTemplateDetails").put(tempmastrCtrl.deleteTemplateDetails);
 router.route("/updateTemplateByID").put(tempmastrCtrl.updateTemplateById);
-router.route("/getalltemplates").get(tempmastrCtrl.getalltemplates);
+router.route("/getalltemplates").post(tempmastrCtrl.getalltemplates);
 
 router.route("/updateTemplateDetailsByID").put(tempmastrCtrl.updateTemplateDetailsByID); //dynamic function route
 

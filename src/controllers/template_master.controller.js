@@ -244,73 +244,45 @@ const tmpmstrController = () => {
 
   const _getalltemplates = async (req, res) => {
     const { user_uuid } = req.headers;
-    //const { temp_type_id, dept_id } = req.query;
     let getsearch = req.body;
-
-        let pageNo = 0;
-        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'tm_template_type_uuid';
-        let sortOrder = 'ASC';
-
-        if (getsearch.pageNo) {
-          let temp = parseInt(getsearch.pageNo);
-
-          if (temp && (temp != NaN)) {
-              pageNo = temp;
-          }
+    
+    pageNo = 0;
+    
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    let sortField = 'tm_template_type_uuid';
+    let sortOrder = 'ASC';
+    
+    if (getsearch.pageNo) {
+      let temp = parseInt(getsearch.pageNo);
+      if (temp && (temp != NaN)) {
+        pageNo = temp;
       }
+    }
+    
+    const offset = pageNo * itemsPerPage;
+    
+    let findQuery = {
+      offset: offset,
+      limit: itemsPerPage,
+      order: [
+        [sortField, sortOrder],
+      ],
+      attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
 
-      const offset = pageNo * itemsPerPage;
-
-      if (getsearch.sortField) {
-
-          sortField = getsearch.sortField;
-      }
-
-      if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-          sortOrder = getsearch.sortOrder;
-      }
-      let findQuery = {
-          offset: offset,
-          limit: itemsPerPage,
-          order: [
-              [sortField, sortOrder],
-          ],
-          attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
-
-      };
-
-      if (getsearch.search && /\S/.test(getsearch.search)) {
-
-          findQuery.where = {
-              [Op.or]: [{
-                      name: {
-                          [Op.like]: '%' + getsearch.search + '%',
-                      },
-
-
-                  }, {
-                      code: {
-                          [Op.like]: '%' + getsearch.search + '%',
-                      },
-                  }
-
-              ]
-          };
-      }
-
-
+    };
 
 
     try {
       if (user_uuid) {
-        //const { table_name, query } = getTemplateTypeUUID(temp_type_id, dept_id, user_uuid);
-        const templateList = await vw_all_temp.findAll(findQuery);
+        const templateList = await vw_all_temp.findAndCountAll(findQuery);
 
         return res
           .status(httpStatus.OK)
-          .json({ statusCode: 200, req: '', responseContents: getAllTempData(templateList) });
+          .json({
+            statusCode: 200, req: '',
+            responseContents: getAllTempData(templateList.rows ? templateList.rows : []),
+            totalRecords: (templateList.count ? templateList.count : 0)
+          });
 
       } else {
         return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
@@ -1063,27 +1035,27 @@ function getAllTempData(fetchedData) {
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
       {
-          template_id: tD.dataValues.tm_uuid,
-          template_name: tD.dataValues.tm_name,
-          template_status: tD.dataValues.tm_status,
-          template_isactive: tD.dataValues.is_active,
-          template_is_public: tD.dataValues.tm_is_public, 
-          template_type_id: tD.dataValues.tm_template_type_uuid,
-          template_type: tD.dataValues.tt_name,
-          template_type_status: tD.dataValues.tt_status,
-          template_type_isactive: tD.dataValues.tt_is_active,
-          facility_id: tD.dataValues.tm_facility_uuid,
-          facility_name: tD.dataValues.f_name,
-          facility_isactive: tD.dataValues.f_is_active,
-          facility_status: tD.dataValues.f_status,
-          department_id: tD.dataValues.tm_department_uuid,
-          departiment_name: tD.dataValues.d_name,
-          user_uuid: tD.dataValues.tm_user_uuid,
-          doctor_name: tD.dataValues.u_first_name+' '+tD.dataValues.u_middle_name+' '+tD.dataValues.u_last_name,
-          doctor_isactive: tD.dataValues.u_is_active,
-          doctor_status: tD.dataValues.u_status
+        template_id: tD.dataValues.tm_uuid,
+        template_name: tD.dataValues.tm_name,
+        template_status: tD.dataValues.tm_status,
+        template_isactive: tD.dataValues.is_active,
+        template_is_public: tD.dataValues.tm_is_public,
+        template_type_id: tD.dataValues.tm_template_type_uuid,
+        template_type: tD.dataValues.tt_name,
+        template_type_status: tD.dataValues.tt_status,
+        template_type_isactive: tD.dataValues.tt_is_active,
+        facility_id: tD.dataValues.tm_facility_uuid,
+        facility_name: tD.dataValues.f_name,
+        facility_isactive: tD.dataValues.f_is_active,
+        facility_status: tD.dataValues.f_status,
+        department_id: tD.dataValues.tm_department_uuid,
+        departiment_name: tD.dataValues.d_name,
+        user_uuid: tD.dataValues.tm_user_uuid,
+        doctor_name: tD.dataValues.u_first_name + ' ' + tD.dataValues.u_middle_name + ' ' + tD.dataValues.u_last_name,
+        doctor_isactive: tD.dataValues.u_is_active,
+        doctor_status: tD.dataValues.u_status
 
-        }
+      }
       ];
     });
     return { "templates_list": templateList };
