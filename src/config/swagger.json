@@ -6225,7 +6225,7 @@
     },
     "/api/template/getalltemplates": {
       "post": {
-        "description": "To get a diagnosis  Details",
+        "description": "To get all templates",
         "parameters": [
           {
             "in": "header",
