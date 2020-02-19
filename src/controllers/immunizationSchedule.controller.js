@@ -7,6 +7,7 @@ const Op = Sequelize.Op;
 
 
 const immunizationScheduleTbl = db.immunization_schedule;
+const immunization = db.immunizations;
 
 const immunizationScheduleController = () => {
     /**
@@ -33,7 +34,7 @@ const immunizationScheduleController = () => {
 
         const offset = pageNo * itemsPerPage;
         if (getsearch.sortField) {
-        sortField = getsearch.sortField;
+            sortField = getsearch.sortField;
         }
         if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
 
@@ -47,23 +48,31 @@ const immunizationScheduleController = () => {
             ],
             where: {
                 status: 1
-            }
+            },
+            include: [
+                {
+                    model: immunization,
+                    attributes:['uuid','name'],
+                    required: false
+                    // as:'immunizations'
+                }
+            ]
 
         };
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -82,6 +91,7 @@ const immunizationScheduleController = () => {
                         });
                 })
                 .catch(err => {
+                    console.log(err);
                     return res
                         .status(httpStatus.OK)
                         .json({
@@ -159,12 +169,12 @@ const immunizationScheduleController = () => {
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await immunizationScheduleTbl.findOne({
-                    where: {
-                        uuid: postData.Id
-                    },
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                where: {
+                    uuid: postData.Id
+                },
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -215,10 +225,10 @@ const immunizationScheduleController = () => {
         postData.modified_by = req.headers.user_uuid;
         await immunizationScheduleTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Id
-                }
+            where: {
+                uuid: postData.Id
             }
+        }
         ).then((data) => {
             res.send({
                 statusCode: 200,
