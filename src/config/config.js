@@ -29,7 +29,8 @@ const envVarsSchema = Joi.object({
   wso2_lisUrl: Joi.string(),
   wso2RmisUrl: Joi.string(),
   wso2InvestUrl: Joi.string(),
-  wso2InvUrl: Joi.string()
+  wso2InvUrl: Joi.string(),
+  wso2AppUrl: Joi.string()
 })
   .unknown()
   .required();
@@ -77,6 +78,7 @@ const config = {
   wso2InvUrl: envVars.wso2InvUrl,
   wso2LisUrl: envVars.wso2_lisUrl,
   wso2RmisUrl: envVars.wso2RmisUrl,
-  wso2InvestUrl: envVars.wso2InvestUrl
+  wso2InvestUrl: envVars.wso2InvestUrl,
+  wso2AppUrl: envVars.wso2AppUrl
 };
 module.exports = config;

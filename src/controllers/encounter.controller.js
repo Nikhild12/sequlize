@@ -2,6 +2,9 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
 
+const rp = require('request-promise');
+var config = require('../config/config');
+
 // Sequelizer Import
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
@@ -509,13 +512,46 @@ const Encounter = () => {
     }
   };
 
+  const _getPatientDoc = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid } = req.query;
+
+    try {
+      if (user_uuid && patient_uuid) {
+
+        const docList = await encounter_doctors_tbl.findAll(
+          {
+            where: { patient_uuid: patient_uuid }
+          }
+        );
+        if (docList && docList.length>0) {
+          const getuDetails = await getuserDetails(docList[0].doctor_uuid, req.headers.authorization);
+          return res
+            .status(httpStatus.OK)
+            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails) });
+        } else {
+          return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
+        }
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+      }
+    }
+    catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
+    }
+  };
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
     getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
     deleteEncounterById: _deleteEncounterById,
     updateECdischarge: _updateECdischarge,
-    updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor
+    updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor,
+    getPatientDoc: _getPatientDoc
   };
 };
 
@@ -596,3 +632,39 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
     }
   });
 }
+
+async function getuserDetails(user_uuid, authorization) {
+  let options = {
+    uri: config.wso2AppUrl + 'users/getusersById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "Id": user_uuid },
+    json: true
+  };
+  const user_details = await rp(options);
+  return user_details;
+}
+
+function getpddata(docList, getuDetails) {
+  //let dsdList = [];
+  let doc_name = getuDetails.responseContents.title.name + '.' + getuDetails.responseContents.first_name;
+  //let nur_name = getnDetails.responseContents.title.name + '.' + getnDetails.responseContents.first_name;
+  if (docList && docList.length > 0) {
+    doc_data = {
+      patient_uuid: docList[0].patient_uuid,
+      doctor_uuid: docList[0].doctor_uuid,
+      doctor_name: doc_name,
+    };
+
+    return { "Doc_info": doc_data };
+  }
+  else {
+    return {};
+  }
+
+}
+

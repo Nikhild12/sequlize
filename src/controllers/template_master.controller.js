@@ -289,7 +289,7 @@ const tmpmstrController = () => {
     try {
       if (user_uuid) {
         const templateList = await vw_all_temp.findAndCountAll(findQuery);
-        console.log (templateList.rows);
+        
         return res
           .status(httpStatus.OK)
           .json({
