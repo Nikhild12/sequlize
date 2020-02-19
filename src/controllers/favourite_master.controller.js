@@ -24,6 +24,8 @@ const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
+const vmAllFavourites = sequelizeDb.vw_all_favourites;
+
 const vwFavouriteInvestigation = sequelizeDb.vw_favourite_investigation;
 
 // Utility Service Import
@@ -37,6 +39,9 @@ const emr_attributes_radiology = require("../attributes/favourite_radiology");
 
 // Favourite Radiology Attributes
 const emr_attributes_investigation = require("../attributes/vw_favourite_investigation");
+
+// All Favourites Attributes
+const emr_all_favourites = require("../attributes/favourites");
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -813,6 +818,75 @@ const TickSheetMasterController = () => {
     }
   };
 
+  const _getAllFavourites = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let { recordsPerPage, searchPageNo, searchKey, searchValue } = req.body;
+    let pageNo = 0;
+    let perPageRecords = 10;
+    let itemsPerPage;
+    if (user_uuid) {
+      if (recordsPerPage) {
+        let records = parseInt(recordsPerPage);
+        if (records && records != NaN) {
+          recordsPerPage = records;
+        }
+      }
+      itemsPerPage = recordsPerPage ? recordsPerPage : perPageRecords;
+
+      if (searchPageNo) {
+        let temp = parseInt(searchPageNo);
+        if (temp && temp != NaN) {
+          pageNo = temp;
+        }
+      }
+
+      const offset = pageNo * itemsPerPage;
+
+      let findQuery = {
+        offset: offset,
+        limit: itemsPerPage,
+        attributes: emr_all_favourites.getAllFavouritesAttributes()
+      };
+
+      if (searchKey) {
+        findQuery.where = emr_all_favourites.getSearchKeyWhere(
+          searchKey,
+          searchValue
+        );
+      }
+
+      try {
+        const allFavouritesData = await vmAllFavourites.findAndCountAll(
+          findQuery
+        );
+
+        const returnMessage =
+          allFavouritesData.rows && allFavouritesData.rows.length > 0
+            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
+            : emr_constants.NO_RECORD_FOUND;
+        return res.status(httpStatus.OK).send({
+          code: httpStatus.OK,
+          message: returnMessage,
+          responseContentLength: allFavouritesData.rows.length,
+          responseContents: emr_all_favourites.getFavouritesInHumanReadableFormat(
+            allFavouritesData.rows
+          ),
+          totalRecords: allFavouritesData.count
+        });
+      } catch (ex) {
+        console.log(`Exception Happened ${ex}`);
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   return {
     createTickSheetMaster: _createTickSheetMaster,
     getFavourite: _getFavourites,
@@ -821,7 +895,8 @@ const TickSheetMasterController = () => {
     deleteFavourite: _deleteFavourite,
     getTreatmentKitFavourite: _getTreatmentKitFavourite,
     getTreatmentFavById: _getTreatmentFavById,
-    getFavouriteDiet: _getFavouriteDiet
+    getFavouriteDiet: _getFavouriteDiet,
+    getAllFavourites: _getAllFavourites
   };
 };
 
