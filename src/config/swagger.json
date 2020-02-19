@@ -5511,6 +5511,32 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/encounter/getPatientDoc": {
+      "get": {
+        "description": "To get a Encounter for Patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Encounter"],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Encounter"
+          }
+        }
+      }
     }
   },
   "definitions": {
