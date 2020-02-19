@@ -245,22 +245,30 @@ const tmpmstrController = () => {
   const _getalltemplates = async (req, res) => {
     const { user_uuid } = req.headers;
     let getsearch = req.body;
-    
+
     pageNo = 0;
-    
+
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
     let sortField = 'tm_template_type_uuid';
     let sortOrder = 'ASC';
-    
+
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
       if (temp && (temp != NaN)) {
         pageNo = temp;
       }
     }
-    
+
+    if (getsearch.sortField) {
+      sortField = getsearch.sortField;
+    }
+    if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+      sortOrder = getsearch.sortOrder;
+    }
+
     const offset = pageNo * itemsPerPage;
-    
+
     let findQuery = {
       offset: offset,
       limit: itemsPerPage,
@@ -271,11 +279,17 @@ const tmpmstrController = () => {
 
     };
 
-
+    if (getsearch.search && /\S/.test(getsearch.search)) {
+      findQuery.where = {
+        tm_name: {
+          [Op.like]: '%' + getsearch.search + '%',
+        },
+      };
+    }
     try {
       if (user_uuid) {
         const templateList = await vw_all_temp.findAndCountAll(findQuery);
-
+        console.log (templateList.rows);
         return res
           .status(httpStatus.OK)
           .json({

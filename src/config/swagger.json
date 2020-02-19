@@ -11806,6 +11806,14 @@
         "paginationSize": {
           "type": "number",
           "example": 10
+        },
+        "sortOrder": {
+          "type": "string",
+          "example": "ASC"
+        },
+        "search": {
+          "type": "string",
+          "example": "fever"
         }
       }
     }
