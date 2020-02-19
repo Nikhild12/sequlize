@@ -6222,6 +6222,44 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/template/getalltemplates": {
+      "post": {
+        "description": "To get all templates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "page",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get all datails Successfully",
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -7732,10 +7770,10 @@
             "type": "integer"
           },
           "tat_start_time": {
-            "type":"string"
+            "type": "string"
           },
           "tat_end_time": {
-            "type":"string"
+            "type": "string"
           }
         }
       }
@@ -8086,10 +8124,10 @@
           "patient_treatment_uuid": {
             "type": "number"
           },
-          "tat_start_time":{
+          "tat_start_time": {
             "type": "string"
           },
-          "tat_end_time":{
+          "tat_end_time": {
             "type": "string"
           }
         }
@@ -11713,6 +11751,19 @@
               }
             }
           }
+        }
+      }
+    },
+    "getalltemp": {
+      "type": "object",
+      "properties": {
+        "pageNo": {
+          "type": "number",
+          "example": 0
+        },
+        "paginationSize": {
+          "type": "number",
+          "example": 10
         }
       }
     }
