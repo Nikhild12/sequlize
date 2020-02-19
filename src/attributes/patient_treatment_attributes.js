@@ -67,7 +67,8 @@ const _createPrescriptionHelper = async (
 ) => {
 
   return await utilityService.postRequest(
-    config.addAllPrescriptionDetails,
+    config.wso2InvUrl + 'prescriptions/addAllPrescriptionDetails',
+    // config.addAllPrescriptionDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -87,7 +88,8 @@ const _createLabHelper = async (
   { header, details }
 ) => {
   return await utilityService.postRequest(
-    config.addAllLabDetails,
+    config.wso2LisUrl + 'patientorders/postpatientorder',
+    //config.addAllLabDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -103,7 +105,8 @@ const _createLabHelper = async (
 
 const _deleteLabHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
-    config.deleteLabDetails,
+    config.wso2LisUrl + 'patientorders/deletepatientorderemr',
+    // config.deleteLabDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -118,7 +121,8 @@ const _deleteLabHelper = async ({ facility_uuid, user_uuid, authorization }, id)
 
 const _deletePrescription = async ({ user_uuid, authorization }, id) => {
   let options = {
-    uri: config.deletePrescriptionDetails,
+    uri: config.wso2InvUrl + 'prescriptions/deletePrescription',
+    // uri: config.deletePrescriptionDetails,
     headers: {
       user_uuid: user_uuid,
       Authorization: authorization
@@ -147,7 +151,8 @@ const _deletePrescription = async ({ user_uuid, authorization }, id) => {
 
 const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
   return await utilityService.postRequest(
-    config.addALLInvestDetails,
+    config.wso2InvestUrl + 'patientorders/postpatientorder',
+    // config.addALLInvestDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
@@ -163,7 +168,8 @@ const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorizati
 
 const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
-    config.deleteInvestDetails,
+    config.wso2InvestUrl + 'patientorders/deletepatientorderemr',
+    //config.deleteInvestDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
@@ -179,7 +185,8 @@ const _deleteInvestigationHelper = async ({ facility_uuid, user_uuid, authorizat
 const _createRadialogyHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
 
   return await utilityService.postRequest(
-    config.addAllRadialogyDetails,
+    config.wso2RmisUrl + 'patientorders/postpatientorder',
+    //  config.addAllRadialogyDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid ? facility_uuid : 1,
@@ -195,7 +202,8 @@ const _createRadialogyHelper = async ({ facility_uuid, user_uuid, authorization 
 
 const _deleteRadialogyHelper = async ({ facility_uuid, user_uuid, authorization }, id) => {
   return await utilityService.postRequest(
-    config.deleteRadialogyDetails,
+    config.wso2RmisUrl + 'patientorders/deletepatientorderemr',
+    // config.deleteRadialogyDetails,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,

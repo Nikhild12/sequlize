@@ -25,7 +25,11 @@ const envVarsSchema = Joi.object({
   PG_PASSWORD: Joi.string()
     .default("root")
     .allow("")
-    .description("test")
+    .description("test"),
+  wso2_lisUrl: Joi.string(),
+  wso2RmisUrl: Joi.string(),
+  wso2InvestUrl: Joi.string(),
+  wso2InvUrl: Joi.string()
 })
   .unknown()
   .required();
@@ -69,6 +73,10 @@ const config = {
   deleteInvestDetails:
     envVars.BASE_URL + envVars.INVEST_CONTEXT_PATH + envVars.DELETE_PATH,
   deletePrescriptionDetails:
-    envVars.BASE_URL + envVars.INVENTORY_CONTEXT_PATH + envVars.DELETE_PRESCRIPTION
+    envVars.BASE_URL + envVars.INVENTORY_CONTEXT_PATH + envVars.DELETE_PRESCRIPTION,
+  wso2InvUrl: envVars.wso2InvUrl,
+  wso2LisUrl: envVars.wso2_lisUrl,
+  wso2RmisUrl: envVars.wso2RmisUrl,
+  wso2InvestUrl: envVars.wso2InvestUrl
 };
 module.exports = config;
