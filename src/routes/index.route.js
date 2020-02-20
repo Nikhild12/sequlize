@@ -10,9 +10,6 @@ const authenticateService = require('../services/authenticate.service');
 // Creating Index route
 const indexRoute = express.Router();
 
-// Middleware
-indexRoute.use('/api', authenticateService, serviceRoute);
-
 //Logging - 19_02_2020
 const config = require("../config/config");
 config.requestDate =  new Date().toLocaleString('en-US', {
@@ -20,10 +17,15 @@ config.requestDate =  new Date().toLocaleString('en-US', {
 });
 //Logging - 19_02_2020
 
-const moment = require("moment");
+// Middleware
+indexRoute.use('/api', authenticateService, serviceRoute);
 
-const utcMoment = moment.utc();
-config.requestDate = new Date(utcMoment.format());
+
+
+//const moment = require("moment");
+
+//const utcMoment = moment.utc();
+//config.requestDate = new Date(utcMoment.format());
 
 // Exporting Index Route
 module.exports = indexRoute;

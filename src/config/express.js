@@ -38,10 +38,14 @@ app.use(express.static(path.join(__dirname, "../src/assets")));
 
 // Enabling Log only for dev
 // if (config.env === 'develoment') {
-	
+
 // }
-app.use(logger('tiny'));
+//app.use(logger('tiny'));
 // Initialzing Index Route to Express Middleware
+if (config.env === "development") {
+	app.use(logger("dev"));
+}
+
 app.use('/', indexRoute);
 
 // Swagger UI Middleware
@@ -50,20 +54,19 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 expressWinston.requestWhitelist.push("body");
 expressWinston.responseWhitelist.push("body");
 app.use(
-expressWinston.logger({
-winstonInstance,
-meta: true, // optional: log meta data about request (defaults to true)
-msg: "HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}} ms ",
-colorStatus: true // Color the status code (default green, 3XX cyan, 4XX yellow, 5XX red).
-})
+	expressWinston.logger({
+		winstonInstance,
+		meta: true, // optional: log meta data about request (defaults to true)
+		msg: "HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}} ms ",
+		colorStatus: true // Color the status code (default green, 3XX cyan, 4XX yellow, 5XX red).
+	})
 );
 
 app.use(
-expressWinston.errorLogger({
-winstonInstance
-})
+	expressWinston.errorLogger({
+		winstonInstance
+	})
 );
-
 
 //Logging - 19_02_2020
 const makeServiceCall = (req, res, next) => {
@@ -100,9 +103,9 @@ const makeServiceCall = (req, res, next) => {
 				logObj.url = req.url;
 				logObj.sqlquery = res.body.sql || null;
 				delete res.body.sql;
-				logObj.request= req.body;
-				if (res && res.body && res.body.statusCode == 200) logObj.response= res.body;
-				else logObj.errorResponse= res.body;
+				logObj.request = req.body;
+				if (res && res.body && res.body.statusCode == 200) logObj.response = res.body;
+				else logObj.errorResponse = res.body;
 
 			}
 		}
@@ -121,7 +124,7 @@ const makeServiceCall = (req, res, next) => {
 			req: logObj,
 			res: res
 		}
-	}, function (error, response, body) {});
+	}, function (error, response, body) { });
 };
 
 function getCurrentDateTime(givendt) {
@@ -160,7 +163,7 @@ var sendLog = function (reqrescontent, sqlcontent) {
 
 var myLogger = function (req, res, next) {
 	res.on('finish', () => {
-			console.log("after finish-------");
+		console.log("after finish-------");
 		if (config.logging === "1") {
 			console.log("config.logiing-------");
 			let filename = "sql.txt";
