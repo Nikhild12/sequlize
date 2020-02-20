@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 //const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require("fs");
 
 // Swagger UI and Json import
 const swaggerUi = require('swagger-ui-express');
@@ -21,8 +22,12 @@ const winstonInstance = require("./winston");
 // Express Initialize
 const app = express();
 
-// Middlewares
 
+if (config.env === "development") {
+	app.use(logger("dev"));
+}
+
+// Middlewares
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 app.use(express.json());
 // Enabling CORS for Accepting cross orgin req
@@ -31,25 +36,6 @@ app.use(cors());
 // Enabling CORS for Accepting cross orgin req
 app.use(helmet());
 
-//for upload purpose
-//app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "../src/assets")));
-//app.use(bodyParser.urlencoded({ extended: false }));
-
-// Enabling Log only for dev
-// if (config.env === 'develoment') {
-
-// }
-//app.use(logger('tiny'));
-// Initialzing Index Route to Express Middleware
-if (config.env === "development") {
-	app.use(logger("dev"));
-}
-
-app.use('/', indexRoute);
-
-// Swagger UI Middleware
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 expressWinston.requestWhitelist.push("body");
 expressWinston.responseWhitelist.push("body");
@@ -67,6 +53,18 @@ app.use(
 		winstonInstance
 	})
 );
+
+//for upload purpose
+//app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "../src/assets")));
+//app.use(bodyParser.urlencoded({ extended: false }));
+
+// Enabling Log only for dev
+// if (config.env === 'develoment') {
+
+// }
+//app.use(logger('tiny'));
+// Initialzing Index Route to Express Middleware
 
 //Logging - 19_02_2020
 const makeServiceCall = (req, res, next) => {
@@ -168,15 +166,19 @@ var myLogger = function (req, res, next) {
 			console.log("config.logiing-------");
 			let filename = "sql.txt";
 			let sqlcontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
-			console.log('Query :' + sqlcontent);
+			//console.log('Query :' + sqlcontent);
 			filename = "access-info.log";
 			let reqrescontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
 			if (reqrescontent) {
+				console.log("reqresconentss---------");
 				sendLog(reqrescontent, sqlcontent);
 			}
 			filename = "access-error.log";
+			console.log(filename);
 			reqrescontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
+			//console.log(reqrescontent);
 			if (reqrescontent) {
+				console.log("afgter read readfilesynd------");
 				sendLog(reqrescontent, sqlcontent);
 			}
 			fs.writeFile('./sql.txt', '', function () {
@@ -196,7 +198,10 @@ var myLogger = function (req, res, next) {
 app.use(myLogger);
 //Logging - 19_02_2020
 
-//console.log(config.logging);
+// Swagger UI Middleware
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/', indexRoute);
 
 module.exports = app;
 

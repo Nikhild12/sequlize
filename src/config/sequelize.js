@@ -73,7 +73,6 @@ sequelize.options.logging = str =>{ log = str,
 };
 //Don't remove the lines this for SQL Query log trace //Logging - 19_02_2020
 
-
 const modelsDir = path.normalize(`${__dirname}/../models`);
 const EMR_VIEWS_DIR = path.normalize(`${__dirname}/../views`);
 
