@@ -13,8 +13,13 @@ const indexRoute = express.Router();
 // Middleware
 indexRoute.use('/api', authenticateService, serviceRoute);
 
-// EMR Logging
+//Logging - 19_02_2020
 const config = require("../config/config");
+config.requestDate =  new Date().toLocaleString('en-US', {
+    timeZone: 'Asia/Kolkata'
+});
+//Logging - 19_02_2020
+
 const moment = require("moment");
 
 const utcMoment = moment.utc();
