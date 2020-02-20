@@ -39,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
                 type: DataTypes.INTEGER(11),
-                allowNull: true
+                allowNull: true,
+                defaultValue: 1,
             },
             is_active: {
                 type: DataTypes.BOOLEAN,

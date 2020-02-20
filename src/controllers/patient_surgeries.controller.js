@@ -26,12 +26,8 @@ const Surgery_History = () => {
     const { user_uuid } = req.headers;
     let surgicalDetails = req.body;
 
-    if (user_uuid) {
-
-      surgicalDetails.is_active = surgicalDetails.status = true;
-      surgicalDetails.created_by = surgicalDetails.modified_by = surgicalDetails.performed_by = user_uuid;
-      surgicalDetails.created_date = surgicalDetails.modified_date = new Date();
-      surgicalDetails.revision = 1;
+    if (user_uuid && surgicalDetails) {
+      await assignDefault(surgicalDetails, user_uuid);
 
       try {
         await surgicalDetailsTbl.create(surgicalDetails, { returing: true });
@@ -43,30 +39,21 @@ const Surgery_History = () => {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
       }
     } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
 
   };
 
   const _getSurgeryHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { patient_uuid } = req.query;
+    const { patient_uuid } = req.query;
 
     try {
       if (user_uuid && patient_uuid) {
-        const surgeryHistory = await vw_surgical_details.findAll({
-          order: [['ps_uuid', 'DESC']],
-          limit: 10,
-          attributes: ['ps_uuid', 'institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments', 'ps_patient_uuid'],
-          where: { ps_patient_uuid: patient_uuid, ps_created_by: user_uuid, ps_is_active: 1, ps_status: 1, ps_is_active: 1, ps_status: 1, institution_is_active: 1, institution_status: 1 }
-
-        },
-          { returning: true }
-        );
-        return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryHistory });
-
+        const surgeryHistory = await patientSurgeryHistory(patient_uuid, user_uuid);
+        return res.status(200).send({ code: httpStatus.OK, message: 'Patient Surgery History Fetched Successfully', responseContent: surgeryHistory });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     }
     catch (err) {
@@ -83,9 +70,8 @@ const Surgery_History = () => {
         const surgeryData = await surgicalDetailsTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
         return res.status(200).send({ code: httpStatus.OK, responseContent: surgeryData });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
-
     }
     catch (err) {
       console.log('Exception Happened', err);
@@ -102,13 +88,13 @@ const Surgery_History = () => {
       where: { uuid: uuid }
     };
     try {
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postData) {
         const data = await surgicalDetailsTbl.update(postData, selector, { returing: true });
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', requestContent: data });
         }
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM}  ${emr_constants.FOUND}` });
 
       }
     }
@@ -118,8 +104,6 @@ const Surgery_History = () => {
 
     }
   };
-
-
 
   return {
 
@@ -134,3 +118,22 @@ const Surgery_History = () => {
 
 module.exports = Surgery_History();
 
+async function assignDefault(surgicalDetails, user_uuid) {
+  surgicalDetails.is_active = surgicalDetails.status = true;
+  surgicalDetails.created_by = surgicalDetails.modified_by = surgicalDetails.performed_by = user_uuid;
+  surgicalDetails.created_date = surgicalDetails.modified_date = new Date();
+  surgicalDetails.revision = 1;
+
+}
+
+async function patientSurgeryHistory(patient_uuid, user_uuid) {
+  return vw_surgical_details.findAll({
+    order: [['ps_uuid', 'DESC']],
+    limit: 10,
+    attributes: ['ps_uuid', 'institution_uuid', 'institution_name', 'procedure_name', 'ps_performed_date', 'ps_comments', 'ps_patient_uuid'],
+    where: { ps_patient_uuid: patient_uuid, ps_created_by: user_uuid, ps_is_active: 1, ps_status: 1, ps_is_active: 1, ps_status: 1, institution_is_active: 1, institution_status: 1 }
+
+  },
+    { returning: true }
+  );
+}

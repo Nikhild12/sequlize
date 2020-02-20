@@ -32,14 +32,35 @@ module.exports = Object.freeze({
   FETCHD_PROFILES_FAIL: " No Record Found ",
   PROPER_FAV_ID: "Please provide proper favourite Type Id",
   DELETE_SUCCESSFUL: "Deleted Successfully",
+  TREATMENT_REQUIRED: "Please send treatment Kit along with One widget details",
+  SURGERY_POSITION: "Surgery Position fetched successfully",
+  PROCEDURE_FETCHED: "Procedure Successfully Fetched",
+  INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
+  UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
+  PLEASE_PROVIDE: "Please Provide",
+  VALID_START_DATE: "a valid Start Date time",
+  VALID_END_DATE: "a valid End Date time",
+  START_DATE: "a Start Date time",
+  END_DATE: "a End Date time",
+  UPDATED_ENC_DOC_TAT_TIME: "Updated Tat End Time Successfully",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
+      case "encounter_uuid":
+        return `${returnProvideMsg} Encounter Id`;
+      case "period_uuid":
+        return `${returnProvideMsg} Period Id`;
       case "facility_uuid":
         return `${returnProvideMsg} Facility Id`;
+      case "referral_facility_uuid":
+        return `${returnProvideMsg} Referral Facility Id`;
       case "department_uuid":
         return `${returnProvideMsg} Department Id`;
+      case "referral_deptartment_uuid":
+        return `${returnProvideMsg} Referral Department Id`;
+      case "transfer_department_uuid":
+        return `${returnProvideMsg} Transfer Department Id`;
       case "role_uuid":
         return `${returnProvideMsg} Role Id`;
       case "context_uuid":
@@ -82,8 +103,40 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} Consultation Id`;
       case "relation_type_uuid":
         return `${returnProvideMsg} Relation Type Id`;
+      case "transfer_facility_uuid":
+        return `${returnProvideMsg} Transfer Facility Id`;
       case "quantity":
         return `${returnProvideMsg} Drug Quantity`;
+      case "admission_status_uuid":
+        return `${returnProvideMsg} admission_status_uuid`;
+      case "encounter_type_uuid":
+        return `${returnProvideMsg} encounter_type_uuid`;
+      case "note_type_uuid":
+        return `${returnProvideMsg} note_type_uuid`;
+      case "category_type_uuid":
+        return `${returnProvideMsg} category_type_uuid`;
+      case "category_group_uuid":
+        return `${returnProvideMsg} category_group_uuid`;
+      case "profile_uuid":
+        return `${returnProvideMsg} profile_uuid`;
+      case "section_uuid":
+        return `${returnProvideMsg} section_uuid`;
+      case "activity_uuid":
+        return `${returnProvideMsg} activity_uuid`;
+      case "profile_section_uuid":
+        return `${returnProvideMsg} profile_section_uuid`;
+      case "category_uuid":
+        return `${returnProvideMsg} category_uuid`;
+      case "profile_section_category_uuid":
+        return `${returnProvideMsg} profile_section_category_uuid`;
+      case "value_type_uuid":
+        return `${returnProvideMsg} value_type_uuid`;
+      case "profile_section_category_concept_uuid":
+        return `${returnProvideMsg} profile_section_category_concept_uuid`;
+      case "section_type_uuid":
+        return `${returnProvideMsg} section_type_uuid`;
+      case "section_note_type_uuid":
+        return `${returnProvideMsg} section_note_type_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -102,6 +155,8 @@ module.exports = Object.freeze({
         return `Patient Id ${lengthMessage}`;
       case "facility_uuid":
         return `Facility Id ${lengthMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${lengthMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${lengthMessage}`;
       case "treatment_kit_type_uuid":
@@ -147,10 +202,16 @@ module.exports = Object.freeze({
         return `Patient Id ${validationMessage}`;
       case "department_uuid":
         return `Department Id ${validationMessage}`;
+      case "referral_deptartment_uuid":
+        return `Referral Department Id ${validationMessage}`;
+      case "transfer_department_uuid":
+        return `Transfer Department Id ${validationMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${validationMessage}`;
       case "facility_uuid":
         return `Facility Id ${validationMessage}`;
+      case "referral_facility_uuid":
+        return `Referral Facility Id ${validationMessage}`;
       case "diagnosis_uuid":
         return `Diagnosis Id ${validationMessage}`;
       case "test_master_uuid":
@@ -175,10 +236,36 @@ module.exports = Object.freeze({
         return `Activity Id ${validationMessage}`;
       case "context_activity_map_uuid":
         return `Context Activity Map Id ${validationMessage}`;
+      case "transfer_facility_uuid":
+        return `Transfer Facility Id ${validationMessage}`;
       case "relation_type_uuid":
         return `Relation Type Id ${validationMessage}`;
+      case "admission_status_uuid":
+        return `admission status uuid ${validationMessage}`;
+      case "category_type_uuid":
+        return `category_type_uuid ${validationMessage}`;
+      case "category_group_uuid":
+        return `category_group_uuid ${validationMessage}`;
+      case "profile_uuid":
+        return `profile_uuid ${validationMessage}`;
+      case "section_uuid":
+        return `section_uuid ${validationMessage}`;
+      case "activity_uuid":
+        return `activity_uuid ${validationMessage}`;
+      case "profile_section_category_uuid":
+        return `profile_section_category_uuid ${validationMessage}`;
+      case "value_type_uuid":
+        return `value_type_uuid ${validationMessage}`;
+      case "profile_section_category_concept_uuid":
+        return `profile_section_category_concept_uuid ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
+    }
+  },
+  getEncounterType(id) {
+    switch (id) {
+      case 1: return "OP"
+      case 2: return "IP"
     }
   }
 });

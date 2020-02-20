@@ -5,6 +5,7 @@ const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const emr_constants = require('../config/constants');
 
 
 
@@ -54,7 +55,7 @@ const allergyMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{is_active: 1}
+            where: { is_active: 1 }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -62,15 +63,15 @@ const allergyMasterController = () => {
             findQuery.where = {
                 [Op.or]: [{
                     allergey_code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        allergy_name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    allergy_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -116,35 +117,36 @@ const allergyMasterController = () => {
     };
 
     const postAlleryMaster = async (req, res, next) => {
-        const postData = req.body;
-        postData.created_by = req.headers.user_uuid;
-       
-        
 
-        if (postData) {
+
+
+        if (Object.keys(req.body).length != 0) {
+            const postData = req.body;
+            postData.created_by = req.headers.user_uuid;
+
 
             allergyMastersTbl.findAll({
                 where: {
-                  [Op.or]: [{
-                    allergey_code: postData.allergey_code
+                    [Op.or]: [{
+                        allergey_code: postData.allergey_code
                     },
                     {
                         allergy_name: postData.allergy_name
                     }
-                  ]
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter Allergy Master"
+                        status: "error",
+                        msg: "Record already Found. Please enter Allergy Master"
                     });
-                  } else{
+                } else {
                     await allergyMastersTbl.create(postData, {
                         returning: true
                     }).then(data => {
-        
+
                         res.send({
                             statusCode: 200,
                             msg: "Inserted Allery Master details Successfully",
@@ -152,88 +154,115 @@ const allergyMasterController = () => {
                             responseContents: data
                         });
                     }).catch(err => {
-        
+
                         res.send({
                             status: "failed",
                             msg: "failed to Allery Master details",
                             error: err
                         });
                     });
-                  }
-              });
+                }
+            });
 
-          
+
         } else {
-            
+
             res.send({
                 status: 'failed',
-                msg: 'Please enter Allery Master details'
+                msg: 'No Request Body Found'
             });
         }
     };
 
 
     const deleteAlleryMaster = async (req, res, next) => {
-        const postData = req.body;
+        if (Object.keys(req.body).length != 0) {
+            const postData = req.body;
+            if (postData.Allergy_id <= 0) {
+                return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
 
-        await allergyMastersTbl.update({
-            is_active: 0
-        }, {
-            where: {
-                uuid: postData.Allergy_id
             }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
-            });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
-        });
-    };
 
+            await allergyMastersTbl.update({
+                is_active: 0
+            }, {
+                where: {
+                    uuid: postData.Allergy_id
+                }
+            }).then((data) => {
+                res.send({
+                    statusCode: 200,
+                    msg: "Deleted Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+                console.log(err.message);
+                res.send({
+                    status: "failed",
+                    msg: "failed to delete data",
+                    error: err.message
+                });
+            });
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+
+        }
+    };
     const updateAlleryMasterById = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await allergyMastersTbl.update(
-            postData, {
+        if (Object.keys(req.body).length != 0) {
+            const postData = req.body;
+
+            postData.modified_by = req.headers.user_uuid;
+            await allergyMastersTbl.update(
+                postData, {
                 where: {
                     uuid: postData.Allergy_id
                 }
             }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
+            ).then((data) => {
+                res.send({
+                    statusCode: 200,
+                    msg: "Updated Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+                console.log(err.message);
+                res.send({
+                    status: "failed",
+                    msg: "failed to update data",
+                    error: err.message
+                });
             });
-        });
-        
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+
     };
-  
+
 
     const getAlleryMasterById = async (req, res, next) => {
         const postData = req.body;
         try {
+            if (postData.Allergy_id <= 0) {
+                return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
 
+            }
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await allergyMastersTbl.findOne({
-                    where: {
-                        uuid: postData.Allergy_id
-                    },
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                where: {
+                    uuid: postData.Allergy_id
+                },
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
+                    if (!data) {
+                        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
+                    }
                     return res
                         .status(httpStatus.OK)
                         .json({

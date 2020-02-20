@@ -17,170 +17,215 @@
       "description": "API for EMR Data"
     }
   ],
-  "schemes": ["http", "https"],
-  "consumes": ["application/json", "multipart/form-data"],
-  "produces": ["application/json", "application/file"],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "multipart/form-data"
+  ],
+  "produces": [
+    "application/json",
+    "application/file"
+  ],
   "paths": {
-
-   "/api/notetemplate/getnotetemplatebytype": {
-    "post": {
-      "description": "Get Successfully",
-      "parameters": [
-        {
-          "in": "body",
-          "name": "type",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/getnotetemplatebytype"
+    "/api/ccc/getcccmasterbytype": {
+      "post": {
+        "description": "Get Successfully",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getcccmasterbytype"
+            }
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getcccmasterbytype"
+            }
           }
         },
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/notetemplate/getnotetemplatebytype": {
+      "post": {
+        "description": "Get Successfully",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getnotetemplatebytype"
+            }
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getnotetemplatebytype"
+            }
+          }
         },
-        {
-          "in": "header",
-          "name": "facility_uuid",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Note Template"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/getnotetemplatebytype"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/deleteProcedures": {
+      "post": {
+        "description": "Inserted Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures"
+            }
           }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-"/api/procedures/deleteProcedures":{
-    "post": {
-      "description": "Inserted Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures"
+            }
+          }
         },
-        {
-          "in": "body",
-          "name": "delete",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/deleteProcedures"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/getProceduresById": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedure_Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProceduresById"
+            }
           }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/deleteProcedures"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProceduresById"
+            }
           }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-  "/api/procedures/getProceduresById": {
-    "post": {
-      "description": "Get By Id Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
         },
-        {
-          "in": "body",
-          "name": "Procedure_Id",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/updateProceduresById": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedure_Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateProceduresById"
+            }
           }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/getProceduresById"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateProceduresById"
+            }
           }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-  "/api/procedures/updateProceduresById": {
-    "post": {
-      "description": "Get By Id Successfully",
-      "parameters": [
-        {
-          "in": "header",
-          "name": "user_uuid",
-          "required": true,
-          "type": "integer"
         },
-        {
-          "in": "body",
-          "name": "Procedure_Id",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/updateProceduresById"
-          }
-        }
-      ],
-      "produces": [
-        "application/json",
-        "application/xml"
-      ],
-      "tags": [
-        "Procedures"
-      ],
-      "responses": {
-        "200": {
-          "description": "get Successfully",
-          "schema": {
-            "$ref": "#/definitions/updateProceduresById"
-          }
-        }
-      },
-      "x-auth-type": "Application & Application User",
-      "x-throttling-tier": "Unlimited"
-    }
-  },
-
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/speciality/createSpeciality": {
       "post": {
         "description": "To Create a Speciality Sketch",
@@ -200,8 +245,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Speciality Sketches"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -233,8 +283,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Speciality Sketches"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -266,8 +321,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Speciality Sketches"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -291,8 +351,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Speciality Sketches"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
         "responses": {
           "200": {
             "description": "get All getAllSpeciality",
@@ -322,8 +387,188 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Speciality Sketches"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Speciality Sketches"
+        ],
+        "responses": {
+          "200": {
+            "description": "deleted Successfully"
+          }
+        }
+      }
+    },
+    "/api/ccc/postcccMaster": {
+      "post": {
+        "description": "To Create a Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create Ccc",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postcccMaster"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/getCccMasterById": {
+      "post": {
+        "description": "To get a Ccc Master Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Ccc_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getCccMasterById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch Successfully",
+            "schema": {
+              "$ref": "#/definitions/getChiefMasterById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/updateCccMasterById": {
+      "post": {
+        "description": "To Update Ccc Master Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpadteCcc",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateCccMasterById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateCccMasterById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/ccc/getAllCccMaster": {
+      "post": {
+        "description": "To get All Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Ccc Master",
+            "schema": {
+              "$ref": "#/definitions/getAllCccMaster"
+            }
+          }
+        }
+      }
+    },
+    "/api/ccc/deleteCccMaster": {
+      "post": {
+        "description": "To Delete Ccc Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Ccc_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteCccMaster"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Ccc Master"
+        ],
         "responses": {
           "200": {
             "description": "deleted Successfully"
@@ -342,8 +587,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Procedures Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -375,8 +625,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Procedures Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -408,8 +663,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Procedures"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -424,27 +684,45 @@
     },
     "/api/procedures/getProcedures": {
       "post": {
-        "description": "Get Successfully",
+        "description": "get list Procedure",
         "parameters": [
           {
-            "in": "header",
-            "name": "user_uuid",
+            "in": "body",
+            "name": "getlistProcedureMaster",
             "required": true,
-            "type": "integer"
-          }
-        ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Procedures"],
-        "responses": {
-          "200": {
-            "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getProcedures"
             }
+          },
+          {
+            "name": "user_uuid",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "You do not have necessary permissions for the resource",
+            "schema": {
+              "type": "object"
+            }
           }
         },
-        "x-auth-type": "Application & Application User",
-        "x-throttling-tier": "Unlimited"
+        "tags": [
+          "Procedures"
+        ]
       }
     },
     "/api/notetemplate/createNoteTemplate": {
@@ -466,8 +744,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -499,8 +782,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -524,8 +812,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -557,8 +850,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -590,8 +888,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Note Template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Note Template"
+        ],
         "responses": {
           "200": {
             "description": "update Successfully",
@@ -623,8 +926,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Vitals Lonic"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Vitals Lonic"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -648,8 +956,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Vitals Lonic"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Vitals Lonic"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -681,8 +994,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Vitals Lonic"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Vitals Lonic"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -697,7 +1015,7 @@
     },
     "/api/vitalLonic/deletevitalslonic": {
       "post": {
-        "description": "Inserted Successfully",
+        "description": "Delete Successfully",
         "parameters": [
           {
             "in": "header",
@@ -714,8 +1032,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Vitals Lonic"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Vitals Lonic"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -747,8 +1070,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Vitals Lonic"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Vitals Lonic"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -772,8 +1100,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Reference"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Reference"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -805,8 +1138,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -838,8 +1176,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -863,8 +1206,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -896,8 +1244,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -929,8 +1282,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "Delete Successfully",
@@ -962,8 +1320,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations"
+        ],
         "responses": {
           "200": {
             "description": "update Successfully",
@@ -995,8 +1358,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations Schedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations Schedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1020,8 +1388,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations Schedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations Schedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1053,8 +1426,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations Schedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations Schedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1086,8 +1464,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations Schedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations Schedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1119,8 +1502,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Immunizations Schedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Immunizations Schedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1152,8 +1540,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Common Reference Group"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Common Reference Group"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1185,8 +1578,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Common Reference Group"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Common Reference Group"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1218,8 +1616,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Common Reference Group"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Common Reference Group"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1251,8 +1654,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Common Reference Group"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Common Reference Group"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1284,8 +1692,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Common Reference Group"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Common Reference Group"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -1317,8 +1730,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Allergy Master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Allergy Master"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted allergy"
@@ -1337,8 +1755,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Allergy Master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Allergy Master"
+        ],
         "responses": {
           "200": {
             "description": "get Allergy Master"
@@ -1365,8 +1788,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Allergy Master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Allergy Master"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -1393,8 +1821,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Allergy Master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Allergy Master"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1421,8 +1854,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Allergy Master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Allergy Master"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1449,8 +1887,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRWorkflowSettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRWorkflowSettings"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1477,8 +1920,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRWorkflowSettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRWorkflowSettings"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -1505,8 +1953,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRWorkflowSettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRWorkflowSettings"
+        ],
         "responses": {
           "200": {
             "description": "Upadted Successfully"
@@ -1525,8 +1978,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRWorkflowSettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRWorkflowSettings"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -1556,8 +2014,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRHistorySettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRHistorySettings"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Workflow"
@@ -1576,8 +2039,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRHistorySettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRHistorySettings"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -1607,8 +2075,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRHistorySettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRHistorySettings"
+        ],
         "responses": {
           "200": {
             "description": "Upadted Successfully"
@@ -1635,8 +2108,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRHistorySettings"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRHistorySettings"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -1663,8 +2141,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientChiefComplaints"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientChiefComplaints"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -1672,7 +2155,6 @@
         }
       }
     },
-
     "/api/patient-chief-complaints/getMockJson": {
       "get": {
         "description": "To get Patient chief Complaints",
@@ -1684,8 +2166,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientChiefComplaints"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientChiefComplaints"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully"
@@ -1712,8 +2199,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRPatientVitals"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted EMR Patient Vitals"
@@ -1732,8 +2224,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRPatientVitals"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Fetched"
@@ -1781,8 +2278,13 @@
             "format": "date"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRPatientVitals"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -1845,8 +2347,13 @@
             "required": true
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientChiefComplaints"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientChiefComplaints"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -1876,8 +2383,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Encounter"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted Encounter"
@@ -1932,8 +2444,13 @@
             "required": true
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Encounter"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter"
@@ -1952,11 +2469,49 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EncounterType"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EncounterType"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter Type"
+          }
+        }
+      }
+    },
+    "/api/encounter/updateECdischarge": {
+      "put": {
+        "description": "To update a Encounter For Patient discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateEncounter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateEncounter"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Inserted Encounter"
           }
         }
       }
@@ -1980,8 +2535,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientDiagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Inserted Patient Diagnosis"
@@ -2000,8 +2560,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientDiagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Fetched Patient Diagnosis"
@@ -2061,8 +2626,13 @@
             "format": "date"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientDiagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Fetched Encounter Type"
@@ -2089,8 +2659,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientDiagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Deleted"
@@ -2123,8 +2698,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["favourite"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -2153,7 +2733,9 @@
             }
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful Delete",
@@ -2189,13 +2771,48 @@
             "type": "integer"
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful",
             "schema": {
               "$ref": "#/definitions/getFavourite"
             }
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/favourite/getAllFavourites": {
+      "post": {
+        "description": "To get all list of favourites for the Clinical Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "pagination",
+            "schema": {
+              "$ref": "#/definitions/getAllFavourite"
+            }
+          }
+        ],
+        "tags": [
+          "favourite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
           },
           "400": {
             "description": "Sorry! Something Went Wrong"
@@ -2222,7 +2839,9 @@
             "type": "integer"
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2255,7 +2874,9 @@
             "type": "integer"
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2288,7 +2909,9 @@
             "type": "integer"
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2326,7 +2949,9 @@
             "type": "integer"
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successful",
@@ -2361,7 +2986,9 @@
             }
           }
         ],
-        "tags": ["favourite"],
+        "tags": [
+          "favourite"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -2397,8 +3024,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2440,8 +3072,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -2473,8 +3110,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["template"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -2506,7 +3148,9 @@
             }
           }
         ],
-        "tags": ["template"],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "Successful Delete"
@@ -2535,7 +3179,9 @@
             }
           }
         ],
-        "tags": ["template"],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -2571,8 +3217,13 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2604,8 +3255,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2637,8 +3293,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -2670,8 +3331,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "get all datails Successfully",
@@ -2703,8 +3369,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "delete Successfully",
@@ -2736,8 +3407,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "updated Successfully",
@@ -2769,8 +3445,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Diagnosis"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
         "responses": {
           "200": {
             "description": "fetch the details Successfully",
@@ -2806,8 +3487,13 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2831,8 +3517,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsDuration"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsDuration"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -2864,8 +3555,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsDuration"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsDuration"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -2897,8 +3593,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully",
@@ -2922,8 +3623,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -2955,8 +3661,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -2988,8 +3699,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -3021,8 +3737,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["ChiefComplaintsMaster"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -3054,14 +3775,57 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["vital_master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
         "responses": {
           "200": {
             "description": "successful operation"
           },
           "400": {
             "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/vitalMaster/deletevitals": {
+      "post": {
+        "description": "Delete Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "delete Successfully",
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
           }
         },
         "x-auth-type": "Application & Application User",
@@ -3079,8 +3843,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["vital_master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -3104,8 +3873,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["vital_master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully"
@@ -3126,14 +3900,53 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["vital_master"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
             "schema": {
               "$ref": "#/definitions/getALLVitalsmaster"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/vitalMaster/getVitalByID": {
+      "post": {
+        "description": "update template details by Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updatetemplatedetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getVitalByID"
+            }
+          }
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Updated"
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -3159,7 +3972,9 @@
             }
           }
         ],
-        "tags": ["template"],
+        "tags": [
+          "template"
+        ],
         "responses": {
           "200": {
             "description": "Successfully Updated"
@@ -3183,8 +3998,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3214,8 +4034,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3239,8 +4064,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3312,8 +4142,13 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3343,8 +4178,14 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json", "application/xml", "application/file"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml",
+          "application/file"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3374,8 +4215,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["attachment"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "attachment"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3407,8 +4253,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["TreatmentKit"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TreatmentKit"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -3447,8 +4298,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["TreatmentKit"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TreatmentKit"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Treatment Kit Successfully",
@@ -3480,8 +4336,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Profiles"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -3492,7 +4353,7 @@
       }
     },
     "/api/profiles/getAll": {
-      "get": {
+      "post": {
         "summary": "To get all the Profile Details ",
         "parameters": [
           {
@@ -3500,16 +4361,26 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
-          }
-        ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Profiles"],
-        "responses": {
-          "200": {
-            "description": "get All Profiles",
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/allProfiles"
             }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Profiles"
           }
         }
       }
@@ -3533,8 +4404,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientAllergyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientAllergyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -3561,8 +4437,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientAllergyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientAllergyHistory"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -3592,8 +4473,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientAllergyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientAllergyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -3623,8 +4509,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientAllergyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientAllergyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -3662,8 +4553,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientAllergyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientAllergyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -3687,7 +4583,7 @@
             "type": "integer"
           },
           {
-            "in": "query",
+            "in": "header",
             "name": "critical_care_type",
             "required": true,
             "type": "integer"
@@ -3701,8 +4597,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3738,8 +4639,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3763,7 +4669,7 @@
             "type": "integer"
           },
           {
-            "in": "query",
+            "in": "header",
             "name": "critical_care_type",
             "required": true,
             "type": "integer"
@@ -3777,8 +4683,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
         "responses": {
           "200": {
             "description": "successful operation"
@@ -3826,8 +4737,13 @@
             "format": "date"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3851,8 +4767,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["CriticalCare"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "CriticalCare"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3866,7 +4787,7 @@
       }
     },
     "/api/my-patient-list/getMyPatientList": {
-      "get": {
+      "post": {
         "summary": "Get List of my patient for the doctor",
         "parameters": [
           {
@@ -3890,46 +4811,30 @@
           {
             "in": "query",
             "name": "from_date",
+            "required": true,
             "type": "string"
           },
           {
             "in": "query",
             "name": "to_date",
+            "required": true,
             "type": "string"
           },
           {
-            "in": "query",
-            "name": "searchKey",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchValue",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "page_size",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "page_no",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "sort_order",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "sort_field",
-            "type": "string"
+            "in": "body",
+            "name": "get list of patientlist",
+            "schema": {
+              "$ref": "#/definitions/getPatientListDetails"
+            }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["MyPatientList"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "MyPatientList"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation",
@@ -3961,8 +4866,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["FamilyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "FamilyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -3992,8 +4902,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["FamilyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "FamilyHistory"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4023,8 +4938,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["FamilyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "FamilyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -4054,8 +4974,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["FamilyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "FamilyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -4093,8 +5018,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["FamilyHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "FamilyHistory"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -4126,8 +5056,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Profiles"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4138,7 +5073,7 @@
       }
     },
     "/api/profiles/getById": {
-      "post": {
+      "get": {
         "summary": "To get profile Details by Id ",
         "parameters": [
           {
@@ -4148,19 +5083,25 @@
             "type": "integer"
           },
           {
-            "in": "body",
-            "name": "uuid",
+            "in": "query",
+            "name": "profile_uuid",
             "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getProfileById"
             }
-          }
-        ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Profiles"],
-        "responses": {
-          "200": {
-            "description": "get Successfully"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -4186,8 +5127,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Profiles"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully"
@@ -4216,8 +5162,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["SurgeryHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4247,8 +5198,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["SurgeryHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4278,8 +5234,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["SurgeryHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
         "responses": {
           "200": {
             "description": "Fetch Successfully",
@@ -4317,8 +5278,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["SurgeryHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryHistory"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -4360,8 +5326,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Encounter"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
         "responses": {
           "200": {
             "description": "sucessful operation"
@@ -4394,8 +5365,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["EMRPatientVitals"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "EMRPatientVitals"
+        ],
         "responses": {
           "200": {
             "description": "Fetched Successfully",
@@ -4425,8 +5401,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientImmunizationSchedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientImmunizationSchedule"
+        ],
         "responses": {
           "200": {
             "description": "Inserted Successfully"
@@ -4453,8 +5434,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientImmunizationSchedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientImmunizationSchedule"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4484,8 +5470,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientImmunizationSchedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientImmunizationSchedule"
+        ],
         "responses": {
           "200": {
             "description": "Deleted Successfully",
@@ -4523,8 +5514,13 @@
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientImmunizationSchedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientImmunizationSchedule"
+        ],
         "responses": {
           "200": {
             "description": "Updated Successfully",
@@ -4554,8 +5550,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientImmunizationSchedule"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientImmunizationSchedule"
+        ],
         "responses": {
           "200": {
             "description": "get All PatientImmunization",
@@ -4568,9 +5569,9 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    "/api/referal-history/getReferralHistory": {
+    "/api/patient-referral/getReferralHistory": {
       "get": {
-        "description": "To get Family History",
+        "description": "To get Referral History",
         "parameters": [
           {
             "in": "header",
@@ -4585,8 +5586,13 @@
             "type": "integer"
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["PatientReferralHistory"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientReferral"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully",
@@ -4598,9 +5604,942 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/patient-referral/createPatientReferral": {
+      "post": {
+        "description": "To Create Patient Referral",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientReferral ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientReferral"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientReferral"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/body-side/get-list": {
+      "get": {
+        "description": "To get List of Body Side",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "BodySide"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/surgery-position/get-list": {
+      "get": {
+        "description": "To get List of Surgery Position",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "SurgeryPosition"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-transfer/create": {
+      "post": {
+        "description": "To Create Patient Transfer",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "create PatientTransfer ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createPatientTransfer"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTransfer"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/procedures/getProceduresByFilter": {
+      "get": {
+        "description": "To get List of Procedures",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "searchKey",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchValue",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getBodySide"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/profiles/getAllValueTypes": {
+      "get": {
+        "summary": "To get List of valueTypes",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getAllValuesTypes"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getDischargeDetails": {
+      "get": {
+        "summary": "To get List of patient detials to discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounter_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDischargeDetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/encounter/delete-by-id": {
+      "put": {
+        "summary": "To get List of patient detials to discharge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/certificates/create": {
+      "post": {
+        "summary": "To Create Patient certficates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Create Patient certficates ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientCertficates"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientCertficates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          },
+          "400": {
+            "description": "Insertion failed"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/certificates/GetAll": {
+      "get": {
+        "summary": "To get List of patient Certificates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientCertficates"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/treatment-kit/getAll": {
+      "post": {
+        "description": "To get List of  patient treatmentkit details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "List of  patient treatmentkit details ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/allTreatmentKit"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TreatmentKit"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/encounter/update-tat-time": {
+      "put": {
+        "summary": "To update ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "encounterDetail",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encounterDetail"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getdischargetype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdischargetype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getdeathtype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdeathtype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomeddetails": {
+      "get": {
+        "summary": "To get List of snomed detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomeddetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomedparent": {
+      "get": {
+        "summary": "To get List of snomed parent detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedparentdetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomedchildren": {
+      "get": {
+        "summary": "To get List of snomed children detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedchildrendetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-treatment/create": {
+      "post": {
+        "summary": "To create patient treatment Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientTreatment"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/template/getalltemplates": {
+      "post": {
+        "description": "To get all templates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "page",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get all datails Successfully",
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/encounter/getPatientDoc": {
+      "get": {
+        "description": "To get a Encounter for Patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Encounter"
+          }
+        }
+      }
+    },
+    "/api/sketch/create": {
+      "post": {
+        "description": "To create patient specality sketch details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "sketch",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addSketch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "patient-specality-Sketch"
+        ],
+        "responses": {
+          "200": {
+            "description": "Insterted patient sketch details Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
+    "getVitalByID": {
+      "type": "object",
+      "properties": {
+        "Vital_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "encounterDetail": {
+      "type": "object",
+      "properties": {
+        "encounterDoctorId": {
+          "type": "integer"
+        },
+        "tat_end_time": {
+          "type": "string"
+        }
+      }
+    },
+    "deletevitals": {
+      "type": "object",
+      "properties": {
+        "vitals_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "getcccmasterbytype": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "getBodySide": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "postcccMaster": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "object",
+          "properties": {
+            "critical_care_type_uuid": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string",
+              "example": "say somthing about related to fever"
+            },
+            "critical_care_uom_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "mnemonic_code_master_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "loinc_code_master_uuid": {
+              "type": "integer",
+              "example": 1
+            },
+            "revision": {
+              "type": "boolean",
+              "example": true
+            },
+            "status": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "body1": {
+          "type": "object",
+          "properties": {
+            "concept_code": {
+              "type": "string"
+            },
+            "concept_name": {
+              "type": "string"
+            },
+            "value_type_uuid": {
+              "type": "integer"
+            },
+            "display_order": {
+              "type": "integer"
+            },
+            "drug_frequency_uuid": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
+            }
+          }
+        },
+        "body2": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept_value": {
+                "type": "string"
+              },
+              "value_from": {
+                "type": "string"
+              },
+              "value_to": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "getCccMasterById": {
+      "type": "object",
+      "properties": {
+        "Ccc_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateCccMasterById": {
+      "type": "object",
+      "properties": {
+        "Ccc_id": {
+          "type": "integer"
+        },
+        "critical_care_type_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "critical_care_uom_uuid": {
+          "type": "integer"
+        },
+        "mnemonic_code_master_uuid": {
+          "type": "integer"
+        },
+        "loinc_code_master_uuid": {
+          "type": "integer"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
+    "getAllCccMaster": {
+      "type": "object",
+      "properties": {}
+    },
+    "deleteCccMaster": {
+      "type": "object",
+      "properties": {
+        "Ccc_id": {
+          "type": "integer"
+        }
+      }
+    },
     "deleteProcedures": {
       "type": "object",
       "properties": {
@@ -4820,6 +6759,10 @@
     "getProcedures": {
       "type": "object",
       "properties": {
+        "search": {
+          "type": "string",
+          "example": ""
+        },
         "procedure_scheme_uuid": {
           "type": "integer"
         },
@@ -5636,9 +7579,6 @@
         },
         "is_active": {
           "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
         }
       }
     },
@@ -5676,9 +7616,6 @@
           "type": "integer"
         },
         "is_active": {
-          "type": "integer"
-        },
-        "revision": {
           "type": "integer"
         }
       }
@@ -5920,6 +7857,12 @@
           },
           "revision": {
             "type": "integer"
+          },
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -5952,10 +7895,6 @@
           "consultation_uuid": {
             "type": "integer",
             "example": 1
-          },
-          "performed_date": {
-            "type": "string",
-            "example": "2019-11-21"
           },
           "vital_group_uuid": {
             "type": "integer",
@@ -6009,9 +7948,11 @@
             "type": "string",
             "example": "1000"
           },
-          "revision": {
-            "type": "integer",
-            "example": 1
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -6188,8 +8129,37 @@
             },
             "session_type_uuid": {
               "type": "number"
+            },
+            "tat_start_time": {
+              "type": "string"
+            },
+            "tat_end_time": {
+              "type": "string"
             }
           }
+        }
+      }
+    },
+    "updateEncounter": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "number"
+        },
+        "encounter_uuid": {
+          "type": "number"
+        },
+        "encounter_type_uuid": {
+          "type": "number"
+        },
+        "patient_uuid": {
+          "type": "number"
+        },
+        "discharge_type_uuid": {
+          "type": "number"
+        },
+        "discharge_date": {
+          "type": "string"
         }
       }
     },
@@ -6242,6 +8212,12 @@
           },
           "patient_treatment_uuid": {
             "type": "number"
+          },
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -6335,6 +8311,9 @@
                 "type": "integer"
               },
               "quantity": {
+                "type": "integer"
+              },
+              "speciality_sketch_uuid": {
                 "type": "integer"
               }
             }
@@ -6570,6 +8549,23 @@
           "diagnosis_description": {
             "type": "string"
           }
+        }
+      }
+    },
+    "getAllFavourite": {
+      "type": "object",
+      "properties": {
+        "recordsPerPage": {
+          "type": "integer"
+        },
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchKey": {
+          "type": "string"
+        },
+        "searchValue": {
+          "type": "string"
         }
       }
     },
@@ -8026,93 +10022,90 @@
         "profiles": {
           "type": "object",
           "properties": {
-            "profile_uuid": {
+            "profile_type_uuid": {
               "type": "integer"
-            }
-          }
-        },
-        "sections": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "section_type_uuid": {
-                "type": "integer"
-              },
-              "section_note_type_uuid": {
-                "type": "integer"
-              },
-              "name": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
-              },
-              "sref": {
-                "type": "string"
-              },
-              "display_order": {
-                "type": "integer"
-              },
-              "categories": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "description": {
-                      "type": "string"
-                    },
-                    "category_type_uuid": {
-                      "type": "integer"
-                    },
-                    "concepts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          },
-                          "value_type_uuid": {
-                            "type": "integer"
-                          },
-                          "is_mandatory": {
-                            "type": "string"
-                          },
-                          "display_order": {
-                            "type": "integer"
-                          },
-                          "is_multiple": {
-                            "type": "string"
-                          },
-                          "category_concept_values": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "category_concept_uuid": {
-                                  "type": "integer"
-                                },
-                                "value_code": {
-                                  "type": "string"
-                                },
-                                "value_name": {
-                                  "type": "string"
-                                },
-                                "display_order": {
-                                  "type": "integer"
+            },
+            "profile_code": {
+              "type": "string"
+            },
+            "profile_name": {
+              "type": "string"
+            },
+            "profile_description": {
+              "type": "string"
+            },
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_uuid": {
+                    "type": "integer"
+                  },
+                  "activity_uuid": {
+                    "type": "integer"
+                  },
+                  "display_order": {
+                    "type": "integer"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "category_uuid": {
+                          "type": "integer"
+                        },
+                        "display_order": {
+                          "type": "integer"
+                        },
+                        "concepts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "value_type_uuid": {
+                                "type": "integer"
+                              },
+                              "is_mandatory": {
+                                "type": "string"
+                              },
+                              "display_order": {
+                                "type": "integer"
+                              },
+                              "is_multiple": {
+                                "type": "string"
+                              },
+                              "conceptvalues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "value_code": {
+                                      "type": "string"
+                                    },
+                                    "value_name": {
+                                      "type": "string"
+                                    },
+                                    "display_order": {
+                                      "type": "integer"
+                                    }
+                                  }
                                 }
                               }
                             }
@@ -8131,61 +10124,29 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "code": {
+        "recordsPerPage": {
           "type": "integer"
         },
-        "message": {
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchSortBy": {
           "type": "string"
         },
-        "responseContents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "uuid": {
-                "type": "integer"
-              },
-              "profile_type_uuid": {
-                "type": "integer"
-              },
-              "profile_code": {
-                "type": "string"
-              },
-              "profile_name": {
-                "type": "string"
-              },
-              "profile_description": {
-                "type": "string"
-              },
-              "facility_uuid": {
-                "type": "integer"
-              },
-              "department_uuid": {
-                "type": "integer"
-              },
-              "is_active": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              },
-              "revision": {
-                "type": "integer"
-              },
-              "created_by": {
-                "type": "integer"
-              },
-              "modified_by": {
-                "type": "integer"
-              },
-              "created_date": {
-                "type": "string"
-              },
-              "modified_date": {
-                "type": "string"
-              }
-            }
-          }
+        "searchSortOrder": {
+          "type": "string"
+        },
+        "searchName": {
+          "type": "string"
+        },
+        "depertmentId": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchLetters": {
+          "type": "string"
         }
       }
     },
@@ -8344,14 +10305,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
               "cc_chart_uuid": {
                 "type": "integer",
                 "example": 1
@@ -8363,6 +10316,14 @@
               "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
+              },
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
               },
               "observed_value": {
                 "type": "integer",
@@ -8392,6 +10353,35 @@
         },
         "patient_uuid": {
           "type": "integer"
+        }
+      }
+    },
+    "getPatientListDetails": {
+      "type": "object",
+      "properties": {
+        "searchKey": {
+          "type": "string",
+          "example": "pa_pin or pd_mobile"
+        },
+        "searchValue": {
+          "type": "string",
+          "example": "1"
+        },
+        "page_no": {
+          "type": "integer",
+          "example": 1
+        },
+        "page_size": {
+          "type": "integer",
+          "example": 1
+        },
+        "sort_field": {
+          "type": "string",
+          "example": "d_uuid"
+        },
+        "sort_order": {
+          "type": "string",
+          "example": "DESC"
         }
       }
     },
@@ -8584,13 +10574,9 @@
           "items": {
             "type": "object",
             "properties": {
-              "from_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
-              },
-              "to_date": {
-                "type": "string",
-                "example": "2019-11-08 05:03:00"
+              "uuid": {
+                "type": "integer",
+                "example": 1
               },
               "cc_chart_uuid": {
                 "type": "integer",
@@ -8603,6 +10589,14 @@
               "cc_concept_value_uuid": {
                 "type": "integer",
                 "example": 1
+              },
+              "from_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
+              },
+              "to_date": {
+                "type": "string",
+                "example": "2019-11-08 05:03:00"
               },
               "observed_value": {
                 "type": "integer",
@@ -8625,35 +10619,91 @@
       }
     },
     "profilesAdd": {
-      "type": "object",
-      "properties": {
-        "profile_type_uuid": {
-          "type": "integer"
-        },
-        "profile_code": {
-          "type": "string"
-        },
-        "profile_name": {
-          "type": "string"
-        },
-        "profile_description": {
-          "type": "string"
-        },
-        "facility_uuid": {
-          "type": "integer"
-        },
-        "department_uuid": {
-          "type": "integer"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "patient_uuid": {
+            "type": "integer"
+          },
+          "encounter_uuid": {
+            "type": "integer"
+          },
+          "encounter_doctor_uuid": {
+            "type": "integer"
+          },
+          "consultation_uuid": {
+            "type": "integer"
+          },
+          "profile_type_uuid": {
+            "type": "integer"
+          },
+          "profile_uuid": {
+            "type": "integer"
+          },
+          "section_uuid": {
+            "type": "integer"
+          },
+          "section_key": {
+            "type": "string"
+          },
+          "activity_uuid": {
+            "type": "integer"
+          },
+          "profile_section_uuid": {
+            "type": "integer"
+          },
+          "category_uuid": {
+            "type": "integer"
+          },
+          "category_key": {
+            "type": "string"
+          },
+          "profile_section_category_uuid": {
+            "type": "integer"
+          },
+          "concept_uuid": {
+            "type": "integer"
+          },
+          "concept_key": {
+            "type": "string"
+          },
+          "profile_section_category_concept_uuid": {
+            "type": "integer"
+          },
+          "term_key": {
+            "type": "string"
+          },
+          "profile_section_category_concept_value_uuid": {
+            "type": "integer"
+          },
+          "result_value": {
+            "type": "integer"
+          },
+          "result_value_rich_text": {
+            "type": "string"
+          },
+          "result_value_json": {
+            "type": "string"
+          },
+          "result_binary": {
+            "type": "string"
+          },
+          "result_path": {
+            "type": "string"
+          },
+          "entry_date": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          }
         }
       }
     },
     "getProfileById": {
       "type": "object",
-      "properties": {
-        "uuid": {
-          "type": "integer"
-        }
-      }
+      "properties": {}
     },
     "deleteProfiles": {
       "type": "object",
@@ -8958,6 +11008,14 @@
         }
       }
     },
+    "allPatientImmunization": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
+        }
+      }
+    },
     "getReferralHistory": {
       "type": "object",
       "properties": {
@@ -8969,11 +11027,924 @@
         }
       }
     },
-    "deleteDiagnosisById":{
+    "createPatientReferral": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referred_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "referral_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_deptartment_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referral_comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
+    "deleteDiagnosisById": {
       "type": "object",
       "properties": {
         "diagnosisId": {
           "type": "integer"
+        }
+      }
+    },
+    "createPatientTransfer": {
+      "type": "object",
+      "properties": {
+        "patient_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        },
+        "transfer_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_facility_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_department_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_ward_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
+    "getAllValuesTypes": {
+      "type": "object",
+      "properties": {}
+    },
+    "getDischargeDetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "patientCertficates": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        },
+        "encounter_uuid": {
+          "type": "integer"
+        },
+        "ward_master_uuid": {
+          "type": "integer"
+        },
+        "admission_status_uuid": {
+          "type": "integer"
+        },
+        "discharge_type_uuid": {
+          "type": "integer"
+        },
+        "doctor_uuid": {
+          "type": "integer"
+        },
+        "data_template": {
+          "type": "string"
+        },
+        "note_type_uuid": {
+          "type": "integer"
+        },
+        "note_template_uuid": {
+          "type": "integer"
+        },
+        "certified_by": {
+          "type": "integer"
+        },
+        "certificate_status_uuid": {
+          "type": "integer"
+        },
+        "released_to_patient": {
+          "type": "integer"
+        },
+        "released_by": {
+          "type": "integer"
+        },
+        "aproved_by": {
+          "type": "integer"
+        },
+        "approved_on": {
+          "type": "string"
+        }
+      }
+    },
+    "getdischargetype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getdeathtype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomeddetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedparentdetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedchildrendetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "patientTreatment": {
+      "type": "object",
+      "properties": {
+        "patientTreatment": {
+          "type": "object",
+          "properties": {
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "patient_uuid": {
+              "type": "integer"
+            },
+            "encounter_uuid": {
+              "type": "integer"
+            },
+            "encounter_type_uuid": {
+              "type": "integer"
+            },
+            "consultation_uuid": {
+              "type": "integer"
+            },
+            "treatment_kit_uuid": {
+              "type": "integer"
+            },
+            "treatment_status_uuid": {
+              "type": "integer"
+            },
+            "comments": {
+              "type": "string"
+            }
+          }
+        },
+        "patientDiagnosis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "facility_uuid": {
+                "type": "number"
+              },
+              "department_uuid": {
+                "type": "number"
+              },
+              "patient_uuid": {
+                "type": "number"
+              },
+              "encounter_uuid": {
+                "type": "number"
+              },
+              "encounter_type_uuid": {
+                "type": "number"
+              },
+              "consultation_uuid": {
+                "type": "number"
+              },
+              "diagnosis_uuid": {
+                "type": "number"
+              },
+              "condition_type_uuid": {
+                "type": "number"
+              },
+              "condition_status_uuid": {
+                "type": "number"
+              },
+              "category_uuid": {
+                "type": "number"
+              },
+              "type_uuid": {
+                "type": "number"
+              },
+              "grade_uuid": {
+                "type": "number"
+              },
+              "body_site_uuid": {
+                "type": "number"
+              },
+              "prescription_uuid": {
+                "type": "number"
+              },
+              "patient_treatment_uuid": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "patientPrescription": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "dispense_status_uuid": {
+                  "type": "number"
+                },
+                "prescription_status_uuid": {
+                  "type": "number"
+                },
+                "store_master_uuid": {
+                  "type": "number"
+                },
+                "patient_uuid": {
+                  "type": "number"
+                },
+                "department_uuid": {
+                  "type": "number"
+                },
+                "doctor_uuid": {
+                  "type": "number"
+                },
+                "encounter_uuid": {
+                  "type": "number"
+                },
+                "encounter_type_uuid": {
+                  "type": "number"
+                },
+                "treatment_kit_uuid": {
+                  "type": "number"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_master_uuid": {
+                    "type": "number"
+                  },
+                  "drug_route_uuid": {
+                    "type": "number"
+                  },
+                  "drug_frequency_uuid": {
+                    "type": "number"
+                  },
+                  "duration": {
+                    "type": "number"
+                  },
+                  "duration_period_uuid": {
+                    "type": "number"
+                  },
+                  "drug_instruction_uuid": {
+                    "type": "number"
+                  },
+                  "prescribed_quantity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientRadiology": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientInvestigation": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientLab": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "getalltemp": {
+      "type": "object",
+      "properties": {
+        "pageNo": {
+          "type": "number",
+          "example": 0
+        },
+        "paginationSize": {
+          "type": "number",
+          "example": 10
+        },
+        "sortOrder": {
+          "type": "string",
+          "example": "ASC"
+        },
+        "search": {
+          "type": "string",
+          "example": "fever"
+        }
+      }
+    },
+    "allTreatmentKit": {
+      "type": "object",
+      "properties": {
+        "recordsPerPage": {
+          "type": "integer"
+        },
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchSortBy": {
+          "type": "string"
+        },
+        "searchSortOrder": {
+          "type": "string"
+        },
+        "searchName": {
+          "type": "string"
+        },
+        "depertmentId": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchLetters": {
+          "type": "string"
+        }
+      }
+    },
+    "addSketch": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        },
+        "encounter_uuid": {
+          "type": "integer"
+        },
+        "encounter_type_uuid": {
+          "type": "integer"
+        },
+        "doctor_uuid": {
+          "type": "integer"
+        },
+        "consultation_uuid": {
+          "type": "integer"
+        },
+        "speciality_sketch_uuid": {
+          "type": "integer"
+        },
+        "sketch_path": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "string"
         }
       }
     }

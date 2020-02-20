@@ -13,6 +13,7 @@ const vw_template = db.vw_template_master_details;
 const vw_lab = db.vw_lab_template;
 const vw_diet = db.vw_template_master_diet;
 const vw_ris = db.vw_ris_template;
+const vw_all_temp = db.vw_all_templates;
 
 const tmpmstrController = () => {
 	/**
@@ -83,10 +84,10 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-        //console.log("temp list --------",templateList);
+
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
-          //console.log("fetched data", templateData);
+
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContent: templateData });
@@ -103,44 +104,58 @@ const tmpmstrController = () => {
   };
 
   const _createTemplate = async (req, res) => {
+    if (Object.keys(req.body).length != 0) {
+      try {
+        // plucking data req body
+        const templateMasterReqData = req.body.headers;
+        const templateMasterDetailsReqData = req.body.details;
+        let userUUID = req.headers.user_uuid;
+        let temp_name = templateMasterReqData.name;
+        //let display_order = templateMasterReqData.display_order;
 
-    try {
-      // plucking data req body
-      const templateMasterReqData = req.body.headers;
-      const templateMasterDetailsReqData = req.body.details;
-      let userUUID = req.headers.user_uuid;
-      let temp_name = templateMasterReqData.name;
-      let temp_type_id = templateMasterReqData.template_type_uuid;
+        templateTransaction = await db.sequelize.transaction();
 
-      templateTransaction = await db.sequelize.transaction();
-      const exists = await nameExists(temp_name, userUUID);
+        //checking template already exits or not
+        const exists = await nameExists(temp_name, userUUID);
 
-      if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
-        return res.status(400).send({ code: httpStatus.OK, message: "Template name exists" });
-      }
-      else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
+        //chechking display order allocation
+        //const dspexists = await dspExists(display_order, userUUID);
 
-        let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
-        if (createData) {
-          await templateTransaction.commit();
-          templateTransStatus = true;
-          return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
+
+        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+          //template already exits
+          return res.status(400).send({ code: httpStatus[400], message: "Template name exists" });
         }
-      } else {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
-        return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-      }
-    } catch (err) {
-      //await templateTransaction.rollback();
-      //templateTransStatus = true;
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
-    }
-    finally {
-      if (templateTransaction && !templateTransStatus) {
-        await templateTransaction.rollback();
+        // else if (dspexists && dspexists.length > 0) {
+        //   //template not exits and display order already allocated
+        //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
+        // }
+        else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
+
+          let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
+          if (createData) {
+            await templateTransaction.commit();
+            templateTransStatus = true;
+            return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
+          }
+        } else {
+          await templateTransaction.rollback();
+          templateTransStatus = true;
+          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+      } catch (err) {
+        //await templateTransaction.rollback();
+        //templateTransStatus = true;
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
+      finally {
+        if (templateTransaction && !templateTransStatus) {
+          await templateTransaction.rollback();
+          return res.status(400).send({ code: httpStatus.BAD_REQUEST });
+        }
+      }
+    } else {
+      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
   };
 
@@ -158,14 +173,14 @@ const tmpmstrController = () => {
       try {
         if (user_uuid && templateMasterReqData && templateMasterDetailsReqData) {
 
-          templateTransaction = await db.sequelize.transaction();
+          //templateTransaction = await db.sequelize.transaction();
 
           const del_temp_drugs = (tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0) ? await removedTmpDetails(tempmstrdetailsTbl, tmpDtlsRmvdDrugs, user_uuid) : '';
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(templateMasterNewDrugsDetailsReqData, { returning: true });
-          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id }, transaction:templateTransaction }, {returning: true, plain: true });
-          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid, templateTransaction));
-          await templateTransaction.commit();
-          templateTransStatus = true;
+          const temp_mas = await tempmstrTbl.update(templateMasterUpdateData, { where: { uuid: templateMasterReqData.template_id } }, { returning: true, plain: true });
+          const temp_mas_dtls = await Promise.all(getTemplateMasterDetailsWithUUID(tempmstrdetailsTbl, templateMasterDetailsReqData, templateMasterReqData, user_uuid));
+          // await templateTransaction.commit();
+          // templateTransStatus = true;
 
           if (temp_mas && temp_mas_dtls) {
             //await templateTransaction.commit();
@@ -173,20 +188,20 @@ const tmpmstrController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", responseContent: { tm: temp_mas, tmd: temp_mas_dtls } });
           }
         } else {
-          await templateTransaction.rollback();
-          templateTransStatus = true;
+          // await templateTransaction.rollback();
+          // templateTransStatus = true;
           return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
         }
       } catch (ex) {
-        await templateTransaction.rollback();
-        templateTransStatus = true;
+        // await templateTransaction.rollback();npm 
+        // templateTransStatus = true;
         return res.status(400).send({ code: httpStatus[400], message: ex.message });
       }
-      finally {
-        if (templateTransaction && !templateTransStatus) {
-          await templateTransaction.rollback();
-        }
-      }
+      // finally {
+      //   if (templateTransaction && !templateTransStatus) {
+      //     await templateTransaction.rollback();
+      //   }
+      // }
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
@@ -223,8 +238,75 @@ const tmpmstrController = () => {
         return res.status(400).send({ code: httpStatus[400], message: "No Request headers or Body Found" });
       }
     } catch (ex) {
-      //console.log('ex', ex);
       return res.status(400).send({ code: httpStatus[400], message: ex.message });
+    }
+  };
+
+  const _getalltemplates = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let getsearch = req.body;
+
+    pageNo = 0;
+
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    let sortField = 'tm_template_type_uuid';
+    let sortOrder = 'ASC';
+
+    if (getsearch.pageNo) {
+      let temp = parseInt(getsearch.pageNo);
+      if (temp && (temp != NaN)) {
+        pageNo = temp;
+      }
+    }
+
+    if (getsearch.sortField) {
+      sortField = getsearch.sortField;
+    }
+    if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+      sortOrder = getsearch.sortOrder;
+    }
+
+    const offset = pageNo * itemsPerPage;
+
+    let findQuery = {
+      offset: offset,
+      limit: itemsPerPage,
+      order: [
+        [sortField, sortOrder],
+      ],
+      attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
+
+    };
+
+    if (getsearch.search && /\S/.test(getsearch.search)) {
+      findQuery.where = {
+        tm_name: {
+          [Op.like]: '%' + getsearch.search + '%',
+        },
+      };
+    }
+    try {
+      if (user_uuid) {
+        const templateList = await vw_all_temp.findAndCountAll(findQuery);
+        
+        return res
+          .status(httpStatus.OK)
+          .json({
+            statusCode: 200, req: '',
+            responseContents: getAllTempData(templateList.rows ? templateList.rows : []),
+            totalRecords: (templateList.count ? templateList.count : 0)
+          });
+
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+      }
+    }
+    catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
     }
   };
 
@@ -234,6 +316,7 @@ const tmpmstrController = () => {
     deleteTemplateDetails: _deleteTemplateDetails,
     gettempdetails: _gettempdetails,
     updateTemplateById: _updateTemplateById,
+    getalltemplates: _getalltemplates,
 
     updateTemplateDetailsByID: _updateTemplateDetailsByID
   };
@@ -244,6 +327,7 @@ module.exports = tmpmstrController();
 function getTemplateMasterUpdateData(user_uuid, templateMasterReqData) {
 
   return {
+    uuid: templateMasterReqData.template_id,
     name: templateMasterReqData.name,
     is_public: templateMasterReqData.is_public,
     description: templateMasterReqData.description,
@@ -270,13 +354,14 @@ function getTemplateData(fetchedData) {
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
+      is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false
     };
 
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
       {
         template_details_id: tD.tmd_uuid,
-        template_details_displayorder:tD.tmd_display_order,
+        template_details_displayorder: tD.tmd_display_order,
 
         drug_name: tD.im_name,
         drug_code: tD.im_code,
@@ -326,6 +411,8 @@ function getTemplateListData(fetchedData) {
           user_uuid: tD.dataValues.tm_userid,
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
+          is_public: tD.dataValues.tm_public[0] === 1 ? true : false
+
         },
         drug_details: [...drug_details, ...getDrugsListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
@@ -342,9 +429,8 @@ function getTemplateListData(fetchedData) {
 
 function getTemplateListData1(fetchedData) {
   let templateList = [], diet_details = [];
-//console.log("3.fetched data", fetchedData);
+
   if (fetchedData && fetchedData.length > 0) {
-    //console.log("fetched data length --------",fetchedData.length);
 
     fetchedData.forEach((tD) => {
       templateList = [...templateList,
@@ -357,16 +443,16 @@ function getTemplateListData1(fetchedData) {
           user_uuid: tD.dataValues.tm_userid,
           display_order: tD.dataValues.tm_display_order,
           template_desc: tD.dataValues.tm_description,
+          is_public: tD.dataValues.tm_public[0] === 1 ? true : false
         },
         diet_details: [...diet_details, ...getDietListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
       }
       ];
     });
-    //console.log("template list----",templateList);
-    //console.log("diet details",templateList.diet_details[0]);
+
     let uniq = {};
     let temp_list = templateList.filter(obj => !uniq[obj.temp_details.template_id] && (uniq[obj.temp_details.template_id] = true));
-    //console.log("********* temp list", temp_list);
+
     return { "templates_list": temp_list };
   }
   else {
@@ -386,9 +472,9 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.item_master_uuid = mD.drug_id,
       mD.drug_route_uuid = mD.drug_route_uuid,
       mD.drug_frequency_uuid = mD.drug_frequency_uuid,
-      mD.diet_master_uuid= mD.diet_master_uuid,
-      mD.diet_catagory_uuid= mD.diet_catagory_uuid,
-      mD.diet_frequency_uuid= mD.diet_frequency_uuid,
+      mD.diet_master_uuid = mD.diet_master_uuid,
+      mD.diet_category_uuid = mD.diet_category_uuid,
+      mD.diet_frequency_uuid = mD.diet_frequency_uuid,
       mD.display_order = mD.display_order,
       mD.duration = mD.drug_duration,
       mD.duration_period_uuid = mD.drug_period_uuid,
@@ -400,7 +486,7 @@ function getTemplateMasterDetailsWithUUID(detailsTbl, detailsData, masterData, u
       mD.revision = mD.revision,
       mD.is_active = mD.is_active;
     masterDetailsPromise = [...masterDetailsPromise,
-    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction},{ returning: true })];
+    detailsTbl.update(mD, { where: { uuid: mD.template_details_uuid, template_master_uuid: masterData.template_id }, transaction: templateTransaction }, { returning: true })];
   });
   return masterDetailsPromise;
 }
@@ -421,7 +507,7 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
         drug_frequency_uuid: tD.drug_frequency_uuid,
         duration: tD.drug_duration,
         diet_master_uuid: tD.diet_master_uuid,
-        diet_catagory_uuid: tD.diet_catagory_uuid,
+        diet_category_uuid: tD.diet_category_uuid,
         diet_frequency_uuid: tD.diet_frequency_uuid,
         duration_period_uuid: tD.drug_period_uuid,
         drug_instruction_uuid: tD.drug_instruction_uuid,
@@ -439,7 +525,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
   }
   return newTempDtls;
 }
-
 
 //function for delete values from template details table when perform update action
 function removedTmpDetails(dtlsTbl, dtls, user_id) {
@@ -508,36 +593,34 @@ function getDietListForTemplate(fetchedData, template_id) {
   const filteredData = fetchedData.filter((fD) => {
     return fD.dataValues.tm_uuid == template_id;
   });
-//console.log("filterred data",filteredData);
+
   if (filteredData && filteredData.length > 0) {
     filteredData.forEach((dD) => {
       diet_list = [...diet_list,
       {
         template_details_uuid: dD.tmd_uuid,
         template_details_displayorder: dD.tmd_display_order,
-        
+
         diet_id: dD.tmd_diet_master_uuid,
         diet_name: dD.dm_name,
         diet_code: dD.dm_code,
-        //drug_id: dD.im_uuid,
 
         diet_category_id: dD.tmd_diet_category_uuid,
         diet_category_name: dD.dc_name,
         diet_category_code: dD.dc_code,
 
-        diet_frequency_id:dD.tmd_diet_frequency_uuid,
+        diet_frequency_id: dD.tmd_diet_frequency_uuid,
         diet_frequency_name: dD.df_name,
         diet_frequency_code: dD.df_code,
-        
+
         diet_display_order: dD.tmd_display_order,
 
         quantity: dD.tmd_quantity
-
-        }
+      }
       ];
     });
   }
-  //console.log("diet list after filtered data",diet_list);
+
   return diet_list;
 }
 
@@ -559,6 +642,7 @@ function getLabListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
+          is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getLabListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
@@ -592,6 +676,7 @@ function getRisListData(fetchedData) {
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
           template_is_active: tD.dataValues.tm_is_active[0] === 1 ? true : false,
           template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
+          is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
         },
 
         lab_details: [...lab_details, ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)]
@@ -747,7 +832,7 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
 }
 
 function getTempData(temp_type_id, result) {
-  //console.log("temp type id ---------------",temp_type_id);
+
   switch (temp_type_id) {
     case "1":
       return getTemplateListData(result);
@@ -801,6 +886,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_template,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
@@ -809,6 +895,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_lab,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: {
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
@@ -825,6 +912,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_ris,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: {
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
@@ -846,6 +934,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       return {
         table_name: vw_diet,
         query: {
+          order: [['tm_display_order', 'ASC']],
           where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
           attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] }
         }
@@ -902,7 +991,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
         table_name: tempmstrTbl,
         query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id),
       };
-      case "9":
+    case "9":
       return {
         table_name: vw_diet,
         query: {
@@ -930,9 +1019,62 @@ function getTemplateDetailsData(temp_type_id, list) {
       fetchdata = getTempData(temp_type_id, list);
       return (fetchdata && fetchdata.templateDetails && fetchdata.templateDetails.length > 0) ? fetchdata.templateDetails[0] : {};
     case "9":
-        fetchdata = getTempData(temp_type_id, list);
-        return fetchdata;
-  
-      }
+      fetchdata = getTempData(temp_type_id, list);
+      return fetchdata;
+  }
+}
 
+//function for chechking display order allocated or not
+const dspExists = (display_order, userUUID) => {
+
+  if (display_order !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = tempmstrTbl.findAll({
+        attributes: ['user_uuid', 'display_order', 'is_active', 'status'],
+        where: { display_order: display_order, user_uuid: userUUID }
+      }); if (value) {
+        resolve(value);
+        return value;
+      }
+      else { reject({ 'message': 'not existed' }); }
+    });
+  }
+};
+
+function getAllTempData(fetchedData) {
+  let templateList = [];
+
+  if (fetchedData && fetchedData.length > 0) {
+
+    fetchedData.forEach((tD) => {
+      templateList = [...templateList,
+      {
+        template_id: tD.dataValues.tm_uuid,
+        template_name: tD.dataValues.tm_name,
+        template_status: tD.dataValues.tm_status,
+        template_isactive: tD.dataValues.is_active,
+        template_is_public: tD.dataValues.tm_is_public,
+        template_type_id: tD.dataValues.tm_template_type_uuid,
+        template_type: tD.dataValues.tt_name,
+        template_type_status: tD.dataValues.tt_status,
+        template_type_isactive: tD.dataValues.tt_is_active,
+        facility_id: tD.dataValues.tm_facility_uuid,
+        facility_name: tD.dataValues.f_name,
+        facility_isactive: tD.dataValues.f_is_active,
+        facility_status: tD.dataValues.f_status,
+        department_id: tD.dataValues.tm_department_uuid,
+        departiment_name: tD.dataValues.d_name,
+        user_uuid: tD.dataValues.tm_user_uuid,
+        doctor_name: tD.dataValues.u_first_name + ' ' + tD.dataValues.u_middle_name + ' ' + tD.dataValues.u_last_name,
+        doctor_isactive: tD.dataValues.u_is_active,
+        doctor_status: tD.dataValues.u_status
+
+      }
+      ];
+    });
+    return { "templates_list": templateList };
+  }
+  else {
+    return {};
+  }
 }

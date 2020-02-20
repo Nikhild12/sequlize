@@ -37,7 +37,8 @@ const getPatientDiagnosisAttributes = () => {
     "performed_date",
     "created_date",
     "modified_date",
-    "performed_by"
+    "performed_by",
+    "encounter_type_uuid"
   ];
 };
 
@@ -52,21 +53,24 @@ const PatientDiagnsis = () => {
       try {
         // if the bit is not set
         // setting it to `0`
-        patientsDiagnosisData.forEach(pD => {
-          pD.is_snomed = pD.is_snomed || emr_constants.IS_ACTIVE;
-          pD.is_patient_condition =
-            pD.is_patient_condition || emr_constants.IS_ACTIVE;
-          pD.is_chronic = pD.is_chronic || emr_constants.IS_ACTIVE;
 
-          pD.is_active = pD.status = emr_constants.IS_ACTIVE;
+        if (utilityService.checkTATIsPresent(patientsDiagnosisData)) {
+          if (!utilityService.checkTATIsValid(patientsDiagnosisData)) {
+            return res.status(400).send({
+              code: httpStatus[400],
+              message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+            });
+          }
+        } else {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+          });
+        }
 
-          pD.created_by = pD.modified_by = pD.performed_by = user_uuid;
-          pD.modified_date = pD.created_date = new Date();
-        });
-
-        const patientDiagnosisCreatedData = await patient_diagnosis_tbl.bulkCreate(
+        const patientDiagnosisCreatedData = await _helperCreatePatientDiagnosis(
           patientsDiagnosisData,
-          { returning: true }
+          user_uuid
         );
         return res.status(200).send({
           code: httpStatus.OK,
@@ -110,7 +114,7 @@ const PatientDiagnsis = () => {
           departmentId &&
           facility_uuid &&
           from_date,
-          to_date)
+        to_date)
       ) {
         const patientDiagnosisData = await patient_diagnosis_tbl.findAll(
           getPatientFiltersQuery1(
@@ -166,8 +170,6 @@ const PatientDiagnsis = () => {
     }
   };
 
-
-
   const _getPatientDiagnosisHistoryById = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.query;
@@ -196,14 +198,28 @@ const PatientDiagnsis = () => {
 
   const _updatePatientDiagnosisHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { uuid } = req.query;
+    const { uuid, patient_uuid, department_uuid } = req.query;
     let postData = req.body;
     let selector = {
-      where: { uuid: uuid }
+      where: {
+        uuid: uuid,
+        patient_uuid: patient_uuid,
+        department_uuid: department_uuid
+      }
     };
-
     try {
-      if (user_uuid && uuid) {
+      if (user_uuid && uuid && postData) {
+        let fetchedData = await patient_diagnosis_tbl.findOne(selector);
+        let fetchedDate = fetchedData.condition_date;
+        fetchedDate = moment(fetchedDate).format("YYYY-MM-DD");
+        let currentDate = moment(Date.now()).format("YYYY-MM-DD");
+        if (fetchedDate != currentDate) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "Only today date able to update"
+          });
+        }
+
         const diagnosisData = await patient_diagnosis_tbl.update(
           postData,
           selector,
@@ -248,7 +264,7 @@ const PatientDiagnsis = () => {
     const { diagnosisId } = req.body;
 
     if (user_uuid && diagnosisId) {
-      const updateData = await deletePatientDiagnosisById(diagnosisId);
+      const updateData = await _helperdelPatDignsById(diagnosisId);
       let deleteResponseMessage = emr_constants.DELETE_SUCCESSFUL;
       if (updateData && !updateData[0]) {
         deleteResponseMessage = emr_constants.NO_CONTENT_MESSAGE;
@@ -272,7 +288,9 @@ const PatientDiagnsis = () => {
     getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById,
     updatePatientDiagnosisHistory: _updatePatientDiagnosisHistory,
     getMobileMockAPI: _getMobileMockAPI,
-    deletePatientDiagnosisById: _deletePatientDiagnosisById
+    deletePatientDiagnosisById: _deletePatientDiagnosisById,
+    helperCreatePatientDiagnosis: _helperCreatePatientDiagnosis,
+    helperdelPatDignsById: _helperdelPatDignsById
   };
 };
 
@@ -394,6 +412,7 @@ function getPatientData(responseData) {
   return responseData.map(rD => {
     return {
       patient_diagnosis_id: rD.uuid || 0,
+      encounter_type_id: rD.encounter_type_uuid || 0,
       diagnosis_performed_date: rD.performed_date,
       diagnosis_created_date: rD.created_date,
       diagnosis_modified_date: rD.modified_date,
@@ -434,7 +453,7 @@ function getPatientDiagnosisHistory(patient_uuid) {
   return patient_diagnosis_tbl.findAll(query);
 }
 
-async function deletePatientDiagnosisById(diagnosisId) {
+async function _helperdelPatDignsById(diagnosisId) {
   return await patient_diagnosis_tbl.update(
     {
       status: emr_constants.IS_IN_ACTIVE,
@@ -444,4 +463,20 @@ async function deletePatientDiagnosisById(diagnosisId) {
       where: { uuid: diagnosisId }
     }
   );
+}
+
+async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
+  patientsDiagnosisData.forEach(pD => {
+    pD.is_snomed = pD.is_snomed || emr_constants.IS_ACTIVE;
+    pD.is_patient_condition =
+      pD.is_patient_condition || emr_constants.IS_ACTIVE;
+    pD.is_chronic = pD.is_chronic || emr_constants.IS_ACTIVE;
+
+    pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
+    pD.performed_by = user_uuid;
+  });
+
+  return await patient_diagnosis_tbl.bulkCreate(patientsDiagnosisData, {
+    returning: true
+  });
 }

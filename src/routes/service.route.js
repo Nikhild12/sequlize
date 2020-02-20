@@ -7,7 +7,7 @@ const encounterRouter = require("./encounter.route");
 const encounterTypeRouter = require("./encounter.type.route");
 const patientDiagnosisRouter = require("./patient.diagnosis.route");
 const patientAttachmentsRouter = require("./patient_attachments.route");
-//const serviceRoute = express.Router();
+const patientTreatmentRoute = require("./patient_treatment.route");
 
 const favouriteRoutes = require("./favourite_master_route");
 const templateRoutes = require("./template_master.route");
@@ -39,20 +39,25 @@ const chiefDurationRoute = require("./chief_complaints_duration.route");
 const treatmentKitRoute = require("./treatment.kit.routes");
 
 const emrHisSetCtrl = require("./emr.history.settings.routes");
+const bodySideRoute = require("./body_side.route");
+
+const surgeryPositionRoute = require("./surgery.position.route");
 
 const profilesRouter = require("./profiles.route");
-
+// Patient History routes
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require("./family_history.route");
 const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
+const patientTransferRoute = require("./patient_transfer.route");
 
 //EMR CRITICAL CARE CHARTS ROUTES
-const CCCRoute = require('./CC_charts.route');
+const CCCRoute = require("./CC_charts.route");
 
 const myPatientListRoute = require("./my.patient-list-filters.route");
 // const myPatientListRoute = require("./my.patient-list-filters.route");
 const specialitySketcheRoute = require("./speciality_Sketches.route");
+const cccRoute = require("./cccMaster.route");
 
 const patientImmunizationRoute = require("./patient_immunization_schedules.route");
 
@@ -61,7 +66,21 @@ const sectionsRouter = require("./sections.route");
 
 //OPNotes categories routes
 const categoriesRouter = require("./categories.route");
+
+//patient certificate routes
+const certificateRouter = require("./patient_certificates.route");
+
+//patient specality sketch routes
+const sketchRouter = require("./patient_speciality_sketches.route");
+
+//snomed details routes
+const smRouter = require("./snomed_details.route");
+
 const serviceRouter = express.Router();
+
+
+//Discharge summary
+const dischargeSummary = require("./discharge_summary.route");
 
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
@@ -138,7 +157,11 @@ serviceRouter.use("/surgery-history", surgeryHistoryRoute);
 
 // Referral History Routes
 
-serviceRouter.use("/referal-history", referralHistoryRoute);
+serviceRouter.use("/patient-referral", referralHistoryRoute);
+
+// Patient Transfer ROutes
+
+serviceRouter.use("/patient-transfer", patientTransferRoute);
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
@@ -147,13 +170,16 @@ serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
 serviceRouter.use("/profiles", profilesRouter);
 
 //EMR Critical Care Routes
-serviceRouter.use("/CC-charts",CCCRoute);
+serviceRouter.use("/CC-charts", CCCRoute);
 
 // My Patient List Routes
 serviceRouter.use("/my-patient-list", myPatientListRoute);
 
 //speciality Routes
 serviceRouter.use("/speciality", specialitySketcheRoute);
+
+//CCC Master Routes
+serviceRouter.use("/ccc", cccRoute);
 
 //EMR Patient Immunization Schedules  Routes
 serviceRouter.use("/immunization", patientImmunizationRoute);
@@ -167,5 +193,24 @@ serviceRouter.use("/sections", sectionsRouter);
 // EMR categories Routes
 serviceRouter.use("/categories", categoriesRouter);
 
-module.exports = serviceRouter;
+// Body Sides Routes
+serviceRouter.use("/body-side", bodySideRoute);
 
+// Surgery Position Routes
+serviceRouter.use("/surgery-position", surgeryPositionRoute);
+
+// Patient Treatment Routes
+serviceRouter.use("/patient-treatment", patientTreatmentRoute);
+// Discharge Summary Routes
+serviceRouter.use("/discharge-summary", dischargeSummary);
+
+// patient certificate Routes
+serviceRouter.use("/certificates", certificateRouter);
+
+//snomed details Routes
+serviceRouter.use("/snomed", smRouter);
+
+//patient specality skecth Routes
+serviceRouter.use("/sketch", sketchRouter);
+
+module.exports = serviceRouter;

@@ -1,13 +1,9 @@
 //Package Import
 const httpStatus = require("http-status");
-
 //Sequelizer Import
 const db = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const active_boolean = 1;
-
-
 //EMR Constants Import
 const emr_constants = require('../config/constants');
 
@@ -15,21 +11,17 @@ const emr_utility = require('../services/utility.service');
 
 //Initialize profile opNotes
 const profilesTbl = db.profiles;
-const profileUsersTbl = db.profile_users;
-const profileTypesTbl = db.profile_types;
-const sectionTypesTbl = db.section_types;
-const sectionNoteTypesTbl = db.section_note_types;
+const valueTypesTbl = db.value_types;
+const profileSectionsTbl = db.profile_sections;
+const profileSectionCategoriesTbl = db.profile_section_categories;
+const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
+const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
+const opProfilesViewTbl = db.vw_op_notes_details;
+const sectionCategoryEntriesTbl = db.section_category_entries;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
-const valueTypesTbl = db.value_types;
-const conceptsTbl = db.concepts;
-const profileSectionsTbl = db.profile_sections;
-const categoryConceptsTbl = db.category_concepts;
-const sectionCategoryMapTbl = db.section_category_map;
-const categoryTypeMasterTbl = db.category_type_master;
-const visitTypeTbl = db.visit_type;
-const categoryConceptValuesTbl = db.category_concept_values;
-
+const profilesViewTbl = db.vw_profile;
+const Q = require('q');
 
 const profilesController = () => {
   /**
@@ -37,191 +29,106 @@ const profilesController = () => {
    * @param {*} req 
    * @param {*} res 
    */
-  // const _createProfileOpNotes = async (req, res) => {
-  //   const { user_uuid } = req.headers;
-  //   let { profiles, sections } = req.body;
 
-  //   //categoryDetails
-  //   let categoryDetails = [];
-  //   sections.forEach((item, section_idx, display_order) => {
-  //     let categories = item.categories;
-  //     categories.forEach((item, idx) => {
-  //       categoryDetails = [...categoryDetails, {
-  //         code: item.code,
-  //         name: item.name,
-  //         description: item.description,
-  //         category_type_uuid: item.category_type_uuid,
-  //         displayOrder: display_order,
-  //         sectionIdx: section_idx
-  //       }];
-  //     });
+  const _createProfileOpNotes = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let { profiles } = req.body;
+    let sectionsDetails = profiles.sections;
 
-  //   });
+    // creating profile
+    if (user_uuid && profiles.profile_code && profiles.profile_name) {
+      try {
+        let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [];
+        profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
+        //Profiles save
+        const profileResponse = await profilesTbl.create(profiles, { returning: true });
 
-  //   //Concepts Details
-  //   let conceptsDetails = [];
-  //   sections.forEach((item, idx) => {
-  //     let categories = item.categories;
-  //     categories.forEach((item, category_idx) => {
-  //       let concepts = item.concepts;
-  //       concepts.forEach((item, idx) => {
-  //         conceptsDetails = [...conceptsDetails, {
-  //           code: item.code,
-  //           name: item.name,
-  //           description: item.description,
-  //           value_type_uuid: item.value_type_uuid,
-  //           is_multiple: item.is_multiple,
-  //           is_mandatory: item.is_mandatory,
-  //           display_order: item.display_order,
-  //           categoryIdx: category_idx
-  //         }];
-
-  //       });
-  //     });
-  //   });
-
-  //   // Category Concept value Details
-  //   let categoryConceptValueDetails = [];
-  //   sections.forEach((item, idx) => {
-  //     if (item && Array.isArray(item.categories)) {
-  //       item.categories.forEach((cItem) => {
-  //         if (cItem && Array.isArray(cItem.concepts)) {
-  //           cItem.concepts.forEach((cnItem, value_idx) => {
-  //             if (cnItem && Array.isArray(cnItem.category_concept_values)) {
-  //               cnItem.category_concept_values.forEach((item, idx) => {
-  //                 categoryConceptValueDetails = [...categoryConceptValueDetails, {
-  //                   value_code: item.value_code,
-  //                   value_name: item.value_name,
-  //                   display_order: item.display_order
-  //                 }];
-  //               });
-  //             }
-  //           });
-
-  //         }
-  //       });
-  //     }
-
-
-  //   });
-  //   // creating profile 
-  //   if (user_uuid && profiles && profiles.profile_uuid) {
-  //     if (checkProfiles(req)) {
-  //       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send userId and profile details' });
-  //     }
-  //     try {
-  //       let profileSave = [];
-  //       //const duplicateProfilesRecord = await findDuplicateProfilesByCodeAndName(profiles);
-  //       //   if (duplicateProfilesRecord && duplicateProfilesRecord.length > 0) {
-  //       //        return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateProfilesRecord) });
-  //       // }
-  //       // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
-  //       // Profiles save
-  //       //const createdProfileData = await profilesTbl.create(profiles, { returning: true });
-
-  //       //   creating sections 
-  //       if (sections && Array.isArray(sections) && sections.length > 0) {
-
-  //         sections = emr_utility.createIsActiveAndStatus(sections, { returning: true });
-  //         sections.forEach((l) => {
-  //           l = emr_utility.assignDefaultValuesAndUUIdToObject(l, sections, user_uuid);
-
-  //         });
-  //         // Sections  Save
-  //         let createdSectionData = [];
-  //         createdSectionData = await sectionsTbl.bulkCreate(sections, { returning: true });
-
-  //         // Profile and Sections mapping
-  //         sections.forEach((item, idx) => {
-
-  //           item.profile_uuid = profiles.profile_uuid;
-  //           item.section_uuid = createdSectionData[idx].uuid;
-  //           item = emr_utility.assignDefaultValuesAndUUIdToObject(item, sections, user_uuid);
-  //         });
-  //         profileSave = [...profileSave, profileSectionsTbl.bulkCreate(sections, { returning: true })];
-
-  //         // creating categories
-  //         categoryDetails = emr_utility.createIsActiveAndStatus(categoryDetails, { returning: true });
-  //         // assigning Default Values
-  //         categoryDetails.forEach((c) => {
-  //           c = emr_utility.assignDefaultValuesAndUUIdToObject(c, categoryDetails, user_uuid);
-
-  //         });
-  //         //categoryDetails save
-  //         let createdCatgoriesData = [];
-  //         createdCatgoriesData = await categoriesTbl.bulkCreate(categoryDetails, { returning: true });
-
-  //         //Sections and Categories mapping
-  //         const sectionCategoryData = categoryDetails.map((cD, cIdx) => {
-
-  //           return {
-  //             "section_uuid": createdSectionData[cD.sectionIdx].uuid,
-  //             "category_uuid": createdCatgoriesData[cIdx].uuid,
-  //             "display_order": createdSectionData[cD.sectionIdx].display_order
-  //           };
-  //         });
-
-  //         sectionCategoryData.forEach((l) => {
-  //           l = emr_utility.assignDefaultValuesAndUUIdToObject(l, sectionCategoryData, user_uuid);
-
-  //         });
-
-  //         // sectionCategory Save
-  //         profileSave = [...profileSave, sectionCategoryMapTbl.bulkCreate(sectionCategoryData, categoryDetails, { returning: true })];
-
-  //         // Concepts
-  //         conceptsDetails = emr_utility.createIsActiveAndStatus(conceptsDetails, { returning: true });
-
-  //         // assigning defaults values
-  //         conceptsDetails.forEach((co) => {
-  //           co = emr_utility.assignDefaultValuesAndUUIdToObject(co, conceptsDetails, user_uuid);
-  //         });
-
-  //         let createdConceptsData = [];
-  //         createdConceptsData = await conceptsTbl.bulkCreate(conceptsDetails, { returning: true });
-
-  //         // Categories and concepts mapping
-  //         const categoryConceptsData = conceptsDetails.map((coD, coIdx) => {
-
-
-  //           return {
-  //             "category_uuid": createdCatgoriesData[coD.categoryIdx].uuid,
-  //             "concept_uuid": createdConceptsData[coIdx].uuid,
-  //           };
-  //         });
-
-  //         categoryConceptsData.forEach((s) => {
-  //           s = emr_utility.assignDefaultValuesAndUUIdToObject(s, categoryConceptsData, user_uuid);
-
-  //         });
-
-  //         // profileSave = [...profileSave, categoryConceptsTbl.bulkCreate(categoryConceptsData, conceptsDetails, { returning: true })]
-  //         createdConceptCatgoriesData = await categoryConceptsTbl.bulkCreate(categoryConceptsData, conceptsDetails, { returning: true });
-
-  //         // CategoriesconceptValues mapping
-  //         // categoryConceptValueDetails = emr_utility.createIsActiveAndStatus(categoryConceptValueDetails, { returning: true });
-  //         categoryConceptValueDetails.forEach((m, idx) => {
-
-  //           m = emr_utility.assignDefaultValuesAndUUIdToObject(m, createdConceptCatgoriesData, user_uuid);
-  //           m.category_concept_uuid = createdConceptCatgoriesData[idx].uuid;
-  //         });
-  //         // CategoriesconceptValues  Save
-  //         profileSave = [...profileSave, categoryConceptValuesTbl.bulkCreate(categoryConceptValueDetails, { returning: true })];
-
-  //       }
-  //       await Promise.all(profileSave);
-  //       return res.status(200).send({ code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, reqContents: req.body });
-  //     } catch (ex) {
-  //       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-
-  //     }
-  //   } else {
-
-  //     return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-
-  //   }
-
-  // };
+        // Profile and Sections mapping
+        for (let i = 0; i < sectionsDetails.length; i++) {
+          const element = sectionsDetails[i];
+          profileSectionSave.push({
+            profile_uuid: profileResponse.uuid,
+            section_uuid: element.section_uuid,
+            activity_uuid: element.activity_uuid,
+            display_order: element.display_order
+          });
+        }
+        if (profileSectionSave.length > 0) {
+          var profileSectionResponse = await profileSectionsTbl.bulkCreate(profileSectionSave);
+          for (let i = 0; i < sectionsDetails.length; i++) {
+            for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+              const element = sectionsDetails[i].categories[j];
+              CategorySave.push({
+                profile_section_uuid: profileSectionResponse[i].uuid,
+                category_uuid: element.category_uuid,
+                display_order: element.display_order
+              });
+            }
+          }
+          // profile_ Sections_categories mapping
+          if (CategorySave.length > 0) {
+            var categoriesResponse = await profileSectionCategoriesTbl.bulkCreate(CategorySave);
+            var index = 0;
+            for (let i = 0; i < sectionsDetails.length; i++) {
+              for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                index++;
+                for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                  const element = sectionsDetails[i].categories[j].concepts[k];
+                  ConceptsSave.push({
+                    profile_section_category_uuid: categoriesResponse[index - 1].uuid,
+                    code: element.code,
+                    name: element.name,
+                    description: element.description,
+                    value_type_uuid: element.value_type_uuid,
+                    is_mandatory: element.is_mandatory,
+                    display_order: element.display_order,
+                    is_multiple: element.is_multiple
+                  });
+                }
+              }
+            }
+            // profile_ Sections_categories_concepts mapping
+            if (ConceptsSave.length > 0) {
+              var conceptResponse = await profileSectionCategoryConceptsTbl.bulkCreate(ConceptsSave);
+              var index = 0;
+              for (let i = 0; i < sectionsDetails.length; i++) {
+                for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                  for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                    index++;
+                    for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
+                      const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
+                      conceptValuesSave.push({
+                        profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
+                        value_code: element.value_code,
+                        value_name: element.value_name,
+                        display_order: element.display_order
+                      });
+                    }
+                  }
+                }
+              }
+              // profile_ Sections_categories_concept_values mapping
+              if (conceptValuesSave.length > 0) {
+                var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(conceptValuesSave);
+              }
+            }
+          }
+        }
+        return res.status(200).send({
+          code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, responseContents: {
+            profileResponse: profileResponse, profileSectionResponse: profileSectionResponse, categoriesResponse: categoriesResponse,
+            conceptResponse: conceptResponse,
+            conceptValuesResponse: conceptValuesResponse
+          }
+        });
+      }
+      catch (ex) {
+        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+      }
+    } else {
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+    }
+  };
 
   // Get All the Profiles
   const _getAllProfiles = async (req, res) => {
@@ -229,13 +136,112 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
 
     try {
+      // let paginationSize = req.query.paginationSize;
+      let { paginationSize, pageNo, sortField, sortOrder, departmentId, status, searchKey } = req.body;
+      // let pageNo = 0;
+      if (paginationSize) {
+        let records = parseInt(paginationSize);
+        if (records && (records != NaN)) {
+          paginationSize = records;
+        }
+      }
+      let itemsPerPage = paginationSize ? paginationSize : 10;
+      // let sortField = 'uuid';
+      //let sortOrder = 'DESC';
+      if (pageNo) {
+        let temp = parseInt(pageNo);
+        if (temp && (temp != NaN)) {
+          pageNo = temp;
+        }
+      }
+
+      const offset = pageNo * itemsPerPage;
+
+
+      if (sortField) {
+
+        sortField = sortField;
+      }
+
+      if (sortOrder && ((sortOrder == 'ASC') || (sortOrder == 'DESC'))) {
+
+        sortOrder = sortOrder;
+      }
+
+      let findQuery = {
+        offset: offset,
+        limit: itemsPerPage,
+        order: [
+          [sortField, sortOrder],
+        ],
+        where: { p_is_active: 1 }
+      };
+
+      if (sortField && /\S/.test(sortField)) {
+
+        findQuery.where = {
+          [Op.or]: [{
+            profile_code: {
+              [Op.like]: '%' + sortField + '%',
+            },
+
+
+          }, {
+            profile_name: {
+              [Op.like]: '%' + sortField + '%',
+            },
+          }
+
+          ]
+        };
+      }
+
+      if (typeof departmentId == 'string') {
+        findQuery.where['d_uuid'] = parseInt(departmentId);
+      }
+
+      if (typeof status == 'boolean') {
+        findQuery.where['tk_status'] = status;
+      }
+      if (searchKey && /\S/.test(searchKey)) {
+        Object.assign(findQuery.where, {
+          [Op.or]: [
+            {
+              p_profile_code: {
+                [Op.like]: '%' + searchKey + '%',
+              }
+            },
+            {
+              p_profile_name: {
+                [Op.like]: '%' + searchKey + '%',
+              }
+
+            },
+            {
+              d_name: {
+                [Op.like]: '%' + searchKey + '%',
+              }
+            },
+            {
+              p_status: {
+                [Op.eq]: searchKey,
+              }
+            }
+
+          ]
+        });
+      }
+
 
       if (user_uuid) {
-        const profilesData = await profilesTbl.findAll();
-        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: profilesData });
+        const profileData = await profilesViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
+        );
+        if (profileData) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Fetched profile Details successfully', responseContents: profileData });
+        }
       }
       else {
-        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
       }
     } catch (ex) {
 
@@ -244,8 +250,6 @@ const profilesController = () => {
     }
   };
 
-
-  // Delete Profiles
   const _deleteProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.body;
@@ -274,132 +278,58 @@ const profilesController = () => {
   };
 
   /**
-       * Updating Profiles By Id
-       * @param {*} req 
-       * @param {*} res 
-       */
-
-  const _updateProfiles = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const profilesReqData = req.body;
-
-    const profilesUpdateData = getProfilesUpdateData(user_uuid, profilesReqData);
-    const sectionsUpdateData = getSectionsUpdateData(user_uuid, profilesReqData);
-    const profileSectionsUpdateData = getProfileSectionsUpdateData(user_uuid, profilesReqData);
-    const categoriesUpdateData = getCategoriesUpdateData(user_uuid, profilesReqData);
-    const sectionsCategoryUpdateData = getSectionCategoryUpdateData(user_uuid, profilesReqData);
-    const conceptsUpdateData = getConceptsUpdateData(user_uuid, profilesReqData);
-    const categoryConceptsData = getCategoryConceptsUpdateData(user_uuid, profilesReqData);
-    const categoryConceptUpdateData = getCategoryConceptUpdateData(user_uuid, profilesReqData);
-
-    if (uuid && user_uuid && profilesReqData.hasOwnProperty('uuid') && profilesReqData.hasOwnProperty('is_active')) {
-
-      try {
-        const updatingRecord = await profilesTbl.findAll({
-          where: {
-            uuid: profilesReqData.uuid,
-            status: emr_constants.IS_ACTIVE
-          }
-        });
-
-        if (updatingRecord && updatingRecord.length === 0) {
-          return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
-        }
-
-        const updatedProfilesData = await Promise.all([
-          profilesTbl.update(profilesUpdateData, { where: { uuid: profilesReqData.uuid } }),
-          sectionsTbl.update(sectionsUpdateData, { where: { uuid: sectionsUpdateData.uuid } }),
-
-        ]);
-
-
-        if (updatedProfilesData) {
-          return res.status(200).send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: profilesReqData });
-        }
-
-      } catch (ex) {
-
-        console.log(`Exception Happened ${ex}`);
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
-
-      }
-
-    }
-  };
-
-
-  /**
-       * Get profiles By Id,name and department
-       * @param {*} req 
-       * @param {*} res 
-       */
-
+  * Get profiles By Id,name and department
+  @param {} req
+  @param {} res
+  */
   const _getProfileById = async (req, res) => {
 
     const { user_uuid } = req.headers;
-    const { uuid, profile_code, profile_name, department_uuid } = req.body;
-    if (user_uuid && uuid) {
+    const { profile_uuid } = req.query;
+    if (user_uuid && profile_uuid) {
       try {
-
         const profileData = await profilesTbl.findAll({
           attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
-          where: { uuid: uuid, is_active: 1, status: 1 },
+          where: { uuid: profile_uuid, is_active: 1, status: 1 },
           include: [
             {
               model: profileSectionsTbl,
               as: 'profile_sections',
-              attributes: ['uuid', 'profile_uuid', 'section_uuid'],
+              attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
               where: { is_active: 1, status: 1 },
-
               include: [{
                 model: sectionsTbl,
                 as: 'sections',
-                attributes: ['uuid', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
                 where: { is_active: 1, status: 1 },
-
-
+              },
+              {
+                model: profileSectionCategoriesTbl,
+                as: 'profile_section_categories',
+                attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+                where: { is_active: 1, status: 1 },
                 include: [{
-                  model: sectionCategoryMapTbl,
-                  as: 'section_category_map',
-                  attributes: ['uuid', 'section_uuid', 'category_uuid'],
+                  model: categoriesTbl,
+                  as: 'categories',
+                  attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
                   where: { is_active: 1, status: 1 },
 
+                },
+                {
+                  model: profileSectionCategoryConceptsTbl,
+                  as: 'profile_section_category_concepts',
+                  attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+                  where: { is_active: 1, status: 1 },
                   include: [{
-                    model: categoriesTbl,
-                    as: 'categories',
-                    attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'description'],
+                    model: profileSectionCategoryConceptValuesTbl,
+                    as: 'profile_section_category_concept_values',
+                    attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
                     where: { is_active: 1, status: 1 },
-
-                    include: [{
-
-                      include: [{
-                        model: conceptsTbl,
-                        as: 'concepts',
-                        attributes: ['uuid', 'code', 'name', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-                        where: { is_active: 1, status: 1 },
-                      }],
-                      model: categoryConceptsTbl,
-                      as: 'category_concepts',
-                      attributes: ['uuid', 'category_uuid', 'concept_uuid'],
-                      where: { is_active: 1, status: 1 },
-
-                      include: [{
-                        model: categoryConceptValuesTbl,
-                        as: 'category_concept_values',
-                        attributes: ['uuid', 'category_concept_uuid', 'value_code', 'value_name'],
-                        where: { is_active: 1, status: 1 },
-                      }]
-
-                    }]
-
                   }]
-
                 }]
-
               }]
             }]
         });
-
         return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
 
       } catch (ex) {
@@ -415,6 +345,98 @@ const profilesController = () => {
   };
 
 
+  /**
+      * update profiles
+      * @param {*} req 
+      * @param {*} res 
+      */
+
+  const _updateProfiles = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { profiles } = req.body;
+    if (user_uuid && profiles) {
+      try {
+        let bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
+        return res.send({ status: 'success', statusCode: 200, msg: 'success', responseContents: bulkUpdateProfileResponse });
+      } catch (err) {
+        return res.send({ status: 'error', statusCode: 400, msg: 'failed', error: err.message });
+      }
+    } else {
+      return res.send({ status: 'error', statusCode: 400, msg: 'Authentication error or profile detail should not be empty' });
+    }
+  };
+
+  const bulkUpdateProfile = async (req) => {
+    var deferred = new Q.defer();
+    var profileData = req;
+    var profileDetailsUpdate = [];
+    for (let i = 0; i < profileData.profiles.sections.length; i++) {
+      const element = profileData.profiles.sections[i];
+      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
+
+      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
+        const element = profileData.profiles.sections[i].categories[j];
+        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
+
+        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
+          const element = profileData.profiles.sections[i].categories[j].concepts[k];
+          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_bulkUpdateProfileuuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
+
+          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
+            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
+            profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+          }
+        }
+      }
+    }
+    if (profileDetailsUpdate.length > 0) {
+      var response = await Q.allSettled(profileDetailsUpdate);
+      if (response.length > 0) {
+        var responseMsg = [];
+        for (let i = 0; i < response.length; i++) {
+          const element = response[i];
+          if (element.state == "rejected") {
+            responseMsg.push(element.reason);
+          }
+        }
+
+        if (responseMsg.length == 0) {
+          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
+        } else {
+          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
+        }
+      }
+    }
+    return deferred.promise;
+  };
+  /**
+        * Get All  valueTypes
+        * @param {*} req 
+        * @param {*} res 
+        */
+  const _getAllValueTypes = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+
+    try {
+      if (user_uuid) {
+        const valuesData = await valueTypesTbl.findAll();
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: valuesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex.message);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+  /**
+         * OPNotes main template save
+         * @param {*} req 
+         * @param {*} res 
+         */
   const _addProfiles = async (req, res) => {
 
     const { user_uuid } = req.headers;
@@ -428,8 +450,8 @@ const profilesController = () => {
       profiles.revision = 1;
 
       try {
-        await profilesTbl.create(profiles, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully' });
+        const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, { returing: true });
+        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', reqContents: req.body });
 
       }
       catch (ex) {
@@ -442,213 +464,20 @@ const profilesController = () => {
 
   };
 
-
-  const _createProfileOpNotes = async (req, res) => {
-    const { user_uuid } = req.headers;
-    let { profiles, sections } = req.body;
-
-    //categoryDetails
-    let categoryDetails = [];
-    sections.forEach((item, section_idx, display_order) => {
-      let categories = item.categories;
-      categories.forEach((item, idx) => {
-        categoryDetails = [...categoryDetails, {
-          code: item.code,
-          name: item.name,
-          description: item.description,
-          category_type_uuid: item.category_type_uuid,
-          displayOrder: display_order,
-          sectionIdx: section_idx
-        }];
-      });
-
-    });
-
-    //Concepts Details
-    let conceptsDetails = [];
-    sections.forEach((item, idx) => {
-      let categories = item.categories;
-      categories.forEach((item, category_idx) => {
-        let concepts = item.concepts;
-        concepts.forEach((item, idx) => {
-          conceptsDetails = [...conceptsDetails, {
-            code: item.code,
-            name: item.name,
-            description: item.description,
-            value_type_uuid: item.value_type_uuid,
-            is_multiple: item.is_multiple,
-            is_mandatory: item.is_mandatory,
-            display_order: item.display_order,
-            categoryIdx: category_idx
-          }];
-
-        });
-      });
-    });
-
-    // Category Concept value Details
-    let categoryConceptValueDetails = [];
-    sections.forEach((item, idx) => {
-      if (item && Array.isArray(item.categories)) {
-        item.categories.forEach((cItem) => {
-          if (cItem && Array.isArray(cItem.concepts)) {
-            cItem.concepts.forEach((cnItem, value_idx) => {
-              if (cnItem && Array.isArray(cnItem.category_concept_values)) {
-                cnItem.category_concept_values.forEach((item, idx) => {
-                  categoryConceptValueDetails = [...categoryConceptValueDetails, {
-                    value_code: item.value_code,
-                    value_name: item.value_name,
-                    display_order: item.display_order
-                  }];
-                });
-              }
-            });
-
-          }
-        });
-      }
-
-
-    });
-    // creating profile 
-    if (user_uuid && profiles && profiles.profile_uuid) {
-      if (checkProfiles(req)) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send userId and profile details' });
-      }
-      try {
-        let profileSave = [];
-        //const duplicateProfilesRecord = await findDuplicateProfilesByCodeAndName(profiles);
-        //   if (duplicateProfilesRecord && duplicateProfilesRecord.length > 0) {
-        //        return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateProfilesRecord) });
-        // }
-        // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
-        // Profiles save
-        //const createdProfileData = await profilesTbl.create(profiles, { returning: true });
-
-        //   creating sections 
-        if (sections && Array.isArray(sections) && sections.length > 0) {
-
-          sections = emr_utility.createIsActiveAndStatus(sections, { returning: true });
-          sections.forEach((l) => {
-            l = emr_utility.assignDefaultValuesAndUUIdToObject(l, sections, user_uuid);
-
-          });
-          // Sections  Save
-          let createdSectionData = [];
-          createdSectionData = await sectionsTbl.bulkCreate(sections, { returning: true });
-
-          // Profile and Sections mapping
-          sections.forEach((item, idx) => {
-
-            item.profile_uuid = profiles.profile_uuid;
-            item.section_uuid = createdSectionData[idx].uuid;
-            item = emr_utility.assignDefaultValuesAndUUIdToObject(item, sections, user_uuid);
-          });
-          profileSave = [...profileSave, profileSectionsTbl.bulkCreate(sections, { returning: true })];
-
-          // creating categories
-          categoryDetails = emr_utility.createIsActiveAndStatus(categoryDetails, { returning: true });
-          // assigning Default Values
-          categoryDetails.forEach((c) => {
-            c = emr_utility.assignDefaultValuesAndUUIdToObject(c, categoryDetails, user_uuid);
-
-          });
-          //categoryDetails save
-          let createdCatgoriesData = [];
-          createdCatgoriesData = await categoriesTbl.bulkCreate(categoryDetails, { returning: true });
-
-          // Profile_Sections_Categories mapping
-          // const sectionCategoryData = categoryDetails.map((cD, cIdx) => {
-
-          //   return {
-          //     "section_uuid": createdSectionData[cD.sectionIdx].uuid,
-          //     "category_uuid": createdCatgoriesData[cIdx].uuid,
-          //     "display_order": createdSectionData[cD.sectionIdx].display_order
-          //   };
-          // });
-
-          // sectionCategoryData.forEach((l) => {
-          //   l = emr_utility.assignDefaultValuesAndUUIdToObject(l, sectionCategoryData, user_uuid);
-
-          // });
-
-
-          conceptsDetails.forEach((c, idx) => {
-
-            c = emr_utility.assignDefaultValuesAndUUIdToObject(c, createdCatgoriesData, user_uuid);
-            c.profile_section_uuid = createdCatgoriesData[idx].uuid;
-          });
-
-          // sectionCategory Save
-          profileSave = [...profileSave, sectionCategoryMapTbl.bulkCreate(profileSectionCategoryData, categoryDetails, { returning: true })];
-
-          // Concepts
-          conceptsDetails = emr_utility.createIsActiveAndStatus(conceptsDetails, { returning: true });
-
-          // assigning defaults values
-          conceptsDetails.forEach((co) => {
-            co = emr_utility.assignDefaultValuesAndUUIdToObject(co, conceptsDetails, user_uuid);
-          });
-
-          let createdConceptsData = [];
-          createdConceptsData = await conceptsTbl.bulkCreate(conceptsDetails, { returning: true });
-
-          // Categories and concepts mapping
-          const categoryConceptsData = conceptsDetails.map((coD, coIdx) => {
-
-
-            return {
-              "category_uuid": createdCatgoriesData[coD.categoryIdx].uuid,
-              "concept_uuid": createdConceptsData[coIdx].uuid,
-            };
-          });
-
-          categoryConceptsData.forEach((s) => {
-            s = emr_utility.assignDefaultValuesAndUUIdToObject(s, categoryConceptsData, user_uuid);
-
-          });
-
-          // profileSave = [...profileSave, categoryConceptsTbl.bulkCreate(categoryConceptsData, conceptsDetails, { returning: true })]
-          createdConceptCatgoriesData = await categoryConceptsTbl.bulkCreate(categoryConceptsData, conceptsDetails, { returning: true });
-
-          // CategoriesconceptValues mapping
-          // categoryConceptValueDetails = emr_utility.createIsActiveAndStatus(categoryConceptValueDetails, { returning: true });
-          categoryConceptValueDetails.forEach((m, idx) => {
-
-            m = emr_utility.assignDefaultValuesAndUUIdToObject(m, createdConceptCatgoriesData, user_uuid);
-            m.category_concept_uuid = createdConceptCatgoriesData[idx].uuid;
-          });
-          // CategoriesconceptValues  Save
-          profileSave = [...profileSave, categoryConceptValuesTbl.bulkCreate(categoryConceptValueDetails, { returning: true })];
-
-        }
-        await Promise.all(profileSave);
-        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, reqContents: req.body });
-      } catch (ex) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-
-      }
-    } else {
-
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-
-    }
-
-  };
-
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
     deleteProfiles: _deleteProfiles,
     getProfileById: _getProfileById,
     updateProfiles: _updateProfiles,
-    addProfiles: _addProfiles
+    addProfiles: _addProfiles,
+    getAllValueTypes: _getAllValueTypes
+
 
 
   };
 
 };
-
 
 module.exports = profilesController();
 
@@ -672,157 +501,33 @@ function getDuplicateMsg(record) {
 
 
 function checkProfiles(req) {
-  const { profiles, sections, categories, concepts } = req.body;
+  const { profiles, sections, profilesSectionInfo, profilesSectionCategoryInfo, profileSectionCategoryConceptsInfo, profileSectionCategoryConceptValuesInfo } = req.body;
   return !checkSections(sections) &&
-    !checkCategories(categories) &&
-    !checkConcepts(concepts);
+    !checkprofilesSectionInfo(profilesSectionInfo) &&
+    !checkprofilesSectionCategoryInfo(profilesSectionCategoryInfo) &&
+    !checkprofileSectionCategoryConceptsInfo(profileSectionCategoryConceptsInfo) &&
+    !checkprofileSectionCategoryConceptValuesInfo(profileSectionCategoryConceptValuesInfo);
 
 }
-
-
 
 function checkSections(sections) {
   return sections && Array.isArray(sections) && sections.length > 0;
 }
 
-function checkCategories(categories) {
-
-  return categories && Array.isArray(categories) && categories.length > 0;
+function checkprofilesSectionInfo(profilesSectionInfo) {
+  return profilesSectionInfo && Array.isArray(profilesSectionInfo) && profilesSectionInfo.length > 0;
 }
 
 
-function checkConcepts(concepts) {
-
-  return concepts && Array.isArray(concepts) && concepts.length > 0;
+function checkprofilesSectionCategoryInfo(profilesSectionCategoryInfo) {
+  return profilesSectionCategoryInfo && Array.isArray(profilesSectionCategoryInfo) && profilesSectionCategoryInfo.length > 0;
 }
 
-function getProfilesUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    profile_code: profilesReqData.profile_code,
-    profile_name: profilesReqData.profile_name,
-    profile_description: profilesReqData.profile_description,
-    description: profilesReqData.department_id,
-    facility_uuid: profilesReqData.facility_uuid,
-    profile_type_uuid: profilesReqData.profile_type_uuid,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
+function checkprofileSectionCategoryConceptsInfo(profileSectionCategoryConceptsInfo) {
+  return profileSectionCategoryConceptsInfo && Array.isArray(profileSectionCategoryConceptsInfo) && profileSectionCategoryConceptsInfo.length > 0;
 }
 
-function getSectionsUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    section_type_uuid: profilesReqData.section_type_uuid,
-    section_note_type_uuid: profilesReqData.section_note_type_uuid,
-    name: profilesReqData.name,
-    description: profilesReqData.description,
-    sref: profilesReqData.sref,
-    display_order: profilesReqData.display_order,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
+function checkprofileSectionCategoryConceptValuesInfo(profileSectionCategoryConceptValuesInfo) {
+  return profileSectionCategoryConceptValuesInfo && Array.isArray(profileSectionCategoryConceptValuesInfo) && profileSectionCategoryConceptValuesInfo.length > 0;
 }
 
-
-function getCategoriesUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    code: profilesReqData.code,
-    name: profilesReqData.name,
-    description: profilesReqData.description,
-    category_type_uuid: profilesReqData.category_type_uuid,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}
-
-function getConceptsUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    code: profilesReqData.code,
-    name: profilesReqData.name,
-    description: profilesReqData.description,
-    value_type_uuid: profilesReqData.value_type_uuid,
-    is_mandatory: profilesReqData.is_mandatory,
-    display_order: profilesReqData.display_order,
-    is_multiple: profilesReqData.is_multiple,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}
-
-function getCategoryConceptsUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    value_code: profilesReqData.value_code,
-    value_name: profilesReqData.value_name,
-    category_concept_uuid: profilesReqData.category_concept_uuid,
-    display_order: profilesReqData.display_order,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}
-
-function getProfileSectionsUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    display_order: profilesReqData.display_order,
-    section_uuid: profilsection_uuid,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}
-
-function getSectionCategoryUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    display_order: profilesReqData.display_order,
-    section_uuid: profilsection_uuid,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}
-
-
-function getCategoryConceptUpdateData(user_uuid, profilesReqData) {
-
-  return {
-    user_uuid: user_uuid,
-    display_order: profilesReqData.display_order,
-    section_uuid: profilsection_uuid,
-    modified_by: user_uuid,
-    modified_date: new Date(),
-    is_active: profilesReqData.is_active,
-    status: profilesReqData.status
-  };
-
-}

@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
                 type: DataTypes.STRING,
-                allowNull: false
+                defaultValue: 1
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -76,8 +76,14 @@ module.exports = (sequelize, DataTypes) => {
             indexes: [{
                 fields: ["uuid"]
             }]
-        }
+        }  
     );
+    immunization_schedule.associate =  models => {
+        immunization_schedule.belongsTo(models.immunizations , {
+            foreignKey:"immunization_uuid"
+            // as:'critical_care_types'
+        });
+    };
 
     return immunization_schedule;
 };

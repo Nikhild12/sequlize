@@ -38,87 +38,35 @@ const Patient_Allergies = () => {
 
       try {
 
-        const savePatientAllergyData = await patientAllergiesTbl.create(patient_allergies, { returing: true });
+        await patientAllergiesTbl.create(patient_allergies, { returing: true });
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: patient_allergies });
       } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-
       }
     } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
-
   };
 
-
+  /**
+       * Patient Allergy History
+       * @param {*} req 
+       * @param {*} res 
+       */
 
   const _getPatientAllergies = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { patient_uuid } = req.query;
-
+    const { patient_uuid } = req.query;
 
     try {
-
       if (user_uuid && patient_uuid) {
-        const patientAllergyData = await patientAllergiesTbl.findAll(
-          {
-            limit: 10,
-            order: [['uuid', 'DESC']],
-            where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
-            include: [
-              {
-                model: encounterTbl,
-                as: 'encounter',
-                attributes: ['uuid', 'encounter_type_uuid'],
-                where: { is_active: 1, status: 1 },
-
-                include: [{
-                  model: encounterTypeTbl,
-                  attributes: ['uuid', 'name'],
-                  where: { is_active: 1, status: 1 },
-
-                }],
-              },
-              {
-                model: allergyMasterTbl,
-                as: 'allergy_masters',
-                attributes: ['uuid', 'allergy_name'],
-                where: { is_active: 1, status: 1 },
-
-              },
-              {
-                model: allergySourceTbl,
-                as: 'allergy_source',
-                attributes: ['uuid', 'name'],
-                where: { is_active: 1, status: 1 },
-
-              },
-              {
-                model: allergySevirityTbl,
-                as: 'allergy_severity',
-                attributes: ['uuid', 'name'],
-                where: { is_active: 1, status: 1 },
-
-              },
-              {
-                model: periodsTbl,
-                as: 'periods',
-                attributes: ['uuid', 'name'],
-                where: { is_active: 1, status: 1 },
-
-              },
-            ]
-          },
-          { returning: true }
-        );
+        const patientAllergyData = await getPatientAllergyData(patient_uuid);
         if (patientAllergyData) {
-
           return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
-
         }
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
       console.log('Exception happened', ex);
@@ -127,19 +75,17 @@ const Patient_Allergies = () => {
   };
 
 
-
   const _getPatientAllergiesByUserId = async (req, res) => {
 
     const { uuid } = req.query;
     const { user_uuid } = req.headers;
 
     try {
-
       if (user_uuid && uuid) {
         const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
         return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
       console.log('Exception happened', ex);
@@ -152,28 +98,14 @@ const Patient_Allergies = () => {
   const _updatePatientAllergy = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.query;
-    const { patient_allergies } = req.body;
+    let { patient_allergies } = req.body;
 
-    if (uuid && user_uuid) {
+    if (uuid && user_uuid && patient_allergies) {
       try {
-        let allergy_data = {
-          patient_uuid: patient_allergies.patient_uuid,
-          encounter_uuid: patient_allergies.encounter_uuid,
-          consultation_uuid: patient_allergies.consultation_uuid,
-          allergy_master_uuid: patient_allergies.allergy_master_uuid,
-          allergy_type_uuid: patient_allergies.allergy_type_uuid,
-          symptom: patient_allergies.symptom,
-          performed_date: patient_allergies.performed_date,
-          start_date: patient_allergies.performed_date,
-          end_date: patient_allergies.performed_date,
-          allergy_severity_uuid: patient_allergies.allergy_severity_uuid,
-          allergy_source_uuid: patient_allergies.allergy_source_uuid,
-          duration: patient_allergies.duration,
-          period_uuid: patient_allergies.period_uuid
-        };
-        const data = await patientAllergiesTbl.update(allergy_data, { where: { uuid: uuid } });
-        if (data) {
-          return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContent: data });
+        let allergy_data = await allergyData(patient_allergies);
+        const [updated] = await patientAllergiesTbl.update(allergy_data, { where: { uuid: uuid } });
+        if (updated) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContent: updated });
         }
         else {
           return res.status(400).send({ code: httpStatus[400], message: 'Update Failed' });
@@ -183,7 +115,7 @@ const Patient_Allergies = () => {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
     } else {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO_USER_ID} ${emr_constants.NO_REQUEST_PARAM}` });
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
 
@@ -208,7 +140,7 @@ const Patient_Allergies = () => {
 
       }
     } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND}` });
 
     }
   };
@@ -226,3 +158,87 @@ const Patient_Allergies = () => {
 
 module.exports = Patient_Allergies();
 
+async function getPatientAllergyData(patient_uuid) {
+  return patientAllergiesTbl.findAll(
+    {
+      limit: 10,
+      order: [['uuid', 'DESC']],
+      where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
+      include: [
+        {
+          model: encounterTbl,
+          as: 'encounter',
+          attributes: ['uuid', 'encounter_type_uuid'],
+          required: false,
+
+          where: { is_active: 1, status: 1 },
+
+          include: [{
+            model: encounterTypeTbl,
+            required: false,
+
+            attributes: ['uuid', 'name'],
+            where: { is_active: 1, status: 1 },
+
+          }],
+        },
+        {
+          model: allergyMasterTbl,
+          as: 'allergy_masters',
+          attributes: ['uuid', 'allergy_name'],
+          required: false,
+
+          where: { is_active: 1, status: 1 },
+
+        },
+        {
+          model: allergySourceTbl,
+          as: 'allergy_source',
+          attributes: ['uuid', 'name'],
+          required: false,
+
+          where: { is_active: 1, status: 1 },
+
+        },
+        {
+          model: allergySevirityTbl,
+          as: 'allergy_severity',
+          attributes: ['uuid', 'name'],
+          required: false,
+
+          where: { is_active: 1, status: 1 },
+
+        },
+        {
+          model: periodsTbl,
+          as: 'periods',
+          attributes: ['uuid', 'name'],
+          required: false,
+
+          where: { is_active: 1, status: 1 },
+
+        },
+      ]
+    },
+    { returning: true }
+  );
+}
+
+async function allergyData(patient_allergies) {
+  let data = {
+    patient_uuid: patient_allergies.patient_uuid,
+    encounter_uuid: patient_allergies.encounter_uuid,
+    consultation_uuid: patient_allergies.consultation_uuid,
+    allergy_master_uuid: patient_allergies.allergy_master_uuid,
+    allergy_type_uuid: patient_allergies.allergy_type_uuid,
+    symptom: patient_allergies.symptom,
+    performed_date: patient_allergies.performed_date,
+    start_date: patient_allergies.performed_date,
+    end_date: patient_allergies.performed_date,
+    allergy_severity_uuid: patient_allergies.allergy_severity_uuid,
+    allergy_source_uuid: patient_allergies.allergy_source_uuid,
+    duration: patient_allergies.duration,
+    period_uuid: patient_allergies.period_uuid
+  };
+  return data;
+}

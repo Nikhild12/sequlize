@@ -15,4 +15,6 @@ proceduresRoutes.route("/deleteProcedures").post(proceduresCtrl.deleteprocedures
 proceduresRoutes.route("/updateProceduresById").post(proceduresCtrl.updateproceduresId);
 proceduresRoutes.route("/getProceduresById").post(proceduresCtrl.getproceduresById);
 
+proceduresRoutes.route("/getProceduresByFilter").get(proceduresCtrl.getProceduresByFilters);
+
 module.exports = proceduresRoutes;

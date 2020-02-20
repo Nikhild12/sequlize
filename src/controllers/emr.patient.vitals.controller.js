@@ -14,45 +14,101 @@ const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals;
 
 const emr_mock_json = require("../config/emr_mock_json");
+const validate = require("../config/validate");
 
+const utilityService = require("../services/utility.service");
 const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
-    const emrPatientVitalReqData = req.body;
-    const { user_uuid } = req.headers;
-
     try {
-      if (
-        user_uuid &&
-        emrPatientVitalReqData &&
-        emrPatientVitalReqData.length > 0
-      ) {
-        emrPatientVitalReqData.forEach(eRD => {
-          eRD.performed_date = new Date(eRD.performed_date);
-          eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
-          eRD.is_active = eRD.status = true;
-          eRD.created_date = eRD.modified_date = new Date();
-        });
-        const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
-          emrPatientVitalReqData,
-          { returning: true }
-        );
+      const emrPatientVitalReqData = req.body;
+      const { user_uuid } = req.headers;
+      if (Object.keys(req.body).length != 0) {
+        //validating the keys in req.body
+        for (let detail of req.body) {
+          let body_details_validation_result = validate.validate(detail, [
+            "facility_uuid",
+            "department_uuid",
+            "patient_uuid",
+            "encounter_uuid",
+            "encounter_type_uuid",
+            "consultation_uuid",
+            "vital_group_uuid",
+            "vital_type_uuid",
+            "vital_master_uuid",
+            "vital_qualifier_uuid",
+            "vital_value_type_uuid",
+            "vital_uom_uuid",
+            "patient_vital_status_uuid"
+          ]);
+          if (!body_details_validation_result.status) {
+            return res
+              .status(400)
+              .send({
+                code: httpStatus[400],
+                message: body_details_validation_result.errors
+              });
+          }
+        }
+        //checking for existing patient vitals
+        /* for (let exit of req.body) {
+          const exists = await PVexists(exit.patient_uuid, exit.vital_master_uuid);
 
-        emrPatientVitalReqData.forEach((ePV, index) => {
-          ePV.uuid = emr_patient_vitals_response[index].uuid;
-        });
+          if (exists && exists.length > 0) {
+            return res.status(400).send({ code: httpStatus[400], message: "vitals for the patient already exists" });
+          }
+        }*/
+        if (
+          user_uuid &&
+          emrPatientVitalReqData &&
+          emrPatientVitalReqData.length > 0
+        ) {
+          //const exists = await PVexists(emrPatientVitalReqData.patient_uuid,emrPatientVitalReqData.vital_master_uuid);
 
-        if (emr_patient_vitals_response) {
-          return res
-            .status(200)
-            .send({
+          if (utilityService.checkTATIsPresent(emrPatientVitalReqData)) {
+            if (!utilityService.checkTATIsValid(emrPatientVitalReqData)) {
+              return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emrConstants.PLEASE_PROVIDE} ${emrConstants.VALID_START_DATE} ${emrConstants.OR} ${emrConstants.VALID_END_DATE}`
+              });
+            }
+          } else {
+            return res.status(400).send({
+              code: httpStatus[400],
+              message: `${emrConstants.PLEASE_PROVIDE} ${emrConstants.START_DATE} ${emrConstants.OR} ${emrConstants.END_DATE}`
+            });
+          }
+
+          emrPatientVitalReqData.forEach(eRD => {
+            eRD.performed_date = new Date();
+            eRD.doctor_uuid = eRD.modified_by = eRD.created_by = user_uuid;
+            eRD.is_active = eRD.status = true;
+            eRD.created_date = eRD.modified_date = new Date();
+            eRD.revision = 1;
+          });
+          const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
+            emrPatientVitalReqData,
+            { returning: true }
+          );
+
+          emrPatientVitalReqData.forEach((ePV, index) => {
+            ePV.uuid = emr_patient_vitals_response[index].uuid;
+          });
+
+          if (emr_patient_vitals_response) {
+            return res.status(200).send({
               code: httpStatus.OK,
               message: "Inserted EMR Patient Vital Details  Successfully",
               responseContents: emrPatientVitalReqData
             });
+          }
         }
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (ex) {
-      console.log("-----", ex);
+      //console.log("-----", ex);
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -73,13 +129,11 @@ const EMRPatientVitals = () => {
       );
 
       if (getPatientVitals) {
-        return res
-          .status(200)
-          .send({
-            code: httpStatus.OK,
-            message: "Fetched EMR Patient Vital Details  Successfully",
-            responseContents: getPatientVitals
-          });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched EMR Patient Vital Details  Successfully",
+          responseContents: getPatientVitals
+        });
       } else {
         return res
           .status(400)
@@ -103,13 +157,11 @@ const EMRPatientVitals = () => {
         },
         { returning: true }
       );
-      return res
-        .status(200)
-        .send({
-          code: httpStatus.OK,
-          message: "Fetched EMR Patient Vital Details  Successfully",
-          responseContents: getPatientVitals
-        });
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched EMR Patient Vital Details  Successfully",
+        responseContents: getPatientVitals
+      });
     } catch (ex) {
       return res
         .status(400)
@@ -139,25 +191,21 @@ const EMRPatientVitals = () => {
           getPatientQuery(patient_uuid, facility_uuid, from_date, to_date),
           { returning: true }
         );
-        return res
-          .status(200)
-          .send({
-            code: httpStatus.OK,
-            message: "Fetched EMR Patient Vital Details  Successfully",
-            responseContents: patientVitalsList(getPatientVitals)
-          });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched EMR Patient Vital Details  Successfully",
+          responseContents: patientVitalsList(getPatientVitals)
+        });
       } else if (user_uuid && patient_uuid && department_uuid > 0) {
         let getHistoryPatientVitals = await vw_patientVitalsTbl.findAll(
           getHistoryPatientVitalQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
-        return res
-          .status(200)
-          .send({
-            code: httpStatus.OK,
-            message: "Fetched EMR History Patient Vital Details  Successfully",
-            responseContents: patientVitalsList(getHistoryPatientVitals)
-          });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched EMR History Patient Vital Details  Successfully",
+          responseContents: patientVitalsList(getHistoryPatientVitals)
+        });
       } else {
         return res
           .status(400)
@@ -180,13 +228,11 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
-        return res
-          .status(200)
-          .send({
-            code: httpStatus.OK,
-            message: "Fetched EMR Previous Patient Vital Details  Successfully",
-            responseContents: PPVitalsList(getPPV)
-          });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched EMR Previous Patient Vital Details  Successfully",
+          responseContents: PPVitalsList(getPPV)
+        });
       } else {
         return res
           .status(400)
@@ -437,3 +483,27 @@ function getPVlist(fetchedData, p_id, created_date) {
   }
   return pv_list;
 }
+
+const PVexists = (PID, vital_master_uuid) => {
+  //console.log ("pvexits callback----------",PVexists);
+  if (PID != undefined) {
+    return new Promise((resolve, reject) => {
+      let value = emr_patientvitals_Tbl.findAll({
+        attributes: [
+          "patient_uuid",
+          "vital_master_uuid",
+          "is_active",
+          "status"
+        ],
+        where: { patient_uuid: PID, vital_master_uuid: vital_master_uuid }
+      });
+      if (value) {
+        //console.log("------value-----",value);
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "PV does not existed" });
+      }
+    });
+  }
+};
