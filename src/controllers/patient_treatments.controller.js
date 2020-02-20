@@ -21,10 +21,22 @@ const utilityService = require("../services/utility.service");
 // tbl
 const patientTreatmenttbl = sequelizeDb.patient_treatments;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
+const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
 
 
 // Patient Treatment Attributes
 const patientTreatmentAttributes = require("../attributes/patient_treatment_attributes");
+const getPrevKitOrders = [
+  'pt_uuid',
+  'pt_patient_uuid',
+  'pt_treatment_given_date',
+  'd_name',
+  'tk_name',
+  'u1_first_name',
+  'u1_middle_name',
+  'u1_last_name',
+  'et_name'
+];
 
 const PatientTreatmentController = () => {
   const _createPatientTreatment = async (req, res) => {
@@ -174,9 +186,53 @@ const PatientTreatmentController = () => {
       });
     }
   };
+  const _prevKitOrdersById = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid } = req.query;
+    try {
+      let query = {
+        pt_patient_uuid: patient_uuid,
+        pt_is_active: emr_constants.IS_ACTIVE,
+        pt_status: emr_constants.IS_ACTIVE
+
+      };
+      if (user_uuid && patient_uuid) {
+        const prevKitOrderData = await prevKitOrdersViewTbl.findAll({
+          where: query,
+          attributes: getPrevKitOrders
+        });
+        const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+        let response = getPrevKitOrdersResponse(prevKitOrderData);
+        return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+
+      }
+
+    } catch (ex) {
+      console.log('Exception Happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+    }
+
+  };
   return {
-    createPatientTreatment: _createPatientTreatment
+    createPatientTreatment: _createPatientTreatment,
+    prevKitOrdersById: _prevKitOrdersById
   };
 };
 
 module.exports = PatientTreatmentController();
+
+function getPrevKitOrdersResponse(orders) {
+  return orders.map((o) => {
+    return {
+      patient_id: o.pt_patient_uuid,
+      ordered_date: o.pt_treatment_given_date,
+      department_name: o.d_name,
+      encounter_type: o.et_name,
+      treatment_name: o.tk_name,
+      docter_name: `${o.u1_first_name} ${o.u1_middle_name} ${o.u1_last_name}`
+
+    };
+  });
+}
