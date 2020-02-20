@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profiles = sequelize.define(
@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
             profile_type_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
-                /*validate: {
+                allowNull: false,
+                validate: {
                     notNull: {
                         msg: emr_constants.GetpleaseProvideMsg('profile_type_uuid')
                     },
@@ -27,35 +27,35 @@ module.exports = (sequelize, DataTypes) => {
                         args: [1],
                         msg: emr_constants.GetZeroValidationMessage('profile_type_uuid')
                     }
-                }*/
+                }
 
             },
             profile_code: {
 
                 type: DataTypes.STRING,
-                allowNull: false
-                /*  validate: {
-                      notNull: {
-                          msg: emr_constants.GetpleaseProvideMsg('profile_code')
-                      },
-                      notEmpty: {
-                          msg: emr_constants.GetpleaseProvideMsg('profile_code')
-                      }
-                  }*/
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_code')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_code')
+                    }
+                }
 
             },
             profile_name: {
 
                 type: DataTypes.STRING,
-                allowNull: false
-                /* validate: {
-                     notNull: {
-                         msg: emr_constants.GetpleaseProvideMsg('profile_name')
-                     },
-                     notEmpty: {
-                         msg: emr_constants.GetpleaseProvideMsg('profile_name')
-                     }
-                 }*/
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_name')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_name')
+                    }
+                }
 
             },
             profile_description: {
@@ -67,37 +67,37 @@ module.exports = (sequelize, DataTypes) => {
             facility_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
-                /*   validate: {
-                       notNull: {
-                           msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
-                       },
-                       notEmpty: {
-                           msg:emr_constants.GetpleaseProvideMsg('facility_uuid')
-                       },
-                       min: {
-                           args: [1],
-                           msg: emr_constants.GetZeroValidationMessage('facility_uuid')
-                       }
-                   } */
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+                    }
+                }
 
             },
             department_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
-                /*  validate: {
-                      notNull: {
-                          msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                      },
-                      notEmpty: {
-                          msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                      },
-                      min: {
-                          args: [1],
-                          msg: emr_constants.GetZeroValidationMessage('department_uuid')
-                      }
-                  } */
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('department_uuid')
+                    }
+                }
 
             },
             is_active: {
@@ -116,7 +116,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
 
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                defaultValue: 1,
+                allowNull: false
 
             },
             created_by: {

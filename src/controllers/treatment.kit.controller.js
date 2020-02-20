@@ -220,9 +220,8 @@ const TreatMent_Kit = () => {
 
 
     };
-
     // Get All  TreatmentKit List
-    const _getAllTreatmentKit = async (req, res) => {
+    const _getAllTreatmentKit_old = async (req, res) => {
 
         const { user_uuid } = req.headers;
 
@@ -247,7 +246,6 @@ const TreatMent_Kit = () => {
             }
 
             const offset = pageNo * itemsPerPage;
-
 
             if (searchSortBy) {
 
@@ -293,8 +291,6 @@ const TreatMent_Kit = () => {
                         [Op.like]: '%' + createdBy + '%',
                     }
                 }
-
-
 
             }
             if (typeof departmentId == 'string') {
@@ -362,6 +358,156 @@ const TreatMent_Kit = () => {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
+
+    // Get All  TreatmentKit List
+    const _getAllTreatmentKit = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+
+        try {
+            // let paginationSize = req.query.paginationSize;
+            let { paginationSize, pageNo, sortField, sortOrder, departmentId, status, searchKey } = req.body;
+            // let pageNo = 0;
+            if (paginationSize) {
+                let records = parseInt(paginationSize);
+                if (records && (records != NaN)) {
+                    paginationSize = records;
+                }
+            }
+            let itemsPerPage = paginationSize ? paginationSize : 10;
+            // let sortField = 'uuid';
+            //let sortOrder = 'DESC';
+            if (pageNo) {
+                let temp = parseInt(pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+
+            const offset = pageNo * itemsPerPage;
+
+
+            if (sortField) {
+
+                sortField = sortField;
+            }
+
+            if (sortOrder && ((sortOrder == 'ASC') || (sortOrder == 'DESC'))) {
+
+                sortOrder = sortOrder;
+            }
+
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: { p_is_active: 1 }
+            };
+
+            if (sortField && /\S/.test(sortField)) {
+
+                findQuery.where = {
+                    [Op.or]: [{
+                        tk_code: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+
+
+                    }, {
+                        tk_name: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+                    },
+                    {
+                        u_first_name: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+                    }
+
+                    ]
+                };
+            }
+
+            if (typeof share == 'boolean') {
+                findQuery.where['tk_is_public'] = share;
+            }
+            if (typeof departmentId == 'string') {
+                findQuery.where['d_uuid'] = parseInt(departmentId);
+            }
+            if (typeof status == 'boolean') {
+                findQuery.where['tk_status'] = status;
+            }
+            // if (typeof createdBy && /\S/.test(createdBy)) {
+
+            //     findQuery.where = {
+            //         u_first_name: {
+            //             [Op.like]: '%' + createdBy + '%',
+            //         }
+            //     }
+
+            // }
+
+            if (searchKey && /\S/.test(searchKey)) {
+                Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            tk_code: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+                        {
+                            tk_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+
+                        },
+                        {
+                            d_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+
+
+                        {
+                            tk_is_public: {
+                                [Op.eq]: searchKey,
+                            }
+                        },
+                        {
+                            u_first_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+
+                        {
+                            tk_status: {
+                                [Op.eq]: searchLetters,
+                            }
+                        }
+
+                    ]
+                });
+            }
+            if (user_uuid) {
+                const treatmentKitData = await treatmentKitViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
+                );
+                if (treatmentKitData) {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched treatmentKit Details successfully', responseContents: treatmentKitData });
+                }
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
+
 
     return {
 

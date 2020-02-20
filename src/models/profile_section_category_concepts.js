@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profile_section_category_concepts = sequelize.define(
@@ -34,13 +34,39 @@ module.exports = (sequelize, DataTypes) => {
             profile_section_category_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('profile_section_category_uuid')
+                    }
+                }
+
+
 
             },
             value_type_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('value_type_uuid')
+                    }
+                }
 
             },
             is_multiple: {
@@ -78,7 +104,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
 
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                defaultValue: 1,
+                allowNull: false
 
             },
             created_by: {

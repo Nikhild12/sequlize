@@ -114,7 +114,30 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} encounter_type_uuid`;
       case "note_type_uuid":
         return `${returnProvideMsg} note_type_uuid`;
-
+      case "category_type_uuid":
+        return `${returnProvideMsg} category_type_uuid`;
+      case "category_group_uuid":
+        return `${returnProvideMsg} category_group_uuid`;
+      case "profile_uuid":
+        return `${returnProvideMsg} profile_uuid`;
+      case "section_uuid":
+        return `${returnProvideMsg} section_uuid`;
+      case "activity_uuid":
+        return `${returnProvideMsg} activity_uuid`;
+      case "profile_section_uuid":
+        return `${returnProvideMsg} profile_section_uuid`;
+      case "category_uuid":
+        return `${returnProvideMsg} category_uuid`;
+      case "profile_section_category_uuid":
+        return `${returnProvideMsg} profile_section_category_uuid`;
+      case "value_type_uuid":
+        return `${returnProvideMsg} value_type_uuid`;
+      case "profile_section_category_concept_uuid":
+        return `${returnProvideMsg} profile_section_category_concept_uuid`;
+      case "section_type_uuid":
+        return `${returnProvideMsg} section_type_uuid`;
+      case "section_note_type_uuid":
+        return `${returnProvideMsg} section_note_type_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -220,7 +243,22 @@ module.exports = Object.freeze({
         return `Relation Type Id ${validationMessage}`;
       case "admission_status_uuid":
         return `admission status uuid ${validationMessage}`;
-
+      case "category_type_uuid":
+        return `category_type_uuid ${validationMessage}`;
+      case "category_group_uuid":
+        return `category_group_uuid ${validationMessage}`;
+      case "profile_uuid":
+        return `profile_uuid ${validationMessage}`;
+      case "section_uuid":
+        return `section_uuid ${validationMessage}`;
+      case "activity_uuid":
+        return `activity_uuid ${validationMessage}`;
+      case "profile_section_category_uuid":
+        return `profile_section_category_uuid ${validationMessage}`;
+      case "value_type_uuid":
+        return `value_type_uuid ${validationMessage}`;
+      case "profile_section_category_concept_uuid":
+        return `profile_section_category_concept_uuid ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
     }

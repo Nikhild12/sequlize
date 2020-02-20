@@ -3,6 +3,9 @@ const Joi = require("joi");
 require("dotenv").config();
 
 const envVarsSchema = Joi.object({
+  PG_DB_LOGGING: Joi.string().default(0),
+  WSO2_LOG_URL: Joi.string().default('http://localhost:7327/api/logger/insertLog'),
+
   NODE_ENV: Joi.string()
     .allow(["development", "production", "test", "provision"])
     .default("development"),
@@ -41,6 +44,11 @@ if (error) {
 }
 
 const config = {
+  //Logging - 19_02_2020
+  logging: envVars.PG_DB_LOGGING,
+  wso2_logurl: envVars.WSO2_LOG_URL,
+  requestDate: new Date(),
+  //Logging - 19_02_2020
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   jwtSecret: envVars.JWT_SECRET,
@@ -54,9 +62,7 @@ const config = {
     password: envVars.PG_PASSWORD,
     dialect: "mysql"
   },
-  logging: envVars.PG_DB_LOGGING,
-  wso2_logurl: envVars.WSO2_LOG_URL,
-  requestDate: new Date(), //Logging
+  
   fileServerPath: envVars.FILE_SERVER_PATH,
   serverStoragePath: envVars.SERVER_STORAGE_PATH,
   addAllPrescriptionDetails:

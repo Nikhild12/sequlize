@@ -70,6 +70,9 @@ const categoriesRouter = require("./categories.route");
 //patient certificate routes
 const certificateRouter = require("./patient_certificates.route");
 
+//patient specality sketch routes
+const sketchRouter = require("./patient_speciality_sketches.route");
+
 //snomed details routes
 const smRouter = require("./snomed_details.route");
 
@@ -207,5 +210,7 @@ serviceRouter.use("/certificates", certificateRouter);
 //snomed details Routes
 serviceRouter.use("/snomed", smRouter);
 
+//patient specality skecth Routes
+serviceRouter.use("/sketch", sketchRouter);
 
 module.exports = serviceRouter;
