@@ -160,7 +160,9 @@ var sendLog = function (reqrescontent, sqlcontent) {
 
 var myLogger = function (req, res, next) {
 	res.on('finish', () => {
+			console.log("after finish-------");
 		if (config.logging === "1") {
+			console.log("config.logiing-------");
 			let filename = "sql.txt";
 			let sqlcontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
 			console.log('Query :' + sqlcontent);
