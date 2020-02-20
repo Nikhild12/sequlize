@@ -6306,6 +6306,41 @@
           }
         }
       }
+    },
+    "/api/sketch/create": {
+      "post": {
+        "description": "To create patient specality sketch details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "sketch",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addSketch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "patient-specality-Sketch"
+        ],
+        "responses": {
+          "200": {
+            "description": "Insterted patient sketch details Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -11874,6 +11909,41 @@
           "type": "string"
         },
         "searchLetters": {
+          "type": "string"
+        }
+      }
+    },
+    "addSketch": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        },
+        "encounter_uuid": {
+          "type": "integer"
+        },
+        "encounter_type_uuid": {
+          "type": "integer"
+        },
+        "doctor_uuid": {
+          "type": "integer"
+        },
+        "consultation_uuid": {
+          "type": "integer"
+        },
+        "speciality_sketch_uuid": {
+          "type": "integer"
+        },
+        "sketch_path": {
+          "type": "string"
+        },
+        "comments": {
           "type": "string"
         }
       }
