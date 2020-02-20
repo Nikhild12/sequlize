@@ -1,37 +1,37 @@
-// package Import
-const express = require('express');
-const logger = require('morgan');
-const cors = require('cors');
-const helmet = require('helmet');
-//const bodyParser = require('body-parser');
-const path = require('path');
-const fs = require("fs");
-
-// Swagger UI and Json import
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const compress = require("compression");
+const methodOverride = require("method-override");
+const cors = require("cors");
+// const httpStatus = require("http-status");
+const expressWinston = require("express-winston");
+const expressValidation = require("express-validation");
+const helmet = require("helmet");
+const winstonInstance = require("./winston");
+const routes = require("../routes/index.route");
+const config = require("./config");
+const APIError = require("../helpers/APIError");
+const multer = require("multer");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-// Config Import
-const config = require('./config');
-
-// Index route
-const indexRoute = require('../routes/index.route');
-
-const expressWinston = require("express-winston");
-const winstonInstance = require("./winston");
-// Express Initialize
+const fs = require("fs");
+const request = require("request");
+const moment = require("moment");
 const app = express();
-
 
 if (config.env === "development") {
 	app.use(logger("dev"));
 }
 
-// Middlewares
-app.use(express.urlencoded({ extended: true, limit: '100mb' }));
-app.use(express.json());
-// Enabling CORS for Accepting cross orgin req
-app.use(cors());
+// parse body params and attache them to req.body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 
 app.use(cookieParser());
 app.use(compress());
@@ -40,6 +40,10 @@ app.use(methodOverride());
 // secure apps by setting various HTTP headers
 app.use(helmet());
 
+// enable CORS - Cross Origin Resource Sharing
+app.use(cors());
+
+//Logging - 19_02_2020
 expressWinston.requestWhitelist.push("body");
 expressWinston.responseWhitelist.push("body");
 app.use(
@@ -56,17 +60,84 @@ app.use(
 		winstonInstance
 	})
 );
+//Logging - 19_02_2020
 
-//for upload purpose
-//app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "../src/assets")));
 
-// Enabling Log only for dev
-// if (config.env === 'develoment') {
 
-// }
-//app.use(logger('tiny'));
-// Initialzing Index Route to Express Middleware
+app.use("/assets", express.static(path.join(__dirname, "../uploads")));
+
+// if error is not an instanceOf APIError, convert it.
+app.use((err, req, res, next) => {
+	if (err instanceof expressValidation.ValidationError) {
+		// validation error contains errors which is an array of error each containing message[]
+		const unifiedErrorMessage = err.errors.map(error => error.messages.join(". ")).join(" and ");
+		const error = new APIError(unifiedErrorMessage, err.status, true);
+		return next(error);
+	} else if (!(err instanceof APIError)) {
+		const apiError = new APIError(err.message, err.status, err.isPublic);
+		return next(apiError);
+	}
+	return next(err);
+});
+
+
+var upload = multer({
+	storage: multer.diskStorage({
+		destination: function (req, file, callback) {
+			callback(null, path.join(__dirname + '../../../public/uploads'));
+		},
+		filename: function (req, file, callback) {
+			callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+		}
+	}),
+	fileFilter: function (req, file, callback) {
+		var ext = path.extname(file.originalname);
+		if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+			return callback( /*res.end('Only images are allowed')*/ null, false);
+		}
+		callback(null, true);
+	}
+});
+
+app.post('/api/image/imageUpload', upload.any(), function (req, res) {
+	const files = req.files;
+	const postData = req.body;
+	const finalData = [];
+	console.log(files);
+	if (!req.body && !req.files) {
+		res.send({
+			status: "failed",
+			msg: 'failed to upload file',
+			responseContents: postData
+		});
+	} else {
+		files.forEach(item => {
+			finalData.push(item.filename);
+		});
+		var final = {
+			module: postData.module,
+			uploadDate: postData.uploadDate,
+			imagePath: finalData
+		};
+		res.send({
+			statusCode: '200',
+			msg: "image uploaded",
+			responseContents: final
+		});
+	}
+});
+
+
+app.get('/api/getAPIVersion', function (req, res) {
+	const pkg = require('../../package.json');
+	res.send({
+		statusCode: '200',
+		msg: pkg.version,
+		responseContents: pkg.version
+	});
+});
+
+
 
 //Logging - 19_02_2020
 const makeServiceCall = (req, res, next) => {
@@ -97,9 +168,9 @@ const makeServiceCall = (req, res, next) => {
 				const zoneplace = moment.tz.guess();
 				const zonetime = moment().format('Z');
 				logObj.UTCFormat = zoneplace + ' ' + zonetime;
-				logObj.APIRequestTime = getCurrentDateTime(config.requestDate);
-				logObj.APIResponseTime = getCurrentDateTime(null);
-				logObj.APISpendTime = (moment.duration(moment(logObj.APIResponseTime).diff(config.requestDate))) || null;
+				logObj.APIRequestTime = moment(getCurrentDateTime(config.requestDate)).format('YYYY-MM-DD HH:mm:ss');
+				logObj.APIResponseTime =  moment(getCurrentDateTime(null)).format('YYYY-MM-DD HH:mm:ss');
+				logObj.APISpendTime = res.responseTime + ' milliseconds' || null;
 				logObj.url = req.url;
 				logObj.sqlquery = res.body.sql || null;
 				delete res.body.sql;
@@ -162,60 +233,20 @@ var sendLog = function (reqrescontent, sqlcontent) {
 	}
 };
 
-function getCurrentDateTime(givendt) {
-	let istdatetime = new Date().toLocaleString('en-US', {
-		timeZone: 'Asia/Kolkata'
-	});
-	if (givendt) {
-		istdatetime = new Date(givendt).toLocaleString('en-US', {
-			timeZone: 'Asia/Kolkata'
-		});
-	}
-	return new Date(istdatetime);
-}
-
-var sendLog = function (reqrescontent, sqlcontent) {
-	try {
-		let metadata = {
-			req: '',
-			res: '',
-		};
-		metainfo = JSON.parse((reqrescontent));
-		if (metainfo && metainfo.meta &&
-			metainfo.meta.res) {
-			metainfo.meta.res.body.sql = sqlcontent;
-			metainfo.meta.res.body.loglevel = metainfo.level;
-		}
-		metadata.req = metainfo.meta.req;
-		metadata.res = metainfo.meta.res;
-		if (metadata.req && metadata.res) {
-			makeServiceCall(metadata.req, metadata.res);
-		}
-	} catch (ex) {
-		metainfo = '';
-	}
-};
-
 var myLogger = function (req, res, next) {
 	res.on('finish', () => {
-		console.log("after finish-------");
 		if (config.logging === "1") {
-			console.log("config.logiing-------");
 			let filename = "sql.txt";
 			let sqlcontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
 			console.log('Query :' + sqlcontent);
 			filename = "access-info.log";
 			let reqrescontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
 			if (reqrescontent) {
-				console.log("reqresconentss---------");
 				sendLog(reqrescontent, sqlcontent);
 			}
 			filename = "access-error.log";
-			console.log(filename);
 			reqrescontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
-			//console.log(reqrescontent);
 			if (reqrescontent) {
-				console.log("afgter read readfilesynd------");
 				sendLog(reqrescontent, sqlcontent);
 			}
 			fs.writeFile('./sql.txt', '', function () {
@@ -235,10 +266,6 @@ var myLogger = function (req, res, next) {
 app.use(myLogger);
 //Logging - 19_02_2020
 
-// Swagger UI Middleware
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.use('/', indexRoute);
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
