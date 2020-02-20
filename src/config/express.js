@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 const compress = require("compression");
 const methodOverride = require("method-override");
 const cors = require("cors");
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(compress());
 app.use(methodOverride());
 
