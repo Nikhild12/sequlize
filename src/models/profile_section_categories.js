@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profile_section_categories = sequelize.define(
@@ -15,13 +15,30 @@ module.exports = (sequelize, DataTypes) => {
             profile_section_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
+                    },
+                }
 
             },
             category_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+                    },
+                }
+
 
             },
             display_order: {
