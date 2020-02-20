@@ -525,7 +525,8 @@ const Encounter = () => {
           }
         );
         if (docList && docList.length>0) {
-          const getuDetails = await getuserDetails(docList[0].doctor_uuid, req.headers.authorization);
+          
+          const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails) });
@@ -633,7 +634,8 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
   });
 }
 
-async function getuserDetails(user_uuid, authorization) {
+async function getuserDetails(user_uuid, docid, authorization) {
+  //console.log(user_uuid, authorization);
   let options = {
     uri: config.wso2AppUrl + 'users/getusersById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
@@ -642,7 +644,7 @@ async function getuserDetails(user_uuid, authorization) {
       "Authorization": authorization,
       "user_uuid": user_uuid
     },
-    body: { "Id": user_uuid },
+    body: { "Id": docid },
     json: true
   };
   const user_details = await rp(options);
