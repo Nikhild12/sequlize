@@ -525,11 +525,11 @@ const Encounter = () => {
           }
         );
         if (docList && docList.length>0) {
-          
+          const getdepdetails = await getdepDetails(user_uuid, docList[0].department_uuid, req.headers.authorization);
           const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
           return res
             .status(httpStatus.OK)
-            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails) });
+            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails, getdepdetails) });
         } else {
           return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
         }
@@ -651,15 +651,36 @@ async function getuserDetails(user_uuid, docid, authorization) {
   return user_details;
 }
 
-function getpddata(docList, getuDetails) {
+async function getdepDetails(user_uuid, depid, authorization) {
+  console.log(depid);
+  let options = {
+    uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "uuid": depid },
+    json: true
+  };
+  const dep_details = await rp(options);
+  return dep_details;
+}
+
+function getpddata(docList, getuDetails, getdep) {
   //let dsdList = [];
   let doc_name = getuDetails.responseContents.title.name + '.' + getuDetails.responseContents.first_name;
   //let nur_name = getnDetails.responseContents.title.name + '.' + getnDetails.responseContents.first_name;
   if (docList && docList.length > 0) {
     doc_data = {
       patient_uuid: docList[0].patient_uuid,
+      encounter_uuid: docList[0].encounter_uuid,
+      created_date: docList[0].created_date,
       doctor_uuid: docList[0].doctor_uuid,
       doctor_name: doc_name,
+      department_uuid: docList[0].department_uuid,
+      department_name: getdep.responseContent.name
     };
 
     return { "Doc_info": doc_data };
