@@ -166,7 +166,7 @@ var myLogger = function (req, res, next) {
 			console.log("config.logiing-------");
 			let filename = "sql.txt";
 			let sqlcontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
-			//console.log('Query :' + sqlcontent);
+			console.log('Query :' + sqlcontent);
 			filename = "access-info.log";
 			let reqrescontent = fs.readFileSync(process.cwd() + "/" + filename).toString();
 			if (reqrescontent) {
