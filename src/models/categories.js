@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const categories = sequelize.define(
@@ -33,13 +33,40 @@ module.exports = (sequelize, DataTypes) => {
             category_type_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_type_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_type_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('category_type_uuid')
+                    }
+
+                }
 
             },
             category_group_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('category_group_uuid')
+                    }
+
+                }
+
 
             },
             is_active: {

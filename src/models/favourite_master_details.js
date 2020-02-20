@@ -169,7 +169,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-
+            speciality_sketch_uuid: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            },
             created_date: 'created_date',
             modified_date: 'modified_date',
 
