@@ -529,7 +529,7 @@ const Encounter = () => {
           const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
           return res
             .status(httpStatus.OK)
-            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails, getdepdetails) });
+            .json({ statusCode: 200, req: '', responseContents: [getpddata(docList, getuDetails, getdepdetails)] });
         } else {
           return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
         }
