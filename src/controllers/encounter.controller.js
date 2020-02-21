@@ -683,7 +683,7 @@ function getpddata(docList, getuDetails, getdep) {
       department_name: getdep.responseContent.name
     };
 
-    return { "Doc_info": doc_data };
+    return { "Doc_info": [doc_data] };
   }
   else {
     return {};
