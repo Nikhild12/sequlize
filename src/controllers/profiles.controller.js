@@ -237,7 +237,7 @@ const profilesController = () => {
         const profileData = await profilesViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
         );
         if (profileData) {
-          return res.status(200).send({ code: httpStatus.OK, message: 'Fetched profile Details successfully', responseContents: profileData });
+          return res.status(200).send({ code: httpStatus.OK, message: 'Fetched profile Details successfully', count: profileData.count, responseContents: profileData.rows });
         }
       }
       else {
