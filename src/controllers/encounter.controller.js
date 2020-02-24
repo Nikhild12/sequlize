@@ -230,8 +230,7 @@ const Encounter = () => {
                   status: emr_constants.IS_IN_ACTIVE
                 },
                 {
-                  where: { uuid: encounterData[0].uuid },
-                  transaction: encounterTransaction
+                  where: { uuid: encounterData[0].uuid }
                 }
               ),
               encounter_doctors_tbl.update(
@@ -241,8 +240,7 @@ const Encounter = () => {
                   status: emr_constants.IS_IN_ACTIVE
                 },
                 {
-                  where: { encounter_uuid: encounterData[0].uuid },
-                  transaction: encounterTransaction
+                  where: { encounter_uuid: encounterData[0].uuid }
                 }
               )
             ];
@@ -262,8 +260,7 @@ const Encounter = () => {
           encounterPromise = [
             ...encounterPromise,
             encounter_tbl.create(encounter, {
-              returning: true,
-              transaction: encounterTransaction
+              returning: true
             })
           ];
         }
@@ -281,11 +278,11 @@ const Encounter = () => {
 
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
             encounterDoctor,
-            { returning: true, transaction: encounterTransaction }
+            { returning: true }
           );
           encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-          await encounterTransaction.commit();
-          encounterTransStatus = true;
+          // await encounterTransaction.commit();
+          // encounterTransStatus = true;
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Encounter Successfully",
@@ -294,18 +291,18 @@ const Encounter = () => {
         }
       } catch (ex) {
         console.log(ex);
-        if (encounterTransaction) {
-          await encounterTransaction.rollback();
-          encounterTransStatus = true;
-        }
+        // if (encounterTransaction) {
+        //   await encounterTransaction.rollback();
+        //   encounterTransStatus = true;
+        // }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (encounterTransaction && !encounterTransStatus) {
-          encounterTransaction.rollback();
-        }
+        // if (encounterTransaction && !encounterTransStatus) {
+        //   encounterTransaction.rollback();
+        // }
       }
     } else {
       return res.status(400).send({
