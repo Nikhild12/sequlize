@@ -332,7 +332,7 @@ const TickSheetMasterController = () => {
       );
 
       try {
-        favouriteTransaction = await sequelizeDb.sequelize.transaction();
+        // favouriteTransaction = await sequelizeDb.sequelize.transaction();
         const { search_key, search_value } = getSearchValueBySearchKey(
           favouriteMasterDetailsReqData[0],
           searchkey
@@ -351,6 +351,8 @@ const TickSheetMasterController = () => {
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
+          console.log("Existing Record");
+
           const duplicate_msg =
             checkingForSameFavourite[0].tsm_active[0] === 1
               ? duplicate_active_msg
@@ -364,24 +366,28 @@ const TickSheetMasterController = () => {
           favouriteMasterReqData,
           {
             returning: true
-            // , transaction: favouriteTransaction
           }
         );
-        const favouriteMasterDetailsCreatedData = await Promise.all(
-          getFavouriteMasterDetailsWithUUID(
-            favouritMasterDetailsTbl,
-            favouriteMasterDetailsReqData,
-            favouriteMasterCreatedData,
-            user_uuid
-          )
+
+        const fmd = favouriteMasterDetailsReqData[0];
+        fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
+          fmd,
+          favouriteMasterCreatedData,
+          user_uuid,
+          "favourite_master_uuid"
+        );
+        const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
+          fmd,
+          {
+            returning: true
+          }
         );
 
         if (favouriteMasterDetailsCreatedData) {
           // returning req data with inserted record Id
           favouriteMasterReqData.uuid = favouriteMasterCreatedData.uuid;
-          favouriteMasterDetailsReqData.forEach((fMD, index) => {
-            fMD.uuid = favouriteMasterDetailsCreatedData[index].uuid;
-          });
+          favouriteMasterDetailsReqData[0].uuid =
+            favouriteMasterDetailsCreatedData[0].uuid;
           // await favouriteTransaction.commit();
           // favouriteTransStatus = true;
           return res.status(200).send({
@@ -396,7 +402,7 @@ const TickSheetMasterController = () => {
       } catch (ex) {
         // tickSheetDebug(`Exception Happened ${ex.message}`);
         // await favouriteTransaction.rollback();
-        // favouriteTransStatus = true;
+        favouriteTransStatus = true;
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -603,7 +609,7 @@ const TickSheetMasterController = () => {
       favouriteMasterReqData.hasOwnProperty("is_active")
     ) {
       try {
-        favouriteTransaction = await sequelizeDb.sequelize.transaction();
+        // favouriteTransaction = await sequelizeDb.sequelize.transaction();
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteMasterReqData.favourite_id,
@@ -620,17 +626,15 @@ const TickSheetMasterController = () => {
 
         const updatedFavouriteData = await Promise.all([
           favouriteMasterTbl.update(favouriteMasterUpdateData, {
-            where: { uuid: favouriteMasterReqData.favourite_id },
-            transaction: favouriteTransaction
+            where: { uuid: favouriteMasterReqData.favourite_id }
           }),
           favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, {
             where: {
               favourite_master_uuid: favouriteMasterReqData.favourite_id
-            },
-            transaction: favouriteTransaction
+            }
           })
         ]);
-        await favouriteTransaction.commit();
+        // await favouriteTransaction.commit();
         favouriteTransStatus = true;
 
         if (updatedFavouriteData) {
@@ -642,15 +646,16 @@ const TickSheetMasterController = () => {
         }
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
-        await favouriteTransaction.rollback();
-        favouriteTransaction = true;
+        // await favouriteTransaction.rollback();
+        // favouriteTransaction = true;
         return res
           .status(400)
           .send({ code: httpStatus[400], message: ex.message });
       } finally {
-        if (favouriteTransaction && !favouriteTransStatus) {
-          await favouriteTransaction.rollback();
-        }
+        // if (favouriteTransaction && !favouriteTransStatus) {
+        //   await favouriteTransaction.rollback();
+        // }
+        console.log("Finally");
       }
     }
   };
