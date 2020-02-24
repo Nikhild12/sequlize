@@ -45,8 +45,8 @@ const PatientTreatmentController = () => {
     const { patientDiagnosis, patientPrescription } = req.body;
     const { patientLab, patientRadiology, patientInvestigation } = req.body;
 
-    let patientTransaction;
-    let patientTransactionStatus = false;
+    // let patientTransaction;
+    // let patientTransactionStatus = false;
     if (user_uuid && patientTreatment) {
       if (!patientTreatmentAttributes.checkPatientTreatmentBody(req)) {
         return res.status(400).send({
@@ -60,7 +60,7 @@ const PatientTreatmentController = () => {
 
       try {
         // transaction Initialization
-        patientTransaction = await sequelizeDb.sequelize.transaction();
+        // patientTransaction = await sequelizeDb.sequelize.transaction();
         patientTreatment.treatment_given_by = user_uuid;
         patientTreatment.treatment_given_date = new Date();
         patientTreatment.tat_start_time = new Date();
@@ -68,7 +68,8 @@ const PatientTreatmentController = () => {
           patientTreatment,
           {
             returning: true,
-            transaction: patientTransaction
+            //transaction: patientTransaction
+
           }
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
@@ -88,7 +89,7 @@ const PatientTreatmentController = () => {
             patientDiagnosis,
             {
               returning: true,
-              transaction: patientTransaction,
+              //transaction: patientTransaction,
               validate: true
             }
           );
@@ -131,8 +132,8 @@ const PatientTreatmentController = () => {
 
 
 
-        await patientTransaction.commit();
-        patientTransactionStatus = true;
+        //await patientTransaction.commit();
+        // patientTransactionStatus = true;
         return res.status(200).send({
           code: httpStatus.OK,
           message: emr_constants.INSERTED_PATIENT_TREATMENT,
@@ -148,10 +149,10 @@ const PatientTreatmentController = () => {
       } catch (error) {
         console.log(error, "Exception Happened");
 
-        if (patientTransaction) {
-          await patientTransaction.rollback();
-          patientTransactionStatus = true;
-        }
+        // if (patientTransaction) {
+        //   await patientTransaction.rollback();
+        //   patientTransactionStatus = true;
+        // }
 
         if (labCreated) {
           const id = labCreated[0].uuid;
@@ -175,9 +176,9 @@ const PatientTreatmentController = () => {
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: error });
       } finally {
-        if (patientTransaction && !patientTransactionStatus) {
-          patientTransaction.rollback();
-        }
+        // if (patientTransaction && !patientTransactionStatus) {
+        //   patientTransaction.rollback();
+        // }
       }
     } else {
       return res.status(400).send({
@@ -227,6 +228,7 @@ module.exports = PatientTreatmentController();
 function getPrevKitOrdersResponse(orders) {
   return orders.map((o) => {
     return {
+      pt_uuid: o.pt_uuid,
       patient_id: o.pt_patient_uuid,
       ordered_date: o.pt_treatment_given_date,
       department_name: o.d_name,
