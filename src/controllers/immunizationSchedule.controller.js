@@ -7,6 +7,7 @@ const Op = Sequelize.Op;
 
 
 const immunizationScheduleTbl = db.immunization_schedule;
+const immunization = db.immunizations;
 
 const immunizationScheduleController = () => {
     /**
@@ -20,29 +21,21 @@ const immunizationScheduleController = () => {
 
     const getimmunizationSchedule = async (req, res, next) => {
         let getsearch = req.body;
-
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
         let sortField = 'created_date';
         let sortOrder = 'DESC';
-
         if (getsearch.pageNo) {
             let temp = parseInt(getsearch.pageNo);
-
-
             if (temp && (temp != NaN)) {
                 pageNo = temp;
             }
         }
 
         const offset = pageNo * itemsPerPage;
-
-
         if (getsearch.sortField) {
-
             sortField = getsearch.sortField;
         }
-
         if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
 
             sortOrder = getsearch.sortOrder;
@@ -52,40 +45,42 @@ const immunizationScheduleController = () => {
             limit: itemsPerPage,
             order: [
                 [sortField, sortOrder],
-            ],where:{
-status:1
-            }
+            ],
+            where: {
+                status: 1
+            },
+            include: [
+                {
+                    model: immunization,
+                    attributes:['uuid','name'],
+                    required: false
+                    // as:'immunizations'
+                }
+            ]
 
         };
-
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
         }
-
-
         try {
             await immunizationScheduleTbl.findAndCountAll(findQuery)
-
-
                 .then((findData) => {
-
                     return res
-
                         .status(httpStatus.OK)
                         .json({
                             message: "success",
@@ -96,6 +91,7 @@ status:1
                         });
                 })
                 .catch(err => {
+                    console.log(err);
                     return res
                         .status(httpStatus.OK)
                         .json({
@@ -112,40 +108,33 @@ status:1
                     message: "error",
                 });
         }
-
-
     };
-
-
-  
     const postimmunizationSchedule = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-       
-        
+
+
 
         if (postData) {
 
             immunizationScheduleTbl.findAll({
                 where: {
-                  [Op.or]: [
-                    {
+                    [Op.or]: [{
                         immunization_name: postData.immunization_name
-                    }
-                  ]
+                    }]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter immunizations Schedule"
+                        status: "error",
+                        msg: "Record already Found. Please enter immunizations Schedule"
                     });
-                  } else{
+                } else {
                     await immunizationScheduleTbl.create(postData, {
                         returning: true
                     }).then(data => {
-        
+
                         res.send({
                             statusCode: 200,
                             msg: "Inserted immunizations Schedule details Successfully",
@@ -153,19 +142,19 @@ status:1
                             responseContents: data
                         });
                     }).catch(err => {
-        
+
                         res.send({
                             status: "failed",
                             msg: "failed to immunizations Schedule details",
                             error: err
                         });
                     });
-                  }
-              });
+                }
+            });
 
-          
+
         } else {
-            
+
             res.send({
                 status: 'failed',
                 msg: 'Please enter immunizations details'
@@ -180,12 +169,12 @@ status:1
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await immunizationScheduleTbl.findOne({
-                    where: {
-                        uuid: postData.Id
-                    },
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                where: {
+                    uuid: postData.Id
+                },
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -236,10 +225,10 @@ status:1
         postData.modified_by = req.headers.user_uuid;
         await immunizationScheduleTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Id
-                }
+            where: {
+                uuid: postData.Id
             }
+        }
         ).then((data) => {
             res.send({
                 statusCode: 200,

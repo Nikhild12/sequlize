@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profile_section_categories = sequelize.define(
@@ -15,13 +15,30 @@ module.exports = (sequelize, DataTypes) => {
             profile_section_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
+                    },
+                }
 
             },
             category_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+                    },
+                }
+
 
             },
             display_order: {
@@ -75,6 +92,21 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+
+    profile_section_categories.associate = models => {
+        profile_section_categories.belongsTo(models.categories, {
+            foreignKey: 'category_uuid',
+            as: 'categories'
+        });
+        profile_section_categories.belongsTo(models.profile_sections, {
+            foreignKey: 'profile_section_uuid',
+            as: 'profile_sections'
+        });
+        profile_section_categories.hasMany(models.profile_section_category_concepts, {
+            foreignKey: 'profile_section_category_uuid',
+            as: 'profile_section_category_concepts'
+        });
+    };
 
     return profile_section_categories;
 };

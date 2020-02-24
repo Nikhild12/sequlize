@@ -80,25 +80,25 @@ const TreatMent_Kit = () => {
     const _createTreatmentKit = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        let treatTransStatus = false;
-        let treatmentTransaction;
+        // let treatTransStatus = false;
+        //let treatmentTransaction;
         let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
         let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
         if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
 
             if (checkTreatmentKit(req)) {
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: 'Please send treatment Kit along with One widget details' });
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED });
             }
             try {
 
-                treatmentTransaction = await sequelizeDb.sequelize.transaction();
+                // treatmentTransaction = await sequelizeDb.sequelize.transaction();
                 let treatmentSave = [];
                 const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
                 if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
                     return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord) });
                 }
                 treatment_kit = emr_utility.createIsActiveAndStatus(treatment_kit, user_uuid);
-                const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true, transaction: treatmentTransaction });
+                const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true });
                 // Lab
                 if (treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 && treatmentSavedData) {
 
@@ -108,7 +108,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Lab Save
-                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.bulkCreate(treatment_kit_lab, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.bulkCreate(treatment_kit_lab, { returning: true })];
 
                 }
                 // Drug
@@ -120,7 +120,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, { returning: true })];
 
                 }
                 // Investigation 
@@ -131,7 +131,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.bulkCreate(treatment_kit_investigation, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.bulkCreate(treatment_kit_investigation, { returning: true })];
                 }
                 // Diagnosis 
                 if (treatment_kit_diagnosis && Array.isArray(treatment_kit_diagnosis) && treatment_kit_diagnosis.length > 0 && treatmentSavedData) {
@@ -141,7 +141,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, { returning: true })];
                 }
                 // Radiology
                 if (treatment_kit_radiology && Array.isArray(treatment_kit_radiology) && treatment_kit_radiology.length > 0 && treatmentSavedData) {
@@ -151,27 +151,27 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, { returning: true })];
                 }
 
                 await Promise.all(treatmentSave);
-                await treatmentTransaction.commit();
-                treatTransStatus = true;
+                //await treatmentTransaction.commit();
+                //treatTransStatus = true;
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.TREATMENT_SUCCESS, reqContents: req.body });
 
 
             } catch (ex) {
                 console.log('Exception happened', ex);
-                if (treatmentTransaction) {
-                    await treatmentTransaction.rollback();
-                    treatTransStatus = true;
-                }
+                // if (treatmentTransaction) {
+                //     await treatmentTransaction.rollback();
+                //     treatTransStatus = true;
+                // }
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             } finally {
 
-                if (treatmentTransaction && !treatTransStatus) {
-                    treatmentTransaction.rollback();
-                }
+                // if (treatmentTransaction && !treatTransStatus) {
+                //     treatmentTransaction.rollback();
+                // }
             }
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
@@ -220,9 +220,8 @@ const TreatMent_Kit = () => {
 
 
     };
-
     // Get All  TreatmentKit List
-    const _getAllTreatmentKit = async (req, res) => {
+    const _getAllTreatmentKit_old = async (req, res) => {
 
         const { user_uuid } = req.headers;
 
@@ -247,7 +246,6 @@ const TreatMent_Kit = () => {
             }
 
             const offset = pageNo * itemsPerPage;
-
 
             if (searchSortBy) {
 
@@ -293,8 +291,6 @@ const TreatMent_Kit = () => {
                         [Op.like]: '%' + createdBy + '%',
                     }
                 }
-
-
 
             }
             if (typeof departmentId == 'string') {
@@ -362,6 +358,156 @@ const TreatMent_Kit = () => {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
+
+    // Get All  TreatmentKit List
+    const _getAllTreatmentKit = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+
+        try {
+            // let paginationSize = req.query.paginationSize;
+            let { paginationSize, pageNo, sortField, sortOrder, departmentId, status, searchKey } = req.body;
+            // let pageNo = 0;
+            if (paginationSize) {
+                let records = parseInt(paginationSize);
+                if (records && (records != NaN)) {
+                    paginationSize = records;
+                }
+            }
+            let itemsPerPage = paginationSize ? paginationSize : 10;
+            // let sortField = 'uuid';
+            //let sortOrder = 'DESC';
+            if (pageNo) {
+                let temp = parseInt(pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+
+            const offset = pageNo * itemsPerPage;
+
+
+            if (sortField) {
+
+                sortField = sortField;
+            }
+
+            if (sortOrder && ((sortOrder == 'ASC') || (sortOrder == 'DESC'))) {
+
+                sortOrder = sortOrder;
+            }
+
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: { p_is_active: 1 }
+            };
+
+            if (sortField && /\S/.test(sortField)) {
+
+                findQuery.where = {
+                    [Op.or]: [{
+                        tk_code: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+
+
+                    }, {
+                        tk_name: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+                    },
+                    {
+                        u_first_name: {
+                            [Op.like]: '%' + sortField + '%',
+                        },
+                    }
+
+                    ]
+                };
+            }
+
+            if (typeof share == 'boolean') {
+                findQuery.where['tk_is_public'] = share;
+            }
+            if (typeof departmentId == 'string') {
+                findQuery.where['d_uuid'] = parseInt(departmentId);
+            }
+            if (typeof status == 'boolean') {
+                findQuery.where['tk_status'] = status;
+            }
+            // if (typeof createdBy && /\S/.test(createdBy)) {
+
+            //     findQuery.where = {
+            //         u_first_name: {
+            //             [Op.like]: '%' + createdBy + '%',
+            //         }
+            //     }
+
+            // }
+
+            if (searchKey && /\S/.test(searchKey)) {
+                Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            tk_code: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+                        {
+                            tk_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+
+                        },
+                        {
+                            d_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+
+
+                        {
+                            tk_is_public: {
+                                [Op.eq]: searchKey,
+                            }
+                        },
+                        {
+                            u_first_name: {
+                                [Op.like]: '%' + searchKey + '%',
+                            }
+                        },
+
+                        {
+                            tk_status: {
+                                [Op.eq]: searchLetters,
+                            }
+                        }
+
+                    ]
+                });
+            }
+            if (user_uuid) {
+                const treatmentKitData = await treatmentKitViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
+                );
+                if (treatmentKitData) {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'Fetched treatmentKit Details successfully', responseContents: treatmentKitData });
+                }
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
+
 
     return {
 

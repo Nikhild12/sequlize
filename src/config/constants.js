@@ -23,6 +23,7 @@ module.exports = Object.freeze({
   TREATMENT_SUCCESS: "Treatment Kit Successfully Inserted",
   FILTERBYTHREE: "filterbythree",
   FETCHD_TREATMENT_KIT_SUCCESSFULLY: "Fetched Treatment Kit Successfully",
+  FETCHED_PREVIOUS_KIT_SUCCESSFULLY: "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
   NO_RECORD_FOUND: "No Record Found",
   NO_CONTENT_MESSAGE: "No Content Found or record could be deleted",
@@ -37,6 +38,12 @@ module.exports = Object.freeze({
   PROCEDURE_FETCHED: "Procedure Successfully Fetched",
   INSERTED_PATIENT_TREATMENT: "Inserted Patient Treatment Successfully",
   UPDATED_ENC_SUCCESS: "Updated Encounter By Id",
+  PLEASE_PROVIDE: "Please Provide",
+  VALID_START_DATE: "a valid Start Date time",
+  VALID_END_DATE: "a valid End Date time",
+  START_DATE: "a Start Date time",
+  END_DATE: "a End Date time",
+  UPDATED_ENC_DOC_TAT_TIME: "Updated Tat End Time Successfully",
 
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
@@ -107,7 +114,30 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} encounter_type_uuid`;
       case "note_type_uuid":
         return `${returnProvideMsg} note_type_uuid`;
-
+      case "category_type_uuid":
+        return `${returnProvideMsg} category_type_uuid`;
+      case "category_group_uuid":
+        return `${returnProvideMsg} category_group_uuid`;
+      case "profile_uuid":
+        return `${returnProvideMsg} profile_uuid`;
+      case "section_uuid":
+        return `${returnProvideMsg} section_uuid`;
+      case "activity_uuid":
+        return `${returnProvideMsg} activity_uuid`;
+      case "profile_section_uuid":
+        return `${returnProvideMsg} profile_section_uuid`;
+      case "category_uuid":
+        return `${returnProvideMsg} category_uuid`;
+      case "profile_section_category_uuid":
+        return `${returnProvideMsg} profile_section_category_uuid`;
+      case "value_type_uuid":
+        return `${returnProvideMsg} value_type_uuid`;
+      case "profile_section_category_concept_uuid":
+        return `${returnProvideMsg} profile_section_category_concept_uuid`;
+      case "section_type_uuid":
+        return `${returnProvideMsg} section_type_uuid`;
+      case "section_note_type_uuid":
+        return `${returnProvideMsg} section_note_type_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -213,9 +243,30 @@ module.exports = Object.freeze({
         return `Relation Type Id ${validationMessage}`;
       case "admission_status_uuid":
         return `admission status uuid ${validationMessage}`;
-
+      case "category_type_uuid":
+        return `category_type_uuid ${validationMessage}`;
+      case "category_group_uuid":
+        return `category_group_uuid ${validationMessage}`;
+      case "profile_uuid":
+        return `profile_uuid ${validationMessage}`;
+      case "section_uuid":
+        return `section_uuid ${validationMessage}`;
+      case "activity_uuid":
+        return `activity_uuid ${validationMessage}`;
+      case "profile_section_category_uuid":
+        return `profile_section_category_uuid ${validationMessage}`;
+      case "value_type_uuid":
+        return `value_type_uuid ${validationMessage}`;
+      case "profile_section_category_concept_uuid":
+        return `profile_section_category_concept_uuid ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
+    }
+  },
+  getEncounterType(id) {
+    switch (id) {
+      case 1: return "OP"
+      case 2: return "IP"
     }
   }
 });

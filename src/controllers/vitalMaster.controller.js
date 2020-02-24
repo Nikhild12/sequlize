@@ -158,30 +158,40 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-  const _getVitalByID = async (req, res) => {
+  const _getVitalByID = async (req, res, next) => {  
+    const postData = req.body;
+    try {
 
-    let { vital_uuid } = req.query;
+      const page = postData.page ? postData.page : 1;
+      const itemsPerPage = postData.limit ? postData.limit : 10;
+      const offset = (page - 1) * itemsPerPage;
+      await vitalmstrTbl.findOne({
+              where: {
+                  uuid: postData.Vital_id
+              },
+              offset: offset,
+              limit: itemsPerPage
+          })
+          .then((data) => {
+              return res
+                  .status(httpStatus.OK)
+                  .json({
+                      statusCode: 200,
+                      req: '',
+                      responseContents: data
+                  });
+          });
 
-    if (vital_uuid && vital_uuid !== '') {
-
-      try {
-
-        const getVital = await vitalmstrTbl.findOne(getdefaultVitalsQuery(vital_uuid), { returning: true });
-
-        return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Detailed Vital Master", responseContent: getVital });
-
-      }
-      catch (ex) {
-
-        return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
-
-      }
-
-    } else {
-
-      return res.status(400).send({ code: httpStatus[400], message: "No Request body Found" });
-    }
-  };
+  } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+              status: "error",
+              msg: errorMsg
+          });
+     };
+    };
   const _updatevitalsById = async (req, res, next) => {
     const postData = req.body;
     postData.modified_by = req.headers.user_uuid;
@@ -213,7 +223,7 @@ const _deletevitals = async (req, res) => {
 
           const updateddiagnosissAsync = await Promise.all(
               [
-                  diagnosisTbl.update(updatedvitalsData, { where: { uuid: vitals_id } })
+                  vitalmstrTbl.update(updatedvitalsData, { where: { uuid: vitals_id } })
                  
               ]
           );

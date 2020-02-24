@@ -7,7 +7,7 @@ const encounterRouter = require("./encounter.route");
 const encounterTypeRouter = require("./encounter.type.route");
 const patientDiagnosisRouter = require("./patient.diagnosis.route");
 const patientAttachmentsRouter = require("./patient_attachments.route");
-//const serviceRoute = express.Router();
+const patientTreatmentRoute = require("./patient_treatment.route");
 
 const favouriteRoutes = require("./favourite_master_route");
 const templateRoutes = require("./template_master.route");
@@ -69,6 +69,12 @@ const categoriesRouter = require("./categories.route");
 
 //patient certificate routes
 const certificateRouter = require("./patient_certificates.route");
+
+//patient specality sketch routes
+const sketchRouter = require("./patient_speciality_sketches.route");
+
+//snomed details routes
+const smRouter = require("./snomed_details.route");
 
 const serviceRouter = express.Router();
 
@@ -193,11 +199,18 @@ serviceRouter.use("/body-side", bodySideRoute);
 // Surgery Position Routes
 serviceRouter.use("/surgery-position", surgeryPositionRoute);
 
+// Patient Treatment Routes
+serviceRouter.use("/patient-treatment", patientTreatmentRoute);
 // Discharge Summary Routes
 serviceRouter.use("/discharge-summary", dischargeSummary);
 
 // patient certificate Routes
 serviceRouter.use("/certificates", certificateRouter);
 
+//snomed details Routes
+serviceRouter.use("/snomed", smRouter);
+
+//patient specality skecth Routes
+serviceRouter.use("/sketch", sketchRouter);
 
 module.exports = serviceRouter;

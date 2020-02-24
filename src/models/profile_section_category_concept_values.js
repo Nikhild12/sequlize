@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profile_section_category_concept_values = sequelize.define(
@@ -15,8 +15,19 @@ module.exports = (sequelize, DataTypes) => {
             profile_section_category_concept_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
-
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_concept_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_concept_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('profile_section_category_concept_uuid')
+                    }
+                }
             },
             value_code: {
 
@@ -52,7 +63,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
 
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                defaultValue: 1,
+                allowNull: false
 
             },
             created_by: {
@@ -79,6 +92,13 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+
+    profile_section_category_concept_values.associate = models => {
+        profile_section_category_concept_values.belongsTo(models.profile_section_category_concepts, {
+            foreignKey: 'profile_section_category_concept_uuid',
+            as: 'profile_section_category_concepts'
+        });
+    };
 
     return profile_section_category_concept_values;
 };

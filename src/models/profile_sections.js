@@ -1,4 +1,4 @@
-//const emr_constants = require('../config/constants');
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const profile_sections = sequelize.define(
@@ -15,45 +15,84 @@ module.exports = (sequelize, DataTypes) => {
             profile_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('profile_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('profile_uuid')
+                    }
+                }
 
             },
             section_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('section_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('section_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('section_uuid')
+                    }
+                }
 
             },
             activity_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
+                    },
+                    min: {
+                        args: [1],
+                        msg: emr_constants.GetZeroValidationMessage('activity_uuid')
+                    }
+                }
+
 
             },
             display_order: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: false,
+                defaultValue: 0,
 
             },
             is_active: {
 
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
-                allowNull: true
+                allowNull: false
 
             },
             status: {
 
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
-                allowNull: true
+                allowNull: false
 
             },
             revision: {
 
                 type: DataTypes.INTEGER,
-                allowNull: true
+                defaultValue: 1,
+                allowNull: false
 
             },
             created_by: {
@@ -86,6 +125,14 @@ module.exports = (sequelize, DataTypes) => {
         profile_sections.belongsTo(models.sections, {
             foreignKey: 'section_uuid',
             as: 'sections'
+        });
+        profile_sections.belongsTo(models.profiles, {
+            foreignKey: 'profile_uuid',
+            as: 'profiles'
+        });
+        profile_sections.hasMany(models.profile_section_categories, {
+            foreignKey: 'profile_section_uuid',
+            as: 'profile_section_categories'
         });
     };
 

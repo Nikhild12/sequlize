@@ -66,6 +66,13 @@ const sequelize = new Sequelize(
 }
 );
 
+//Don't remove the lines this for SQL Query log trace //Logging - 19_02_2020
+const logStream = fs.createWriteStream('./sql.txt', {'flags': 'a'});
+sequelize.options.logging = str =>{ log = str,
+  logStream.write(log);
+};
+//Don't remove the lines this for SQL Query log trace //Logging - 19_02_2020
+
 const modelsDir = path.normalize(`${__dirname}/../models`);
 const EMR_VIEWS_DIR = path.normalize(`${__dirname}/../views`);
 
@@ -107,11 +114,7 @@ Object.keys(db).forEach(modelName => {
 // assign the sequelize variables to the db object and returning the db.
 
 
-const logStream = fs.createWriteStream('./sql.txt', { 'flags': 'a' });
-sequelize.options.logging = str => {
-log = str,
-  logStream.write(log);
-};
+
 module.exports = _.extend({
   sequelize,
   Sequelize

@@ -401,7 +401,7 @@
         }
       }
     },
-    "/api/ccc/addCccMaster": {
+    "/api/ccc/postcccMaster": {
       "post": {
         "description": "To Create a Ccc Master",
         "parameters": [
@@ -416,7 +416,7 @@
             "name": "create Ccc",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/addCccMaster"
+              "$ref": "#/definitions/postcccMaster"
             }
           }
         ],
@@ -684,47 +684,47 @@
     },
     "/api/procedures/getProcedures": {
       "post": {
-      "description": "get list Procedure",
-      "parameters": [
-      {
-      "in": "body",
-      "name": "getlistProcedureMaster",
-      "required": true,
-      "schema": {
-      "$ref": "#/definitions/getProcedures"
+        "description": "get list Procedure",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "getlistProcedureMaster",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProcedures"
+            }
+          },
+          {
+            "name": "user_uuid",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "You do not have necessary permissions for the resource",
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "tags": [
+          "Procedures"
+        ]
       }
-      },
-      {
-      "name": "user_uuid",
-      "in": "header",
-      "description": "an authorization header",
-      "required": true,
-      "type": "string"
-      }
-      ],
-      "produces": [
-      "application/json",
-      "application/xml"
-      ],
-      "responses": {
-      "200": {
-      "description": "successful operation",
-      "schema": {
-      "type": "object"
-      }
-      },
-      "403": {
-      "description": "You do not have necessary permissions for the resource",
-      "schema": {
-      "type": "object"
-      }
-      }
-      },
-      "tags": [
-        "Procedures"
-      ]
-      }
-  },
+    },
     "/api/notetemplate/createNoteTemplate": {
       "post": {
         "description": "Inserted Successfully",
@@ -1015,7 +1015,7 @@
     },
     "/api/vitalLonic/deletevitalslonic": {
       "post": {
-        "description": "Inserted Successfully",
+        "description": "Delete Successfully",
         "parameters": [
           {
             "in": "header",
@@ -2789,6 +2789,39 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/favourite/getAllFavourites": {
+      "post": {
+        "description": "To get all list of favourites for the Clinical Master",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "pagination",
+            "schema": {
+              "$ref": "#/definitions/getAllFavourite"
+            }
+          }
+        ],
+        "tags": [
+          "favourite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/favourite/getTreatmentKitFavourite": {
       "get": {
         "description": "To get list of Treatment favourites",
@@ -3761,6 +3794,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/vitalMaster/deletevitals": {
+      "post": {
+        "description": "Delete Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "delete Successfully",
+            "schema": {
+              "$ref": "#/definitions/deletevitals"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalMaster/getVitals": {
       "get": {
         "summary": "To get default vitals master List",
@@ -3842,6 +3913,40 @@
             "schema": {
               "$ref": "#/definitions/getALLVitalsmaster"
             }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/vitalMaster/getVitalByID": {
+      "post": {
+        "description": "update template details by Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updatetemplatedetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getVitalByID"
+            }
+          }
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Updated"
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -4248,7 +4353,7 @@
       }
     },
     "/api/profiles/getAll": {
-      "get": {
+      "post": {
         "summary": "To get all the Profile Details ",
         "parameters": [
           {
@@ -4256,6 +4361,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/allProfiles"
+            }
           }
         ],
         "produces": [
@@ -4267,10 +4380,7 @@
         ],
         "responses": {
           "200": {
-            "description": "get All Profiles",
-            "schema": {
-              "$ref": "#/definitions/allProfiles"
-            }
+            "description": "get All Profiles"
           }
         }
       }
@@ -4677,7 +4787,7 @@
       }
     },
     "/api/my-patient-list/getMyPatientList": {
-      "get": {
+      "post": {
         "summary": "Get List of my patient for the doctor",
         "parameters": [
           {
@@ -4701,42 +4811,21 @@
           {
             "in": "query",
             "name": "from_date",
+            "required": true,
             "type": "string"
           },
           {
             "in": "query",
             "name": "to_date",
+            "required": true,
             "type": "string"
           },
           {
-            "in": "query",
-            "name": "searchKey",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchValue",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "page_size",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "page_no",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "sort_order",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "sort_field",
-            "type": "string"
+            "in": "body",
+            "name": "get list of patientlist",
+            "schema": {
+              "$ref": "#/definitions/getPatientListDetails"
+            }
           }
         ],
         "produces": [
@@ -5680,7 +5769,7 @@
           "application/xml"
         ],
         "tags": [
-          "Procedures          "
+          "Procedures"
         ],
         "responses": {
           "200": {
@@ -5871,7 +5960,7 @@
       }
     },
     "/api/treatment-kit/getAll": {
-      "get": {
+      "post": {
         "description": "To get List of  patient treatmentkit details",
         "parameters": [
           {
@@ -5881,64 +5970,12 @@
             "type": "integer"
           },
           {
-            "in": "query",
-            "name": "recordsPerPage",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchPageNo",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchSortBy",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchSortOrder",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchName",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "createdBy",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "depertmentId",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "share",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "searchLetters",
-            "required": false,
-            "type": "string"
+            "in": "body",
+            "name": "List of  patient treatmentkit details ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/allTreatmentKit"
+            }
           }
         ],
         "produces": [
@@ -5956,9 +5993,415 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/encounter/update-tat-time": {
+      "put": {
+        "summary": "To update ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "encounterDetail",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encounterDetail"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getdischargetype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdischargetype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/discharge-summary/getdeathtype": {
+      "get": {
+        "summary": "To get List of discharge types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdeathtype"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomeddetails": {
+      "get": {
+        "summary": "To get List of snomed detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomeddetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomedparent": {
+      "get": {
+        "summary": "To get List of snomed parent detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedparentdetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/snomed/getsnomedchildren": {
+      "get": {
+        "summary": "To get List of snomed children detials",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Snomed-Details"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getsnomedchildrendetails"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-treatment/create": {
+      "post": {
+        "summary": "To create patient treatment Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/patientTreatment"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/template/getalltemplates": {
+      "post": {
+        "description": "To get all templates",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "page",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get all datails Successfully",
+            "schema": {
+              "$ref": "#/definitions/getalltemp"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/encounter/getPatientDoc": {
+      "get": {
+        "description": "To get a Encounter for Patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Encounter"
+          }
+        }
+      }
+    },
+    "/api/sketch/create": {
+      "post": {
+        "description": "To create patient specality sketch details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "sketch",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addSketch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "patient-specality-Sketch"
+        ],
+        "responses": {
+          "200": {
+            "description": "Insterted patient sketch details Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/patient-treatment/prevKitOrdersById": {
+      "get": {
+        "description": "To get Previouskit Orders",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched PreviousKit Orders"
+          }
+        }
+      }
     }
   },
   "definitions": {
+    "getVitalByID": {
+      "type": "object",
+      "properties": {
+        "Vital_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "encounterDetail": {
+      "type": "object",
+      "properties": {
+        "encounterDoctorId": {
+          "type": "integer"
+        },
+        "tat_end_time": {
+          "type": "string"
+        }
+      }
+    },
+    "deletevitals": {
+      "type": "object",
+      "properties": {
+        "vitals_id": {
+          "type": "integer"
+        }
+      }
+    },
     "getcccmasterbytype": {
       "type": "object",
       "properties": {
@@ -5981,12 +6424,15 @@
         }
       }
     },
-    "addCccMaster": {
+    "postcccMaster": {
       "type": "object",
       "properties": {
         "body": {
           "type": "object",
           "properties": {
+            "critical_care_type_uuid": {
+              "type": "integer"
+            },
             "name": {
               "type": "string"
             },
@@ -6020,37 +6466,31 @@
           }
         },
         "body1": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "concept_code": {
-                "type": "string"
-              },
-              "concept_name": {
-                "type": "string"
-              },
-              "cc_chart_uuid": {
-                "type": "integer"
-              },
-              "value_type_uuid": {
-                "type": "integer"
-              },
-              "display_order": {
-                "type": "integer"
-              },
-              "drug_frequency_uuid": {
-                "type": "integer"
-              },
-              "is_default": {
-                "type": "integer"
-              },
-              "revision": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              }
+          "type": "object",
+          "properties": {
+            "concept_code": {
+              "type": "string"
+            },
+            "concept_name": {
+              "type": "string"
+            },
+            "value_type_uuid": {
+              "type": "integer"
+            },
+            "display_order": {
+              "type": "integer"
+            },
+            "drug_frequency_uuid": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
             }
           }
         },
@@ -6350,9 +6790,9 @@
     "getProcedures": {
       "type": "object",
       "properties": {
-        "search":{
-          "type":"string",
-          "example":""
+        "search": {
+          "type": "string",
+          "example": ""
         },
         "procedure_scheme_uuid": {
           "type": "integer"
@@ -7448,6 +7888,12 @@
           },
           "revision": {
             "type": "integer"
+          },
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -7532,6 +7978,12 @@
           "comments": {
             "type": "string",
             "example": "1000"
+          },
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -7708,6 +8160,12 @@
             },
             "session_type_uuid": {
               "type": "number"
+            },
+            "tat_start_time": {
+              "type": "string"
+            },
+            "tat_end_time": {
+              "type": "string"
             }
           }
         }
@@ -7785,6 +8243,12 @@
           },
           "patient_treatment_uuid": {
             "type": "number"
+          },
+          "tat_start_time": {
+            "type": "string"
+          },
+          "tat_end_time": {
+            "type": "string"
           }
         }
       }
@@ -7878,6 +8342,9 @@
                 "type": "integer"
               },
               "quantity": {
+                "type": "integer"
+              },
+              "speciality_sketch_uuid": {
                 "type": "integer"
               }
             }
@@ -8113,6 +8580,23 @@
           "diagnosis_description": {
             "type": "string"
           }
+        }
+      }
+    },
+    "getAllFavourite": {
+      "type": "object",
+      "properties": {
+        "recordsPerPage": {
+          "type": "integer"
+        },
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchKey": {
+          "type": "string"
+        },
+        "searchValue": {
+          "type": "string"
         }
       }
     },
@@ -9671,61 +10155,29 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "code": {
+        "recordsPerPage": {
           "type": "integer"
         },
-        "message": {
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchSortBy": {
           "type": "string"
         },
-        "responseContents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "uuid": {
-                "type": "integer"
-              },
-              "profile_type_uuid": {
-                "type": "integer"
-              },
-              "profile_code": {
-                "type": "string"
-              },
-              "profile_name": {
-                "type": "string"
-              },
-              "profile_description": {
-                "type": "string"
-              },
-              "facility_uuid": {
-                "type": "integer"
-              },
-              "department_uuid": {
-                "type": "integer"
-              },
-              "is_active": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "boolean"
-              },
-              "revision": {
-                "type": "integer"
-              },
-              "created_by": {
-                "type": "integer"
-              },
-              "modified_by": {
-                "type": "integer"
-              },
-              "created_date": {
-                "type": "string"
-              },
-              "modified_date": {
-                "type": "string"
-              }
-            }
-          }
+        "searchSortOrder": {
+          "type": "string"
+        },
+        "searchName": {
+          "type": "string"
+        },
+        "depertmentId": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchLetters": {
+          "type": "string"
         }
       }
     },
@@ -9932,6 +10384,35 @@
         },
         "patient_uuid": {
           "type": "integer"
+        }
+      }
+    },
+    "getPatientListDetails": {
+      "type": "object",
+      "properties": {
+        "searchKey": {
+          "type": "string",
+          "example": "pa_pin or pd_mobile"
+        },
+        "searchValue": {
+          "type": "string",
+          "example": "1"
+        },
+        "page_no": {
+          "type": "integer",
+          "example": 1
+        },
+        "page_size": {
+          "type": "integer",
+          "example": 1
+        },
+        "sort_field": {
+          "type": "string",
+          "example": "d_uuid"
+        },
+        "sort_order": {
+          "type": "string",
+          "example": "DESC"
         }
       }
     },
@@ -10745,6 +11226,756 @@
         },
         "aproved_by": {
           "type": "integer"
+        },
+        "approved_on": {
+          "type": "string"
+        }
+      }
+    },
+    "getdischargetype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getdeathtype": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomeddetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedparentdetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "getsnomedchildrendetails": {
+      "type": "object",
+      "properties": {}
+    },
+    "patientTreatment": {
+      "type": "object",
+      "properties": {
+        "patientTreatment": {
+          "type": "object",
+          "properties": {
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "patient_uuid": {
+              "type": "integer"
+            },
+            "encounter_uuid": {
+              "type": "integer"
+            },
+            "encounter_type_uuid": {
+              "type": "integer"
+            },
+            "consultation_uuid": {
+              "type": "integer"
+            },
+            "treatment_kit_uuid": {
+              "type": "integer"
+            },
+            "treatment_status_uuid": {
+              "type": "integer"
+            },
+            "comments": {
+              "type": "string"
+            }
+          }
+        },
+        "patientDiagnosis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "facility_uuid": {
+                "type": "number"
+              },
+              "department_uuid": {
+                "type": "number"
+              },
+              "patient_uuid": {
+                "type": "number"
+              },
+              "encounter_uuid": {
+                "type": "number"
+              },
+              "encounter_type_uuid": {
+                "type": "number"
+              },
+              "consultation_uuid": {
+                "type": "number"
+              },
+              "diagnosis_uuid": {
+                "type": "number"
+              },
+              "condition_type_uuid": {
+                "type": "number"
+              },
+              "condition_status_uuid": {
+                "type": "number"
+              },
+              "category_uuid": {
+                "type": "number"
+              },
+              "type_uuid": {
+                "type": "number"
+              },
+              "grade_uuid": {
+                "type": "number"
+              },
+              "body_site_uuid": {
+                "type": "number"
+              },
+              "prescription_uuid": {
+                "type": "number"
+              },
+              "patient_treatment_uuid": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "patientPrescription": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "dispense_status_uuid": {
+                  "type": "number"
+                },
+                "prescription_status_uuid": {
+                  "type": "number"
+                },
+                "store_master_uuid": {
+                  "type": "number"
+                },
+                "patient_uuid": {
+                  "type": "number"
+                },
+                "department_uuid": {
+                  "type": "number"
+                },
+                "doctor_uuid": {
+                  "type": "number"
+                },
+                "encounter_uuid": {
+                  "type": "number"
+                },
+                "encounter_type_uuid": {
+                  "type": "number"
+                },
+                "treatment_kit_uuid": {
+                  "type": "number"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_master_uuid": {
+                    "type": "number"
+                  },
+                  "drug_route_uuid": {
+                    "type": "number"
+                  },
+                  "drug_frequency_uuid": {
+                    "type": "number"
+                  },
+                  "duration": {
+                    "type": "number"
+                  },
+                  "duration_period_uuid": {
+                    "type": "number"
+                  },
+                  "drug_instruction_uuid": {
+                    "type": "number"
+                  },
+                  "prescribed_quantity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientRadiology": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientInvestigation": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientLab": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "patient_uuid": {
+                  "type": "integer"
+                },
+                "encounter_uuid": {
+                  "type": "integer"
+                },
+                "encounter_type_uuid": {
+                  "type": "integer"
+                },
+                "lab_master_type_uuid": {
+                  "type": "integer"
+                },
+                "consultation_uuid": {
+                  "type": "integer"
+                },
+                "patient_treatment_uuid": {
+                  "type": "integer"
+                },
+                "treatment_plan_uuid": {
+                  "type": "integer"
+                },
+                "doctor_uuid": {
+                  "type": "integer"
+                },
+                "department_uuid": {
+                  "type": "integer"
+                },
+                "sub_department_uuid": {
+                  "type": "integer"
+                },
+                "order_to_location_uuid": {
+                  "type": "integer"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "profile_uuid": {
+                    "type": "integer"
+                  },
+                  "is_profile": {
+                    "type": "integer"
+                  },
+                  "to_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_priority_uuid": {
+                    "type": "integer"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  },
+                  "test_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_uuid": {
+                    "type": "integer"
+                  },
+                  "encounter_type_uuid": {
+                    "type": "integer"
+                  },
+                  "patient_uuid": {
+                    "type": "integer"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "integer"
+                  },
+                  "is_direct_bill": {
+                    "type": "string"
+                  },
+                  "consultation_uuid": {
+                    "type": "string"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "integer"
+                  },
+                  "treatment_plan_uuid": {
+                    "type": "integer"
+                  },
+                  "order_number": {
+                    "type": "integer"
+                  },
+                  "order_request_date": {
+                    "type": "integer"
+                  },
+                  "order_schedule_date": {
+                    "type": "integer"
+                  },
+                  "doctor_uuid": {
+                    "type": "integer"
+                  },
+                  "facility_uuid": {
+                    "type": "integer"
+                  },
+                  "order_status_uuid": {
+                    "type": "integer"
+                  },
+                  "order_completed_date": {
+                    "type": "integer"
+                  },
+                  "department_uuid": {
+                    "type": "integer"
+                  },
+                  "sub_department_uuid": {
+                    "type": "integer"
+                  },
+                  "order_to_location_uuid": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "revision": {
+                    "type": "integer"
+                  },
+                  "created_by": {
+                    "type": "integer"
+                  },
+                  "created_date": {
+                    "type": "integer"
+                  },
+                  "modified_by": {
+                    "type": "integer"
+                  },
+                  "modified_date": {
+                    "type": "integer"
+                  },
+                  "cancelled_by": {
+                    "type": "integer"
+                  },
+                  "cancelled_date_time": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_uuid": {
+                    "type": "integer"
+                  },
+                  "cancel_reason_comment": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "getalltemp": {
+      "type": "object",
+      "properties": {
+        "pageNo": {
+          "type": "number",
+          "example": 0
+        },
+        "paginationSize": {
+          "type": "number",
+          "example": 10
+        },
+        "sortOrder": {
+          "type": "string",
+          "example": "ASC"
+        },
+        "search": {
+          "type": "string",
+          "example": "fever"
+        }
+      }
+    },
+    "allTreatmentKit": {
+      "type": "object",
+      "properties": {
+        "recordsPerPage": {
+          "type": "integer"
+        },
+        "searchPageNo": {
+          "type": "integer"
+        },
+        "searchSortBy": {
+          "type": "string"
+        },
+        "searchSortOrder": {
+          "type": "string"
+        },
+        "searchName": {
+          "type": "string"
+        },
+        "depertmentId": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchLetters": {
+          "type": "string"
+        }
+      }
+    },
+    "addSketch": {
+      "type": "object",
+      "properties": {
+        "facility_uuid": {
+          "type": "integer"
+        },
+        "department_uuid": {
+          "type": "integer"
+        },
+        "patient_uuid": {
+          "type": "integer"
+        },
+        "encounter_uuid": {
+          "type": "integer"
+        },
+        "encounter_type_uuid": {
+          "type": "integer"
+        },
+        "doctor_uuid": {
+          "type": "integer"
+        },
+        "consultation_uuid": {
+          "type": "integer"
+        },
+        "speciality_sketch_uuid": {
+          "type": "integer"
+        },
+        "sketch_path": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "string"
         }
       }
     }

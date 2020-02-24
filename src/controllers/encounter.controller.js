@@ -2,6 +2,9 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
 
+const rp = require('request-promise');
+var config = require('../config/config');
+
 // Sequelizer Import
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
@@ -57,7 +60,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
         moment().format("YYYY-MM-DD")
       )
     ];
-  } else if(etypeId === 2 || etypeId === '2'){
+  } else if (etypeId === 2 || etypeId === "2") {
     delete encounterQuery.include[0].where.doctor_uuid;
     delete encounterQuery.include[0].where.department_uuid;
   }
@@ -162,6 +165,24 @@ const Encounter = () => {
       const { encounter_type_uuid, patient_uuid } = encounter;
       const { doctor_uuid, department_uuid } = encounterDoctor;
 
+      const { tat_start_time, tat_end_time } = encounterDoctor;
+
+      if (tat_start_time && tat_end_time) {
+        if (
+          !moment(tat_start_time).isValid() ||
+          !moment(tat_end_time).isValid()
+        ) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+          });
+        }
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+        });
+      }
       // Assigning
       encounter = emr_utility.createIsActiveAndStatus(encounter, user_uuid);
       encounter.is_active_encounter = emr_constants.IS_ACTIVE;
@@ -178,7 +199,7 @@ const Encounter = () => {
         // if Encounter Type is 2 then check
         // for active encounter for type 1 if exists
         // closing it
-        encounterTransaction = await sequelizeDb.sequelize.transaction();
+        // encounterTransaction = await sequelizeDb.sequelize.transaction();
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
@@ -343,7 +364,7 @@ const Encounter = () => {
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
       let encounterPromise = [];
       try {
-        enDelTransaction = await sequelizeDb.sequelize.transaction();
+        // enDelTransaction = await sequelizeDb.sequelize.transaction();
         encounterPromise = [
           ...encounterPromise,
           encounter_tbl.update(
@@ -353,8 +374,7 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { uuid: encounterId },
-              transaction: enDelTransaction
+              where: { uuid: encounterId }
             }
           ),
           encounter_doctors_tbl.update(
@@ -364,24 +384,23 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { encounter_uuid: encounterId },
-              transaction: enDelTransaction
+              where: { encounter_uuid: encounterId }
             }
           )
         ];
 
         let deleteEnPromise = await Promise.all(encounterPromise);
-        const isAllDeleted = deleteEnPromise.every(d => {
-          return d === 1;
-        });
+        // const isAllDeleted = deleteEnPromise.every(d => {
+        //   return d === 1;
+        // });
 
-        if (isAllDeleted) {
-          await enDelTransaction.commit();
-        } else {
-          await enDelTransaction.rollback();
-        }
+        // if (isAllDeleted) {
+        //   await enDelTransaction.commit();
+        // } else {
+        //   await enDelTransaction.rollback();
+        // }
 
-        enDelTransStatus = true;
+        // enDelTransStatus = true;
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
 
         const responseMessage = isAllDeleted
@@ -393,18 +412,21 @@ const Encounter = () => {
         });
       } catch (ex) {
         console.log(ex);
-        if (enDelTransaction) {
-          await enDelTransaction.rollback();
-          enDelTransStatus = true;
-        }
+        // if (enDelTransaction) {
+        //   await enDelTransaction.rollback();
+        //   enDelTransStatus = true;
+        // }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (enDelTransaction && !enDelTransStatus) {
-          enDelTransaction.rollback();
-        }
+        // if (enDelTransaction && !enDelTransStatus) {
+        //   enDelTransaction.rollback();
+        // }
+
+        console.log("Finally");
+        
       }
     } else {
       return res.status(400).send({
@@ -414,8 +436,8 @@ const Encounter = () => {
     }
   };
 
-  const _updateECdischarge = async (req,res) => {
-    const {user_uuid} = req.headers;
+  const _updateECdischarge = async (req, res) => {
+    const { user_uuid } = req.headers;
     const updatedata = req.body;
     const ec_updateData = {
       discharge_type_uuid: req.body.discharge_type_uuid,
@@ -423,41 +445,115 @@ const Encounter = () => {
       modified_by: user_uuid,
       modified_date: new Date()
     };
-    try{
-    if (user_uuid && updatedata){
-      const ec_updated = await encounter_tbl.update(ec_updateData,
-        {
+    try {
+      if (user_uuid && updatedata) {
+        const ec_updated = await encounter_tbl.update(ec_updateData, {
           where: {
             facility_uuid: updatedata.facility_uuid,
             uuid: updatedata.encounter_uuid,
             patient_uuid: updatedata.patient_uuid,
             encounter_type_uuid: updatedata.encounter_type_uuid
           }
+        });
+        if (ec_updated) {
+          return res
+            .status(200)
+            .send({ code: httpStatus[200], message: "updated sucessfully" });
         }
-      );
-        if (ec_updated){
-          return res.status(200).send({ code: httpStatus[200], message: "updated sucessfully" });
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
+    } catch (ex) {
+      return res
+        .status(400)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
+  const _updateTATTimeInEncounterDoctor = async (req, res) => {
+    const { user_uuid } = req.headers;
+
+    const { encounterDoctorId, tat_end_time } = req.body;
+
+    const isValidEndTime = moment(tat_end_time).isValid();
+    if (user_uuid && encounterDoctorId && isValidEndTime) {
+      try {
+        const updatedEncounter = await encounter_doctors_tbl.update(
+          {
+            tat_end_time: tat_end_time,
+            modified_by: user_uuid,
+            modified_date: new Date()
+          },
+          {
+            where: { uuid: encounterDoctorId }
+          }
+        );
+
+        const returnMessage =
+          updatedEncounter[0] === 1
+            ? emr_constants.UPDATED_ENC_DOC_TAT_TIME
+            : emr_constants.NO_CONTENT_MESSAGE;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: returnMessage
+        });
+      } catch (ex) {
+        console.log(ex);
+        return res
+          .status(400)
+          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.PLEASE_PROVIDE} ${emr_constants.END_DATE}`
+      });
+    }
+  };
+
+  const _getPatientDoc = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid } = req.query;
+
+    try {
+      if (user_uuid && patient_uuid) {
+
+        const docList = await encounter_doctors_tbl.findAll(
+          {
+            where: { patient_uuid: patient_uuid }
+          }
+        );
+        if (docList && docList.length>0) {
+          const getdepdetails = await getdepDetails(user_uuid, docList[0].department_uuid, req.headers.authorization);
+          const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
+          return res
+            .status(httpStatus.OK)
+            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails, getdepdetails) });
+        } else {
+          return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
         }
-    
-    }else{
-      return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+      }
     }
-    }catch(ex){
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
     }
-    
-    };
-    
-    
-     
-    
+  };
 
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
     getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
     deleteEncounterById: _deleteEncounterById,
-    updateECdischarge: _updateECdischarge
+    updateECdischarge: _updateECdischarge,
+    updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor,
+    getPatientDoc: _getPatientDoc
   };
 };
 
@@ -538,3 +634,63 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
     }
   });
 }
+
+async function getuserDetails(user_uuid, docid, authorization) {
+  //console.log(user_uuid, authorization);
+  let options = {
+    uri: config.wso2AppUrl + 'users/getusersById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "Id": docid },
+    json: true
+  };
+  const user_details = await rp(options);
+  return user_details;
+}
+
+async function getdepDetails(user_uuid, depid, authorization) {
+  console.log(depid);
+  let options = {
+    uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartment',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "uuid": depid },
+    json: true
+  };
+  const dep_details = await rp(options);
+  return dep_details;
+}
+
+function getpddata(docList, getuDetails, getdep) {
+  //let dsdList = [];
+  let doc_name = getuDetails.responseContents.title.name + '.' + getuDetails.responseContents.first_name;
+  //let nur_name = getnDetails.responseContents.title.name + '.' + getnDetails.responseContents.first_name;
+  if (docList && docList.length > 0) {
+    doc_data = {
+      patient_uuid: docList[0].patient_uuid,
+      encounter_uuid: docList[0].encounter_uuid,
+      created_date: docList[0].created_date,
+      doctor_uuid: docList[0].doctor_uuid,
+      doctor_name: doc_name,
+      department_uuid: docList[0].department_uuid,
+      department_name: getdep.responseContent.name
+    };
+
+    return { "Doc_info": doc_data };
+  }
+  else {
+    return {};
+  }
+
+}
+

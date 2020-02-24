@@ -137,41 +137,74 @@ const CCchartsController = () => {
                 }
 
                 if (data1) {
-                    vdata = getventilatorData(data1);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data1.critical_care_charts !== null) {
+                        vdata = getventilatorData(data1);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data2) {
-                    vdata = getabgData(data2);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data2.critical_care_charts !== null) {
+                        vdata = getabgData(data2);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data3) {
-                    vdata = getmonitorData(data3);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data3.critical_care_charts !== null) {
+                        vdata = getmonitorData(data3);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data4) {
-                    vdata = getinoutData(data4);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data4.critical_care_charts !== null) {
+                        vdata = getinoutData(data4);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
+
                 else if (data5) {
-                    vdata = getbpData(data5);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data5.critical_care_charts !== null) {
+                        vdata = getbpData(data5);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data6) {
-                    vdata = getdiabetesData(data6);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data6.critical_care_charts !== null) {
+                        vdata = getdiabetesData(data6);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data7) {
-                    vdata = getdialysisData(data7);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data6.critical_care_charts !== null) {
+                        vdata = getdialysisData(data7);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
+
             }
             else {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
             }
         } catch (err) {
+
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
         }
+
+
     };
 
     const _updateCCCbypatientid = async (req, res) => {
@@ -182,7 +215,7 @@ const CCchartsController = () => {
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 //let cdate = moment(new Date()).format('YYYY-MM-DD');
-                
+
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
                 if (user_uuid && data1 && data2 && critical_care_type) {
@@ -289,33 +322,63 @@ const CCchartsController = () => {
                 }
 
                 if (data1) {
-                    vdata = getventilatorData(data1);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data1.critical_care_charts !== null) {
+                        vdata = getventilatorData(data1);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data2) {
-                    vdata = getabgData(data2);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data2.critical_care_charts !== null) {
+                        vdata = getabgData(data2);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data3) {
-                    vdata = getmonitorData(data3);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data3.critical_care_charts !== null) {
+                        vdata = getmonitorData(data3);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data4) {
-                    vdata = getinoutData(data4);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data4.critical_care_charts !== null) {
+                        vdata = getinoutData(data4);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
+
                 else if (data5) {
-                    vdata = getbpData(data5);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data5.critical_care_charts !== null) {
+                        vdata = getbpData(data5);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data6) {
-                    vdata = getdiabetesData(data6);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data6.critical_care_charts !== null) {
+                        vdata = getdiabetesData(data6);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
                 else if (data7) {
-                    vdata = getdialysisData(data7);
-                    return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    if (data6.critical_care_charts !== null) {
+                        vdata = getdialysisData(data7);
+                        return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
+                    } else {
+                        return res.status(400).send({ code: httpStatus[400], message: "no data found" });
+                    }
                 }
+
             }
             else {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
@@ -491,7 +554,7 @@ function getCCquery(patient_uuid) {
             is_active: 1,
             status: 1
         },
-
+        required: false,
         include: [
 
             {
@@ -572,11 +635,11 @@ function getabgData(fetchedData) {
                 ]
             };
         });
+
         let uniq = {};
         let ab_list = abgList.filter(
             obj => !uniq[obj.abg_date] && (uniq[obj.abg_date] = true)
         );
-
         return { "abg_details": abg_details, "observed_values": ab_list };
     }
     else {
@@ -586,6 +649,7 @@ function getabgData(fetchedData) {
 
 function getadList(fetchedData, p_id, from_date) {
     let ad_list = [];
+    //console.log(fetchedData);
     const filteredData = fetchedData.filter(fD => {
         return (
             fD.dataValues.patient_uuid == p_id &&
@@ -594,6 +658,7 @@ function getadList(fetchedData, p_id, from_date) {
     });
     if (filteredData && filteredData.length > 0) {
         ad_list = filteredData.map(pV => {
+            //if (pV.critical_care_charts === !null && pV.critical_care_charts.critical_care_types === !null){
             return {
                 abg_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
@@ -608,9 +673,12 @@ function getadList(fetchedData, p_id, from_date) {
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
             };
+            //}
         });
     }
+
     return ad_list;
+
 }
 
 function getmonitorData(fetchedData) {

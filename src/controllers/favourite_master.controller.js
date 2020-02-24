@@ -24,6 +24,8 @@ const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
+const vmAllFavourites = sequelizeDb.vw_all_favourites;
+
 const vwFavouriteInvestigation = sequelizeDb.vw_favourite_investigation;
 
 // Utility Service Import
@@ -37,6 +39,9 @@ const emr_attributes_radiology = require("../attributes/favourite_radiology");
 
 // Favourite Radiology Attributes
 const emr_attributes_investigation = require("../attributes/vw_favourite_investigation");
+
+// All Favourites Attributes
+const emr_all_favourites = require("../attributes/favourites");
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -297,9 +302,6 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
 
-  let favouriteTransaction;
-  let favouriteTransStatus = false;
-
   /**
    * Create Favourite
    * @param {*} req
@@ -309,6 +311,9 @@ const TickSheetMasterController = () => {
     // plucking data req body
     let favouriteMasterReqData = req.body.headers;
     let favouriteMasterDetailsReqData = req.body.details;
+
+    let favouriteTransaction;
+    let favouriteTransStatus = false;
 
     const { searchkey } = req.query;
     const { user_uuid } = req.headers;
@@ -327,7 +332,7 @@ const TickSheetMasterController = () => {
       );
 
       try {
-        favouriteTransaction = await sequelizeDb.sequelize.transaction();
+        // favouriteTransaction = await sequelizeDb.sequelize.transaction();
         const { search_key, search_value } = getSearchValueBySearchKey(
           favouriteMasterDetailsReqData[0],
           searchkey
@@ -346,6 +351,8 @@ const TickSheetMasterController = () => {
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
+          console.log("Existing Record");
+
           const duplicate_msg =
             checkingForSameFavourite[0].tsm_active[0] === 1
               ? duplicate_active_msg
@@ -357,26 +364,32 @@ const TickSheetMasterController = () => {
 
         const favouriteMasterCreatedData = await favouriteMasterTbl.create(
           favouriteMasterReqData,
-          { returning: true, transaction: favouriteTransaction }
+          {
+            returning: true
+          }
         );
-        const favouriteMasterDetailsCreatedData = await Promise.all(
-          getFavouriteMasterDetailsWithUUID(
-            favouritMasterDetailsTbl,
-            favouriteMasterDetailsReqData,
-            favouriteMasterCreatedData,
-            user_uuid,
-            favouriteTransaction
-          )
+
+        let fmd = favouriteMasterDetailsReqData[0];
+        fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
+          fmd,
+          favouriteMasterCreatedData,
+          user_uuid,
+          "favourite_master_uuid"
+        );
+        const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
+          fmd,
+          {
+            returning: true
+          }
         );
 
         if (favouriteMasterDetailsCreatedData) {
           // returning req data with inserted record Id
           favouriteMasterReqData.uuid = favouriteMasterCreatedData.uuid;
-          favouriteMasterDetailsReqData.forEach((fMD, index) => {
-            fMD.uuid = favouriteMasterDetailsCreatedData[index].uuid;
-          });
-          await favouriteTransaction.commit();
-          favouriteTransStatus = true;
+          favouriteMasterDetailsReqData[0].uuid =
+            favouriteMasterDetailsCreatedData.uuid;
+          // await favouriteTransaction.commit();
+          // favouriteTransStatus = true;
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Favourite Master Successfully",
@@ -388,15 +401,16 @@ const TickSheetMasterController = () => {
         }
       } catch (ex) {
         // tickSheetDebug(`Exception Happened ${ex.message}`);
-        await favouriteTransaction.rollback();
+        // await favouriteTransaction.rollback();
         favouriteTransStatus = true;
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (favouriteTransaction && !favouriteTransStatus) {
-          await favouriteTransaction.rollback();
-        }
+        // if (favouriteTransaction && !favouriteTransStatus) {
+        //   await favouriteTransaction.rollback();
+        // }
+        console.log("Finally");
       }
     } else {
       return res.status(400).send({
@@ -595,7 +609,7 @@ const TickSheetMasterController = () => {
       favouriteMasterReqData.hasOwnProperty("is_active")
     ) {
       try {
-        favouriteTransaction = await sequelizeDb.sequelize.transaction();
+        // favouriteTransaction = await sequelizeDb.sequelize.transaction();
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteMasterReqData.favourite_id,
@@ -612,17 +626,15 @@ const TickSheetMasterController = () => {
 
         const updatedFavouriteData = await Promise.all([
           favouriteMasterTbl.update(favouriteMasterUpdateData, {
-            where: { uuid: favouriteMasterReqData.favourite_id },
-            transaction: favouriteTransaction
+            where: { uuid: favouriteMasterReqData.favourite_id }
           }),
           favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, {
             where: {
               favourite_master_uuid: favouriteMasterReqData.favourite_id
-            },
-            transaction: favouriteTransaction
+            }
           })
         ]);
-        await favouriteTransaction.commit();
+        // await favouriteTransaction.commit();
         favouriteTransStatus = true;
 
         if (updatedFavouriteData) {
@@ -634,15 +646,16 @@ const TickSheetMasterController = () => {
         }
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
-        await favouriteTransaction.rollback();
-        favouriteTransaction = true;
+        // await favouriteTransaction.rollback();
+        // favouriteTransaction = true;
         return res
           .status(400)
           .send({ code: httpStatus[400], message: ex.message });
       } finally {
-        if (favouriteTransaction && !favouriteTransStatus) {
-          await favouriteTransaction.rollback();
-        }
+        // if (favouriteTransaction && !favouriteTransStatus) {
+        //   await favouriteTransaction.rollback();
+        // }
+        console.log("Finally");
       }
     }
   };
@@ -813,6 +826,75 @@ const TickSheetMasterController = () => {
     }
   };
 
+  const _getAllFavourites = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let { recordsPerPage, searchPageNo, searchKey, searchValue } = req.body;
+    let pageNo = 0;
+    let perPageRecords = 10;
+    let itemsPerPage;
+    if (user_uuid) {
+      if (recordsPerPage) {
+        let records = parseInt(recordsPerPage);
+        if (records && records != NaN) {
+          recordsPerPage = records;
+        }
+      }
+      itemsPerPage = recordsPerPage ? recordsPerPage : perPageRecords;
+
+      if (searchPageNo) {
+        let temp = parseInt(searchPageNo);
+        if (temp && temp != NaN) {
+          pageNo = temp;
+        }
+      }
+
+      const offset = pageNo * itemsPerPage;
+
+      let findQuery = {
+        offset: offset,
+        limit: itemsPerPage,
+        attributes: emr_all_favourites.getAllFavouritesAttributes()
+      };
+
+      if (searchKey) {
+        findQuery.where = emr_all_favourites.getSearchKeyWhere(
+          searchKey,
+          searchValue
+        );
+      }
+
+      try {
+        const allFavouritesData = await vmAllFavourites.findAndCountAll(
+          findQuery
+        );
+
+        const returnMessage =
+          allFavouritesData.rows && allFavouritesData.rows.length > 0
+            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
+            : emr_constants.NO_RECORD_FOUND;
+        return res.status(httpStatus.OK).send({
+          code: httpStatus.OK,
+          message: returnMessage,
+          responseContentLength: allFavouritesData.rows.length,
+          responseContents: emr_all_favourites.getFavouritesInHumanReadableFormat(
+            allFavouritesData.rows
+          ),
+          totalRecords: allFavouritesData.count
+        });
+      } catch (ex) {
+        console.log(`Exception Happened ${ex}`);
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   return {
     createTickSheetMaster: _createTickSheetMaster,
     getFavourite: _getFavourites,
@@ -821,7 +903,8 @@ const TickSheetMasterController = () => {
     deleteFavourite: _deleteFavourite,
     getTreatmentKitFavourite: _getTreatmentKitFavourite,
     getTreatmentFavById: _getTreatmentFavById,
-    getFavouriteDiet: _getFavouriteDiet
+    getFavouriteDiet: _getFavouriteDiet,
+    getAllFavourites: _getAllFavourites
   };
 };
 
@@ -831,8 +914,7 @@ function getFavouriteMasterDetailsWithUUID(
   detailsTbl,
   detailsData,
   masterData,
-  reqUserUUId,
-  favouriteTransaction
+  reqUserUUId
 ) {
   let masterDetailsPromise = [];
 
@@ -849,8 +931,7 @@ function getFavouriteMasterDetailsWithUUID(
     masterDetailsPromise = [
       ...masterDetailsPromise,
       detailsTbl.create(mD, {
-        returning: true,
-        transaction: favouriteTransaction
+        returning: true
       })
     ];
   });
