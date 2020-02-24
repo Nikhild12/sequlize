@@ -638,16 +638,15 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
 async function getuserDetails(user_uuid, docid, authorization) {
   //console.log(user_uuid, authorization);
   let options = {
-    //uri: config.wso2AppUrl + 'users/getusersById',
+    uri: config.wso2AppUrl + 'users/getusersById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
-    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors',
     method: 'POST',
     headers: {
       "Authorization": authorization,
       "user_uuid": user_uuid
     },
-    //body: { "Id": docid },
-    body: {},
+    body: { "Id": docid },
     json: true
   };
   const user_details = await rp(options);
@@ -657,16 +656,15 @@ async function getuserDetails(user_uuid, docid, authorization) {
 async function getdepDetails(user_uuid, depid, authorization) {
   console.log(depid);
   let options = {
-    //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+    uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
-    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartment',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartment',
     method: 'POST',
     headers: {
       "Authorization": authorization,
       "user_uuid": user_uuid
     },
-    body: { "pageNo": 0,
-  "paginationSize": 100 },
+    body: { "uuid": depid },
     json: true
   };
   const dep_details = await rp(options);
