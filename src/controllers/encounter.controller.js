@@ -2,8 +2,8 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
 
-const rp = require("request-promise");
-var config = require("../config/config");
+const rp = require('request-promise');
+var config = require('../config/config');
 
 // Sequelizer Import
 var Sequelize = require("sequelize");
@@ -199,7 +199,7 @@ const Encounter = () => {
         // if Encounter Type is 2 then check
         // for active encounter for type 1 if exists
         // closing it
-        encounterTransaction = await sequelizeDb.sequelize.transaction();
+        // encounterTransaction = await sequelizeDb.sequelize.transaction();
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
@@ -230,8 +230,8 @@ const Encounter = () => {
                   status: emr_constants.IS_IN_ACTIVE
                 },
                 {
-                  where: { uuid: encounterData[0].uuid }
-                  // transaction: encounterTransaction
+                  where: { uuid: encounterData[0].uuid },
+                  transaction: encounterTransaction
                 }
               ),
               encounter_doctors_tbl.update(
@@ -241,8 +241,8 @@ const Encounter = () => {
                   status: emr_constants.IS_IN_ACTIVE
                 },
                 {
-                  where: { encounter_uuid: encounterData[0].uuid }
-                  // transaction: encounterTransaction
+                  where: { encounter_uuid: encounterData[0].uuid },
+                  transaction: encounterTransaction
                 }
               )
             ];
@@ -262,8 +262,8 @@ const Encounter = () => {
           encounterPromise = [
             ...encounterPromise,
             encounter_tbl.create(encounter, {
-              returning: true
-              // transaction: encounterTransaction
+              returning: true,
+              transaction: encounterTransaction
             })
           ];
         }
@@ -281,12 +281,10 @@ const Encounter = () => {
 
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
             encounterDoctor,
-            { returning: true
-              // , transaction: encounterTransaction 
-            }
+            { returning: true, transaction: encounterTransaction }
           );
           encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-          // await encounterTransaction.commit();
+          await encounterTransaction.commit();
           encounterTransStatus = true;
           return res.status(200).send({
             code: httpStatus.OK,
@@ -296,18 +294,18 @@ const Encounter = () => {
         }
       } catch (ex) {
         console.log(ex);
-        // if (encounterTransaction) {
-        //   // await encounterTransaction.rollback();
-        //   encounterTransStatus = true;
-        // }
+        if (encounterTransaction) {
+          await encounterTransaction.rollback();
+          encounterTransStatus = true;
+        }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        // if (encounterTransaction && !encounterTransStatus) {
-        //   encounterTransaction.rollback();
-        // }
+        if (encounterTransaction && !encounterTransStatus) {
+          encounterTransaction.rollback();
+        }
       }
     } else {
       return res.status(400).send({
@@ -366,7 +364,7 @@ const Encounter = () => {
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
       let encounterPromise = [];
       try {
-        enDelTransaction = await sequelizeDb.sequelize.transaction();
+        // enDelTransaction = await sequelizeDb.sequelize.transaction();
         encounterPromise = [
           ...encounterPromise,
           encounter_tbl.update(
@@ -376,8 +374,7 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { uuid: encounterId },
-              transaction: enDelTransaction
+              where: { uuid: encounterId }
             }
           ),
           encounter_doctors_tbl.update(
@@ -387,24 +384,23 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { encounter_uuid: encounterId },
-              transaction: enDelTransaction
+              where: { encounter_uuid: encounterId }
             }
           )
         ];
 
         let deleteEnPromise = await Promise.all(encounterPromise);
-        const isAllDeleted = deleteEnPromise.every(d => {
-          return d === 1;
-        });
+        // const isAllDeleted = deleteEnPromise.every(d => {
+        //   return d === 1;
+        // });
 
-        if (isAllDeleted) {
-          await enDelTransaction.commit();
-        } else {
-          await enDelTransaction.rollback();
-        }
+        // if (isAllDeleted) {
+        //   await enDelTransaction.commit();
+        // } else {
+        //   await enDelTransaction.rollback();
+        // }
 
-        enDelTransStatus = true;
+        // enDelTransStatus = true;
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
 
         const responseMessage = isAllDeleted
@@ -416,18 +412,21 @@ const Encounter = () => {
         });
       } catch (ex) {
         console.log(ex);
-        if (enDelTransaction) {
-          await enDelTransaction.rollback();
-          enDelTransStatus = true;
-        }
+        // if (enDelTransaction) {
+        //   await enDelTransaction.rollback();
+        //   enDelTransStatus = true;
+        // }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (enDelTransaction && !enDelTransStatus) {
-          enDelTransaction.rollback();
-        }
+        // if (enDelTransaction && !enDelTransStatus) {
+        //   enDelTransaction.rollback();
+        // }
+
+        console.log("Finally");
+        
       }
     } else {
       return res.status(400).send({
@@ -520,44 +519,26 @@ const Encounter = () => {
 
     try {
       if (user_uuid && patient_uuid) {
-        const docList = await encounter_doctors_tbl.findAll({
-          where: { patient_uuid: patient_uuid }
-        });
-        if (docList && docList.length > 0) {
-          const getdepdetails = await getdepDetails(
-            user_uuid,
-            docList[0].department_uuid,
-            req.headers.authorization
-          );
-          const getuDetails = await getuserDetails(
-            user_uuid,
-            docList[0].doctor_uuid,
-            req.headers.authorization
-          );
+
+        const docList = await encounter_doctors_tbl.findAll(
+          {
+            where: { patient_uuid: patient_uuid }
+          }
+        );
+        if (docList && docList.length>0) {
+          const getdepdetails = await getdepDetails(user_uuid, docList[0].department_uuid, req.headers.authorization);
+          const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
           return res
             .status(httpStatus.OK)
-            .json({
-              statusCode: 200,
-              req: "",
-              responseContents: [getpddata(docList, getuDetails, getdepdetails)]
-            });
+            .json({ statusCode: 200, req: '', responseContents: getpddata(docList, getuDetails, getdepdetails) });
         } else {
-          return res
-            .status(400)
-            .send({
-              code: httpStatus[400],
-              message: "patient information not found"
-            });
+          return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
         }
       } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request Body or Search key Found "
-          });
+        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
       }
-    } catch (ex) {
+    }
+    catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
       return res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -657,14 +638,16 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
 async function getuserDetails(user_uuid, docid, authorization) {
   //console.log(user_uuid, authorization);
   let options = {
-    uri: config.wso2AppUrl + "users/getusersById",
+    //uri: config.wso2AppUrl + 'users/getusersById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
-    method: "POST",
+    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors',
+    method: 'POST',
     headers: {
-      Authorization: authorization,
-      user_uuid: user_uuid
+      "Authorization": authorization,
+      "user_uuid": user_uuid
     },
-    body: { Id: docid },
+    //body: { "Id": docid },
+    body: {},
     json: true
   };
   const user_details = await rp(options);
@@ -674,14 +657,16 @@ async function getuserDetails(user_uuid, docid, authorization) {
 async function getdepDetails(user_uuid, depid, authorization) {
   console.log(depid);
   let options = {
-    uri: config.wso2AppUrl + "department/getDepartmentOnlyById",
+    //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
-    method: "POST",
+    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartment',
+    method: 'POST',
     headers: {
-      Authorization: authorization,
-      user_uuid: user_uuid
+      "Authorization": authorization,
+      "user_uuid": user_uuid
     },
-    body: { uuid: depid },
+    body: { "pageNo": 0,
+  "paginationSize": 100 },
     json: true
   };
   const dep_details = await rp(options);
@@ -690,10 +675,7 @@ async function getdepDetails(user_uuid, depid, authorization) {
 
 function getpddata(docList, getuDetails, getdep) {
   //let dsdList = [];
-  let doc_name =
-    getuDetails.responseContents.title.name +
-    "." +
-    getuDetails.responseContents.first_name;
+  let doc_name = getuDetails.responseContents.title.name + '.' + getuDetails.responseContents.first_name;
   //let nur_name = getnDetails.responseContents.title.name + '.' + getnDetails.responseContents.first_name;
   if (docList && docList.length > 0) {
     doc_data = {
@@ -706,8 +688,11 @@ function getpddata(docList, getuDetails, getdep) {
       department_name: getdep.responseContent.name
     };
 
-    return { Doc_info: [doc_data] };
-  } else {
+    return { "Doc_info": doc_data };
+  }
+  else {
     return {};
   }
+
 }
+
