@@ -199,7 +199,8 @@ const PatientTreatmentController = () => {
       if (user_uuid && patient_uuid) {
         const prevKitOrderData = await prevKitOrdersViewTbl.findAll({
           where: query,
-          attributes: getPrevKitOrders
+          attributes: getPrevKitOrders,
+          limit: 5
         });
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
