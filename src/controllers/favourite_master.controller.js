@@ -302,9 +302,6 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
 
-  let favouriteTransaction;
-  let favouriteTransStatus = false;
-
   /**
    * Create Favourite
    * @param {*} req
@@ -314,6 +311,9 @@ const TickSheetMasterController = () => {
     // plucking data req body
     let favouriteMasterReqData = req.body.headers;
     let favouriteMasterDetailsReqData = req.body.details;
+
+    let favouriteTransaction;
+    let favouriteTransStatus = false;
 
     const { searchkey } = req.query;
     const { user_uuid } = req.headers;
@@ -362,15 +362,17 @@ const TickSheetMasterController = () => {
 
         const favouriteMasterCreatedData = await favouriteMasterTbl.create(
           favouriteMasterReqData,
-          { returning: true, transaction: favouriteTransaction }
+          {
+            returning: true
+            // , transaction: favouriteTransaction
+          }
         );
         const favouriteMasterDetailsCreatedData = await Promise.all(
           getFavouriteMasterDetailsWithUUID(
             favouritMasterDetailsTbl,
             favouriteMasterDetailsReqData,
             favouriteMasterCreatedData,
-            user_uuid,
-            favouriteTransaction
+            user_uuid
           )
         );
 
@@ -380,8 +382,8 @@ const TickSheetMasterController = () => {
           favouriteMasterDetailsReqData.forEach((fMD, index) => {
             fMD.uuid = favouriteMasterDetailsCreatedData[index].uuid;
           });
-          await favouriteTransaction.commit();
-          favouriteTransStatus = true;
+          // await favouriteTransaction.commit();
+          // favouriteTransStatus = true;
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Favourite Master Successfully",
@@ -393,15 +395,16 @@ const TickSheetMasterController = () => {
         }
       } catch (ex) {
         // tickSheetDebug(`Exception Happened ${ex.message}`);
-        await favouriteTransaction.rollback();
-        favouriteTransStatus = true;
+        // await favouriteTransaction.rollback();
+        // favouriteTransStatus = true;
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (favouriteTransaction && !favouriteTransStatus) {
-          await favouriteTransaction.rollback();
-        }
+        // if (favouriteTransaction && !favouriteTransStatus) {
+        //   await favouriteTransaction.rollback();
+        // }
+        console.log("Finally");
       }
     } else {
       return res.status(400).send({
@@ -906,8 +909,7 @@ function getFavouriteMasterDetailsWithUUID(
   detailsTbl,
   detailsData,
   masterData,
-  reqUserUUId,
-  favouriteTransaction
+  reqUserUUId
 ) {
   let masterDetailsPromise = [];
 
@@ -924,8 +926,7 @@ function getFavouriteMasterDetailsWithUUID(
     masterDetailsPromise = [
       ...masterDetailsPromise,
       detailsTbl.create(mD, {
-        returning: true,
-        transaction: favouriteTransaction
+        returning: true
       })
     ];
   });
