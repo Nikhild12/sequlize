@@ -199,7 +199,7 @@ const Encounter = () => {
         // if Encounter Type is 2 then check
         // for active encounter for type 1 if exists
         // closing it
-        encounterTransaction = await sequelizeDb.sequelize.transaction();
+        // encounterTransaction = await sequelizeDb.sequelize.transaction();
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
@@ -366,7 +366,7 @@ const Encounter = () => {
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
       let encounterPromise = [];
       try {
-        enDelTransaction = await sequelizeDb.sequelize.transaction();
+        // enDelTransaction = await sequelizeDb.sequelize.transaction();
         encounterPromise = [
           ...encounterPromise,
           encounter_tbl.update(
@@ -376,8 +376,7 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { uuid: encounterId },
-              transaction: enDelTransaction
+              where: { uuid: encounterId }
             }
           ),
           encounter_doctors_tbl.update(
@@ -387,24 +386,23 @@ const Encounter = () => {
               status: emr_constants.IS_IN_ACTIVE
             },
             {
-              where: { encounter_uuid: encounterId },
-              transaction: enDelTransaction
+              where: { encounter_uuid: encounterId }
             }
           )
         ];
 
         let deleteEnPromise = await Promise.all(encounterPromise);
-        const isAllDeleted = deleteEnPromise.every(d => {
-          return d === 1;
-        });
+        // const isAllDeleted = deleteEnPromise.every(d => {
+        //   return d === 1;
+        // });
 
-        if (isAllDeleted) {
-          await enDelTransaction.commit();
-        } else {
-          await enDelTransaction.rollback();
-        }
+        // if (isAllDeleted) {
+        //   await enDelTransaction.commit();
+        // } else {
+        //   await enDelTransaction.rollback();
+        // }
 
-        enDelTransStatus = true;
+        // enDelTransStatus = true;
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
 
         const responseMessage = isAllDeleted
@@ -416,18 +414,21 @@ const Encounter = () => {
         });
       } catch (ex) {
         console.log(ex);
-        if (enDelTransaction) {
-          await enDelTransaction.rollback();
-          enDelTransStatus = true;
-        }
+        // if (enDelTransaction) {
+        //   await enDelTransaction.rollback();
+        //   enDelTransStatus = true;
+        // }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       } finally {
-        if (enDelTransaction && !enDelTransStatus) {
-          enDelTransaction.rollback();
-        }
+        // if (enDelTransaction && !enDelTransStatus) {
+        //   enDelTransaction.rollback();
+        // }
+
+        console.log("Finally");
+        
       }
     } else {
       return res.status(400).send({
