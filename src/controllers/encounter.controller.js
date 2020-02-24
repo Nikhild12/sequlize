@@ -17,6 +17,7 @@ const emr_utility = require("../services/utility.service");
 const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const encounter_type_tbl = sequelizeDb.encounter_type;
+const vw_patientdoc = sequelizeDb.vw_patient_doctor_details;
 
 const emr_constants = require("../config/constants");
 
@@ -520,9 +521,10 @@ const Encounter = () => {
     try {
       if (user_uuid && patient_uuid) {
 
-        const docList = await encounter_doctors_tbl.findAll(
+        const docList = await vw_patientdoc.findAll(
           {
-            where: { patient_uuid: patient_uuid }
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+            where: { ed_patient_uuid: patient_uuid }
           }
         );
         if (docList) {
