@@ -45,11 +45,11 @@ const _isRadiologyAvailable = ({ header, details } = {}) => {
 const _checkPatientTreatmentBody = req => {
   const { patientDiagnosis, patientPrescription } = req.body;
   const { patientLab, patientRadiology, patientInvestigation } = req.body;
-  console.log("Diagnosis Available", _isDiagnosisAvailable(patientDiagnosis));
-  console.log("RadialogyAvailable", _isRadiologyAvailable(patientRadiology));
-  console.log("Lab Available", _isLabAvailable(patientLab));
-  console.log("Pres Available", _isPrescriptionAvailable(patientPrescription));
-  console.log("InvestigationAvailable", _isInvistigationAvailable(patientInvestigation));
+  // console.log("Diagnosis Available", _isDiagnosisAvailable(patientDiagnosis));
+  // console.log("RadialogyAvailable", _isRadiologyAvailable(patientRadiology));
+  // console.log("Lab Available", _isLabAvailable(patientLab));
+  // console.log("Pres Available", _isPrescriptionAvailable(patientPrescription));
+  // console.log("InvestigationAvailable", _isInvistigationAvailable(patientInvestigation));
   return (
 
     _isDiagnosisAvailable(patientDiagnosis) ||

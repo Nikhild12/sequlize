@@ -8,5 +8,6 @@ const patientTreatmentCtrl = require('../controllers/patient_treatments.controll
 const patientTKRoute = express.Router();
 
 patientTKRoute.route('/create').post(patientTreatmentCtrl.createPatientTreatment);
+patientTKRoute.route('/prevKitOrdersById').get(patientTreatmentCtrl.prevKitOrdersById);
 
 module.exports = patientTKRoute;

@@ -87,7 +87,6 @@ const _checkTATIsValid = array => {
   });
 };
 const _postRequest = async (api, headers, data) => {
-  console.log("headers", headers, "data", data);
   return new Promise((resolve, reject) => {
     request.post(
       {
@@ -95,7 +94,7 @@ const _postRequest = async (api, headers, data) => {
         headers: headers,
         json: data
       },
-      function(error, response, body) {
+      function (error, response, body) {
         console.log("\n body...", body);
 
         if (error) {
@@ -109,9 +108,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-                body.responseContents ||
-                body.benefMembers ||
-                body.req
+              body.responseContents ||
+              body.benefMembers ||
+              body.req
             );
           }
         } else if (body && body.status == "error") {
@@ -123,9 +122,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-                body.responseContents ||
-                body.benefMembers ||
-                body.req
+              body.responseContents ||
+              body.benefMembers ||
+              body.req
             );
           } else {
             reject(body);

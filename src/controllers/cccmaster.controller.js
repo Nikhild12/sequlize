@@ -102,12 +102,12 @@ const cccMasterController = () => {
             }
             const { user_uuid, facility_uuid } = req.headers;
             let concept_detail_output;
-            let transaction;
+            // let transaction;
 
-            let transaction_status = false;
+            //let transaction_status = false;
             try {
 
-                transaction = await db.sequelize.transaction();
+                //   transaction = await db.sequelize.transaction();
 
                 //Body Request
                 const postData = req.body;
@@ -122,13 +122,13 @@ const cccMasterController = () => {
                 postData.name = postData.fieldname;
 
 
-                let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true, transaction });
+                let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true });
 
                 postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid
                 postDatabody1.created_by = user_uuid;
                 postDatabody1.modified_by = 0;
                 postDatabody1.created_by = req.headers.user_uuid
-                let concept_output = await conceptTbl.create(postDatabody1, { returning: true, transaction });
+                let concept_output = await conceptTbl.create(postDatabody1, { returning: true });
 
                 let finalCConceptData = [];
 
@@ -156,18 +156,18 @@ const cccMasterController = () => {
                 // if (finalCConceptData.length > 0) {
                 //     concept_detail_output = await conceptdetailsTbl.bulkCreate(finalCConceptData, { returning: true, transaction });
                 // }
-                await transaction.commit();
-                transaction_status = true;
+                //  await transaction.commit();
+                // transaction_status = true;
                 res.send({ statusCode: 200, message: "Created Successfully", responseContents: finalCConceptData })
             } catch (err) {
                 console.log(err)
-                if (transaction) await transaction.rollback();
-                transaction_status = true;
+                // if (transaction) await transaction.rollback();
+                // transaction_status = true;
                 throw err;
             } finally {
-                if (!transaction_status && transaction) {
-                    await transaction.rollback();
-                }
+                // if (!transaction_status && transaction) {
+                //     await transaction.rollback();
+                // }
             }
         } catch (err) {
             console.log(err);

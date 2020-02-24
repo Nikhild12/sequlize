@@ -80,8 +80,8 @@ const TreatMent_Kit = () => {
     const _createTreatmentKit = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        let treatTransStatus = false;
-        let treatmentTransaction;
+        // let treatTransStatus = false;
+        //let treatmentTransaction;
         let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
         let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
         if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
@@ -91,14 +91,14 @@ const TreatMent_Kit = () => {
             }
             try {
 
-                treatmentTransaction = await sequelizeDb.sequelize.transaction();
+                // treatmentTransaction = await sequelizeDb.sequelize.transaction();
                 let treatmentSave = [];
                 const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
                 if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
                     return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord) });
                 }
                 treatment_kit = emr_utility.createIsActiveAndStatus(treatment_kit, user_uuid);
-                const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true, transaction: treatmentTransaction });
+                const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, { returning: true });
                 // Lab
                 if (treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 && treatmentSavedData) {
 
@@ -108,7 +108,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Lab Save
-                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.bulkCreate(treatment_kit_lab, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitLabTbl.bulkCreate(treatment_kit_lab, { returning: true })];
 
                 }
                 // Drug
@@ -120,7 +120,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, { returning: true })];
 
                 }
                 // Investigation 
@@ -131,7 +131,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.bulkCreate(treatment_kit_investigation, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitInvestigationTbl.bulkCreate(treatment_kit_investigation, { returning: true })];
                 }
                 // Diagnosis 
                 if (treatment_kit_diagnosis && Array.isArray(treatment_kit_diagnosis) && treatment_kit_diagnosis.length > 0 && treatmentSavedData) {
@@ -141,7 +141,7 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, { returning: true })];
                 }
                 // Radiology
                 if (treatment_kit_radiology && Array.isArray(treatment_kit_radiology) && treatment_kit_radiology.length > 0 && treatmentSavedData) {
@@ -151,27 +151,27 @@ const TreatMent_Kit = () => {
                     });
 
                     // Treatment Kit Drug Save
-                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, { returning: true, transaction: treatmentTransaction })];
+                    treatmentSave = [...treatmentSave, treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, { returning: true })];
                 }
 
                 await Promise.all(treatmentSave);
-                await treatmentTransaction.commit();
-                treatTransStatus = true;
+                //await treatmentTransaction.commit();
+                //treatTransStatus = true;
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.TREATMENT_SUCCESS, reqContents: req.body });
 
 
             } catch (ex) {
                 console.log('Exception happened', ex);
-                if (treatmentTransaction) {
-                    await treatmentTransaction.rollback();
-                    treatTransStatus = true;
-                }
+                // if (treatmentTransaction) {
+                //     await treatmentTransaction.rollback();
+                //     treatTransStatus = true;
+                // }
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             } finally {
 
-                if (treatmentTransaction && !treatTransStatus) {
-                    treatmentTransaction.rollback();
-                }
+                // if (treatmentTransaction && !treatTransStatus) {
+                //     treatmentTransaction.rollback();
+                // }
             }
         } else {
             return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
