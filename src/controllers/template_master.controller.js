@@ -24,8 +24,7 @@ const tmpmstrController = () => {
 	 * @returns {*}
 	 */
 
-  let templateTransaction;
-  let templateTransStatus = false;
+  
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -113,8 +112,6 @@ const tmpmstrController = () => {
         let temp_name = templateMasterReqData.name;
         //let display_order = templateMasterReqData.display_order;
 
-        templateTransaction = await db.sequelize.transaction();
-
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
@@ -132,28 +129,17 @@ const tmpmstrController = () => {
         // }
         else if ((exists.length == 0 || exists[0].dataValues.status == 0) && userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0) {
 
-          let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction);
+          let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData);
           if (createData) {
-            await templateTransaction.commit();
-            templateTransStatus = true;
             return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
           }
         } else {
-          await templateTransaction.rollback();
-          templateTransStatus = true;
-          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
       } catch (err) {
-        //await templateTransaction.rollback();
-        //templateTransStatus = true;
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
-      finally {
-        if (templateTransaction && !templateTransStatus) {
-          await templateTransaction.rollback();
-          return res.status(400).send({ code: httpStatus.BAD_REQUEST });
-        }
-      }
+      
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
@@ -848,19 +834,19 @@ function getTempData(temp_type_id, result) {
   }
 }
 
-async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, templateTransaction) {
+async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData) {
 
   templateMasterReqData = emr_utility.createIsActiveAndStatus(templateMasterReqData, userUUID);
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
 
-  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData, { returning: true, transaction: templateTransaction });
+  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData, { returning: true });
   templateMasterDetailsReqData.forEach((item, index) => {
     item.template_master_uuid = templateMasterCreatedData.dataValues.uuid;
     item.created_by = userUUID;
     item.modified_by = 0;
     item.created_date = item.modified_date = new Date();
   });
-  const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true, transaction: templateTransaction });
+  const dtls_result = await tempmstrdetailsTbl.bulkCreate(templateMasterDetailsReqData, { returning: true });
   return { "templateMasterReqData": templateMasterCreatedData, "templateMasterDetailsReqData": dtls_result };
 }
 

@@ -23,6 +23,7 @@ module.exports = Object.freeze({
   TREATMENT_SUCCESS: "Treatment Kit Successfully Inserted",
   FILTERBYTHREE: "filterbythree",
   FETCHD_TREATMENT_KIT_SUCCESSFULLY: "Fetched Treatment Kit Successfully",
+  FETCHED_PREVIOUS_KIT_SUCCESSFULLY: "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
   NO_RECORD_FOUND: "No Record Found",
   NO_CONTENT_MESSAGE: "No Content Found or record could be deleted",
