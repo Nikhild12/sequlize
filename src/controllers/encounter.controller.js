@@ -664,7 +664,8 @@ async function getdepDetails(user_uuid, depid, authorization) {
       "Authorization": authorization,
       "user_uuid": user_uuid
     },
-    body: { "pageNo": 0, "paginationSize": 100 },
+    body: { "pageNo": 0,
+  "paginationSize": 100 },
     json: true
   };
   const dep_details = await rp(options);
