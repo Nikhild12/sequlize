@@ -6372,6 +6372,56 @@
           }
         }
       }
+    },
+    "/api/sections/getAll": {
+      "get": {
+        "summary": "To get all the section Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Sections"
+          }
+        }
+      }
+    },
+    "/api/categories/getAll": {
+      "get": {
+        "summary": "To get all the categories Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All categories"
+          }
+        }
+      }
     }
   },
   "definitions": {
