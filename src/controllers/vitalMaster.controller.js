@@ -218,7 +218,7 @@ const _deletevitals = async (req, res) => {
   const { user_uuid } = req.headers; 
 
   if (vitals_id) {
-      const updatedvitalsData = { status: 0, modified_by: user_uuid, modified_date: new Date() };
+      const updatedvitalsData = { status: 0, is_active: 0,  modified_by: user_uuid, modified_date: new Date() };
       try {
 
           const updateddiagnosissAsync = await Promise.all(

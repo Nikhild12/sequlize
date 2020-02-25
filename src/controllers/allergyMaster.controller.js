@@ -10,6 +10,8 @@ const emr_constants = require('../config/constants');
 
 
 const allergyMastersTbl = db.allergy_masters;
+const allergySourceTbl = db.allergy_source;
+const allergySeverityTbl = db.allergy_severity;
 
 const allergyMasterController = () => {
     /**
@@ -55,7 +57,21 @@ const allergyMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where: { is_active: 1 }
+            where: { is_active: 1 },
+            include: [{
+                model: allergySourceTbl,
+                // as: 'source' 
+                attributes: ['uuid','name'],
+                where: {status: 1, is_active: 1}
+            }
+            ,
+            {
+                model: allergySeverityTbl,
+                // as: 'source' 
+                attributes: ['uuid','name'],
+                where: {status: 1, is_active: 1}
+            }
+        ]
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -243,6 +259,7 @@ const allergyMasterController = () => {
 
 
     const getAlleryMasterById = async (req, res, next) => {
+        console.log('getAlleryMasterById', req.body);
         const postData = req.body;
         try {
             if (postData.Allergy_id <= 0) {
@@ -257,7 +274,21 @@ const allergyMasterController = () => {
                     uuid: postData.Allergy_id
                 },
                 offset: offset,
-                limit: itemsPerPage
+                limit: itemsPerPage,
+                include: [{
+                    model: allergySourceTbl,
+                    // as: 'source' 
+                    attributes: ['uuid','name'],
+                    where: {status: 1, is_active: 1}
+                }
+                ,
+                {
+                    model: allergySeverityTbl,
+                    // as: 'source' 
+                    attributes: ['uuid','name'],
+                    where: {status: 1, is_active: 1}
+                }
+                ]
             })
                 .then((data) => {
                     if (!data) {

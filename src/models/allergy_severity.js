@@ -50,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
+    
 
     return allergy_severity;
 };

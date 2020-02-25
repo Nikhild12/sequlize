@@ -2,6 +2,8 @@ const httpStatus = require("http-status");
 const db = require("../config/sequelize");
 const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
+const multer = require('multer');
+const middleware = require('../middleware/middleware');
 const Op = Sequelize.Op;
 const specialitySketchesMasterTbl = db.speciality_sketches;
 
@@ -109,7 +111,12 @@ const specialitySketchesMasterController = () => {
 
 
     };
-    const postSpecialitySketcheMaster = async (req, res, next) => { const postData = req.body;
+    const postSpecialitySketcheMaster = async (req, res, next) => { 
+        const attachments = req.body;
+        console.log('-----------', req.files);
+        console.log('-----------', attachments);
+        return false;
+        const postData = req.body;
         postData.created_by = req.headers.user_uuid;
         if (postData) {
             specialitySketchesMasterTbl.findAll({
@@ -129,7 +136,7 @@ const specialitySketchesMasterController = () => {
                       status: "error",
                       msg: "Record already Found. Please enter Speciality Sketche Master"
                     });
-                  } else{
+                  } else {
                     await specialitySketchesMasterTbl.create(postData, {
                         returning: true
                     }).then(data => {
@@ -233,6 +240,38 @@ const specialitySketchesMasterController = () => {
                     msg: errorMsg
                 });
         }};
+
+        const uploadD = multer({ storage: middleware.multerDynamicUpload('') }).any();
+
+        // const postSpecialitySketcheMaster = async (req, res) => {
+        //     let userUUID = req.headers.user_uuid;
+        //     try {
+        //         if (userUUID) {
+        //             uploadD(req, res, async (err) => {
+        //                 const attachmentData = req.body;
+    
+        //                 if (err instanceof multer.MulterError) {
+        //                     res.send({ status: 400, message: err });
+        //                 } else if (err) {
+        //                     res.send({ status: 400, message: err });
+        //                 } else {
+        //                     //attachmentData.consultation_uuid = userUUID;
+        //                     attachmentData.is_active = attachmentData.status = true;
+        //                     //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
+        //                     attachmentData.created_by = attachmentData.modified_by = userUUID;
+        //                     attachmentData.created_date = attachmentData.modified_date = new Date();
+        //                     attachmentData.sketch_path = req.files[0].path;
+        //                     attachmentData.revision = 1;
+        //                     await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
+        //                     res.send({ "status": 200, "attachment data": attachmentData, "files": req.files, "count": req.files.length, "message": "Files Uploaded Successfully " });
+        //                 }
+        //             });
+        //         } else { return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); }
+        //     }
+        //     catch (ex) {
+        //         res.send({ "status": 400, "message": ex.message });
+        //     }
+        // };
     return {
         postSpecialitySketcheMaster,
         deleteSpecialitySketcheMaster,
