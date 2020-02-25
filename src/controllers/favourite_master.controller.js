@@ -369,7 +369,7 @@ const TickSheetMasterController = () => {
           }
         );
 
-        const fmd = favouriteMasterDetailsReqData[0];
+        let fmd = favouriteMasterDetailsReqData[0];
         fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
           fmd,
           favouriteMasterCreatedData,
@@ -387,7 +387,7 @@ const TickSheetMasterController = () => {
           // returning req data with inserted record Id
           favouriteMasterReqData.uuid = favouriteMasterCreatedData.uuid;
           favouriteMasterDetailsReqData[0].uuid =
-            favouriteMasterDetailsCreatedData[0].uuid;
+            favouriteMasterDetailsCreatedData.uuid;
           // await favouriteTransaction.commit();
           // favouriteTransStatus = true;
           return res.status(200).send({
