@@ -96,7 +96,7 @@ const cccMasterController = () => {
 
     };
 
-    const postcccMaster = async (req, res, next) => {
+    const postcccMaster_old = async (req, res, next) => {
         try {
             if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
             }
@@ -177,6 +177,83 @@ const cccMasterController = () => {
 
     };
 
+
+    const postcccMaster = async (req, res, next) => {
+        try {
+            if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
+            }
+            const { user_uuid, facility_uuid } = req.headers;
+            let concept_detail_output;
+            // let transaction;
+
+            //let transaction_status = false;
+            try {
+
+                //   transaction = await db.sequelize.transaction();
+
+                //Body Request
+                const postData = req.body;
+                const postDatabody = req.body.body;
+                const postDatabody1 = req.body.body1;
+                const postDatabody2 = req.body.body2;
+                const postDatabody3 = req.body.body2.range;
+
+                postDatabody.created_by = user_uuid;
+                postDatabody.modified_by = 0;
+                postData.created_by = req.headers.user_uuid
+                postData.code = postData.fieldname
+                postData.name = postData.fieldname;
+
+
+                let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true });
+
+                postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid
+                postDatabody1.created_by = user_uuid;
+                postDatabody1.modified_by = 0;
+                postDatabody1.created_by = req.headers.user_uuid
+                let concept_output = await conceptTbl.create(postDatabody1, { returning: true });
+                if (postDatabody2.concept_value) {
+
+                    let valuetypesSave = [];
+                    for (let i = 0; i < postDatabody2.concept_value.length; i++) {
+                        const element = postDatabody2.concept_value[i];
+                        valuetypesSave.push({
+                            cc_concept_uuid: concept_output.uuid,
+                            concept_value: element.concept_value
+                        });
+                    }
+                    if (valuetypesSave.length > 0) {
+                        let conceptValuesResponse = await conceptdetailsTbl.bulkCreate(valuetypesSave);
+                    }
+                } else {
+                    let conceptRangesResponse = await conceptdetailsTbl.create(postDatabody3, { returning: true });
+
+                }
+                res.send({
+                    statusCode: 200, message: "Created Successfully", responseContents: {
+                        ccc_master_output: ccc_master_output, concept_output: concept_output,
+                        conceptValuesResponse: valuetypesSave
+
+                    }
+                })
+            } catch (err) {
+                console.log(err)
+                // if (transaction) await transaction.rollback();
+                // transaction_status = true;
+                throw err;
+            } finally {
+                // if (!transaction_status && transaction) {
+                //     await transaction.rollback();
+                // }
+            }
+        } catch (err) {
+            console.log(err);
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res.status(500).json({ status: "error", msg: errorMsg });
+        }
+
+    };
+
     const deletecccMaster = async (req, res, next) => {
         const postData = req.body;
 
@@ -201,6 +278,25 @@ const cccMasterController = () => {
             });
         });
     };
+    const updatecccMasterById_old = async (req, res, next) => {
+        const postData = req.body;
+        postData.modified_by = req.headers.user_uuid;
+        await cccMasterTbl.update(
+            postData, {
+            where: {
+                uuid: postData.Ccc_id
+            }
+        }
+        ).then((data) => {
+            res.send({
+                statusCode: 200,
+                msg: "Updated Successfully",
+                req: postData,
+                responseContents: data
+            });
+        });
+    };
+
     const updatecccMasterById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
@@ -219,6 +315,8 @@ const cccMasterController = () => {
             });
         });
     };
+
+
     const getcccMasterById = async (req, res, next) => {
         const postData = req.body;
         try {
