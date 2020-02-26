@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true
       },
+      ed_created_date: {
+        type: DataTypes.DATE
+      },
       t_uuid: {
         type: DataTypes.INTEGER(11),
         allowNull: false,
