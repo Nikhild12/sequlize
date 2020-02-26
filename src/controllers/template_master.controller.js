@@ -280,7 +280,7 @@ const tmpmstrController = () => {
           .status(httpStatus.OK)
           .json({
             statusCode: 200, req: '',
-            responseContents: getAllTempData(templateList.rows ? templateList.rows : []),
+            responseContents: templateList.rows ? templateList.rows : [],
             totalRecords: (templateList.count ? templateList.count : 0)
           });
 
