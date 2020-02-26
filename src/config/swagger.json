@@ -6422,6 +6422,76 @@
           }
         }
       }
+    },
+    "/api/categories/create": {
+      "post": {
+        "description": "To create category details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Categories",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addCategory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Insterted Categories details Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/sections/create": {
+      "post": {
+        "description": "To create sections details",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Sections",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addSections"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "responses": {
+          "200": {
+            "description": "Insterted Sections details Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -6490,28 +6560,22 @@
               "type": "string"
             },
             "comments": {
-              "type": "string",
-              "example": "say somthing about related to fever"
+              "type": "string"
             },
             "critical_care_uom_uuid": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             },
             "mnemonic_code_master_uuid": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             },
             "loinc_code_master_uuid": {
-              "type": "integer",
-              "example": 1
+              "type": "integer"
             },
             "revision": {
-              "type": "boolean",
-              "example": true
+              "type": "boolean"
             },
             "status": {
-              "type": "boolean",
-              "example": true
+              "type": "boolean"
             }
           }
         },
@@ -6545,18 +6609,50 @@
           }
         },
         "body2": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "concept_value": {
-                "type": "string"
-              },
-              "value_from": {
-                "type": "string"
-              },
-              "value_to": {
-                "type": "integer"
+          "type": "object",
+          "properties": {
+            "concept_value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "concept_value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "normalrange": {
+              "type": "object",
+              "properties": {
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
+              }
+            },
+            "lowrange": {
+              "type": "object",
+              "properties": {
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
+              }
+            },
+            "highrange": {
+              "type": "object",
+              "properties": {
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
               }
             }
           }
@@ -10205,19 +10301,16 @@
     "allProfiles": {
       "type": "object",
       "properties": {
-        "recordsPerPage": {
+        "paginationSize": {
           "type": "integer"
         },
-        "searchPageNo": {
+        "pageNo": {
           "type": "integer"
         },
-        "searchSortBy": {
+        "sortField": {
           "type": "string"
         },
-        "searchSortOrder": {
-          "type": "string"
-        },
-        "searchName": {
+        "sortOrder": {
           "type": "string"
         },
         "depertmentId": {
@@ -10226,7 +10319,7 @@
         "status": {
           "type": "string"
         },
-        "searchLetters": {
+        "searchKey": {
           "type": "string"
         }
       }
@@ -11968,19 +12061,16 @@
     "allTreatmentKit": {
       "type": "object",
       "properties": {
-        "recordsPerPage": {
+        "paginationSize": {
           "type": "integer"
         },
-        "searchPageNo": {
+        "pageNo": {
           "type": "integer"
         },
-        "searchSortBy": {
+        "sortField": {
           "type": "string"
         },
-        "searchSortOrder": {
-          "type": "string"
-        },
-        "searchName": {
+        "sortOrder": {
           "type": "string"
         },
         "depertmentId": {
@@ -11989,7 +12079,7 @@
         "status": {
           "type": "string"
         },
-        "searchLetters": {
+        "searchKey": {
           "type": "string"
         }
       }
@@ -12026,6 +12116,52 @@
         },
         "comments": {
           "type": "string"
+        }
+      }
+    },
+    "addCategory": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category_type_uuid": {
+          "type": "integer"
+        },
+        "category_group_uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "addSections": {
+      "type": "object",
+      "properties": {
+        "section_type_uuid": {
+          "type": "integer"
+        },
+        "section_note_type_uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sref": {
+          "type": "string"
+        },
+        "display_order": {
+          "type": "integer"
         }
       }
     }
