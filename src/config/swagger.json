@@ -6526,7 +6526,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "ventilator"
+          "type": "string"
         }
       }
     },
