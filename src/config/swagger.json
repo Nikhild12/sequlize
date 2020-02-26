@@ -12055,6 +12055,10 @@
         "search": {
           "type": "string",
           "example": "fever"
+        },
+        "sortField":{
+          "type": "string",
+          "example": "f_name"
         }
       }
     },
