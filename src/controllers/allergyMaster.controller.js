@@ -60,6 +60,7 @@ const allergyMasterController = () => {
             where: { is_active: 1 },
             include: [{
                 model: allergySourceTbl,
+                required:false,
                 // as: 'source' 
                 attributes: ['uuid','name'],
                 where: {status: 1, is_active: 1}
@@ -67,6 +68,7 @@ const allergyMasterController = () => {
             ,
             {
                 model: allergySeverityTbl,
+                required:false,
                 // as: 'source' 
                 attributes: ['uuid','name'],
                 where: {status: 1, is_active: 1}
@@ -277,6 +279,7 @@ const allergyMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: allergySourceTbl,
+                    required:false,
                     // as: 'source' 
                     attributes: ['uuid','name'],
                     where: {status: 1, is_active: 1}
@@ -284,6 +287,7 @@ const allergyMasterController = () => {
                 ,
                 {
                     model: allergySeverityTbl,
+                    required:false,
                     // as: 'source' 
                     attributes: ['uuid','name'],
                     where: {status: 1, is_active: 1}
