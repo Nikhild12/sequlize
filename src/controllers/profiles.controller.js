@@ -138,7 +138,7 @@ const profilesController = () => {
     try {
       // let paginationSize = req.query.paginationSize;
       let { paginationSize, pageNo, sortField, sortOrder, departmentId, status, searchKey } = req.body;
-      // let pageNo = 0;
+      // pageNo = 0;
       if (paginationSize) {
         let records = parseInt(paginationSize);
         if (records && (records != NaN)) {
@@ -148,16 +148,18 @@ const profilesController = () => {
       let itemsPerPage = paginationSize ? paginationSize : 10;
       // let sortField = 'uuid';
       //let sortOrder = 'DESC';
+
       if (pageNo) {
         let temp = parseInt(pageNo);
         if (temp && (temp != NaN)) {
           pageNo = temp;
         }
+        console.log('pageNo===', pageNo);
       }
-
+      pageNo = pageNo ? pageNo : 0;
       const offset = pageNo * itemsPerPage;
 
-
+      console.log('offset===', offset);
       if (sortField) {
 
         sortField = sortField;
