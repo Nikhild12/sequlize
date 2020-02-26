@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const speciality_sketches = sequelize.define(
-        "speciality_sketches", {
+    const speciality_sketch_details = sequelize.define(
+        "speciality_sketch_details", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -8,34 +8,18 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             // 1 to 21 columns
-            code: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            name: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            department_uuid: {
+            speciality_sketch_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            description: {
+            sketch_path: {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-            sketch_name: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
+            
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
-            },
-            revision: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                defaultValue: 1,
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -50,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             },
         }, {
-            tableName: "speciality_sketches",
+            tableName: "speciality_sketch_details",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -58,12 +42,6 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-    speciality_sketches.associate = models => {
-        
-        speciality_sketches.hasMany(models.speciality_sketch_details, {
-            foreignKey: "speciality_sketch_uuid",
-            targetKey: "uuid"
-        });
-    };
-    return speciality_sketches;
+
+    return speciality_sketch_details;
 };
