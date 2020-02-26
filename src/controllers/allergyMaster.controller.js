@@ -96,6 +96,7 @@ const allergyMasterController = () => {
         }
 
 
+        
         try {
             await allergyMastersTbl.findAndCountAll(findQuery)
 
