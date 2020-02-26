@@ -196,14 +196,12 @@ const cccMasterController = () => {
                 const postDatabody = req.body.body;
                 const postDatabody1 = req.body.body1;
                 const postDatabody2 = req.body.body2;
-                const postDatabody3 = req.body.body2.range;
 
                 postDatabody.created_by = user_uuid;
                 postDatabody.modified_by = 0;
                 postData.created_by = req.headers.user_uuid
                 postData.code = postData.fieldname
                 postData.name = postData.fieldname;
-
 
                 let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true });
 
@@ -212,9 +210,9 @@ const cccMasterController = () => {
                 postDatabody1.modified_by = 0;
                 postDatabody1.created_by = req.headers.user_uuid
                 let concept_output = await conceptTbl.create(postDatabody1, { returning: true });
-                if (postDatabody2.concept_value) {
 
-                    let valuetypesSave = [];
+                let valuetypesSave = [];
+                if (postDatabody2.concept_value) {
                     for (let i = 0; i < postDatabody2.concept_value.length; i++) {
                         const element = postDatabody2.concept_value[i];
                         valuetypesSave.push({
@@ -226,14 +224,29 @@ const cccMasterController = () => {
                         let conceptValuesResponse = await conceptdetailsTbl.bulkCreate(valuetypesSave);
                     }
                 } else {
-                    let conceptRangesResponse = await conceptdetailsTbl.create(postDatabody3, { returning: true });
+                    let obj_copy = {}; let obj_copy1 = {}; let obj_copy2 = {};
+                    obj_copy.cc_concept_uuid = concept_output.uuid,
+                        obj_copy.value_from = postDatabody2.normalrange.value_from,
+                        obj_copy.value_to = postDatabody2.normalrange.value_to
 
+                    valuetypesSave.push(obj_copy);
+
+                    obj_copy1.cc_concept_uuid = concept_output.uuid,
+                        obj_copy1.value_from = postDatabody2.lowrange.value_from,
+                        obj_copy1.value_to = postDatabody2.lowrange.value_to
+                    valuetypesSave.push(obj_copy1);
+
+                    obj_copy2.cc_concept_uuid = concept_output.uuid,
+                        obj_copy2.value_from = postDatabody2.highrange.value_from,
+                        obj_copy2.value_to = postDatabody2.highrange.value_to
+                    valuetypesSave.push(obj_copy2);
+
+                    let conceptRangesResponse = await conceptdetailsTbl.bulkCreate(valuetypesSave, { returning: true });
                 }
                 res.send({
                     statusCode: 200, message: "Created Successfully", responseContents: {
                         ccc_master_output: ccc_master_output, concept_output: concept_output,
                         conceptValuesResponse: valuetypesSave
-
                     }
                 })
             } catch (err) {
