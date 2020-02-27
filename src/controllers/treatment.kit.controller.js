@@ -290,7 +290,7 @@ const TreatMent_Kit = () => {
                     u_first_name: {
                         [Op.like]: '%' + createdBy + '%',
                     }
-                }
+                };
 
             }
             if (typeof departmentId == 'string') {
@@ -598,6 +598,6 @@ function treatmentKitResponse(treatmentKitData) {
             doctor_uuid: tk.u_uuid,
             createdBy: tk.u_first_name + ' ' + tk.u_middle_name + '' + tk.u_last_name,
             status: tk.u_status
-        }
-    })
+        };
+    });
 }
