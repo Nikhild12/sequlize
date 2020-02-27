@@ -40,7 +40,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             },
                  
-           
+            is_default: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
@@ -73,6 +76,15 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-
+    note_templates.associate = models => {
+        
+        note_templates.belongsTo(models.note_type, {
+            foreignKey: "note_type_uuid",
+            targetKey:"uuid"
+        });
+        note_templates.belongsTo(models.note_template_type, {
+            foreignKey: "note_template_type_uuid"
+        });
+    };
     return note_templates;
 };
