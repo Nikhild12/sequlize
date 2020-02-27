@@ -112,30 +112,34 @@ const specialitySketchesMasterController = () => {
 
 
     };
+    
     const uploadD = multer({ storage: middleware.multerDynamicUpload('') }).any();
-
-        const postSpecialitySketcheMaster = async (req, res) => {
+       
+    const postSpecialitySketcheMaster = async (req, res) => {
             let userUUID = req.headers.user_uuid;
             try {
                 if (userUUID) {
                     uploadD(req, res, async (err) => {
                         const attachmentData = req.body;
-                        attachmentData.folder_name = 'ssketch';
+                        
                         if (err instanceof multer.MulterError) {
                             res.send({ status: 400, message: err });
                         } else if (err) {
                             res.send({ status: 400, message: err });
                         } else {
                             //attachmentData.consultation_uuid = userUUID;
+                            //attachmentData.folder_name = 'ssketch';
                             attachmentData.is_active = attachmentData.status = true;
                             //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
                             attachmentData.created_by = attachmentData.modified_by = userUUID;
                             attachmentData.created_date = attachmentData.modified_date = new Date();
                             attachmentData.revision = 1;
+                            
                             let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
                             if (req.files.length > 0) {
                                 let sketchFileSave = [];
                                 for (let i = 0; i < req.files.length; i++) {
+                                    console.log('req.files[i].path', req.files[i].path)
                                     sketchFileSave.push({
                                         speciality_sketch_uuid: specialityData.dataValues.uuid,
                                         sketch_path: req.files[i].path,
@@ -158,7 +162,7 @@ const specialitySketchesMasterController = () => {
                 res.send({ "status": 400, "message": ex.message });
             }
         };
-
+        
     const deleteSpecialitySketcheMaster = async (req, res, next) => {
         const postData = req.body;
 

@@ -238,12 +238,6 @@
           },
           {
             "in": "formData",
-            "name": "documentImage",
-            "required": true,
-            "type": "file"
-          },
-          {
-            "in": "formData",
             "name": "code",
             "required": true,
             "type": "string"
@@ -274,7 +268,7 @@
           },
           {
             "in": "formData",
-            "name": "sketch_path",
+            "name": "folder_name",
             "required": true,
             "type": "string"
           },
@@ -289,6 +283,12 @@
             "name": "revision",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file"
           }
         ],
         "produces": [
@@ -6871,6 +6871,9 @@
           "type": "string"
         },
         "sketch_path": {
+          "type": "string"
+        },
+        "folder_name": {
           "type": "string"
         },
         "status": {
