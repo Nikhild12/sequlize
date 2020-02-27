@@ -218,10 +218,48 @@ const PatientChiefComplaints = () => {
     }
   };
 
+  const _getTopComplaints = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let filterQuery = {
+      encounter_doctor_uuid: user_uuid,
+      status: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE
+    };
+    try {
+      if (user_uuid) {
+        const topComplaints = await patient_chief_complaints_tbl.findAll({
+          include: [{
+            model: chief_complaints_tbl,
+            attributes: ['uuid', 'name'],
+          }],
+          where: filterQuery,
+          group: ['chief_complaint_uuid'],
+          attributes: ['uuid', 'encounter_doctor_uuid', 'chief_complaint_uuid',
+            [Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'Count']
+          ],
+          order: [[Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'DESC']]
+
+        });
+        const returnMsg = topComplaints.length > 0 ? 'Patient Chief complaints fetched Successfully' : emr_constants.NO_RECORD_FOUND;
+        return res.status(200).send({ code: httpStatus.OK, msg: returnMsg, responseContents: topComplaints });
+      } else {
+        return res.status(400).send({
+          code: httpStatus.UNAUTHORIZED,
+          message: emr_constants.NO_USER_ID
+        });
+      }
+    } catch (ex) {
+      console.log('Exception happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+
+    }
+  };
+
   return {
     createChiefComplaints: _createChiefComplaints,
     getPatientChiefComplaints: _getPatientChiefComplaints,
-    getMobileMockAPI: _getMobileMockAPI
+    getMobileMockAPI: _getMobileMockAPI,
+    getTopComplaints: _getTopComplaints
   };
 };
 
@@ -257,12 +295,12 @@ function getPatientsChiefComplaintsInReadable(fetchedData) {
         chief_complaint_duration_id: fD.chief_complaint_duration_period_uuid,
         chief_complaint_duration_name:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.name
+            fD.chief_complaint_duration_period.name
             ? fD.chief_complaint_duration_period.name
             : "",
         chief_complaint_duration_code:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.code
+            fD.chief_complaint_duration_period.code
             ? fD.chief_complaint_duration_period.code
             : "",
         is_active: fD.is_active[0] === 1 ? true : false,
