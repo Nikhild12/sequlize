@@ -4411,7 +4411,6 @@
           {
             "in": "body",
             "name": "Profiles",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/allProfiles"
             }
@@ -10362,7 +10361,13 @@
         "sortOrder": {
           "type": "string"
         },
-        "depertmentId": {
+        "search": {
+          "type": "string"
+        },
+        "codename": {
+          "type": "string"
+        },
+        "departmentId": {
           "type": "integer"
         },
         "status": {
@@ -12105,7 +12110,7 @@
           "type": "string",
           "example": "fever"
         },
-        "sortField":{
+        "sortField": {
           "type": "string",
           "example": "f_name"
         }
