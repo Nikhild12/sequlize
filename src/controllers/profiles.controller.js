@@ -210,8 +210,8 @@ const profilesController = () => {
         }
       }
 
-      if (postData.depertmentId && /\S/.test(postData.depertmentId)) {
-        findQuery.where['d_uuid'] = postData.depertmentId;
+      if (postData.departmentId && /\S/.test(postData.departmentId)) {
+        findQuery.where['d_uuid'] = postData.departmentId;
       }
 
       if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {

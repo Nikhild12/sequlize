@@ -68,7 +68,7 @@ const CertificatesController = () => {
     };
 
 
-}
+};
 
 
 module.exports = CertificatesController();
@@ -92,6 +92,6 @@ function certificateResponse(certificatesData) {
             department: pc.d_name,
             createdBy: pc.u_first_name + ' ' + pc.u_middle_name + '' + pc.u_last_name,
             status: pc.u_status
-        }
-    })
+        };
+    });
 }
