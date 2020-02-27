@@ -521,7 +521,8 @@ const Encounter = () => {
         const docList = await vw_patientdoc.findAll(
           {
             attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-            where: { ed_patient_uuid: patient_uuid }
+            where: { ed_patient_uuid: patient_uuid },
+            //group: ['ed_created_date']
           }
         );
         if (docList) {

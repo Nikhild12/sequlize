@@ -28,10 +28,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            sketch_path: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
@@ -62,6 +58,12 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-
+    speciality_sketches.associate = models => {
+        
+        speciality_sketches.hasMany(models.speciality_sketch_details, {
+            foreignKey: "speciality_sketch_uuid",
+            targetKey: "uuid"
+        });
+    };
     return speciality_sketches;
 };

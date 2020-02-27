@@ -9,6 +9,8 @@ const Op = Sequelize.Op;
 
 const templateTypeTbl = db.template_type;
 const noteTemplatesTbl = db.note_templates;
+const noteTypeTbl = db.note_type;
+const noteTemplateTypeTbl = db.note_template_type;
 
 const noteTemplatesController = () => {
     /**
@@ -230,6 +232,18 @@ const noteTemplatesController = () => {
                     where: {
                         uuid: postData.Note_temp_id
                     },
+                    include:[
+                        {
+                            model:noteTemplateTypeTbl,
+                            required:false,
+                            where:{is_active:1,status:1}
+                        },
+                        {
+                            model:noteTypeTbl,
+                            required:false,
+                            where:{is_active:1,status:1}
+                        }
+                    ],
                     offset: offset,
                     limit: itemsPerPage
                 })
