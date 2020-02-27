@@ -94,6 +94,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:"vital_value_type_uuid",
             as:'vital_value_type'
         });
+        vital_masters.hasOne(models.vital_loinc, {
+            foreignKey: "vital_master_uuid",
+            targetKey: "uuid"
+        });
     };
     return vital_masters;
 };

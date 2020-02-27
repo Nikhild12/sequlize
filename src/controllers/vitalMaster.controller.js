@@ -9,6 +9,7 @@ const clinical_const = require('../config/constants');
 const vitalmstrTbl = db.vital_masters;
 const vitalTypeTbl = db.vital_type;
 const vitalValueTypeTbl = db.vital_value_type;
+const vitalLonicTbl = db.vital_loinc;
 
 
 const vitalmstrController = () => {
@@ -170,7 +171,18 @@ const vitalmstrController = () => {
                   uuid: postData.Vital_id
               },
               offset: offset,
-              limit: itemsPerPage
+              limit: itemsPerPage,
+              include: [
+                {
+                  model: vitalLonicTbl,
+                  // as: 'vital_lonic',
+                  require: false,
+                  // where: {
+                  //   is_active: clinical_const.IS_ACTIVE,
+                  //   status: clinical_const.IS_ACTIVE
+                  // }
+                }
+              ]
           })
           .then((data) => {
               return res
