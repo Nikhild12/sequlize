@@ -181,9 +181,9 @@ const profilesController = () => {
           sortArr
         ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-        where: {
-          p_status: 1,
-        }
+        // where: {
+        //   p_status: 1,
+        // }
       };
 
       if (postData.search && /\S/.test(postData.search)) {
@@ -211,11 +211,14 @@ const profilesController = () => {
       }
 
       if (postData.departmentId && /\S/.test(postData.departmentId)) {
-        findQuery.where['d_uuid'] = postData.departmentId;
-      }
+        // findQuery.where['p_department_uuid'] = postData.departmentId;      
+        findQuery.where =
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_department_uuid')), 'LIKE', '%' + postData.departmentId);
 
+      }
       if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-        findQuery.where['p_is_active'] = postData.status;
+        //findQuery.where['p_is_active'] = postData.status;
+        findQuery.where = { p_is_active: postData.status };
       }
       await profilesViewTbl.findAndCountAll(findQuery)
         .then((data) => {
@@ -320,7 +323,7 @@ const profilesController = () => {
       }
 
       if (typeof status == 'boolean') {
-        findQuery.where['tk_status'] = status;
+        findQuery.where['p_status'] = status;
       }
       if (searchKey && /\S/.test(searchKey)) {
         Object.assign(findQuery.where, {
