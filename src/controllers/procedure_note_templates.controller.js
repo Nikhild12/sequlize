@@ -118,43 +118,26 @@ const procedureNoteTemplatesController = () => {
     const postprocedureNoteTemplates = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-       
-        
-
         if (postData) {
+            await procedureNoteTemplatesTbl.create(postData, {
+                returning: true
+            }).then(data => {
 
-            procedureNoteTemplatesTbl.findAll({
-                where: {
-                  
-                }
-              }).then(async (result) =>{
-                if (result.length != 0) {
-                    return res.send({
-                        statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter procedures note template"
-                    });
-                  } else{
-                    await procedureNoteTemplatesTbl.create(postData, {
-                        returning: true
-                    }).then(data => {
-        
-                        res.send({
-                            statusCode: 200,
-                            msg: "Inserted procedures note tmplate details Successfully",
-                            req: postData,
-                            responseContents: data
-                        });
-                    }).catch(err => {
-        
-                        res.send({
-                            status: "failed",
-                            msg: "failed to procedures note tmplate details",
-                            error: err
-                        });
-                    });
-                  }
-              });
+                res.send({
+                    statusCode: 200,
+                    msg: "Inserted procedures note tmplate details Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+
+                res.send({
+                    status: "failed",
+                    msg: "failed to procedures note tmplate details",
+                    error: err
+                });
+            });
+            
 
           
         } else {
