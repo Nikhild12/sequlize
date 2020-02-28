@@ -181,9 +181,9 @@ const profilesController = () => {
           sortArr
         ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-        // where: {
-        //   p_status: 1,
-        // }
+        where: {
+          // p_status: 1,
+        }
       };
 
       if (postData.search && /\S/.test(postData.search)) {
@@ -193,7 +193,7 @@ const profilesController = () => {
 
         ];
       }
-
+      console.log('postData.codename==', postData.codename);
       if (postData.codename && /\S/.test(postData.codename)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
