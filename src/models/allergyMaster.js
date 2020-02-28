@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         allergy_source_uuid: {
             type: DataTypes.INTEGER
         },
+        allergy_severity_uuid: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+        },
             revision: {
                 type: DataTypes.STRING,
                 defaultValue: 1
@@ -61,8 +65,13 @@ module.exports = (sequelize, DataTypes) => {
         allergy_masters.belongsTo(models.allergy_type, {
             foreignKey: "allergy_type_uuid"
         });
+        allergy_masters.belongsTo(models.allergy_source, {
+            foreignKey: "allergy_source_uuid"
+        });
+        allergy_masters.belongsTo(models.allergy_severity, {
+            foreignKey: "allergy_severity_uuid"
+        });
     };
-
-
+    
     return allergy_masters;
 };

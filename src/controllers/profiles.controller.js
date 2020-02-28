@@ -23,6 +23,12 @@ const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
 const Q = require('q');
 
+let page_no = 0;
+let sort_order = "DESC";
+let sort_field = "p_uuid";
+let page_size = 10;
+let offset;
+
 const profilesController = () => {
   /**
    * Creating  profile opNotes
@@ -131,7 +137,121 @@ const profilesController = () => {
   };
 
   // Get All the Profiles
-  const _getAllProfiles = async (req, res) => {
+
+  const _getAllProfiles = async (req, res, next) => {
+    try {
+      const postData = req.body;
+      let pageNo = 0;
+      const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+      let sortArr = ['p_uuid', 'DESC'];
+
+
+      if (postData.pageNo) {
+        let temp = parseInt(postData.pageNo);
+        if (temp && (temp != NaN)) {
+          pageNo = temp;
+        }
+      }
+      const offset = pageNo * itemsPerPage;
+      let fieldSplitArr = [];
+      if (postData.sortField) {
+        fieldSplitArr = postData.sortField.split('.');
+        if (fieldSplitArr.length == 1) {
+          sortArr[0] = postData.sortField;
+        } else {
+          for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+            const element = fieldSplitArr[idx];
+            fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+          }
+          sortArr = fieldSplitArr;
+        }
+      }
+      if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+        if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+          sortArr[1] = postData.sortOrder;
+        } else {
+          sortArr.push(postData.sortOrder);
+        }
+      }
+      let findQuery = {
+        subQuery: false,
+        offset: offset,
+        limit: postData.paginationSize,
+        order: [
+          sortArr
+        ],
+        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+        where: {
+          // p_status: 1,
+        }
+      };
+
+      if (postData.search && /\S/.test(postData.search)) {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+
+        ];
+      }
+      console.log('postData.codename==', postData.codename);
+      if (postData.codename && /\S/.test(postData.codename)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+            ]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+          ];
+        }
+      }
+
+      if (postData.departmentId && /\S/.test(postData.departmentId)) {
+        // findQuery.where['p_department_uuid'] = postData.departmentId;      
+        findQuery.where =
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_department_uuid')), 'LIKE', '%' + postData.departmentId);
+
+      }
+      if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+        //findQuery.where['p_is_active'] = postData.status;
+        findQuery.where = { p_is_active: postData.status };
+      }
+      await profilesViewTbl.findAndCountAll(findQuery)
+        .then((data) => {
+          return res
+            .status(httpStatus.OK)
+            .json({
+              statusCode: 200,
+              message: "Get Details Fetched successfully",
+              req: '',
+              responseContents: data.rows,
+              totalRecords: data.count
+            });
+        })
+        .catch(err => {
+          return res
+            .status(409)
+            .json({
+              statusCode: 409,
+              error: err
+            });
+        });
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  };
+
+  const _getAllProfiles_old = async (req, res) => {
 
     const { user_uuid } = req.headers;
 
@@ -203,7 +323,7 @@ const profilesController = () => {
       }
 
       if (typeof status == 'boolean') {
-        findQuery.where['tk_status'] = status;
+        findQuery.where['p_status'] = status;
       }
       if (searchKey && /\S/.test(searchKey)) {
         Object.assign(findQuery.where, {
@@ -252,6 +372,7 @@ const profilesController = () => {
     }
   };
 
+  // delete profile details
   const _deleteProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.body;

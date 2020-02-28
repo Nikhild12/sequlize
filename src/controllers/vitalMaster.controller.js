@@ -9,6 +9,7 @@ const clinical_const = require('../config/constants');
 const vitalmstrTbl = db.vital_masters;
 const vitalTypeTbl = db.vital_type;
 const vitalValueTypeTbl = db.vital_value_type;
+const vitalLonicTbl = db.vital_loinc;
 
 
 const vitalmstrController = () => {
@@ -170,7 +171,18 @@ const vitalmstrController = () => {
                   uuid: postData.Vital_id
               },
               offset: offset,
-              limit: itemsPerPage
+              limit: itemsPerPage,
+              include: [
+                {
+                  model: vitalLonicTbl,
+                  // as: 'vital_lonic',
+                  require: false,
+                  // where: {
+                  //   is_active: clinical_const.IS_ACTIVE,
+                  //   status: clinical_const.IS_ACTIVE
+                  // }
+                }
+              ]
           })
           .then((data) => {
               return res
@@ -218,7 +230,7 @@ const _deletevitals = async (req, res) => {
   const { user_uuid } = req.headers; 
 
   if (vitals_id) {
-      const updatedvitalsData = { status: 0, modified_by: user_uuid, modified_date: new Date() };
+      const updatedvitalsData = { status: 0, is_active: 0,  modified_by: user_uuid, modified_date: new Date() };
       try {
 
           const updateddiagnosissAsync = await Promise.all(

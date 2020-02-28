@@ -54,7 +54,7 @@ const vitalslonicController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{is_active: 1}
+            where:{is_active: 1, status: 1}
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
