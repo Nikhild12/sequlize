@@ -1,3 +1,4 @@
+//npm i gulp gulp-uglify-es gulp-zip gulp-clean jsonfile gulp-eslint eslint-formatter-friendly
 const gulp = require('gulp');
 const uglify = require('gulp-uglify-es').default;
 const zip = require('gulp-zip');
@@ -13,7 +14,7 @@ const lintrule = './.eslintrc';
 
 const releasefolder = '../release/';
 const releasetmpfolder = 'tmp/';
-const adminappfolder = 'EMR/';
+const appfolder = 'EMR/';
 const WarFileName = 'OASYS_EMR';
 
 gulp.task('eslint', function () {
