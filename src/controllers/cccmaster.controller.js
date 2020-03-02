@@ -5,8 +5,8 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const cccMasterTbl = db.critical_care_charts;
 const conceptTbl = db.critical_care_concepts;
-const conceptdetailsTbl = db.critical_care_concept_values
-const criticalcareTypeTbl = db.critical_care_types
+const conceptdetailsTbl = db.critical_care_concept_values;
+const criticalcareTypeTbl = db.critical_care_types;
 const Q = require('q');
 
 
@@ -162,7 +162,7 @@ const cccMasterController = () => {
                 // transaction_status = true;
                 res.send({ statusCode: 200, message: "Created Successfully", responseContents: finalCConceptData })
             } catch (err) {
-                console.log(err)
+                console.log(err);
                 // if (transaction) await transaction.rollback();
                 // transaction_status = true;
                 throw err;
@@ -201,16 +201,16 @@ const cccMasterController = () => {
 
                 postDatabody.created_by = user_uuid;
                 postDatabody.modified_by = 0;
-                postData.created_by = req.headers.user_uuid
-                postData.code = postData.fieldname
+                postData.created_by = req.headers.user_uuid;
+                postData.code = postData.fieldname;
                 postData.name = postData.fieldname;
 
                 let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true });
 
-                postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid
+                postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid;
                 postDatabody1.created_by = user_uuid;
                 postDatabody1.modified_by = 0;
-                postDatabody1.created_by = req.headers.user_uuid
+                postDatabody1.created_by = req.headers.user_uuid;
                 let concept_output = await conceptTbl.create(postDatabody1, { returning: true });
 
                 let valuetypesSave = [];
@@ -229,18 +229,18 @@ const cccMasterController = () => {
                     let obj_copy = {}; let obj_copy1 = {}; let obj_copy2 = {};
                     obj_copy.cc_concept_uuid = concept_output.uuid,
                         obj_copy.value_from = postDatabody2.normalrange.value_from,
-                        obj_copy.value_to = postDatabody2.normalrange.value_to
+                        obj_copy.value_to = postDatabody2.normalrange.value_to;
 
                     valuetypesSave.push(obj_copy);
 
                     obj_copy1.cc_concept_uuid = concept_output.uuid,
                         obj_copy1.value_from = postDatabody2.lowrange.value_from,
-                        obj_copy1.value_to = postDatabody2.lowrange.value_to
+                        obj_copy1.value_to = postDatabody2.lowrange.value_to;
                     valuetypesSave.push(obj_copy1);
 
                     obj_copy2.cc_concept_uuid = concept_output.uuid,
                         obj_copy2.value_from = postDatabody2.highrange.value_from,
-                        obj_copy2.value_to = postDatabody2.highrange.value_to
+                        obj_copy2.value_to = postDatabody2.highrange.value_to;
                     valuetypesSave.push(obj_copy2);
 
                     let conceptRangesResponse = await conceptdetailsTbl.bulkCreate(valuetypesSave, { returning: true });
@@ -250,9 +250,9 @@ const cccMasterController = () => {
                         ccc_master_output: ccc_master_output, concept_output: concept_output,
                         conceptValuesResponse: valuetypesSave
                     }
-                })
+                });
             } catch (err) {
-                console.log(err)
+                console.log(err);
                 // if (transaction) await transaction.rollback();
                 // transaction_status = true;
                 throw err;
@@ -342,35 +342,40 @@ const cccMasterController = () => {
 
         cccDetailsUpdate = await conceptTbl.update(cccData2,
             { where: { uuid: cccData2.critical_care_concepts_uuid } });
+        if (cccData3.concept_value) {
+            for (let i = 0; i < cccData3.concept_value.length; i++) {
+                const element = cccData3.concept_value[i];
+                cccDetailsUpdate.push(await conceptdetailsTbl.update({ concept_value: element.concept_value, cc_concept_uuid: cccData3.cc_concept_uuid }, { where: { uuid: element.critical_care_concept_values_uuid } }));
+            }
+        }
+        else {
+            let obj_copy = {}; let obj_copy1 = {}; let obj_copy2 = {};
+            // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+            obj_copy.cc_concept_uuid = cccData3.cc_concept_uuid,
+                obj_copy.value_from = cccData3.normalrange.value_from,
+                obj_copy.value_to = cccData3.normalrange.value_to;
 
-        let obj_copy = {}; let obj_copy1 = {}; let obj_copy2 = {};
-        console.log('cccData3.cc_concept_uuid==', cccData3.cc_concept_uuid);
-        // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
-        obj_copy.cc_concept_uuid = cccData3.cc_concept_uuid,
-            obj_copy.value_from = cccData3.normalrange.value_from,
-            obj_copy.value_to = cccData3.normalrange.value_to
+            //valuetypesSave.push(obj_copy);
+            cccDetailsUpdate = await conceptdetailsTbl.update(obj_copy,
+                { where: { uuid: cccData3.normalrange.critical_care_concept_values_uuid } },
+                { returning: true });
 
-        valuetypesSave.push(obj_copy);
+            // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+            obj_copy1.cc_concept_uuid = cccData3.cc_concept_uuid,
+                obj_copy1.value_from = cccData3.lowrange.value_from,
+                obj_copy1.value_to = cccData3.lowrange.value_to;
+            //valuetypesSave.push(obj_copy1);
 
-        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
-            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
-
-        // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
-        obj_copy1.cc_concept_uuid = cccData3.cc_concept_uuid,
-            obj_copy1.value_from = cccData3.lowrange.value_from,
-            obj_copy1.value_to = cccData3.lowrange.value_to
-        valuetypesSave.push(obj_copy1);
-
-        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
-            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
-        //obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
-        obj_copy2.cc_concept_uuid = cccData3.cc_concept_uuid,
-            obj_copy2.value_from = cccData3.highrange.value_from,
-            obj_copy2.value_to = cccData3.highrange.value_to
-        valuetypesSave.push(obj_copy2);
-        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
-            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
-
+            cccDetailsUpdate = await conceptdetailsTbl.update(obj_copy1,
+                { where: { uuid: cccData3.lowrange.critical_care_concept_values_uuid } });
+            //obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+            obj_copy2.cc_concept_uuid = cccData3.cc_concept_uuid,
+                obj_copy2.value_from = cccData3.highrange.value_from,
+                obj_copy2.value_to = cccData3.highrange.value_to;
+            // valuetypesSave.push(obj_copy2);
+            cccDetailsUpdate = await conceptdetailsTbl.update(obj_copy2,
+                { where: { uuid: cccData3.highrange.critical_care_concept_values_uuid } });
+        }
         if (cccDetailsUpdate.length > 0) {
             var response = await Q.allSettled(cccDetailsUpdate);
             if (response.length > 0) {
