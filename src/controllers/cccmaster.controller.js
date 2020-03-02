@@ -7,6 +7,8 @@ const cccMasterTbl = db.critical_care_charts;
 const conceptTbl = db.critical_care_concepts;
 const conceptdetailsTbl = db.critical_care_concept_values
 const criticalcareTypeTbl = db.critical_care_types
+const Q = require('q');
+
 
 const cccMasterController = () => {
     /**
@@ -310,25 +312,85 @@ const cccMasterController = () => {
         });
     };
 
-    const updatecccMasterById = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await cccMasterTbl.update(
-            postData, {
-            where: {
-                uuid: postData.Ccc_id
+    const updatecccMasterById = async (req, res) => {
+        const { user_uuid } = req.headers;
+        //   const { data } = req.body;
+        if (user_uuid) {
+            try {
+                let bulkUpdateCCCResponse = await bulkUpdateCCC(req.body);
+                return res.send({ status: 'success', statusCode: 200, msg: 'success', responseContents: bulkUpdateCCCResponse });
+            } catch (err) {
+                return res.send({ status: 'error', statusCode: 400, msg: 'failed', error: err.message });
             }
+        } else {
+            return res.send({ status: 'error', statusCode: 400, msg: 'Authentication error or profile detail should not be empty' });
         }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
     };
 
+    const bulkUpdateCCC = async (req) => {
+        var deferred = new Q.defer();
+        var cccData = req;
+        var cccData1 = req.body;
+        var cccData2 = req.body1;
+        var cccData3 = req.body2;
+        let valuetypesSave = []; let valuetypesSave1 = [];
+        let valuetypesSave2 = [];
+
+        var cccDetailsUpdate = [];
+        cccDetailsUpdate = await cccMasterTbl.update(cccData1,
+            { where: { uuid: cccData1.critical_care_charts_uuid } });
+
+        cccDetailsUpdate = await conceptTbl.update(cccData2,
+            { where: { uuid: cccData2.critical_care_concepts_uuid } });
+
+        let obj_copy = {}; let obj_copy1 = {}; let obj_copy2 = {};
+        console.log('cccData3.cc_concept_uuid==', cccData3.cc_concept_uuid);
+        // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+        obj_copy.cc_concept_uuid = cccData3.cc_concept_uuid,
+            obj_copy.value_from = cccData3.normalrange.value_from,
+            obj_copy.value_to = cccData3.normalrange.value_to
+
+        valuetypesSave.push(obj_copy);
+
+        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
+            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
+
+        // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+        obj_copy1.cc_concept_uuid = cccData3.cc_concept_uuid,
+            obj_copy1.value_from = cccData3.lowrange.value_from,
+            obj_copy1.value_to = cccData3.lowrange.value_to
+        valuetypesSave.push(obj_copy1);
+
+        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
+            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
+        //obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
+        obj_copy2.cc_concept_uuid = cccData3.cc_concept_uuid,
+            obj_copy2.value_from = cccData3.highrange.value_from,
+            obj_copy2.value_to = cccData3.highrange.value_to
+        valuetypesSave.push(obj_copy2);
+        cccDetailsUpdate = await conceptdetailsTbl.update(valuetypesSave,
+            { where: { uuid: cccData3.critical_care_concept_values_uuid } });
+
+        if (cccDetailsUpdate.length > 0) {
+            var response = await Q.allSettled(cccDetailsUpdate);
+            if (response.length > 0) {
+                var responseMsg = [];
+                for (let i = 0; i < response.length; i++) {
+                    const element = response[i];
+                    if (element.state == "rejected") {
+                        responseMsg.push(element.reason);
+                    }
+                }
+
+                if (responseMsg.length == 0) {
+                    deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
+                } else {
+                    deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
+                }
+            }
+        }
+        return deferred.promise;
+    };
 
     const getcccMasterById = async (req, res, next) => {
         const postData = req.body;
