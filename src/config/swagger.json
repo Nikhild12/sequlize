@@ -6068,7 +6068,6 @@
           {
             "in": "body",
             "name": "List of  patient treatmentkit details ",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/allTreatmentKit"
             }
@@ -6766,38 +6765,139 @@
     "updateCccMasterById": {
       "type": "object",
       "properties": {
-        "Ccc_id": {
-          "type": "integer"
+        "body": {
+          "type": "object",
+          "properties": {
+            "critical_care_charts_uuid": {
+              "type": "integer"
+            },
+            "critical_care_type_uuid": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string"
+            },
+            "critical_care_uom_uuid": {
+              "type": "integer"
+            },
+            "mnemonic_code_master_uuid": {
+              "type": "integer"
+            },
+            "loinc_code_master_uuid": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
+            }
+          }
         },
-        "critical_care_type_uuid": {
-          "type": "integer"
+        "body1": {
+          "type": "object",
+          "properties": {
+            "critical_care_concepts_uuid": {
+              "type": "integer"
+            },
+            "cc_chart_uuid": {
+              "type": "integer"
+            },
+            "concept_code": {
+              "type": "string"
+            },
+            "concept_name": {
+              "type": "string"
+            },
+            "value_type_uuid": {
+              "type": "integer"
+            },
+            "display_order": {
+              "type": "integer"
+            },
+            "drug_frequency_uuid": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "integer"
+            },
+            "revision": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "boolean"
+            }
+          }
         },
-        "code": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "critical_care_uom_uuid": {
-          "type": "integer"
-        },
-        "mnemonic_code_master_uuid": {
-          "type": "integer"
-        },
-        "loinc_code_master_uuid": {
-          "type": "integer"
-        },
-        "comments": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
+        "body2": {
+          "type": "object",
+          "properties": {
+            "cc_concept_uuid": {
+              "type": "integer"
+            },
+            "concept_value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "critical_care_concept_values_uuid": {
+                    "type": "integer"
+                  },
+                  "concept_value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "normalrange": {
+              "type": "object",
+              "properties": {
+                "critical_care_concept_values_uuid": {
+                  "type": "integer"
+                },
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
+              }
+            },
+            "lowrange": {
+              "type": "object",
+              "properties": {
+                "critical_care_concept_values_uuid": {
+                  "type": "integer"
+                },
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
+              }
+            },
+            "highrange": {
+              "type": "object",
+              "properties": {
+                "critical_care_concept_values_uuid": {
+                  "type": "integer"
+                },
+                "value_from": {
+                  "type": "integer"
+                },
+                "value_to": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
         }
       }
     },
