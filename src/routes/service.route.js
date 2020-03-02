@@ -4,6 +4,7 @@ const emrWorkflowRouter = require("./emr.workflow.route");
 const patientChiefRoute = require("./patient_chief_complaints.route");
 const emrPatientVitalRouter = require("./emr.patient.vitals.route");
 const encounterRouter = require("./encounter.route");
+const dashboardRouter = require("./dash_board.route");
 const encounterTypeRouter = require("./encounter.type.route");
 const patientDiagnosisRouter = require("./patient.diagnosis.route");
 const patientAttachmentsRouter = require("./patient_attachments.route");
@@ -94,6 +95,8 @@ serviceRouter.use("/patient-chief-complaints", patientChiefRoute);
 // Patient Vitals
 serviceRouter.use("/emr-patient-vitals", emrPatientVitalRouter);
 
+//EMR Dashboard 
+serviceRouter.use("/dashboard", dashboardRouter);
 // Encounter Routes
 serviceRouter.use("/encounter", encounterRouter);
 serviceRouter.use("/encounter-type", encounterTypeRouter);

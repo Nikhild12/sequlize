@@ -281,25 +281,7 @@ const PatientDiagnsis = () => {
       });
     }
   };
-  const _getTopDiagnosis = async (req, res) => {
-    const { user_uuid } = req.headers;
 
-    try {
-      if (user_uuid) {
-        const topDiagnosis = await getTopDiagnosisQuery(user_uuid);
-        return res.status(200).send({ code: httpStatus.OK, msg: 'Patient Diagnosis fetched successfully', responseContents: topDiagnosis });
-      } else {
-        return res.status(400).send({
-          code: httpStatus.UNAUTHORIZED,
-          message: emr_constants.NO_USER_ID
-        });
-      }
-    } catch (ex) {
-      console.log('Exception Happened');
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-    }
-
-  };
 
   return {
     createPatientDiagnosis: _createPatientDiagnosis,
@@ -310,7 +292,6 @@ const PatientDiagnsis = () => {
     deletePatientDiagnosisById: _deletePatientDiagnosisById,
     helperCreatePatientDiagnosis: _helperCreatePatientDiagnosis,
     helperdelPatDignsById: _helperdelPatDignsById,
-    getTopDiagnosis: _getTopDiagnosis
   };
 };
 
@@ -501,23 +482,4 @@ async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
   });
 }
 
-async function getTopDiagnosisQuery(user_uuid) {
-  let filterQuery = {
-    is_active: emr_constants.IS_ACTIVE,
-    status: emr_constants.IS_ACTIVE,
-    encounter_doctor_uuid: user_uuid
-  };
-  return patient_diagnosis_tbl.findAll({
-    include: [{
-      model: diagnosis_tbl,
-      attributes: ['code', 'name'],
-    }],
-    where: filterQuery,
-    group: ['diagnosis_uuid'],
-    attributes: ['uuid', 'diagnosis_uuid', 'encounter_doctor_uuid',
-      [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
-    ],
-    order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'DESC']],
 
-  });
-}

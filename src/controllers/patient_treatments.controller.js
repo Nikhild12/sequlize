@@ -25,6 +25,7 @@ const patientTreatmenttbl = sequelizeDb.patient_treatments;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const diagnosisTbl = sequelizeDb.diagnosis;
 const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
+const encounterTypeTbl = sequelizeDb.encounter_type;
 
 
 // Patient Treatment Attributes
@@ -222,7 +223,7 @@ const PatientTreatmentController = () => {
   };
 
   const _repeatOrderById = async (req, res) => {
-    const { user_uuid, authorization } = req.headers;
+    const { user_uuid, facility_uuid, authorization } = req.headers;
     const { order_id } = req.body;
 
     if (!user_uuid && !order_id) {
@@ -230,9 +231,10 @@ const PatientTreatmentController = () => {
     }
     try {
       const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
-      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      // const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
 
-      return res.status(200).send({ code: httpStatus.OK, message: 'Prevkit Order Details Fetched Successfully', responseContents: { "Diagnosis": repeatOrderDiagnosisData, "Prescription": repeatOrderPrescData } });
+      return res.status(200).send({ code: httpStatus.OK, message: 'Prevkit Order Details Fetched Successfully', responseContents: { "Diagnosis": repeatOrderDiagnosisData, "Lab": repeatOrderLabData } });
     } catch (ex) {
       console.log('Exception Happened ', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
@@ -290,21 +292,40 @@ async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) 
 }
 
 async function getPreviousRadiology({ user_uuid, authorization }, order_id) {
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   return await _getRequest({ user_uuid, authorization }, order_id);
 
 }
-async function getPreviousLab({ user_uuid, authorization }, order_id) {
-  return await _getRequest({ user_uuid, authorization }, order_id);
+async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
+  let result = [];
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+
+  result = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
+  const encounterId = result.responseContents[0].patient_order.encounter_type_uuid;
+  const encounterType = await encounterTypeTbl.findOne({
+    where: {
+      uuid: encounterId
+    },
+    attributes: ['name']
+  });
+  let response = [];
+  response = [...response, result.responseContents[0] = {
+    ...result.responseContents[0],
+    encounterType
+  }];
+  return response;
 
 }
 async function getPreviousInvest({ user_uuid, authorization }, order_id) {
   return await _getRequest({ user_uuid, authorization }, order_id);
 
 }
-const _postRequest = async (url, { user_uuid, authorization }, order_id) => {
+const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, order_id) => {
   let options = {
     uri: url,
     headers: {
+      user_uuid: user_uuid,
+      facility_uuid: facility_uuid,
       Authorization: authorization
     },
     method: 'POST',
@@ -320,7 +341,7 @@ const _postRequest = async (url, { user_uuid, authorization }, order_id) => {
     }
   } catch (ex) {
     console.log('Exception Happened', ex);
-    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+    return ex;
   }
 
 };
