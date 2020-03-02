@@ -12131,7 +12131,19 @@
         "sortOrder": {
           "type": "string"
         },
-        "depertmentId": {
+        "search": {
+          "type": "string"
+        },
+        "codename": {
+          "type": "string"
+        },
+        "departmentId": {
+          "type": "integer"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "share": {
           "type": "integer"
         },
         "status": {
