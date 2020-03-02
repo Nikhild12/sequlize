@@ -2719,6 +2719,57 @@
         }
       }
     },
+    "/api/patient-diagnosis/updatePatientDiagnosis": {
+      "put": {
+        "description": "To create Patient Diagnosis",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_diagnosis_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "department_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "UpdatePatientDiagnosis",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatePatientDiagnosis"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Updated Patient Diagnosis"
+          }
+        }
+      }
+    },
     "/api/favourite/create": {
       "post": {
         "description": "To Create a favourite Drug for the Master",
@@ -11312,6 +11363,67 @@
         }
       }
     },
+    "updatePatientDiagnosis": {
+      "type": "object",
+      "properties": {
+        "encounter_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "encounter_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "consultation_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "diagnosis_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "condition_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "condition_date": {
+          "type": "string",
+          "example": "enter some date"
+        },
+        "condition_status_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "category_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "grade_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "body_site_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "prescription_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "patient_treatment_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "comments": {
+          "type": "string",
+          "example": "enter some thing"
+        }
+      }
+    },
     "createPatientTransfer": {
       "type": "object",
       "properties": {
@@ -12131,7 +12243,19 @@
         "sortOrder": {
           "type": "string"
         },
-        "depertmentId": {
+        "search": {
+          "type": "string"
+        },
+        "codename": {
+          "type": "string"
+        },
+        "departmentId": {
+          "type": "integer"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "share": {
           "type": "integer"
         },
         "status": {
