@@ -114,7 +114,7 @@ const PatientDiagnsis = () => {
           departmentId &&
           facility_uuid &&
           from_date,
-        to_date)
+          to_date)
       ) {
         const patientDiagnosisData = await patient_diagnosis_tbl.findAll(
           getPatientFiltersQuery1(
@@ -282,6 +282,7 @@ const PatientDiagnsis = () => {
     }
   };
 
+
   return {
     createPatientDiagnosis: _createPatientDiagnosis,
     getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
@@ -290,7 +291,7 @@ const PatientDiagnsis = () => {
     getMobileMockAPI: _getMobileMockAPI,
     deletePatientDiagnosisById: _deletePatientDiagnosisById,
     helperCreatePatientDiagnosis: _helperCreatePatientDiagnosis,
-    helperdelPatDignsById: _helperdelPatDignsById
+    helperdelPatDignsById: _helperdelPatDignsById,
   };
 };
 
@@ -484,3 +485,5 @@ async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
     returning: true
   });
 }
+
+
