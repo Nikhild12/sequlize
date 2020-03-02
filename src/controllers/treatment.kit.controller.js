@@ -448,6 +448,11 @@ const TreatMent_Kit = () => {
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('tk_is_public')), 'LIKE', '%' + postData.share);
 
             }
+            if (postData.createdBy && /\S/.test(postData.createdBy)) {
+                findQuery.where =
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('u_first_name')), 'LIKE', '%' + postData.createdBy);
+
+            }
             await treatmentKitViewTbl.findAndCountAll(findQuery)
                 .then((data) => {
                     return res

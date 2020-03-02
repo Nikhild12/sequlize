@@ -1,12 +1,18 @@
 {
   "name": "emr",
-  "version": "1.0.0",
+  "version": "1.0.9",
+  "qaversion": "1.0.6",
+  "uatversion": "1.0.7",
+  "prodversion": "0.0.2",
   "description": "EMR_API",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index",
     "eslint": "gulp eslint",
+    "dev.build": "gulp devbuild",
+    "qa.build": "gulp qabuild",
+    "uat.build": "gulp uatbuild",
     "prod.build": "gulp prodbuild"
   },
   "repository": {
