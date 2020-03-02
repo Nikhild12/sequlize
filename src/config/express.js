@@ -116,10 +116,16 @@ app.post('/api/image/imageUpload', upload.any(), function (req, res) {
 
 app.get('/api/getAPIVersion', function (req, res) {
 	const pkg = require('../../package.json');
-	res.send({
+	let versiondata = {
+		'dev': pkg.version,
+		'qa': pkg.qaversion,
+		'uat':pkg.uatversion,
+		'prod':pkg.prodversion
+	};
+	return res.send({
 		statusCode: '200',
-		msg: pkg.version,
-		responseContents: pkg.version
+		msg: versiondata,
+		responseContents: versiondata
 	});
 });
 
