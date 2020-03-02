@@ -198,19 +198,19 @@ const PatientDiagnsis = () => {
 
   const _updatePatientDiagnosisHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { uuid, patient_uuid, department_uuid } = req.query;
+    const { patient_diagnosis_id, patient_uuid, department_uuid } = req.query;
     let postData = req.body;
     let selector = {
       where: {
-        uuid: uuid,
+        uuid: patient_diagnosis_id,
         patient_uuid: patient_uuid,
         department_uuid: department_uuid
       }
     };
     try {
-      if (user_uuid && uuid && postData) {
+      if (user_uuid && patient_diagnosis_id && postData && Object.keys(postData).length != 0) {
         let fetchedData = await patient_diagnosis_tbl.findOne(selector);
-        let fetchedDate = fetchedData.condition_date;
+        let fetchedDate = fetchedData.created_date;
         fetchedDate = moment(fetchedDate).format("YYYY-MM-DD");
         let currentDate = moment(Date.now()).format("YYYY-MM-DD");
         if (fetchedDate != currentDate) {
@@ -422,7 +422,7 @@ function getPatientData(responseData) {
       diagnosis_modified_date: rD.modified_date,
       diagnosis_performed_by: rD.performed_by,
       diagnosis_comments: rD.comments,
-      
+
       diagnosis_name:
         rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : rD.other_diagnosis,
       diagnosis_code:
