@@ -9,6 +9,6 @@ const patientTKRoute = express.Router();
 
 patientTKRoute.route('/create').post(patientTreatmentCtrl.createPatientTreatment);
 patientTKRoute.route('/prevKitOrdersById').get(patientTreatmentCtrl.prevKitOrdersById);
-patientTKRoute.route('/repeatOrderDetails').get(patientTreatmentCtrl.repeatOrderById);
+patientTKRoute.route('/repeatOrderDetails').post(patientTreatmentCtrl.repeatOrderById);
 
 module.exports = patientTKRoute;
