@@ -205,7 +205,8 @@ const PatientTreatmentController = () => {
         const prevKitOrderData = await prevKitOrdersViewTbl.findAll({
           where: query,
           attributes: getPrevKitOrders,
-          limit: 5
+          limit: 5,
+          order: [['pt_treatment_given_date', 'DESC']]
         });
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
@@ -230,11 +231,18 @@ const PatientTreatmentController = () => {
       return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
     }
     try {
+      //  const repeatOrder = await getTrearmentOrderRepeat(order_id, { user_uuid, facility_uuid, authorization });
+      //const repeatOrderList = await getRepeatOrderDiagnosisResponse(repeatOrder);
       const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
-      // const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      // const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
+      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
       const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
 
-      return res.status(200).send({ code: httpStatus.OK, message: 'Prevkit Order Details Fetched Successfully', responseContents: { "Diagnosis": repeatOrderDiagnosisData, "Lab": repeatOrderLabData } });
+      return res.status(200).send({
+        code: httpStatus.OK, message: 'Prevkit Order Details Fetched Successfully',
+        // responseContents: repeatOrder
+        responseContents: { "diagnosis_details": repeatOrderDiagnosisData, "prescription": repeatOrderPrescData, "lab_details": repeatOrderLabData }
+      });
     } catch (ex) {
       console.log('Exception Happened ', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
@@ -278,7 +286,7 @@ function getPrevOrderdDiagnosisData(order_id) {
     attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'patient_treatment_uuid'],
     include: [{
       model: diagnosisTbl,
-      attributes: ['code', 'name']
+      attributes: ['code', 'name', 'description']
     }],
 
   });
@@ -395,4 +403,20 @@ async function getPrescriptionRseponse(prescriptionData) {
 
   return prescriptionList;
 
-} 
+}
+
+
+async function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
+
+}
+
+
+async function getTrearmentOrderRepeat(order_id, { user_uuid, facility_uuid, authorization }) {
+  return Promise.all([
+    getPrevOrderdDiagnosisData(order_id),
+    getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id),
+    getPrevOrderPrescription({ user_uuid, authorization }, order_id)
+
+  ]);
+}
+

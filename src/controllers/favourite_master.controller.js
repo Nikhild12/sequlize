@@ -1136,8 +1136,8 @@ function getDrugDetailsFromTreatment(drugArray) {
   return drugArray.map(d => {
     return {
       // Drug Details
-      drug_name: d.dr_name,
-      drug_code: d.dr_code,
+      drug_name: d.im_name,
+      drug_code: d.im_code,
       drug_id: d.tkd_item_master_uuid,
       drug_quantity: d.tkd_quantity,
       drug_duration: d.tkd_duration,
