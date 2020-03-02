@@ -11,6 +11,8 @@ const config = require("../config/config");
 
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
+const rp = require('request-promise');
+
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -21,7 +23,9 @@ const utilityService = require("../services/utility.service");
 // tbl
 const patientTreatmenttbl = sequelizeDb.patient_treatments;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
+const diagnosisTbl = sequelizeDb.diagnosis;
 const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
+const encounterTypeTbl = sequelizeDb.encounter_type;
 
 
 // Patient Treatment Attributes
@@ -67,7 +71,7 @@ const PatientTreatmentController = () => {
         const patientTKCreatedData = await patientTreatmenttbl.create(
           patientTreatment,
           {
-            returning: true,
+            returning: true
             //transaction: patientTransaction
 
           }
@@ -217,9 +221,31 @@ const PatientTreatmentController = () => {
     }
 
   };
+
+  const _repeatOrderById = async (req, res) => {
+    const { user_uuid, facility_uuid, authorization } = req.headers;
+    const { order_id } = req.body;
+
+    if (!user_uuid && !order_id) {
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+    }
+    try {
+      const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
+      // const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
+
+      return res.status(200).send({ code: httpStatus.OK, message: 'Prevkit Order Details Fetched Successfully', responseContents: { "Diagnosis": repeatOrderDiagnosisData, "Lab": repeatOrderLabData } });
+    } catch (ex) {
+      console.log('Exception Happened ', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+    }
+
+  };
+
   return {
     createPatientTreatment: _createPatientTreatment,
-    prevKitOrdersById: _prevKitOrdersById
+    prevKitOrdersById: _prevKitOrdersById,
+    repeatOrderById: _repeatOrderById
   };
 };
 
@@ -228,7 +254,7 @@ module.exports = PatientTreatmentController();
 function getPrevKitOrdersResponse(orders) {
   return orders.map((o) => {
     return {
-      pt_uuid: o.pt_uuid,
+      order_id: o.pt_uuid,
       patient_id: o.pt_patient_uuid,
       ordered_date: o.pt_treatment_given_date,
       department_name: o.d_name,
@@ -239,3 +265,134 @@ function getPrevKitOrdersResponse(orders) {
     };
   });
 }
+function getPrevOrderdDiagnosisData(order_id) {
+  let query = {
+    patient_treatment_uuid: order_id,
+    is_active: emr_constants.IS_ACTIVE,
+    status: emr_constants.IS_ACTIVE
+
+  };
+  return patientDiagnosisTbl.findAll({
+
+    where: query,
+    attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'patient_treatment_uuid'],
+    include: [{
+      model: diagnosisTbl,
+      attributes: ['code', 'name']
+    }],
+
+  });
+}
+
+async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) {
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+  const prescriptionData = await _postRequest(url, { user_uuid, authorization }, order_id);
+  const result = getPrescriptionRseponse(prescriptionData);
+  return result;
+}
+
+async function getPreviousRadiology({ user_uuid, authorization }, order_id) {
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  return await _getRequest({ user_uuid, authorization }, order_id);
+
+}
+async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
+  let result = [];
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+
+  result = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
+  const encounterId = result.responseContents[0].patient_order.encounter_type_uuid;
+  const encounterType = await encounterTypeTbl.findOne({
+    where: {
+      uuid: encounterId
+    },
+    attributes: ['name']
+  });
+  let response = [];
+  response = [...response, result.responseContents[0] = {
+    ...result.responseContents[0],
+    encounterType
+  }];
+  return response;
+
+}
+async function getPreviousInvest({ user_uuid, authorization }, order_id) {
+  return await _getRequest({ user_uuid, authorization }, order_id);
+
+}
+const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, order_id) => {
+  let options = {
+    uri: url,
+    headers: {
+      user_uuid: user_uuid,
+      facility_uuid: facility_uuid,
+      Authorization: authorization
+    },
+    method: 'POST',
+    json: true,
+    body: {
+      patient_treatment_uuid: order_id
+    }
+  };
+  try {
+    const result = await rp(options);
+    if (result) {
+      return result;
+    }
+  } catch (ex) {
+    console.log('Exception Happened', ex);
+    return ex;
+  }
+
+};
+
+const _getRequest = async (url, { user_uuid, authorization }, order_id) => {
+  let options = {
+    uri: url,
+    headers: {
+      Authorization: authorization
+    },
+    method: 'GET',
+    json: true,
+    body: {
+      patient_treatment_uuid: order_id
+    }
+  };
+  try {
+    const result = await rp(options);
+    if (result) {
+      return result;
+    }
+  } catch (ex) {
+    console.log('Exception Happened', ex);
+    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+  }
+
+};
+
+async function getPrescriptionRseponse(prescriptionData) {
+  let prescriptionList = [];
+  let prescriptions = prescriptionData.responseContents;
+  prescriptions.forEach((p, pIdx) => {
+    prescriptionList = [...prescriptionList, {
+      order_id: p.patient_treatment_uuid,
+      uuid: p.uuid,
+      prescription_no: p.prescription_no,
+      treatment_kit_uuid: p.treatment_kit_uuid,
+      prescriptionDetails: {
+        prescription_uuid: p.prescription_details[pIdx].prescription_uuid,
+        drug_name: p.prescription_details[pIdx].item_master.name,
+        drug_route: p.prescription_details[pIdx].drug_route,
+        drug_frequency: p.prescription_details[pIdx].drug_frequency,
+        duration: p.prescription_details[pIdx].duration,
+        duration_period: p.prescription_details[pIdx].duration_period,
+        instruction: p.prescription_details[pIdx].drug_instruction
+      }
+
+    }];
+    return prescriptionList;
+  });
+
+  return prescriptionList;
+
+} 

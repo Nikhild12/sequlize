@@ -218,10 +218,12 @@ const PatientChiefComplaints = () => {
     }
   };
 
+
+
   return {
     createChiefComplaints: _createChiefComplaints,
     getPatientChiefComplaints: _getPatientChiefComplaints,
-    getMobileMockAPI: _getMobileMockAPI
+    getMobileMockAPI: _getMobileMockAPI,
   };
 };
 
@@ -257,12 +259,12 @@ function getPatientsChiefComplaintsInReadable(fetchedData) {
         chief_complaint_duration_id: fD.chief_complaint_duration_period_uuid,
         chief_complaint_duration_name:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.name
+            fD.chief_complaint_duration_period.name
             ? fD.chief_complaint_duration_period.name
             : "",
         chief_complaint_duration_code:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.code
+            fD.chief_complaint_duration_period.code
             ? fD.chief_complaint_duration_period.code
             : "",
         is_active: fD.is_active[0] === 1 ? true : false,

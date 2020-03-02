@@ -13,14 +13,14 @@ const _isDiagnosisAvailable = diagnosis => {
 };
 const _isLabAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
-    return false
+    return false;
   }
 
   return header && Array.isArray(details) && details.length > 0;
 };
 const _isPrescriptionAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
-    return false
+    return false;
   }
 
   return header && Array.isArray(details) && details.length > 0;
@@ -28,7 +28,7 @@ const _isPrescriptionAvailable = ({ header, details } = {}) => {
 
 const _isInvistigationAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
-    return false
+    return false;
   }
 
   return header && Array.isArray(details) && details.length > 0;
@@ -36,7 +36,7 @@ const _isInvistigationAvailable = ({ header, details } = {}) => {
 
 const _isRadiologyAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
-    return false
+    return false;
   }
 
   return header && Array.isArray(details) && details.length > 0;
@@ -143,10 +143,10 @@ const _deletePrescription = async ({ user_uuid, authorization }, id) => {
     }
   } catch (err) {
     console.log(err, 'exception happened');
-    return err
+    return err;
   }
 
-}
+};
 
 
 const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
