@@ -335,7 +335,9 @@ function getPatientFiltersQuery(key, value, pId, dId, uId, from_date, to_date) {
   filtersQuery.include = [
     {
       model: diagnosis_tbl,
-      attributes: ["code", "name"]
+      attributes: ["code", "name"],
+      required: false
+
     }
   ];
   filtersQuery.where = {
@@ -378,8 +380,9 @@ function getPatientFiltersQuery1(
   filtersQuery.include = [
     {
       model: diagnosis_tbl,
-      attributes: ["code", "name"]
-    }
+      attributes: ["code", "name"],
+      required: false
+    },
   ];
 
   filtersQuery.where = {
@@ -419,10 +422,11 @@ function getPatientData(responseData) {
       diagnosis_modified_date: rD.modified_date,
       diagnosis_performed_by: rD.performed_by,
       diagnosis_comments: rD.comments,
+      
       diagnosis_name:
-        rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : "",
+        rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : rD.other_diagnosis,
       diagnosis_code:
-        rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : "",
+        rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : rD.diagnosis_uuid,
       diagnosis_is_snomed: rD.is_snomed[0] === 1 ? true : false
     };
   });
@@ -468,7 +472,7 @@ async function _helperdelPatDignsById(diagnosisId) {
 
 async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
   patientsDiagnosisData.forEach(pD => {
-    pD.is_snomed = pD.is_snomed || emr_constants.IS_ACTIVE;
+    pD.is_snomed = pD.is_snomed;
     pD.is_patient_condition =
       pD.is_patient_condition || emr_constants.IS_ACTIVE;
     pD.is_chronic = pD.is_chronic || emr_constants.IS_ACTIVE;

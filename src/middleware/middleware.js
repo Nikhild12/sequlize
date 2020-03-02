@@ -29,15 +29,16 @@ const middleware = () => {
         //console.log('\n destinationPath...',destinationPath);
         
         let { writeFilePath } = createFolder(destinationPath);
+        //console.log('writeFilePath', writeFilePath);
         return multer.diskStorage({ //multers disk storage settings
             destination: function (req, file, cb) {
                 let { folder_name } = req.body;
-                console.log('\n folder...', folder_name);
+                //console.log('\n folder...', folder_name);
 
                 if (folder_name) {
-                    console.log('\n writeFilePath...', writeFilePath);
+                   // console.log('\n writeFilePath...', writeFilePath);
                     destinationPath = writeFilePath + ('/' + folder_name);
-                    console.log('\n after destinationPath...', destinationPath);
+                    //console.log('\n after destinationPath...', destinationPath);
                     if (!fs.existsSync(destinationPath)) {
                         fs.mkdirSync(destinationPath, (err) => {
                             if (err) throw err;

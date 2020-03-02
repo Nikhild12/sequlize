@@ -238,12 +238,6 @@
           },
           {
             "in": "formData",
-            "name": "documentImage",
-            "required": true,
-            "type": "file"
-          },
-          {
-            "in": "formData",
             "name": "code",
             "required": true,
             "type": "string"
@@ -274,7 +268,7 @@
           },
           {
             "in": "formData",
-            "name": "sketch_path",
+            "name": "folder_name",
             "required": true,
             "type": "string"
           },
@@ -289,6 +283,12 @@
             "name": "revision",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file"
           }
         ],
         "produces": [
@@ -4411,7 +4411,6 @@
           {
             "in": "body",
             "name": "Profiles",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/allProfiles"
             }
@@ -6871,6 +6870,9 @@
           "type": "string"
         },
         "sketch_path": {
+          "type": "string"
+        },
+        "folder_name": {
           "type": "string"
         },
         "status": {
@@ -10359,7 +10361,13 @@
         "sortOrder": {
           "type": "string"
         },
-        "depertmentId": {
+        "search": {
+          "type": "string"
+        },
+        "codename": {
+          "type": "string"
+        },
+        "departmentId": {
           "type": "integer"
         },
         "status": {
@@ -12102,7 +12110,7 @@
           "type": "string",
           "example": "fever"
         },
-        "sortField":{
+        "sortField": {
           "type": "string",
           "example": "f_name"
         }

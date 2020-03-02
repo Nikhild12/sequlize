@@ -112,30 +112,34 @@ const specialitySketchesMasterController = () => {
 
 
     };
+    
     const uploadD = multer({ storage: middleware.multerDynamicUpload('') }).any();
-
-        const postSpecialitySketcheMaster = async (req, res) => {
+       
+    const postSpecialitySketcheMaster = async (req, res) => {
             let userUUID = req.headers.user_uuid;
             try {
                 if (userUUID) {
                     uploadD(req, res, async (err) => {
                         const attachmentData = req.body;
-                        attachmentData.folder_name = 'ssketch';
+                        
                         if (err instanceof multer.MulterError) {
                             res.send({ status: 400, message: err });
                         } else if (err) {
                             res.send({ status: 400, message: err });
                         } else {
                             //attachmentData.consultation_uuid = userUUID;
+                            //attachmentData.folder_name = 'ssketch';
                             attachmentData.is_active = attachmentData.status = true;
                             //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
                             attachmentData.created_by = attachmentData.modified_by = userUUID;
                             attachmentData.created_date = attachmentData.modified_date = new Date();
                             attachmentData.revision = 1;
+                            
                             let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
                             if (req.files.length > 0) {
                                 let sketchFileSave = [];
                                 for (let i = 0; i < req.files.length; i++) {
+                                    console.log('req.files[i].path', req.files[i].path)
                                     sketchFileSave.push({
                                         speciality_sketch_uuid: specialityData.dataValues.uuid,
                                         sketch_path: req.files[i].path,
@@ -158,7 +162,7 @@ const specialitySketchesMasterController = () => {
                 res.send({ "status": 400, "message": ex.message });
             }
         };
-
+        
     const deleteSpecialitySketcheMaster = async (req, res, next) => {
         const postData = req.body;
 
@@ -184,22 +188,72 @@ const specialitySketchesMasterController = () => {
         });
     };
     const updateSpecialitySketcheMasterById = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await specialitySketchesMasterTbl.update(
-            postData, {
-                where: {
-                    uuid: postData.Speciality_id
-                }
-            }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
+        let userUUID = req.headers.user_uuid;
+        try {
+            if (userUUID) {
+                uploadD(req, res, async (err) => {
+                    const attachmentData = req.body;
+                    if (err instanceof multer.MulterError) {
+                        res.send({ status: 400, message: err });
+                    } else if (err) {
+                        res.send({ status: 400, message: err });
+                    } else {
+                        let updateData = {
+                            code: attachmentData.code,
+                            name: attachmentData.name,
+                            department_uuid: attachmentData.department_uuid,
+                            description: attachmentData.description,
+                            sketch_name: attachmentData.sketch_name,
+                            modified_by: req.headers.user_uuid
+                        }
+                        
+                        await specialitySketchesMasterTbl.update(updateData, 
+                            {
+                                where: {
+                                    uuid: attachmentData.Speciality_id
+                                }
+                            });
+                        if (req.files.length > 0) {
+                            let sketchFileSave = [];
+                            for (let i = 0; i < req.files.length; i++) {
+                                console.log('req.files[i].path', req.files[i].path)
+                                sketchFileSave.push({
+                                    speciality_sketch_uuid: attachmentData.Speciality_id,
+                                    sketch_path: req.files[i].path,
+                                    status:true,
+                                    is_active: true,
+                                    modified_by: req.headers.user_uuid
+                                });
+                            }
+                            if (sketchFileSave.length > 0) {
+                            await specialitySketcheDetailsTbl.update({is_active:0, status:0},{
+                                where: {
+                                    speciality_sketch_uuid: attachmentData.Speciality_id
+                                }
+                            });
+                            let oldImages = JSON.parse(attachmentData.oldImages);
+                            var bulkfilesUpdate = [...oldImages, ...sketchFileSave];
+                            await specialitySketcheDetailsTbl.bulkCreate(bulkfilesUpdate);
+                            }
+                            
+                        } else {
+                            await specialitySketcheDetailsTbl.update({is_active:0, status:0},{
+                                where: {
+                                    speciality_sketch_uuid: attachmentData.Speciality_id
+                                }
+                            });
+                            let oldImages = JSON.parse(attachmentData.oldImages);
+                            var bulkfilesUpdate = await specialitySketcheDetailsTbl.bulkCreate(oldImages);
+                            
+                        }
+                        res.send({ "status": 200, "responseContents": attachmentData, "files": bulkfilesUpdate, "count": req.files.length, "message": "Updated Successfully" });
+                    }
+                });
+            } else { return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); }
+        }
+        catch (ex) {
+            res.send({ "status": 400, "message": ex.message });
+        }
     };
     const getSpecialitySketcheMasterById = async (req, res, next) => {  const postData = req.body;
         try {
@@ -217,7 +271,7 @@ const specialitySketchesMasterController = () => {
                         model: specialitySketcheDetailsTbl,
                         required:false,
                         // as: 'source' 
-                        // attributes: ['uuid','name'],
+                        attributes: ['speciality_sketch_uuid','sketch_path','status','is_active'],
                         where: {status: 1, is_active: 1}
                     }]
                 })
