@@ -7,6 +7,8 @@ const sequelizeDb = require('../config/sequelize');
 var Op = Sequelize.Op;
 const emr_utility = require('../services/utility.service');
 
+const rp = require('request-promise');
+
 //Intialize Tables
 const patient_chief_complaints_tbl = sequelizeDb.patient_chief_complaints;
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
@@ -25,25 +27,32 @@ const EmrDashBoard = () => {
 
   const _getDashBoard = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { doctorId, depertmentId, from_date, to_date } = req.query;
+    const { depertment_Id, from_date, to_date } = req.query;
 
     let filterQuery = {
-      encounter_doctor_uuid: doctorId,
+      encounter_doctor_uuid: user_uuid,
       status: emr_constants.IS_ACTIVE,
       is_active: emr_constants.IS_ACTIVE,
-      department_uuid: depertmentId,
-
+      department_uuid: depertment_Id,
     };
+
     if (!user_uuid) {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
     }
     try {
+      const allpatients = await getallpatientdetials(user_uuid, req.headers.authorization);
 
       const topComplaints = await getTopComplaints(filterQuery, Sequelize);
-      const topDiagnosis = await getTopDiagnosis(filterQuery, Sequelize);
-      return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": topDiagnosis } });
+      //const topDiagnosis = await getTopDiagnosis(filterQuery, Sequelize);
+      const topDiagnosis = await getDiagnosis(filterQuery, Sequelize);
+      
+      if (topDiagnosis )
+      {
+        const diagcount = gettopdiag(topDiagnosis);
+      }
+      
+      return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": gettopdiag(topDiagnosis), "All_Patients": allpatients } });
     } catch (ex) {
-      console.log('Exception Happned', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
   };
@@ -53,6 +62,7 @@ const EmrDashBoard = () => {
 };
 
 module.exports = EmrDashBoard();
+
 async function getTopComplaints(filterQuery, Sequelize) {
   return patient_chief_complaints_tbl.findAll({
     include: [{
@@ -79,11 +89,88 @@ async function getTopDiagnosis(filterQuery, Sequelize) {
     where: filterQuery,
     require: false,
     group: ['diagnosis_uuid'],
-    attributes: ['diagnosis_uuid', 'encounter_doctor_uuid',
-      [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
+    attributes: ['diagnosis_uuid', 'encounter_doctor_uuid', 'patient_uuid'
+    [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
     ],
     order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'DESC']],
     limit: 10
 
   });
 }
+
+async function getdepDetails(user_uuid, depid, authorization) {
+  //console.log(depid);
+  let options = {
+    //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "uuid": depid },
+    json: true
+  };
+  const dep_details = await rp(options);
+  return dep_details;
+}
+
+
+async function getallpatientdetials(user_uuid, authorization) {
+  console.log(authorization);
+  let options = {
+    //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+    uri: 'https://qahmisgateway.oasyshealth.co/DEVregistration/v1/api/patient/search',
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid,
+      "accept-language": "en"
+    },
+    body: {
+      "pageNo": 1,
+      "paginationSize": 100
+    },
+    json: true
+  };
+  const dep_details = await rp(options);
+  return dep_details;
+}
+
+async function getDiagnosis(filterQuery, Sequelize) {
+  return patient_diagnosis_tbl.findAll({
+    include: [{
+      model: diagnosis_tbl,
+      attributes: ['code', 'name'],
+    }],
+    where: filterQuery,
+    require: false,
+    group: ['diagnosis_uuid'],
+    attributes: ['uuid','diagnosis_uuid', 'encounter_doctor_uuid', 'patient_uuid', 'other_diagnosis',
+    [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
+    ],
+    order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'DESC']],
+    limit: 10
+
+  });
+  
+}
+
+function gettopdiag(responseData){
+
+  return responseData.map(rD => {
+    return {
+      patient_diagnosis_id: rD.uuid || 0,
+      Count: rD.dataValues.Count,
+      diagnosis_name: rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : rD.other_diagnosis,
+      diagnosis_code: rD.diagnosis && rD.diagnosis.code ? rD.diagnosis.code : rD.diagnosis_uuid,
+      
+
+    };
+  });
+}
+
+
+//patient search url
+//https://qahmisgateway.oasyshealth.co/DEVregistration/v1/api/patient/search
