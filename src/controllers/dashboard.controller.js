@@ -38,6 +38,7 @@ const EmrDashBoard = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
     }
     try {
+
       const topComplaints = await getTopComplaints(filterQuery, Sequelize);
       const topDiagnosis = await getTopDiagnosis(filterQuery, Sequelize);
       return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": topDiagnosis } });
@@ -45,7 +46,7 @@ const EmrDashBoard = () => {
       console.log('Exception Happned', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
-  }
+  };
   return {
     getDashBoard: _getDashBoard
   };
