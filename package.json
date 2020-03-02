@@ -13,7 +13,7 @@
     "dev.build": "gulp devbuild",
     "qa.build": "gulp qabuild",
     "uat.build": "gulp uatbuild",
-    "prod.build": "gulp prodbuild",
+    "prod.build": "gulp prodbuild"
   },
   "repository": {
     "type": "git",
