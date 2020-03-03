@@ -68,7 +68,7 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    "/api/proceduresNoteTemplate/getProceduresById": {
+    "/api/proceduresNoteTemplate/getProcedures-note-templateById": {
       "post": {
         "description": "Get By Id Successfully",
         "parameters": [
