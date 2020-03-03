@@ -1135,6 +1135,45 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+   
+    "/api/vitalMaster/updatevitals": {
+      "post": {
+        "description": "Updated Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatevitals"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updatevitals"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalLonic/updatevitalslonicById": {
       "post": {
         "description": "Updated Successfully",
@@ -6704,6 +6743,53 @@
     }
   },
   "definitions": {
+    "updatevitals":{
+      "type": "object",
+      "properties": {
+        "vitals_id": {
+          "type": "integer"
+        },
+        "vital_type_uuid": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "mnemonic": {
+          "type": "integer"
+        },
+        "loinc_code_master_uuid":{
+          "type": "integer"
+        },
+        "uom_master_uuid":{
+          "type": "integer"
+        },
+        "vital_value_type_uuid":{
+          "type": "integer"
+        },
+        "reference_range_from":{
+          "type": "integer"
+        },
+        "reference_range_to":{
+          "type": "integer"
+        },
+        "is_default":{
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
     "deleteProcedures-note-template": {
       "type": "object",
       "properties": {
