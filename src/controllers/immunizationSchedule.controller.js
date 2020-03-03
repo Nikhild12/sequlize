@@ -8,6 +8,7 @@ const Op = Sequelize.Op;
 
 const immunizationScheduleTbl = db.immunization_schedule;
 const immunization = db.immunizations;
+const schedules = db.schedules;
 
 const immunizationScheduleController = () => {
     /**
@@ -54,7 +55,11 @@ const immunizationScheduleController = () => {
                     model: immunization,
                     attributes:['uuid','name'],
                     required: false
-                    // as:'immunizations'
+                },
+                {
+                    model: schedules,
+                    attributes:['uuid','name'],
+                    required: false
                 }
             ]
 
@@ -172,6 +177,18 @@ const immunizationScheduleController = () => {
                 where: {
                     uuid: postData.Id
                 },
+                include: [
+                    {
+                        model: immunization,
+                        attributes:['uuid','name'],
+                        required: false
+                    },
+                    {
+                        model: schedules,
+                        attributes:['uuid','name'],
+                        required: false
+                    }
+                ],
                 offset: offset,
                 limit: itemsPerPage
             })

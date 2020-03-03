@@ -30,6 +30,120 @@
     "application/file"
   ],
   "paths": {
+    "/api/proceduresNoteTemplate/deleteProcedures-note-template": {
+      "post": {
+        "description": "Deleted Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures-note-template"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/deleteProcedures"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/proceduresNoteTemplate/getProceduresById": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedures_id_NT",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getProcedures-note-templateById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getProcedures-note-templateById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/proceduresNoteTemplate/updateProcedures-note-template": {
+      "post": {
+        "description": "Get By Id Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Procedures_id_NT",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateProcedures-note-template"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Procedures Note Template"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateProcedures-note-template"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/ccc/getcccmasterbytype": {
       "post": {
         "description": "Get Successfully",
@@ -6590,6 +6704,51 @@
     }
   },
   "definitions": {
+    "deleteProcedures-note-template": {
+      "type": "object",
+      "properties": {
+        "Procedures_id_NT": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateProcedures-note-template": {
+      "type": "object",
+      "properties": {
+        "Procedures_id_NT": {
+          "type": "integer"
+        },
+        "procedure_uuid": {
+          "type": "integer"
+        },
+        "note_template_uuid": {
+          "type": "integer"
+        },
+        "note_template_type_uuid": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
+    "getProcedures-note-templateById": {
+      "type": "object",
+      "properties": {
+        "Procedures_id_NT": {
+          "type": "integer"
+        }
+      }
+    },
     "getVitalByID": {
       "type": "object",
       "properties": {

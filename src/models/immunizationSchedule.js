@@ -81,9 +81,11 @@ module.exports = (sequelize, DataTypes) => {
     immunization_schedule.associate =  models => {
         immunization_schedule.belongsTo(models.immunizations , {
             foreignKey:"immunization_uuid"
-            // as:'critical_care_types'
         });
-    };
+    immunization_schedule.belongsTo(models.schedules , {
+           foreignKey:"schedule_uuid"
+      });
+          };
 
     return immunization_schedule;
 };
