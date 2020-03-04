@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-
+    procedure_note_templates.associate = models => {
+        procedure_note_templates.belongsTo(models.procedures, {
+            foreignKey: "procedure_uuid"
+        });
+    };
     return procedure_note_templates;
 };
