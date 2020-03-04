@@ -71,6 +71,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
+            description:{
+                type: DataTypes.STRING(250),
+                allowNull: true
+            },
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
@@ -103,6 +107,12 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
+    // procedures.associate =  models => {
+    //     procedures.belongsTo(models.procedures , {
+    //         foreignKey:"vital_type_uuid",
+    //         as:'vital_type'
+    //     });
+    //       };
 
     return procedures;
 };
