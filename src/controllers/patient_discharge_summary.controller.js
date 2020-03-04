@@ -67,19 +67,19 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
-  
+
   const _getDischargeType = async (req, res) => {
-    
+
     const { user_uuid } = req.headers;
-    
+
     if (user_uuid) {
       try {
-        
+
         //get discharge types
         const dTypes = await gettypes(dtypesTbl, user_uuid);
-        
-        if (dTypes){
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dTypes }, message: "discharge types fetched sucessfully" });
+
+        if (dTypes) {
+          return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dTypes }, message: "discharge types fetched sucessfully" });
         }
       }
       catch (ex) {
@@ -90,19 +90,19 @@ const patient_discharge_summary = () => {
       return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
-  
+
   const _getDeathType = async (req, res) => {
-    
+
     const { user_uuid } = req.headers;
-    
+
     if (user_uuid) {
       try {
-        
+
         //get discharge types
         const dtTypes = await gettypes(dttypesTbl, user_uuid);
-        
-        if (dtTypes){
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dtTypes }, message: "discharge types fetched sucessfully" });
+
+        if (dtTypes) {
+          return res.status(200).send({ code: httpStatus.OK, responseContent: { "Discharge_Types": dtTypes }, message: "discharge types fetched sucessfully" });
         }
       }
       catch (ex) {
@@ -332,8 +332,8 @@ function PPVitalsList(getPatientVitals) {
         doctor_middlename: pV.u_middle_name,
         doctor_lastlename: pV.u_last_name,
         department_name: pV.d_name,
-        institution_uuid:pV.f_uuid,
-        institution_name:pV.f_name,
+        institution_uuid: pV.f_uuid,
+        institution_name: pV.f_name,
         encounter_type_code: pV.et_code,
         encounter_type_name: pV.et_name,
         PV_list: [
@@ -485,7 +485,7 @@ function getDClist(fetchedData, p_id, created_date) {
 
 async function getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid) {
 
-  
+
   let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
     where: {
       pcc_encounter_uuid: encounter_uuid,
@@ -494,7 +494,7 @@ async function getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encount
       pcc_status: emr_constants.IS_ACTIVE
     },
     order: [["pcc_uuid", "DESC"]],
-   
+
   }, { returning: true });
   //  return patient_cc_res;
   let data = await getPatientChiefComplaintsOrganizeData(patient_cc_res);
@@ -505,7 +505,7 @@ async function getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encount
 }
 
 function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
-  let cc_result=[];
+  let cc_result = [];
 
   if (patient_cc_res.length > 0) {
     cc_result = patient_cc_res.map((item) => {
@@ -513,15 +513,14 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
         patient_cheif_complaint_uuid: item.pcc_uuid,
         created_date: item.pcc_created_date,
         patient_uuid: item.pcc_patient_uuid,
-        institution_uuid:item.f_uuid,
+        institution_uuid: item.f_uuid,
         institution: item.f_name,
-        department_uuid:item.d_uuid,
+        department_uuid: item.d_uuid,
         department: item.d_name,
         encounter_uuid: item.pcc_encounter_uuid,
-        encounter_type_uuid:item.pcc_encounter_type_uuid,
+        encounter_type_uuid: item.pcc_encounter_type_uuid,
         encounter_type: emr_constants.getEncounterType(item.pcc_encounter_type_uuid),
         consultation_uuid: item.pcc_consultation_uuid,
-        chief_complaint_duration: item.pcc_chief_complaint_duration,
         performed_by: item.u_first_name,
         chief_complaint_details: [...getCheifComplaintList(patient_cc_res, item.pcc_patient_uuid, item.pcc_created_date)]
       };
@@ -544,7 +543,8 @@ function getCheifComplaintList(arr, patient_uuid, created_date) {
       cheif_complaint_desc: item.cc_description,
       cheif_complaint_performed_date: item.pcc_performed_date,
 
-      chief_complaint_duration_period_uuid: item.pcc_chief_complaint_duration_period_uuid ,
+      chief_complaint_duration: item.pcc_chief_complaint_duration,
+      chief_complaint_duration_period_uuid: item.pcc_chief_complaint_duration_period_uuid,
       chief_complaint_duration_period_code: item.ccdp_code,
       chief_complaint_duration_period_name: item.ccdp_name,
     };
@@ -584,7 +584,7 @@ function getGetDiagnosis(diagnosis_res) {
         department_uuid: item.department_uuid,
         patient_uuid: item.patient_uuid,
         encounter_uuid: item.encounter_uuid,
-        encounter_type:emr_constants.getEncounterType(item.encounter_type_uuid),
+        encounter_type: emr_constants.getEncounterType(item.encounter_type_uuid),
         diagnosis_uuid: item.diagnosis_uuid,
         performed_by: item.performed_by,
         performed_date: item.performed_date,
@@ -599,10 +599,10 @@ function getGetDiagnosis(diagnosis_res) {
   return diagnosis_result;
 }
 
-async function gettypes(tablename, user_uuid){
-  
+async function gettypes(tablename, user_uuid) {
+
   let fetchedData = await tablename.findAll();
-  if (fetchedData){
-  return fetchedData;
+  if (fetchedData) {
+    return fetchedData;
   }
 }
