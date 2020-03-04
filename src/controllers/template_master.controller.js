@@ -33,7 +33,7 @@ const tmpmstrController = () => {
       if (user_uuid && temp_type_id && dept_id) {
         const { table_name, query } = getTemplateTypeUUID(temp_type_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-
+        console.log(templateList);
         return res
           .status(httpStatus.OK)
           .json({ statusCode: 200, req: '', responseContents: getTempData(temp_type_id, templateList) });
@@ -83,7 +83,8 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-
+  
+        
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
 
@@ -551,7 +552,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
 
         drug_route_name: dD.dr_code,
         drug_route_id: dD.dr_uuid,
-
+        drug_is_emar: dD.im_is_emar,
         drug_frequency_id: dD.df_uuid,
         drug_frequency_name: dD.df_code,
 
