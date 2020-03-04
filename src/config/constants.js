@@ -23,7 +23,8 @@ module.exports = Object.freeze({
   TREATMENT_SUCCESS: "Treatment Kit Successfully Inserted",
   FILTERBYTHREE: "filterbythree",
   FETCHD_TREATMENT_KIT_SUCCESSFULLY: "Fetched Treatment Kit Successfully",
-  FETCHED_PREVIOUS_KIT_SUCCESSFULLY: "Fetched Previous  Treatment Kit Orders Successfully",
+  FETCHED_PREVIOUS_KIT_SUCCESSFULLY:
+    "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
   NO_RECORD_FOUND: "No Record Found",
   NO_CONTENT_MESSAGE: "No Content Found or record could be deleted",
@@ -44,8 +45,9 @@ module.exports = Object.freeze({
   START_DATE: "a Start Date time",
   END_DATE: "a End Date time",
   UPDATED_ENC_DOC_TAT_TIME: "Updated Tat End Time Successfully",
+  TREATMENT_DELETE_SUCCESS: "Treatment Kit Deleted Successfully",
 
-  GetpleaseProvideMsg: function (columnname) {
+  GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "encounter_uuid":
@@ -143,7 +145,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetMinimumMessage: function (columnname) {
+  GetMinimumMessage: function(columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -190,7 +192,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function (columnname) {
+  GetZeroValidationMessage: function(columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -265,8 +267,10 @@ module.exports = Object.freeze({
   },
   getEncounterType(id) {
     switch (id) {
-      case 1: return "OP"
-      case 2: return "IP"
+      case 1:
+        return "OP";
+      case 2:
+        return "IP";
     }
   }
 });
