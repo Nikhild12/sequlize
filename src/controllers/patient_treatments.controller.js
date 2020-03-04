@@ -227,29 +227,33 @@ const PatientTreatmentController = () => {
     const { user_uuid, facility_uuid, authorization } = req.headers;
     const { order_id } = req.body;
 
-    if (!user_uuid && !order_id) {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+    if (!user_uuid || !order_id || !authorization) {
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} authorization provided` });
     }
     try {
+      if (order_id < 0) {
+        return res.status(400).send({ code: httpStatus[400], message: 'Please providr valid order id' });
+      }
 
       const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
       const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-      // const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
       const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
       const repeatOrderRadilogy = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id);
+
       return res.status(200).send({
         code: httpStatus.OK,
         message: 'Prevkit Order Details Fetched Successfully',
         responseContents: {
           "diagnosis_details": responseDiagnosis,
-          "drug_details": repeatOrderPrescData,
+          "drug_details": repeatOrderPrescData ? repeatOrderPrescData : [],
           "lab_details": repeatOrderLabData,
           "radiology_details": repeatOrderRadilogy
         }
       });
     } catch (ex) {
       console.log('Exception Happened ', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
 
   };
@@ -296,19 +300,18 @@ async function getPrevOrderdDiagnosisData(order_id) {
 }
 
 async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) {
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
   const prescriptionData = await _postRequest(url, { user_uuid, authorization }, order_id);
-  if (prescriptionData) {
-    const prescriptionResult = getPrescriptionRseponse(prescriptionData);
+  if (prescriptionData.responseContents) {
+    const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
     return prescriptionResult;
   }
-  //return prescriptionData;
 }
 
 async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const url = config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
 
   let radialogyData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
@@ -334,14 +337,12 @@ async function getPreviousInvest({ user_uuid, authorization }, order_id) {
 
 }
 
-async function getPrescriptionRseponse(prescriptionData) {
-  let drugResponse = [];
-  let prescriptions = prescriptionData.responseContents;
-  // p = p.prescription_details;
+async function getPrescriptionRseponse(prescriptions) {
+  // let prescriptions = prescriptionData.responseContents;
+  return prescriptions.map((p, pIdx) => {
+    p = p.prescription_details[pIdx];
+    return {
 
-  prescriptions.forEach((pd, pIdx) => {
-    let p = pd.prescription_details[pIdx];
-    drugResponse = [...drugResponse, {
       //Drug Details
       drug_name: p.item_master.name,
       drug_code: p.item_master.code,
@@ -369,9 +370,9 @@ async function getPrescriptionRseponse(prescriptionData) {
       drug_instruction_code: p.drug_instruction.code,
       drug_instruction_name: p.drug_instruction.name,
       drug_instruction_id: p.drug_instruction.uuid
-    }];
+    };
   });
-  return drugResponse;
+
 }
 
 function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {

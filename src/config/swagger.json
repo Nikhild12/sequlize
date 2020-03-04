@@ -1135,7 +1135,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-   
     "/api/vitalMaster/updatevitals": {
       "post": {
         "description": "Updated Successfully",
@@ -4595,10 +4594,10 @@
           "200": {
             "description": "Fetched Treatment Kit Successfully"
           },
-          "500":{
+          "500": {
             "description": "Internal Server Error"
           },
-          "400":{
+          "400": {
             "description": "Bad Request"
           }
         },
@@ -6660,6 +6659,39 @@
         }
       }
     },
+    "/api/patient-treatment/repeatOrderDetails": {
+      "post": {
+        "description": "To get Particular Previouskit Orders",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/repeatPreviousKit"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched PreviousKit Orders"
+          }
+        }
+      }
+    },
     "/api/sections/getAll": {
       "get": {
         "summary": "To get all the section Details ",
@@ -6782,7 +6814,7 @@
     }
   },
   "definitions": {
-    "updatevitals":{
+    "updatevitals": {
       "type": "object",
       "properties": {
         "vitals_id": {
@@ -6800,22 +6832,22 @@
         "mnemonic": {
           "type": "integer"
         },
-        "loinc_code_master_uuid":{
+        "loinc_code_master_uuid": {
           "type": "integer"
         },
-        "uom_master_uuid":{
+        "uom_master_uuid": {
           "type": "integer"
         },
-        "vital_value_type_uuid":{
+        "vital_value_type_uuid": {
           "type": "integer"
         },
-        "reference_range_from":{
+        "reference_range_from": {
           "type": "integer"
         },
-        "reference_range_to":{
+        "reference_range_to": {
           "type": "integer"
         },
-        "is_default":{
+        "is_default": {
           "type": "integer"
         },
         "status": {
@@ -12584,6 +12616,14 @@
               }
             }
           }
+        }
+      }
+    },
+    "repeatPreviousKit": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer"
         }
       }
     },
