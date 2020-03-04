@@ -1,9 +1,9 @@
 {
   "name": "emr",
-  "version": "1.0.9",
-  "qaversion": "1.0.6",
-  "uatversion": "1.0.7",
-  "prodversion": "0.0.2",
+  "version": "3.0.0",
+	"qaversion": "3.0.0",
+	"uatversion": "3.0.0",
+	"prodversion": "3.0.0",
   "description": "EMR_API",
   "main": "index.js",
   "scripts": {
