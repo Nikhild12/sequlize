@@ -91,7 +91,10 @@ const getFavouritesAttributes = [
   "d_name",
   "d_code",
   "d_description",
-  "im_is_emar"
+  "im_is_emar",
+  "sm_uuid",
+  "sm_store_code",
+  "sm_store_name"
 ];
 
 // Fav Treatment Kit Att
@@ -671,7 +674,9 @@ const TickSheetMasterController = () => {
     const { favouriteId } = req.body;
     const { user_uuid } = req.headers;
     if (favouriteId <= 0 || isNaN(+favouriteId)) {
-      return res.status(400).send({ code: 400, message: 'Please provide valid FavouriteId' });
+      return res
+        .status(400)
+        .send({ code: 400, message: "Please provide valid FavouriteId" });
     }
 
     if (favouriteId) {
@@ -972,6 +977,11 @@ function getFavouritesInList(fetchedData) {
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_is_emar: tD.im_is_emar,
+
+        // Store Master Details
+        store_id: tD.sm_uuid,
+        store_code: tD.sm_store_code,
+        store_name: tD.sm_store_name,
 
         // Chief Complaints Details
         chief_complaint_id: tD.cc_uuid,

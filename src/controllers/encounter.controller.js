@@ -220,7 +220,7 @@ const Encounter = () => {
 
         is_enc_doc_avail =
           encounterDoctorData && encounterDoctorData.length > 0;
-        if (encounter_type_uuid === 2) {
+        if (encounter_type_uuid === 2 || encounter_type_uuid === 3) {
           if (encounterData && encounterData.length > 0) {
             encounterPromise = [
               ...encounterPromise,
