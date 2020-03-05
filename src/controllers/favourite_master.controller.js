@@ -670,6 +670,9 @@ const TickSheetMasterController = () => {
     // plucking data req body
     const { favouriteId } = req.body;
     const { user_uuid } = req.headers;
+    if (favouriteId <= 0 || isNaN(+favouriteId)) {
+      return res.status(400).send({ code: 400, message: 'Please provide valid FavouriteId' });
+    }
 
     if (favouriteId) {
       const updatedFavouriteData = {
