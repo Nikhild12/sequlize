@@ -1,7 +1,7 @@
 //const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const concepts = sequelize.define(
+    const conceptsValues = sequelize.define(
         "critical_care_concept_values",
         {
             uuid: {
@@ -100,12 +100,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    // concepts.associate = models => {
-    //     concepts.hasMany(models.category_concepts, {
-    //         foreignKey: 'concept_uuid',
-    //         as: 'critical_care_concept_values'
-    //     });
-    // };
 
-    return concepts;
+    return conceptsValues;
 };
