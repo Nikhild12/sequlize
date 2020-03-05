@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
 
             },
-            cc_chart_uuid:{
+            cc_chart_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: true
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            value_type_uuid:{
+            value_type_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: true
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            is_default:{
+            is_default: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
@@ -96,14 +96,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    
-    // concepts.associate = models => {
-    //     concepts.hasMany(models.category_concepts, {
-    //         foreignKey: 'concept_uuid',
-    //         as: 'critical_care_concept_values'
-    //     });
-    // };
-    
+    concepts.associate = models => {
+        concepts.hasMany(models.critical_care_concept_values, {
+            foreignKey: "cc_concept_uuid",
+            as: 'critical_care_concept_values'
+        });
+    };
+
 
     return concepts;
 };
