@@ -1135,6 +1135,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/vitalMaster/updatevitals": {
+      "post": {
+        "description": "Updated Successfully",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatevitals"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updatevitals"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalLonic/updatevitalslonicById": {
       "post": {
         "description": "Updated Successfully",
@@ -4528,6 +4566,45 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/treatment-kit/delete": {
+      "delete": {
+        "summary": "To delete the treatment kit By Given Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "treatmentKitId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TreatmentKit"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Treatment Kit Successfully"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/profiles/create": {
       "post": {
         "summary": "To create OPNotes profile Details ",
@@ -6582,6 +6659,39 @@
         }
       }
     },
+    "/api/patient-treatment/repeatOrderDetails": {
+      "post": {
+        "description": "To get Particular Previouskit Orders",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/repeatPreviousKit"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched PreviousKit Orders"
+          }
+        }
+      }
+    },
     "/api/sections/getAll": {
       "get": {
         "summary": "To get all the section Details ",
@@ -6704,6 +6814,53 @@
     }
   },
   "definitions": {
+    "updatevitals": {
+      "type": "object",
+      "properties": {
+        "vitals_id": {
+          "type": "integer"
+        },
+        "vital_type_uuid": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "mnemonic": {
+          "type": "integer"
+        },
+        "loinc_code_master_uuid": {
+          "type": "integer"
+        },
+        "uom_master_uuid": {
+          "type": "integer"
+        },
+        "vital_value_type_uuid": {
+          "type": "integer"
+        },
+        "reference_range_from": {
+          "type": "integer"
+        },
+        "reference_range_to": {
+          "type": "integer"
+        },
+        "is_default": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "integer"
+        },
+        "revision": {
+          "type": "integer"
+        }
+      }
+    },
     "deleteProcedures-note-template": {
       "type": "object",
       "properties": {
@@ -12459,6 +12616,14 @@
               }
             }
           }
+        }
+      }
+    },
+    "repeatPreviousKit": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer"
         }
       }
     },

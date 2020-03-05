@@ -90,7 +90,8 @@ const getFavouritesAttributes = [
   "tmsd_diagnosis_uuid",
   "d_name",
   "d_code",
-  "d_description"
+  "d_description",
+  "im_is_emar"
 ];
 
 // Fav Treatment Kit Att
@@ -967,6 +968,7 @@ function getFavouritesInList(fetchedData) {
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
+        drug_is_emar: tD.im_is_emar,
 
         // Chief Complaints Details
         chief_complaint_id: tD.cc_uuid,

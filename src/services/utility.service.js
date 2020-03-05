@@ -94,7 +94,7 @@ const _postRequest = async (api, headers, data) => {
         headers: headers,
         json: data
       },
-      function (error, response, body) {
+      function(error, response, body) {
         console.log("\n body...", body);
 
         if (error) {
@@ -108,9 +108,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-              body.responseContents ||
-              body.benefMembers ||
-              body.req
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
             );
           }
         } else if (body && body.status == "error") {
@@ -122,9 +122,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-              body.responseContents ||
-              body.benefMembers ||
-              body.req
+                body.responseContents ||
+                body.benefMembers ||
+                body.req
             );
           } else {
             reject(body);
@@ -135,6 +135,11 @@ const _postRequest = async (api, headers, data) => {
   });
 };
 
+const _isNumberValid = value => {
+  value = Number(value);
+  return !isNaN(value);
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -143,5 +148,6 @@ module.exports = {
   getDateQueryBtwColumn: _getDateQueryBtwColumn,
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
-  postRequest: _postRequest
+  postRequest: _postRequest,
+  isNumberValid: _isNumberValid
 };

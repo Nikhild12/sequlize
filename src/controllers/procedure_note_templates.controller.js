@@ -9,6 +9,7 @@ const Op = Sequelize.Op;
 
 
 const procedureNoteTemplatesTbl = db.procedure_note_templates;
+const proceduresTbl = db.procedures;
 
 const procedureNoteTemplatesController = () => {
     /**
@@ -54,7 +55,12 @@ const procedureNoteTemplatesController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{status: 1}
+            where:{status: 1},
+            include: [
+                {
+                model: proceduresTbl,
+                // attributes:['uuid','name']
+                }]
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -207,6 +213,11 @@ const procedureNoteTemplatesController = () => {
                     where: {
                         uuid: postData.Procedures_id_NT
                     },
+                    include: [
+                        {
+                        model: proceduresTbl,
+                        // attributes:['uuid','name']
+                        }],
                     offset: offset,
                     limit: itemsPerPage
                 })

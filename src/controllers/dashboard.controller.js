@@ -27,7 +27,7 @@ const EmrDashBoard = () => {
 
   const _getDashBoard = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { depertment_Id, from_date, to_date } = req.query;
+    const { depertment_Id, from_date, to_date, gender} = req.query;
 
     let filterQuery = {
       encounter_doctor_uuid: user_uuid,
@@ -46,12 +46,17 @@ const EmrDashBoard = () => {
       //const topDiagnosis = await getTopDiagnosis(filterQuery, Sequelize);
       const topDiagnosis = await getDiagnosis(filterQuery, Sequelize);
       
-      if (topDiagnosis )
+
+      if (gender)
       {
-        const diagcount = gettopdiag(topDiagnosis);
+        const diag_gender = gettopdiagnosis_gender(allpatients, topDiagnosis, gender);
       }
-      
-      return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": gettopdiag(topDiagnosis), "All_Patients": allpatients } });
+      // if (topDiagnosis )
+      // {
+      //   const diagcount = gettopdiag(topDiagnosis);
+      // }
+      return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": diag_gender, "All_Patients": allpatients.responseContents } });
+      //return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "TopComplaints": topComplaints, "TopDiagnosis": gettopdiag(topDiagnosis), "All_Patients": allpatients.responseContents } });
     } catch (ex) {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
@@ -169,6 +174,30 @@ function gettopdiag(responseData){
 
     };
   });
+}
+
+function gettopdiagnosis_gender(allpatients, topDiagnosis, gender)
+{
+
+  console.log ("gender diagnosis");
+  let genderdata = [];
+for (let td of topDiagnosis){
+  for (let ap of allpatients){
+    
+    if (td.patient_uuid === ap.uuid && ap.gender_details.uuid === gender){
+      genderdata = [...genderdata,
+        {
+        patient_diagnosis_id: td.uuid || 0,
+        Count: td.dataValues.Count,
+        diagnosis_name: td.diagnosis && td.diagnosis.name ? td.diagnosis.name : td.other_diagnosis,
+        diagnosis_code: td.diagnosis && td.diagnosis.code ? td.diagnosis.code : td.diagnosis_uuid,
+      }
+    ];
+    }
+  }
+}
+return genderdata;
+
 }
 
 

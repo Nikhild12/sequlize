@@ -33,7 +33,7 @@ const tmpmstrController = () => {
       if (user_uuid && temp_type_id && dept_id) {
         const { table_name, query } = getTemplateTypeUUID(temp_type_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-
+        console.log(templateList);
         return res
           .status(httpStatus.OK)
           .json({ statusCode: 200, req: '', responseContents: getTempData(temp_type_id, templateList) });
@@ -83,7 +83,8 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-
+  
+        
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
 
@@ -551,7 +552,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
 
         drug_route_name: dD.dr_code,
         drug_route_id: dD.dr_uuid,
-
+        drug_is_emar: dD.im_is_emar,
         drug_frequency_id: dD.df_uuid,
         drug_frequency_name: dD.df_code,
 
@@ -883,14 +884,17 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
         query: {
           order: [['tm_display_order', 'ASC']],
           where: {
-            tm_user_uuid: user_uuid,
-            tm_department_uuid: dept_id,
+            //tm_user_uuid: user_uuid,
+            //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
             ltm_lab_master_type_uuid: 1,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
-            tmd_active: 1
+            tmd_active: 1,
+            [Op.or]: [
+              { "tm_department_uuid": { [Op.eq]: dept_id }, "`tm_is_public`": { [Op.eq]: 1 } }, { "tm_user_uuid": { [Op.eq]: user_uuid } }
+            ]
           }
         }
       };
@@ -900,14 +904,17 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
         query: {
           order: [['tm_display_order', 'ASC']],
           where: {
-            tm_user_uuid: user_uuid,
-            tm_department_uuid: dept_id,
+            //tm_user_uuid: user_uuid,
+            //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
             rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
-            tmd_active: 1
+            tmd_active: 1,
+            [Op.or]: [
+              { "tm_department_uuid": { [Op.eq]: dept_id }, "`tm_is_public`": { [Op.eq]: 1 } }, { "tm_user_uuid": { [Op.eq]: user_uuid } }
+            ]
           }
         }
       };
