@@ -24,7 +24,7 @@ const tmpmstrController = () => {
 	 * @returns {*}
 	 */
 
-  
+
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -83,8 +83,8 @@ const tmpmstrController = () => {
       if (user_uuid && temp_id && temp_type_id && dept_id) {
         const { table_name, query } = getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid);
         const templateList = await table_name.findAll(query);
-  
-        
+
+
         if (templateList) {
           const templateData = getTemplateDetailsData(temp_type_id, templateList);
 
@@ -135,12 +135,12 @@ const tmpmstrController = () => {
             return res.status(200).send({ code: httpStatus.OK, responseContent: { "headers": templateMasterReqData, "details": templateMasterDetailsReqData }, message: "Template details Inserted Successfully" });
           }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+          return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
         }
       } catch (err) {
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err.message });
       }
-      
+
     } else {
       return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
     }
@@ -276,7 +276,7 @@ const tmpmstrController = () => {
     try {
       if (user_uuid) {
         const templateList = await vw_all_temp.findAndCountAll(findQuery);
-        
+
         return res
           .status(httpStatus.OK)
           .json({
@@ -565,6 +565,9 @@ function getDrugsListForTemplate(fetchedData, template_id) {
         drug_instruction_code: dD.di_code,
 
         drug_duration: dD.tmd_duration,
+        sm_uuid: dD.sm_uuid,
+        sm_store_code: dD.sm_store_code,
+        sm_store_name: dD.sm_store_name,
 
         is_active: dD.im_acive[0] === 1 ? true : false
       }

@@ -137,6 +137,18 @@ module.exports = (sequelize, DataTypes) => {
       di_name: {
         type: DataTypes.STRING(100),
         allowNull: false
+      },
+      sm_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      sm_store_code: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+      },
+      sm_store_name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
       }
     },
     {
