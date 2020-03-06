@@ -107,12 +107,61 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-    // procedures.associate =  models => {
-    //     procedures.belongsTo(models.procedures , {
-    //         foreignKey:"vital_type_uuid",
-    //         as:'vital_type'
-    //     });
-    //       };
+    procedures.associate = models => {
+        procedures.belongsTo(models.procedure_scheme, {
+            foreignKey: "procedure_scheme_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_technique, {
+            foreignKey: "procedure_technique_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_version, {
+            foreignKey: "procedure_version_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_region, {
+            foreignKey: "procedure_region_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_type, {
+            foreignKey: "procedure_type_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_category, {
+            foreignKey: "procedure_category_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.procedure_sub_category, {
+            foreignKey: "procedure_sub_category_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.operation_type, {
+            foreignKey: "operation_type_uuid",
+            // targetKey:"uuid"
+        });
+        procedures.belongsTo(models.anesthesia_type, {
+            foreignKey: "anaesthesia_type_uuid",
+            // targetKey:"uuid"
+        });
+        //  procedures.belongsTo(models.procedure_scheme, {
+        //     foreignKey: "speciality_uuid",
+        //     // targetKey:"uuid"
+        // });
+        // procedures.belongsTo(models.procedure_scheme, {
+        //     foreignKey: "equipment_uuid",
+        //     // targetKey:"uuid"
+        // });
+        procedures.belongsTo(models.body_site, {
+            foreignKey: "body_site_uuid",
+            // targetKey:"uuid"
+        });
+
+        procedures.hasMany(models.procedure_note_templates, {
+            foreignKey: "procedure_uuid",
+            targetKey:"uuid"
+        });
+    };
 
     return procedures;
 };

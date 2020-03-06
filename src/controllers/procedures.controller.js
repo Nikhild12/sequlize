@@ -6,6 +6,17 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 const proceduresTbl = db.procedures;
+const procedureNoteTbl = db.procedure_note_templates;
+const procedure_schemeTbl = db.procedure_scheme;
+const procedure_technique = db.procedure_technique
+const procedure_version = db.procedure_version
+const procedure_region = db.procedure_region
+const procedure_type = db.procedure_type
+const procedure_category = db.procedure_category
+const procedure_sub_category = db.procedure_sub_category
+const operation_type = db.operation_type
+const anesthesia_type = db.anesthesia_type
+const body_site = db.body_site
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -56,7 +67,49 @@ const proceduresController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      where: { is_active: 1 }
+      where: { is_active: 1 ,status:1},
+      include: [{
+        model: procedureNoteTbl
+      },
+      {
+        model: procedure_schemeTbl,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: procedure_technique,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: procedure_version,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: procedure_region,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: procedure_type,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: procedure_category,
+        attributes: ['uuid', 'name']
+      }, {
+        model: procedure_sub_category,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: operation_type,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: anesthesia_type,
+        attributes: ['uuid', 'name']
+      },
+      {
+        model: body_site,
+        attributes: ['uuid', 'name']
+      }],
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -219,6 +272,48 @@ const proceduresController = () => {
           where: {
             uuid: postData.Procedures_id
           },
+          include: [{
+            model: procedureNoteTbl
+          },
+          {
+            model: procedure_schemeTbl,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: procedure_technique,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: procedure_version,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: procedure_region,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: procedure_type,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: procedure_category,
+            attributes: ['uuid', 'name']
+          }, {
+            model: procedure_sub_category,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: operation_type,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: anesthesia_type,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: body_site,
+            attributes: ['uuid', 'name']
+          }],
           offset: offset,
           limit: itemsPerPage
         })
