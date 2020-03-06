@@ -458,7 +458,8 @@ const TickSheetMasterController = () => {
         } else {
           favouriteData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
-            where: getFavouriteQuery(dept_id, user_uuid, fav_type_id)
+            where: getFavouriteQuery(dept_id, user_uuid, fav_type_id),
+            order: [['tsm_display_order', 'ASC']],
           });
         }
 
@@ -658,6 +659,8 @@ const TickSheetMasterController = () => {
         // }
         console.log("Finally");
       }
+    } else {
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
     }
   };
 
