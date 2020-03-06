@@ -6175,6 +6175,40 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/encounter/close-encounter": {
+      "put": {
+        "summary": "To Close an Encounter",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Closed Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+
     "/api/certificates/create": {
       "post": {
         "summary": "To Create Patient certficates",

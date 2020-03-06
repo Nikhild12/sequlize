@@ -2,8 +2,8 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
 
-const rp = require('request-promise');
-var config = require('../config/config');
+const rp = require("request-promise");
+var config = require("../config/config");
 
 // Sequelizer Import
 var Sequelize = require("sequelize");
@@ -424,7 +424,6 @@ const Encounter = () => {
         // }
 
         console.log("Finally");
-        
       }
     } else {
       return res.status(400).send({
@@ -517,32 +516,82 @@ const Encounter = () => {
 
     try {
       if (user_uuid && patient_uuid) {
-
-        const docList = await vw_patientdoc.findAll(
-          {
-            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-            where: { ed_patient_uuid: patient_uuid },
-            //group: ['ed_created_date']
-          }
-        );
+        const docList = await vw_patientdoc.findAll({
+          attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          where: { ed_patient_uuid: patient_uuid }
+          //group: ['ed_created_date']
+        });
         if (docList) {
           //const getdepdetails = await getdepDetails(user_uuid, docList[0].department_uuid, req.headers.authorization);
           //const getuDetails = await getuserDetails(user_uuid,docList[0].doctor_uuid, req.headers.authorization);
           return res
             .status(httpStatus.OK)
-            .json({ statusCode: 200, req: '', responseContents: docList });
+            .json({ statusCode: 200, req: "", responseContents: docList });
         } else {
-          return res.status(400).send({ code: httpStatus[400], message: "patient information not found" });
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "patient information not found"
+          });
         }
       } else {
-        return res.status(400).send({ code: httpStatus[400], message: "No Request Body or Search key Found " });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
+        });
       }
-    }
-    catch (ex) {
+    } catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
       return res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
         .json({ status: "error", msg: errorMsg });
+    }
+  };
+
+  const _closeEncounter = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { encounterId } = req.query;
+
+    if (user_uuid && emr_utility.isNumberValid(encounterId)) {
+      try {
+        const updateVal = {
+          is_active: emr_constants.IS_IN_ACTIVE,
+          modified_by: user_uuid,
+          is_active_encounter: emr_constants.IS_IN_ACTIVE
+        };
+        const updateEncQuery = {
+          where: { uuid: encounterId }
+        };
+        const updateEncDocQuery = {
+          where: { encounter_uuid: encounterId }
+        };
+        let encPromise = [];
+        encPromise = [
+          ...encPromise,
+          encounter_tbl.update(updateVal, updateEncQuery),
+          encounter_doctors_tbl.update(updateVal, updateEncDocQuery)
+        ];
+        const encounterPromise = await Promise.all(encPromise);
+        const responseCode =
+          encounterPromise[0][0] === 1 ? httpStatus.OK : httpStatus.NO_CONTENT;
+        const responseMessage =
+          encounterPromise[0][0] === 1
+            ? emr_constants.ENCOUNTER_CLOSED_SUCCESS
+            : emr_constants.NO_RECORD_FOUND;
+        return res.status(200).send({
+          code: responseCode,
+          message: responseMessage
+        });
+      } catch (ex) {
+        console.log("Exception happened", ex);
+        return res
+          .status(500)
+          .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
     }
   };
 
@@ -553,7 +602,8 @@ const Encounter = () => {
     deleteEncounterById: _deleteEncounterById,
     updateECdischarge: _updateECdischarge,
     updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor,
-    getPatientDoc: _getPatientDoc
+    getPatientDoc: _getPatientDoc,
+    closeEncounter: _closeEncounter
   };
 };
 
@@ -640,11 +690,12 @@ async function getuserDetails(user_uuid, docid, authorization) {
   let options = {
     //uri: config.wso2AppUrl + 'users/getusersById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
-    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors',
-    method: 'POST',
+    uri:
+      "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+    method: "POST",
     headers: {
-      "Authorization": authorization,
-      "user_uuid": user_uuid
+      Authorization: authorization,
+      user_uuid: user_uuid
     },
     //body: { "Id": docid },
     body: {},
@@ -659,15 +710,15 @@ async function getdepDetails(user_uuid, depid, authorization) {
   let options = {
     //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
-    uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments',
-    method: 'POST',
+    uri:
+      "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments",
+    method: "POST",
     headers: {
-      "Authorization": authorization,
-      "user_uuid": user_uuid
+      Authorization: authorization,
+      user_uuid: user_uuid
     },
     //body: { "uuid": depid },
-    body: { "pageNo": 0,
-    "paginationSize": 100},
+    body: { pageNo: 0, paginationSize: 100 },
     json: true
   };
   const dep_details = await rp(options);
@@ -676,7 +727,10 @@ async function getdepDetails(user_uuid, depid, authorization) {
 
 function getpddata(docList, getuDetails, getdep) {
   //let dsdList = [];
-  let doc_name = getuDetails.responseContents.title.name + '.' + getuDetails.responseContents.first_name;
+  let doc_name =
+    getuDetails.responseContents.title.name +
+    "." +
+    getuDetails.responseContents.first_name;
   //let nur_name = getnDetails.responseContents.title.name + '.' + getnDetails.responseContents.first_name;
   if (docList && docList.length > 0) {
     doc_data = {
@@ -689,13 +743,8 @@ function getpddata(docList, getuDetails, getdep) {
       department_name: getdep.responseContent.name
     };
 
-    return { "Doc_info": doc_data };
-  }
-  else {
+    return { Doc_info: doc_data };
+  } else {
     return {};
   }
-
 }
-
-
-
