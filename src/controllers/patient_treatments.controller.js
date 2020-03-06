@@ -227,11 +227,11 @@ const PatientTreatmentController = () => {
     const { user_uuid, facility_uuid, authorization } = req.headers;
     const { order_id } = req.body;
 
-    if (!user_uuid || !order_id || !authorization) {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} authorization provided` });
+    if (!user_uuid || !order_id) {
+      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ` });
     }
     try {
-      if (order_id < 0) {
+      if (order_id <= 0) {
         return res.status(400).send({ code: httpStatus[400], message: 'Please providr valid order id' });
       }
 
