@@ -66,6 +66,16 @@ const EmrDashBoard = () => {
         const comp_gender = gettopcomp_gender(allpatientsC.responseContents, allcomp, gender);
         return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "Top_Complaints": comp_gender, "Top_Diagnosis": diag_gender } });
 
+      } else if (from_date && to_date) {
+
+        console.log("date filter here-----------------");
+        const allcomp = await getComplaintsbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize);
+        const alldiag = await getDiagnosisbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize);
+
+
+        return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "Top_Complaints": gettopcomp(allcomp), "Top_Diagnosis": gettopdiag(alldiag) } });
+
+
       } else {
         //console.log("----------------");
         const topComplaints = await getComplaints(filterQuery, Sequelize);
@@ -74,7 +84,7 @@ const EmrDashBoard = () => {
       }
 
     } catch (ex) {
-      //console.log(ex);
+      console.log(ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
   };
@@ -106,28 +116,25 @@ async function getallpatientdetials(user_uuid, authorization, PData) {
 }
 
 async function getComplaints(filterQuery, Sequelize) {
+  console.log(filterQuery);
   return patient_chief_complaints_tbl.findAll({
+    where: filterQuery,
+    group: ['chief_complaint_uuid'],
+    attributes: ['uuid', 'patient_uuid', 'encounter_doctor_uuid', 'chief_complaint_uuid', 'created_date',
+      [Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'Count']
+    ],
+    order: [[Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'DESC']],
+    limit: 10,
     include: [{
       model: chief_complaints_tbl,
       attributes: ['uuid', 'code', 'name'],
     }],
-    where: filterQuery,
-    group: ['chief_complaint_uuid'],
-    attributes: ['uuid', 'patient_uuid', 'encounter_doctor_uuid', 'chief_complaint_uuid',
-      [Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'Count']
-    ],
-    order: [[Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'DESC']],
-    limit: 10
   });
 
 }
 
 async function getDiagnosis(filterQuery, Sequelize) {
   return patient_diagnosis_tbl.findAll({
-    include: [{
-      model: diagnosis_tbl,
-      attributes: ['code', 'name'],
-    }],
     where: filterQuery,
     require: false,
     group: ['diagnosis_uuid'],
@@ -135,11 +142,77 @@ async function getDiagnosis(filterQuery, Sequelize) {
       [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
     ],
     order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'DESC']],
-    limit: 10
+    limit: 10,
+    include: [{
+      model: diagnosis_tbl,
+      attributes: ['code', 'name'],
+    }],
 
   });
 
 }
+
+async function getComplaintsbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize) {
+  console.log("complaints function --------------");
+  return patient_chief_complaints_tbl.findAll({
+    group: ['chief_complaint_uuid'],
+    attributes: ['uuid', 'patient_uuid', 'encounter_doctor_uuid', 'chief_complaint_uuid', 'created_date',
+      [Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'Count']
+    ],
+    order: [[Sequelize.fn('COUNT', Sequelize.col('chief_complaint_uuid')), 'DESC']],
+    limit: 10,
+    where: {
+      encounter_doctor_uuid: user_uuid,
+      status: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE,
+      department_uuid: depertment_Id,
+      created_date: {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('date', Sequelize.col('`patient_chief_complaints`.`created_date`')), '>=', moment(from_date).format('YYYY-MM-DD')),
+          Sequelize.where(Sequelize.fn('date', Sequelize.col('`patient_chief_complaints`.`created_date`')), '<=', moment(to_date).format('YYYY-MM-DD'))
+        ]
+      }
+    },
+
+    include: [{
+      model: chief_complaints_tbl,
+      attributes: ['uuid', 'code', 'name'],
+    }],
+  });
+
+}
+
+async function getDiagnosisbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize) {
+  console.log("diagnosis function --------------");
+  return patient_diagnosis_tbl.findAll({
+
+    group: ['diagnosis_uuid'],
+    attributes: ['uuid', 'diagnosis_uuid', 'encounter_doctor_uuid', 'patient_uuid', 'other_diagnosis',
+      [Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'Count']
+    ],
+    order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis_uuid')), 'DESC']],
+    limit: 10,
+    where: {
+      encounter_doctor_uuid: user_uuid,
+      status: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE,
+      department_uuid: depertment_Id,
+      created_date: {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('date', Sequelize.col('`patient_diagnosis.created_date`')), '>=', moment(from_date).format('YYYY-MM-DD')),
+          Sequelize.where(Sequelize.fn('date', Sequelize.col('`patient_diagnosis.created_date`')), '<=', moment(to_date).format('YYYY-MM-DD'))
+        ]
+      }
+    },
+    include: [{
+      model: diagnosis_tbl,
+      attributes: ['code', 'name'],
+    }],
+
+  });
+
+}
+
 
 function gettopdiag(responseData) {
 
@@ -212,9 +285,7 @@ function gettopcomp_gender(allpatients, topcomp, gender) {
     }
   }
   return genderdata;
-
 }
-
 
 //patient search url
 //https://qahmisgateway.oasyshealth.co/DEVregistration/v1/api/patient/search
