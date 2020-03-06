@@ -103,6 +103,13 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
+    // concepts.associate = models => {
+    //     concepts.hasMany(models.category_concepts, {
+    //         foreignKey: "concept_uuid",
+    //         as: 'critical_care_concept_values'
+    //     });
+    // };
+
 
     return concepts;
 };

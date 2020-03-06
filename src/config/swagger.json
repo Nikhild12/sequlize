@@ -6670,6 +6670,12 @@
             "type": "integer"
           },
           {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "in": "body",
             "name": "Profiles",
             "required": true,

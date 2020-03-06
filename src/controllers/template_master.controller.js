@@ -231,10 +231,10 @@ const tmpmstrController = () => {
           const del_temp_drugs =
             tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvdDrugs,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvdDrugs,
+                user_uuid
+              )
               : "";
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewDrugsDetailsReqData,
@@ -322,10 +322,10 @@ const tmpmstrController = () => {
           const del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvd,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              )
               : "";
           const new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
@@ -356,10 +356,10 @@ const tmpmstrController = () => {
           del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvd,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              )
               : "";
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
@@ -1217,7 +1217,8 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tm_status: 1,
             tmd_status: 1,
             tmd_active: 1
-          }
+          },
+          order: [['tm_display_order', 'ASC']]
         }
       };
     case "3":
@@ -1234,7 +1235,8 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tm_status: 1,
             tmd_status: 1,
             tmd_active: 1
-          }
+          },
+          order: [['tm_display_order', 'ASC']]
         }
       };
     case "4":
