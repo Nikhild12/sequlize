@@ -17,6 +17,10 @@ const releasetmpfolder = 'tmp/';
 const appfolder = 'EMR/';
 const WarFileName = 'OASYS_EMR';
 
+
+
+
+
 gulp.task('eslint', function () {
     return gulp.src(['**/*.js', '!node_modules/**'])
         .pipe(eslint(lintrule))
@@ -25,46 +29,37 @@ gulp.task('eslint', function () {
 });
 
 
-gulp.task('buildcopy', function () {
+gulp.task('devbuildcopy', function () {
+    updateVersion(pkg.version, 1);
     return gulp.src(['**', '!node_modules/**'])
         .pipe(gulp.dest(releasefolder + releasetmpfolder + appfolder));
 });
 
-gulp.task('devbuildzip', () => {
-    updateVersion(pkg.version, 1);
+gulp.task('qabuildcopy', function () {
+    updateVersion(pkg.version, 2);
+    return gulp.src(['**', '!node_modules/**'])
+        .pipe(gulp.dest(releasefolder + releasetmpfolder + appfolder));
+});
+
+
+gulp.task('uatbuildcopy', function () {
+    updateVersion(pkg.version, 3);
+    return gulp.src(['**', '!node_modules/**'])
+        .pipe(gulp.dest(releasefolder + releasetmpfolder + appfolder));
+});
+
+gulp.task('prodbuildcopy', function () {
+    updateVersion(pkg.version, 4);
+    return gulp.src(['**', '!node_modules/**'])
+        .pipe(gulp.dest(releasefolder + releasetmpfolder + appfolder));
+});
+
+gulp.task('buildzip', () => {
     return gulp.src([releasefolder + releasetmpfolder + '**'])
         .pipe(zip(WarFileName + '_dev_' + pkg.version + '.zip'))
         .pipe(gulp.dest(releasefolder));
 });
 
-gulp.task('qabuildzip', () => {
-    updateVersion(pkg.qaversion, 2);
-    return gulp.src([releasefolder + releasetmpfolder + '**'])
-        .pipe(zip(WarFileName + '_qa_' + pkg.qaversion + '.zip'))
-        .pipe(gulp.dest(releasefolder));
-});
-
-gulp.task('uatbuildzip', () => {
-    updateVersion(pkg.uatversion, 3);
-    return gulp.src([releasefolder + releasetmpfolder + '**'])
-        .pipe(zip(WarFileName + '_uat_' + pkg.uatversion + '.zip'))
-        .pipe(gulp.dest(releasefolder));
-});
-
-gulp.task('prodbuildzip', () => {
-    updateVersion(pkg.prodversion, 4);
-    return gulp.src([releasefolder + releasetmpfolder + '**'])
-        .pipe(zip(WarFileName + '_prod_' + pkg.prodversion + '.zip'))
-        .pipe(gulp.dest(releasefolder));
-});
-
-
-gulp.task('buildclean', function () {
-    return gulp.src(releasefolder + releasetmpfolder)
-        .pipe(clean({
-            force: true
-        }));
-});
 
 function updateVersion(version_, env) {
     var version = (version_).split('.');
@@ -96,14 +91,15 @@ function updateVersion(version_, env) {
 
 
 gulp.task('devbuild',
-    gulp.series('buildcopy', 'devbuildzip', 'buildclean')); // Combine
+    gulp.series('devbuildcopy', 'buildzip', 'buildclean')); // Combine
 
 gulp.task('qabuild',
-    gulp.series('buildcopy', 'qabuildzip', 'buildclean')); // Combine
+    gulp.series('qabuildcopy', 'buildzip', 'buildclean')); // Combine
 
 gulp.task('uatbuild',
-    gulp.series('buildcopy', 'uatbuildzip', 'buildclean')); // Combine
+    gulp.series('uatbuildcopy', 'buildzip', 'buildclean')); // Combine
 
 gulp.task('prodbuild',
-    gulp.series('buildcopy', 'prodbuildzip', 'buildclean')); // Combine
+    gulp.series('prodbuildcopy', 'buildzip', 'buildclean')); // Combine
+
 
