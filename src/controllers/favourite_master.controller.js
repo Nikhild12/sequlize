@@ -11,6 +11,8 @@ const favouriteMasterTbl = sequelizeDb.favourite_master;
 const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
+const specialitySketchesTbl = sequelizeDb.speciality_sketches;
+const specialitySketchDetailsTbl = sequelizeDb.speciality_sketch_details;
 
 // Get Treatment Fav Views
 const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
@@ -458,7 +460,21 @@ const TickSheetMasterController = () => {
               fav_type_id
             )
           });
-        } else {
+        }
+        else if (fav_type_id === 10) {
+          favouriteData = await specialitySketchesTbl.findAll({
+            attributes: ['uuid', 'code', 'name', 'description', 'facility_uuid', 'department_uuid', 'sketch_name', 'is_active', 'status'],
+            where: { is_active: 1, status: 1 },
+            include: [
+              {
+                model: specialitySketchDetailsTbl,
+                as: 'speciality_sketch_details',
+                attributes: ['uuid', 'speciality_sketch_uuid', 'sketch_path', 'is_active', 'status'],
+                where: { is_active: 1, status: 1 },
+              }]
+          });
+        }
+        else {
           favouriteData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
             where: getFavouriteQuery(dept_id, user_uuid, fav_type_id),
@@ -474,7 +490,12 @@ const TickSheetMasterController = () => {
           favouriteList = emr_attributes_investigation.getInvestigationResponse(
             favouriteData
           );
-        } else {
+        }
+        else if (fav_type_id === 10) {
+          favouriteList = favouriteData
+        }
+
+        else {
           favouriteList = getFavouritesInList(favouriteData);
         }
 
