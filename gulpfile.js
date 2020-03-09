@@ -89,6 +89,12 @@ function updateVersion(version_, env) {
     return pkg.version;
 }
 
+gulp.task('buildclean', function () {
+    return gulp.src(releasefolder + releasetmpfolder)
+        .pipe(clean({
+            force: true
+        }));
+});
 
 gulp.task('devbuild',
     gulp.series('devbuildcopy', 'buildzip', 'buildclean')); // Combine
