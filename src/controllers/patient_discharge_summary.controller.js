@@ -505,7 +505,7 @@ async function getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encount
 }
 
 function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
-  let cc_result = [];
+  let cc_result = [], PCC_list = [];
 
   if (patient_cc_res.length > 0) {
     cc_result = patient_cc_res.map((item) => {
@@ -525,8 +525,14 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
         chief_complaint_details: [...getCheifComplaintList(patient_cc_res, item.pcc_patient_uuid, item.pcc_created_date)]
       };
     });
+    let uniq = {};
+    PCC_list = cc_result.filter(
+      obj => !uniq[obj.created_date] && (uniq[obj.created_date] = true)
+    );
   }
-  return cc_result;
+
+  return PCC_list;
+
 }
 function getCheifComplaintList(arr, patient_uuid, created_date) {
   let filtered_data = arr.filter((item) => {
