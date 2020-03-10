@@ -359,11 +359,11 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id) {
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
-  const prescriptionData = await _postRequest(url, { user_uuid, authorization }, order_id);
+  const prescriptionData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
   if (prescriptionData.responseContents) {
     const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
     return prescriptionResult;
