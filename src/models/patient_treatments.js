@@ -134,5 +134,13 @@ module.exports = (sequelize, DataTypes) => {
       ]
     }
   );
+  PATIENT_TREATMENTS.associate = models => {
+    PATIENT_TREATMENTS.belongsTo(models.treatment_kit, {
+      foreignKey: "treatment_kit_uuid",
+    });
+    PATIENT_TREATMENTS.belongsTo(models.encounter_type, {
+      foreignKey: "encounter_type_uuid"
+    })
+  }
   return PATIENT_TREATMENTS;
 };

@@ -26,22 +26,32 @@ const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const diagnosisTbl = sequelizeDb.diagnosis;
 const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
 const encounterTypeTbl = sequelizeDb.encounter_type;
+const treatmentKitTable = sequelizeDb.treatment_kit;
 
 
 // Patient Treatment Attributes
 const patientTreatmentAttributes = require("../attributes/patient_treatment_attributes");
-const getPrevKitOrders = [
-  'pt_uuid',
-  'pt_patient_uuid',
-  'pt_treatment_given_date',
-  'd_name',
-  'tk_name',
-  'u1_first_name',
-  'u1_middle_name',
-  'u1_last_name',
-  'et_name'
-];
+// const getPrevKitOrders = [
+//   'pt_uuid',
+//   'pt_patient_uuid',
+//   'pt_treatment_given_date',
+//   'd_name',
+//   'tk_name',
+//   'u1_first_name',
+//   'u1_middle_name',
+//   'u1_last_name',
+//   'et_name'
+// ];
 
+const getPrevKitOrders = [
+  'uuid',
+  'patient_uuid',
+  'treatment_given_date',
+  'treatment_kit_uuid',
+  'department_uuid',
+  'encounter_type_uuid',
+  'treatment_given_by'
+];
 const PatientTreatmentController = () => {
   const _createPatientTreatment = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
@@ -192,30 +202,79 @@ const PatientTreatmentController = () => {
     }
   };
   const _prevKitOrdersById = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, authorization } = req.headers;
+
     const { patient_uuid } = req.query;
     try {
       let query = {
-        pt_patient_uuid: patient_uuid,
-        pt_is_active: emr_constants.IS_ACTIVE,
-        pt_status: emr_constants.IS_ACTIVE
+        patient_uuid: patient_uuid,
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE
 
       };
-      if (user_uuid && patient_uuid) {
-        const prevKitOrderData = await prevKitOrdersViewTbl.findAll({
+
+
+      if (user_uuid && patient_uuid && patient_uuid > 0) {
+        let prevKitOrderData = await patientTreatmenttbl.findAll({
           where: query,
           attributes: getPrevKitOrders,
           limit: 5,
-          order: [['pt_treatment_given_date', 'DESC']]
+          order: [['created_date', 'DESC']],
+          include: [
+            {
+              model: treatmentKitTable,
+              attributes: ['uuid', 'name', 'code'],
+              // where: { is_active: 1, status: 1 }
+              required: false
+
+            },
+            {
+              model: encounterTypeTbl,
+              attributes: ['uuid', 'code', 'name'],
+              required: false
+
+            }
+          ],
+          required: false
+
         });
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
+        let departmentIds = [];
+        let doctorIds = [];
+        response.map(d => {
+          departmentIds.push(d.department_id);
+          doctorIds.push(d.doctor_id)
+
+        });
+
+        const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
+        if (departmentsResponse) {
+          for (let [i, r] of response.entries()) {
+            for (let d of departmentsResponse.responseContent.rows) {
+              if (r.department_id == d.uuid) {
+                response[i].department_name = d.name
+              }
+            }
+          }
+        }
+        const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
+        if (doctorResponse) {
+          for (let [i, r] of response.entries()) {
+            for (let d of doctorResponse.responseContents) {
+              if (r.doctor_id == d.uuid) {
+                response[i].doctor_name = d.first_name
+
+              }
+            }
+          }
+
+        }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
-      } else {
-        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
-
       }
-
+      else {
+        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+      }
     } catch (ex) {
       console.log('Exception Happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
@@ -237,7 +296,7 @@ const PatientTreatmentController = () => {
 
       const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
       const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id);
       const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
       const repeatOrderRadilogy = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id);
 
@@ -268,16 +327,17 @@ const PatientTreatmentController = () => {
 module.exports = PatientTreatmentController();
 
 function getPrevKitOrdersResponse(orders) {
-  return orders.map((o) => {
+  return orders.map(o => {
     return {
-      order_id: o.pt_uuid,
-      patient_id: o.pt_patient_uuid,
-      ordered_date: o.pt_treatment_given_date,
-      department_name: o.d_name,
-      encounter_type: o.et_name,
-      treatment_name: o.tk_name,
-      docter_name: `${o.u1_first_name} ${o.u1_middle_name} ${o.u1_last_name}`
-
+      order_id: o.uuid,
+      patient_id: o.patient_uuid,
+      ordered_date: o.treatment_given_date,
+      doctor_id: o.treatment_given_by,
+      encounter_type_uuid: o.encounter_type.uuid,
+      encounter_type: o.encounter_type.name,
+      treatment_kit_uuid: o.treatment_kit == null ? null : o.treatment_kit.uuid,
+      treatment_kit_name: o.treatment_kit == null ? null : o.treatment_kit.name,
+      department_id: o.department_uuid,
     };
   });
 }
@@ -299,11 +359,11 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id) {
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
-  const prescriptionData = await _postRequest(url, { user_uuid, authorization }, order_id);
+  const prescriptionData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
   if (prescriptionData.responseContents) {
     const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
     return prescriptionResult;
@@ -311,8 +371,8 @@ async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) 
 }
 
 async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
-  const url = config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
 
   let radialogyData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
   if (radialogyData) {
@@ -322,8 +382,9 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 }
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
-  const url = config.wso2LisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  const url = config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
+
   const labData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
 
   if (labData) {
@@ -335,6 +396,46 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 async function getPreviousInvest({ user_uuid, authorization }, order_id) {
   return await _getRequest({ user_uuid, authorization }, order_id);
 
+}
+
+async function getDepartments(user_uuid, authorization, departmentIds) {
+
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
+  const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
+
+  let options = {
+    uri: url,
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "uuid": departmentIds },
+    json: true
+  };
+  const departmentData = await rp(options);
+  if (departmentData) {
+    return departmentData
+  }
+}
+
+async function getDoctorDetails(user_uuid, authorization, doctorIds) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
+  const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
+  let options = {
+    uri: url,
+    method: 'POST',
+    headers: {
+      "Authorization": authorization,
+      "user_uuid": user_uuid
+    },
+    body: { "uuid": doctorIds },
+    json: true
+  };
+  const doctorData = await rp(options);
+  if (doctorData) {
+    return doctorData;
+  }
 }
 
 async function getPrescriptionRseponse(prescriptions) {

@@ -17,6 +17,8 @@ const procedure_sub_category = db.procedure_sub_category
 const operation_type = db.operation_type
 const anesthesia_type = db.anesthesia_type
 const body_site = db.body_site
+const noteTemplatetypeTbl = db.note_template_type;
+const npotetemplateTbl = db.note_templates;
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -69,7 +71,16 @@ const proceduresController = () => {
       order: [[sortField, sortOrder]],
       where: { is_active: 1 ,status:1},
       include: [{
-        model: procedureNoteTbl
+        model: procedureNoteTbl,
+        include : [ 
+          {
+          model: noteTemplatetypeTbl,
+          attributes: ['uuid', 'name'],
+        },
+           {
+            model: npotetemplateTbl,
+            attributes: ['uuid', 'name']
+           }]
       },
       {
         model: procedure_schemeTbl,
@@ -272,8 +283,18 @@ const proceduresController = () => {
           where: {
             uuid: postData.Procedures_id
           },
+          
           include: [{
-            model: procedureNoteTbl
+            model: procedureNoteTbl,
+            include : [ 
+              {
+              model: noteTemplatetypeTbl,
+              attributes: ['uuid', 'name'],
+            },
+               {
+                model: npotetemplateTbl,
+                attributes: ['uuid', 'name']
+               }]
           },
           {
             model: procedure_schemeTbl,
