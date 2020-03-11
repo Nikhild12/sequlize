@@ -145,16 +145,16 @@ const Encounter = () => {
     } = req.query;
 
     try {
-      if (user_uuid && is_active_encounter == 2) {
-        if (e_patient_uuid || (e_patient_uuid && e_encounter_date)) {
-          const encounterData = await vw_encounterDetailsTbl.findAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } });
-          return res.status(200).send({
-            code: httpStatus.OK,
-            message: "Fetched Encounter Successfully",
-            responseContents: encounterData
-          });
-        }
+      if (user_uuid && e_patient_uuid || (e_patient_uuid && e_encounter_date)) {
+        const encounterData = await vw_encounterDetailsTbl.findAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } },
+          { where: is_active_encounter == 2 });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched Encounter Successfully",
+          responseContents: encounterData
+        });
       }
+
       else {
         return res.status(400).send({
           code: httpStatus[400],
