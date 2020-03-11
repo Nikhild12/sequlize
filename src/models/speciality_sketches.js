@@ -64,6 +64,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "speciality_sketch_uuid",
             targetKey: "uuid"
         });
+
+        speciality_sketches.belongsTo(models.favourite_master_details, {
+            foreignKey: "uuid",
+            targetKey: "uuid"
+          });
     };
     return speciality_sketches;
 };
