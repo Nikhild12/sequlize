@@ -65,6 +65,9 @@ const tmpmstrController = () => {
     const userUUID = parseInt(req.headers.user_uuid);
 
     try {
+      if (tempuuid <= 0) {
+        return res.status(400).send({ code: httpStatus[400], message: 'Please provide valid template id' });
+      }
       if (tempuuid) {
         const updatedtempData = {
           status: 0,
@@ -107,7 +110,7 @@ const tmpmstrController = () => {
         );
         const templateList = await table_name.findAll(query);
 
-        if (templateList) {
+        if (templateList.length > 0) {
           const templateData = getTemplateDetailsData(
             temp_type_id,
             templateList
@@ -116,6 +119,8 @@ const tmpmstrController = () => {
           return res
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: "", responseContent: templateData });
+        } else {
+          return res.status(200).send({ statusCode: 200, message: 'No Record Found' });
         }
       } else {
         return res
@@ -227,7 +232,10 @@ const tmpmstrController = () => {
           templateMasterDetailsReqData
         ) {
           //templateTransaction = await db.sequelize.transaction();
+          if (templateMasterReqData.template_id <= 0) {
+            return res.status(400).send({ code: httpStatus[400], message: 'Please provide valid template id' });
 
+          }
           const del_temp_drugs =
             tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0
               ? await removedTmpDetails(
