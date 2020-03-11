@@ -2,8 +2,7 @@
 const emr_constants = require("../config/constants");
 
 // Sequelize Import
-const Sequelize = require('sequelize');
-
+const Sequelize = require("sequelize");
 
 const Op = Sequelize.Op;
 const neQuery = { [Op.ne]: null };
@@ -47,7 +46,9 @@ const _getFavouriteInvestigationQuery = (user_id, fav_type_id) => {
     fm_status: emr_constants.IS_ACTIVE,
     fm_active: emr_constants.IS_ACTIVE,
     fm_userid: user_id,
-    ivtm_uuid: neQuery
+    ivtm_uuid: neQuery,
+    ivtm_is_active: emr_constants.IS_ACTIVE,
+    ivtm_status: emr_constants.IS_ACTIVE
   };
 };
 
