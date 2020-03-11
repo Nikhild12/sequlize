@@ -261,7 +261,7 @@ const PatientTreatmentController = () => {
         const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
         if (doctorResponse) {
           for (let [i, r] of response.entries()) {
-            for (let d of doctorResponse.responseContent) {
+            for (let d of doctorResponse.responseContents) {
               if (r.doctor_id == d.uuid) {
                 response[i].doctor_name = d.first_name
 
@@ -296,7 +296,7 @@ const PatientTreatmentController = () => {
 
       const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
       const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, authorization }, order_id);
+      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id);
       const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
       const repeatOrderRadilogy = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id);
 
@@ -359,11 +359,11 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription({ user_uuid, authorization }, order_id) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id) {
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
-  const prescriptionData = await _postRequest(url, { user_uuid, authorization }, order_id);
+  const prescriptionData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
   if (prescriptionData.responseContents) {
     const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
     return prescriptionResult;

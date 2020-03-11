@@ -132,6 +132,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       tsmd_diet_master_uuid: {
         type: DataTypes.INTEGER
+      },
+      tsmd_speciality_sketch_uuid: {
+        type: DataTypes.INTEGER
       }
     }
   );
