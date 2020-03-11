@@ -344,10 +344,13 @@ const TickSheetMasterController = () => {
     ) {
       const { department_uuid } = favouriteMasterReqData;
       favouriteMasterReqData.active_from = new Date();
+      const fav_master_active = favouriteMasterReqData.is_active;
+
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData,
         user_uuid
       );
+      favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
 
       try {
         // favouriteTransaction = await sequelizeDb.sequelize.transaction();
@@ -369,8 +372,6 @@ const TickSheetMasterController = () => {
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
-          console.log("Existing Record");
-
           const duplicate_msg =
             checkingForSameFavourite[0].tsm_active[0] === 1
               ? duplicate_active_msg
