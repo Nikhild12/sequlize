@@ -20,106 +20,117 @@ const cccMasterController = () => {
     */
 
     const getAllcccMaster = async (req, res, next) => {
-        let getsearch = req.body;
-        let pageNo = 0;
-        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
-        let sortOrder = 'DESC';
+        try {
+            let getsearch = req.body;
+            let pageNo = 0;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+            let sortField = 'created_date';
+            let sortOrder = 'DESC';
 
-        if (getsearch.pageNo) {
-            let temp = parseInt(getsearch.pageNo);
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
 
 
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
             }
-        }
 
-        const offset = pageNo * itemsPerPage;
-
-
-        if (getsearch.sortField) {
-
-            sortField = getsearch.sortField;
-        }
-
-        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-            sortOrder = getsearch.sortOrder;
-        }
-        let findQuery = {
-            offset: offset,
-            limit: itemsPerPage,
-            order: [
-                [sortField, sortOrder],
-            ],
-            where: { is_active: 1, status: 1 },
-            // include: [
-            //     {
-            //         model: criticalcareTypeTbl,
-            //         as: 'critical_care_types'
-            //     }
-            //     // {
-            //     //     model: conceptTbl,
-            //     //     include: [{ model: conceptdetailsTbl }]
-            //     // }
-            // ]
-
-        };
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-
-            findQuery.where = {
-                [Op.or]: [{
-                    code: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
+            const offset = pageNo * itemsPerPage;
 
 
-                }, {
-                    name: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-                }
+            if (getsearch.sortField) {
 
-                ]
+                sortField = getsearch.sortField;
+            }
+
+            if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+                sortOrder = getsearch.sortOrder;
+            }
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: { is_active: 1, status: 1 },
+                // include: [
+                //     {
+                //         model: criticalcareTypeTbl,
+                //         as: 'critical_care_types'
+                //     }
+                //     // {
+                //     //     model: conceptTbl,
+                //     //     include: [{ model: conceptdetailsTbl }]
+                //     // }
+                // ]
+
             };
-        }
-        let data = await cccMasterTbl.findAndCountAll({
-            findQuery,
+            if (getsearch.search && /\S/.test(getsearch.search)) {
 
-            attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
-                , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                'status'],
-            where: {
-                is_active: 1, status: 1
-            },
-            include: [
-                {
-                    model: conceptTbl,
-                    as: 'critical_care_concepts',
-                    attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
-                    where: { is_active: 1, status: 1 },
-                    include: [
-                        {
-                            model: conceptdetailsTbl,
-                            as: 'critical_care_concept_values',
-                            attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
-                            where: { is_active: 1, status: 1 },
-                        }
+                findQuery.where = {
+                    [Op.or]: [{
+                        code: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+
+
+                    }, {
+                        name: {
+                            [Op.like]: '%' + getsearch.search + '%',
+                        },
+                    }
+
                     ]
-                }
+                };
+            }
+            let data = await cccMasterTbl.findAndCountAll({
+                findQuery,
 
-            ], returning: true
-        });
+                attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+                    , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                    'status'],
+                where: {
+                    is_active: 1, status: 1
+                },
+                include: [
+                    {
+                        model: conceptTbl,
+                        as: 'critical_care_concepts',
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        where: { is_active: 1, status: 1 },
+                        include: [
+                            {
+                                model: conceptdetailsTbl,
+                                as: 'critical_care_concept_values',
+                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                where: { is_active: 1, status: 1 },
+                            }
+                        ]
+                    }
 
-        return res
-            .status(httpStatus.OK)
-            .json({
-                statusCode: 200,
-                req: '',
-                responseContents: (data.rows ? data.rows : [])
+                ], returning: true
             });
 
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    statusCode: 200,
+                    req: '',
+                    responseContents: (data.rows ? data.rows : [])
+                });
+
+        }
+        catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
     };
     const getAllcccMaster_old = async (req, res, next) => {
         let getsearch = req.body;

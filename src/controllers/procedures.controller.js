@@ -69,18 +69,18 @@ const proceduresController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      where: { is_active: 1 ,status:1},
+      where: { is_active: 1, status: 1 },
       include: [{
         model: procedureNoteTbl,
-        include : [ 
-          {
-          model: noteTemplatetypeTbl,
-          attributes: ['uuid', 'name'],
-        },
-           {
-            model: npotetemplateTbl,
-            attributes: ['uuid', 'name']
-           }]
+        // include: [
+        //   {
+        //     model: noteTemplatetypeTbl,
+        //     attributes: ['uuid', 'name'],
+        //   },
+        //   {
+        //     model: npotetemplateTbl,
+        //     attributes: ['uuid', 'name']
+        //   }]
       },
       {
         model: procedure_schemeTbl,
@@ -283,18 +283,18 @@ const proceduresController = () => {
           where: {
             uuid: postData.Procedures_id
           },
-          
+
           include: [{
             model: procedureNoteTbl,
-            include : [ 
+            include: [
               {
-              model: noteTemplatetypeTbl,
-              attributes: ['uuid', 'name'],
-            },
-               {
+                model: noteTemplatetypeTbl,
+                attributes: ['uuid', 'name'],
+              },
+              {
                 model: npotetemplateTbl,
                 attributes: ['uuid', 'name']
-               }]
+              }]
           },
           {
             model: procedure_schemeTbl,
