@@ -7114,6 +7114,62 @@
           }
         }
       }
+    },
+    "/api/dashboard/getDashBoarddata": {
+      "get": {
+        "summary": "To get DashBoad Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "depertment_Id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "gender",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "session",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Dash Board"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdashboard"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -13186,6 +13242,10 @@
           "type": "integer"
         }
       }
+    },
+    "getdashboard": {
+      "type": "object",
+      "properties": {}
     }
   }
 }

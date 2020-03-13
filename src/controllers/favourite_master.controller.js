@@ -190,24 +190,32 @@ let getTreatmentKitLabAtt = [
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
-  let notNullSearchKey;
+  let notNullSearchKey, activeKey, statusKey;
   tsmd_test_id =
     typeof tsmd_test_id === "string" ? +tsmd_test_id : tsmd_test_id;
   switch (tsmd_test_id) {
     case 1:
       notNullSearchKey = "im_name";
+      activeKey = "im_is_active";
+      statusKey = "im_status";
       break;
     case 2:
     case 3:
     case 7:
       notNullSearchKey = "ltm_name";
+      activeKey = "ltm_is_active";
+      statusKey = "ltm_status";
       break;
     case 5:
       notNullSearchKey = "cc_name";
+      activeKey = "cc_is_active";
+      statusKey = "cc_status";
       break;
     case 6:
     default:
       notNullSearchKey = "d_name";
+      activeKey = "d_is_active";
+      statusKey = "d_status";
       break;
   }
   return {
@@ -215,6 +223,8 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
     tsm_status: active_boolean,
     [notNullSearchKey]: neQuery,
     tsm_favourite_type_uuid: tsmd_test_id,
+    [activeKey]: emr_constants.IS_ACTIVE,
+    [statusKey]: emr_constants.IS_ACTIVE,
     [Op.or]: [
       { tsm_dept: { [Op.eq]: dept_id }, tsm_public: { [Op.eq]: 1 } },
       { tsm_userid: { [Op.eq]: user_uuid } }
@@ -297,7 +307,9 @@ function getFavouriteRadiologyQuery(user_id, fav_type_id) {
     fm_status: active_boolean,
     fm_active: active_boolean,
     fm_userid: user_id,
-    rtm_uuid: neQuery
+    rtm_uuid: neQuery,
+    rtm_is_active: emr_constants.IS_ACTIVE,
+    rtm_status: emr_constants.IS_ACTIVE
   };
 }
 
@@ -332,10 +344,13 @@ const TickSheetMasterController = () => {
     ) {
       const { department_uuid } = favouriteMasterReqData;
       favouriteMasterReqData.active_from = new Date();
+      const fav_master_active = favouriteMasterReqData.is_active;
+
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData,
         user_uuid
       );
+      favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
 
       try {
         // favouriteTransaction = await sequelizeDb.sequelize.transaction();
@@ -357,8 +372,6 @@ const TickSheetMasterController = () => {
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
-          console.log("Existing Record");
-
           const duplicate_msg =
             checkingForSameFavourite[0].tsm_active[0] === 1
               ? duplicate_active_msg

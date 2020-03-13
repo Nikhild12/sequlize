@@ -135,6 +135,36 @@ module.exports = (sequelize, DataTypes) => {
       },
       tsmd_speciality_sketch_uuid: {
         type: DataTypes.INTEGER
+      },
+      im_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      im_status: {
+        type: DataTypes.BOOLEAN
+      },
+      cc_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      cc_status: {
+        type: DataTypes.BOOLEAN
+      },
+      vm_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      vm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      ltm_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      ltm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      d_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      d_status: {
+        type: DataTypes.BOOLEAN
       }
     }
   );
