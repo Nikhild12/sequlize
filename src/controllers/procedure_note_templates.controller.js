@@ -9,7 +9,8 @@ const Op = Sequelize.Op;
 
 
 const procedureNoteTemplatesTbl = db.procedure_note_templates;
-const proceduresTbl = db.procedures;
+const noteTemplatetypeTbl = db.note_template_type;
+const npotetemplateTbl = db.note_templates;
 
 const procedureNoteTemplatesController = () => {
     /**
@@ -55,12 +56,18 @@ const procedureNoteTemplatesController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{status: 1},
+            where: { status: 1 },
             include: [
                 {
-                model: proceduresTbl,
-                // attributes:['uuid','name']
-                }]
+                    model: noteTemplatetypeTbl,
+                    attributes: ['uuid', 'name']
+                }],
+            include: [
+                {
+                    model: npotetemplateTbl,
+                    attributes: ['uuid', 'name']
+                }],
+            
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -68,15 +75,15 @@ const procedureNoteTemplatesController = () => {
             findQuery.where = {
                 [Op.or]: [{
                     code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -143,11 +150,11 @@ const procedureNoteTemplatesController = () => {
                     error: err
                 });
             });
-            
 
-          
+
+
         } else {
-            
+
             res.send({
                 status: 'failed',
                 msg: 'Please enter procedures note template details'
@@ -186,10 +193,10 @@ const procedureNoteTemplatesController = () => {
         postData.modified_by = req.headers.user_uuid;
         await procedureNoteTemplatesTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Procedures_id_NT
-                }
+            where: {
+                uuid: postData.Procedures_id_NT
             }
+        }
         ).then((data) => {
             res.send({
                 statusCode: 200,
@@ -198,9 +205,9 @@ const procedureNoteTemplatesController = () => {
                 responseContents: data
             });
         });
-        
+
     };
-  
+
 
     const getprocedureNoteTemplatesById = async (req, res, next) => {
         const postData = req.body;
@@ -210,17 +217,25 @@ const procedureNoteTemplatesController = () => {
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await procedureNoteTemplatesTbl.findOne({
-                    where: {
-                        uuid: postData.Procedures_id_NT
-                    },
-                    include: [
-                        {
+                where: {
+                    uuid: postData.Procedures_id_NT
+                },
+                include: [
+                    {
                         model: proceduresTbl,
                         // attributes:['uuid','name']
-                        }],
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                    },
+                    {
+                        model: noteTemplatetypeTbl,
+                        attributes: ['uuid', 'name'],
+                      },
+                         {
+                          model: npotetemplateTbl,
+                          attributes: ['uuid', 'name']
+                         }],
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)

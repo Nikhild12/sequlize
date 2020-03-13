@@ -6208,7 +6208,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-
     "/api/certificates/create": {
       "post": {
         "summary": "To Create Patient certficates",
@@ -6850,6 +6849,270 @@
         },
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/sections/getById": {
+      "post": {
+        "summary": "To get sections Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sectionsgetById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getSectionsById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/sections/delete": {
+      "put": {
+        "summary": "Deleted sections Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sectionsDelete"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted Successfully",
+            "schema": {
+              "$ref": "#/definitions/deleteSections"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/sections/update": {
+      "put": {
+        "summary": "To Update sections Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateSections",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateSections"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateSections"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/categories/getById": {
+      "post": {
+        "summary": "To get categories Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/categoriesgetById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getCategoriesById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/categories/delete": {
+      "put": {
+        "summary": "Deleted Categories Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CategoriesDelete"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted Successfully",
+            "schema": {
+              "$ref": "#/definitions/deleteCategories"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/categories/update": {
+      "put": {
+        "summary": "To Update Categories Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateCategories",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateCategories"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/updateCategories"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/encounter/getAll": {
+      "get": {
+        "summary": "To get all the encounter Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "e_patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "e_encounter_date",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Encounter Details"
+          }
+        }
       }
     }
   },
@@ -12807,6 +13070,119 @@
           "type": "string"
         },
         "display_order": {
+          "type": "integer"
+        }
+      }
+    },
+    "sectionsgetById": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getSectionsById": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "sectionsDelete": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "deleteSections": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateSections": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        },
+        "section_type_uuid": {
+          "type": "integer"
+        },
+        "section_note_type_uuid": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sref": {
+          "type": "string"
+        },
+        "display_order": {
+          "type": "integer"
+        }
+      }
+    },
+    "categoriesgetById": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "getCategoriesById": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "CategoriesDelete": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "deleteCategories": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        }
+      }
+    },
+    "updateCategories": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category_type_uuid": {
+          "type": "integer"
+        },
+        "category_group_uuid": {
           "type": "integer"
         }
       }
