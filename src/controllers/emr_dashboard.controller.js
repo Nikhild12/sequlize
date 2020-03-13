@@ -17,6 +17,7 @@ const lab_dash = sequelizeDb.vw_emr_lab_dashboard;
 const inv_dash = sequelizeDb.vw_emr_inv_dashboard;
 const diag_dash = sequelizeDb.vw_emr_diagnosis_dashboard;
 const chiefc_dash = sequelizeDb.vw_emr_chief_complaint_dashboard;
+const cons_dash = sequelizeDb.vw_emr_cons_dashboard;
 
 const EmrDashBoard = () => {
     /**
@@ -40,36 +41,26 @@ const EmrDashBoard = () => {
 
                 const diagnosis = await getDiagnosisbygenger(diag_dash, user_uuid, depertment_Id, gender);
                 const chiefc = await getchiefbygenger(chiefc_dash, user_uuid, depertment_Id, gender);
-                //const lab = await getlabbygenger(lab_dash, user_uuid, depertment_Id, gender);
+                const lab = await getlabbygenger(lab_dash, user_uuid, depertment_Id, gender);
                 //const rad = await getradbygender(ris_dash, user_uuid, depertment_Id, gender);
                 //const inv = await getinvbygender(inv_dash, user_uuid, depertment_Id, gender);
-                //const presc = await getprescbygender(pres_dash, user_uuid, depertment_Id, gender);
+                const presc = await getprescbygender(pres_dash, user_uuid, depertment_Id, gender);
 
-                // let orders = {};
 
-                // orders.gender = lab[0].dataValues.g_name || rad[0].dataValues.g_name || inv[0].dataValues.g_name;
-                // orders.lab_count = lab[0].dataValues.Count;
-                // //orders.radiology_count = rad[0].dataValues.Count;
-                // orders.investigation_count = inv[0].dataValues.Count;
+                let orders = {};
 
-                // let pres = {};
-                // pres.male = 0;
-                // pres.female = 0;
-                // pres.transgender = 0;
-
-                // if (gender == 1) {
-                //     pres.male = presc[0].dataValues.Count;
-                // } else if (gender == 2) {
-                //     pres.female = presc[0].dataValues.Count;
-                // } else {
-                //     pres.transgender = presc[0].dataValues.Count;
-                // }
+                orders.gender = lab[0].dataValues.g_name || rad[0].dataValues.g_name || inv[0].dataValues.g_name;
+                orders.lab_count = lab[0].dataValues.Count;
+                //orders.radiology_count = rad[0].dataValues.Count;
+                //orders.investigation_count = inv[0].dataValues.Count;
 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diagnosis,
                         "cieif_complaints": chiefc,
+                        "prescription": presc,
+                        "orders": orders
 
                     }
                 });
@@ -78,12 +69,15 @@ const EmrDashBoard = () => {
                 console.log("this is session section");
                 const diag = await getDiagnosisbysession(diag_dash, user_uuid, depertment_Id, session);
                 const chiefc = await getchiefcbysession(chiefc_dash, user_uuid, depertment_Id, session);
+                const presc = await getprescbysession(pres_dash, user_uuid, depertment_Id, session);
+
 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
+                        "prescription": presc
 
                     }
                 });
@@ -91,25 +85,72 @@ const EmrDashBoard = () => {
                 console.log("this is date section");
                 const diag = await getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date, to_date);
                 const chiefc = await getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
+                const presc = await getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date);
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
+                        "prescription": presc
+                    }
+                });
+            } else if (session && from_date && to_date && gender) {
+                console.log("this is all filter");
+                const diag = await getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+                const chiefc = await getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+                const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+
+                return res.status(200).send({
+                    code: httpStatus.OK, message: 'Fetched Successfully',
+                    responseContents: {
+                        "diagnosis:": diag,
+                        "cieif_complaints": chiefc,
+                        "prescription": presc
 
                     }
                 });
-            }
-            else if (session && from_date && to_date && gender) {
-                console.log ("this is all filter");
-                const diag = await getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
-                const chiefc = await getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+            } else if (session && !from_date && !to_date && gender) {
+                console.log("this is all filter");
+                const diag = await getdiagbysessiongender(diag_dash, user_uuid, depertment_Id, session, gender);
+                const chiefc = await getchiefbysessiongender(chiefc_dash, user_uuid, depertment_Id, session, gender);
+                const presc = await getprescbysessiongender(pres_dash, user_uuid, depertment_Id, session, gender);
                 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
+                        "prescription": presc
+
+                    }
+                });
+            } else if (session && from_date && to_date && !gender) {
+                console.log("this is all filter");
+                const diag = await getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date);
+                const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
+                const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date);
+
+                return res.status(200).send({
+                    code: httpStatus.OK, message: 'Fetched Successfully',
+                    responseContents: {
+                        "diagnosis:": diag,
+                        "cieif_complaints": chiefc,
+                        "prescription": presc
+
+                    }
+                });
+            } else if (!session && from_date && to_date && gender) {
+                console.log("this is all filter");
+                const diag = await getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+                const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+                const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+
+                return res.status(200).send({
+                    code: httpStatus.OK, message: 'Fetched Successfully',
+                    responseContents: {
+                        "diagnosis:": diag,
+                        "cieif_complaints": chiefc,
+                        "prescription": presc
 
                     }
                 });
@@ -255,17 +296,17 @@ async function getinvbygender(inv_dash, user_uuid, depertment_Id, gender) {
 async function getprescbygender(pres_dash, user_uuid, depertment_Id, gender) {
 
     const diag = await pres_dash.findAll({
-        group: ['g_uuid'],
-        attributes: ['g_name',
-            [Sequelize.fn('COUNT', Sequelize.col('g_uuid')), 'Count']
+
+        attributes: [[Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
         ],
-        order: [[Sequelize.fn('COUNT', Sequelize.col('g_uuid')), 'DESC']],
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
-            p_gender_uuid: gender
+            g_uuid: gender
         }
     }
     );
@@ -275,6 +316,188 @@ async function getprescbygender(pres_dash, user_uuid, depertment_Id, gender) {
         return {};
     }
 }
+
+async function getprescbysession(pres_dash, user_uuid, depertment_Id, session) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: ['s_name',
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ps_prescription_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            g_uuid: gender,
+            ps_prescription_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            ps_prescription_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbysessiongender(pres_dash, user_uuid, depertment_Id, session, gender) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            g_uuid: gender
+
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            g_uuid: gender,
+            ps_prescription_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
 
 async function getDiagnosisbysession(diag_dash, user_uuid, depertment_Id, session) {
 
@@ -434,6 +657,184 @@ async function getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gen
             ed_department_uuid: depertment_Id,
             p_gender_uuid: gender,
             s_uuid: session,
+            pcc_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getdiagbysessiongender(diag_dash, user_uuid, depertment_Id, session, gender) {
+    const diag = await diag_dash.findAll({
+        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
+        attributes: ['pd_diagnosis_uuid', 'd_name', 'g_name', 's_name',
+            [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            p_gender_uuid: gender,
+            s_uuid: session
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getchiefbysessiongender(chiefc_dash, user_uuid, depertment_Id, session, gender) {
+    const diag = await chiefc_dash.findAll({
+        group: ['ed_patient_uuid', 'pcc_chief_complaint_uuid'],
+        attributes: ['pcc_chief_complaint_uuid', 'cc_name', 'g_name', 's_name',
+            [Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            p_gender_uuid: gender,
+            s_uuid: session
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date) {
+    const diag = await diag_dash.findAll({
+        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
+        attributes: ['pd_diagnosis_uuid', 'd_name', 's_name', 'pd_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            pd_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date) {
+    const diag = await chiefc_dash.findAll({
+        group: ['ed_patient_uuid', 'pcc_chief_complaint_uuid'],
+        attributes: ['pcc_chief_complaint_uuid', 'cc_name', 's_name', 'pcc_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            pcc_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
+    const diag = await diag_dash.findAll({
+        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
+        attributes: ['pd_diagnosis_uuid', 'd_name', 'g_name', 'pd_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            p_gender_uuid: gender,
+            pd_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
+    const diag = await chiefc_dash.findAll({
+        group: ['ed_patient_uuid', 'pcc_chief_complaint_uuid'],
+        attributes: ['pcc_chief_complaint_uuid', 'cc_name', 'g_name', 'pcc_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            p_gender_uuid: gender,
             pcc_performed_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
