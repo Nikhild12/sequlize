@@ -45,7 +45,7 @@ const EmrDashBoard = () => {
                 //const rad = await getradbygender(ris_dash, user_uuid, depertment_Id, gender);
                 //const inv = await getinvbygender(inv_dash, user_uuid, depertment_Id, gender);
                 const presc = await getprescbygender(pres_dash, user_uuid, depertment_Id, gender);
-
+                const cons = await getconsbygender(cons_dash, user_uuid, depertment_Id, gender);
 
                 let orders = {};
 
@@ -60,6 +60,7 @@ const EmrDashBoard = () => {
                         "diagnosis:": diagnosis,
                         "cieif_complaints": chiefc,
                         "prescription": presc,
+                        "consulted": cons, 
                         "orders": orders
 
                     }
@@ -70,6 +71,7 @@ const EmrDashBoard = () => {
                 const diag = await getDiagnosisbysession(diag_dash, user_uuid, depertment_Id, session);
                 const chiefc = await getchiefcbysession(chiefc_dash, user_uuid, depertment_Id, session);
                 const presc = await getprescbysession(pres_dash, user_uuid, depertment_Id, session);
+                const cons = await getconsbysession(cons_dash, user_uuid, depertment_Id, session);
 
 
                 return res.status(200).send({
@@ -77,7 +79,8 @@ const EmrDashBoard = () => {
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
 
                     }
                 });
@@ -86,12 +89,15 @@ const EmrDashBoard = () => {
                 const diag = await getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date, to_date);
                 const chiefc = await getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
                 const presc = await getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date);
+                const cons = await getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
+                
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
                     }
                 });
             } else if (session && from_date && to_date && gender) {
@@ -99,13 +105,15 @@ const EmrDashBoard = () => {
                 const diag = await getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
                 const chiefc = await getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
                 const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+                const cons = await getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
 
                     }
                 });
@@ -114,13 +122,16 @@ const EmrDashBoard = () => {
                 const diag = await getdiagbysessiongender(diag_dash, user_uuid, depertment_Id, session, gender);
                 const chiefc = await getchiefbysessiongender(chiefc_dash, user_uuid, depertment_Id, session, gender);
                 const presc = await getprescbysessiongender(pres_dash, user_uuid, depertment_Id, session, gender);
-                
+                const cons = await getconsbysessiongender(cons_dash, user_uuid, depertment_Id, session, gender);
+
+
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
 
                     }
                 });
@@ -129,13 +140,15 @@ const EmrDashBoard = () => {
                 const diag = await getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date);
                 const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
                 const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date);
+                const cons = await getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session, from_date, to_date);
 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
 
                     }
                 });
@@ -144,13 +157,15 @@ const EmrDashBoard = () => {
                 const diag = await getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                 const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                 const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+                const cons = await getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date);
 
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis:": diag,
                         "cieif_complaints": chiefc,
-                        "prescription": presc
+                        "prescription": presc,
+                        "consulted": cons
 
                     }
                 });
@@ -850,4 +865,209 @@ async function getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gende
         return {};
     }
 
+}
+
+async function getconsbygender(cons_dash, user_uuid, depertment_Id, gender) {
+
+    const diag = await cons_dash.findAll({
+
+        attributes: [[Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            g_uuid: gender
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbysession(cons_dash, user_uuid, depertment_Id, session) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: ['s_name',
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            g_uuid: gender,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbysessiongender(cons_dash, user_uuid, depertment_Id, session, gender) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            s_uuid: session,
+            g_uuid: gender
+
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            g_uuid: gender,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
 }
