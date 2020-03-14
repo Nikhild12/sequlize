@@ -94,14 +94,14 @@ const ChiefComplaints = () => {
 
         const { user_uuid } = req.headers;
         const { searchBy, searchValue } = req.query;
-        let ex = new RegExp("/^[a-zA-Z]+$/");
-        console.log('ex.test(searchBy==============+', ex.test(searchBy));
+        // let ex = new RegExp("/^[a-zA-Z]+$/");
+        // console.log('ex.test(searchBy==============+', ex.test(searchBy));
 
-        if (ex.test(searchBy)) {
-            console.log('search by', searchBy);
+        // if (ex.test(searchBy)) {
+        //     console.log('search by', searchBy);
 
-            return res.send({ code: httpStatus.BAD_REQUEST, message: 'SearchBy should be string value' });
-        }
+        //     return res.send({ code: httpStatus.BAD_REQUEST, message: 'SearchBy should be string value' });
+        // }
 
         if (user_uuid && searchBy && searchValue) {
 
