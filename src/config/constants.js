@@ -48,7 +48,7 @@ module.exports = Object.freeze({
   TREATMENT_DELETE_SUCCESS: "Treatment Kit Deleted Successfully",
   ENCOUNTER_CLOSED_SUCCESS: "Encounter Closed Successfully",
 
-  GetpleaseProvideMsg: function(columnname) {
+  GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "encounter_uuid":
@@ -141,12 +141,14 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} section_type_uuid`;
       case "section_note_type_uuid":
         return `${returnProvideMsg} section_note_type_uuid`;
+      case "display_order":
+        return `${returnProvideMsg} display_order`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
   },
 
-  GetMinimumMessage: function(columnname) {
+  GetMinimumMessage: function (columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -193,7 +195,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function(columnname) {
+  GetZeroValidationMessage: function (columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -262,6 +264,8 @@ module.exports = Object.freeze({
         return `value_type_uuid ${validationMessage}`;
       case "profile_section_category_concept_uuid":
         return `profile_section_category_concept_uuid ${validationMessage}`;
+      case "display_order":
+        return `display_order ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
     }

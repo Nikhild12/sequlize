@@ -1,3 +1,5 @@
+const emr_constants = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
   const TICK_SHEET_MASTER = sequelize.define(
     "favourite_master",
@@ -40,7 +42,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+          },
+          min: {
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('department_uuid')
+          }
         }
       },
       user_uuid: {
@@ -52,7 +63,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       display_order: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('display_order')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('display_order')
+          },
+          min: {
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('display_order')
+          }
+        }
       },
 
       active_from: {

@@ -1,3 +1,5 @@
+const emr_constants = require('../config/constants');
+
 module.exports = (sequelize, DataTypes) => {
   const TICK_SHEET_MASTER_DETAILS = sequelize.define(
     "favourite_master_details",
@@ -113,7 +115,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       display_order: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('display_order')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('display_order')
+          },
+          min: {
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('display_order')
+          }
+        }
       },
       comments: {
         type: DataTypes.STRING(255),

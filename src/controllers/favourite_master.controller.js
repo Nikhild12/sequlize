@@ -448,7 +448,7 @@ const TickSheetMasterController = () => {
     const { user_uuid } = req.headers;
     let { dept_id, fav_type_id } = req.query;
 
-    if (user_uuid && dept_id && fav_type_id) {
+    if (user_uuid && dept_id > 0 && fav_type_id) {
       fav_type_id = +fav_type_id;
       if (isNaN(fav_type_id)) {
         return res.status(400).send({
@@ -543,7 +543,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request headers or Query Param Found"
+        message: "No Request headers or Query Param Found or Bad Request "
       });
     }
   };
@@ -748,10 +748,15 @@ const TickSheetMasterController = () => {
           })
         ]);
 
-        if (updateFavouriteAsync) {
+        if (updateFavouriteAsync == 1) {
           return res
             .status(200)
             .send({ code: httpStatus.OK, message: "Deleted Successfully" });
+        }
+        else {
+          return res
+            .status(400)
+            .send({ code: httpStatus.OK, message: " Failed to Delete Record or No Record Found" });
         }
       } catch (ex) {
         return res

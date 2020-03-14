@@ -1,6 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
-const username=require("../config/config");
+const username = require("../config/config");
 // Sequelizer Import
 const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
@@ -16,6 +16,7 @@ const emr_const = require('../config/constants');
 
 
 function getChiefComplaintsFilterByQuery(searchBy, searchValue) {
+
     searchBy = searchBy.toLowerCase();
     switch (searchBy) {
         case 'filterbythree':
@@ -49,33 +50,33 @@ function getChiefComplaintsFilterByQuery(searchBy, searchValue) {
     }
 }
 
-const getChiefComplaintsAttributes= [
-        'uuid',
-        'code',
-        'name',
-        'description',
-        'chief_complaint_category_uuid',
-        'referrence_link',
-        'body_site',
-        'created_date',
-        'is_active',
-        'created_by',
-            'modified_by',
-            'modified_date'
-    ];
+const getChiefComplaintsAttributes = [
+    'uuid',
+    'code',
+    'name',
+    'description',
+    'chief_complaint_category_uuid',
+    'referrence_link',
+    'body_site',
+    'created_date',
+    'is_active',
+    'created_by',
+    'modified_by',
+    'modified_date'
+];
 
 
 function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
 
     return {
-        uuid:ChiefComplaintsReqData.ChiefComplaints_id,
+        uuid: ChiefComplaintsReqData.ChiefComplaints_id,
         code: ChiefComplaintsReqData.code,
         user_uuid: user_uuid,
         name: ChiefComplaintsReqData.name,
         description: ChiefComplaintsReqData.description,
-        chief_complaint_category_uuid:ChiefComplaintsReqData.chief_complaint_category_uuid,
-        referrence_link:ChiefComplaintsReqData.referrence_link,
-        body_site:ChiefComplaintsReqData.body_site,
+        chief_complaint_category_uuid: ChiefComplaintsReqData.chief_complaint_category_uuid,
+        referrence_link: ChiefComplaintsReqData.referrence_link,
+        body_site: ChiefComplaintsReqData.body_site,
         modified_by: user_uuid,
         modified_date: new Date(),
         created_by: user_uuid,
@@ -93,6 +94,14 @@ const ChiefComplaints = () => {
 
         const { user_uuid } = req.headers;
         const { searchBy, searchValue } = req.query;
+        let ex = new RegExp("/^[a-zA-Z]+$/");
+        console.log('ex.test(searchBy==============+', ex.test(searchBy));
+
+        if (ex.test(searchBy)) {
+            console.log('search by', searchBy);
+
+            return res.send({ code: httpStatus.BAD_REQUEST, message: 'SearchBy should be string value' });
+        }
 
         if (user_uuid && searchBy && searchValue) {
 
@@ -118,28 +127,28 @@ const ChiefComplaints = () => {
         const { user_uuid } = req.headers;
         const chiefComplaintsData = req.body;
 
-        if(user_uuid && chiefComplaintsData){
+        if (user_uuid && chiefComplaintsData) {
             chief_complaints_tbl.findAll({
                 where: {
-                  [Op.or]: [{
-                      code: chiefComplaintsData.code
+                    [Op.or]: [{
+                        code: chiefComplaintsData.code
                     },
                     {
-                      name: chiefComplaintsData.name
+                        name: chiefComplaintsData.name
                     }
-                  ]
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter New CHIEF COMPLAINT "
+                        status: "error",
+                        msg: "Record already Found. Please enter New CHIEF COMPLAINT "
                     });
-                  } 
-              });
+                }
+            });
 
-             
+
             try {
                 chiefComplaintsData.code = chiefComplaintsData & chiefComplaintsData.code ? chiefComplaintsData.code : chiefComplaintsData.name;
                 chiefComplaintsData.description = chiefComplaintsData & chiefComplaintsData.description ? chiefComplaintsData.description : chiefComplaintsData.name;
@@ -151,39 +160,39 @@ const ChiefComplaints = () => {
 
                 if (chiefComplaintsCreatedData) {
                     chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
-                    return res.status(200).send({  statusCode: 200, message: "Inserted Chief Complaints Successfully", responseContents: chiefComplaintsData });
+                    return res.status(200).send({ statusCode: 200, message: "Inserted Chief Complaints Successfully", responseContents: chiefComplaintsData });
                 }
             } catch (ex) {
                 console.log(ex.message);
                 return res.status(400).send({ statusCode: 400, message: ex.message });
             }
-        }else {
+        } else {
             return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
         }
-       
 
-  
+
+
 
     };
     const _getChiefComplaintsById = async (req, res) => {
 
         const { user_uuid } = req.headers;
         const { ChiefComplaints_id } = req.body;
-  
-        if (user_uuid&&ChiefComplaints_id) {
+
+        if (user_uuid && ChiefComplaints_id) {
             try {
 
                 const chiefData = await chief_complaints_tbl.findOne({
                     attributes: getChiefComplaintsAttributes,
-                    where: {uuid:ChiefComplaints_id}
+                    where: { uuid: ChiefComplaints_id }
                 });
 
-               
+
                 return res.status(httpStatus.OK).json({
                     message: "success",
                     statusCode: 200,
-                    responseContents:chiefData 
-                   
+                    responseContents: chiefData
+
 
                 });
 
@@ -205,7 +214,7 @@ const ChiefComplaints = () => {
         const ChiefComplaintsReqData = req.body;
 
         const ChiefComplaintsReqUpdateData = getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData);
-       
+
 
         if (user_uuid && ChiefComplaintsReqData) {
 
@@ -213,11 +222,11 @@ const ChiefComplaints = () => {
 
                 const updatedcheifcomplaintsData = await Promise.all([
                     chief_complaints_tbl.update(ChiefComplaintsReqUpdateData, { where: { uuid: ChiefComplaintsReqData.ChiefComplaints_id } })
-                   
+
                 ]);
 
                 if (updatedcheifcomplaintsData) {
-                    return res.status(200).send({ statusCode:200, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
+                    return res.status(200).send({ statusCode: 200, message: "Updated Successfully", requestContent: ChiefComplaintsReqData });
                 }
 
             } catch (ex) {
@@ -245,7 +254,7 @@ const ChiefComplaints = () => {
                 const updatedcheifcomplaintsAsync = await Promise.all(
                     [
                         chief_complaints_tbl.update(updatedcheifcomplaintsData, { where: { uuid: ChiefComplaints_id } })
-                       
+
                     ]
                 );
 
@@ -263,7 +272,7 @@ const ChiefComplaints = () => {
 
     };
     // const _getChiefComplaints = async (req, res) => {
- 
+
     //     const { user_uuid } = req.headers;
     //     let getsearch = req.body;
 
@@ -327,7 +336,7 @@ const ChiefComplaints = () => {
     //             const chiefdata = await chief_complaints_tbl.findAndCountAll({
     //                 attributes: getChiefComplaintsAttributes,
     //                findQuery:findQuery
-                   
+
     //             });
 
     //             // favouriteList = getFavouritesInList(tickSheetData);
@@ -390,24 +399,24 @@ const ChiefComplaints = () => {
                 [sortField, sortOrder],
             ],
             where: {
-                status:1
-             },
+                status: 1
+            },
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -456,10 +465,10 @@ const ChiefComplaints = () => {
     return {
         getChiefComplaintsFilter: _getChiefComplaintsFilter,
         createChiefComplaints: _createChiefComplaints,
-        getChiefComplaints:_getChiefComplaints,
-        getChiefComplaintsById:_getChiefComplaintsById,
-        updateChiefComplaintsById:_updateChiefComplaintsById,
-        deleteChiefComplaints:_deleteChiefComplaints
+        getChiefComplaints: _getChiefComplaints,
+        getChiefComplaintsById: _getChiefComplaintsById,
+        updateChiefComplaintsById: _updateChiefComplaintsById,
+        deleteChiefComplaints: _deleteChiefComplaints
     };
 
 };
