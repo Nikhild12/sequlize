@@ -7078,6 +7078,98 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/encounter/getAll": {
+      "get": {
+        "summary": "To get all the encounter Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "e_patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "e_encounter_date",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "get All Encounter Details"
+          }
+        }
+      }
+    },
+    "/api/dashboard/getDashBoarddata": {
+      "get": {
+        "summary": "To get DashBoad Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "depertment_Id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "gender",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "session",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Dash Board"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getdashboard"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -7721,75 +7813,6 @@
         "search": {
           "type": "string",
           "example": ""
-        },
-        "procedure_scheme_uuid": {
-          "type": "integer"
-        },
-        "code": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "procedure_technique_uuid": {
-          "type": "integer"
-        },
-        "procedure_version_uuid": {
-          "type": "integer"
-        },
-        "procedure_region_uuid": {
-          "type": "integer"
-        },
-        "procedure_type_uuid": {
-          "type": "integer"
-        },
-        "procedure_category_uuid": {
-          "type": "integer"
-        },
-        "procedure_sub_category_uuid": {
-          "type": "integer"
-        },
-        "operation_type_uuid": {
-          "type": "integer"
-        },
-        "anaesthesia_type_uuid": {
-          "type": "integer"
-        },
-        "speciality_uuid": {
-          "type": "integer"
-        },
-        "equipment_uuid": {
-          "type": "integer"
-        },
-        "body_site_uuid": {
-          "type": "integer"
-        },
-        "duration": {
-          "type": "integer"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "is_active": {
-          "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
-        },
-        "created_by": {
-          "type": "integer"
-        },
-        "modified_by": {
-          "type": "integer"
-        },
-        "created_date": {
-          "type": "string"
-        },
-        "modified_date": {
-          "type": "string"
         }
       }
     },
@@ -13150,6 +13173,10 @@
           "type": "integer"
         }
       }
+    },
+    "getdashboard": {
+      "type": "object",
+      "properties": {}
     }
   }
 }

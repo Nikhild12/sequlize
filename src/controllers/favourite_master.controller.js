@@ -190,24 +190,32 @@ let getTreatmentKitLabAtt = [
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
-  let notNullSearchKey;
+  let notNullSearchKey, activeKey, statusKey;
   tsmd_test_id =
     typeof tsmd_test_id === "string" ? +tsmd_test_id : tsmd_test_id;
   switch (tsmd_test_id) {
     case 1:
       notNullSearchKey = "im_name";
+      activeKey = "im_is_active";
+      statusKey = "im_status";
       break;
     case 2:
     case 3:
     case 7:
       notNullSearchKey = "ltm_name";
+      activeKey = "ltm_is_active";
+      statusKey = "ltm_status";
       break;
     case 5:
       notNullSearchKey = "cc_name";
+      activeKey = "cc_is_active";
+      statusKey = "cc_status";
       break;
     case 6:
     default:
       notNullSearchKey = "d_name";
+      activeKey = "d_is_active";
+      statusKey = "d_status";
       break;
   }
   return {
@@ -215,6 +223,8 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
     tsm_status: active_boolean,
     [notNullSearchKey]: neQuery,
     tsm_favourite_type_uuid: tsmd_test_id,
+    [activeKey]: emr_constants.IS_ACTIVE,
+    [statusKey]: emr_constants.IS_ACTIVE,
     [Op.or]: [
       { tsm_dept: { [Op.eq]: dept_id }, tsm_public: { [Op.eq]: 1 } },
       { tsm_userid: { [Op.eq]: user_uuid } }
@@ -297,7 +307,9 @@ function getFavouriteRadiologyQuery(user_id, fav_type_id) {
     fm_status: active_boolean,
     fm_active: active_boolean,
     fm_userid: user_id,
-    rtm_uuid: neQuery
+    rtm_uuid: neQuery,
+    rtm_is_active: emr_constants.IS_ACTIVE,
+    rtm_status: emr_constants.IS_ACTIVE
   };
 }
 
@@ -332,10 +344,13 @@ const TickSheetMasterController = () => {
     ) {
       const { department_uuid } = favouriteMasterReqData;
       favouriteMasterReqData.active_from = new Date();
+      const fav_master_active = favouriteMasterReqData.is_active;
+
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData,
         user_uuid
       );
+      favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
 
       try {
         // favouriteTransaction = await sequelizeDb.sequelize.transaction();
@@ -357,8 +372,6 @@ const TickSheetMasterController = () => {
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
-          console.log("Existing Record");
-
           const duplicate_msg =
             checkingForSameFavourite[0].tsm_active[0] === 1
               ? duplicate_active_msg
@@ -435,7 +448,7 @@ const TickSheetMasterController = () => {
     const { user_uuid } = req.headers;
     let { dept_id, fav_type_id } = req.query;
 
-    if (user_uuid && dept_id && fav_type_id) {
+    if (user_uuid && dept_id > 0 && fav_type_id) {
       fav_type_id = +fav_type_id;
       if (isNaN(fav_type_id)) {
         return res.status(400).send({
@@ -460,25 +473,40 @@ const TickSheetMasterController = () => {
               fav_type_id
             )
           });
-        }
-        else if (fav_type_id === 10) {
-          favouriteData = await specialitySketchesTbl.findAll({
-            attributes: ['uuid', 'code', 'name', 'description', 'facility_uuid', 'department_uuid', 'sketch_name', 'is_active', 'status'],
-            where: { is_active: 1, status: 1 },
+        } else if (fav_type_id === 10) {
+          favouriteData = await favouriteMasterTbl.findAll({
+            attributes: ["uuid", "favourite_type_uuid", "code", "name"],
+            where: {
+              favourite_type_uuid: fav_type_id,
+              is_active: emr_constants.IS_ACTIVE,
+              status: emr_constants.IS_ACTIVE,
+              [Op.or]: [
+                {
+                  department_uuid: { [Op.eq]: dept_id },
+                  is_public: { [Op.eq]: emr_constants.IS_ACTIVE }
+                },
+                { user_uuid: { [Op.eq]: user_uuid } }
+              ]
+            },
+
             include: [
               {
-                model: specialitySketchDetailsTbl,
-                as: 'speciality_sketch_details',
-                attributes: ['uuid', 'speciality_sketch_uuid', 'sketch_path', 'is_active', 'status'],
-                where: { is_active: 1, status: 1 },
-              }]
+                model: favouritMasterDetailsTbl,
+                attributes: ["uuid", "speciality_sketch_uuid"],
+                include: [
+                  {
+                    model: specialitySketchesTbl,
+                    attributes: ["code", "name", "description"]
+                  }
+                ]
+              }
+            ]
           });
-        }
-        else {
+        } else {
           favouriteData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
             where: getFavouriteQuery(dept_id, user_uuid, fav_type_id),
-            order: [['tsm_display_order', 'ASC']],
+            order: [["tsm_display_order", "ASC"]]
           });
         }
 
@@ -490,12 +518,9 @@ const TickSheetMasterController = () => {
           favouriteList = emr_attributes_investigation.getInvestigationResponse(
             favouriteData
           );
-        }
-        else if (fav_type_id === 10) {
-          favouriteList = favouriteData
-        }
-
-        else {
+        } else if (fav_type_id === 10) {
+          favouriteList = getSpecialitySketchFavourite(favouriteData);
+        } else {
           favouriteList = getFavouritesInList(favouriteData);
         }
 
@@ -518,7 +543,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request headers or Query Param Found"
+        message: "No Request headers or Query Param Found or Bad Request "
       });
     }
   };
@@ -684,7 +709,10 @@ const TickSheetMasterController = () => {
         console.log("Finally");
       }
     } else {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
     }
   };
 
@@ -720,10 +748,15 @@ const TickSheetMasterController = () => {
           })
         ]);
 
-        if (updateFavouriteAsync) {
+        if (updateFavouriteAsync == 1) {
           return res
             .status(200)
             .send({ code: httpStatus.OK, message: "Deleted Successfully" });
+        }
+        else {
+          return res
+            .status(400)
+            .send({ code: httpStatus.OK, message: " Failed to Delete Record or No Record Found" });
         }
       } catch (ex) {
         return res
@@ -1097,6 +1130,12 @@ function getSearchValueBySearchKey(details, search_key) {
         search_key: "tsmd_diet_master_uuid",
         search_value: details.diet_master_uuid
       };
+
+    case "speciality":
+      return {
+        search_key: "tsmd_speciality_sketch_uuid",
+        search_value: details.speciality_sketch_uuid
+      };
     case "drug":
     default:
       return {
@@ -1319,4 +1358,25 @@ function getAllDietFavsInReadableFormat(dietFav) {
       diet_category_code: df.dc_code
     };
   });
+}
+
+function getSpecialitySketchFavourite(sketchFav) {
+  return sketchFav.map(f => {
+    return {
+      favourite_id: f.uuid,
+      favourite_name: getSpecialityFromFav(f.favourite_master_detail, "name"),
+      favourite_code: getSpecialityFromFav(f.favourite_master_detail, "code"),
+      favourite_details_id:
+        (f.favourite_master_detail && f.favourite_master_detail.uuid) || 0,
+
+      speciality_sketch_id:
+        (f.favourite_master_detail &&
+          f.favourite_master_detail.speciality_sketch_uuid) ||
+        0
+    };
+  });
+}
+
+function getSpecialityFromFav(detail, property) {
+  return (detail.speciality_sketch && detail.speciality_sketch[property]) || "";
 }

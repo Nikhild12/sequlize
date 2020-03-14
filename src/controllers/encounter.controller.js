@@ -18,7 +18,7 @@ const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const encounter_type_tbl = sequelizeDb.encounter_type;
 const vw_patientdoc = sequelizeDb.vw_patient_doctor_details;
-
+const vw_encounterDetailsTbl = sequelizeDb.vw_emr_encounter_details;
 const emr_constants = require("../config/constants");
 
 const emr_mock_json = require("../config/emr_mock_json");
@@ -123,6 +123,39 @@ const Encounter = () => {
           responseContents: encounterData
         });
       } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        });
+      }
+    } catch (ex) {
+      console.log(ex);
+      return res
+        .status(400)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
+  const _getEncounterByPatientIdAndVisitdate = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const {
+      e_patient_uuid,
+      e_encounter_date,
+      is_active_encounter
+    } = req.query;
+
+    try {
+      if (user_uuid && e_patient_uuid || (e_patient_uuid && e_encounter_date)) {
+        const encounterData = await vw_encounterDetailsTbl.findAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } },
+          { where: is_active_encounter == 2 });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched Encounter Successfully",
+          responseContents: encounterData
+        });
+      }
+
+      else {
         return res.status(400).send({
           code: httpStatus[400],
           message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
@@ -603,7 +636,8 @@ const Encounter = () => {
     updateECdischarge: _updateECdischarge,
     updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor,
     getPatientDoc: _getPatientDoc,
-    closeEncounter: _closeEncounter
+    closeEncounter: _closeEncounter,
+    getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate
   };
 };
 
