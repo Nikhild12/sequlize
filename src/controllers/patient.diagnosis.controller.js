@@ -209,16 +209,17 @@ const PatientDiagnsis = () => {
     };
     try {
       if (user_uuid && patient_diagnosis_id && postData && Object.keys(postData).length != 0) {
-        let fetchedData = await patient_diagnosis_tbl.findOne(selector);
-        let fetchedDate = fetchedData.created_date;
-        fetchedDate = moment(fetchedDate).format("YYYY-MM-DD");
-        let currentDate = moment(Date.now()).format("YYYY-MM-DD");
-        if (fetchedDate != currentDate) {
-          return res.status(400).send({
-            code: httpStatus[400],
-            message: "Only today date able to update"
-          });
-        }
+        // let fetchedData = await patient_diagnosis_tbl.findOne(selector);
+        // let fetchedDate = fetchedData.created_date;
+        // fetchedDate = moment(fetchedDate).format("YYYY-MM-DD");
+        // let currentDate = moment(Date.now()).format("YYYY-MM-DD");
+        // if (fetchedDate != currentDate) {
+        //   return res.status(400).send({
+        //     code: httpStatus[400],
+        //     message: "Only today date able to update"
+        //   });
+        // }
+
 
         const diagnosisData = await patient_diagnosis_tbl.update(
           postData,
@@ -229,6 +230,8 @@ const PatientDiagnsis = () => {
           return res
             .status(200)
             .send({ code: httpStatus.OK, message: "Updated Successfully" });
+        } else {
+          return res.status(400).send({ code: 400, message: 'failed to update' });
         }
       } else {
         return res
