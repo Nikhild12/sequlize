@@ -20,6 +20,9 @@ const chief_complaints_duration_tbl =
 const encounter_tbl = sequelizeDb.encounter;
 
 const emr_constants = require("../config/constants");
+const duplicate_active_msg = "Already item is available in the list";
+const duplicate_in_active_msg =
+  "This item is Inactive! Please contact administrator";
 
 const utilityService = require("../services/utility.service");
 
@@ -129,6 +132,15 @@ const PatientChiefComplaints = () => {
           chiefComplaintsData,
           { returning: true }
         );
+        // if (chiefComplaintsCreatedData && chiefComplaintsCreatedData.length > 0) {
+        //   const duplicate_msg =
+        //     chiefComplaintsCreatedData[0].is_active[0] === 1
+        //       ? duplicate_active_msg
+        //       : duplicate_in_active_msg;
+        //   return res
+        //     .status(400)
+        //     .send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
+        // }
         if (chiefComplaintsCreatedData) {
           return res.status(200).send({
             code: httpStatus.OK,
