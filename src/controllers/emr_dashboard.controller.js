@@ -211,6 +211,30 @@ const EmrDashBoard = () => {
             }
             else {
                 console.log("this is default filter section");
+                console.log(today);
+                let from_date = today;
+                let to_date = today;
+                const diag = await getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_date, to_date);
+                const chiefc = await getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
+                const presc = await getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date);
+                const cons = await getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
+                const lab = await getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date);
+
+                // let orders = {};
+                // orders.date = lab[0].lpo_order_request_date;
+                // orders.gender = lab[0].dataValues.g_name;
+                // orders.lab_count = lab[0].dataValues.Count;
+
+                return res.status(200).send({
+                    code: httpStatus.OK, message: 'Fetched Successfully',
+                    responseContents: {
+                        "diagnosis": diag,
+                        "cieif_complaints": chiefc,
+                        "prescription": presc,
+                        "consulted": cons,
+                        "lab_orders": lab
+                    }
+                });
             }
 
         } catch (ex) {
@@ -1274,6 +1298,167 @@ async function getlabbygenderdate(lab_dash, user_uuid, depertment_Id, gender, fr
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date) {
+    const diag = await lab_dash.findAll({
+        group: ['lpo_order_request_date'],
+        attributes: ['lpo_order_request_date',
+            [Sequelize.fn('time', Sequelize.col('ed_consultation_start_date')), 'Time'],
+            //[Sequelize.fn('day', Sequelize.col('ed_consultation_start_date')), 'day'],
+            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_number')), 'Count'],
+            //[Sequelize.fn('count', '*'), 'Count']
+        ],
+        //group: ['hour'],
+        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            lpo_order_request_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //hour( activity_dt ) , day( activity_dt )
+        group: ['ed_consultation_start_date'],
+        attributes: ['ed_consultation_start_date',
+            //[Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
+            [Sequelize.fn('time', Sequelize.col('ed_consultation_start_date')), 'Time'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*' ),'Tot_Count']
+        ],
+        //group: ['hour'],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date) {
+
+    const diag = await pres_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        ],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ps_prescription_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+
+async function getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_date, to_date) {
+    const diag = await diag_dash.findAll({
+        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
+        attributes: ['pd_diagnosis_uuid', 'd_name', 'pd_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            pd_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pd_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+
+}
+
+async function getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date) {
+    const diag = await chiefc_dash.findAll({
+        group: ['ed_patient_uuid', 'pcc_chief_complaint_uuid'],
+        attributes: ['pcc_chief_complaint_uuid', 'cc_name', 'pcc_performed_date',
+            [Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'DESC']],
+        limit: 10,
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            pcc_performed_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('pcc_performed_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
                 ]
             }
         }
