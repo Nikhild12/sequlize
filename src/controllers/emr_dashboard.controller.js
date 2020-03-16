@@ -253,7 +253,7 @@ async function getDiagnosisbygenger(diag_dash, user_uuid, depertment_Id, gender)
 
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_name', 'g_name',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'g_name',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -278,7 +278,7 @@ async function getchiefbygenger(chiefc_dash, user_uuid, depertment_Id, gender) {
 
     const diag = await chiefc_dash.findAll({
         group: ['ed_patient_uuid', 'pcc_chief_complaint_uuid'],
-        attributes: ['pcc_chief_complaint_uuid', 'cc_name', 'g_name',
+        attributes: ['pcc_chief_complaint_uuid', 'cc_code', 'cc_name', 'g_name',
             [Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pcc_chief_complaint_uuid')), 'DESC']],
