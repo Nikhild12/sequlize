@@ -1315,7 +1315,7 @@ async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_d
     const diag = await lab_dash.findAll({
         group: ['lpo_order_request_date'],
         attributes: ['lpo_order_request_date',
-            [Sequelize.fn('time', Sequelize.col('ed_consultation_start_date')), 'Time'],
+            [Sequelize.fn('time', Sequelize.col('lpo_order_request_date')), 'Time'],
             //[Sequelize.fn('day', Sequelize.col('ed_consultation_start_date')), 'day'],
             [Sequelize.fn('COUNT', Sequelize.col('lpo_order_number')), 'Count'],
             //[Sequelize.fn('count', '*'), 'Count']
