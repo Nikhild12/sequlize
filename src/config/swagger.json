@@ -6662,12 +6662,18 @@
       }
     },
     "/api/patient-treatment/prevKitOrdersById": {
-      "get": {
+      "post": {
         "description": "To get Previouskit Orders",
         "parameters": [
           {
             "in": "header",
             "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
             "required": true,
             "type": "integer"
           },
