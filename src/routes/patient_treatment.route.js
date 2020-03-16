@@ -8,7 +8,7 @@ const patientTreatmentCtrl = require('../controllers/patient_treatments.controll
 const patientTKRoute = express.Router();
 
 patientTKRoute.route('/create').post(patientTreatmentCtrl.createPatientTreatment);
-patientTKRoute.route('/prevKitOrdersById').get(patientTreatmentCtrl.prevKitOrdersById);
+patientTKRoute.route('/prevKitOrdersById').post(patientTreatmentCtrl.previousKitRepeatOrder);
 patientTKRoute.route('/repeatOrderDetails').post(patientTreatmentCtrl.repeatOrderById);
-
+//patientTKRoute.route('/prevKitOrdersRepeat').post(patientTreatmentCtrl.previousKitRepeatOrder);
 module.exports = patientTKRoute;
