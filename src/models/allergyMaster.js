@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(250),
             allowNull: true
         },
+        comments: {
+            type: DataTypes.STRING(250),
+            allowNull: true
+        },
         allergy_source_uuid: {
             type: DataTypes.INTEGER
         },

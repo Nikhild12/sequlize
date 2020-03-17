@@ -482,6 +482,7 @@ async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
 
     pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
     pD.performed_by = user_uuid;
+    pD.performed_date = new Date();
   });
 
   return await patient_diagnosis_tbl.bulkCreate(patientsDiagnosisData, {
