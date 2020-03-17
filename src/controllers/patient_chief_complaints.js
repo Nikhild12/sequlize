@@ -126,6 +126,7 @@ const PatientChiefComplaints = () => {
       try {
         chiefComplaintsData.forEach(cD => {
           cD = emr_utility.createIsActiveAndStatus(cD, user_uuid);
+          cD.performed_date = new Date();
         });
 
         const chiefComplaintsCreatedData = await patient_chief_complaints_tbl.bulkCreate(
