@@ -748,16 +748,17 @@ const TickSheetMasterController = () => {
           })
         ]);
 
-        if (updateFavouriteAsync == 1) {
-          return res
-            .status(200)
-            .send({ code: httpStatus.OK, message: "Deleted Successfully" });
-        }
-        else {
-          return res
-            .status(400)
-            .send({ code: httpStatus.OK, message: " Failed to Delete Record or No Record Found" });
-        }
+        const isDeleteSuccess = updateFavouriteAsync[0][0] === 1;
+        const responseCode = isDeleteSuccess
+          ? httpStatus.OK
+          : httpStatus.NO_CONTENT;
+        const responseMessage = isDeleteSuccess
+          ? emr_constants.FAVOURITE_DELETED_SUCCESSFULLY
+          : emr_constants.NO_RECORD_FOUND;
+
+        return res
+          .status(200)
+          .send({ code: responseCode, message: responseMessage });
       } catch (ex) {
         return res
           .status(400)
