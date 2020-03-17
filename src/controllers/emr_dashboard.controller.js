@@ -72,7 +72,7 @@ const EmrDashBoard = () => {
                 const inv = await getinvbysession(inv_dash, user_uuid, depertment_Id, session);
 
                 const orders = getorders(lab, rad, inv);
-                
+
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
@@ -210,7 +210,8 @@ const EmrDashBoard = () => {
                 const lab = await getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date);
                 const rad = await getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date);
                 const inv = await getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date);
-
+                const consd = await getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
+                
                 let obj = {};
 
                 let order = [];
@@ -235,17 +236,23 @@ const EmrDashBoard = () => {
 
                 order.push(Object.assign({}, obj));
 
+                const lab_order = gethours(lab);
+                const rad_order = gethours(rad);
+                const inv_order = gethours(inv);
+                const cons_graph = gethourscons(cons);
+
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
                         "diagnosis": diag,
                         "cieif_complaints": chiefc,
                         "prescription": presc,
-                        "consulted": cons,
+                        "consulted": consd,
                         "orders": order,
-                        "rad_orders": rad,
-                        "inv_orders": inv,
-                        "lab_orders": lab
+                        "rad_orders": rad_order,
+                        "inv_orders": inv_order,
+                        "lab_orders": lab_order,
+                        "cons_graph": cons_graph
                     }
                 });
             }
@@ -669,7 +676,7 @@ async function getDiagnosisbysession(diag_dash, user_uuid, depertment_Id, sessio
 
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 's_name',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 's_name',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -719,7 +726,7 @@ async function getchiefcbysession(chiefc_dash, user_uuid, depertment_Id, session
 async function getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid','d_code', 'd_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -779,7 +786,7 @@ async function getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date,
 async function getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 'g_name', 's_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'g_name', 's_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -843,7 +850,7 @@ async function getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gen
 async function getdiagbysessiongender(diag_dash, user_uuid, depertment_Id, session, gender) {
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 'g_name', 's_name',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'g_name', 's_name',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -897,7 +904,7 @@ async function getchiefbysessiongender(chiefc_dash, user_uuid, depertment_Id, se
 async function getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date) {
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 's_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 's_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -959,7 +966,7 @@ async function getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, sess
 async function getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
     const diag = await diag_dash.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 'g_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'g_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -1664,13 +1671,13 @@ async function getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, fr
 }
 async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await lab_dash.findAll({
-        group: ['lpo_order_request_date'],
+        //group: ['lpo_order_request_date'],
         attributes: ['lpo_order_request_date',
-            [Sequelize.fn('time', Sequelize.col('lpo_order_request_date')), 'Time'],
+            [Sequelize.fn('hour', Sequelize.col('lpo_order_request_date')), 'hour'],
             [Sequelize.fn('COUNT', Sequelize.col('lpo_order_number')), 'Count'],
             //[Sequelize.fn('count', '*'), 'Count']
         ],
-        //group: ['hour'],
+        group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
         limit: 10,
         where: {
@@ -1688,6 +1695,7 @@ async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_d
     }
     );
     if (diag && diag.length > 0) {
+
         return diag;
     } else {
         return {};
@@ -1696,13 +1704,13 @@ async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_d
 }
 async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await ris_dash.findAll({
-        group: ['rpo_order_request_date'],
+        //group: ['rpo_order_request_date'],
         attributes: ['rpo_order_request_date',
-            [Sequelize.fn('time', Sequelize.col('rpo_order_request_date')), 'Time'],
+            [Sequelize.fn('hour', Sequelize.col('rpo_order_request_date')), 'hour'],
             [Sequelize.fn('COUNT', Sequelize.col('rpo_order_number')), 'Count'],
             //[Sequelize.fn('count', '*'), 'Count']
         ],
-        //group: ['hour'],
+        group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
         limit: 10,
         where: {
@@ -1728,13 +1736,13 @@ async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_d
 }
 async function getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await inv_dash.findAll({
-        group: ['ipo_order_request_date'],
+        //group: ['ipo_order_request_date'],
         attributes: ['ipo_order_request_date',
-            [Sequelize.fn('time', Sequelize.col('ipo_order_request_date')), 'Time'],
+            [Sequelize.fn('hour', Sequelize.col('ipo_order_request_date')), 'hour'],
             [Sequelize.fn('COUNT', Sequelize.col('ipo_order_number')), 'Count'],
             //[Sequelize.fn('count', '*'), 'Count']
         ],
-        //group: ['hour'],
+        group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
         limit: 10,
         where: {
@@ -1762,10 +1770,45 @@ async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to
 
     const diag = await cons_dash.findAll({
         //hour( activity_dt ) , day( activity_dt )
-        group: ['ed_consultation_start_date'],
+        //group: ['ed_consultation_start_date'],
         attributes: ['ed_consultation_start_date',
             //[Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
-            [Sequelize.fn('time', Sequelize.col('ed_consultation_start_date')), 'Time'],
+            [Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
+        ],
+        group: ['hour'],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+    if (diag && diag.length > 0) {
+        return diag;
+    } else {
+        return {};
+    }
+}
+async function getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
+
+    const diag = await cons_dash.findAll({
+        //hour( activity_dt ) , day( activity_dt )
+        //group: ['ed_consultation_start_date'],
+        attributes: [
+            //[Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
+            //[Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
@@ -1793,7 +1836,6 @@ async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to
         return {};
     }
 }
-
 async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date) {
 
     const diag = await pres_dash.findAll({
@@ -1905,4 +1947,255 @@ function getorders(lab, rad, inv) {
     //orders.gender = lab[0].dataValues.g_name;
 
     return orders;
+}
+
+
+function gethours(data) {
+    //console.log (data);
+    let lab_obj = {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
+        "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
+        "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0
+    };
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].dataValues.hour === 0) {
+            lab_obj["0"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 1) {
+            lab_obj["1"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 2) {
+            lab_obj["2"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 3) {
+            lab_obj["3"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 4) {
+            lab_obj["4"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 5) {
+            lab_obj["5"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 6) {
+            lab_obj["6"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 7) {
+            lab_obj["7"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 8) {
+            lab_obj["8"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 9) {
+            lab_obj["9"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 10) {
+            lab_obj["10"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 11) {
+            lab_obj["11"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 12) {
+            lab_obj["12"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 13) {
+            lab_obj["13"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 14) {
+            lab_obj["14"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 15) {
+            lab_obj["15"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 16) {
+            lab_obj["16"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 17) {
+            lab_obj["17"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 18) {
+            lab_obj["18"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 19) {
+            lab_obj["19"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 20) {
+            lab_obj["20"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 21) {
+            lab_obj["21"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 22) {
+            lab_obj["22"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 23) {
+            lab_obj["23"] = data[i].dataValues.Count;
+        }
+    }
+    return lab_obj;
+}
+
+function gethourscons(data) {
+    //console.log (data);
+    let lab_obj = {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
+        "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
+        "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0
+    };
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].dataValues.hour === 0) {
+            lab_obj["0"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 1) {
+            lab_obj["1"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 2) {
+            lab_obj["2"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 3) {
+            lab_obj["3"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 4) {
+            lab_obj["4"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 5) {
+            lab_obj["5"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 6) {
+            lab_obj["6"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 7) {
+            lab_obj["7"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 8) {
+            lab_obj["8"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 9) {
+            lab_obj["9"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 10) {
+            lab_obj["10"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 11) {
+            lab_obj["11"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 12) {
+            lab_obj["12"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 13) {
+            lab_obj["13"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 14) {
+            lab_obj["14"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 15) {
+            lab_obj["15"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 16) {
+            lab_obj["16"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 17) {
+            lab_obj["17"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 18) {
+            lab_obj["18"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 19) {
+            lab_obj["19"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 20) {
+            lab_obj["20"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 21) {
+            lab_obj["21"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 22) {
+            lab_obj["22"] = data[i].dataValues.Tot_Count;
+        }
+        if (data[i].dataValues.hour === 23) {
+            lab_obj["23"] = data[i].dataValues.Tot_Count;
+        }
+    }
+
+    return lab_obj;
+}
+
+
+function gethoursnew(data) {
+    //console.log (data);
+    let lab_obj = {};
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].dataValues.hour === 0) {
+            lab_obj["0"] = (data[i].dataValues.Count && data[i].dataValues.Count > 0) ? data[i].dataValues.Count : 0;
+        }
+        if (data[i].dataValues.hour === 1) {
+            lab_obj["1"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 2) {
+            lab_obj["2"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 3) {
+            lab_obj["3"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 4) {
+            lab_obj["4"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 5) {
+            lab_obj["5"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 6) {
+            lab_obj["6"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 7) {
+            lab_obj["7"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 8) {
+            lab_obj["8"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 9) {
+            lab_obj["9"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 10) {
+            lab_obj["10"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 11) {
+            lab_obj["11"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 12) {
+            lab_obj["12"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 13) {
+            lab_obj["13"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 14) {
+            lab_obj["14"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 15) {
+            lab_obj["15"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 16) {
+            lab_obj["16"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 17) {
+            lab_obj["17"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 18) {
+            lab_obj["18"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 19) {
+            lab_obj["19"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 20) {
+            lab_obj["20"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 21) {
+            lab_obj["21"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 22) {
+            lab_obj["22"] = data[i].dataValues.Count;
+        }
+        if (data[i].dataValues.hour === 23) {
+            lab_obj["23"] = data[i].dataValues.Count;
+        }
+    }
+    return lab_obj;
 }
