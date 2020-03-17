@@ -327,7 +327,7 @@ const PatientTreatmentController = () => {
               });
             });
           }
-          const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, orderIds, patient_uuid);
+          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, facility_uuid, authorization, orderIds, patient_uuid);
           if (repeatOrderPrescData.length > 0) {
             response.forEach(p => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -426,7 +426,7 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id, patient_uuid) {
+async function getPrevOrderPrescription(user_uuid, facility_uuid, Authorization, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
@@ -436,7 +436,7 @@ async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorizatio
     headers: {
       user_uuid: user_uuid,
       facility_uuid: facility_uuid,
-      Authorization: authorization
+      Authorization: Authorization
     },
     method: 'POST',
     json: true,
