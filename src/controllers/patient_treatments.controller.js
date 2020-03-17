@@ -31,17 +31,6 @@ const treatmentKitTable = sequelizeDb.treatment_kit;
 
 // Patient Treatment Attributes
 const patientTreatmentAttributes = require("../attributes/patient_treatment_attributes");
-// const getPrevKitOrders = [
-//   'pt_uuid',
-//   'pt_patient_uuid',
-//   'pt_treatment_given_date',
-//   'd_name',
-//   'tk_name',
-//   'u1_first_name',
-//   'u1_middle_name',
-//   'u1_last_name',
-//   'et_name'
-// ];
 
 const getPrevKitOrders = [
   'uuid',
@@ -457,6 +446,7 @@ async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorizatio
     }
   };
   try {
+    console.log(options, 'options');
     const prescriptionData = await rp(options);
     if (prescriptionData.responseContents) {
       const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
@@ -558,30 +548,29 @@ async function getPrescriptionRseponse(prescriptions) {
           "prescription_status_code": pd.prescription_status != null ? pd.prescription_status.code : null,
 
           //Drug Details
-          "drug_name": e.item_master.name,
-          "drug_code": e.item_master.code,
-          "item_master_uuid": e.item_master.uuid,
+          "drug_name": e.item_master != null ? e.item_master.name : null,
+          "drug_code": e.item_master != null ? e.item_master.code : null,
+          "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
           // Drug Route Details
-          "drug_route_name": e.drug_route.name,
-          "drug_route_code": e.drug_route.code,
-          "drug_route_id": e.drug_route.uuid,
-          "prescribed_quantity": e.prescribed_quantity,
+          "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
+          "drug_route_code": e.drug_route != null ? e.drug_route.code : null,
+          "drug_route_id": e.drug_route != null ? e.drug_route.uuid : null,
           // Drug Frequency Details
-          "drug_frequency_name": e.drug_frequency.name,
-          "drug_frequency_id": e.drug_frequency.uuid,
-          "drug_frequency_code": e.drug_frequency.code,
+          "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
+          "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
+          "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
           // Drug Period Details
-          "drug_period_name": e.duration_period.name,
-          "drug_period_id": e.duration_period.uuid,
-          "drug_period_code": e.duration_period.code,
+          "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
+          "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
+          "drug_period_code": e.duration_period != null ? e.duration_period.code : null,
 
           //Duration
           "duration": e.duration,
 
           // Drug Instruction Details
-          "drug_instruction_code": e.drug_instruction.code,
-          "drug_instruction_name": e.drug_instruction.name,
-          "drug_instruction_id": e.drug_instruction.uuid
+          "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
+          "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
+          "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
         }
       ]
     });
