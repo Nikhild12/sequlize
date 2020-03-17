@@ -331,17 +331,21 @@ const PatientTreatmentController = () => {
         if (response) {
           const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(orderIds);
           const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-          response.forEach((e, index) => {
-            e.diagnosis = responseDiagnosis.filter((rD) => {
-              return rD.order_id === e.order_id;
+          if (responseDiagnosis.length > 0) {
+            response.forEach((e, index) => {
+              e.diagnosis = responseDiagnosis.filter((rD) => {
+                return rD.order_id === e.order_id;
+              });
             });
-          });
+          }
           const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, orderIds, patient_uuid);
-          response.forEach(p => {
-            p.drugDetails = repeatOrderPrescData.filter((rP) => {
-              return rP.order_id === p.order_id;
-            })
-          });
+          if (repeatOrderPrescData.length > 0) {
+            response.forEach(p => {
+              p.drugDetails = repeatOrderPrescData.filter((rP) => {
+                return rP.order_id === p.order_id;
+              });
+            });
+          }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
       }
@@ -350,7 +354,7 @@ const PatientTreatmentController = () => {
       }
     } catch (ex) {
       console.log('Exception Happened', ex);
-      return res.status(400).send({ code: 400, message: ex });
+      return res.status(400).send({ code: 400, message: ex.message });
     }
 
   };
@@ -460,7 +464,7 @@ async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorizatio
     }
 
   } catch (ex) {
-    console.log(ex, 'ex');
+    console.log(ex.message, 'ex');
     return ex;
   }
 }
@@ -489,21 +493,20 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 
 }
 async function getPreviousInvest({ user_uuid, authorization }, order_id) {
-  return await _getRequest({ user_uuid, authorization }, order_id);
 
 }
 
-async function getDepartments(user_uuid, authorization, departmentIds) {
+async function getDepartments(user_uuid, Authorization, departmentIds) {
 
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
   const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
 
   let options = {
     uri: url,
     method: 'POST',
     headers: {
-      "Authorization": authorization,
-      "user_uuid": user_uuid
+      Authorization: Authorization,
+      user_uuid: user_uuid
     },
     body: { "uuid": departmentIds },
     json: true
@@ -514,15 +517,15 @@ async function getDepartments(user_uuid, authorization, departmentIds) {
   }
 }
 
-async function getDoctorDetails(user_uuid, authorization, doctorIds) {
+async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
   const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
   let options = {
     uri: url,
     method: 'POST',
     headers: {
-      "Authorization": authorization,
-      "user_uuid": user_uuid
+      Authorization: Authorization,
+      user_uuid: user_uuid
     },
     body: { "uuid": doctorIds },
     json: true
@@ -544,6 +547,11 @@ async function getPrescriptionRseponse(prescriptions) {
         ...result,
         {
           "order_id": pd.patient_treatment_uuid,
+
+          "uuid": e.uuid,
+          "prescription_uuid": e.prescription_uuid,
+
+
           //Drug Status
           "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
           "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
@@ -552,11 +560,12 @@ async function getPrescriptionRseponse(prescriptions) {
           //Drug Details
           "drug_name": e.item_master.name,
           "drug_code": e.item_master.code,
-          "drug_id": e.item_master.uuid,
+          "item_master_uuid": e.item_master.uuid,
           // Drug Route Details
           "drug_route_name": e.drug_route.name,
           "drug_route_code": e.drug_route.code,
           "drug_route_id": e.drug_route.uuid,
+          "prescribed_quantity": e.prescribed_quantity,
           // Drug Frequency Details
           "drug_frequency_name": e.drug_frequency.name,
           "drug_frequency_id": e.drug_frequency.uuid,
@@ -588,6 +597,7 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
       result.push(
         {
           order_id: rd.dataValues.patient_treatment_uuid,
+          uuid: rd.dataValues.uuid,
           diagnosis_id: rd.dataValues.diagnosis.dataValues.uuid,
           diagnosis_name: rd.dataValues.diagnosis.dataValues.name,
           diagnosis_code: rd.dataValues.diagnosis.dataValues.code,
@@ -665,30 +675,6 @@ const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, or
   } catch (ex) {
     console.log('Exception Happened', ex);
     return ex;
-  }
-
-};
-
-const _getRequest = async (url, { user_uuid, authorization }, order_id) => {
-  let options = {
-    uri: url,
-    headers: {
-      Authorization: authorization
-    },
-    method: 'GET',
-    json: true,
-    body: {
-      patient_treatment_uuid: order_id
-    }
-  };
-  try {
-    const result = await rp(options);
-    if (result) {
-      return result;
-    }
-  } catch (ex) {
-    console.log('Exception Happened', ex);
-    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
   }
 
 };
