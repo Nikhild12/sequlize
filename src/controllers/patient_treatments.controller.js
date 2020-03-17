@@ -331,17 +331,21 @@ const PatientTreatmentController = () => {
         if (response) {
           const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(orderIds);
           const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-          response.forEach((e, index) => {
-            e.diagnosis = responseDiagnosis.filter((rD) => {
-              return rD.order_id === e.order_id;
+          if (responseDiagnosis.length > 0) {
+            response.forEach((e, index) => {
+              e.diagnosis = responseDiagnosis.filter((rD) => {
+                return rD.order_id === e.order_id;
+              });
             });
-          });
+          }
           const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, orderIds, patient_uuid);
-          response.forEach(p => {
-            p.drugDetails = repeatOrderPrescData.filter((rP) => {
-              return rP.order_id === p.order_id;
-            })
-          });
+          if (repeatOrderPrescData.length > 0) {
+            response.forEach(p => {
+              p.drugDetails = repeatOrderPrescData.filter((rP) => {
+                return rP.order_id === p.order_id;
+              });
+            });
+          }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
       }
@@ -350,7 +354,7 @@ const PatientTreatmentController = () => {
       }
     } catch (ex) {
       console.log('Exception Happened', ex);
-      return res.status(400).send({ code: 400, message: ex });
+      return res.status(400).send({ code: 400, message: ex.message });
     }
 
   };
@@ -434,8 +438,8 @@ async function getPrevOrderdDiagnosisData(order_id) {
 }
 
 async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id, patient_uuid) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
-  const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
+  //const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
 
   let options = {
@@ -495,8 +499,8 @@ async function getPreviousInvest({ user_uuid, authorization }, order_id) {
 
 async function getDepartments(user_uuid, authorization, departmentIds) {
 
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
-  const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
+  //const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
 
   let options = {
     uri: url,
@@ -515,8 +519,8 @@ async function getDepartments(user_uuid, authorization, departmentIds) {
 }
 
 async function getDoctorDetails(user_uuid, authorization, doctorIds) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
-  const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
+  //const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
   let options = {
     uri: url,
     method: 'POST',
