@@ -239,6 +239,7 @@ const EmrDashBoard = () => {
                 const lab_order = gethours(lab);
                 const rad_order = gethours(rad);
                 const inv_order = gethours(inv);
+                const orders_graph = getordershr(lab_order,rad_order,inv_order);
                 const cons_graph = gethourscons(cons);
 
                 return res.status(200).send({
@@ -249,10 +250,11 @@ const EmrDashBoard = () => {
                         "prescription": presc,
                         "consulted": consd,
                         "orders": order,
-                        "rad_orders": rad_order,
-                        "inv_orders": inv_order,
-                        "lab_orders": lab_order,
-                        "cons_graph": cons_graph
+                        //"rad_orders": rad_order,
+                        //"inv_orders": inv_order,
+                        //"lab_orders": lab_order,
+                        "cons_graph": cons_graph,
+                        "orders_graph": orders_graph
                     }
                 });
             }
@@ -2198,4 +2200,17 @@ function gethoursnew(data) {
         }
     }
     return lab_obj;
+}
+
+function getordershr(lab_order,rad_order,inv_order){
+    let obj = {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
+        "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
+        "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0
+    };
+
+for (let i=0;i<=23; i++){
+    obj[""+i+""] = lab_order[""+i+""] + rad_order[""+i+""] + inv_order[""+i+""];
+}
+return obj;
 }
