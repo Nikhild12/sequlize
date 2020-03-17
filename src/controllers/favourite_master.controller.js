@@ -748,7 +748,7 @@ const TickSheetMasterController = () => {
           })
         ]);
 
-        const isDeleteSuccess = updateFavouriteAsync[0] === 1;
+        const isDeleteSuccess = updateFavouriteAsync[0][0] === 1;
         const responseCode = isDeleteSuccess
           ? httpStatus.OK
           : httpStatus.NO_CONTENT;
