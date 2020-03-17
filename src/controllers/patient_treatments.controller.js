@@ -437,7 +437,7 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription({ user_uuid, facility_uuid, Authorization }, order_id, patient_uuid) {
+async function getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
 
@@ -447,7 +447,7 @@ async function getPrevOrderPrescription({ user_uuid, facility_uuid, Authorizatio
     headers: {
       user_uuid: user_uuid,
       facility_uuid: facility_uuid,
-      Authorization: Authorization
+      Authorization: authorization
     },
     method: 'POST',
     json: true,
@@ -464,7 +464,7 @@ async function getPrevOrderPrescription({ user_uuid, facility_uuid, Authorizatio
     }
 
   } catch (ex) {
-    console.log(ex, 'ex');
+    console.log(ex.message, 'ex');
     return ex;
   }
 }
@@ -493,7 +493,6 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 
 }
 async function getPreviousInvest({ user_uuid, authorization }, order_id) {
-  return await _getRequest({ user_uuid, authorization }, order_id);
 
 }
 
@@ -548,6 +547,11 @@ async function getPrescriptionRseponse(prescriptions) {
         ...result,
         {
           "order_id": pd.patient_treatment_uuid,
+
+          "uuid": e.uuid,
+          "prescription_uuid": e.prescription_uuid,
+
+
           //Drug Status
           "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
           "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
@@ -556,11 +560,12 @@ async function getPrescriptionRseponse(prescriptions) {
           //Drug Details
           "drug_name": e.item_master.name,
           "drug_code": e.item_master.code,
-          "drug_id": e.item_master.uuid,
+          "item_master_uuid": e.item_master.uuid,
           // Drug Route Details
           "drug_route_name": e.drug_route.name,
           "drug_route_code": e.drug_route.code,
           "drug_route_id": e.drug_route.uuid,
+          "prescribed_quantity": e.prescribed_quantity,
           // Drug Frequency Details
           "drug_frequency_name": e.drug_frequency.name,
           "drug_frequency_id": e.drug_frequency.uuid,
@@ -592,6 +597,7 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
       result.push(
         {
           order_id: rd.dataValues.patient_treatment_uuid,
+          uuid: rd.dataValues.uuid,
           diagnosis_id: rd.dataValues.diagnosis.dataValues.uuid,
           diagnosis_name: rd.dataValues.diagnosis.dataValues.name,
           diagnosis_code: rd.dataValues.diagnosis.dataValues.code,
@@ -669,30 +675,6 @@ const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, or
   } catch (ex) {
     console.log('Exception Happened', ex);
     return ex;
-  }
-
-};
-
-const _getRequest = async (url, { user_uuid, authorization }, order_id) => {
-  let options = {
-    uri: url,
-    headers: {
-      Authorization: authorization
-    },
-    method: 'GET',
-    json: true,
-    body: {
-      patient_treatment_uuid: order_id
-    }
-  };
-  try {
-    const result = await rp(options);
-    if (result) {
-      return result;
-    }
-  } catch (ex) {
-    console.log('Exception Happened', ex);
-    return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
   }
 
 };
