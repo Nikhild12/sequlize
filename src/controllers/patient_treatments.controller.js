@@ -280,7 +280,6 @@ const PatientTreatmentController = () => {
     const { user_uuid, facility_uuid, authorization } = req.headers;
     const { patient_uuid } = req.query;
     try {
-
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
@@ -348,11 +347,48 @@ const PatientTreatmentController = () => {
 
   };
 
+  const _modifyPreviousOrder = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid, order_id } = req.query;
+    const { patientDiagnosis } = req.body;
+    try {
+      let orderUpdatePromise = [];
+      if (user_uuid && patient_uuid && order_id && patient_uuid > 0 && order_id > 0) {
+        if (patientDiagnosis &&
+          Array.isArray(patientDiagnosis) &&
+          patientDiagnosis.length > 0
+        ) {
+          let query = {
+            where: {
+              uuid: patientDiagnosis.uuid,
+              patient_uuid: patient_uuid,
+            }
+          };
+          orderUpdatePromise = [...orderUpdatePromise,
+          patientDiagnosisTbl.update(patientDiagnosis, query)
+          ];
+          const updatedOrder = await Promise.all(orderUpdatePromise);
+          console.log(updatedOrder, 'updatedOrder=====');
+          if (updatedOrder) {
+            return res.status(200).send({ code: httpStatus.OK, message: 'Updated Success' });
+          }
+          //const updatedDiagnosis = await updateDiagnosis(patient_uuid, order_id, patientDiagnosis);
+        }
+      } else {
+        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+      }
+    } catch (ex) {
+      console.log('Exception Happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     createPatientTreatment: _createPatientTreatment,
     prevKitOrdersById: _prevKitOrdersById,
     repeatOrderById: _repeatOrderById,
-    previousKitRepeatOrder: _previousKitRepeatOrder
+    previousKitRepeatOrder: _previousKitRepeatOrder,
+    modifyPreviousOrder: _modifyPreviousOrder
   };
 };
 
@@ -433,12 +469,12 @@ async function getPrevOrderPrescription(user_uuid, facility_uuid, Authorization,
 
   let options = {
     uri: url,
+    method: 'POST',
     headers: {
+      Authorization: Authorization,
       user_uuid: user_uuid,
       facility_uuid: facility_uuid,
-      Authorization: Authorization
     },
-    method: 'POST',
     json: true,
     body: {
       patient_treatment_uuid: order_id,
