@@ -93,9 +93,10 @@ const EmrDashBoard = () => {
                 const lab = await getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_date);
                 const rad = await getradbydate(ris_dash, user_uuid, depertment_Id, from_date, to_date);
                 const inv = await getinvbydate(inv_dash, user_uuid, depertment_Id, from_date, to_date);
-
+                const cons_graph = await getconsgraphbydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
+                const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                 const orders = getorders(lab, rad, inv);
-
+                console.log(orders_graph);
                 return res.status(200).send({
                     code: httpStatus.OK, message: 'Fetched Successfully',
                     responseContents: {
@@ -103,7 +104,12 @@ const EmrDashBoard = () => {
                         "cieif_complaints": chiefc,
                         "prescription": presc,
                         "consulted": cons,
-                        "orders": orders
+                        // "lab": lab,
+                        // "rad": rad,
+                        // "inv": inv,
+                        "orders": orders,
+                        "cons_graph": cons_graph,
+                        "orders_graph": orders_graph
                     }
                 });
             } else if (session && from_date && to_date && gender) {
@@ -211,7 +217,7 @@ const EmrDashBoard = () => {
                 const rad = await getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date);
                 const inv = await getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date);
                 const consd = await getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
-                
+
                 let obj = {};
 
                 let order = [];
@@ -234,12 +240,12 @@ const EmrDashBoard = () => {
 
                 obj.total_count = obj.lab_count + obj.rad_count + obj.inv_count;
 
-                order.push(Object.assign({}, obj));
+                //order.push(Object.assign({}, obj));
 
                 const lab_order = gethours(lab);
                 const rad_order = gethours(rad);
                 const inv_order = gethours(inv);
-                const orders_graph = getordershr(lab_order,rad_order,inv_order);
+                const orders_graph = getordershr(lab_order, rad_order, inv_order);
                 const cons_graph = gethourscons(cons);
 
                 return res.status(200).send({
@@ -249,7 +255,7 @@ const EmrDashBoard = () => {
                         "cieif_complaints": chiefc,
                         "prescription": presc,
                         "consulted": consd,
-                        "orders": order,
+                        "orders": obj,
                         //"rad_orders": rad_order,
                         //"inv_orders": inv_order,
                         //"lab_orders": lab_order,
@@ -475,6 +481,7 @@ async function getprescbygender(pres_dash, user_uuid, depertment_Id, gender) {
         attributes: [[Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
         [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
         [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -500,6 +507,7 @@ async function getprescbysession(pres_dash, user_uuid, depertment_Id, session) {
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -525,6 +533,7 @@ async function getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, 
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -556,6 +565,7 @@ async function getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gende
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -589,6 +599,7 @@ async function getprescbysessiondate(pres_dash, user_uuid, depertment_Id, sessio
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -621,6 +632,7 @@ async function getprescbysessiongender(pres_dash, user_uuid, depertment_Id, sess
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -649,6 +661,7 @@ async function getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender,
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1034,6 +1047,7 @@ async function getconsbygender(cons_dash, user_uuid, depertment_Id, gender) {
         attributes: [[Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
         [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
         [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1059,6 +1073,7 @@ async function getconsbysession(cons_dash, user_uuid, depertment_Id, session) {
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1084,6 +1099,7 @@ async function getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, t
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1115,6 +1131,7 @@ async function getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1148,6 +1165,7 @@ async function getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1180,6 +1198,7 @@ async function getconsbysessiongender(cons_dash, user_uuid, depertment_Id, sessi
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1199,7 +1218,6 @@ async function getconsbysessiongender(cons_dash, user_uuid, depertment_Id, sessi
         return {};
     }
 }
-
 async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
 
     const diag = await cons_dash.findAll({
@@ -1208,6 +1226,7 @@ async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, 
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1231,15 +1250,15 @@ async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, 
         return {};
     }
 }
-
 async function getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await lab_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
+        //group: ['lpo_order_request_date'],
+        attributes: [[Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
+        group: ['date'],
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1259,16 +1278,16 @@ async function getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_da
     } else {
         return {};
     }
-
 }
 async function getradbydate(ris_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
+        //group: ['rpo_order_request_date'],
+        attributes: [[Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        group: ['date'],
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1288,16 +1307,16 @@ async function getradbydate(ris_dash, user_uuid, depertment_Id, from_date, to_da
     } else {
         return {};
     }
-
 }
 async function getinvbydate(inv_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await inv_dash.findAll({
         //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
+        attributes: [[Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
+        group: ['date'],
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1317,9 +1336,7 @@ async function getinvbydate(inv_dash, user_uuid, depertment_Id, from_date, to_da
     } else {
         return {};
     }
-
 }
-
 async function getlabbyAll(lab_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
     const diag = await lab_dash.findAll({
         //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
@@ -1349,7 +1366,6 @@ async function getlabbyAll(lab_dash, user_uuid, depertment_Id, session, gender, 
     } else {
         return {};
     }
-
 }
 async function getradbyAll(ris_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
     const diag = await ris_dash.findAll({
@@ -1380,7 +1396,6 @@ async function getradbyAll(ris_dash, user_uuid, depertment_Id, session, gender, 
     } else {
         return {};
     }
-
 }
 async function getinvbyAll(inv_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
     const diag = await inv_dash.findAll({
@@ -1411,7 +1426,6 @@ async function getinvbyAll(inv_dash, user_uuid, depertment_Id, session, gender, 
     } else {
         return {};
     }
-
 }
 async function getlabbysessiongender(lab_dash, user_uuid, depertment_Id, session, gender) {
     const diag = await lab_dash.findAll({
@@ -1437,7 +1451,6 @@ async function getlabbysessiongender(lab_dash, user_uuid, depertment_Id, session
     } else {
         return {};
     }
-
 }
 async function getradbysessiongender(ris_dash, user_uuid, depertment_Id, session, gender) {
     const diag = await ris_dash.findAll({
@@ -1463,7 +1476,6 @@ async function getradbysessiongender(ris_dash, user_uuid, depertment_Id, session
     } else {
         return {};
     }
-
 }
 async function getinvbysessiongender(inv_dash, user_uuid, depertment_Id, session, gender) {
     const diag = await inv_dash.findAll({
@@ -1489,7 +1501,6 @@ async function getinvbysessiongender(inv_dash, user_uuid, depertment_Id, session
     } else {
         return {};
     }
-
 }
 async function getlabbysessiondate(lab_dash, user_uuid, depertment_Id, session, from_date, to_date) {
     const diag = await lab_dash.findAll({
@@ -1519,7 +1530,6 @@ async function getlabbysessiondate(lab_dash, user_uuid, depertment_Id, session, 
     } else {
         return {};
     }
-
 }
 async function getradbysessiondate(ris_dash, user_uuid, depertment_Id, session, from_date, to_date) {
     const diag = await ris_dash.findAll({
@@ -1549,7 +1559,6 @@ async function getradbysessiondate(ris_dash, user_uuid, depertment_Id, session, 
     } else {
         return {};
     }
-
 }
 async function getinvbysessiondate(inv_dash, user_uuid, depertment_Id, session, from_date, to_date) {
     const diag = await inv_dash.findAll({
@@ -1579,7 +1588,6 @@ async function getinvbysessiondate(inv_dash, user_uuid, depertment_Id, session, 
     } else {
         return {};
     }
-
 }
 async function getlabbygenderdate(lab_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
     const diag = await lab_dash.findAll({
@@ -1609,7 +1617,6 @@ async function getlabbygenderdate(lab_dash, user_uuid, depertment_Id, gender, fr
     } else {
         return {};
     }
-
 }
 async function getradbygenderdate(ris_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
     const diag = await ris_dash.findAll({
@@ -1639,7 +1646,6 @@ async function getradbygenderdate(ris_dash, user_uuid, depertment_Id, gender, fr
     } else {
         return {};
     }
-
 }
 async function getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
     const diag = await inv_dash.findAll({
@@ -1669,7 +1675,6 @@ async function getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, fr
     } else {
         return {};
     }
-
 }
 async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await lab_dash.findAll({
@@ -1702,7 +1707,6 @@ async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_d
     } else {
         return {};
     }
-
 }
 async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await ris_dash.findAll({
@@ -1734,7 +1738,6 @@ async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_d
     } else {
         return {};
     }
-
 }
 async function getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await inv_dash.findAll({
@@ -1766,7 +1769,6 @@ async function getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_d
     } else {
         return {};
     }
-
 }
 async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
 
@@ -1846,6 +1848,7 @@ async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, t
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
         ],
         where: {
             ed_doctor_uuid: user_uuid,
@@ -1896,7 +1899,6 @@ async function getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_dat
     } else {
         return {};
     }
-
 }
 
 async function getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date) {
@@ -1926,31 +1928,36 @@ async function getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date
     } else {
         return {};
     }
-
 }
 
 function getorders(lab, rad, inv) {
     let orders = {};
+    orders.lab_count = 0; orders.rad_count = 0; orders.inv_count = 0;
     if (lab.length > 0) {
-        orders.lab_count = lab[0].dataValues.Count;
+        for (let i = 0; i < lab.length; i++) {
+            orders.lab_count = orders.lab_count + lab[i].dataValues.Count;
+        }
     } else {
         orders.lab_count = 0;
     }
     if (rad.length > 0) {
-        orders.rad_count = rad[0].dataValues.Count;
+        for (let i = 0; i < rad.length; i++) {
+            orders.rad_count = orders.rad_count + rad[i].dataValues.Count;
+        }
     } else {
         orders.rad_count = 0;
     }
     if (inv.length > 0) {
-        orders.inv_count = inv[0].dataValues.Count;
+        for (let i = 0; i < inv.length; i++) {
+            orders.inv_count = orders.inv_count + inv[i].dataValues.Count;
+        }
     } else {
         orders.inv_count = 0;
     }
-    //orders.gender = lab[0].dataValues.g_name;
+    orders.total_count = orders.lab_count + orders.rad_count + orders.inv_count;
 
     return orders;
 }
-
 
 function gethours(data) {
     //console.log (data);
@@ -2121,96 +2128,199 @@ function gethourscons(data) {
     return lab_obj;
 }
 
-
-function gethoursnew(data) {
-    //console.log (data);
-    let lab_obj = {};
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].dataValues.hour === 0) {
-            lab_obj["0"] = (data[i].dataValues.Count && data[i].dataValues.Count > 0) ? data[i].dataValues.Count : 0;
-        }
-        if (data[i].dataValues.hour === 1) {
-            lab_obj["1"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 2) {
-            lab_obj["2"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 3) {
-            lab_obj["3"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 4) {
-            lab_obj["4"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 5) {
-            lab_obj["5"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 6) {
-            lab_obj["6"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 7) {
-            lab_obj["7"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 8) {
-            lab_obj["8"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 9) {
-            lab_obj["9"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 10) {
-            lab_obj["10"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 11) {
-            lab_obj["11"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 12) {
-            lab_obj["12"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 13) {
-            lab_obj["13"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 14) {
-            lab_obj["14"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 15) {
-            lab_obj["15"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 16) {
-            lab_obj["16"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 17) {
-            lab_obj["17"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 18) {
-            lab_obj["18"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 19) {
-            lab_obj["19"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 20) {
-            lab_obj["20"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 21) {
-            lab_obj["21"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 22) {
-            lab_obj["22"] = data[i].dataValues.Count;
-        }
-        if (data[i].dataValues.hour === 23) {
-            lab_obj["23"] = data[i].dataValues.Count;
-        }
-    }
-    return lab_obj;
-}
-
-function getordershr(lab_order,rad_order,inv_order){
+function getordershr(lab_order, rad_order, inv_order) {
     let obj = {
-        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
-        "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
-        "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0
+        // "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
+        // "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
+        // "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0
     };
 
-for (let i=0;i<=23; i++){
-    obj[""+i+""] = lab_order[""+i+""] + rad_order[""+i+""] + inv_order[""+i+""];
+    //for (let i = 0; i < 23; i++) {
+       /* if (lab_order[0].dataValues.hour && rad_order[0].dataValues.hour && inv_order[0].dataValues.hour=== 0) {
+            lab_obj["0"] = lab_order["0"] + rad_order["0"] + inv_order["0"];
+        }
+        if (lab_order[1].dataValues.hour && rad_order[1].dataValues.hour && inv_order[1].dataValues.hour=== 1) {
+            lab_obj["1"] = lab_order["1"] + rad_order["1"] + inv_order["1"];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 2) {
+            lab_obj["2"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 3) {
+            lab_obj["3"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 4) {
+            lab_obj["4"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 5) {
+            lab_obj["5"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 6) {
+            lab_obj["6"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 7) {
+            lab_obj["7"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 8) {
+            lab_obj["8"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 9) {
+            lab_obj["9"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 10) {
+            lab_obj["10"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 11) {
+            lab_obj["11"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 12) {
+            lab_obj["12"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 13) {
+            lab_obj["13"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 14) {
+            lab_obj["14"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 15) {
+            lab_obj["15"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 16) {
+            lab_obj["16"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 17) {
+            lab_obj["17"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 18) {
+            lab_obj["18"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 19) {
+            lab_obj["19"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 20) {
+            lab_obj["20"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 21) {
+            lab_obj["21"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 22) {
+            lab_obj["22"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }
+        if (lab_order[i].dataValues.hour && rad_order[i].dataValues.hour && inv_order[i].dataValues.hour=== 23) {
+            lab_obj["23"] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+        }*/
+    //}
+
+
+    for (let i = 0; i <= 23; i++) {
+        obj["" + i + ""] = lab_order["" + i + ""] + rad_order["" + i + ""] + inv_order["" + i + ""];
+    }
+    return obj;
 }
-return obj;
+
+async function getconsgraphbydate(cons_dash, user_uuid, depertment_Id, startDate, stopDate) {
+    let cons_graph = {};
+    const diag = await cons_dash.findAll({
+        //group: ['g_uuid',],
+        attributes: [[Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
+        [Sequelize.fn('COUNT', '*'), 'Tot_Count']
+        ],
+        group: ['date'],
+        where: {
+            ed_doctor_uuid: user_uuid,
+            ed_status: 1,
+            ed_is_active: 1,
+            ed_department_uuid: depertment_Id,
+            ed_consultation_start_date: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(startDate).format('YYYY-MM-DD')),
+                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '<=', moment(stopDate).format('YYYY-MM-DD'))
+                ]
+            }
+
+        }
+    }
+    );
+
+    if (diag && diag.length > 0) {
+
+        var dateArray = [];
+        var currentDate = moment(startDate);
+        var stopDate = moment(stopDate);
+        while (currentDate <= stopDate) {
+            dateArray.push(moment(currentDate).format('YYYY-MM-DD'));
+            currentDate = moment(currentDate).add(1, 'days');
+        }
+
+        for (let i = 0; i < dateArray.length; i++) {
+            cons_graph["" + dateArray[i] + ""] = 0;
+        }
+
+
+        for (let i = 0; i < dateArray.length; i++) {
+            for (let j = 0; j < diag.length; j++) {
+                if (dateArray[i] === diag[j].dataValues.date) {
+                    cons_graph["" + dateArray[i] + ""] = cons_graph["" + dateArray[i] + ""] + diag[j].dataValues.Tot_Count;
+                }
+            }
+        }
+        // for (let i = 0; i < diag.length; i++) {
+        //     cons_graph["" + diag[i].dataValues.date + ""] = diag[i].dataValues.Tot_Count;
+        // }
+
+        return cons_graph;
+
+
+    } else {
+        return {};
+    }
+}
+
+function getordergraphbydate(lab, rad, inv, startDate, stopDate) {
+    let orders_graph = {};
+
+    var dateArray = [];
+    var currentDate = moment(startDate);
+    var stopDate = moment(stopDate);
+    while (currentDate <= stopDate) {
+        dateArray.push(moment(currentDate).format('YYYY-MM-DD'));
+        currentDate = moment(currentDate).add(1, 'days');
+    }
+
+    //return dateArray;
+
+
+    for (let i = 0; i < dateArray.length; i++) {
+        orders_graph["" + dateArray[i] + ""] = 0;
+    }
+
+
+    //return orders_graph;
+    if (dateArray.length > 0) {
+
+        for (let i = 0; i < dateArray.length; i++) {
+            for (let j = 0; j < lab.length; j++) {
+                if (dateArray[i] === lab[j].dataValues.date) {
+                    orders_graph["" + dateArray[i] + ""] = orders_graph["" + dateArray[i] + ""] + lab[j].dataValues.Count;
+                }
+            }
+            for (let k = 0; k < rad.length; k++) {
+                if (dateArray[i] === rad[k].dataValues.date) {
+                    orders_graph["" + dateArray[i] + ""] = orders_graph["" + dateArray[i] + ""] + rad[k].dataValues.Count;
+                }
+            }
+
+            for (let l = 0; l < inv.length; l++) {
+                if (dateArray[i] === inv[l].dataValues.date) {
+                    orders_graph["" + dateArray[i] + ""] = orders_graph["" + dateArray[i] + ""] + inv[l].dataValues.Count;
+                }
+            }
+        }
+    }
+    if (orders_graph) {
+        return orders_graph;
+    }
+
 }
