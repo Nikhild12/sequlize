@@ -471,7 +471,7 @@ async function getPrevOrderPrescription(user_uuid, facility_uuid, order_id, pati
     uri: url,
     method: 'POST',
     headers: {
-      Authorization: `Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2`,
+      Authorization: "Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2",
       user_uuid: user_uuid,
       facility_uuid: facility_uuid,
     },
