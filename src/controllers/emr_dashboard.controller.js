@@ -358,7 +358,7 @@ async function getlabbysession(lab_dash, user_uuid, depertment_Id, session) {
             [Sequelize.fn('COUNT', Sequelize.col('s_uuid')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -383,7 +383,7 @@ async function getinvbysession(inv_dash, user_uuid, depertment_Id, session) {
             [Sequelize.fn('COUNT', Sequelize.col('s_uuid')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -408,7 +408,7 @@ async function getradbysession(ris_dash, user_uuid, depertment_Id, session) {
             [Sequelize.fn('COUNT', Sequelize.col('s_uuid')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1344,7 +1344,7 @@ async function getlabbyAll(lab_dash, user_uuid, depertment_Id, session, gender, 
             [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1374,7 +1374,7 @@ async function getradbyAll(ris_dash, user_uuid, depertment_Id, session, gender, 
             [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1404,7 +1404,7 @@ async function getinvbyAll(inv_dash, user_uuid, depertment_Id, session, gender, 
             [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1434,7 +1434,7 @@ async function getlabbysessiongender(lab_dash, user_uuid, depertment_Id, session
             [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1459,7 +1459,7 @@ async function getradbysessiongender(ris_dash, user_uuid, depertment_Id, session
             [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1484,7 +1484,7 @@ async function getinvbysessiongender(inv_dash, user_uuid, depertment_Id, session
             [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1509,7 +1509,7 @@ async function getlabbysessiondate(lab_dash, user_uuid, depertment_Id, session, 
             [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1538,7 +1538,7 @@ async function getradbysessiondate(ris_dash, user_uuid, depertment_Id, session, 
             [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1567,7 +1567,7 @@ async function getinvbysessiondate(inv_dash, user_uuid, depertment_Id, session, 
             [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1625,7 +1625,7 @@ async function getradbygenderdate(ris_dash, user_uuid, depertment_Id, gender, fr
             [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1654,7 +1654,7 @@ async function getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, fr
             [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
         ],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1686,7 +1686,7 @@ async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_d
         ],
         group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1718,7 +1718,7 @@ async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_d
         ],
         group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
@@ -1749,7 +1749,7 @@ async function getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_d
         ],
         group: ['hour'],
         //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        limit: 10,
+        //limit: 10,
         where: {
             ed_doctor_uuid: user_uuid,
             ed_status: 1,
