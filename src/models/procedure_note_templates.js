@@ -59,6 +59,15 @@ module.exports = (sequelize, DataTypes) => {
         procedure_note_templates.belongsTo(models.procedures, {
             foreignKey: "procedure_uuid"
         });
+    
+        procedure_note_templates.belongsTo(models.note_templates, {
+            foreignKey: "note_template_uuid"
+        });
+    
+        procedure_note_templates.belongsTo(models.note_template_type, {
+            foreignKey: "note_template_type_uuid"
+        });
     };
+
     return procedure_note_templates;
 };
