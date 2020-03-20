@@ -336,14 +336,14 @@ const PatientTreatmentController = () => {
             });
 
           }
-          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
-          if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
-            response.forEach((p) => {
-              p.drugDetails = repeatOrderPrescData.filter((rP) => {
-                return rP.order_id === p.order_id;
-              });
-            });
-          }
+          // const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
+          // if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
+          //   response.forEach((p) => {
+          //     p.drugDetails = repeatOrderPrescData.filter((rP) => {
+          //       return rP.order_id === p.order_id;
+          //     });
+          //   });
+          // }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
       }
@@ -395,8 +395,8 @@ const PatientTreatmentController = () => {
 
   return {
     createPatientTreatment: _createPatientTreatment,
-    prevKitOrdersById: _prevKitOrdersById,
-    repeatOrderById: _repeatOrderById,
+    //prevKitOrdersById: _prevKitOrdersById,
+    //repeatOrderById: _repeatOrderById,
     previousKitRepeatOrder: _previousKitRepeatOrder,
     modifyPreviousOrder: _modifyPreviousOrder
   };
@@ -518,9 +518,20 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
-  const url = config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
-
-  const labData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
+  const labData = await utilityService.postRequest(
+    config.wso2LisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    //url,
+    {
+      "content-type": "application/json",
+      facility_uuid: facility_uuid || 1,
+      user_uuid: user_uuid,
+      Authorization: authorization
+    },
+    {
+      patient_treatment_uuid: order_id
+    }
+  );
+  //const labData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
 
   if (labData) {
     const labResult = await getLabResponse(labData);
@@ -553,7 +564,7 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
 }
 
 async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
   const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
   let options = {
     uri: url,
@@ -645,9 +656,10 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
 }
 
 async function getLabResponse(labData) {
-  let labArray = labData.responseContents;
-  if (labArray) {
-    return labArray.map(l => {
+
+  //let labArray = labData.responseContents;
+  if (labData) {
+    return labData.map(l => {
       return {
         uuid: l.patient_order_uuid,
         details_uuid: l.uuid,
