@@ -326,9 +326,19 @@ const PatientTreatmentController = () => {
               });
             });
           }
-          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, facility_uuid, orderIds, patient_uuid);
-          if (repeatOrderPrescData.length > 0) {
-            response.forEach(p => {
+
+          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
+          if (repeatLabOrder && repeatLabOrder.length > 0) {
+            response.forEach((l) => {
+              l.labDetails = repeatLabOrder.filter((rl) => {
+                return rl.order_id === l.order_id;
+              });
+            });
+
+          }
+          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
+          if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
+            response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
                 return rP.order_id === p.order_id;
               });
@@ -360,7 +370,7 @@ const PatientTreatmentController = () => {
         ) {
           let query = {
             where: {
-              uuid: patientDiagnosis.uuid,
+              uuid: 1310,
               patient_uuid: patient_uuid,
             }
           };
@@ -462,16 +472,16 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-async function getPrevOrderPrescription(user_uuid, facility_uuid, order_id, patient_uuid) {
+async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
-
+  const auth = "Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2";
 
   let options = {
     uri: url,
     method: 'POST',
     headers: {
-      Authorization: "Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2",
+      Authorization: authorization != null ? authorization : auth,
       user_uuid: user_uuid,
       facility_uuid: facility_uuid,
     },
@@ -482,7 +492,7 @@ async function getPrevOrderPrescription(user_uuid, facility_uuid, order_id, pati
     }
   };
   try {
-    console.log(options, 'options');
+    console.log(options, 'prescription');
     const prescriptionData = await rp(options);
     if (prescriptionData.responseContents) {
       const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
@@ -496,8 +506,8 @@ async function getPrevOrderPrescription(user_uuid, facility_uuid, order_id, pati
 }
 
 async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
-  //const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
 
   let radialogyData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
   if (radialogyData) {
@@ -507,13 +517,13 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 }
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
-  //const url = config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  const url = config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
 
   const labData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
 
   if (labData) {
-    const labResult = getLabResponse(labData);
+    const labResult = await getLabResponse(labData);
     return labResult;
   }
 
@@ -523,9 +533,8 @@ async function getPreviousInvest({ user_uuid, authorization }, order_id) {
 }
 
 async function getDepartments(user_uuid, Authorization, departmentIds) {
-
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
-  //const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
+  const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
 
   let options = {
     uri: url,
@@ -544,8 +553,8 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
 }
 
 async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
-  //const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
+  const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
   let options = {
     uri: url,
     method: 'POST',
@@ -637,23 +646,33 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
 
 async function getLabResponse(labData) {
   let labArray = labData.responseContents;
-  return labArray.map(l => {
-    return {
-      //test details
-      test_master_uuid: l.test_master.uuid,
-      lab_name: l.test_master.name,
-      lab_code: l.test_master.code,
+  if (labArray) {
+    return labArray.map(l => {
+      return {
+        uuid: l.patient_order_uuid,
+        details_uuid: l.uuid,
+        order_id: l.patient_treatment_uuid,
 
-      //encounter details
-      encounter_type_uuid: l.patient_order.encounter_type_uuid,
-      encounter_type: l.patient_order.encounter_type,
+        // order status details
+        order_status_uuid: l.order_status != null ? l.order_status.uuid : null,
+        order_status_code: l.order_status != null ? l.order_status.name : null,
+        order_status_name: l.order_status != null ? l.order_status.code : null,
+        // //test details
+        test_master_uuid: l.test_master != null ? l.test_master.uuid : null,
+        lab_name: l.test_master != null ? l.test_master.name : null,
+        lab_code: l.test_master != null ? l.test_master.code : null,
 
-      //OrderToLocation Details
-      to_location_uuid: l.to_location.uuid,
-      location_code: l.to_location.location_code,
-      location_name: l.to_location.location_name
-    };
-  });
+        // //encounter details
+        encounter_type_uuid: l.patient_order != null ? l.patient_order.encounter_type_uuid : null,
+        encounter_type: l.patient_order != null ? l.patient_order.encounter_type : null,
+
+        // //OrderToLocation Details
+        to_location_uuid: l.to_location != null ? l.to_location.uuid : null,
+        location_code: l.to_location != null ? l.to_location.location_code : null,
+        location_name: l.to_location != null ? l.to_location.location_name : null
+      };
+    });
+  }
 }
 
 async function getRadialogyResponse(radialogyData) {
@@ -692,6 +711,8 @@ const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, or
       patient_treatment_uuid: order_id
     }
   };
+  console.log(options, 'lab');
+
   try {
     const result = await rp(options);
     if (result) {
