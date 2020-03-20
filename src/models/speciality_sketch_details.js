@@ -42,6 +42,14 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
+    // speciality_sketch_details.associate = models => {
 
+    //     speciality_sketch_details.belongsTo(models.speciality_sketches, {
+    //         foreignKey: "speciality_sketch_uuid",
+    //         targetKey: "uuid"
+    //     });
+
+        
+    // };
     return speciality_sketch_details;
 };

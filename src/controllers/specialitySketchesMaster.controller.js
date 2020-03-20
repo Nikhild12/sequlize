@@ -4,6 +4,8 @@ const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const multer = require('multer');
 const middleware = require('../middleware/middleware');
+const rp = require("request-promise");
+var config = require("../config/config");
 const Op = Sequelize.Op;
 const specialitySketchesMasterTbl = db.speciality_sketches;
 const specialitySketcheDetailsTbl = db.speciality_sketch_details;
@@ -368,12 +370,13 @@ const specialitySketchesMasterController = () => {
     };
     const getSpecialitySketcheMasterById = async (req, res, next) => {
         const postData = req.body;
+        const { user_uuid } = req.headers;
         try {
 
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await specialitySketchesMasterTbl.findOne({
+            let data = await specialitySketchesMasterTbl.findOne({
                 where: {
                     uuid: postData.Speciality_id
                 },
@@ -381,21 +384,28 @@ const specialitySketchesMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
-                    required: false,
+                    //as: 'speciality_sketch_details',
+                    //required: false,
                     // as: 'source' 
                     attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
                     where: { status: 1, is_active: 1 }
                 }]
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
+            });
+
+            const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
+            const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
+            //const finaldata = getfinaldata(data,getcuDetails,getmuDetails);
+            //data.assign({data}, )
+            data.created_by = getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name;
+            data.modified_by = getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    statusCode: 200,
+                    req: '',
+                    responseContents: data
                 });
+
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -419,3 +429,24 @@ const specialitySketchesMasterController = () => {
 
 };
 module.exports = specialitySketchesMasterController();
+
+
+async function getuserDetails(user_uuid, docid, authorization) {
+    console.log(user_uuid, docid, authorization);
+    let options = {
+        uri: config.wso2AppUrl + 'users/getusersById',
+        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+        //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+        method: "POST",
+        headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+        },
+        body: { "Id": docid },
+        //body: {},
+        json: true
+    };
+    const user_details = await rp(options);
+    return user_details;
+}
+
