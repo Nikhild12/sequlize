@@ -395,8 +395,8 @@ const PatientTreatmentController = () => {
 
   return {
     createPatientTreatment: _createPatientTreatment,
-    //prevKitOrdersById: _prevKitOrdersById,
-    //repeatOrderById: _repeatOrderById,
+    prevKitOrdersById: _prevKitOrdersById,
+    repeatOrderById: _repeatOrderById,
     previousKitRepeatOrder: _previousKitRepeatOrder,
     modifyPreviousOrder: _modifyPreviousOrder
   };
