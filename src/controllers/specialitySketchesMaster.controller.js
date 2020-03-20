@@ -393,12 +393,13 @@ const specialitySketchesMasterController = () => {
                 }]
             });
 
+            if (data){
             const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
             const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
-            //const finaldata = getfinaldata(data,getcuDetails,getmuDetails);
-            //data.assign({data}, )
+            
             data.created_by = getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name;
             data.modified_by = getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name;
+            
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -407,7 +408,18 @@ const specialitySketchesMasterController = () => {
                     responseContents: data
                 });
 
+            }
+            else {
+                return res
+                .status(400)
+                .json({
+                    statusCode: 400,
+                    req: '',
+                    responseContents: "data not found"
+                });
 
+            }
+            
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
