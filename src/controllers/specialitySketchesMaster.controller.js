@@ -249,6 +249,7 @@ const specialitySketchesMasterController = () => {
                         attachmentData.revision = 1;
 
                         let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
+                        
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
@@ -260,7 +261,7 @@ const specialitySketchesMasterController = () => {
                                     is_active: 1
                                 });
                             }
-                            if (sketchFileSave.length > 0) {
+                            if (sketchFileSave) {
                                 var specialitySketcheFiles = await specialitySketcheDetailsTbl.bulkCreate(sketchFileSave);
 
                             }
