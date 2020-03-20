@@ -381,7 +381,8 @@ const specialitySketchesMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
-                    required: false,
+                    //as: 'speciality_sketch_details',
+                    //required: false,
                     // as: 'source' 
                     attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
                     where: { status: 1, is_active: 1 }
