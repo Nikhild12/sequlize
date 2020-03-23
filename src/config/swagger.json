@@ -6557,6 +6557,59 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/patient-treatment/updatePreviousOrder": {
+      "put": {
+        "summary": "To update patient treatment Details ",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "facility_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "order_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Profiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatePatientTreatment"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientTreatment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/template/getalltemplates": {
       "post": {
         "description": "To get all templates",
@@ -8550,7 +8603,7 @@
         "allergy_description": {
           "type": "string"
         },
-        "comments":{
+        "comments": {
           "type": "string"
         },
         "allergy_source_uuid": {
@@ -12910,6 +12963,83 @@
                   },
                   "cancel_reason_comment": {
                     "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "updatePatientTreatment": {
+      "type": "object",
+      "properties": {
+        "patientDiagnosis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "remove_details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "new_diagnosis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "facility_uuid": {
+                      "type": "number"
+                    },
+                    "department_uuid": {
+                      "type": "number"
+                    },
+                    "patient_uuid": {
+                      "type": "number"
+                    },
+                    "encounter_uuid": {
+                      "type": "number"
+                    },
+                    "encounter_type_uuid": {
+                      "type": "number"
+                    },
+                    "consultation_uuid": {
+                      "type": "number"
+                    },
+                    "diagnosis_uuid": {
+                      "type": "number"
+                    },
+                    "condition_type_uuid": {
+                      "type": "number"
+                    },
+                    "condition_status_uuid": {
+                      "type": "number"
+                    },
+                    "category_uuid": {
+                      "type": "number"
+                    },
+                    "type_uuid": {
+                      "type": "number"
+                    },
+                    "grade_uuid": {
+                      "type": "number"
+                    },
+                    "body_site_uuid": {
+                      "type": "number"
+                    },
+                    "prescription_uuid": {
+                      "type": "number"
+                    },
+                    "patient_treatment_uuid": {
+                      "type": "number"
+                    }
                   }
                 }
               }
