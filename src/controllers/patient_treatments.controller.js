@@ -495,10 +495,11 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
-  const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
+  //const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
   try {
     const prescriptionData = await utilityService.postRequest(
-      url,
+      config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientTreatmentId',
+      //url,
       {
         "content-type": "application/json",
         facility_uuid: facility_uuid || 1,
