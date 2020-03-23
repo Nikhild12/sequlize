@@ -485,7 +485,7 @@ async function getDiagnosisbygenger(diag_dash, user_uuid, depertment_Id, gender)
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -510,7 +510,7 @@ async function getchiefbygenger(chiefc_dash, user_uuid, depertment_Id, gender) {
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -534,7 +534,7 @@ async function getlabbygenger(lab_dash, user_uuid, depertment_Id, gender) {
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return [];
+        return {};
     }
 }
 async function getlabbysession(lab_dash, user_uuid, depertment_Id, session) {
@@ -682,7 +682,7 @@ async function getprescbygender(pres_dash, user_uuid, depertment_Id, gender) {
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -708,7 +708,7 @@ async function getprescbysession(pres_dash, user_uuid, depertment_Id, session) {
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -740,7 +740,7 @@ async function getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, 
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -774,7 +774,7 @@ async function getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gende
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -807,7 +807,7 @@ async function getprescbysessiondate(pres_dash, user_uuid, depertment_Id, sessio
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -836,7 +836,7 @@ async function getprescbysessiongender(pres_dash, user_uuid, depertment_Id, sess
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -869,7 +869,7 @@ async function getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender,
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -896,7 +896,7 @@ async function getDiagnosisbysession(diag_dash, user_uuid, depertment_Id, sessio
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -921,7 +921,7 @@ async function getchiefcbysession(chiefc_dash, user_uuid, depertment_Id, session
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -950,7 +950,7 @@ async function getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -980,7 +980,7 @@ async function getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date,
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1012,7 +1012,7 @@ async function getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1044,7 +1044,7 @@ async function getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gen
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1071,7 +1071,7 @@ async function getdiagbysessiongender(diag_dash, user_uuid, depertment_Id, sessi
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1098,7 +1098,7 @@ async function getchiefbysessiongender(chiefc_dash, user_uuid, depertment_Id, se
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1129,7 +1129,7 @@ async function getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1160,7 +1160,7 @@ async function getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, sess
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1191,7 +1191,7 @@ async function getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, 
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1222,7 +1222,7 @@ async function getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gende
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 
 }
@@ -1306,7 +1306,7 @@ async function getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, t
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -1342,7 +1342,7 @@ async function getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -1375,7 +1375,7 @@ async function getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -1404,7 +1404,7 @@ async function getconsbysessiongender(cons_dash, user_uuid, depertment_Id, sessi
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -1441,7 +1441,7 @@ async function getconsbygendertoday(cons_dash, user_uuid, depertment_Id, gender,
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -1475,7 +1475,7 @@ async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, 
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 async function getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_date) {
@@ -2047,7 +2047,7 @@ async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 async function getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
@@ -2082,7 +2082,7 @@ async function getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_d
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date) {
@@ -2113,7 +2113,7 @@ async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, t
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -2142,7 +2142,7 @@ async function getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_dat
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -2171,7 +2171,7 @@ async function getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -2604,7 +2604,7 @@ async function getconstodayAll(cons_dash, user_uuid, depertment_Id, from_date, t
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -2638,7 +2638,7 @@ async function getDiagnosisbytodayAll(diag_dash, user_uuid, depertment_Id, sessi
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -2669,7 +2669,7 @@ async function getchiefcbytodayAll(chiefc_dash, user_uuid, depertment_Id, sessio
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
@@ -3211,7 +3211,7 @@ async function getconsbygenderdatetoday(cons_dash, user_uuid, depertment_Id, ses
     if (diag && diag.length > 0) {
         return diag;
     } else {
-        return {};
+        return [];
     }
 }
 
