@@ -65,16 +65,16 @@ const noteTemplatesController = () => {
 
             findQuery.where = {
                 [Op.or]: [{
-                        allergey_code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    allergey_code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        allergy_name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    allergy_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -130,11 +130,11 @@ const noteTemplatesController = () => {
             noteTemplatesTbl.findAll({
                 where: {
                     [Op.or]: [{
-                            code: postData.code
-                        },
-                        {
-                            name: postData.name
-                        }
+                        code: postData.code
+                    },
+                    {
+                        name: postData.name
+                    }
                     ]
                 }
             }).then(async (result) => {
@@ -206,10 +206,10 @@ const noteTemplatesController = () => {
         postData.modified_by = req.headers.user_uuid;
         await noteTemplatesTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Note_temp_id
-                }
+            where: {
+                uuid: postData.Note_temp_id
             }
+        }
         ).then((data) => {
             res.send({
                 statusCode: 200,
@@ -229,24 +229,24 @@ const noteTemplatesController = () => {
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await noteTemplatesTbl.findOne({
-                    where: {
-                        uuid: postData.Note_temp_id
+                where: {
+                    uuid: postData.Note_temp_id
+                },
+                include: [
+                    {
+                        model: noteTemplateTypeTbl,
+                        required: false,
+                        where: { is_active: 1, status: 1 }
                     },
-                    include:[
-                        {
-                            model:noteTemplateTypeTbl,
-                            required:false,
-                            where:{is_active:1,status:1}
-                        },
-                        {
-                            model:noteTypeTbl,
-                            required:false,
-                            where:{is_active:1,status:1}
-                        }
-                    ],
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                    {
+                        model: noteTypeTbl,
+                        required: false,
+                        where: { is_active: 1, status: 1 }
+                    }
+                ],
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -283,10 +283,10 @@ const noteTemplatesController = () => {
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await templateTypeTbl.findOne({
-                    where: {
-                        name: postData.type
-                    }
-                })
+                where: {
+                    name: postData.type
+                }
+            })
                 .then((data) => {
                     if (!data) {
                         return res
@@ -296,12 +296,12 @@ const noteTemplatesController = () => {
                                 msg: 'Required type: <note_type_name>'
                             });
                     }
-                    noteTemplatesTbl.findAll({
-                            where: {
-                                facility_uuid: req.headers.facility_uuid,
-                                note_template_type_uuid: data.dataValues.uuid
-                            }
-                        })
+                    return noteTemplatesTbl.findAll({
+                        where: {
+                            facility_uuid: req.headers.facility_uuid,
+                            note_template_type_uuid: data.dataValues.uuid
+                        }
+                    })
                         .then((data1) => {
                             console.log('sf', data1);
                             return res
