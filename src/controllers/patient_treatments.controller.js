@@ -295,7 +295,6 @@ const PatientTreatmentController = () => {
 
         const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
         if (departmentsResponse) {
-          // for (let [i, r] of response.entries()) {
           response.map((r, i) => {
             for (let d of departmentsResponse.responseContent.rows) {
               if (r.department_id == d.uuid) {
@@ -303,11 +302,9 @@ const PatientTreatmentController = () => {
               }
             }
           });
-          // }
         }
         const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
         if (doctorResponse) {
-          // for (let [i, r] of response.entries()) {
           response.map((r, i) => {
             for (let d of doctorResponse.responseContents) {
               if (r.doctor_id == d.uuid) {
@@ -336,8 +333,6 @@ const PatientTreatmentController = () => {
             });
 
           }
-          // const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, orderIds);
-
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
@@ -345,6 +340,24 @@ const PatientTreatmentController = () => {
                 return rP.order_id === p.order_id;
               });
             });
+          }
+          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, orderIds);
+          if (repeatRadilogyOrder && repeatRadilogyOrder.length > 0) {
+            response.forEach((r) => {
+              r.radilogyDetails = repeatRadilogyOrder.filter((rm) => {
+                return rm.order_id === r.order_id;
+              });
+            });
+
+          }
+          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
+          if (repeatInvestOrder && repeatInvestOrder.length > 0) {
+            response.forEach((r) => {
+              r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
+                return rI.order_id === r.order_id;
+              });
+            });
+
           }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
@@ -460,75 +473,35 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
-// async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid, order_id, patient_uuid) {
-//   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
-//   const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
-//   const auth = "Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2";
 
-//   let options = {
-//     uri: url,
-//     method: 'POST',
-//     headers: {
-//       Authorization: authorization != null ? authorization : auth,
-//       user_uuid: user_uuid,
-//       facility_uuid: facility_uuid,
-//     },
-//     json: true,
-//     body: {
-//       patient_treatment_uuid: order_id,
-//       patient_uuid: patient_uuid
-//     }
-//   };
-//   try {
-//     console.log(options, 'prescription');
-//     const prescriptionData = await rp(options);
-//     if (prescriptionData.responseContents) {
-//       const prescriptionResult = getPrescriptionRseponse(prescriptionData.responseContents);
-//       return prescriptionResult;
-//     }
-
-//   } catch (ex) {
-//     console.log(ex.message, 'ex');
-//     return ex;
-//   }
-// }
 
 async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
-  //const url = config.wso2InvestUrl + 'prescriptions/getPrescriptionByPatientTreatmentId';
-  try {
-    const prescriptionData = await utilityService.postRequest(
-      config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientTreatmentId',
-      //url,
-      {
-        "content-type": "application/json",
-        facility_uuid: facility_uuid || 1,
-        user_uuid: user_uuid,
-        Authorization: authorization
-      },
-      {
-        patient_treatment_uuid: order_id,
-        patient_uuid: patient_uuid
-      }
-    );
-
-    if (prescriptionData) {
-      const prescriptionResult = getPrescriptionRseponse(prescriptionData);
-      return prescriptionResult;
+  const prescriptionData = await utilityService.postRequest(
+    config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientTreatmentId',
+    //url,
+    {
+      "content-type": "application/json",
+      facility_uuid: facility_uuid || 1,
+      user_uuid: user_uuid,
+      Authorization: authorization
+    },
+    {
+      patient_treatment_uuid: order_id,
+      patient_uuid: patient_uuid
     }
+  );
 
-  } catch (ex) {
-    console.log(ex.message, 'ex');
-    return ex;
+  if (prescriptionData) {
+    const prescriptionResult = getPrescriptionRseponse(prescriptionData);
+    return prescriptionResult;
   }
 }
-
 async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
-  //const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
-    //config.wso2LisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
     url,
     {
       "content-type": "application/json",
@@ -540,6 +513,7 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
       patient_treatment_uuid: order_id
     }
   );
+
   if (radialogyData) {
     const radialogyResult = getRadialogyResponse(radialogyData);
     return radialogyResult;
@@ -561,16 +535,31 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
       patient_treatment_uuid: order_id
     }
   );
-  //const labData = await _postRequest(url, { user_uuid, facility_uuid, authorization }, order_id);
-
   if (labData) {
     const labResult = await getLabResponse(labData);
     return labResult;
   }
 
 }
-async function getPreviousInvest({ user_uuid, authorization }, order_id) {
-
+async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, order_id) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  const investigationData = await utilityService.postRequest(
+    config.wso2InvestUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    //url,
+    {
+      "content-type": "application/json",
+      facility_uuid: facility_uuid || 1,
+      user_uuid: user_uuid,
+      Authorization: authorization
+    },
+    {
+      patient_treatment_uuid: order_id
+    }
+  );
+  if (investigationData) {
+    const investigationResult = await getInvestigationResponse(investigationData);
+    return investigationResult;
+  }
 }
 
 async function getDepartments(user_uuid, Authorization, departmentIds) {
@@ -722,21 +711,63 @@ async function getRadialogyResponse(radialogyData) {
   if (radialogyData) {
     return radialogyData.map(r => {
       return {
-        //test details
         uuid: r.patient_order_uuid,
+        details_uuid: r.uuid,
+        order_id: r.patient_treatment_uuid,
 
         // order status details
+        order_status_uuid: r.order_status != null ? r.order_status.uuid : null,
+        order_status_code: r.order_status != null ? r.order_status.name : null,
+        order_status_name: r.order_status != null ? r.order_status.code : null,
         // //test details
+        test_master_uuid: r.test_master != null ? r.test_master.uuid : null,
+        lab_name: r.test_master != null ? r.test_master.name : null,
+        lab_code: r.test_master != null ? r.test_master.code : null,
 
         // //encounter details
+        encounter_type_uuid: r.patient_order != null ? r.patient_order.encounter_type_uuid : null,
+        encounter_type: r.patient_order != null ? r.patient_order.encounter_type : null,
 
         // //OrderToLocation Details
+        to_location_uuid: r.to_location != null ? r.to_location.uuid : null,
+        location_code: r.to_location != null ? r.to_location.location_code : null,
+        location_name: r.to_location != null ? r.to_location.location_name : null
 
       };
     });
   }
 }
 
+async function getInvestigationResponse(investigationData) {
+  if (investigationData) {
+    return investigationData.map(i => {
+      return {
+        uuid: i.patient_order_uuid,
+        details_uuid: i.uuid,
+        order_id: i.patient_treatment_uuid,
+
+        // order status details
+        order_status_uuid: i.order_status != null ? i.order_status.uuid : null,
+        order_status_code: i.order_status != null ? i.order_status.name : null,
+        order_status_name: i.order_status != null ? i.order_status.code : null,
+        // //test details
+        test_master_uuid: i.test_master != null ? i.test_master.uuid : null,
+        lab_name: i.test_master != null ? i.test_master.name : null,
+        lab_code: i.test_master != null ? i.test_master.code : null,
+
+        // //encounter details
+        encounter_type_uuid: i.patient_order != null ? i.patient_order.encounter_type_uuid : null,
+        encounter_type: i.patient_order != null ? i.patient_order.encounter_type : null,
+
+        // //OrderToLocation Details
+        to_location_uuid: i.to_location != null ? i.to_location.uuid : null,
+        location_code: i.to_location != null ? i.to_location.location_code : null,
+        location_name: i.to_location != null ? i.to_location.location_name : null
+      }
+    });
+  }
+
+}
 
 async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
   let diagnosisPromise = [];
