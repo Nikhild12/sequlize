@@ -367,7 +367,7 @@ const PatientTreatmentController = () => {
       }
     } catch (ex) {
       console.log('Exception Happened', ex);
-      return res.status(400).send({ code: 400, message: ex.message });
+      return res.status(400).send({ code: 400, message: ex });
     }
 
   };
@@ -499,10 +499,10 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
 }
 async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
-  const url = config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
-    url,
+    config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    //url,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
