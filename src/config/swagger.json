@@ -7231,6 +7231,41 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
+    },
+    "/api/profiles/update": {
+      "put": {
+        "summary": "To Update profiles Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updateProfiles",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateProfiles"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Profiles"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
     }
   },
   "definitions": {
@@ -13318,6 +13353,123 @@
     "getdashboard": {
       "type": "object",
       "properties": {}
+    },
+    "updateProfiles": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "object",
+          "properties": {
+            "profile_type_uuid": {
+              "type": "integer"
+            },
+            "profile_code": {
+              "type": "string"
+            },
+            "profile_name": {
+              "type": "string"
+            },
+            "profile_description": {
+              "type": "string"
+            },
+            "facility_uuid": {
+              "type": "integer"
+            },
+            "department_uuid": {
+              "type": "integer"
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "profile_sections_uuid": {
+                    "type": "integer"
+                  },
+                  "section_uuid": {
+                    "type": "integer"
+                  },
+                  "activity_uuid": {
+                    "type": "integer"
+                  },
+                  "display_order": {
+                    "type": "integer"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "profile_section_categories_uuid": {
+                          "type": "integer"
+                        },
+                        "category_uuid": {
+                          "type": "integer"
+                        },
+                        "display_order": {
+                          "type": "integer"
+                        },
+                        "concepts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "profile_section_category_concepts_uuid": {
+                                "type": "integer"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "value_type_uuid": {
+                                "type": "integer"
+                              },
+                              "is_mandatory": {
+                                "type": "string"
+                              },
+                              "display_order": {
+                                "type": "integer"
+                              },
+                              "is_multiple": {
+                                "type": "string"
+                              },
+                              "conceptvalues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "profile_section_category_concept_values_uuid": {
+                                      "type": "integer"
+                                    },
+                                    "value_code": {
+                                      "type": "string"
+                                    },
+                                    "value_name": {
+                                      "type": "string"
+                                    },
+                                    "display_order": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
