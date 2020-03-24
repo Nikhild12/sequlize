@@ -1,3 +1,6 @@
+// Constants Import
+const emr_constants = require("../config/constants");
+
 const _getAllFavouritesAttributes = () => {
   return [
     "fm_uuid",
@@ -62,8 +65,33 @@ const _getSearchKeyWhere = (key, value) => {
   }
 };
 
+const _favouriteDuplicateMessage = (favList, sKey, sVal, dO) => {
+  let duplicate_msg, duplicate_code;
+  const foundFavByItem = favList.find(c => {
+    return c[sKey] === sVal;
+  });
+
+  const foundFavByDO = favList.find(c => {
+    return c['tsm_display_order'] === Number(dO);
+  });
+
+  if (foundFavByItem && foundFavByItem[sKey]) {
+    duplicate_msg =
+    foundFavByItem.tsm_active[0] === 1
+        ? emr_constants.DUPLICATE_ACTIVE_MSG
+        : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
+    duplicate_code = emr_constants.DUPLICATE_RECORD;
+  } else  if(foundFavByDO){
+    duplicate_msg = `Already display Order '${dO}' has been added to your Favourite list.`;
+    duplicate_code = emr_constants.DUPLICATE_DISPLAY_ORDER;
+  }
+
+  return { duplicate_msg, duplicate_code };
+};
+
 module.exports = {
   getAllFavouritesAttributes: _getAllFavouritesAttributes,
   getFavouritesInHumanReadableFormat: _getFavouritesInHumanReadableFormat,
-  getSearchKeyWhere: _getSearchKeyWhere
+  getSearchKeyWhere: _getSearchKeyWhere,
+  favouriteDuplicateMessage: _favouriteDuplicateMessage
 };
