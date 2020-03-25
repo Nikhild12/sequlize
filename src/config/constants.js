@@ -49,6 +49,7 @@ module.exports = Object.freeze({
   TREATMENT_DELETE_SUCCESS: "Treatment Kit Deleted Successfully",
   ENCOUNTER_CLOSED_SUCCESS: "Encounter Closed Successfully",
   FAVOURITE_DELETED_SUCCESSFULLY: "Favourite Deleted Successfully",
+  LATEST_RECORD_FETECHED_SUCCESSFULLY: "Fetched Latest Record Successfully",
 
   GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
