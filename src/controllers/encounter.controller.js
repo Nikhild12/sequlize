@@ -12,13 +12,19 @@ var Op = Sequelize.Op;
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
+// EMR Utilities
 const emr_utility = require("../services/utility.service");
+
+// Encounter Attributes
+const enc_att = require("../attributes/encounter.attributes");
 
 const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const encounter_type_tbl = sequelizeDb.encounter_type;
 const vw_patientdoc = sequelizeDb.vw_patient_doctor_details;
 const vw_encounterDetailsTbl = sequelizeDb.vw_emr_encounter_details;
+const vw_latest_encounter = sequelizeDb.vw_latest_encounter;
+
 const emr_constants = require("../config/constants");
 
 const emr_mock_json = require("../config/emr_mock_json");
@@ -138,24 +144,23 @@ const Encounter = () => {
 
   const _getEncounterByPatientIdAndVisitdate = async (req, res) => {
     const { user_uuid } = req.headers;
-    const {
-      e_patient_uuid,
-      e_encounter_date,
-      is_active_encounter
-    } = req.query;
+    const { e_patient_uuid, e_encounter_date, is_active_encounter } = req.query;
 
     try {
-      if (user_uuid && e_patient_uuid || (e_patient_uuid && e_encounter_date)) {
-        const encounterData = await vw_encounterDetailsTbl.findAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } },
-          { where: is_active_encounter == 2 });
+      if (
+        (user_uuid && e_patient_uuid) ||
+        (e_patient_uuid && e_encounter_date)
+      ) {
+        const encounterData = await vw_encounterDetailsTbl.findAll(
+          { attributes: { exclude: ["id", "createdAt", "updatedAt"] } },
+          { where: is_active_encounter == 2 }
+        );
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
           responseContents: encounterData
         });
-      }
-
-      else {
+      } else {
         return res.status(400).send({
           code: httpStatus[400],
           message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
@@ -627,6 +632,47 @@ const Encounter = () => {
       });
     }
   };
+  const _getLatestEncounterByPatientId = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patientId, encounterTypeId } = req.query;
+
+    if (
+      emr_utility.isNumberValid(patientId) &&
+      emr_utility.isNumberValid(encounterTypeId) &&
+      user_uuid
+    ) {
+      try {
+        const latestEncounterRecord = await vw_latest_encounter.findAll({
+          attributes: enc_att.getLatestEncounterAttributes(),
+          where: enc_att.getLatestEncounterQuery(patientId, encounterTypeId),
+          order: [["ed_uuid", "desc"]]
+        });
+
+        const {
+          responseCode,
+          responseMessage
+        } = enc_att.getLatestEncounterResponse(latestEncounterRecord);
+        return res.status(200).send({
+          code: responseCode,
+          message: responseMessage,
+          responseContents: enc_att.modifiedLatestEncounterRecord(
+            latestEncounterRecord
+          )[0]
+        });
+      } catch (error) {
+        console.log(error);
+
+        return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
 
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
@@ -637,7 +683,8 @@ const Encounter = () => {
     updateTATTimeInEncounterDoctor: _updateTATTimeInEncounterDoctor,
     getPatientDoc: _getPatientDoc,
     closeEncounter: _closeEncounter,
-    getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate
+    getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate,
+    getLatestEncounterByPatientId: _getLatestEncounterByPatientId
   };
 };
 
