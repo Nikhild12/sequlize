@@ -159,7 +159,15 @@ const specialitySketchesMasterController = () => {
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
                     // p_status: 1,
-                }
+                },
+                include: [{
+                    model: specialitySketcheDetailsTbl,
+                    //as: 'speciality_sketch_details',
+                    //required: false,
+                    // as: 'source' 
+                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
+                    where: { status: 1, is_active: 1 }
+                }]
             };
 
             if (postData.search && /\S/.test(postData.search)) {
@@ -195,7 +203,9 @@ const specialitySketchesMasterController = () => {
                 //findQuery.where['p_is_active'] = postData.status;
                 findQuery.where = { is_active: postData.status };
             }
-            await specialitySketchesMasterTbl.findAndCountAll(findQuery)
+            await specialitySketchesMasterTbl.findAndCountAll(findQuery,
+                
+                )
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -249,7 +259,7 @@ const specialitySketchesMasterController = () => {
                         attachmentData.revision = 1;
 
                         let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
-                        
+
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
@@ -393,33 +403,36 @@ const specialitySketchesMasterController = () => {
                 }]
             });
 
-            if (data){
-            const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
-            const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
-            
-            data.created_by = getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name;
-            data.modified_by = getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name;
-            
-            return res
-                .status(httpStatus.OK)
-                .json({
-                    statusCode: 200,
-                    req: '',
-                    responseContents: data
-                });
+            if (data) {
+                const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
+                const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
+                const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
+                //data.created_by = getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name;
+                //data.modified_by = getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name;
+                //data.department_name = getdep.responseContent.name;
+                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
+
+                //Object.assign(data, {detapartment_name: getdep});
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        responseContents: getdata
+                    });
 
             }
             else {
                 return res
-                .status(400)
-                .json({
-                    statusCode: 400,
-                    req: '',
-                    responseContents: "data not found"
-                });
+                    .status(400)
+                    .json({
+                        statusCode: 400,
+                        req: '',
+                        responseContents: "data not found"
+                    });
 
             }
-            
+
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -463,3 +476,45 @@ async function getuserDetails(user_uuid, docid, authorization) {
     return user_details;
 }
 
+async function getdepDetails(user_uuid, depid, authorization) {
+    console.log(depid);
+    let options = {
+        uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
+        //   uri:
+        //     "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments",
+        method: "POST",
+        headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+        },
+        body: { "uuid": depid },
+        //body: { pageNo: 0, paginationSize: 100 },
+        json: true
+    };
+    const dep_details = await rp(options);
+    return dep_details;
+}
+
+function getfulldata(data, getcuDetails, getmuDetails, getdep) {
+    let newdata = {
+        "uuid": data.uuid,
+        "code": data.code,
+        "name": data.name,
+        "department_uuid": data.department_uuid,
+        "department_name": getdep.responseContent.name,
+        "description": data.description,
+        "sketch_name": data.sketch_name,
+        "status": data.status,
+        "revision": data.revision,
+        "is_active": data.is_active,
+        "created_by_id": data.created_by,
+        "created_by": getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name,
+        "modified_by_id": data.modified_by,
+        "modified_by": getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name,
+        "created_date": data.created_date,
+        "modified_date": data.modified_date,
+        "speciality_sketch_detail": data.speciality_sketch_detail
+    };
+    return newdata;
+}

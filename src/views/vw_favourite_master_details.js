@@ -165,6 +165,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       d_status: {
         type: DataTypes.BOOLEAN
+      },
+      tsm_display_order: {
+        type: DataTypes.INTEGER
       }
     }
   );

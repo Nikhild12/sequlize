@@ -13,6 +13,7 @@ module.exports = Object.freeze({
   NO_RECORD_FOUND: "Sorry! No Record Found",
   EMR_FETCHED_SUCCESSFULLY: "Fetched EMR Workflow Successfully",
   DUPLICATE_RECORD: "Duplicate Record",
+  DUPLICATE_DISPLAY_ORDER: "Duplicate Display Order",
   GIVEN_USER_UUID: "for the given user_uuid",
   SEND_PROPER_REQUEST: "Send Proper Request Body",
   I_E_NUMBER_ARRAY: "i.e. number array",
@@ -48,8 +49,9 @@ module.exports = Object.freeze({
   TREATMENT_DELETE_SUCCESS: "Treatment Kit Deleted Successfully",
   ENCOUNTER_CLOSED_SUCCESS: "Encounter Closed Successfully",
   FAVOURITE_DELETED_SUCCESSFULLY: "Favourite Deleted Successfully",
+  LATEST_RECORD_FETECHED_SUCCESSFULLY: "Fetched Latest Record Successfully",
 
-  GetpleaseProvideMsg: function (columnname) {
+  GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "encounter_uuid":
@@ -149,7 +151,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetMinimumMessage: function (columnname) {
+  GetMinimumMessage: function(columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -196,7 +198,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function (columnname) {
+  GetZeroValidationMessage: function(columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
