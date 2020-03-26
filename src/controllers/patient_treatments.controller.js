@@ -190,91 +190,7 @@ const PatientTreatmentController = () => {
       });
     }
   };
-  const _prevKitOrdersById = async (req, res) => {
-    const { user_uuid, authorization } = req.headers;
 
-    const { patient_uuid } = req.query;
-    try {
-      if (user_uuid && patient_uuid && patient_uuid > 0) {
-        let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
-        const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
-        let response = getPrevKitOrdersResponse(prevKitOrderData);
-        let departmentIds = [];
-        let doctorIds = [];
-        response.map(d => {
-          departmentIds.push(d.department_id);
-          doctorIds.push(d.doctor_id)
-
-        });
-
-        const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
-        if (departmentsResponse) {
-          for (let [i, r] of response.entries()) {
-            for (let d of departmentsResponse.responseContent.rows) {
-              if (r.department_id == d.uuid) {
-                response[i].department_name = d.name
-              }
-            }
-          }
-        }
-        const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
-        if (doctorResponse) {
-          for (let [i, r] of response.entries()) {
-            for (let d of doctorResponse.responseContents) {
-              if (r.doctor_id == d.uuid) {
-                response[i].doctor_name = d.first_name
-
-              }
-            }
-          }
-
-        }
-        return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
-      }
-      else {
-        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
-      }
-    } catch (ex) {
-      console.log('Exception Happened', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-    }
-
-  };
-
-  const _repeatOrderById = async (req, res) => {
-    const { user_uuid, facility_uuid, authorization } = req.headers;
-    const { order_id } = req.body;
-
-    if (!user_uuid || !order_id) {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ` });
-    }
-    try {
-      if (order_id <= 0) {
-        return res.status(400).send({ code: httpStatus[400], message: 'Please providr valid order id' });
-      }
-
-      const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(order_id);
-      const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
-      const repeatOrderPrescData = await getPrevOrderPrescription({ user_uuid, facility_uuid, authorization }, order_id);
-      const repeatOrderLabData = await getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id);
-      //const repeatOrderRadilogy = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id);
-
-      return res.status(200).send({
-        code: httpStatus.OK,
-        message: 'Prevkit Order Details Fetched Successfully',
-        responseContents: {
-          "diagnosis_details": responseDiagnosis,
-          "drug_details": repeatOrderPrescData ? repeatOrderPrescData : [],
-          "lab_details": repeatOrderLabData,
-          //  "radiology_details": repeatOrderRadilogy
-        }
-      });
-    } catch (ex) {
-      console.log('Exception Happened ', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-    }
-
-  };
 
   const _previousKitRepeatOrder = async (req, res) => {
     const { user_uuid, facility_uuid, authorization } = req.headers;
@@ -373,17 +289,30 @@ const PatientTreatmentController = () => {
   };
 
   const _modifyPreviousOrder = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, authorization } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis } = req.body;
+    const { patientDiagnosis, patientPrescription } = req.body;
+    let diagnosisUpdated, prescriptionUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
-          const diagnosisUpdated = updateDiagnosisDetails ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
-          if (diagnosisUpdated) {
-            return res.status(200).send({ code: httpStatus.OK, message: 'Updated success' });
-          }
+          diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
+
+        }
+        if (patientPrescription && Array.isArray(patientPrescription)) {
+          let updatePrescriptionDetails = req.body.patientPrescription[0].drug_details;
+          prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
+        }
+        if (diagnosisUpdated || prescriptionUpdated) {
+          return res.status(200).send({
+            code: httpStatus.OK, message: 'Updated success',
+            responseContents: {
+              prescriptionUpdated
+            }
+          });
+        } else {
+          return res.status(400).send({ code: 400, message: 'Failed to update' });
         }
       } else {
         return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -396,8 +325,6 @@ const PatientTreatmentController = () => {
 
   return {
     createPatientTreatment: _createPatientTreatment,
-    prevKitOrdersById: _prevKitOrdersById,
-    repeatOrderById: _repeatOrderById,
     previousKitRepeatOrder: _previousKitRepeatOrder,
     modifyPreviousOrder: _modifyPreviousOrder
   };
@@ -615,7 +542,7 @@ async function getPrescriptionRseponse(prescriptions) {
 
           "uuid": e.uuid,
           "prescription_uuid": e.prescription_uuid,
-
+          "comments": e.comments,
 
           //Drug Status
           "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
@@ -683,7 +610,8 @@ async function getLabResponse(labData) {
         uuid: l.patient_order_uuid,
         details_uuid: l.uuid,
         order_id: l.patient_treatment_uuid,
-
+        //comments
+        comments: l.comments != null ? l.comments : null,
         // order status details
         order_status_uuid: l.order_status != null ? l.order_status.uuid : null,
         order_status_code: l.order_status != null ? l.order_status.name : null,
@@ -692,7 +620,10 @@ async function getLabResponse(labData) {
         test_master_uuid: l.test_master != null ? l.test_master.uuid : null,
         lab_name: l.test_master != null ? l.test_master.name : null,
         lab_code: l.test_master != null ? l.test_master.code : null,
-
+        //ordepriority
+        priority_uuid: l.order_priority != null ? l.order_priority.uuid : null,
+        priority_code: l.order_priority != null ? l.order_priority.code : null,
+        prority_name: l.order_priority != null ? l.order_priority.name : null,
         // //encounter details
         encounter_type_uuid: l.patient_order != null ? l.patient_order.encounter_type_uuid : null,
         encounter_type: l.patient_order != null ? l.patient_order.encounter_type : null,
@@ -714,7 +645,8 @@ async function getRadialogyResponse(radialogyData) {
         uuid: r.patient_order_uuid,
         details_uuid: r.uuid,
         order_id: r.patient_treatment_uuid,
-
+        //comments
+        comments: r.comments != null ? r.comments : null,
         // order status details
         order_status_uuid: r.order_status != null ? r.order_status.uuid : null,
         order_status_code: r.order_status != null ? r.order_status.name : null,
@@ -724,6 +656,10 @@ async function getRadialogyResponse(radialogyData) {
         lab_name: r.test_master != null ? r.test_master.name : null,
         lab_code: r.test_master != null ? r.test_master.code : null,
 
+        //ordepriority
+        priority_uuid: r.order_priority != null ? r.order_priority.uuid : null,
+        priority_code: r.order_priority != null ? r.order_priority.code : null,
+        prority_name: r.order_priority != null ? r.order_priority.name : null,
         // //encounter details
         encounter_type_uuid: r.patient_order != null ? r.patient_order.encounter_type_uuid : null,
         encounter_type: r.patient_order != null ? r.patient_order.encounter_type : null,
@@ -731,7 +667,9 @@ async function getRadialogyResponse(radialogyData) {
         // //OrderToLocation Details
         to_location_uuid: r.to_location != null ? r.to_location.uuid : null,
         location_code: r.to_location != null ? r.to_location.location_code : null,
-        location_name: r.to_location != null ? r.to_location.location_name : null
+        location_name: r.to_location != null ? r.to_location.location_name : null,
+
+
 
       };
     });
@@ -745,7 +683,8 @@ async function getInvestigationResponse(investigationData) {
         uuid: i.patient_order_uuid,
         details_uuid: i.uuid,
         order_id: i.patient_treatment_uuid,
-
+        //comments
+        comments: i.comments != null ? i.comments : null,
         // order status details
         order_status_uuid: i.order_status != null ? i.order_status.uuid : null,
         order_status_code: i.order_status != null ? i.order_status.name : null,
@@ -755,6 +694,10 @@ async function getInvestigationResponse(investigationData) {
         lab_name: i.test_master != null ? i.test_master.name : null,
         lab_code: i.test_master != null ? i.test_master.code : null,
 
+        //ordepriority
+        priority_uuid: i.order_priority != null ? i.order_priority.uuid : null,
+        priority_code: i.order_priority != null ? i.order_priority.code : null,
+        prority_name: i.order_priority != null ? i.order_priority.name : null,
         // //encounter details
         encounter_type_uuid: i.patient_order != null ? i.patient_order.encounter_type_uuid : null,
         encounter_type: i.patient_order != null ? i.patient_order.encounter_type : null,
@@ -808,6 +751,24 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
   });
 
   return diagnosisPromise
+}
+
+async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/updatePrescription'
+  return utilityService.postRequest(
+    config.wso2InvUrl + 'prescriptions/updatePrescription',
+    //url,
+    {
+      "content-type": "application/json",
+      user_uuid: user_uuid,
+      Authorization: authorization
+    },
+    {
+      details: updatePrescriptionDetails
+    }
+  );
+
+
 }
 const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, order_id) => {
   let options = {
