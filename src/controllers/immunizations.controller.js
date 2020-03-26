@@ -5,9 +5,8 @@ const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 
-
 const immunizationsTbl = db.immunizations;
-
+const immunizationsVwTbl = db.vw_emr_immunizations;
 
 function getimmunizationsFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -16,14 +15,14 @@ function getimmunizationsFilterByQuery(searchBy, searchValue) {
 
             return {
                 is_active: emr_const.IS_ACTIVE,
-                    status: emr_const.IS_ACTIVE,
-                    [Op.or]: [{
-                            name: {
-                                [Op.like]: `%${searchValue}%`
-                            }
-                        }
-                        
-                    ]
+                status: emr_const.IS_ACTIVE,
+                [Op.or]: [{
+                    name: {
+                        [Op.like]: `%${searchValue}%`
+                    }
+                }
+
+                ]
             };
 
 
@@ -32,8 +31,8 @@ function getimmunizationsFilterByQuery(searchBy, searchValue) {
             searchValue = +searchValue;
             return {
                 is_active: emr_const.IS_ACTIVE,
-                    status: emr_const.IS_ACTIVE,
-                    uuid: searchValue
+                status: emr_const.IS_ACTIVE,
+                uuid: searchValue
             };
     }
 }
@@ -41,7 +40,7 @@ function getimmunizationsFilterByQuery(searchBy, searchValue) {
 function getimmunizationsDataAttributes() {
     return [
         'uuid',
-        
+
         'name',
         'description',
         'route_uuid',
@@ -67,7 +66,7 @@ const immunizationsController = () => {
      * @param next
      * @returns {*}
      */
-   
+
 
 
     const getimmunization = async (req, res, next) => {
@@ -105,8 +104,8 @@ const immunizationsController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where:{
-                status:1
+            where: {
+                status: 1
             }
 
         };
@@ -115,12 +114,12 @@ const immunizationsController = () => {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }
+                }
 
                 ]
             };
@@ -166,35 +165,35 @@ const immunizationsController = () => {
     };
 
 
-   
+
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-       
-        
+
+
 
         if (postData) {
 
             immunizationsTbl.findAll({
                 where: {
-                  [Op.or]: [
-                    {
-                        name: postData.name
-                    }
-                  ]
+                    [Op.or]: [
+                        {
+                            name: postData.name
+                        }
+                    ]
                 }
-              }).then(async (result) =>{
+            }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
                         statusCode: 400,
-                      status: "error",
-                      msg: "Record already Found. Please enter immunizations"
+                        status: "error",
+                        msg: "Record already Found. Please enter immunizations"
                     });
-                  } else{
+                } else {
                     await immunizationsTbl.create(postData, {
                         returning: true
                     }).then(data => {
-        
+
                         res.send({
                             statusCode: 200,
                             msg: "Inserted immunizations details Successfully",
@@ -202,25 +201,60 @@ const immunizationsController = () => {
                             responseContents: data
                         });
                     }).catch(err => {
-        
+
                         res.send({
                             status: "failed",
                             msg: "failed to immunizations details",
                             error: err
                         });
                     });
-                  }
-              });
+                }
+            });
 
-          
+
         } else {
-            
+
             res.send({
                 status: 'failed',
                 msg: 'Please enter immunizations details'
             });
         }
     };
+
+    // const getimmunizationById = async (req, res, next) => {
+    //     const postData = req.body;
+    //     try {
+
+    //         const page = postData.page ? postData.page : 1;
+    //         const itemsPerPage = postData.limit ? postData.limit : 10;
+    //         const offset = (page - 1) * itemsPerPage;
+    //         await immunizationsTbl.findOne({
+    //                 where: {
+    //                     uuid: postData.Id
+    //                 },
+    //                 offset: offset,
+    //                 limit: itemsPerPage
+    //             })
+    //             .then((data) => {
+    //                 return res
+    //                     .status(httpStatus.OK)
+    //                     .json({
+    //                         statusCode: 200,
+    //                         req: '',
+    //                         responseContents: data
+    //                     });
+    //             });
+
+    //     } catch (err) {
+    //         const errorMsg = err.errors ? err.errors[0].message : err.message;
+    //         return res
+    //             .status(httpStatus.INTERNAL_SERVER_ERROR)
+    //             .json({
+    //                 status: "error",
+    //                 msg: errorMsg
+    //             });
+    //     }
+    // };
 
     const getimmunizationById = async (req, res, next) => {
         const postData = req.body;
@@ -229,13 +263,13 @@ const immunizationsController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await immunizationsTbl.findOne({
-                    where: {
-                        uuid: postData.Id
-                    },
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+            await immunizationsVwTbl.findAll({
+                where: {
+                    i_uuid: postData.Id
+                },
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -281,17 +315,17 @@ const immunizationsController = () => {
         });
     };
 
-   
-  
+
+
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
         await immunizationsTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Id
-                }
+            where: {
+                uuid: postData.Id
             }
+        }
         ).then((data) => {
             res.send({
                 statusCode: 200,
@@ -333,7 +367,7 @@ const immunizationsController = () => {
                     });
                 }
             } catch (error) {
-               
+
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: error.message
@@ -347,7 +381,7 @@ const immunizationsController = () => {
         }
     };
 
-  
+
     // --------------------------------------------return----------------------------------
     return {
         postimmunization,
