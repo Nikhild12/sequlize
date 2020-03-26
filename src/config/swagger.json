@@ -2681,6 +2681,46 @@
         }
       }
     },
+    "/api/encounter/get-latest-enc-by-patient": {
+      "get": {
+        "description": "To get Latest Patient Record By Patient Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patientId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterTypeId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Encounter"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Latest Patient Record",
+            "schema": {
+              "$ref": "#/definitions/latestEncounterRecord"
+            }
+          }
+        }
+      }
+    },
     "/api/encounter/updateECdischarge": {
       "put": {
         "description": "To update a Encounter For Patient discharge",
@@ -6572,6 +6612,12 @@
             "name": "facility_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
           },
           {
             "in": "query",
@@ -13082,6 +13128,55 @@
               }
             }
           }
+        },
+        "patientPrescription": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "number"
+                    },
+                    "prescription_uuid": {
+                      "type": "number"
+                    },
+                    "item_master_uuid": {
+                      "type": "number"
+                    },
+                    "drug_route_uuid": {
+                      "type": "number"
+                    },
+                    "drug_frequency_uuid": {
+                      "type": "number"
+                    },
+                    "duration": {
+                      "type": "number"
+                    },
+                    "duration_period_uuid": {
+                      "type": "number"
+                    },
+                    "drug_instruction_uuid": {
+                      "type": "number"
+                    },
+                    "prescribed_quantity": {
+                      "type": "number"
+                    },
+                    "generic_uuid": {
+                      "type": "number"
+                    },
+                    "comments": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -13468,6 +13563,41 @@
               }
             }
           }
+        }
+      }
+    },
+    "latestEncounterRecord": {
+      "type": "object",
+      "properties": {
+        "patientId": {
+          "type": "number"
+        },
+        "encounterTypeId": {
+          "type": "number"
+        },
+        "createdDate": {
+          "type": "string"
+        },
+        "titleName": {
+          "type": "string"
+        },
+        "titleId": {
+          "type": "number"
+        },
+        "doctorFirstName": {
+          "type": "string"
+        },
+        "doctorLastName": {
+          "type": "string"
+        },
+        "doctorMiddleName": {
+          "type": "string"
+        },
+        "departmentName": {
+          "type": "string"
+        },
+        "departmentId": {
+          "type": "number"
         }
       }
     }

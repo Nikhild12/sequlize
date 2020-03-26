@@ -21,6 +21,7 @@ EncounterRoutes.route("/update-tat-time").put(Encounter.updateTATTimeInEncounter
 EncounterRoutes.route("/getPatientDoc").get(Encounter.getPatientDoc);
 EncounterRoutes.route("/close-encounter").put(Encounter.closeEncounter);
 EncounterRoutes.route("/getAll").get(Encounter.getEncounterByPatientIdAndVisitdate);
+EncounterRoutes.route("/get-latest-enc-by-patient").get(Encounter.getLatestEncounterByPatientId);
 
 
 module.exports = EncounterRoutes;
