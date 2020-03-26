@@ -289,22 +289,30 @@ const PatientTreatmentController = () => {
   };
 
   const _modifyPreviousOrder = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, authorization } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis } = req.body;
+    const { patientDiagnosis, patientPrescription } = req.body;
+    let diagnosisUpdated, prescriptionUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
-          const diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
-          if (diagnosisUpdated) {
-            return res.status(200).send({ code: httpStatus.OK, message: 'Updated success' });
-          }
+          diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
+
         }
         if (patientPrescription && Array.isArray(patientPrescription)) {
-          let updatePrescriptionDetails = req.body.patientPrescription.prescriptionDetials;
-          const prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updateDiagnosisDetails, user_uuid, order_id) : "";
-
+          let updatePrescriptionDetails = req.body.patientPrescription[0].drug_details;
+          prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
+        }
+        if (diagnosisUpdated || prescriptionUpdated) {
+          return res.status(200).send({
+            code: httpStatus.OK, message: 'Updated success',
+            responseContents: {
+              prescriptionUpdated
+            }
+          });
+        } else {
+          return res.status(400).send({ code: 400, message: 'Failed to update' });
         }
       } else {
         return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -745,14 +753,13 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
   return diagnosisPromise
 }
 
-async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/updatePrescription'
-  presriptionUpdateResult = utilityService.postRequest(
-    //config.wso2InvUrl + 'prescriptions/updatePrescription',
-    url,
+async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/updatePrescription'
+  return utilityService.postRequest(
+    config.wso2InvUrl + 'prescriptions/updatePrescription',
+    //url,
     {
       "content-type": "application/json",
-      facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
     },
@@ -760,7 +767,6 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
       details: updatePrescriptionDetails
     }
   );
-
 
 
 }
