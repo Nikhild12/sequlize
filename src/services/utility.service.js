@@ -5,6 +5,8 @@ const request = require("request");
 const rp = require("request-promise");
 const Op = Sequelize.Op;
 
+const httpStatus = require("http-status");
+
 const _getActiveAndStatusObject = is_active => {
   return {
     is_active: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE,
@@ -140,6 +142,35 @@ const _isNumberValid = value => {
   return !isNaN(value);
 };
 
+const _isStringValid = value => {
+  return typeof value === "string";
+  u;
+};
+
+const _getResponseCodeForSuccessRequest = records => {
+  return records && records.length > 0 ? httpStatus.OK : httpStatus.NO_CONTENT;
+};
+
+/**
+ *
+ * @param {*} code response code
+ * @param {*} mName module Name
+ * Based on the response code and module name
+ * will return message
+ */
+
+const responseMessage = {
+  cc: emr_constants.CHIEF_COMPLIANT,
+  dis: emr_constants.DISEASES_SUCCESS
+};
+const _getResponseMessageForSuccessRequest = (code, mName) => {
+  if (code === 204) {
+    return emr_constants.NO_RECORD_FOUND;
+  } else {
+    return responseMessage[mName];
+  }
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -149,5 +180,8 @@ module.exports = {
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest,
-  isNumberValid: _isNumberValid
+  isNumberValid: _isNumberValid,
+  getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
+  getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
+  isStringValid: _isStringValid
 };

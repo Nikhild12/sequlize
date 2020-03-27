@@ -664,7 +664,7 @@ const Encounter = () => {
 
         return res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
-        .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex.message });
+        .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
       }
     } else {
       return res.status(400).send({
