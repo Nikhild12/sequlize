@@ -1,9 +1,9 @@
 {
   "name": "emr",
   "version": "3.0.0",
-	"qaversion": "3.0.0",
-	"uatversion": "3.0.0",
-	"prodversion": "3.0.0",
+  "qaversion": "3.0.0",
+  "uatversion": "3.0.0",
+  "prodversion": "3.0.0",
   "description": "EMR_API",
   "main": "index.js",
   "scripts": {
@@ -54,6 +54,7 @@
     "nodemailer": "^6.1.1",
     "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "^1.19.1",
+    "numeral": "^2.0.6",
     "path": "^0.12.7",
     "q": "^1.5.1",
     "request": "^2.88.2",
