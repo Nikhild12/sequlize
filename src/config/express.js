@@ -258,6 +258,12 @@ var myLogger = function (req, res, next) {
 app.use(myLogger);
 //Logging - 19_02_2020
 
+const numeral = require('numeral');
+setInterval(() => {
+  const {rss, heapTotal} = process.memoryUsage();
+  console.log('rss', numeral(rss).format('0.0.ib'),
+     'heapTotal', numeral(heapTotal).format('0.0.ib'));
+}, 5000);
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
