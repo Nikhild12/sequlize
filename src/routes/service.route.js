@@ -45,6 +45,10 @@ const bodySideRoute = require("./body_side.route");
 const surgeryPositionRoute = require("./surgery.position.route");
 
 const profilesRouter = require("./profiles.route");
+
+// Import Diseases Controller
+const diseasesRoute = require("./diseases.route");
+
 // Patient History routes
 const patientAllergieRoute = require("./patient_allergies.route");
 const familyHistoryRoute = require("./family_history.route");
@@ -79,7 +83,6 @@ const smRouter = require("./snomed_details.route");
 
 const serviceRouter = express.Router();
 
-
 //Discharge summary
 const dischargeSummary = require("./discharge_summary.route");
 
@@ -95,7 +98,7 @@ serviceRouter.use("/patient-chief-complaints", patientChiefRoute);
 // Patient Vitals
 serviceRouter.use("/emr-patient-vitals", emrPatientVitalRouter);
 
-//EMR Dashboard 
+//EMR Dashboard
 serviceRouter.use("/dashboard", dashboardRouter);
 // Encounter Routes
 serviceRouter.use("/encounter", encounterRouter);
@@ -215,5 +218,8 @@ serviceRouter.use("/snomed", smRouter);
 
 //patient specality skecth Routes
 serviceRouter.use("/sketch", sketchRouter);
+
+// Diseases Routes
+serviceRouter.use("/diseases", diseasesRoute);
 
 module.exports = serviceRouter;
