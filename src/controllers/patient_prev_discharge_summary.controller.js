@@ -50,10 +50,27 @@ const patient_previous_discharge_summary = () => {
         //check patient admitted or not in IP MANAGEMENT
         const { patient_uuid, encounter_uuid, allergy_uuids, chief_complaint_uuids, vital_uuids, diagnosis_uuids } = postData;
         //get patient allergy details
-        const patient_allergy_res = await getPatientAllergies(allergy_uuids,patient_uuid, encounter_uuid);
-        const patient_vitals_res = await getPatientVitals(vital_uuids,patient_uuid, encounter_uuid);
-        const patient_cheif_complaint_res = await getPatientChiefComplaints(chief_complaint_uuids,patient_uuid, encounter_uuid);
-        const patient_diagnosis_res = await getPatientDiagnosis(diagnosis_uuids,patient_uuid, encounter_uuid);
+        let patient_allergy_res=[],patient_vitals_res=[],patient_diagnosis_res=[],patient_cheif_complaint_res=[];
+        if(allergy_uuids && allergy_uuids.length > 0){
+          patient_allergy_res =  await getPatientAllergies(allergy_uuids, patient_uuid, encounter_uuid);
+        } else {
+          patient_allergy_res=[];
+        }
+        if((vital_uuids && vital_uuids.length > 0)){
+          patient_vitals_res =   await getPatientVitals(vital_uuids, patient_uuid, encounter_uuid);
+        } else {
+          patient_vitals_res =[];
+        }
+        if (chief_complaint_uuids && chief_complaint_uuids.length > 0){
+          patient_cheif_complaint_res = await getPatientChiefComplaints(chief_complaint_uuids, patient_uuid, encounter_uuid);
+        } else {
+          patient_cheif_complaint_res=[];
+        }
+        if(diagnosis_uuids && diagnosis_uuids.length > 0){
+          patient_diagnosis_res = await getPatientDiagnosis(diagnosis_uuids, patient_uuid, encounter_uuid);
+        }else{
+          patient_diagnosis_res=[];
+        }
 
         // const patinet_treatmentKit_res =  await getPatienyTreatmentKit(patient_uuid, doctor_uuid, encounter_uuid);
         // return res.status(200).send({ code: httpStatus.OK, responseContent: { "cheif_complaints": patient_cheif_complaint_res} });
@@ -80,9 +97,8 @@ const patient_previous_discharge_summary = () => {
 
 module.exports = patient_previous_discharge_summary();
 // GET PATIENT ALLERGY DETAILS START
-async function getPatientAllergies(allergy_uuids,patient_uuid, encounter_uuid) {
+async function getPatientAllergies(allergy_uuids, patient_uuid, encounter_uuid) {
 
-  // try {
   const result = await patient_allergyTbl.findAll({
     attributes: [
       'uuid', 'patient_uuid', 'encounter_uuid',
@@ -178,12 +194,9 @@ async function getPatientAllergies(allergy_uuids,patient_uuid, encounter_uuid) {
   if (result) {
     let allergyInfo = getAllergyInfo(result);
     return allergyInfo;
+  } else {
+    return [];
   }
-  // }
-  // catch (ex) {
-  //     console.log('ex----', ex);
-  //     return [];
-  // }
 }
 
 function getAllergyInfo(result) {
@@ -229,15 +242,18 @@ function getAllergyInfo(result) {
 
 
 // GET PATIENT VITALS DETAILS START
-async function getPatientVitals(vital_uuids,patient_uuid, encounter_uuid) {
+async function getPatientVitals(vital_uuids, patient_uuid, encounter_uuid) {
   let getPPV = await vw_patientVitalsTbl.findAll(
-    getPatinetVitalQuery(vital_uuids,patient_uuid, encounter_uuid),
+    getPatinetVitalQuery(vital_uuids, patient_uuid, encounter_uuid),
     { returning: true }
   );
-  // return getPPV
-  return PPVitalsList(getPPV);
+  if (getPPV) {
+    return PPVitalsList(getPPV);
+  } else {
+    return [];
+  }
 }
-function getPatinetVitalQuery(vital_uuids,patient_uuid, encounter_uuid) {
+function getPatinetVitalQuery(vital_uuids, patient_uuid, encounter_uuid) {
   // user_uuid == doctor_uuid
   let query = {
     order: [["pv_uuid", "DESC"]],
@@ -446,10 +462,9 @@ function getDClist(fetchedData, p_id, created_date) {
   return pv_list;
 }
 
-async function getPatientChiefComplaints(chief_complaint_uuids,patient_uuid, encounter_uuid) {
+async function getPatientChiefComplaints(chief_complaint_uuids, patient_uuid, encounter_uuid) {
 
-
-  let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
+let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
     where: {
       pcc_uuid: {
         [Op.in]: chief_complaint_uuids
@@ -463,8 +478,12 @@ async function getPatientChiefComplaints(chief_complaint_uuids,patient_uuid, enc
 
   }, { returning: true });
 
-  let data = await getPatientChiefComplaintsOrganizeData(patient_cc_res);
-  return data;
+  if (patient_cc_res) {
+    let data = await getPatientChiefComplaintsOrganizeData(patient_cc_res);
+    return data;
+  } else {
+    return [];
+  }
 
 }
 
@@ -523,7 +542,7 @@ function getCheifComplaintList(arr, patient_uuid, created_date) {
   return data;
 }
 
-async function getPatientDiagnosis(diagnosis_uuids,patient_uuid, encounter_uuid) {
+async function getPatientDiagnosis(diagnosis_uuids, patient_uuid, encounter_uuid) {
   const diagnosis_res = await patient_diagnosisTbl.findAll({
     where: {
       uuid: {
@@ -544,8 +563,12 @@ async function getPatientDiagnosis(diagnosis_uuids,patient_uuid, encounter_uuid)
       }
     }]
   }, { returning: true });
-  const data = await getGetDiagnosis(diagnosis_res);
-  return data;
+  if (diagnosis_res) {
+    const data = await getGetDiagnosis(diagnosis_res);
+    return data;
+  } else {
+    return [];
+  }
 }
 function getGetDiagnosis(diagnosis_res) {
   let diagnosis_result = [];
@@ -571,12 +594,4 @@ function getGetDiagnosis(diagnosis_res) {
     });
   }
   return diagnosis_result;
-}
-
-async function gettypes(tablename, user_uuid) {
-
-  let fetchedData = await tablename.findAll();
-  if (fetchedData) {
-    return fetchedData;
-  }
 }
