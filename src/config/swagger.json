@@ -4899,6 +4899,49 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+
+    "/api/diseases/get-by-filters": {
+      "get": {
+        "description": "To get list of diseases based on filter",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "searchBy",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "searchValue",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diseases"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDiseases"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/CC-charts/create": {
       "post": {
         "description": "To Create a critical care chart data for the patient",
@@ -7483,6 +7526,33 @@
         },
         "uuid": {
           "type": "integer"
+        }
+      }
+    },
+
+    "getDiseases":{
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "disease_id": {
+            "type": "integer"
+          },
+          "disease_code": {
+            "type": "string"
+          },
+          "disease_name": {
+            "type": "string"
+          },
+          "disease_color": {
+            "type": "string"
+          },
+          "disease_language": {
+            "type": "string"
+          },
+          "diseases_is_default": {
+            "type": "boolean"
+          }
         }
       }
     },
