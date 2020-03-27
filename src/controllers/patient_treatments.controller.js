@@ -289,10 +289,10 @@ const PatientTreatmentController = () => {
   };
 
   const _modifyPreviousOrder = async (req, res) => {
-    const { user_uuid, authorization } = req.headers;
+    const { user_uuid, authorization, facility_uuid } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis, patientPrescription } = req.body;
-    let diagnosisUpdated, prescriptionUpdated;
+    const { patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
+    let diagnosisUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
@@ -304,12 +304,38 @@ const PatientTreatmentController = () => {
           let updatePrescriptionDetails = req.body.patientPrescription[0].drug_details;
           prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
         }
-        if (diagnosisUpdated || prescriptionUpdated) {
+        if (patientLab) {
+          let updateLabDetails = req.body.patientLab;
+          if (updateLabDetails && updateLabDetails.new_details && updateLabDetails.new_details.length > 0) {
+            updateLabDetails.new_details.map((l) => {
+              l.patient_treatment_uuid = order_id;
+            })
+          }
+          labUpdated = updateLabDetails ? await updateLab(updateLabDetails, user_uuid, facility_uuid, authorization) : '';
+
+        }
+        if (patientRadiology) {
+          let updateRadilogyDetails = req.body.patientRadiology;
+          if (updateRadilogyDetails && updateRadilogyDetails.new_details && updateRadilogyDetails.new_details.length > 0) {
+            updateRadilogyDetails.new_details.map((r) => {
+              r.patient_treatment_uuid = order_id;
+            })
+          }
+          radilogyUpadated = updateRadilogyDetails ? await updateRadilogy(updateRadilogyDetails, user_uuid, facility_uuid, authorization) : '';
+        }
+        if (patientInvestigation) {
+          let updateInvestigationDetails = req.body.patientInvestigation;
+          if (updateInvestigationDetails && updateInvestigationDetails.new_details && updateInvestigationDetails.new_details.length > 0) {
+            updateInvestigationDetails.new_details.map((i) => {
+              i.patient_treatment_uuid = order_id;
+            })
+          }
+          investigationUpdated = updateInvestigationDetails ? await updateInvestigation(updateInvestigationDetails, user_uuid, facility_uuid, authorization) : '';
+        }
+        if (diagnosisUpdated || prescriptionUpdated || labUpdated || radilogyUpadated || investigationUpdated) {
           return res.status(200).send({
             code: httpStatus.OK, message: 'Updated success',
-            responseContents: {
-              prescriptionUpdated
-            }
+
           });
         } else {
           return res.status(400).send({ code: 400, message: 'Failed to update' });
@@ -770,7 +796,20 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
 
 
 }
-const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, order_id) => {
+
+async function updateLab(updateLabDetails, facility_uuid, user_uuid, authorization) {
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
+  return await _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
+}
+async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, authorization) {
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
+  return await _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
+}
+async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
+  return await _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
+}
+async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
   let options = {
     uri: url,
     headers: {
@@ -778,19 +817,18 @@ const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, or
       facility_uuid: facility_uuid,
       Authorization: authorization
     },
-    method: 'POST',
+    method: 'PUT',
     json: true,
-    body: {
-      patient_treatment_uuid: order_id
-    }
+    body: updateDetails
   };
-  console.log(options, 'lab');
 
   try {
     const result = await rp(options);
-    if (result) {
+    console.log(result, 'result')
+    if (result && result.statusCode === 200) {
       return result;
     }
+
   } catch (ex) {
     console.log('Exception Happened', ex);
     return ex;

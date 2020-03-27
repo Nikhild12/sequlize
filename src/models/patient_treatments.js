@@ -30,14 +30,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg("facility_uuid")
+            msg: emr_constants.GetpleaseProvideMsg("department_uuid")
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg("facility_uuid")
+            msg: emr_constants.GetpleaseProvideMsg("department_uuid")
           },
           min: {
             args: [1],
-            msg: emr_constants.GetMinimumMessage("facility_uuid")
+            msg: emr_constants.GetMinimumMessage("department_uuid")
           }
         }
       },
@@ -62,14 +62,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg("patient_uuid")
+            msg: emr_constants.GetpleaseProvideMsg("encounter_uuid")
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg("patient_uuid")
+            msg: emr_constants.GetpleaseProvideMsg("encounter_uuid")
           },
           min: {
             args: [1],
-            msg: emr_constants.GetMinimumMessage("patient_uuid")
+            msg: emr_constants.GetMinimumMessage("encounter_uuid")
           }
         }
       },
