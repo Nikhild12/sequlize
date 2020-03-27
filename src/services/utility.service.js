@@ -142,6 +142,11 @@ const _isNumberValid = value => {
   return !isNaN(value);
 };
 
+const _isStringValid = value => {
+  return typeof value === "string";
+  u;
+};
+
 const _getResponseCodeForSuccessRequest = records => {
   return records && records.length > 0 ? httpStatus.OK : httpStatus.NO_CONTENT;
 };
@@ -155,7 +160,8 @@ const _getResponseCodeForSuccessRequest = records => {
  */
 
 const responseMessage = {
-  cc: emr_constants.CHIEF_COMPLIANT
+  cc: emr_constants.CHIEF_COMPLIANT,
+  dis: emr_constants.DISEASES_SUCCESS
 };
 const _getResponseMessageForSuccessRequest = (code, mName) => {
   if (code === 204) {
@@ -176,5 +182,6 @@ module.exports = {
   postRequest: _postRequest,
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
-  getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest
+  getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
+  isStringValid: _isStringValid
 };
