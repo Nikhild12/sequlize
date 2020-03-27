@@ -6182,6 +6182,36 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/discharge-summary/getPreviousDischargeDetails": {
+      "post": {
+        "summary": "To get previous discharge details of patient",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "getPreviousDischargeDetails",
+            "required": true,
+            "schema":{
+              "$ref": "#/definitions/getPreviousDischargeDetails"
+            }
+          }
+        ],
+        "produces": ["application/json", "application/xml"],
+        "tags": ["Patient-discharge-summary"],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },    
     "/api/encounter/delete-by-id": {
       "put": {
         "summary": "To get List of patient detials to discharge",
@@ -13598,6 +13628,47 @@
         },
         "departmentId": {
           "type": "number"
+        }
+      }
+    },
+    "getPreviousDischargeDetails":{
+      "type":"object",
+      "properties":{
+        "patient_uuid":{
+          "type":"number",
+          "example":"1"
+        },
+        "encounter_uuid":{
+          "type":"number",
+          "example":"1"
+        },
+        "allergy_uuids":{
+          "type":"array",
+           "items":{
+             "type":"number",
+             "example":"1"
+           }
+        },
+        "chief_complaint_uuids":{
+          "type":"array",
+           "items":{
+             "type":"number",
+             "example":"1"
+           }
+        },
+        "vital_uuids":{
+          "type":"array",
+           "items":{
+             "type":"number",
+             "example":"1"
+           }
+        },
+        "diagnosis_uuids":{
+          "type":"array",
+           "items":{
+             "type":"number",
+             "example":"1"
+           }
         }
       }
     }
