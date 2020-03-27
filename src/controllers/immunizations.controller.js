@@ -69,7 +69,7 @@ const immunizationsController = () => {
 
 
 
-    const getimmunization = async (req, res, next) => {
+    const getimmunization_old = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -164,7 +164,100 @@ const immunizationsController = () => {
 
     };
 
+    const getimmunization = async (req, res, next) => {
+        let getsearch = req.body;
 
+        let pageNo = 0;
+        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+        let sortField = 'i_created_date';
+        let sortOrder = 'DESC';
+
+        if (getsearch.pageNo) {
+            let temp = parseInt(getsearch.pageNo);
+
+
+            if (temp && (temp != NaN)) {
+                pageNo = temp;
+            }
+        }
+
+        const offset = pageNo * itemsPerPage;
+
+
+        if (getsearch.sortField) {
+
+            sortField = getsearch.sortField;
+        }
+
+        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+            sortOrder = getsearch.sortOrder;
+        }
+        let findQuery = {
+            offset: offset,
+            limit: itemsPerPage,
+            order: [
+                [sortField, sortOrder],
+            ],
+            where: {
+                i_status: 1
+            }
+
+        };
+
+        if (getsearch.search && /\S/.test(getsearch.search)) {
+
+            findQuery.where = {
+                [Op.or]: [{
+                    i_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+
+
+                }
+
+                ]
+            };
+        }
+
+
+        try {
+            await immunizationsVwTbl.findAndCountAll(findQuery)
+
+
+                .then((findData) => {
+
+                    return res
+
+                        .status(httpStatus.OK)
+                        .json({
+                            message: "success",
+                            statusCode: 200,
+                            responseContents: (findData.rows ? findData.rows : []),
+                            totalRecords: (findData.count ? findData.count : 0),
+
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            message: "error",
+                            err: err,
+                            req: ''
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    message: "error",
+                });
+        }
+
+
+    };
 
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
