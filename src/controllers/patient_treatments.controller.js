@@ -801,18 +801,18 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
 
 async function updateLab(updateLabDetails, facility_uuid, user_uuid, authorization) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
-  const url = config.wso2LisUrl + 'patientorders/updatePatientOrder',
+  const url = config.wso2LisUrl + 'patientorders/updatePatientOrder';
 
   return await _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
 }
 async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, authorization) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
-  const url = config.wso2RmisUrl + 'patientorders/updatePatientOrder',
+  const url = config.wso2RmisUrl + 'patientorders/updatePatientOrder';
   return await _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
 }
 async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
-  const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder',
+  const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder';
 
   return await _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
 }
