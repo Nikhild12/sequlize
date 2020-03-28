@@ -240,15 +240,15 @@ const PatientTreatmentController = () => {
             });
           }
 
-          // const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
-          // if (repeatLabOrder && repeatLabOrder.length > 0) {
-          //   response.forEach((l) => {
-          //     l.labDetails = repeatLabOrder.filter((rl) => {
-          //       return rl.order_id === l.order_id;
-          //     });
-          //   });
+          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
+          if (repeatLabOrder && repeatLabOrder.length > 0) {
+            response.forEach((l) => {
+              l.labDetails = repeatLabOrder.filter((rl) => {
+                return rl.order_id === l.order_id;
+              });
+            });
 
-          // }
+          }
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
@@ -474,10 +474,10 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 }
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
-    //config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
-    url,
+    config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
+    //url,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -639,7 +639,7 @@ async function getLabResponse(labData) {
         details_uuid: l.uuid,
         order_id: l.patient_treatment_uuid,
         //comments
-        comments: l.comments != null ? l.comments : null,
+        comments: l.details_comments != null ? l.details_comments : null,
         // order status details
         order_status_uuid: l.order_status != null ? l.order_status.uuid : null,
         order_status_code: l.order_status != null ? l.order_status.name : null,
@@ -674,7 +674,7 @@ async function getRadialogyResponse(radialogyData) {
         details_uuid: r.uuid,
         order_id: r.patient_treatment_uuid,
         //comments
-        comments: r.comments != null ? r.comments : null,
+        comments: r.details_comments != null ? r.details_comments : null,
         // order status details
         order_status_uuid: r.order_status != null ? r.order_status.uuid : null,
         order_status_code: r.order_status != null ? r.order_status.name : null,
@@ -712,7 +712,7 @@ async function getInvestigationResponse(investigationData) {
         details_uuid: i.uuid,
         order_id: i.patient_treatment_uuid,
         //comments
-        comments: i.comments != null ? i.comments : null,
+        comments: i.details_comments != null ? i.details_comments : null,
         // order status details
         order_status_uuid: i.order_status != null ? i.order_status.uuid : null,
         order_status_code: i.order_status != null ? i.order_status.name : null,
