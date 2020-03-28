@@ -240,15 +240,15 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
-          if (repeatLabOrder && repeatLabOrder.length > 0) {
-            response.forEach((l) => {
-              l.labDetails = repeatLabOrder.filter((rl) => {
-                return rl.order_id === l.order_id;
-              });
-            });
+          // const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
+          // if (repeatLabOrder && repeatLabOrder.length > 0) {
+          //   response.forEach((l) => {
+          //     l.labDetails = repeatLabOrder.filter((rl) => {
+          //       return rl.order_id === l.order_id;
+          //     });
+          //   });
 
-          }
+          // }
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
@@ -474,10 +474,10 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 }
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
-    config.wso2LisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
-    //url,
+    //config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
+    url,
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -557,52 +557,54 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
 async function getPrescriptionRseponse(prescriptions) {
   //let prescriptions = prescriptionData.responseContents;
   let result = [];
-  prescriptions.map((pd, pIdx) => {
+  if (prescriptions && Array.isArray(prescriptions)) {
+    prescriptions.map((pd, pIdx) => {
 
-    let p = pd.prescription_details;
-    p.forEach((e) => {
-      result = [
-        ...result,
-        {
-          "order_id": pd.patient_treatment_uuid,
+      let p = pd.prescription_details;
+      p.forEach((e) => {
+        result = [
+          ...result,
+          {
+            "order_id": pd.patient_treatment_uuid,
 
-          "uuid": e.uuid,
-          "prescription_uuid": e.prescription_uuid,
-          "comments": e.comments,
+            "uuid": e.uuid,
+            "prescription_uuid": e.prescription_uuid,
+            "comments": e.comments,
 
-          //Drug Status
-          "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
-          "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
-          "prescription_status_code": pd.prescription_status != null ? pd.prescription_status.code : null,
+            //Drug Status
+            "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
+            "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
+            "prescription_status_code": pd.prescription_status != null ? pd.prescription_status.code : null,
 
-          //Drug Details
-          "drug_name": e.item_master != null ? e.item_master.name : null,
-          "drug_code": e.item_master != null ? e.item_master.code : null,
-          "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
-          // Drug Route Details
-          "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
-          "drug_route_code": e.drug_route != null ? e.drug_route.code : null,
-          "drug_route_id": e.drug_route != null ? e.drug_route.uuid : null,
-          // Drug Frequency Details
-          "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
-          "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
-          "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
-          // Drug Period Details
-          "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
-          "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
-          "drug_period_code": e.duration_period != null ? e.duration_period.code : null,
+            //Drug Details
+            "drug_name": e.item_master != null ? e.item_master.name : null,
+            "drug_code": e.item_master != null ? e.item_master.code : null,
+            "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
+            // Drug Route Details
+            "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
+            "drug_route_code": e.drug_route != null ? e.drug_route.code : null,
+            "drug_route_id": e.drug_route != null ? e.drug_route.uuid : null,
+            // Drug Frequency Details
+            "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
+            "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
+            "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
+            // Drug Period Details
+            "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
+            "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
+            "drug_period_code": e.duration_period != null ? e.duration_period.code : null,
 
-          //Duration
-          "duration": e.duration,
+            //Duration
+            "duration": e.duration,
 
-          // Drug Instruction Details
-          "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
-          "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
-          "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
-        }
-      ]
-    });
-  })
+            // Drug Instruction Details
+            "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
+            "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
+            "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
+          }
+        ]
+      });
+    })
+  }
   return result;
 
 }
