@@ -142,17 +142,21 @@ const vitalmstrController = () => {
     if (getsearch.search && /\S/.test(getsearch.search)) {
 
       findQuery.where = {
-        [Op.or]: [{
-          allergey_code: {
-            [Op.like]: '%' + getsearch.search + '%',
-          },
-        }, {
-          allergy_name: {
-            [Op.like]: '%' + getsearch.search + '%',
-          },
+        name: {
+          [Op.like]: '%' + getsearch.search + '%',
         }
+      //   [Op.or]: [{
+      //     allergey_code: {
+      //       [Op.like]: '%' + getsearch.search + '%',
+      //     },
+      //   }, 
+      //   {
+      //     name: {
+      //       [Op.like]: '%' + getsearch.search + '%',
+      //     },
+      //   }
 
-        ]
+      //  ]
       };
     }
 
@@ -169,6 +173,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+  
   const _getVitalByID = async (req, res, next) => {
     const postData = req.body;
     try {
