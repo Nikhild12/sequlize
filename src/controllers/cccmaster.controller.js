@@ -7,6 +7,7 @@ const cccMasterTbl = db.critical_care_charts;
 const conceptTbl = db.critical_care_concepts;
 const conceptdetailsTbl = db.critical_care_concept_values;
 const criticalcareTypeTbl = db.critical_care_types;
+const criticalCareUomsTbl = db.critical_care_uoms;
 const Q = require('q');
 
 
@@ -597,7 +598,7 @@ const cccMasterController = () => {
                 });
         }
     };
-    const getcccMasterByType = async (req, res, next) => {
+    const getcccMasterByType_old = async (req, res, next) => {
         const postData = req.body;
         const criticalId = [];
         const concepId = [];
@@ -641,6 +642,77 @@ const cccMasterController = () => {
                 }
             })
             return res.send({ conceptDetails_Tab: conceptDetails_Tab, criticalType: criticalType, ccMaster: ccMaster, conceptTbl_data: conceptTbl_data });
+        } catch (err) {
+            console.log(err);
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+    const getcccMasterByType = async (req, res, next) => {
+        const postData = req.body;
+        const criticalId = [];
+        const concepId = [];
+        // if (!postData.type) {
+        //     return res
+        //         .status(httpStatus.INTERNAL_SERVER_ERROR)
+        //         .json({
+        //             status: "info",
+        //             msg: 'Required type: type'
+        //         });
+        // }
+        try {
+            await criticalcareTypeTbl.findAll({
+                attributes: ['uuid', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status'],
+                where: { name: postData.type },
+                include: [
+                    {
+                        model: cccMasterTbl,
+                        as: 'critical_care_charts',
+                        attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+                            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                            'status'],
+                        where: { is_active: 1, status: 1 },
+                        include: [
+                            {
+                                model: conceptTbl,
+                                as: 'critical_care_concepts',
+                                attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                                where: { is_active: 1, status: 1 },
+                                include: [
+                                    {
+                                        model: conceptdetailsTbl,
+                                        as: 'critical_care_concept_values',
+                                        attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                        where: { is_active: 1, status: 1 },
+                                    }
+                                ]
+                            },
+                            // {
+                            //     model: criticalCareUomsTbl,
+                            //     as: 'critical_care_uoms',
+                            //     attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status', 'revision', 'created_by', 'created_date', 'modified_by', 'modified_date'],
+                            //     where: { is_active: 1, status: 1 }
+                            // }
+
+                        ],
+                    }
+                ]
+            })
+                .then((data) => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            req: '',
+                            responseContents: data
+                        });
+                });
+            //return res.send({ conceptDetails_Tab: conceptDetails_Tab, criticalType: criticalType, ccMaster: ccMaster, conceptTbl_data: conceptTbl_data });
         } catch (err) {
             console.log(err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;

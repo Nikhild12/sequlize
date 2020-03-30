@@ -24,6 +24,9 @@ const vitalmstrController = () => {
 
 
   const _createVital = async (req, res) => {
+    
+    if (Object.keys(req.body).length != 0){
+    
     const { user_uuid } = req.headers;
     const vitalsMasterData = req.body;
 
@@ -37,12 +40,23 @@ const vitalmstrController = () => {
       vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
       vitalsMasterData.revision = 1;
       try {
+
+        const exists = await nameExists(vitalsMasterData.name);
+
+        if ( exists && exists.length > 0 ) {
+          //vital already exits
+          return res
+            .status(400)
+            .send({ code: httpStatus[400], message: "vital name already exists" });
+        } else {
+
         const vitalsCreatedData = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
 
         if (vitalsCreatedData) {
           vitalsMasterData.uuid = vitalsCreatedData.uuid;
-          return res.status(200).send({ statusCode: 200, message: "Inserted Chief Complaints Successfully", responseContents: vitalsMasterData });
+          return res.status(200).send({ statusCode: 200, message: "Inserted vitals Successfully", responseContents: vitalsMasterData });
         }
+      }
       } catch (ex) {
         console.log(ex.message);
         return res.status(400).send({ statusCode: 400, message: ex.message });
@@ -50,10 +64,11 @@ const vitalmstrController = () => {
     } else {
       return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
     }
-
-
-
-
+  }else {
+    return res
+      .status(400)
+      .send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
 
   //function for getting default vitals
@@ -142,17 +157,21 @@ const vitalmstrController = () => {
     if (getsearch.search && /\S/.test(getsearch.search)) {
 
       findQuery.where = {
-        [Op.or]: [{
-          allergey_code: {
-            [Op.like]: '%' + getsearch.search + '%',
-          },
-        }, {
-          allergy_name: {
-            [Op.like]: '%' + getsearch.search + '%',
-          },
+        name: {
+          [Op.like]: '%' + getsearch.search + '%',
         }
+        //   [Op.or]: [{
+        //     allergey_code: {
+        //       [Op.like]: '%' + getsearch.search + '%',
+        //     },
+        //   }, 
+        //   {
+        //     name: {
+        //       [Op.like]: '%' + getsearch.search + '%',
+        //     },
+        //   }
 
-        ]
+        //  ]
       };
     }
 
@@ -169,6 +188,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
   const _getVitalByID = async (req, res, next) => {
     const postData = req.body;
     try {
@@ -305,4 +325,19 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
-
+const nameExists = (name) => {
+  if (name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = vitalmstrTbl.findAll({
+        attributes: ["name"],
+        where: { name: name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "name does not existed" });
+      }
+    });
+  }
+};
