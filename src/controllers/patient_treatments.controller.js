@@ -205,8 +205,8 @@ const PatientTreatmentController = () => {
         //let orderIds = [];
         response.map(d => {
           departmentIds.push(d.department_id);
-          doctorIds.push(d.doctor_id)
-          orderIds.push(d.order_id)
+          doctorIds.push(d.doctor_id);
+          orderIds.push(d.order_id);
         });
 
         const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
@@ -214,7 +214,7 @@ const PatientTreatmentController = () => {
           response.map((r, i) => {
             for (let d of departmentsResponse.responseContent.rows) {
               if (r.department_id == d.uuid) {
-                response[i].department_name = d.name
+                response[i].department_name = d.name;
               }
             }
           });
@@ -224,7 +224,7 @@ const PatientTreatmentController = () => {
           response.map((r, i) => {
             for (let d of doctorResponse.responseContents) {
               if (r.doctor_id == d.uuid) {
-                response[i].doctor_name = d.first_name
+                response[i].doctor_name = d.first_name;
               }
             }
           });
@@ -289,10 +289,10 @@ const PatientTreatmentController = () => {
   };
 
   const _modifyPreviousOrder = async (req, res) => {
-    const { user_uuid, authorization } = req.headers;
+    const { user_uuid, authorization, facility_uuid } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis, patientPrescription } = req.body;
-    let diagnosisUpdated, prescriptionUpdated;
+    const { patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
+    let diagnosisUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
@@ -304,12 +304,38 @@ const PatientTreatmentController = () => {
           let updatePrescriptionDetails = req.body.patientPrescription[0].drug_details;
           prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
         }
-        if (diagnosisUpdated || prescriptionUpdated) {
+        if (patientLab) {
+          let updateLabDetails = req.body.patientLab;
+          if (updateLabDetails && updateLabDetails.new_details && updateLabDetails.new_details.length > 0) {
+            updateLabDetails.new_details.map((l) => {
+              l.patient_treatment_uuid = order_id;
+            });
+          }
+          labUpdated = updateLabDetails ? await updateLab(updateLabDetails, user_uuid, facility_uuid, authorization) : '';
+
+        }
+        if (patientRadiology) {
+          let updateRadilogyDetails = req.body.patientRadiology;
+          if (updateRadilogyDetails && updateRadilogyDetails.new_details && updateRadilogyDetails.new_details.length > 0) {
+            updateRadilogyDetails.new_details.map((r) => {
+              r.patient_treatment_uuid = order_id;
+            });
+          }
+          radilogyUpadated = updateRadilogyDetails ? await updateRadilogy(updateRadilogyDetails, user_uuid, facility_uuid, authorization) : '';
+        }
+        if (patientInvestigation) {
+          let updateInvestigationDetails = req.body.patientInvestigation;
+          if (updateInvestigationDetails && updateInvestigationDetails.new_details && updateInvestigationDetails.new_details.length > 0) {
+            updateInvestigationDetails.new_details.map((i) => {
+              i.patient_treatment_uuid = order_id;
+            });
+          }
+          investigationUpdated = updateInvestigationDetails ? await updateInvestigation(updateInvestigationDetails, user_uuid, facility_uuid, authorization) : '';
+        }
+        if (diagnosisUpdated || prescriptionUpdated || labUpdated || radilogyUpadated || investigationUpdated) {
           return res.status(200).send({
             code: httpStatus.OK, message: 'Updated success',
-            responseContents: {
-              prescriptionUpdated
-            }
+
           });
         } else {
           return res.status(400).send({ code: 400, message: 'Failed to update' });
@@ -448,9 +474,9 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
 }
 async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
 
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
-    config.wso2LisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     //url,
     {
       "content-type": "application/json",
@@ -505,7 +531,7 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
   };
   const departmentData = await rp(options);
   if (departmentData) {
-    return departmentData
+    return departmentData;
   }
 }
 
@@ -531,52 +557,54 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
 async function getPrescriptionRseponse(prescriptions) {
   //let prescriptions = prescriptionData.responseContents;
   let result = [];
-  prescriptions.map((pd, pIdx) => {
+  if (prescriptions && Array.isArray(prescriptions)) {
+    prescriptions.map((pd, pIdx) => {
 
-    let p = pd.prescription_details;
-    p.forEach((e) => {
-      result = [
-        ...result,
-        {
-          "order_id": pd.patient_treatment_uuid,
+      let p = pd.prescription_details;
+      p.forEach((e) => {
+        result = [
+          ...result,
+          {
+            "order_id": pd.patient_treatment_uuid,
 
-          "uuid": e.uuid,
-          "prescription_uuid": e.prescription_uuid,
-          "comments": e.comments,
+            "uuid": e.uuid,
+            "prescription_uuid": e.prescription_uuid,
+            "comments": e.comments,
 
-          //Drug Status
-          "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
-          "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
-          "prescription_status_code": pd.prescription_status != null ? pd.prescription_status.code : null,
+            //Drug Status
+            "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
+            "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
+            "prescription_status_code": pd.prescription_status != null ? pd.prescription_status.code : null,
 
-          //Drug Details
-          "drug_name": e.item_master != null ? e.item_master.name : null,
-          "drug_code": e.item_master != null ? e.item_master.code : null,
-          "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
-          // Drug Route Details
-          "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
-          "drug_route_code": e.drug_route != null ? e.drug_route.code : null,
-          "drug_route_id": e.drug_route != null ? e.drug_route.uuid : null,
-          // Drug Frequency Details
-          "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
-          "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
-          "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
-          // Drug Period Details
-          "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
-          "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
-          "drug_period_code": e.duration_period != null ? e.duration_period.code : null,
+            //Drug Details
+            "drug_name": e.item_master != null ? e.item_master.name : null,
+            "drug_code": e.item_master != null ? e.item_master.code : null,
+            "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
+            // Drug Route Details
+            "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
+            "drug_route_code": e.drug_route != null ? e.drug_route.code : null,
+            "drug_route_id": e.drug_route != null ? e.drug_route.uuid : null,
+            // Drug Frequency Details
+            "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
+            "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
+            "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
+            // Drug Period Details
+            "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
+            "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
+            "drug_period_code": e.duration_period != null ? e.duration_period.code : null,
 
-          //Duration
-          "duration": e.duration,
+            //Duration
+            "duration": e.duration,
 
-          // Drug Instruction Details
-          "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
-          "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
-          "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
-        }
-      ]
+            // Drug Instruction Details
+            "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
+            "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
+            "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
+          }
+        ];
+      });
     });
-  })
+  }
   return result;
 
 }
@@ -611,7 +639,7 @@ async function getLabResponse(labData) {
         details_uuid: l.uuid,
         order_id: l.patient_treatment_uuid,
         //comments
-        comments: l.comments != null ? l.comments : null,
+        comments: l.details_comments != null ? l.details_comments : null,
         // order status details
         order_status_uuid: l.order_status != null ? l.order_status.uuid : null,
         order_status_code: l.order_status != null ? l.order_status.name : null,
@@ -646,7 +674,7 @@ async function getRadialogyResponse(radialogyData) {
         details_uuid: r.uuid,
         order_id: r.patient_treatment_uuid,
         //comments
-        comments: r.comments != null ? r.comments : null,
+        comments: r.details_comments != null ? r.details_comments : null,
         // order status details
         order_status_uuid: r.order_status != null ? r.order_status.uuid : null,
         order_status_code: r.order_status != null ? r.order_status.name : null,
@@ -684,7 +712,7 @@ async function getInvestigationResponse(investigationData) {
         details_uuid: i.uuid,
         order_id: i.patient_treatment_uuid,
         //comments
-        comments: i.comments != null ? i.comments : null,
+        comments: i.details_comments != null ? i.details_comments : null,
         // order status details
         order_status_uuid: i.order_status != null ? i.order_status.uuid : null,
         order_status_code: i.order_status != null ? i.order_status.name : null,
@@ -706,7 +734,7 @@ async function getInvestigationResponse(investigationData) {
         to_location_uuid: i.to_location != null ? i.to_location.uuid : null,
         location_code: i.to_location != null ? i.to_location.location_code : null,
         location_name: i.to_location != null ? i.to_location.location_name : null
-      }
+      };
     });
   }
 
@@ -742,15 +770,15 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
         pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
         pD.performed_by = user_uuid;
         pD.performed_date = new Date();
-        pD.patient_treatment_uuid = order_id
+        pD.patient_treatment_uuid = order_id;
       });
       diagnosisPromise = [...diagnosisPromise, patientDiagnosisTbl.bulkCreate(r.new_diagnosis, {
         returning: true
-      })]
+      })];
     }
   });
 
-  return diagnosisPromise
+  return diagnosisPromise;
 }
 
 async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
@@ -770,7 +798,25 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
 
 
 }
-const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, order_id) => {
+
+async function updateLab(updateLabDetails, facility_uuid, user_uuid, authorization) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2LisUrl + 'patientorders/updatePatientOrder';
+
+  return _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
+}
+async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, authorization) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2RmisUrl + 'patientorders/updatePatientOrder';
+  return _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
+}
+async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder';
+
+  return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
+}
+async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
   let options = {
     uri: url,
     headers: {
@@ -778,22 +824,21 @@ const _postRequest = async (url, { user_uuid, facility_uuid, authorization }, or
       facility_uuid: facility_uuid,
       Authorization: authorization
     },
-    method: 'POST',
+    method: 'PUT',
     json: true,
-    body: {
-      patient_treatment_uuid: order_id
-    }
+    body: updateDetails
   };
-  console.log(options, 'lab');
 
   try {
     const result = await rp(options);
-    if (result) {
+    console.log(result, 'result');
+    if (result && result.statusCode === 200) {
       return result;
     }
+
   } catch (ex) {
     console.log('Exception Happened', ex);
     return ex;
   }
 
-};
+}

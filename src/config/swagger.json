@@ -4899,7 +4899,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-
     "/api/diseases/get-by-filters": {
       "get": {
         "description": "To get list of diseases based on filter",
@@ -6239,13 +6238,18 @@
             "in": "body",
             "name": "getPreviousDischargeDetails",
             "required": true,
-            "schema":{
+            "schema": {
               "$ref": "#/definitions/getPreviousDischargeDetails"
             }
           }
         ],
-        "produces": ["application/json", "application/xml"],
-        "tags": ["Patient-discharge-summary"],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Patient-discharge-summary"
+        ],
         "responses": {
           "200": {
             "description": "get Successfully"
@@ -6254,7 +6258,7 @@
         "x-auth-type": "Application & Application User",
         "x-throttling-tier": "Unlimited"
       }
-    },    
+    },
     "/api/encounter/delete-by-id": {
       "put": {
         "summary": "To get List of patient detials to discharge",
@@ -6685,12 +6689,6 @@
             "name": "facility_uuid",
             "required": true,
             "type": "integer"
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true,
-            "type": "string"
           },
           {
             "in": "query",
@@ -7529,8 +7527,7 @@
         }
       }
     },
-
-    "getDiseases":{
+    "getDiseases": {
       "type": "array",
       "items": {
         "type": "object",
@@ -13277,6 +13274,192 @@
               }
             }
           }
+        },
+        "patientLab": {
+          "type": "object",
+          "properties": {
+            "new_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "test_name": {
+                    "type": "string"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "existing_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "removed_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientRadiology": {
+          "type": "object",
+          "properties": {
+            "new_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "test_name": {
+                    "type": "string"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "existing_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "removed_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patientInvestigation": {
+          "type": "object",
+          "properties": {
+            "new_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "test_name": {
+                    "type": "string"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "patient_treatment_uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "existing_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "order_priority_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "details_comments": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "removed_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -13701,44 +13884,44 @@
         }
       }
     },
-    "getPreviousDischargeDetails":{
-      "type":"object",
-      "properties":{
-        "patient_uuid":{
-          "type":"number",
-          "example":"1"
+    "getPreviousDischargeDetails": {
+      "type": "object",
+      "properties": {
+        "patient_uuid": {
+          "type": "number",
+          "example": "1"
         },
-        "encounter_uuid":{
-          "type":"number",
-          "example":"1"
+        "encounter_uuid": {
+          "type": "number",
+          "example": "1"
         },
-        "allergy_uuids":{
-          "type":"array",
-           "items":{
-             "type":"number",
-             "example":"1"
-           }
+        "allergy_uuids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "example": "1"
+          }
         },
-        "chief_complaint_uuids":{
-          "type":"array",
-           "items":{
-             "type":"number",
-             "example":"1"
-           }
+        "chief_complaint_uuids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "example": "1"
+          }
         },
-        "vital_uuids":{
-          "type":"array",
-           "items":{
-             "type":"number",
-             "example":"1"
-           }
+        "vital_uuids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "example": "1"
+          }
         },
-        "diagnosis_uuids":{
-          "type":"array",
-           "items":{
-             "type":"number",
-             "example":"1"
-           }
+        "diagnosis_uuids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "example": "1"
+          }
         }
       }
     }
