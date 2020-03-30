@@ -412,6 +412,8 @@ const ChiefComplaints = () => {
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
       findQuery.where = {
+        is_active: 1,
+        status: 1,
         [Op.or]: [
           {
             name: {
