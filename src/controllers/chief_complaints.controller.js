@@ -405,6 +405,7 @@ const ChiefComplaints = () => {
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
       where: {
+        is_active: 1,
         status: 1
       }
     };
