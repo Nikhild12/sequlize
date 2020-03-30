@@ -1,8 +1,8 @@
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const critical_care_types = sequelize.define(
-        "critical_care_types",
+    const critical_care_uoms = sequelize.define(
+        "critical_care_uoms",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -10,42 +10,32 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             code: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.STRING(225),
                 allowNull: true
             },
             name: {
-                type: DataTypes.STRING(100),
-                allowNull: true
-            },
-            color: {
-                type: DataTypes.STRING(15),
+                type: DataTypes.STRING(225),
                 allowNull: true
             },
             language: {
                 type: DataTypes.INTEGER,
-                allowNull: true,
+                allowNull: false
             },
             display_order: {
                 type: DataTypes.INTEGER,
-                allowNull: true,
+                allowNull: false
             },
             Is_default: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                type: DataTypes.BOOLEAN
             },
             is_active: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1,
-                //allowNull: false
+                type: DataTypes.BOOLEAN
             },
             status: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1,
-                //allowNull: false
+                type: DataTypes.BOOLEAN
             },
             revision: {
-                type: DataTypes.INTEGER,
-                defaultValue: 1,
+                type: DataTypes.INTEGER
             },
 
             created_by: {
@@ -67,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            tableName: "critical_care_types",
+            tableName: "critical_care_uoms",
             indexes: [
                 {
                     fields: ["uuid"]
@@ -75,11 +65,6 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    critical_care_types.associate = models => {
-        critical_care_types.hasOne(models.critical_care_charts, {
-            foreignKey: "critical_care_type_uuid",
-            as: 'critical_care_charts'
-        });
-    };
-    return critical_care_types;
+
+    return critical_care_uoms;
 };
