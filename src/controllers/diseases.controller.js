@@ -38,7 +38,8 @@ const DiseasesController = () => {
         return res.status(200).send({
           code: responseCode,
           message: emr_utilities.getResponseMessageForSuccessRequest(
-            responseCode, 'dis'
+            responseCode,
+            "dis"
           ),
           responseContents: disease_att.getModifiedResponse(
             filteredDiseasesData
@@ -59,8 +60,61 @@ const DiseasesController = () => {
       });
     }
   };
+
+  const _createDiseases = async (req, res) => {
+    const { user_uuid } = req.headers;
+
+    const createDiseases  = req.body;
+
+    if (
+      user_uuid &&
+      typeof createDiseases === "object" &&
+      Object.keys(createDiseases).length > 0
+    ) {
+      try {
+        // assigning default Values
+        createDiseases.status = emr_constants.IS_ACTIVE;
+        createDiseases.created_by = createDiseases.modified_by = user_uuid;
+        createDiseases.created_date = createDiseases.modified_date = new Date();
+        createDiseases.revision = emr_constants.IS_ACTIVE;
+
+        // if is_active is not sent
+        // setting it to false by default
+        if (createDiseases && !createDiseases.is_active) {
+          createDiseases.is_active = emr_constants.IS_IN_ACTIVE;
+        }
+
+        const createdDiseases = await diseasetbl.create(createDiseases, {
+          returning: emr_constants.IS_ACTIVE
+        });
+
+        if (createdDiseases) {
+          createDiseases.uuid = createdDiseases.uuid;
+        }
+
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Inserted Diseases Successfully",
+          responseContents: createDiseases
+        });
+      } catch (ex) {
+        console.log(ex);
+
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: ex.message
+        });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
+    }
+  };
   return {
-    getDiseasesByFilters: _getDiseasesByFilters
+    getDiseasesByFilters: _getDiseasesByFilters,
+    createDiseases: _createDiseases
   };
 };
 
