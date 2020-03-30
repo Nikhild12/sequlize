@@ -4187,6 +4187,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "vitals",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getALLVitalsmaster"
+            }
           }
         ],
         "produces": [
@@ -4198,10 +4206,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Fetched Successfully",
-            "schema": {
-              "$ref": "#/definitions/getALLVitalsmaster"
-            }
+            "description": "Fetched Successfully"
           }
         },
         "x-auth-type": "Application & Application User",
@@ -8414,7 +8419,23 @@
     },
     "getALLVitalsmaster": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "pageNo": {
+          "type": "integer"
+        },
+        "paginationSize": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        }
+      }
     },
     "getreference": {
       "type": "object",
