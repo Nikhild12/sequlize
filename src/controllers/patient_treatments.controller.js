@@ -205,8 +205,8 @@ const PatientTreatmentController = () => {
         //let orderIds = [];
         response.map(d => {
           departmentIds.push(d.department_id);
-          doctorIds.push(d.doctor_id)
-          orderIds.push(d.order_id)
+          doctorIds.push(d.doctor_id);
+          orderIds.push(d.order_id);
         });
 
         const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
@@ -214,7 +214,7 @@ const PatientTreatmentController = () => {
           response.map((r, i) => {
             for (let d of departmentsResponse.responseContent.rows) {
               if (r.department_id == d.uuid) {
-                response[i].department_name = d.name
+                response[i].department_name = d.name;
               }
             }
           });
@@ -224,7 +224,7 @@ const PatientTreatmentController = () => {
           response.map((r, i) => {
             for (let d of doctorResponse.responseContents) {
               if (r.doctor_id == d.uuid) {
-                response[i].doctor_name = d.first_name
+                response[i].doctor_name = d.first_name;
               }
             }
           });
@@ -309,7 +309,7 @@ const PatientTreatmentController = () => {
           if (updateLabDetails && updateLabDetails.new_details && updateLabDetails.new_details.length > 0) {
             updateLabDetails.new_details.map((l) => {
               l.patient_treatment_uuid = order_id;
-            })
+            });
           }
           labUpdated = updateLabDetails ? await updateLab(updateLabDetails, user_uuid, facility_uuid, authorization) : '';
 
@@ -319,7 +319,7 @@ const PatientTreatmentController = () => {
           if (updateRadilogyDetails && updateRadilogyDetails.new_details && updateRadilogyDetails.new_details.length > 0) {
             updateRadilogyDetails.new_details.map((r) => {
               r.patient_treatment_uuid = order_id;
-            })
+            });
           }
           radilogyUpadated = updateRadilogyDetails ? await updateRadilogy(updateRadilogyDetails, user_uuid, facility_uuid, authorization) : '';
         }
@@ -328,7 +328,7 @@ const PatientTreatmentController = () => {
           if (updateInvestigationDetails && updateInvestigationDetails.new_details && updateInvestigationDetails.new_details.length > 0) {
             updateInvestigationDetails.new_details.map((i) => {
               i.patient_treatment_uuid = order_id;
-            })
+            });
           }
           investigationUpdated = updateInvestigationDetails ? await updateInvestigation(updateInvestigationDetails, user_uuid, facility_uuid, authorization) : '';
         }
@@ -531,7 +531,7 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
   };
   const departmentData = await rp(options);
   if (departmentData) {
-    return departmentData
+    return departmentData;
   }
 }
 
@@ -601,9 +601,9 @@ async function getPrescriptionRseponse(prescriptions) {
             "drug_instruction_name": e.drug_instruction != null ? e.drug_instruction.name : null,
             "drug_instruction_id": e.drug_instruction != null ? e.drug_instruction.uuid : null
           }
-        ]
+        ];
       });
-    })
+    });
   }
   return result;
 
@@ -734,7 +734,7 @@ async function getInvestigationResponse(investigationData) {
         to_location_uuid: i.to_location != null ? i.to_location.uuid : null,
         location_code: i.to_location != null ? i.to_location.location_code : null,
         location_name: i.to_location != null ? i.to_location.location_name : null
-      }
+      };
     });
   }
 
@@ -770,15 +770,15 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
         pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
         pD.performed_by = user_uuid;
         pD.performed_date = new Date();
-        pD.patient_treatment_uuid = order_id
+        pD.patient_treatment_uuid = order_id;
       });
       diagnosisPromise = [...diagnosisPromise, patientDiagnosisTbl.bulkCreate(r.new_diagnosis, {
         returning: true
-      })]
+      })];
     }
   });
 
-  return diagnosisPromise
+  return diagnosisPromise;
 }
 
 async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
@@ -800,16 +800,21 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
 }
 
 async function updateLab(updateLabDetails, facility_uuid, user_uuid, authorization) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
-  return await _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2LisUrl + 'patientorders/updatePatientOrder';
+
+  return _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
 }
 async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, authorization) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
-  return await _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2RmisUrl + 'patientorders/updatePatientOrder';
+  return _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
 }
 async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
-  return await _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
+  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
+  const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder';
+
+  return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
 }
 async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
   let options = {
@@ -826,7 +831,7 @@ async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, autho
 
   try {
     const result = await rp(options);
-    console.log(result, 'result')
+    console.log(result, 'result');
     if (result && result.statusCode === 200) {
       return result;
     }
@@ -836,4 +841,4 @@ async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, autho
     return ex;
   }
 
-};
+}
