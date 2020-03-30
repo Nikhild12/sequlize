@@ -53,12 +53,12 @@ const immunizationScheduleController = () => {
             include: [
                 {
                     model: immunization,
-                    attributes:['uuid','name'],
+                    attributes: ['uuid', 'name'],
                     required: false
                 },
                 {
                     model: schedules,
-                    attributes:['uuid','name'],
+                    attributes: ['uuid', 'name'],
                     required: false
                 }
             ]
@@ -180,17 +180,18 @@ const immunizationScheduleController = () => {
                 include: [
                     {
                         model: immunization,
-                        attributes:['uuid','name'],
+                        attributes: ['uuid', 'name'],
                         required: false
                     },
                     {
                         model: schedules,
-                        attributes:['uuid','name'],
+                        attributes: ['uuid', 'name'],
                         required: false
                     }
                 ],
                 offset: offset,
-                limit: itemsPerPage
+                limit: itemsPerPage,
+                order: [['uuid', 'DESC']]
             })
                 .then((data) => {
                     return res
