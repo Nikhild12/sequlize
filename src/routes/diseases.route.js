@@ -10,4 +10,8 @@ diseasesRoutes
   .route("/get-by-filters")
   .get(diseasesController.getDiseasesByFilters);
 
+diseasesRoutes
+  .route("/create")
+  .post(diseasesController.createDiseases);
+
 module.exports = diseasesRoutes;

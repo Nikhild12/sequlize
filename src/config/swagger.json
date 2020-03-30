@@ -4946,6 +4946,42 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+
+    "/api/diseases/create": {
+      "post": {
+        "description": "To create Disease API",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "createDiseases",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createDiseases"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diseases"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/CC-charts/create": {
       "post": {
         "description": "To Create a critical care chart data for the patient",
@@ -13943,6 +13979,32 @@
             "type": "number",
             "example": "1"
           }
+        }
+      }
+    },
+    "createDiseases":{
+      "type": "object",
+      "properties": {
+        "code":{
+          "type":"string"
+        },
+        "name":{
+          "type":"string"
+        },
+        "color":{
+          "type":"string"
+        },
+        "language":{
+          "type":"string"
+        },
+        "display_order":{
+          "type":"number"
+        },
+        "Is_default":{
+          "type":"boolean"
+        },
+        "is_active":{
+          "type":"boolean"
         }
       }
     }
