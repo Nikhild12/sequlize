@@ -140,7 +140,7 @@ const vitalmstrController = () => {
       order: [
         [sortField, sortOrder],
       ],
-      where: { is_active: 1 },
+      where: { status: 1 },
       include: [
         {
           model: vitalLonicTbl,
