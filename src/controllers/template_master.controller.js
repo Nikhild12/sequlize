@@ -38,11 +38,14 @@ const tmpmstrController = () => {
           user_uuid
         );
         const templateList = await table_name.findAll(query);
-        console.log(templateList);
+        console.log("line no 41 ", templateList);
         return res.status(httpStatus.OK).json({
           statusCode: 200,
-          req: "",
-          responseContents: getTempData(temp_type_id, templateList)
+          responseContents: getTempData(temp_type_id, templateList),
+          message:
+            templateList && templateList.length > 0
+              ? emr_constants.TEMPLATE_FETCH_SUCCESS
+              : emr_constants.NO_RECORD_FOUND
         });
       } else {
         return res.status(400).send({

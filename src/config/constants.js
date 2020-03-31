@@ -55,6 +55,7 @@ module.exports = Object.freeze({
   TEMPLATE_DELETED: "Template Deleted Successfully",
   PREVIOUS_PAT_CC_SUCCESS:
     "Fetched Previous Patient Chief Complaints Successfully",
+  TEMPLATE_FETCH_SUCCESS: "Template Fetched Successfully",
 
   GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
