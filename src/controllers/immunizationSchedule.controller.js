@@ -53,12 +53,12 @@ const immunizationScheduleController = () => {
             include: [
                 {
                     model: immunization,
-                    attributes:['uuid','name'],
+                    attributes: ['uuid', 'name'],
                     required: false
                 },
                 {
                     model: schedules,
-                    attributes:['uuid','name'],
+                    attributes: ['uuid', 'name'],
                     required: false
                 }
             ]
@@ -168,6 +168,10 @@ const immunizationScheduleController = () => {
     };
     const getimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
+
+        const user_uuid = req.headers;
+
+        if (user_uuid && postData.Id) {
         try {
 
             const page = postData.page ? postData.page : 1;
@@ -180,17 +184,18 @@ const immunizationScheduleController = () => {
                 include: [
                     {
                         model: immunization,
-                        attributes:['uuid','name'],
+                        attributes: ['uuid', 'name'],
                         required: false
                     },
                     {
                         model: schedules,
-                        attributes:['uuid','name'],
+                        attributes: ['uuid', 'name'],
                         required: false
                     }
                 ],
                 offset: offset,
-                limit: itemsPerPage
+                limit: itemsPerPage,
+                order: [['uuid', 'DESC']]
             })
                 .then((data) => {
                     return res
@@ -201,6 +206,7 @@ const immunizationScheduleController = () => {
                             responseContents: data
                         });
                 });
+                
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -211,9 +217,18 @@ const immunizationScheduleController = () => {
                     msg: errorMsg
                 });
         }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
+            });
+        }
     };
     const deleteimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
+
+ const user_uuid = req.headers;
+        if (user_uuid && postData.Id) {
 
         await immunizationScheduleTbl.update({
             status: 0
@@ -235,6 +250,14 @@ const immunizationScheduleController = () => {
                 error: err
             });
         });
+
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
+            });
+        }
+
     };
 
     const updateimmunizationScheduleById = async (req, res, next) => {

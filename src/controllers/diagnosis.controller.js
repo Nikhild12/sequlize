@@ -13,18 +13,18 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
 
             return {
                 is_active: emr_const.IS_ACTIVE,
-                    status: emr_const.IS_ACTIVE,
-                    [Op.or]: [{
-                            name: {
-                                [Op.like]: `%${searchValue}%`
-                            }
-                        },
-                        {
-                            code: {
-                                [Op.like]: `%${searchValue}%`,
-                            }
-                        }
-                    ]
+                status: emr_const.IS_ACTIVE,
+                [Op.or]: [{
+                    name: {
+                        [Op.like]: `%${searchValue}%`
+                    }
+                },
+                {
+                    code: {
+                        [Op.like]: `%${searchValue}%`,
+                    }
+                }
+                ]
             };
 
 
@@ -33,8 +33,8 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
             searchValue = +searchValue;
             return {
                 is_active: emr_const.IS_ACTIVE,
-                    status: emr_const.IS_ACTIVE,
-                    uuid: searchValue
+                status: emr_const.IS_ACTIVE,
+                uuid: searchValue
             };
     }
 }
@@ -108,13 +108,14 @@ const diagnosisController = () => {
                     where: getDiagnosisFilterByQuery(searchBy, searchValue),
                     attributes: getDiagnosisAttributes()
                 });
-
-                if (diagnosisData) {
+                if (diagnosisData && diagnosisData.length > 0) {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData ? diagnosisData : []
                     });
+                } else {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
                 }
             } catch (error) {
 
@@ -185,11 +186,11 @@ const diagnosisController = () => {
             diagnosisTbl.findAll({
                 where: {
                     [Op.or]: [{
-                            code: diagnosisData.code
-                        },
-                        {
-                            name: diagnosisData.name
-                        }
+                        code: diagnosisData.code
+                    },
+                    {
+                        name: diagnosisData.name
+                    }
                     ]
                 }
             }).then(async (result) => {
@@ -280,16 +281,16 @@ const diagnosisController = () => {
 
             findQuery.where = {
                 [Op.or]: [{
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
+                    name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
 
 
-                    }, {
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
+                }, {
+                    code: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+                }
 
                 ]
             };
@@ -398,10 +399,10 @@ const diagnosisController = () => {
         postData.modified_by = req.headers.user_uuid;
         await diagnosisTbl.update(
             postData, {
-                where: {
-                    uuid: postData.Diagnosis_id
-                }
+            where: {
+                uuid: postData.Diagnosis_id
             }
+        }
         ).then((data) => {
             res.send({
                 code: 200,
@@ -421,14 +422,14 @@ const diagnosisController = () => {
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
             await diagnosisTbl.findOne({
-                    where: {
-                        uuid: postData.Diagnosis_id,
+                where: {
+                    uuid: postData.Diagnosis_id,
 
-                    },
-                    attributes: getDiagnosisAttributes(),
-                    offset: offset,
-                    limit: itemsPerPage
-                })
+                },
+                attributes: getDiagnosisAttributes(),
+                offset: offset,
+                limit: itemsPerPage
+            })
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
