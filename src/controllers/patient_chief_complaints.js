@@ -12,6 +12,8 @@ const emr_utility = require("../services/utility.service");
 
 const emr_mock_json = require("../config/emr_mock_json");
 
+const patientAttributes = require("../attributes/patient_chief_complaints.attribute");
+
 // Initialize EMR Workflow
 const patient_chief_complaints_tbl = sequelizeDb.patient_chief_complaints;
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
@@ -20,9 +22,6 @@ const chief_complaints_duration_tbl =
 const encounter_tbl = sequelizeDb.encounter;
 
 const emr_constants = require("../config/constants");
-const duplicate_active_msg = "Already item is available in the list";
-const duplicate_in_active_msg =
-  "This item is Inactive! Please contact administrator";
 
 const utilityService = require("../services/utility.service");
 
@@ -231,12 +230,59 @@ const PatientChiefComplaints = () => {
     }
   };
 
+  const _getPreviousChiefComplaintsByPatientId = async (req, res) => {
+    // Plucking the data from Req
+    const { user_uuid } = req.headers;
+    const { encounterTypeId, patientId, limit } = req.query;
 
+    // Checking whether the Query Values
+    // are valid i.e. all are number
+    const isQueryParamsValid = emr_utility.isAllNumber(
+      encounterTypeId,
+      patientId,
+      limit
+    );
+
+    if (user_uuid && isQueryParamsValid) {
+      try {
+        const patPrevData = await patient_chief_complaints_tbl.findAll(
+          patientAttributes.getPreviousPatCCQuery(
+            encounterTypeId,
+            patientId,
+            limit
+          )
+        );
+        const {
+          responseCode,
+          responseMessage
+        } = patientAttributes.getResponseCodeAndMessage(patPrevData);
+        return res.status(200).send({
+          code: responseCode,
+          message: responseMessage,
+          responseContents: patientAttributes.getPreviousPatCCModifiedResponse(
+            patPrevData
+          )
+        });
+      } catch (ex) {
+        console.log(ex);
+        return res.status(500).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: ex.message
+        });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
 
   return {
     createChiefComplaints: _createChiefComplaints,
     getPatientChiefComplaints: _getPatientChiefComplaints,
     getMobileMockAPI: _getMobileMockAPI,
+    getPreviousChiefComplaintsByPatientId: _getPreviousChiefComplaintsByPatientId
   };
 };
 
@@ -272,12 +318,12 @@ function getPatientsChiefComplaintsInReadable(fetchedData) {
         chief_complaint_duration_id: fD.chief_complaint_duration_period_uuid,
         chief_complaint_duration_name:
           fD.chief_complaint_duration_period &&
-            fD.chief_complaint_duration_period.name
+          fD.chief_complaint_duration_period.name
             ? fD.chief_complaint_duration_period.name
             : "",
         chief_complaint_duration_code:
           fD.chief_complaint_duration_period &&
-            fD.chief_complaint_duration_period.code
+          fD.chief_complaint_duration_period.code
             ? fD.chief_complaint_duration_period.code
             : "",
         is_active: fD.is_active[0] === 1 ? true : false,

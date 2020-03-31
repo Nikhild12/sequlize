@@ -200,7 +200,7 @@ const immunizationsController = () => {
                 [sortField, sortOrder],
             ],
             where: {
-                i_status: 1
+                i_is_active: 1
             }
 
         };
@@ -262,11 +262,7 @@ const immunizationsController = () => {
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-
-
-
         if (postData) {
-
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
@@ -351,61 +347,80 @@ const immunizationsController = () => {
 
     const getimmunizationById = async (req, res, next) => {
         const postData = req.body;
-        try {
 
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await immunizationsVwTbl.findAll({
-                where: {
-                    i_uuid: postData.Id
-                },
-                offset: offset,
-                limit: itemsPerPage
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
+        const user_uuid = req.headers;
+        if (user_uuid && postData.Id) {
+            try {
 
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
+                const page = postData.page ? postData.page : 1;
+                const itemsPerPage = postData.limit ? postData.limit : 10;
+                const offset = (page - 1) * itemsPerPage;
+                await immunizationsVwTbl.findAll({
+                    where: {
+                        i_uuid: postData.Id
+                    },
+                    offset: offset,
+                    limit: itemsPerPage
+                })
+                    .then((data) => {
+                        return res
+                            .status(httpStatus.OK)
+                            .json({
+                                statusCode: 200,
+                                req: '',
+                                responseContents: data
+                            });
+                    });
+
+
+            } catch (err) {
+                const errorMsg = err.errors ? err.errors[0].message : err.message;
+                return res
+                    .status(httpStatus.INTERNAL_SERVER_ERROR)
+                    .json({
+                        status: "error",
+                        msg: errorMsg
+                    });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
+            });
         }
     };
     const deleteimmunizationById = async (req, res, next) => {
         const postData = req.body;
-
-        await immunizationsTbl.update({
-            status: 0
-        }, {
-            where: {
-                uuid: postData.Id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
+        const user_uuid = req.headers;
+        if (user_uuid && postData.Id) {
+            await immunizationsTbl.update({
+                status: 0
+            }, {
+                where: {
+                    uuid: postData.Id
+                }
+            }).then((data) => {
+                res.send({
+                    statusCode: 200,
+                    msg: "Deleted Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+                res.send({
+                    statusCode: 400,
+                    status: "failed",
+                    msg: "failed to delete data",
+                    error: err
+                });
             });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
+        }
+        else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
             });
-        });
+        }
     };
 
 
