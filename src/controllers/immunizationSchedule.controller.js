@@ -168,8 +168,10 @@ const immunizationScheduleController = () => {
     };
     const getimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
+         const user_uuid = req.headers;
+        if (user_uuid && postData.Id) {
         try {
-if(postData.Id){
+
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
@@ -202,12 +204,7 @@ if(postData.Id){
                             responseContents: data
                         });
                 });
-                }else{ return res
-            .status(httpStatus.BAD_REQUEST)
-            .json({
-                statusCode: 400,
-                msg: "Please Provied Vaild Id number"
-            });}
+                
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -218,10 +215,19 @@ if(postData.Id){
                     msg: errorMsg
                 });
         }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
+            });
+        }
     };
     const deleteimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
-if(postData.Id){
+
+        const user_uuid = req.headers;
+if (user_uuid && postData.Id) {
+
         await immunizationScheduleTbl.update({
             status: 0
         }, {
@@ -242,13 +248,14 @@ if(postData.Id){
                 error: err
             });
         });
-        }else{
-            return res
-            .status(httpStatus.BAD_REQUEST)
-            .json({
-                statusCode: 400,
-                msg: "Please Provied Vaild Id number"
-            });}
+
+        } else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found or please provide valid request'
+            });
+        }
+
     };
 
     const updateimmunizationScheduleById = async (req, res, next) => {
