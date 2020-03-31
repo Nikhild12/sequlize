@@ -200,7 +200,7 @@ const immunizationsController = () => {
                 [sortField, sortOrder],
             ],
             where: {
-                i_status: 1
+                i_is_active: 1
             }
 
         };
@@ -262,11 +262,7 @@ const immunizationsController = () => {
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-
-
-
         if (postData) {
-
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
