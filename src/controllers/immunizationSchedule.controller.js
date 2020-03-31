@@ -168,7 +168,9 @@ const immunizationScheduleController = () => {
     };
     const getimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
-         const user_uuid = req.headers;
+
+        const user_uuid = req.headers;
+
         if (user_uuid && postData.Id) {
         try {
 
@@ -225,8 +227,8 @@ const immunizationScheduleController = () => {
     const deleteimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
 
-        const user_uuid = req.headers;
-if (user_uuid && postData.Id) {
+ const user_uuid = req.headers;
+        if (user_uuid && postData.Id) {
 
         await immunizationScheduleTbl.update({
             status: 0
