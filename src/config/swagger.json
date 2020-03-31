@@ -4213,6 +4213,41 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/vitalMaster/getALLVitalsFilter": {
+      "post": {
+        "summary": "To get all vitals by filter list",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "vitals",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getALLVitalsFilter"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalMaster/getVitalByID": {
       "post": {
         "description": "update template details by Id",
@@ -4946,7 +4981,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-
     "/api/diseases/create": {
       "post": {
         "description": "To create Disease API",
@@ -8469,6 +8503,14 @@
           "type": "string"
         },
         "search": {
+          "type": "string"
+        }
+      }
+    },
+    "getALLVitalsFilter": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
           "type": "string"
         }
       }
@@ -13982,29 +14024,29 @@
         }
       }
     },
-    "createDiseases":{
+    "createDiseases": {
       "type": "object",
       "properties": {
-        "code":{
-          "type":"string"
+        "code": {
+          "type": "string"
         },
-        "name":{
-          "type":"string"
+        "name": {
+          "type": "string"
         },
-        "color":{
-          "type":"string"
+        "color": {
+          "type": "string"
         },
-        "language":{
-          "type":"string"
+        "language": {
+          "type": "string"
         },
-        "display_order":{
-          "type":"number"
+        "display_order": {
+          "type": "number"
         },
-        "Is_default":{
-          "type":"boolean"
+        "Is_default": {
+          "type": "boolean"
         },
-        "is_active":{
-          "type":"boolean"
+        "is_active": {
+          "type": "boolean"
         }
       }
     }

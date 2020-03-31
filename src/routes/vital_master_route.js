@@ -11,6 +11,7 @@ vitalRoute.route('/create').post(vitalController.createVital);
 vitalRoute.route('/getVitals').get(vitalController.getVitals);//get default vitals
 
 vitalRoute.route('/getAllVitals').get(vitalController.getAllVitals);
+vitalRoute.route('/getALLVitalsFilter').post(vitalController.getAllVitalsFilter);
 
 vitalRoute.route('/getVitalByID').post(vitalController.getVitalByID);
 
