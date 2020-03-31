@@ -2378,6 +2378,49 @@
         }
       }
     },
+    "/api/patient-chief-complaints/get-prev-pat-cc-by-patientId": {
+      "get": {
+        "description": "To get Previosu Patient chief Complaints",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterTypeId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patientId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientChiefComplaints"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully"
+          }
+        }
+      }
+    },
     "/api/emr-patient-vitals/create": {
       "post": {
         "description": "To Create a EMR Patient Vitals",

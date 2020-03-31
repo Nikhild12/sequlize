@@ -52,6 +52,9 @@ module.exports = Object.freeze({
   LATEST_RECORD_FETECHED_SUCCESSFULLY: "Fetched Latest Record Successfully",
   CHIEF_COMPLIANT: "Fetched Chief Compliant Successfully",
   DISEASES_SUCCESS: "Fetched Diseases Successfully",
+  TEMPLATE_DELETED: "Template Deleted Successfully",
+  PREVIOUS_PAT_CC_SUCCESS:
+    "Fetched Previous Patient Chief Complaints Successfully",
 
   GetpleaseProvideMsg: function(columnname) {
     let returnProvideMsg = "Please provide";
