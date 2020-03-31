@@ -169,7 +169,7 @@ const immunizationScheduleController = () => {
     const getimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
         try {
-
+if(postData.Id){
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
@@ -202,6 +202,12 @@ const immunizationScheduleController = () => {
                             responseContents: data
                         });
                 });
+                }else{ return res
+            .status(httpStatus.BAD_REQUEST)
+            .json({
+                statusCode: 400,
+                msg: "Please Provied Vaild Id number"
+            });}
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -215,7 +221,7 @@ const immunizationScheduleController = () => {
     };
     const deleteimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
-
+if(postData.Id){
         await immunizationScheduleTbl.update({
             status: 0
         }, {
@@ -236,6 +242,13 @@ const immunizationScheduleController = () => {
                 error: err
             });
         });
+        }else{
+            return res
+            .status(httpStatus.BAD_REQUEST)
+            .json({
+                statusCode: 400,
+                msg: "Please Provied Vaild Id number"
+            });}
     };
 
     const updateimmunizationScheduleById = async (req, res, next) => {
