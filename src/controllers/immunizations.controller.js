@@ -351,6 +351,7 @@ const immunizationsController = () => {
 
     const getimmunizationById = async (req, res, next) => {
         const postData = req.body;
+
         const user_uuid = req.headers;
         if (user_uuid && postData.Id) {
             try {
@@ -374,6 +375,7 @@ const immunizationsController = () => {
                                 responseContents: data
                             });
                     });
+
 
             } catch (err) {
                 const errorMsg = err.errors ? err.errors[0].message : err.message;
