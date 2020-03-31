@@ -268,9 +268,7 @@ const diagnosisController = () => {
         let findQuery = {
             offset: offset,
             limit: itemsPerPage,
-            where: {
-                status: 1
-            },
+           
             attributes: getDiagnosisAttributes()
 
 
@@ -296,8 +294,36 @@ const diagnosisController = () => {
             };
         }
 
+ if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
+          findQuery.where = {
+            [Op.and]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+              
+              
+            ]
+          };
+        }
+        
+        if (getsearch.diagnosis_version_uuid &&  /\S/.test(getsearch.diagnosis_version_uuid)) {
+          findQuery.where = {
+            [Op.and]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
+            ]
+          };
+        }
+if (getsearch.is_active ==1 ) {
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+        }
+        else if(getsearch.is_active ==0) {
+         findQuery.where ={[Op.and]: [ {is_active:0}]};
 
 
+        }
+        else{
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+
+        }
         try {
             await diagnosisTbl.findAndCountAll(findQuery)
 
@@ -356,6 +382,7 @@ const diagnosisController = () => {
         if (Diagnosis_id) {
             const updateddiagnosisData = {
                 status: 0,
+                is_active:0,
                 modified_by: user_uuid,
                 modified_date: new Date()
             };
