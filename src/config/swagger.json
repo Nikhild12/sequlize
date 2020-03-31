@@ -1951,6 +1951,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+           {
+            "in": "body",
+            "name": "allergy master",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getAllergyMaster"
+            }
           }
         ],
         "produces": [
@@ -4256,6 +4264,41 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/vitalMaster/getALLVitalsFilter": {
+      "post": {
+        "summary": "To get all vitals by filter list",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "vitals",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getALLVitalsFilter"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/vitalMaster/getVitalByID": {
       "post": {
         "description": "update template details by Id",
@@ -4989,7 +5032,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-
     "/api/diseases/create": {
       "post": {
         "description": "To create Disease API",
@@ -8513,6 +8555,23 @@
         },
         "search": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "vital_value_type_uuid": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    },
+    "getALLVitalsFilter": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
+          "type": "string"
         }
       }
     },
@@ -8903,6 +8962,35 @@
         },
         "is_active": {
           "type": "integer"
+        }
+      }
+    },
+     "getAllergyMaster": {
+      "type": "object",
+      "properties": {
+        "pageNo": {
+          "type": "integer"
+        },
+        "paginationSize": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "searchKeyWord": {
+          "type": "string"
+        },
+        "allergy_source_uuid": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
         }
       }
     },
@@ -10417,6 +10505,18 @@
           "example": 10
         },
         "search": {
+          "type": "string",
+          "example": "string"
+        },
+        "searchKeyWord": {
+          "type": "string",
+          "example": "string"
+        },
+        "diagnosis_version_uuid": {
+          "type": "string",
+          "example": "string"
+        },
+        "is_active": {
           "type": "string",
           "example": "string"
         }
@@ -14025,29 +14125,29 @@
         }
       }
     },
-    "createDiseases":{
+    "createDiseases": {
       "type": "object",
       "properties": {
-        "code":{
-          "type":"string"
+        "code": {
+          "type": "string"
         },
-        "name":{
-          "type":"string"
+        "name": {
+          "type": "string"
         },
-        "color":{
-          "type":"string"
+        "color": {
+          "type": "string"
         },
-        "language":{
-          "type":"string"
+        "language": {
+          "type": "string"
         },
-        "display_order":{
-          "type":"number"
+        "display_order": {
+          "type": "number"
         },
-        "Is_default":{
-          "type":"boolean"
+        "Is_default": {
+          "type": "boolean"
         },
-        "is_active":{
-          "type":"boolean"
+        "is_active": {
+          "type": "boolean"
         }
       }
     }
