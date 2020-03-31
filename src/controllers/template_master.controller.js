@@ -17,6 +17,8 @@ const vw_lab = db.vw_lab_template;
 const vw_diet = db.vw_template_master_diet;
 const vw_ris = db.vw_ris_template;
 const vw_all_temp = db.vw_all_templates;
+const vw_profile_ris = db.vw_profile_ris_template;
+const vw_profile_lab = db.vw_profile_lab_template;
 
 const tmpmstrController = () => {
   /**
@@ -248,10 +250,10 @@ const tmpmstrController = () => {
           const del_temp_drugs =
             tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvdDrugs,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvdDrugs,
+                user_uuid
+              )
               : "";
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewDrugsDetailsReqData,
@@ -335,10 +337,10 @@ const tmpmstrController = () => {
           const del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvd,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              )
               : "";
           const new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
@@ -367,10 +369,10 @@ const tmpmstrController = () => {
           del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                  tempmstrdetailsTbl,
-                  tmpDtlsRmvd,
-                  user_uuid
-                )
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              )
               : "";
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
@@ -838,10 +840,9 @@ function getLabListData(fetchedData) {
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
-            template_is_active:
-              tD.dataValues.tm_is_active[0] === 1 ? true : false,
-            template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
-            is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
+            template_is_active: tD.dataValues.tm_is_active,
+            template_status: tD.dataValues.tm_status,
+            is_public: tD.dataValues.tm_is_public
           },
 
           lab_details: [
@@ -880,10 +881,9 @@ function getRisListData(fetchedData) {
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
-            template_is_active:
-              tD.dataValues.tm_is_active[0] === 1 ? true : false,
-            template_status: tD.dataValues.tm_status[0] === 1 ? true : false,
-            is_public: tD.dataValues.tm_is_public[0] === 1 ? true : false
+            template_is_active: tD.dataValues.tm_is_active,
+            template_status: tD.dataValues.tm_status,
+            is_public: tD.dataValues.tm_is_public
           },
 
           lab_details: [
@@ -922,9 +922,16 @@ function getLabListForTemplate(fetchedData, template_id) {
           lab_code: lD.ltm_code,
           lab_name: lD.ltm_name,
           lab_test_description: lD.ltm_description,
-          lab_test_status: lD.ltm_status[0] === 1 ? true : false,
-          lab_test_is_active: lD.ltm_is_active[0] === 1 ? true : false,
-          lab_type_uuid: lD.ltm_lab_master_type_uuid
+          lab_test_status: lD.ltm_status,
+          lab_test_is_active: lD.ltm_is_active,
+          lab_type_uuid: lD.ltm_lab_master_type_uuid,
+          profile_test_uuid: lD.lpm_uuid,
+          profile_test_code: lD.lpm_profile_code,
+          profile_test_name: lD.lpm_name,
+          profile_test_description: lD.lpm_description,
+          profile_test_status: lD.lpm_status,
+          profile_test_active: lD.lpm_is_active,
+          //lab_type_uuid: lD.lpm_lab_master_type_uuid
         }
       ];
     });
@@ -949,9 +956,16 @@ function getRisListForTemplate(fetchedData, template_id) {
           lab_code: lD.rtm_code,
           lab_name: lD.rtm_name,
           lab_test_description: lD.rtm_description,
-          lab_test_status: lD.rtm_status[0] === 1 ? true : false,
-          lab_test_is_active: lD.rtm_is_active[0] === 1 ? true : false,
-          lab_type_uuid: lD.rtm_lab_master_type_uuid
+          lab_test_status: lD.rtm_status,
+          lab_test_is_active: lD.rtm_is_active,
+          lab_type_uuid: lD.rtm_lab_master_type_uuid,
+          profile_test_uuid: lD.lpm_uuid,
+          profile_test_code: lD.lpm_profile_code,
+          profile_test_name: lD.lpm_name,
+          profile_test_description: lD.lpm_description,
+          profile_test_status: lD.lpm_status,
+          profile_test_active: lD.lpm_is_active,
+          //lab_type_uuid: lD.lpm_lab_master_type_uuid
         }
       ];
     });
@@ -1130,14 +1144,14 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       };
     case "2":
       return {
-        table_name: vw_lab,
+        table_name: vw_profile_lab,
         query: {
           order: [["tm_display_order", "ASC"]],
           where: {
             //tm_user_uuid: user_uuid,
             //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            ltm_lab_master_type_uuid: 1,
+            //ltm_lab_master_type_uuid: 1,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
@@ -1154,14 +1168,14 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
       };
     case "3":
       return {
-        table_name: vw_ris,
+        table_name: vw_profile_ris,
         query: {
           order: [["tm_display_order", "ASC"]],
           where: {
             //tm_user_uuid: user_uuid,
             //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            rtm_lab_master_type_uuid: 2,
+            //rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
@@ -1210,14 +1224,14 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
       };
     case "2":
       return {
-        table_name: vw_lab,
+        table_name: vw_profile_lab,
         query: {
           where: {
             tm_uuid: temp_id,
             tm_user_uuid: user_uuid,
             tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            ltm_lab_master_type_uuid: 1,
+            //ltm_lab_master_type_uuid: 1,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
@@ -1228,7 +1242,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
       };
     case "3":
       return {
-        table_name: vw_ris,
+        table_name: vw_profile_ris,
         query: {
           where: {
             tm_uuid: temp_id,
