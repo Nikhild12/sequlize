@@ -134,7 +134,6 @@ const vitalmstrController = () => {
         const filterdVitalData = await vitalmstrTbl.findAll({
           where: query
         });
-        console.log(filterdVitalData.length);
         if (filterdVitalData.length > 0) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: { getVitals: filterdVitalData } });
         } else {
@@ -221,32 +220,32 @@ const vitalmstrController = () => {
         //  ]
       };
     }
-    if (getsearch.name &&  /\S/.test (getsearch.name)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
-            ]
-          };
-        }
-          if (getsearch.vital_value_type_uuid &&  /\S/.test(getsearch.vital_value_type_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
-            ]
-          };
-        }
-if (getsearch.is_active ==1 ) {
-         findQuery.where ={[Op.and]: [{is_active:1}]};
-        }
-        else if(getsearch.is_active ==0) {
-         findQuery.where ={[Op.and]: [{is_active:0}]};
+    if (getsearch.name && /\S/.test(getsearch.name)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
+        ]
+      };
+    }
+    if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
+        ]
+      };
+    }
+    if (getsearch.is_active == 1) {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+    }
+    else if (getsearch.is_active == 0) {
+      findQuery.where = { [Op.and]: [{ is_active: 0 }] };
 
 
-        }
-        else{
-         findQuery.where ={[Op.and]: [{is_active:1}]};
+    }
+    else {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
 
-        }
+    }
     try {
       const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
       if (result) {
