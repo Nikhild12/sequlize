@@ -859,20 +859,38 @@ const TickSheetMasterController = () => {
    */
   const _getTreatmentFavById = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { treatmentId } = req.query;
+    const { treatmentId, favouriteId } = req.query;
 
-    if (user_uuid && treatmentId) {
+    if (user_uuid && treatmentId && favouriteId) {
+      let favouriteList;
       try {
-        const treatmentById = await getTreatmentFavByIdPromise(treatmentId);
-
-        const favouriteList = getTreatmentFavouritesInHumanUnderstandable(
-          treatmentById
+        const treatmentById = await getTreatmentFavByIdPromise(
+          treatmentId,
+          favouriteId
         );
+        const favourite_details = await favouriteMasterTbl.findAll({
+          where: {
+            uuid: favouriteId
+          }
+        });
+
         const responseCount =
           treatmentById &&
           treatmentById.reduce((acc, cur) => {
             return acc + cur.length;
           }, 0);
+        if (responseCount > 0) {
+          favouriteList = getTreatmentFavouritesInHumanUnderstandable(
+            treatmentById,
+            favouriteId
+          );
+          if (favourite_details && favourite_details.length > 0) {
+            favouriteList.favourite_details = {
+              display_order: favourite_details[0].display_order
+            };
+          }
+        }
+
         const returnMessage =
           responseCount > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
@@ -1345,7 +1363,7 @@ function getTreatmentDetails(treatFav) {
   return { name, code, id, active };
 }
 
-function getTreatmentFavByIdPromise(treatmentId) {
+function getTreatmentFavByIdPromise(treatmentId, favouriteId) {
   return Promise.all([
     vmTreatmentFavouriteDrug.findAll({
       attributes: gedTreatmentKitDrug,
