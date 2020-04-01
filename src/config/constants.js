@@ -57,7 +57,7 @@ module.exports = Object.freeze({
     "Fetched Previous Patient Chief Complaints Successfully",
   TEMPLATE_FETCH_SUCCESS: "Template Fetched Successfully",
 
-  GetpleaseProvideMsg: function(columnname) {
+  GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
       case "encounter_uuid":
@@ -152,12 +152,22 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} section_note_type_uuid`;
       case "display_order":
         return `${returnProvideMsg} display_order`;
+      case "schedule_uuid":
+        return `${returnProvideMsg} schedule_uuid`;
+      case "immunization_uuid":
+        return `${returnProvideMsg} immunization_uuid`;
+      case "immunization_schedule_flag_uuid":
+        return `${returnProvideMsg} immunization_schedule_flag_uuid`;
+      case "immunization_route_uuid":
+        return `${returnProvideMsg} immunization_route_uuid`;
+      case "immunization_dosage_uuid":
+        return `${returnProvideMsg} immunization_dosage_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
   },
 
-  GetMinimumMessage: function(columnname) {
+  GetMinimumMessage: function (columnname) {
     let lengthMessage = "must be greater than 0";
     switch (columnname) {
       case "encounter_uuid":
@@ -204,7 +214,7 @@ module.exports = Object.freeze({
     }
   },
 
-  GetZeroValidationMessage: function(columnname) {
+  GetZeroValidationMessage: function (columnname) {
     let validationMessage = "must be greater than or equal to 0";
     switch (columnname) {
       case "encounter_uuid":
