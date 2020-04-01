@@ -135,7 +135,7 @@ const vitalmstrController = () => {
           where: query
         });
         if (filterdVitalData.length > 0) {
-          return res.status(200).send({ code: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: { getVitals: filterdVitalData } });
+          return res.status(200).send({ statusCode: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: filterdVitalData });
         } else {
           return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
         }
