@@ -3247,6 +3247,12 @@
             "name": "treatmentId",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "favouriteId",
+            "required": true,
+            "type": "integer"
           }
         ],
         "tags": [
