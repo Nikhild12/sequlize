@@ -261,6 +261,7 @@ const vitalmstrController = () => {
   };
 
   const _getVitalByID = async (req, res, next) => {
+    if (Object.keys(req.body).length != 0) {
     const postData = req.body;
     try {
 
@@ -304,6 +305,11 @@ const vitalmstrController = () => {
           msg: errorMsg
         });
     }
+  } else {
+    return res
+      .status(400)
+      .send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
   const _updatevitalsById = async (req, res, next) => {
     try {

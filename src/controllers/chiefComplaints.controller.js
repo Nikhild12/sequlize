@@ -138,7 +138,7 @@ const chiefComplaintsController = () => {
             }).then(data => {
                 res.send({
                     statusCode: 200,
-                    msg: "Inserted Allery details Successfully",
+                    msg: "Inserted chiefcomplaints details Successfully",
                     req: postData,
                     responseContents: data
                 });
@@ -146,7 +146,7 @@ const chiefComplaintsController = () => {
 
                 res.send({
                     status: "failed",
-                    msg: "failed to Allery Module details",
+                    msg: "failed to insert chiefcomplaints Module details",
                     error: err
                 });
             });
@@ -154,7 +154,7 @@ const chiefComplaintsController = () => {
 
             res.send({
                 status: 'failed',
-                msg: 'Please enter Allery details'
+                msg: 'Please enter chiefcomplaints details'
             });
         }
     };
