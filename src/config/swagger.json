@@ -1952,7 +1952,7 @@
             "required": true,
             "type": "integer"
           },
-           {
+          {
             "in": "body",
             "name": "allergy master",
             "required": true,
@@ -3981,6 +3981,44 @@
             "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/chief-complaints-master/getBySearch": {
+      "post": {
+        "description": "To get a chief Complaints Search Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "ChiefComplaintSearch",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getChiefComplaintSearch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully",
+            "schema": {
+              "$ref": "#/definitions/rescreateChiefMaster"
             }
           }
         },
@@ -8971,7 +9009,7 @@
         }
       }
     },
-     "getAllergyMaster": {
+    "getAllergyMaster": {
       "type": "object",
       "properties": {
         "pageNo": {
@@ -10835,6 +10873,14 @@
       "properties": {
         "ChiefComplaints_id": {
           "type": "integer"
+        }
+      }
+    },
+    "getChiefComplaintSearch": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
+          "type": "string"
         }
       }
     },

@@ -8,6 +8,7 @@ const ChiefComplaints = require('../controllers/chief_complaints.controller');
 const ChiefComplaintsRoutes = express.Router();
 
 ChiefComplaintsRoutes.route('/getByFilters').get(ChiefComplaints.getChiefComplaintsFilter);
+ChiefComplaintsRoutes.route('/getBySearch').post(ChiefComplaints.getChiefComplaintsSearch);
 ChiefComplaintsRoutes.route('/create').post(ChiefComplaints.createChiefComplaints);
 ChiefComplaintsRoutes.route('/getAll').post(ChiefComplaints.getChiefComplaints);
 
