@@ -1402,6 +1402,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "immunization",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getimmunizationReq"
+            }
           }
         ],
         "produces": [
@@ -8658,6 +8666,35 @@
         },
         "revision": {
           "type": "integer"
+        }
+      }
+    },
+    "getimmunizationReq": {
+      "type": "object",
+      "properties": {
+        "paginationSize": {
+          "type": "integer"
+        },
+        "pageNo": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchKey": {
+          "type": "string"
         }
       }
     },
