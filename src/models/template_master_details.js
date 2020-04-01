@@ -77,8 +77,6 @@ module.exports = (sequelize, DataTypes) => {
             diet_category_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false
-                
-                
             },
             diet_frequency_uuid: {
                 type: DataTypes.INTEGER,
@@ -119,7 +117,20 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            vital_master_uuid: {
+            profile_master_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('vital_master_uuid')
+                    },
+                    min: 0
+                }
+            },
+            test_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {

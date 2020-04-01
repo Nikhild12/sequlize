@@ -1,10 +1,13 @@
 const httpStatus = require("http-status");
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const db = require("../config/sequelize");
 
 const clinical_const = require('../config/constants');
+const emr_utilities = require('../services/utility.service');
+const emr_constants = require("../config/constants");
+
 //import tables
 const vitalmstrTbl = db.vital_masters;
 const vitalTypeTbl = db.vital_type;
@@ -24,51 +27,51 @@ const vitalmstrController = () => {
 
 
   const _createVital = async (req, res) => {
-    
-    if (Object.keys(req.body).length != 0){
-    
-    const { user_uuid } = req.headers;
-    const vitalsMasterData = req.body;
 
-    if (user_uuid && vitalsMasterData) {
+    if (Object.keys(req.body).length != 0) {
+
+      const { user_uuid } = req.headers;
+      const vitalsMasterData = req.body;
+
+      if (user_uuid && vitalsMasterData) {
 
 
-      vitalsMasterData.code = vitalsMasterData & vitalsMasterData.code ? vitalsMasterData.code : vitalsMasterData.name;
-      vitalsMasterData.description = vitalsMasterData & vitalsMasterData.description ? vitalsMasterData.description : vitalsMasterData.name;
-      vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
-      vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
-      vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
-      vitalsMasterData.revision = 1;
-      try {
+        vitalsMasterData.code = vitalsMasterData & vitalsMasterData.code ? vitalsMasterData.code : vitalsMasterData.name;
+        vitalsMasterData.description = vitalsMasterData & vitalsMasterData.description ? vitalsMasterData.description : vitalsMasterData.name;
+        vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
+        vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
+        vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
+        vitalsMasterData.revision = 1;
+        try {
 
-        const exists = await nameExists(vitalsMasterData.name);
+          const exists = await nameExists(vitalsMasterData.name);
 
-        if ( exists && exists.length > 0 ) {
-          //vital already exits
-          return res
-            .status(400)
-            .send({ code: httpStatus[400], message: "vital name already exists" });
-        } else {
+          if (exists && exists.length > 0) {
+            //vital already exits
+            return res
+              .status(400)
+              .send({ code: httpStatus[400], message: "vital name already exists" });
+          } else {
 
-        const vitalsCreatedData = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
+            const vitalsCreatedData = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
 
-        if (vitalsCreatedData) {
-          vitalsMasterData.uuid = vitalsCreatedData.uuid;
-          return res.status(200).send({ statusCode: 200, message: "Inserted vitals Successfully", responseContents: vitalsMasterData });
+            if (vitalsCreatedData) {
+              vitalsMasterData.uuid = vitalsCreatedData.uuid;
+              return res.status(200).send({ statusCode: 200, message: "Inserted vitals Successfully", responseContents: vitalsMasterData });
+            }
+          }
+        } catch (ex) {
+          console.log(ex.message);
+          return res.status(400).send({ statusCode: 400, message: ex.message });
         }
-      }
-      } catch (ex) {
-        console.log(ex.message);
-        return res.status(400).send({ statusCode: 400, message: ex.message });
+      } else {
+        return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
       }
     } else {
-      return res.status(400).send({ statusCode: 400, message: 'No Headers Found' });
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
     }
-  }else {
-    return res
-      .status(400)
-      .send({ code: httpStatus[400], message: "No Request Body Found" });
-  }
   };
 
   //function for getting default vitals
@@ -106,6 +109,50 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
+  const _getAllVitalsFilter = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { searchValue } = req.body;
+    const isValidSearchVal = searchValue && emr_utilities.isStringValid(searchValue);
+    let query;
+    query = {
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE,
+      [Op.and]: [
+        {
+          name: {
+            [Op.like]: `%${searchValue}%`
+          }
+        }
+      ]
+    };
+
+
+    if (isValidSearchVal && user_uuid) {
+
+      try {
+        const filterdVitalData = await vitalmstrTbl.findAll({
+          where: query
+        });
+        console.log(filterdVitalData.length);
+        if (filterdVitalData.length > 0) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: { getVitals: filterdVitalData } });
+        } else {
+          return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
+        }
+      } catch (ex) {
+        console.log('Exception Happened', ex);
+        return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   const _getALLVitalsmaster = async (req, res) => {
     let getsearch = req.body;
     let pageNo = 0;
@@ -140,7 +187,7 @@ const vitalmstrController = () => {
       order: [
         [sortField, sortOrder],
       ],
-      where: { is_active: 1 },
+      // where: { is_active: 1 },
       include: [
         {
           model: vitalLonicTbl,
@@ -174,7 +221,32 @@ const vitalmstrController = () => {
         //  ]
       };
     }
+    if (getsearch.name &&  /\S/.test (getsearch.name)) {
+          findQuery.where = {
+            [Op.and]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
+            ]
+          };
+        }
+          if (getsearch.vital_value_type_uuid &&  /\S/.test(getsearch.vital_value_type_uuid)) {
+          findQuery.where = {
+            [Op.and]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
+            ]
+          };
+        }
+if (getsearch.is_active ==1 ) {
+         findQuery.where ={[Op.and]: [{is_active:1}]};
+        }
+        else if(getsearch.is_active ==0) {
+         findQuery.where ={[Op.and]: [{is_active:0}]};
 
+
+        }
+        else{
+         findQuery.where ={[Op.and]: [{is_active:1}]};
+
+        }
     try {
       const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
       if (result) {
@@ -232,7 +304,7 @@ const vitalmstrController = () => {
           status: "error",
           msg: errorMsg
         });
-    };
+    }
   };
   const _updatevitalsById = async (req, res, next) => {
     const postData = req.body;
@@ -287,6 +359,7 @@ const vitalmstrController = () => {
     createVital: _createVital,
     getVitals: _getVitals,
     getAllVitals: _getALLVitals,
+    getAllVitalsFilter: _getAllVitalsFilter,
     getVitalByID: _getVitalByID,
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
