@@ -1951,6 +1951,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+           {
+            "in": "body",
+            "name": "allergy master",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getAllergyMaster"
+            }
           }
         ],
         "produces": [
@@ -8470,6 +8478,15 @@
         },
         "search": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "vital_value_type_uuid": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
         }
       }
     },
@@ -8860,6 +8877,35 @@
         },
         "is_active": {
           "type": "integer"
+        }
+      }
+    },
+     "getAllergyMaster": {
+      "type": "object",
+      "properties": {
+        "pageNo": {
+          "type": "integer"
+        },
+        "paginationSize": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "searchKeyWord": {
+          "type": "string"
+        },
+        "allergy_source_uuid": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
         }
       }
     },
@@ -10374,6 +10420,18 @@
           "example": 10
         },
         "search": {
+          "type": "string",
+          "example": "string"
+        },
+        "searchKeyWord": {
+          "type": "string",
+          "example": "string"
+        },
+        "diagnosis_version_uuid": {
+          "type": "string",
+          "example": "string"
+        },
+        "is_active": {
           "type": "string",
           "example": "string"
         }
