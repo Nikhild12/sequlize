@@ -5,6 +5,9 @@ const Op = sequelize.Op;
 const db = require("../config/sequelize");
 const emr_utility = require("../services/utility.service");
 
+// Import EMR Constants
+const emr_constants = require("../config/constants");
+
 //import tables
 const tempmstrTbl = db.template_master;
 const tempmstrdetailsTbl = db.template_master_details;
@@ -35,21 +38,20 @@ const tmpmstrController = () => {
           user_uuid
         );
         const templateList = await table_name.findAll(query);
-        console.log(templateList);
-        return res
-          .status(httpStatus.OK)
-          .json({
-            statusCode: 200,
-            req: "",
-            responseContents: getTempData(temp_type_id, templateList)
-          });
+        console.log("line no 41 ", templateList);
+        return res.status(httpStatus.OK).json({
+          statusCode: 200,
+          responseContents: getTempData(temp_type_id, templateList),
+          message:
+            templateList && templateList.length > 0
+              ? emr_constants.TEMPLATE_FETCH_SUCCESS
+              : emr_constants.NO_RECORD_FOUND
+        });
       } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request Body or Search key Found "
-          });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
+        });
       }
     } catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
@@ -66,7 +68,10 @@ const tmpmstrController = () => {
 
     try {
       if (tempuuid <= 0) {
-        return res.status(400).send({ code: httpStatus[400], message: 'Please provide valid template id' });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "Please provide valid template id"
+        });
       }
       if (tempuuid) {
         const updatedtempData = {
@@ -81,9 +86,16 @@ const tmpmstrController = () => {
           })
         ]);
         if (updatetempAsync) {
+          const isDeleted = updatetempAsync[0][0] === 1;
+          const responseCode = isDeleted
+            ? httpStatus.OK
+            : httpStatus.NO_CONTENT;
+          const responseMessage = isDeleted
+            ? emr_constants.TEMPLATE_DELETED
+            : emr_constants.NO_RECORD_FOUND;
           return res
             .status(200)
-            .send({ code: httpStatus.OK, message: "Deleted Successfully" });
+            .send({ code: responseCode, message: responseMessage });
         }
       } else {
         return res
@@ -120,15 +132,15 @@ const tmpmstrController = () => {
             .status(httpStatus.OK)
             .json({ statusCode: 200, req: "", responseContent: templateData });
         } else {
-          return res.status(200).send({ statusCode: 200, message: 'No Record Found' });
+          return res
+            .status(200)
+            .send({ statusCode: 200, message: "No Record Found" });
         }
       } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request Body or Search key Found "
-          });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
+        });
       }
     } catch (err) {
       const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -181,16 +193,14 @@ const tmpmstrController = () => {
             templateMasterDetailsReqData
           );
           if (createData) {
-            return res
-              .status(200)
-              .send({
-                code: httpStatus.OK,
-                responseContent: {
-                  headers: templateMasterReqData,
-                  details: templateMasterDetailsReqData
-                },
-                message: "Template details Inserted Successfully"
-              });
+            return res.status(200).send({
+              code: httpStatus.OK,
+              responseContent: {
+                headers: templateMasterReqData,
+                details: templateMasterDetailsReqData
+              },
+              message: "Template details Inserted Successfully"
+            });
           }
         } else {
           return res
@@ -233,16 +243,18 @@ const tmpmstrController = () => {
         ) {
           //templateTransaction = await db.sequelize.transaction();
           if (templateMasterReqData.template_id <= 0) {
-            return res.status(400).send({ code: httpStatus[400], message: 'Please provide valid template id' });
-
+            return res.status(400).send({
+              code: httpStatus[400],
+              message: "Please provide valid template id"
+            });
           }
           const del_temp_drugs =
             tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0
               ? await removedTmpDetails(
-                tempmstrdetailsTbl,
-                tmpDtlsRmvdDrugs,
-                user_uuid
-              )
+                  tempmstrdetailsTbl,
+                  tmpDtlsRmvdDrugs,
+                  user_uuid
+                )
               : "";
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewDrugsDetailsReqData,
@@ -267,23 +279,19 @@ const tmpmstrController = () => {
           if (temp_mas && temp_mas_dtls) {
             //await templateTransaction.commit();
             //templateTransStatus = true;
-            return res
-              .status(200)
-              .send({
-                code: httpStatus.OK,
-                message: "Updated Successfully",
-                responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
-              });
+            return res.status(200).send({
+              code: httpStatus.OK,
+              message: "Updated Successfully",
+              responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
+            });
           }
         } else {
           // await templateTransaction.rollback();
           // templateTransStatus = true;
-          return res
-            .status(400)
-            .send({
-              code: httpStatus[400],
-              message: "No Request headers or Body Found"
-            });
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "No Request headers or Body Found"
+          });
         }
       } catch (ex) {
         // await templateTransaction.rollback();npm
@@ -330,10 +338,10 @@ const tmpmstrController = () => {
           const del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                tempmstrdetailsTbl,
-                tmpDtlsRmvd,
-                user_uuid
-              )
+                  tempmstrdetailsTbl,
+                  tmpDtlsRmvd,
+                  user_uuid
+                )
               : "";
           const new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
@@ -352,42 +360,36 @@ const tmpmstrController = () => {
               user_uuid
             )
           );
-          return res
-            .status(200)
-            .send({
-              code: httpStatus.OK,
-              message: "Updated Successfully",
-              responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
-            });
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: "Updated Successfully",
+            responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
+          });
         }
         if (templateMasterReqData.template_type_uuid == 4) {
           del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0
               ? await removedTmpDetails(
-                tempmstrdetailsTbl,
-                tmpDtlsRmvd,
-                user_uuid
-              )
+                  tempmstrdetailsTbl,
+                  tmpDtlsRmvd,
+                  user_uuid
+                )
               : "";
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData,
             { returning: true }
           );
-          return res
-            .status(200)
-            .send({
-              code: httpStatus.OK,
-              message: "Updated Successfully",
-              responseContent: { new_temp_dtls }
-            });
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: "Updated Successfully",
+            responseContent: { new_temp_dtls }
+          });
         }
       } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request headers or Body Found"
-          });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request headers or Body Found"
+        });
       }
     } catch (ex) {
       return res
@@ -452,12 +454,10 @@ const tmpmstrController = () => {
           totalRecords: templateList.count ? templateList.count : 0
         });
       } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request Body or Search key Found "
-          });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
+        });
       }
     } catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
@@ -1226,7 +1226,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tmd_status: 1,
             tmd_active: 1
           },
-          order: [['tm_display_order', 'ASC']]
+          order: [["tm_display_order", "ASC"]]
         }
       };
     case "3":
@@ -1244,7 +1244,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
             tmd_status: 1,
             tmd_active: 1
           },
-          order: [['tm_display_order', 'ASC']]
+          order: [["tm_display_order", "ASC"]]
         }
       };
     case "4":

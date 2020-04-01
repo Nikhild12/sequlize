@@ -151,6 +151,12 @@ const _getResponseCodeForSuccessRequest = records => {
   return records && records.length > 0 ? httpStatus.OK : httpStatus.NO_CONTENT;
 };
 
+const _isAllNumber = (...args) => {
+  return args.every(a => {
+    return typeof Number(a) === "number";
+  });
+};
+
 /**
  *
  * @param {*} code response code
@@ -161,7 +167,8 @@ const _getResponseCodeForSuccessRequest = records => {
 
 const responseMessage = {
   cc: emr_constants.CHIEF_COMPLIANT,
-  dis: emr_constants.DISEASES_SUCCESS
+  dis: emr_constants.DISEASES_SUCCESS,
+  p: emr_constants.PREVIOUS_PAT_CC_SUCCESS // Previous Patient Chief Complaints
 };
 const _getResponseMessageForSuccessRequest = (code, mName) => {
   if (code === 204) {
@@ -183,5 +190,6 @@ module.exports = {
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
-  isStringValid: _isStringValid
+  isStringValid: _isStringValid,
+  isAllNumber: _isAllNumber
 };
