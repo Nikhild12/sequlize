@@ -164,7 +164,7 @@ const immunizationsController = () => {
 
     };
 
-    const getimmunization = async (req, res, next) => {
+    const getimmunization_old1 = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
@@ -211,9 +211,16 @@ const immunizationsController = () => {
                 [Op.or]: [{
                     i_name: {
                         [Op.like]: '%' + getsearch.search + '%',
-                    },
-
-
+                    }
+                }, {
+                    df_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    }
+                },
+                {
+                    i_status: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    }
                 }
 
                 ]
@@ -258,6 +265,109 @@ const immunizationsController = () => {
 
 
     };
+
+    const getimmunization = async (req, res, next) => {
+        try {
+            const postData = req.body;
+            let pageNo = 0;
+            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            let sortArr = ['i_uuid', 'DESC'];
+
+
+            if (postData.pageNo) {
+                let temp = parseInt(postData.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (postData.sortField) {
+                fieldSplitArr = postData.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = postData.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = postData.sortOrder;
+                } else {
+                    sortArr.push(postData.sortOrder);
+                }
+            }
+            let findQuery = {
+                subQuery: false,
+                offset: offset,
+                limit: postData.paginationSize,
+                order: [
+                    sortArr
+                ],
+                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                where: {
+
+                }
+            };
+
+            if (postData.search && /\S/.test(postData.search)) {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+
+                ];
+            }
+            if (postData.name && /\S/.test(postData.name)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+                        ]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+                    ];
+                }
+            }
+
+            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+                findQuery.where = { i_is_active: postData.status };
+            }
+            await immunizationsVwTbl.findAndCountAll(findQuery)
+                .then((data) => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            message: "Get Details Fetched successfully",
+                            req: '',
+                            responseContents: data.rows,
+                            totalRecords: data.count
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(409)
+                        .json({
+                            statusCode: 409,
+                            error: err
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
 
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
