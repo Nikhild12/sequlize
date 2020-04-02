@@ -4,7 +4,7 @@ const _ = require("lodash");
 const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-
+const utility=require('../services/utility.service')
 const immunizationsTbl = db.immunizations;
 const immunizationsVwTbl = db.vw_emr_immunizations;
 
@@ -58,6 +58,7 @@ function getimmunizationsDataAttributes() {
         'modified_date'
     ];
 }
+ 
 const immunizationsController = () => {
     /**
      * Returns jwt token if valid username and password is provided
@@ -372,7 +373,8 @@ const immunizationsController = () => {
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-        if (postData) {
+
+        if (utility.isEmpty(postData)) {
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
@@ -537,6 +539,9 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
+        if(postData.Id && req.headers.user_uuid){
+
+        
         postData.modified_by = req.headers.user_uuid;
         await immunizationsTbl.update(
             postData, {
@@ -552,7 +557,13 @@ const immunizationsController = () => {
                 responseContents: data
             });
         });
-
+    }
+else{
+     return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found and id not found'
+            });
+}
     };
     const searchimmuization = async (req, res, next) => {
         const {
