@@ -1296,6 +1296,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+           {
+            "in": "body",
+            "name": "tablename",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getreference"
+            }
           }
         ],
         "produces": [
@@ -8704,7 +8712,26 @@
     },
     "getreference": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "search": {
+          "type": "string"
+        },
+        "table_name":{
+"type": "string"
+        },
+        "sortOrder":{
+"type": "string"
+        },
+        "sortField":{
+"type": "string"
+        },
+        "name":{
+"type": "string"
+        },
+        "code":{
+          "type": "string"
+        }
+      }
     },
     "addimmunization": {
       "type": "object",

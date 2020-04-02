@@ -29,7 +29,7 @@ const referenceGroupController = () => {
             const page = pageNo ? pageNo : 1;
             const itemsPerPage = limit ? limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            let sortArr = ['created_date', 'DESC'];
+            let sortArr = ['created_date', 'ASC'];
             let fieldSplitArr = [];
             if (postData.sortField) {
                 fieldSplitArr = postData.sortField.split('.');
