@@ -83,30 +83,30 @@ module.exports = (sequelize, DataTypes) => {
             rtm_is_active:{
                 type: DataTypes.BOOLEAN
             },
-            lpm_uuid:{
+            rpm_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_profile_code:{
+            rpm_profile_code:{
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            lpm_name:{
+            rpm_name:{
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            lpm_description:{
+            rpm_description:{
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            lpm_lab_master_type_uuid:{
+            rpm_lab_master_type_uuid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_status:{
+            rpm_status:{
                 type: DataTypes.BOOLEAN
             },
-            lpm_is_active:{
+            rpm_is_active:{
                 type: DataTypes.BOOLEAN
             }
         },

@@ -188,7 +188,7 @@ if (getsearch.is_active ==1 ) {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "Record already Found. Please enter Allergy Master"
+                        msg: "Please enter Allergy Master"
                     });
                 } else {
                     await allergyMastersTbl.create(postData, {

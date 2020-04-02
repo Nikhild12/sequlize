@@ -962,12 +962,12 @@ function getRisListForTemplate(fetchedData, template_id) {
           lab_test_status: lD.rtm_status,
           lab_test_is_active: lD.rtm_is_active,
           lab_type_uuid: lD.rtm_lab_master_type_uuid,
-          profile_test_uuid: lD.lpm_uuid,
-          profile_test_code: lD.lpm_profile_code,
-          profile_test_name: lD.lpm_name,
-          profile_test_description: lD.lpm_description,
-          profile_test_status: lD.lpm_status,
-          profile_test_active: lD.lpm_is_active,
+          profile_test_uuid: lD.rpm_uuid,
+          profile_test_code: lD.rpm_profile_code,
+          profile_test_name: lD.rpm_name,
+          profile_test_description: lD.rpm_description,
+          profile_test_status: lD.rpm_status,
+          profile_test_active: lD.rpm_is_active,
           //lab_type_uuid: lD.lpm_lab_master_type_uuid
         }
       ];

@@ -156,7 +156,7 @@ const ChiefComplaints = () => {
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
       });
     }
-  }
+  };
   const _createChiefComplaints = async (req, res) => {
     const { user_uuid } = req.headers;
     const chiefComplaintsData = req.body;
@@ -186,10 +186,8 @@ const ChiefComplaints = () => {
         });
 
       try {
-        chiefComplaintsData.code =
-          chiefComplaintsData & chiefComplaintsData.code
-            ? chiefComplaintsData.code
-            : chiefComplaintsData.name;
+        chiefComplaintsData.code = chiefComplaintsData.code;
+        chiefComplaintsData.name = chiefComplaintsData.name;
         chiefComplaintsData.description =
           chiefComplaintsData & chiefComplaintsData.description
             ? chiefComplaintsData.description

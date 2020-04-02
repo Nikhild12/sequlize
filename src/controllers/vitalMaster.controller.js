@@ -261,6 +261,7 @@ const vitalmstrController = () => {
   };
 
   const _getVitalByID = async (req, res, next) => {
+    if (Object.keys(req.body).length != 0) {
     const postData = req.body;
     try {
 
@@ -304,25 +305,40 @@ const vitalmstrController = () => {
           msg: errorMsg
         });
     }
+  } else {
+    return res
+      .status(400)
+      .send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
   const _updatevitalsById = async (req, res, next) => {
-    const postData = req.body;
-    postData.modified_by = req.headers.user_uuid;
-    await vitalmstrTbl.update(
-      postData, {
-      where: {
-        uuid: postData.vitals_id
+    try {
+      const postData = req.body;
+      postData.modified_by = req.headers.user_uuid;
+      if (req.body.vitals_id > 0) {
+        await vitalmstrTbl.update(
+          postData, {
+          where: {
+            uuid: postData.vitals_id
+          }
+        }
+        ).then((data) => {
+          res.send({
+            code: 200,
+            msg: "Updated Successfully",
+            req: postData,
+            responseContents: data
+          });
+        });
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "please provide valid data" });
       }
+    } catch (ex) {
+      console.log(ex.message);
+      return res.status(400).send({ statusCode: 400, message: ex.message });
     }
-    ).then((data) => {
-      res.send({
-        code: 200,
-        msg: "Updated Successfully",
-        req: postData,
-        responseContents: data
-      });
-    });
-
   };
   const _deletevitals = async (req, res) => {
 
