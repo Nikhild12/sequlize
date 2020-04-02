@@ -134,9 +134,8 @@ const vitalmstrController = () => {
         const filterdVitalData = await vitalmstrTbl.findAll({
           where: query
         });
-        console.log(filterdVitalData.length);
         if (filterdVitalData.length > 0) {
-          return res.status(200).send({ code: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: { getVitals: filterdVitalData } });
+          return res.status(200).send({ statusCode: httpStatus.OK, message: 'Data Fetched Successfully', responseContents: filterdVitalData });
         } else {
           return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
         }
@@ -221,32 +220,32 @@ const vitalmstrController = () => {
         //  ]
       };
     }
-    if (getsearch.name &&  /\S/.test (getsearch.name)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
-            ]
-          };
-        }
-          if (getsearch.vital_value_type_uuid &&  /\S/.test(getsearch.vital_value_type_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
-            ]
-          };
-        }
-if (getsearch.is_active ==1 ) {
-         findQuery.where ={[Op.and]: [{is_active:1}]};
-        }
-        else if(getsearch.is_active ==0) {
-         findQuery.where ={[Op.and]: [{is_active:0}]};
+    if (getsearch.name && /\S/.test(getsearch.name)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
+        ]
+      };
+    }
+    if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
+        ]
+      };
+    }
+    if (getsearch.is_active == 1) {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+    }
+    else if (getsearch.is_active == 0) {
+      findQuery.where = { [Op.and]: [{ is_active: 0 }] };
 
 
-        }
-        else{
-         findQuery.where ={[Op.and]: [{is_active:1}]};
+    }
+    else {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
 
-        }
+    }
     try {
       const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
       if (result) {
@@ -262,6 +261,7 @@ if (getsearch.is_active ==1 ) {
   };
 
   const _getVitalByID = async (req, res, next) => {
+    if (Object.keys(req.body).length != 0) {
     const postData = req.body;
     try {
 
@@ -305,25 +305,40 @@ if (getsearch.is_active ==1 ) {
           msg: errorMsg
         });
     }
+  } else {
+    return res
+      .status(400)
+      .send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
   const _updatevitalsById = async (req, res, next) => {
-    const postData = req.body;
-    postData.modified_by = req.headers.user_uuid;
-    await vitalmstrTbl.update(
-      postData, {
-      where: {
-        uuid: postData.vitals_id
+    try {
+      const postData = req.body;
+      postData.modified_by = req.headers.user_uuid;
+      if (req.body.vitals_id > 0) {
+        await vitalmstrTbl.update(
+          postData, {
+          where: {
+            uuid: postData.vitals_id
+          }
+        }
+        ).then((data) => {
+          res.send({
+            code: 200,
+            msg: "Updated Successfully",
+            req: postData,
+            responseContents: data
+          });
+        });
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "please provide valid data" });
       }
+    } catch (ex) {
+      console.log(ex.message);
+      return res.status(400).send({ statusCode: 400, message: ex.message });
     }
-    ).then((data) => {
-      res.send({
-        code: 200,
-        msg: "Updated Successfully",
-        req: postData,
-        responseContents: data
-      });
-    });
-
   };
   const _deletevitals = async (req, res) => {
 

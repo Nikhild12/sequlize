@@ -121,6 +121,42 @@ const ChiefComplaints = () => {
     }
   };
 
+  const _getChiefComplaintsSearch = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { searchValue } = req.body;
+    const isValidSearchVal = searchValue && emr_utilites.isStringValid(searchValue);
+    if (searchValue && isValidSearchVal && user_uuid) {
+      try {
+        const chiefComplaintsSearchData = await chief_complaints_tbl.findAll({
+          where: emr_utilites.getFilterByThreeQueryForCodeAndName(searchValue),
+          attributes: getChiefComplaintsAttributes
+        });
+        const responseCode = emr_utilites.getResponseCodeForSuccessRequest(
+          chiefComplaintsSearchData
+        );
+        const responseMessage = emr_utilites.getResponseMessageForSuccessRequest(
+          responseCode,
+          "cc"
+        );
+        return res.status(200).send({
+          code: responseCode,
+          message: responseMessage,
+          responseContents:
+            chiefComplaintsSearchData && chiefComplaintsSearchData.length > 0
+              ? chiefComplaintsSearchData
+              : []
+        });
+      } catch (ex) {
+        console.log('Exception Happened', ex);
+        return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
+    }
+  };
   const _createChiefComplaints = async (req, res) => {
     const { user_uuid } = req.headers;
     const chiefComplaintsData = req.body;
@@ -150,10 +186,8 @@ const ChiefComplaints = () => {
         });
 
       try {
-        chiefComplaintsData.code =
-          chiefComplaintsData & chiefComplaintsData.code
-            ? chiefComplaintsData.code
-            : chiefComplaintsData.name;
+        chiefComplaintsData.code = chiefComplaintsData.code;
+        chiefComplaintsData.name = chiefComplaintsData.name;
         chiefComplaintsData.description =
           chiefComplaintsData & chiefComplaintsData.description
             ? chiefComplaintsData.description
@@ -460,6 +494,7 @@ const ChiefComplaints = () => {
 
   return {
     getChiefComplaintsFilter: _getChiefComplaintsFilter,
+    getChiefComplaintsSearch: _getChiefComplaintsSearch,
     createChiefComplaints: _createChiefComplaints,
     getChiefComplaints: _getChiefComplaints,
     getChiefComplaintsById: _getChiefComplaintsById,

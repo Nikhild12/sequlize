@@ -5,6 +5,8 @@ const _ = require("lodash");
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+// EMR Constants Import
+const emr_constants = require('../config/constants');
 
 const immunizationScheduleTbl = db.immunization_schedule;
 const immunization = db.immunizations;
@@ -130,11 +132,13 @@ const immunizationScheduleController = () => {
                 }
             }).then(async (result) => {
                 if (result.length != 0) {
-                    return res.send({
-                        statusCode: 400,
-                        status: "error",
-                        msg: "Record already Found. Please enter immunizations Schedule"
-                    });
+                    return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+
+                    // return res.send({
+                    //     statusCode: 400,
+                    //     status: "error",
+                    //     msg: "Record already Found. Please enter immunizations Schedule"
+                    // });
                 } else {
                     await immunizationScheduleTbl.create(postData, {
                         returning: true
@@ -172,51 +176,51 @@ const immunizationScheduleController = () => {
         const user_uuid = req.headers;
 
         if (user_uuid && postData.Id) {
-        try {
+            try {
 
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await immunizationScheduleTbl.findOne({
-                where: {
-                    uuid: postData.Id
-                },
-                include: [
-                    {
-                        model: immunization,
-                        attributes: ['uuid', 'name'],
-                        required: false
+                const page = postData.page ? postData.page : 1;
+                const itemsPerPage = postData.limit ? postData.limit : 10;
+                const offset = (page - 1) * itemsPerPage;
+                await immunizationScheduleTbl.findOne({
+                    where: {
+                        uuid: postData.Id
                     },
-                    {
-                        model: schedules,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    }
-                ],
-                offset: offset,
-                limit: itemsPerPage,
-                order: [['uuid', 'DESC']]
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
-                
+                    include: [
+                        {
+                            model: immunization,
+                            attributes: ['uuid', 'name'],
+                            required: false
+                        },
+                        {
+                            model: schedules,
+                            attributes: ['uuid', 'name'],
+                            required: false
+                        }
+                    ],
+                    offset: offset,
+                    limit: itemsPerPage,
+                    order: [['uuid', 'DESC']]
+                })
+                    .then((data) => {
+                        return res
+                            .status(httpStatus.OK)
+                            .json({
+                                statusCode: 200,
+                                req: '',
+                                responseContents: data
+                            });
+                    });
 
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
+
+            } catch (err) {
+                const errorMsg = err.errors ? err.errors[0].message : err.message;
+                return res
+                    .status(httpStatus.INTERNAL_SERVER_ERROR)
+                    .json({
+                        status: "error",
+                        msg: errorMsg
+                    });
+            }
         } else {
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
@@ -227,29 +231,29 @@ const immunizationScheduleController = () => {
     const deleteimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
 
- const user_uuid = req.headers;
+        const user_uuid = req.headers;
         if (user_uuid && postData.Id) {
 
-        await immunizationScheduleTbl.update({
-            status: 0
-        }, {
-            where: {
-                uuid: postData.Id
-            }
-        }).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Deleted Successfully",
-                req: postData,
-                responseContents: data
+            await immunizationScheduleTbl.update({
+                status: 0
+            }, {
+                where: {
+                    uuid: postData.Id
+                }
+            }).then((data) => {
+                res.send({
+                    statusCode: 200,
+                    msg: "Deleted Successfully",
+                    req: postData,
+                    responseContents: data
+                });
+            }).catch(err => {
+                res.send({
+                    status: "failed",
+                    msg: "failed to delete data",
+                    error: err
+                });
             });
-        }).catch(err => {
-            res.send({
-                status: "failed",
-                msg: "failed to delete data",
-                error: err
-            });
-        });
 
         } else {
             return res.status(400).send({

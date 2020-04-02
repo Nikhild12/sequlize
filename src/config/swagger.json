@@ -1402,6 +1402,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "immunization",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getimmunizationReq"
+            }
           }
         ],
         "produces": [
@@ -1952,7 +1960,7 @@
             "required": true,
             "type": "integer"
           },
-           {
+          {
             "in": "body",
             "name": "allergy master",
             "required": true,
@@ -2913,6 +2921,43 @@
             "name": "to_date",
             "type": "string",
             "format": "date"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Encounter Type"
+          }
+        }
+      }
+    },
+    "/api/patient-diagnosis/getPreviousDiagnosisByPatiendId": {
+      "get": {
+        "description": "To get list of Patient Diagnosis previous orders",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patientId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterTypeId",
+            "required": true,
+            "type": "integer"
           }
         ],
         "produces": [
@@ -3981,6 +4026,44 @@
             "description": "get Successfully",
             "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/chief-complaints-master/getBySearch": {
+      "post": {
+        "description": "To get a chief Complaints Search Data",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "ChiefComplaintSearch",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getChiefComplaintSearch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ChiefComplaintsMaster"
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted Successfully",
+            "schema": {
+              "$ref": "#/definitions/rescreateChiefMaster"
             }
           }
         },
@@ -8623,6 +8706,35 @@
         }
       }
     },
+    "getimmunizationReq": {
+      "type": "object",
+      "properties": {
+        "paginationSize": {
+          "type": "integer"
+        },
+        "pageNo": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchKey": {
+          "type": "string"
+        }
+      }
+    },
     "getimmunization": {
       "type": "object",
       "properties": {
@@ -8971,7 +9083,7 @@
         }
       }
     },
-     "getAllergyMaster": {
+    "getAllergyMaster": {
       "type": "object",
       "properties": {
         "pageNo": {
@@ -10838,6 +10950,14 @@
         }
       }
     },
+    "getChiefComplaintSearch": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
+          "type": "string"
+        }
+      }
+    },
     "deleteChiefMaster": {
       "type": "object",
       "properties": {
@@ -10903,7 +11023,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "description": {
           "type": "string",
@@ -10911,15 +11031,15 @@
         },
         "mnemonic": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "loinc_code": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "uom": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "vital_type_uuid": {
           "type": "integer",
@@ -10927,16 +11047,13 @@
         },
         "reference_range_from": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "reference_range_to": {
           "type": "string",
-          "example": "asd"
-        },
-        "revision": {
-          "type": "integer",
-          "example": 0
+          "example": "string"
         }
+    
       }
     },
     "getVitalsMaster": {
