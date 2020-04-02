@@ -285,10 +285,55 @@ const PatientDiagnsis = () => {
     }
   };
 
+  const _getPreviousPatientDiagnosisByPatientId = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { encounterTypeId, patientId } = req.query;
+
+    if (user_uuid && encounterTypeId && patientId) {
+      try {
+        let query = {
+          patient_uuid: patientId,
+          encounter_type_uuid: encounterTypeId,
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+
+        };
+        const prevDiagnosiData = await patient_diagnosis_tbl.findAll({
+          where: query,
+          order: [["uuid", "desc"]],
+          limit: 5,
+          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid'],
+          include: [{
+            model: diagnosis_tbl,
+            attributes: ['uuid', 'code', 'name', 'description']
+          }]
+        });
+        if (prevDiagnosiData.length > 0) {
+          return res.status(200).send({ code: httpStatus.OK, message: 'Previous Diagnosis Data Fetched Successfully', responseContents: prevDiagnosiData });
+        } else {
+          return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
+        }
+
+      } catch (ex) {
+        console.log(ex);
+        return res.status(500).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: ex.message
+        });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+
+  }
 
   return {
     createPatientDiagnosis: _createPatientDiagnosis,
     getPatientDiagnosisByFilters: _getPatientDiagnosisFilters,
+    getPreviousPatientDiagnosisByPatientId: _getPreviousPatientDiagnosisByPatientId,
     getPatientDiagnosisHistoryById: _getPatientDiagnosisHistoryById,
     updatePatientDiagnosisHistory: _updatePatientDiagnosisHistory,
     getMobileMockAPI: _getMobileMockAPI,

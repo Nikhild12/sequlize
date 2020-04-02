@@ -2929,6 +2929,43 @@
         }
       }
     },
+    "/api/patient-diagnosis/getPreviousDiagnosisByPatiendId": {
+      "get": {
+        "description": "To get list of Patient Diagnosis previous orders",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patientId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "encounterTypeId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "PatientDiagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Fetched Encounter Type"
+          }
+        }
+      }
+    },
     "/api/patient-diagnosis/updateById": {
       "put": {
         "description": "To update Patient Diagnosis By Id",
