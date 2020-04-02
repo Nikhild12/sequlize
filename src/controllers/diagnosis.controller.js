@@ -5,6 +5,8 @@ var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const diagnosisTbl = db.diagnosis;
 const diagnosisversionTb = db.diagnosis_version;
+const emr_utilites = require("../services/utility.service");
+
 
 function getDiagnosisFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -268,7 +270,7 @@ const diagnosisController = () => {
         let findQuery = {
             offset: offset,
             limit: itemsPerPage,
-           
+
             attributes: getDiagnosisAttributes()
 
 
@@ -294,34 +296,34 @@ const diagnosisController = () => {
             };
         }
 
- if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
-          findQuery.where = {
-            [Op.and]: [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-              
-              
-            ]
-          };
+        if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+
+
+                ]
+            };
         }
-        
-        if (getsearch.diagnosis_version_uuid &&  /\S/.test(getsearch.diagnosis_version_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
-            ]
-          };
+
+        if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
+                ]
+            };
         }
-if (getsearch.is_active ==1 ) {
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
+        if (getsearch.is_active == 1) {
+            findQuery.where = { [Op.and]: [{ is_active: 1 }] };
         }
-        else if(getsearch.is_active ==0) {
-         findQuery.where ={[Op.and]: [ {is_active:0}]};
+        else if (getsearch.is_active == 0) {
+            findQuery.where = { [Op.and]: [{ is_active: 0 }] };
 
 
         }
-        else{
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
+        else {
+            findQuery.where = { [Op.and]: [{ is_active: 1 }] };
 
         }
         try {
@@ -382,7 +384,7 @@ if (getsearch.is_active ==1 ) {
         if (Diagnosis_id) {
             const updateddiagnosisData = {
                 status: 0,
-                is_active:0,
+                is_active: 0,
                 modified_by: user_uuid,
                 modified_date: new Date()
             };
@@ -477,11 +479,45 @@ if (getsearch.is_active ==1 ) {
                 });
         }
     };
+
+    const _getdiagnosisAutoSearch = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { searchValue } = req.body;
+        const isValidSearchVal = searchValue && emr_utilites.isStringValid(searchValue);
+        if (searchValue && isValidSearchVal && user_uuid) {
+            try {
+                const diagnosisAutoSearchData = await diagnosisTbl.findAll({
+                    where: emr_utilites.getFilterByThreeQueryForCodeAndName(searchValue),
+                    attributes: getDiagnosisAttributes()
+                });
+
+                if (diagnosisAutoSearchData && diagnosisAutoSearchData.length > 0) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: "Fetched Diagnosis Data Successfully",
+                        responseContents: diagnosisAutoSearchData ? diagnosisAutoSearchData : []
+                    });
+                } else {
+                    return res.status(200).send({ code: httpStatus.OK, message: 'No Record Found' });
+                }
+            } catch (ex) {
+                console.log('Exception Happened', ex);
+                return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emr_const.NO} ${emr_const.NO_USER_ID} ${emr_const.OR} ${emr_const.NO_REQUEST_BODY} ${emr_const.FOUND}`
+            });
+        }
+
+    }
     // --------------------------------------------return----------------------------------
     return {
         getDiagnosisFilter: _getDiagnosisFilter,
         createDiagnosis: _createDiagnosis,
         getDiagnosisSearch: _getDiagnosisSearch,
+        getdiagnosisAutoSearch: _getdiagnosisAutoSearch,
         getDiagnosis: _getDiagnosis,
         deleteDiagnosis: _deleteDiagnosis,
         updateDiagnosisById: _updateDiagnosisById,

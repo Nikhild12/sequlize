@@ -3741,6 +3741,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/diagnosis/getDiagnosisAutoSearch": {
+      "post": {
+        "description": "To get a diagnosis  Details By Name Search",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getDiagnsisAutoSearch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "get all datails Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDiagnosis"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diagnosis/deleteDiagnosis": {
       "post": {
         "description": "Deleted successfully",
@@ -10640,6 +10678,14 @@
         }
       }
     },
+    "getDiagnsisAutoSearch": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
+          "type": "string"
+        }
+      }
+    },
     "deleteDiagnosis": {
       "type": "object",
       "properties": {
@@ -11053,7 +11099,6 @@
           "type": "string",
           "example": "string"
         }
-    
       }
     },
     "getVitalsMaster": {
@@ -12004,6 +12049,10 @@
           "type": "integer",
           "example": 1
         },
+        "disease_uuid": {
+          "type": "integer",
+          "example": 1
+        },
         "disease_name": {
           "type": "string",
           "example": "enter some thing"
@@ -12066,6 +12115,10 @@
           "example": 1
         },
         "relation_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "disease_uuid": {
           "type": "integer",
           "example": 1
         },
