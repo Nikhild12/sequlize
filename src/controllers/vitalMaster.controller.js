@@ -6,7 +6,6 @@ const db = require("../config/sequelize");
 
 const clinical_const = require('../config/constants');
 const emr_utilities = require('../services/utility.service');
-const emr_constants = require("../config/constants");
 
 //import tables
 const vitalmstrTbl = db.vital_masters;
@@ -116,8 +115,8 @@ const vitalmstrController = () => {
     const isValidSearchVal = searchValue && emr_utilities.isStringValid(searchValue);
     let query;
     query = {
-      is_active: emr_constants.IS_ACTIVE,
-      status: emr_constants.IS_ACTIVE,
+      is_active: emr_const.IS_ACTIVE,
+      status: emr_const.IS_ACTIVE,
       [Op.and]: [
         {
           name: {
@@ -147,7 +146,7 @@ const vitalmstrController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        message: `${emr_const.NO} ${emr_const.NO_USER_ID} ${emr_const.OR} ${emr_const.NO_REQUEST_BODY} ${emr_const.FOUND}`
       });
     }
   };
@@ -262,54 +261,54 @@ const vitalmstrController = () => {
 
   const _getVitalByID = async (req, res, next) => {
     if (Object.keys(req.body).length != 0) {
-    const postData = req.body;
-    try {
+      const postData = req.body;
+      try {
 
-      const page = postData.page ? postData.page : 1;
-      const itemsPerPage = postData.limit ? postData.limit : 10;
-      const offset = (page - 1) * itemsPerPage;
-      await vitalmstrTbl.findOne({
-        where: {
-          uuid: postData.Vital_id
-        },
-        offset: offset,
-        limit: itemsPerPage,
-        include: [
-          {
-            model: vitalLonicTbl,
-            // as: 'vital_lonic',
-            require: false,
-            // where: {
-            //   is_active: clinical_const.IS_ACTIVE,
-            //   status: clinical_const.IS_ACTIVE
-            // }
-          }
-        ]
-      })
-        .then((data) => {
-          return res
-            .status(httpStatus.OK)
-            .json({
-              statusCode: 200,
-              req: '',
-              responseContents: data
-            });
-        });
+        const page = postData.page ? postData.page : 1;
+        const itemsPerPage = postData.limit ? postData.limit : 10;
+        const offset = (page - 1) * itemsPerPage;
+        await vitalmstrTbl.findOne({
+          where: {
+            uuid: postData.Vital_id
+          },
+          offset: offset,
+          limit: itemsPerPage,
+          include: [
+            {
+              model: vitalLonicTbl,
+              // as: 'vital_lonic',
+              require: false,
+              // where: {
+              //   is_active: clinical_const.IS_ACTIVE,
+              //   status: clinical_const.IS_ACTIVE
+              // }
+            }
+          ]
+        })
+          .then((data) => {
+            return res
+              .status(httpStatus.OK)
+              .json({
+                statusCode: 200,
+                req: '',
+                responseContents: data
+              });
+          });
 
-    } catch (err) {
-      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      } catch (err) {
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
+        return res
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            status: "error",
+            msg: errorMsg
+          });
+      }
+    } else {
       return res
-        .status(httpStatus.INTERNAL_SERVER_ERROR)
-        .json({
-          status: "error",
-          msg: errorMsg
-        });
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
     }
-  } else {
-    return res
-      .status(400)
-      .send({ code: httpStatus[400], message: "No Request Body Found" });
-  }
   };
   const _updatevitalsById = async (req, res, next) => {
     try {
