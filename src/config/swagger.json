@@ -10986,7 +10986,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "description": {
           "type": "string",
@@ -10994,15 +10994,15 @@
         },
         "mnemonic": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "loinc_code": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "uom": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "vital_type_uuid": {
           "type": "integer",
@@ -11010,16 +11010,13 @@
         },
         "reference_range_from": {
           "type": "string",
-          "example": "asd"
+          "example": "string"
         },
         "reference_range_to": {
           "type": "string",
-          "example": "asd"
-        },
-        "revision": {
-          "type": "integer",
-          "example": 0
+          "example": "string"
         }
+    
       }
     },
     "getVitalsMaster": {
