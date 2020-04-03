@@ -4,9 +4,10 @@ const _ = require("lodash");
 const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-const utility=require('../services/utility.service')
+const utility = require('../services/utility.service')
 const immunizationsTbl = db.immunizations;
 const immunizationsVwTbl = db.vw_emr_immunizations;
+const emr_constants = require('../config/constants');
 
 function getimmunizationsFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -58,7 +59,7 @@ function getimmunizationsDataAttributes() {
         'modified_date'
     ];
 }
- 
+
 const immunizationsController = () => {
     /**
      * Returns jwt token if valid username and password is provided
@@ -385,6 +386,8 @@ const immunizationsController = () => {
                 }
             }).then(async (result) => {
                 if (result.length != 0) {
+                    // return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+
                     return res.send({
                         statusCode: 400,
                         status: "error",
@@ -414,11 +417,13 @@ const immunizationsController = () => {
 
 
         } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
-            res.send({
-                status: 'failed',
-                msg: 'Please enter immunizations details'
-            });
+
+            // res.send({
+            //     status: 'failed',
+            //     msg: 'Please enter immunizations details'
+            // });
         }
     };
 
@@ -539,31 +544,33 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
-        if(postData.Id && req.headers.user_uuid){
+        if (postData.Id && req.headers.user_uuid) {
 
-        
-        postData.modified_by = req.headers.user_uuid;
-        await immunizationsTbl.update(
-            postData, {
-            where: {
-                uuid: postData.Id
-            }
+
+            postData.modified_by = req.headers.user_uuid;
+            if (postData.length > 0) {
+                await immunizationsTbl.update(
+                    postData, {
+                    where: {
+                        uuid: postData.Id
+                    }
+                }
+                ).then((data) => {
+                    res.send({
+                        statusCode: 200,
+                        msg: "Updated Successfully",
+                        req: postData,
+                        responseContents: data
+                    });
+                });
+            };
         }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
-    }
-else{
-     return res.status(400).send({
+        else {
+            return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
                 message: 'No Headers Found and id not found'
             });
-}
+        }
     };
     const searchimmuization = async (req, res, next) => {
         const {
