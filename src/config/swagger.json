@@ -1297,7 +1297,7 @@
             "required": true,
             "type": "integer"
           },
-           {
+          {
             "in": "body",
             "name": "tablename",
             "required": true,
@@ -4063,7 +4063,7 @@
             "in": "header",
             "name": "user_uuid",
             "required": true,
-           "schema": {
+            "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
             }
           }
@@ -5331,7 +5331,7 @@
       }
     },
     "/api/CC-charts/updateCCCbypatientid": {
-      "put": {
+      "post": {
         "description": "To update a critical care charts data for the patient",
         "parameters": [
           {
@@ -8758,19 +8758,19 @@
         "search": {
           "type": "string"
         },
-        "table_name":{
-"type": "string"
+        "table_name": {
+          "type": "string"
         },
-        "sortOrder":{
-"type": "string"
+        "sortOrder": {
+          "type": "string"
         },
-        "sortField":{
-"type": "string"
+        "sortField": {
+          "type": "string"
         },
-        "name":{
-"type": "string"
+        "name": {
+          "type": "string"
         },
-        "code":{
+        "code": {
           "type": "string"
         }
       }
@@ -11046,14 +11046,14 @@
         "search": {
           "type": "string"
         },
-        "table_name":{
-"type": "string"
+        "table_name": {
+          "type": "string"
         },
-        "sortOrder":{
-"type": "string"
+        "sortOrder": {
+          "type": "string"
         },
-        "sortField":{
-"type": "string"
+        "sortField": {
+          "type": "string"
         }
       }
     },
