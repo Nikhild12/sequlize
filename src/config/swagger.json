@@ -4058,6 +4058,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+           "schema": {
+              "$ref": "#/definitions/getAllChiefMaster"
+            }
           }
         ],
         "produces": [
@@ -11035,17 +11043,17 @@
         "name": {
           "type": "string"
         },
-        "description": {
+        "search": {
           "type": "string"
         },
-        "chief_complaint_category_uuid": {
-          "type": "integer"
+        "table_name":{
+"type": "string"
         },
-        "referrence_link": {
-          "type": "string"
+        "sortOrder":{
+"type": "string"
         },
-        "body_site": {
-          "type": "string"
+        "sortField":{
+"type": "string"
         }
       }
     },
