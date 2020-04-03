@@ -4058,6 +4058,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+           "schema": {
+              "$ref": "#/definitions/getAllChiefMaster"
+            }
           }
         ],
         "produces": [
@@ -4447,6 +4455,40 @@
           {
             "in": "body",
             "name": "updatetemplatedetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getVitalByID"
+            }
+          }
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Updated"
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/vitalMaster/getVitalsByUUID": {
+      "post": {
+        "description": "get vitals details by Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "getvitals",
             "required": true,
             "schema": {
               "$ref": "#/definitions/getVitalByID"
@@ -11001,17 +11043,17 @@
         "name": {
           "type": "string"
         },
-        "description": {
+        "search": {
           "type": "string"
         },
-        "chief_complaint_category_uuid": {
-          "type": "integer"
+        "table_name":{
+"type": "string"
         },
-        "referrence_link": {
-          "type": "string"
+        "sortOrder":{
+"type": "string"
         },
-        "body_site": {
-          "type": "string"
+        "sortField":{
+"type": "string"
         }
       }
     },

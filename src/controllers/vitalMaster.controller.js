@@ -12,6 +12,7 @@ const vitalmstrTbl = db.vital_masters;
 const vitalTypeTbl = db.vital_type;
 const vitalValueTypeTbl = db.vital_value_type;
 const vitalLonicTbl = db.vital_loinc;
+const vw_vitals_master = db.vw_vitals_master;
 
 
 const vitalmstrController = () => {
@@ -169,34 +170,19 @@ const vitalmstrController = () => {
 
     const offset = pageNo * itemsPerPage;
 
-
     if (getsearch.sortField) {
-
       sortField = getsearch.sortField;
     }
-
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
       sortOrder = getsearch.sortOrder;
     }
     let findQuery = {
+      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
       limit: itemsPerPage,
       order: [
         [sortField, sortOrder],
       ],
-      // where: { is_active: 1 },
-      include: [
-        {
-          model: vitalLonicTbl,
-          // as: 'vital_lonic',
-          require: false,
-          // where: {
-          //   is_active: clinical_const.IS_ACTIVE,
-          //   status: clinical_const.IS_ACTIVE
-          // }
-        }
-      ]
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -205,18 +191,7 @@ const vitalmstrController = () => {
         name: {
           [Op.like]: '%' + getsearch.search + '%',
         }
-        //   [Op.or]: [{
-        //     allergey_code: {
-        //       [Op.like]: '%' + getsearch.search + '%',
-        //     },
-        //   }, 
-        //   {
-        //     name: {
-        //       [Op.like]: '%' + getsearch.search + '%',
-        //     },
-        //   }
-
-        //  ]
+        
       };
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
@@ -229,24 +204,19 @@ const vitalmstrController = () => {
     if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
       findQuery.where = {
         [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
         ]
       };
     }
     if (getsearch.is_active == 1) {
       findQuery.where = { [Op.and]: [{ is_active: 1 }] };
     }
-    else if (getsearch.is_active == 0) {
+    if (getsearch.is_active == 0) {
       findQuery.where = { [Op.and]: [{ is_active: 0 }] };
-
-
     }
-    else {
-      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
-
-    }
+    
     try {
-      const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
+      const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });
       if (result) {
         return res.status(200).send({
           statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents: (result.rows ? result.rows : []),
@@ -267,7 +237,8 @@ const vitalmstrController = () => {
         const page = postData.page ? postData.page : 1;
         const itemsPerPage = postData.limit ? postData.limit : 10;
         const offset = (page - 1) * itemsPerPage;
-        await vitalmstrTbl.findOne({
+        await vital_masters.findOne({
+           //attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             uuid: postData.Vital_id
           },
@@ -284,6 +255,58 @@ const vitalmstrController = () => {
               // }
             }
           ]
+        })
+          .then((data) => {
+            return res
+              .status(httpStatus.OK)
+              .json({
+                statusCode: 200,
+                req: '',
+                responseContents: data
+              });
+          });
+
+      } catch (err) {
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
+        return res
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            status: "error",
+            msg: errorMsg
+          });
+      }
+    } else {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+  };
+  const _getVitalsByUUID = async (req, res, next) => {
+    if (Object.keys(req.body).length != 0) {
+      const postData = req.body;
+      try {
+
+        const page = postData.page ? postData.page : 1;
+        const itemsPerPage = postData.limit ? postData.limit : 10;
+        const offset = (page - 1) * itemsPerPage;
+        await vw_vitals_master.findOne({
+           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          where: {
+            uuid: postData.Vital_id
+          },
+          offset: offset,
+          limit: itemsPerPage,
+          // include: [
+          //   {
+          //     model: vitalLonicTbl,
+          //     // as: 'vital_lonic',
+          //     require: false,
+          //     // where: {
+          //     //   is_active: clinical_const.IS_ACTIVE,
+          //     //   status: clinical_const.IS_ACTIVE
+          //     // }
+          //   }
+          // ]
         })
           .then((data) => {
             return res
@@ -377,7 +400,8 @@ const vitalmstrController = () => {
     getVitalByID: _getVitalByID,
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
-    deletevitals: _deletevitals
+    deletevitals: _deletevitals,
+    getVitalsByUUID: _getVitalsByUUID
   };
 };
 
