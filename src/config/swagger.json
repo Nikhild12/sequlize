@@ -4060,8 +4060,8 @@
             "type": "integer"
           },
           {
-            "in": "header",
-            "name": "user_uuid",
+            "in": "body",
+            "name": "getallchief",
             "required": true,
             "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
