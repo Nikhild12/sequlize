@@ -12,6 +12,7 @@ const vitalmstrTbl = db.vital_masters;
 const vitalTypeTbl = db.vital_type;
 const vitalValueTypeTbl = db.vital_value_type;
 const vitalLonicTbl = db.vital_loinc;
+const vw_vitals_master = db.vw_vitals_master;
 
 
 const vitalmstrController = () => {
@@ -185,18 +186,18 @@ const vitalmstrController = () => {
       order: [
         [sortField, sortOrder],
       ],
-      // where: { is_active: 1 },
-      include: [
-        {
-          model: vitalLonicTbl,
-          // as: 'vital_lonic',
-          require: false,
-          // where: {
-          //   is_active: clinical_const.IS_ACTIVE,
-          //   status: clinical_const.IS_ACTIVE
-          // }
-        }
-      ]
+      // // where: { is_active: 1 },
+      // include: [
+      //   {
+      //     model: vitalLonicTbl,
+      //     // as: 'vital_lonic',
+      //     require: false,
+      //     // where: {
+      //     //   is_active: clinical_const.IS_ACTIVE,
+      //     //   status: clinical_const.IS_ACTIVE
+      //     // }
+      //   }
+      //]
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -246,7 +247,10 @@ const vitalmstrController = () => {
 
     }
     try {
-      const result = await vitalmstrTbl.findAndCountAll(findQuery, { returning: true });
+      const result = await vw_vitals_master.findAndCountAll({
+        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+        findQuery,
+          returning: true });
       if (result) {
         return res.status(200).send({
           statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents: (result.rows ? result.rows : []),
@@ -267,7 +271,8 @@ const vitalmstrController = () => {
         const page = postData.page ? postData.page : 1;
         const itemsPerPage = postData.limit ? postData.limit : 10;
         const offset = (page - 1) * itemsPerPage;
-        await vitalmstrTbl.findOne({
+        await vital_masters.findOne({
+           //attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             uuid: postData.Vital_id
           },
@@ -284,6 +289,58 @@ const vitalmstrController = () => {
               // }
             }
           ]
+        })
+          .then((data) => {
+            return res
+              .status(httpStatus.OK)
+              .json({
+                statusCode: 200,
+                req: '',
+                responseContents: data
+              });
+          });
+
+      } catch (err) {
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
+        return res
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            status: "error",
+            msg: errorMsg
+          });
+      }
+    } else {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+  };
+  const _getVitalsByUUID = async (req, res, next) => {
+    if (Object.keys(req.body).length != 0) {
+      const postData = req.body;
+      try {
+
+        const page = postData.page ? postData.page : 1;
+        const itemsPerPage = postData.limit ? postData.limit : 10;
+        const offset = (page - 1) * itemsPerPage;
+        await vw_vitals_master.findOne({
+           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          where: {
+            uuid: postData.Vital_id
+          },
+          offset: offset,
+          limit: itemsPerPage,
+          // include: [
+          //   {
+          //     model: vitalLonicTbl,
+          //     // as: 'vital_lonic',
+          //     require: false,
+          //     // where: {
+          //     //   is_active: clinical_const.IS_ACTIVE,
+          //     //   status: clinical_const.IS_ACTIVE
+          //     // }
+          //   }
+          // ]
         })
           .then((data) => {
             return res
@@ -377,7 +434,8 @@ const vitalmstrController = () => {
     getVitalByID: _getVitalByID,
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
-    deletevitals: _deletevitals
+    deletevitals: _deletevitals,
+    getVitalsByUUID: _getVitalsByUUID
   };
 };
 
