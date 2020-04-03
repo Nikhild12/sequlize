@@ -162,6 +162,18 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} immunization_route_uuid`;
       case "immunization_dosage_uuid":
         return `${returnProvideMsg} immunization_dosage_uuid`;
+      case "route_uuid":
+        return `${returnProvideMsg} route_uuid`;
+      case "frequency_uuid":
+        return `${returnProvideMsg} frequency_uuid`;
+      case "duration":
+        return `${returnProvideMsg} duration`;
+      case "instruction_uuid":
+        return `${returnProvideMsg} instruction_uuid`;
+      case "schedule_flag_uuid":
+        return `${returnProvideMsg} schedule_flag_uuid`;
+      case "immunization_name":
+        return `${returnProvideMsg} immunization_name`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
