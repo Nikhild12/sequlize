@@ -170,14 +170,10 @@ const vitalmstrController = () => {
 
     const offset = pageNo * itemsPerPage;
 
-
     if (getsearch.sortField) {
-
       sortField = getsearch.sortField;
     }
-
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
       sortOrder = getsearch.sortOrder;
     }
     let findQuery = {
@@ -187,18 +183,6 @@ const vitalmstrController = () => {
       order: [
         [sortField, sortOrder],
       ],
-      // // where: { is_active: 1 },
-      // include: [
-      //   {
-      //     model: vitalLonicTbl,
-      //     // as: 'vital_lonic',
-      //     require: false,
-      //     // where: {
-      //     //   is_active: clinical_const.IS_ACTIVE,
-      //     //   status: clinical_const.IS_ACTIVE
-      //     // }
-      //   }
-      //]
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -207,18 +191,7 @@ const vitalmstrController = () => {
         name: {
           [Op.like]: '%' + getsearch.search + '%',
         }
-        //   [Op.or]: [{
-        //     allergey_code: {
-        //       [Op.like]: '%' + getsearch.search + '%',
-        //     },
-        //   }, 
-        //   {
-        //     name: {
-        //       [Op.like]: '%' + getsearch.search + '%',
-        //     },
-        //   }
-
-        //  ]
+        
       };
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
@@ -231,22 +204,17 @@ const vitalmstrController = () => {
     if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
       findQuery.where = {
         [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
         ]
       };
     }
     if (getsearch.is_active == 1) {
       findQuery.where = { [Op.and]: [{ is_active: 1 }] };
     }
-    else if (getsearch.is_active == 0) {
+    if (getsearch.is_active == 0) {
       findQuery.where = { [Op.and]: [{ is_active: 0 }] };
-
-
     }
-    else {
-      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
-
-    }
+    
     try {
       const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });
       if (result) {
