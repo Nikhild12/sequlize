@@ -28,7 +28,7 @@ const CCchartsController = () => {
     */
 
     const _createCCC = async (req, res) => {
-
+        console.log('Request Body===', req.body);
         if (Object.keys(req.body).length != 0) {
             try {
 
