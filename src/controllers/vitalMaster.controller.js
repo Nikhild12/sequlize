@@ -181,6 +181,7 @@ const vitalmstrController = () => {
       sortOrder = getsearch.sortOrder;
     }
     let findQuery = {
+      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
       limit: itemsPerPage,
       order: [
@@ -247,10 +248,7 @@ const vitalmstrController = () => {
 
     }
     try {
-      const result = await vw_vitals_master.findAndCountAll({
-        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        findQuery,
-          returning: true });
+      const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });
       if (result) {
         return res.status(200).send({
           statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents: (result.rows ? result.rows : []),
