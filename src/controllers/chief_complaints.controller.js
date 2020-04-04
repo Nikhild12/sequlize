@@ -188,10 +188,7 @@ const ChiefComplaints = () => {
       try {
         chiefComplaintsData.code = chiefComplaintsData.code;
         chiefComplaintsData.name = chiefComplaintsData.name;
-        chiefComplaintsData.description =
-          chiefComplaintsData & chiefComplaintsData.description
-            ? chiefComplaintsData.description
-            : chiefComplaintsData.name;
+        chiefComplaintsData.description =chiefComplaintsData.description  
         chiefComplaintsData.is_active = chiefComplaintsData.status =
           emr_const.IS_ACTIVE;
         chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
@@ -463,8 +460,7 @@ const ChiefComplaints = () => {
       };
     }
 
-    // let bodyParse = await requests.getResults("users/getusersById", req, getsearch.Id);
-    // console.log(bodyParse)
+  
     try {
       await chief_complaints_tbl
         .findAndCountAll(findQuery)
