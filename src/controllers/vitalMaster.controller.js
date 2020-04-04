@@ -239,7 +239,7 @@ const vitalmstrController = () => {
         const page = postData.page ? postData.page : 1;
         const itemsPerPage = postData.limit ? postData.limit : 10;
         const offset = (page - 1) * itemsPerPage;
-        await vital_masters.findOne({
+        await vitalmstrTbl.findOne({
            //attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             uuid: postData.Vital_id
@@ -298,17 +298,13 @@ const vitalmstrController = () => {
           },
           offset: offset,
           limit: itemsPerPage,
-          // include: [
-          //   {
-          //     model: vitalLonicTbl,
-          //     // as: 'vital_lonic',
-          //     require: false,
-          //     // where: {
-          //     //   is_active: clinical_const.IS_ACTIVE,
-          //     //   status: clinical_const.IS_ACTIVE
-          //     // }
-          //   }
-          // ]
+          include: [
+            {
+              model: vitalLonicTbl,
+              require: false,
+              
+            }
+          ]
         })
           .then((data) => {
             return res

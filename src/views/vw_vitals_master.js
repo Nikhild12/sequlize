@@ -131,6 +131,12 @@ module.exports = (sequelize, DataTypes) => {
             freezeTableName: true,
         }
     );
-
+    vw_vitals_master.associate =  models => {
+        
+        vw_vitals_master.hasOne(models.vital_loinc, {
+            foreignKey: "vital_master_uuid",
+            targetKey: "uuid"
+        });
+    };
     return vw_vitals_master;
 };
