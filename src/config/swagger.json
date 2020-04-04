@@ -4058,6 +4058,7 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+
           },
           {
             "in": "body",
@@ -4066,7 +4067,10 @@
             "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
             }
-          }
+
+
+          },
+          
         ],
         "produces": [
           "application/json",
@@ -11037,6 +11041,12 @@
     "getAllChiefMaster": {
       "type": "object",
       "properties": {
+        "pageNo":{
+          "type":"integer"
+        },
+        "paginationSize":{
+          "type":"integer"
+        },
         "code": {
           "type": "string"
         },
