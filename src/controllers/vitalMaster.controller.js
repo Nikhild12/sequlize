@@ -199,7 +199,7 @@ const vitalmstrController = () => {
     if (getsearch.name && /\S/.test(getsearch.name)) {
       findQuery.where = {
         [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vital_masters.name')), getsearch.name.toLowerCase()),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase()),
         ]
       };
     }
