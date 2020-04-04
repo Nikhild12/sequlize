@@ -325,6 +325,7 @@ function PPVitalsList(getPatientVitals) {
   if (getPatientVitals && getPatientVitals.length > 0) {
     patient_vitals_list = getPatientVitals.map(pV => {
       return {
+        patient_vital_uuid: pV.pv_uuid,
         patient_uuid: pV.pv_patient_uuid,
         created_date: pV.pv_created_date,
         doctor_uuid: pV.pv_doctor_uuid,

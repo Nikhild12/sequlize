@@ -1600,6 +1600,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "scheduleData",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getimmunizationScheduleReq"
+            }
           }
         ],
         "produces": [
@@ -4058,7 +4066,6 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
-
           },
           {
             "in": "body",
@@ -4067,10 +4074,7 @@
             "schema": {
               "$ref": "#/definitions/getAllChiefMaster"
             }
-
-
           }
-          
         ],
         "produces": [
           "application/json",
@@ -8838,6 +8842,9 @@
         "name": {
           "type": "string"
         },
+        "Frequency": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
         },
@@ -11041,11 +11048,11 @@
     "getAllChiefMaster": {
       "type": "object",
       "properties": {
-        "pageNo":{
-          "type":"integer"
+        "pageNo": {
+          "type": "integer"
         },
-        "paginationSize":{
-          "type":"integer"
+        "paginationSize": {
+          "type": "integer"
         },
         "code": {
           "type": "string"
@@ -11170,7 +11177,7 @@
           "type": "integer",
           "example": 1
         },
-        "vital_value_type_uuid":{
+        "vital_value_type_uuid": {
           "type": "integer",
           "example": 1
         },
@@ -11182,7 +11189,7 @@
           "type": "integer",
           "example": 20
         },
-        "is_default":{
+        "is_default": {
           "type": "integer",
           "example": 1
         }
@@ -14411,6 +14418,35 @@
         },
         "is_active": {
           "type": "boolean"
+        }
+      }
+    },
+    "getimmunizationScheduleReq": {
+      "type": "object",
+      "properties": {
+        "paginationSize": {
+          "type": "integer"
+        },
+        "pageNo": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchKey": {
+          "type": "string"
         }
       }
     }
