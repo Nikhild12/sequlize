@@ -11145,28 +11145,36 @@
           "example": "say somthing about related to fever"
         },
         "mnemonic": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 1
         },
-        "loinc_code": {
-          "type": "string",
-          "example": "string"
+        "loinc_code_master_uuid": {
+          "type": "integer",
+          "example": 1
         },
-        "uom": {
-          "type": "string",
-          "example": "string"
+        "uom_master_uuid": {
+          "type": "integer",
+          "example": 1
         },
         "vital_type_uuid": {
           "type": "integer",
           "example": 1
         },
+        "vital_value_type_uuid":{
+          "type": "integer",
+          "example": 1
+        },
         "reference_range_from": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 10
         },
         "reference_range_to": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 20
+        },
+        "is_default":{
+          "type": "integer",
+          "example": 1
         }
       }
     },

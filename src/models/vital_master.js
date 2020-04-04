@@ -38,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
                 
             },
             reference_range_from:{
-                type: DataTypes.DATE,
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
             reference_range_to:{
-                type: DataTypes.DATE,
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
             is_default:{

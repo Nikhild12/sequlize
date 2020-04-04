@@ -42,6 +42,7 @@ const vitalmstrController = () => {
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
         vitalsMasterData.revision = 1;
+        console.log(vitalsMasterData);
         try {
 
           const exists = await nameExists(vitalsMasterData.name);
@@ -179,6 +180,7 @@ const vitalmstrController = () => {
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
+      where:{ is_active: 1},
       limit: itemsPerPage,
       order: [
         [sortField, sortOrder],
