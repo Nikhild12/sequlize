@@ -322,18 +322,31 @@ const immunizationsController = () => {
 
                 ];
             }
+            // if (postData.name && /\S/.test(postData.name)) {
+            //     if (findQuery.where[Op.or]) {
+            //         findQuery.where[Op.and] = [{
+            //             [Op.or]: [
+            //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+            //             ]
+            //         }];
+            //     } else {
+            //         findQuery.where[Op.or] = [
+            //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+            //         ];
+            //     }
+            // }
+
             if (postData.name && /\S/.test(postData.name)) {
-                if (findQuery.where[Op.or]) {
-                    findQuery.where[Op.and] = [{
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-                        ]
-                    }];
-                } else {
-                    findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-                    ];
-                }
+                findQuery.where = {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), postData.name.toLowerCase()),
+                    ]
+                };
+            }
+            if (postData.Frequency && /\S/.test(postData.Frequency)) {
+                findQuery.where =
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('df_uuid')), 'LIKE', '%' + postData.Frequency);
+
             }
 
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
