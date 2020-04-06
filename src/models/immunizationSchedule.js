@@ -36,7 +36,15 @@ module.exports = (sequelize, DataTypes) => {
         },
         immunization_name: {
             type: DataTypes.STRING(250),
-            allowNull: true
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: emr_constants.GetpleaseProvideMsg('immunization_name')
+                },
+                notEmpty: {
+                    msg: emr_constants.GetpleaseProvideMsg('immunization_name')
+                }
+            }
         },
         immunization_schedule_flag_uuid: {
             type: DataTypes.INTEGER,

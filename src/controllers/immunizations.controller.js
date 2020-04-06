@@ -4,9 +4,10 @@ const _ = require("lodash");
 const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-
+const utility = require('../services/utility.service')
 const immunizationsTbl = db.immunizations;
 const immunizationsVwTbl = db.vw_emr_immunizations;
+const emr_constants = require('../config/constants');
 
 function getimmunizationsFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
@@ -58,6 +59,7 @@ function getimmunizationsDataAttributes() {
         'modified_date'
     ];
 }
+
 const immunizationsController = () => {
     /**
      * Returns jwt token if valid username and password is provided
@@ -320,18 +322,31 @@ const immunizationsController = () => {
 
                 ];
             }
+            // if (postData.name && /\S/.test(postData.name)) {
+            //     if (findQuery.where[Op.or]) {
+            //         findQuery.where[Op.and] = [{
+            //             [Op.or]: [
+            //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+            //             ]
+            //         }];
+            //     } else {
+            //         findQuery.where[Op.or] = [
+            //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
+            //         ];
+            //     }
+            // }
+
             if (postData.name && /\S/.test(postData.name)) {
-                if (findQuery.where[Op.or]) {
-                    findQuery.where[Op.and] = [{
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-                        ]
-                    }];
-                } else {
-                    findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-                    ];
-                }
+                findQuery.where = {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), postData.name.toLowerCase()),
+                    ]
+                };
+            }
+            if (postData.Frequency && /\S/.test(postData.Frequency)) {
+                findQuery.where =
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('df_uuid')), 'LIKE', '%' + postData.Frequency);
+
             }
 
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
@@ -372,7 +387,9 @@ const immunizationsController = () => {
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-        if (postData) {
+        postData.modified_by = req.headers.user_uuid;
+        
+        if (Object.keys(postData).length != 0) {
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
@@ -383,6 +400,8 @@ const immunizationsController = () => {
                 }
             }).then(async (result) => {
                 if (result.length != 0) {
+                    // return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+
                     return res.send({
                         statusCode: 400,
                         status: "error",
@@ -412,11 +431,13 @@ const immunizationsController = () => {
 
 
         } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
-            res.send({
-                status: 'failed',
-                msg: 'Please enter immunizations details'
-            });
+
+            // res.send({
+            //     status: 'failed',
+            //     msg: 'Please enter immunizations details'
+            // });
         }
     };
 
@@ -537,22 +558,33 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await immunizationsTbl.update(
-            postData, {
-            where: {
-                uuid: postData.Id
-            }
-        }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
+        if (postData.Id && req.headers.user_uuid) {
 
+
+            postData.modified_by = req.headers.user_uuid;
+            if (postData.length > 0) {
+                await immunizationsTbl.update(
+                    postData, {
+                    where: {
+                        uuid: postData.Id
+                    }
+                }
+                ).then((data) => {
+                    res.send({
+                        statusCode: 200,
+                        msg: "Updated Successfully",
+                        req: postData,
+                        responseContents: data
+                    });
+                });
+            };
+        }
+        else {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'No Headers Found and id not found'
+            });
+        }
     };
     const searchimmuization = async (req, res, next) => {
         const {

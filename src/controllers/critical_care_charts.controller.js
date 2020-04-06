@@ -28,7 +28,7 @@ const CCchartsController = () => {
     */
 
     const _createCCC = async (req, res) => {
-
+        console.log('Request Body===', req.body);
         if (Object.keys(req.body).length != 0) {
             try {
 
@@ -76,19 +76,19 @@ const CCchartsController = () => {
                     }
 
                     if (createdData1) {
-                        res.send({ "status": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
                     } else if (createdData2) {
-                        res.send({ "status": 200, "abg_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "abg_data": data2, "message": "Inserted Successfully " });
                     } else if (createdData3) {
-                        res.send({ "status": 200, "monitor_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "monitor_data": data2, "message": "Inserted Successfully " });
                     } else if (createdData4) {
-                        res.send({ "status": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
                     } else if (createdData5) {
-                        res.send({ "status": 200, "bp_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "bp_data": data2, "message": "Inserted Successfully " });
                     } else if (createdData6) {
-                        res.send({ "status": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
                     } else if (createdData7) {
-                        res.send({ "status": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
+                        res.send({ "statusCode": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
                     }
 
                 } else {

@@ -178,6 +178,9 @@ const _getResponseMessageForSuccessRequest = (code, mName) => {
   }
 };
 
+const isEmpty = (obj) => {
+        return Object.keys(obj).length === 0;
+    };
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -191,5 +194,6 @@ module.exports = {
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
   isStringValid: _isStringValid,
-  isAllNumber: _isAllNumber
+  isAllNumber: _isAllNumber,
+  isEmpty:isEmpty
 };

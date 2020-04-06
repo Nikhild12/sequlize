@@ -56,6 +56,7 @@ const commonReferenceGroupController = () => {
                     order: [
                         [sortField, sortOrder],
                     ],
+                    where:{status:1,is_active:1},
                 };
 
                 if (postData.name != null && postData.name != "") {

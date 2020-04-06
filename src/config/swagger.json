@@ -1296,6 +1296,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "tablename",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getreference"
+            }
           }
         ],
         "produces": [
@@ -1592,6 +1600,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "scheduleData",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getimmunizationScheduleReq"
+            }
           }
         ],
         "produces": [
@@ -3741,6 +3757,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/diagnosis/getDiagnosisAutoSearch": {
+      "post": {
+        "description": "To get a diagnosis  Details By Name Search",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getDiagnsisAutoSearch"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "get all datails Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDiagnosis"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diagnosis/deleteDiagnosis": {
       "post": {
         "description": "Deleted successfully",
@@ -4012,6 +4066,14 @@
             "name": "user_uuid",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "getallchief",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getAllChiefMaster"
+            }
           }
         ],
         "produces": [
@@ -4401,6 +4463,40 @@
           {
             "in": "body",
             "name": "updatetemplatedetails",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getVitalByID"
+            }
+          }
+        ],
+        "tags": [
+          "vital_master"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Updated"
+          },
+          "400": {
+            "description": "Sorry! Something Went Wrong"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api/vitalMaster/getVitalsByUUID": {
+      "post": {
+        "description": "get vitals details by Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "getvitals",
             "required": true,
             "schema": {
               "$ref": "#/definitions/getVitalByID"
@@ -5243,7 +5339,7 @@
       }
     },
     "/api/CC-charts/updateCCCbypatientid": {
-      "put": {
+      "post": {
         "description": "To update a critical care charts data for the patient",
         "parameters": [
           {
@@ -8666,7 +8762,26 @@
     },
     "getreference": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "search": {
+          "type": "string"
+        },
+        "table_name": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
     },
     "addimmunization": {
       "type": "object",
@@ -8725,6 +8840,9 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "Frequency": {
           "type": "string"
         },
         "status": {
@@ -10640,6 +10758,14 @@
         }
       }
     },
+    "getDiagnsisAutoSearch": {
+      "type": "object",
+      "properties": {
+        "searchValue": {
+          "type": "string"
+        }
+      }
+    },
     "deleteDiagnosis": {
       "type": "object",
       "properties": {
@@ -10922,22 +11048,28 @@
     "getAllChiefMaster": {
       "type": "object",
       "properties": {
+        "pageNo": {
+          "type": "integer"
+        },
+        "paginationSize": {
+          "type": "integer"
+        },
         "code": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "description": {
+        "search": {
           "type": "string"
         },
-        "chief_complaint_category_uuid": {
-          "type": "integer"
-        },
-        "referrence_link": {
+        "table_name": {
           "type": "string"
         },
-        "body_site": {
+        "sortOrder": {
+          "type": "string"
+        },
+        "sortField": {
           "type": "string"
         }
       }
@@ -11030,30 +11162,37 @@
           "example": "say somthing about related to fever"
         },
         "mnemonic": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 1
         },
-        "loinc_code": {
-          "type": "string",
-          "example": "string"
+        "loinc_code_master_uuid": {
+          "type": "integer",
+          "example": 1
         },
-        "uom": {
-          "type": "string",
-          "example": "string"
+        "uom_master_uuid": {
+          "type": "integer",
+          "example": 1
         },
         "vital_type_uuid": {
           "type": "integer",
           "example": 1
         },
+        "vital_value_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
         "reference_range_from": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 10
         },
         "reference_range_to": {
-          "type": "string",
-          "example": "string"
+          "type": "integer",
+          "example": 20
+        },
+        "is_default": {
+          "type": "integer",
+          "example": 1
         }
-    
       }
     },
     "getVitalsMaster": {
@@ -12004,6 +12143,10 @@
           "type": "integer",
           "example": 1
         },
+        "disease_uuid": {
+          "type": "integer",
+          "example": 1
+        },
         "disease_name": {
           "type": "string",
           "example": "enter some thing"
@@ -12066,6 +12209,10 @@
           "example": 1
         },
         "relation_type_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "disease_uuid": {
           "type": "integer",
           "example": 1
         },
@@ -14271,6 +14418,35 @@
         },
         "is_active": {
           "type": "boolean"
+        }
+      }
+    },
+    "getimmunizationScheduleReq": {
+      "type": "object",
+      "properties": {
+        "paginationSize": {
+          "type": "integer"
+        },
+        "pageNo": {
+          "type": "integer"
+        },
+        "sortField": {
+          "type": "string"
+        },
+        "sortOrder": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "searchKey": {
+          "type": "string"
         }
       }
     }

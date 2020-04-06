@@ -87,7 +87,11 @@ module.exports = (sequelize, DataTypes) => {
         }
 
       },
-
+      disease_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
       disease_name: {
         type: DataTypes.STRING(100),
         allowNull: true
