@@ -388,7 +388,7 @@ const immunizationsController = () => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
         postData.modified_by = req.headers.user_uuid;
-        
+
         if (Object.keys(postData).length != 0) {
             immunizationsTbl.findAll({
                 where: {
@@ -558,11 +558,14 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
-        if (postData.Id && req.headers.user_uuid) {
+        console.log("this is update -----------");
+        if (Object.keys(postData).length != 0) {
+            if (postData.Id && req.headers.user_uuid) {
+                console.log("this is 1st if---------");
 
+                postData.modified_by = req.headers.user_uuid;
 
-            postData.modified_by = req.headers.user_uuid;
-            if (postData.length > 0) {
+                console.log("this is before update----------");
                 await immunizationsTbl.update(
                     postData, {
                     where: {
@@ -577,7 +580,14 @@ const immunizationsController = () => {
                         responseContents: data
                     });
                 });
-            };
+
+            }
+            else {
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: 'No Headers Found and id not found'
+                });
+            }
         }
         else {
             return res.status(400).send({
