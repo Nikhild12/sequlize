@@ -273,7 +273,7 @@ const immunizationsController = () => {
             const postData = req.body;
             let pageNo = 0;
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-            let sortArr = ['i_uuid', 'DESC'];
+            let sortArr = ['i_modified_date', 'DESC'];
 
 
             if (postData.pageNo) {
