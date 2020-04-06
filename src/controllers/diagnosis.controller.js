@@ -198,13 +198,16 @@ const diagnosisController = () => {
             }).then(async (result) => {
                 if (result.length != 0) {
                     return res.send({
+                        code: 400,
                         status: "error",
                         msg: "Record already Found. Please enter New diagnosis "
                     });
                 }
             });
 
-            diagnosisData.code = diagnosisData & diagnosisData.code ? diagnosisData.code : diagnosisData.name;
+            diagnosisData.code =diagnosisData.code;
+            diagnosisData.name = diagnosisData.name;
+
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
             diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
             diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
@@ -226,13 +229,13 @@ const diagnosisController = () => {
             } catch (ex) {
 
                 return res.status(400).send({
-                    code: httpStatus.BAD_REQUEST,
+                    code: 400,
                     message: ex.message
                 });
             }
         } else {
             return res.status(400).send({
-                code: httpStatus.BAD_REQUEST,
+                code: 400,
                 message: 'No Headers Found'
             });
         }
