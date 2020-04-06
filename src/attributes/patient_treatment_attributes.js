@@ -55,8 +55,7 @@ const _checkPatientTreatmentBody = req => {
     _isDiagnosisAvailable(patientDiagnosis) ||
     _isRadiologyAvailable(patientRadiology) ||
     _isLabAvailable(patientLab) ||
-    _isPrescriptionAvailable(patientPrescription) ||
-    _isInvistigationAvailable(patientInvestigation)
+    _isPrescriptionAvailable(patientPrescription)
   );
 
 };
