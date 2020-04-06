@@ -374,8 +374,9 @@ const immunizationsController = () => {
     const postimmunization = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-
-        if (utility.isEmpty(postData)) {
+        postData.modified_by = req.headers.user_uuid;
+        
+        if (Object.keys(postData).length != 0) {
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
