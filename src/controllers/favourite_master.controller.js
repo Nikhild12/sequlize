@@ -12,7 +12,6 @@ const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
 const specialitySketchesTbl = sequelizeDb.speciality_sketches;
-const specialitySketchDetailsTbl = sequelizeDb.speciality_sketch_details;
 
 // Get Treatment Fav Views
 const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
@@ -26,6 +25,8 @@ const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
+const vmFavouriteRad = sequelizeDb.vw_favourite_ris;
+const vwFavouriteLab = sequelizeDb.vw_favourite_lab;
 const vmAllFavourites = sequelizeDb.vw_all_favourites;
 
 const vwFavouriteInvestigation = sequelizeDb.vw_favourite_investigation;
@@ -506,83 +507,24 @@ const TickSheetMasterController = () => {
           message: emr_constants.PROPER_FAV_ID
         });
       }
-      let favouriteList = [];
+      let favList = [];
 
       try {
-        let favouriteData;
-        if (fav_type_id === 3) {
-          favouriteData = await vmFavouriteRadiology.findAll({
-            attributes: emr_attributes_radiology.radiolodyAttributes,
-            where: getFavouriteRadiologyQuery(user_uuid, fav_type_id)
-          });
-        } else if (fav_type_id === 7) {
-          favouriteData = await vwFavouriteInvestigation.findAll({
-            attributes: emr_attributes_investigation.investigationAttributes,
-            where: emr_attributes_investigation.getFavouriteInvestigationQuery(
-              user_uuid,
-              fav_type_id
-            )
-          });
-        } else if (fav_type_id === 10) {
-          favouriteData = await favouriteMasterTbl.findAll({
-            attributes: ["uuid", "favourite_type_uuid", "code", "name"],
-            where: {
-              favourite_type_uuid: fav_type_id,
-              is_active: emr_constants.IS_ACTIVE,
-              status: emr_constants.IS_ACTIVE,
-              [Op.or]: [
-                {
-                  department_uuid: { [Op.eq]: dept_id },
-                  is_public: { [Op.eq]: emr_constants.IS_ACTIVE }
-                },
-                { user_uuid: { [Op.eq]: user_uuid } }
-              ]
-            },
-
-            include: [
-              {
-                model: favouritMasterDetailsTbl,
-                attributes: ["uuid", "speciality_sketch_uuid"],
-                include: [
-                  {
-                    model: specialitySketchesTbl,
-                    attributes: ["code", "name", "description"]
-                  }
-                ]
-              }
-            ]
-          });
-        } else {
-          favouriteData = await vmTickSheetMasterTbl.findAll({
-            attributes: getFavouritesAttributes,
-            where: getFavouriteQuery(dept_id, user_uuid, fav_type_id),
-            order: [["tsm_display_order", "ASC"]]
-          });
-        }
-
-        if (fav_type_id === 3) {
-          favouriteList = emr_attributes_radiology.getRadiologyResponse(
-            favouriteData
-          );
-        } else if (fav_type_id === 7) {
-          favouriteList = emr_attributes_investigation.getInvestigationResponse(
-            favouriteData
-          );
-        } else if (fav_type_id === 10) {
-          favouriteList = getSpecialitySketchFavourite(favouriteData);
-        } else {
-          favouriteList = getFavouritesInList(favouriteData);
-        }
-
+        const favouriteData = await getFavouritesQuery(
+          user_uuid,
+          fav_type_id,
+          dept_id
+        );
+        favList = getFavouritesRes(favouriteData, fav_type_id);
         const returnMessage =
-          favouriteList && favouriteList.length > 0
+          favList && favList.length > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
             : emr_constants.NO_RECORD_FOUND;
         return res.status(httpStatus.OK).send({
           code: httpStatus.OK,
           message: returnMessage,
-          responseContents: favouriteList,
-          responseContentLength: favouriteList.length
+          responseContents: favList,
+          responseContentLength: favList.length
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -1439,3 +1381,74 @@ function getSpecialitySketchFavourite(sketchFav) {
 function getSpecialityFromFav(detail, property) {
   return (detail.speciality_sketch && detail.speciality_sketch[property]) || "";
 }
+
+const getFavouritesQuery = (uId, fTyId, dId) => {
+  if (fTyId === 3) {
+    return vmFavouriteRad.findAll({
+      attributes: emr_all_favourites.favouriteRadVWAttributes(),
+      where: emr_all_favourites.favouriteRadVWQuery(uId, fTyId)
+    });
+  } else if (fTyId === 7) {
+    return vwFavouriteInvestigation.findAll({
+      attributes: emr_attributes_investigation.investigationAttributes,
+      where: emr_attributes_investigation.getFavouriteInvestigationQuery(
+        uId,
+        fTyId
+      )
+    });
+  } else if (fTyId === 10) {
+    return favouriteMasterTbl.findAll({
+      attributes: ["uuid", "favourite_type_uuid", "code", "name"],
+      where: {
+        favourite_type_uuid: fav_type_id,
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE,
+        [Op.or]: [
+          {
+            department_uuid: { [Op.eq]: dId },
+            is_public: { [Op.eq]: emr_constants.IS_ACTIVE }
+          },
+          { user_uuid: { [Op.eq]: uId } }
+        ]
+      },
+
+      include: [
+        {
+          model: favouritMasterDetailsTbl,
+          attributes: ["uuid", "speciality_sketch_uuid"],
+          include: [
+            {
+              model: specialitySketchesTbl,
+              attributes: ["code", "name", "description"]
+            }
+          ]
+        }
+      ]
+    });
+  } else if (fTyId === 2) {
+    return vwFavouriteLab.findAll({
+      attributes: emr_all_favourites.favouriteLabVWAttributes(),
+      where: emr_all_favourites.favouriteLabVWQuery(uId, dId)
+    });
+  } else {
+    return vmTickSheetMasterTbl.findAll({
+      attributes: getFavouritesAttributes,
+      where: getFavouriteQuery(dId, uId, fTyId),
+      order: [["tsm_display_order", "ASC"]]
+    });
+  }
+};
+
+const getFavouritesRes = (favData, fTypeId) => {
+  if (fTypeId === 3) {
+    return emr_all_favourites.favouriteRadResponse(favData);
+  } else if (fTypeId === 7) {
+    return emr_attributes_investigation.getInvestigationResponse(favData);
+  } else if (fTypeId === 10) {
+    return getSpecialitySketchFavourite(favData);
+  } else if (fTypeId === 2) {
+    return emr_all_favourites.favouriteLabResponse(favData);
+  } else {
+    return getFavouritesInList(favData);
+  }
+};

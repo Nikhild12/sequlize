@@ -33,14 +33,20 @@ const tmpmstrController = () => {
     const { user_uuid } = req.headers;
     const { temp_type_id, dept_id } = req.query;
     try {
-      if (user_uuid && temp_type_id && dept_id) {
+      if (user_uuid > 0 && temp_type_id > 0 && dept_id > 0) {
+        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "templete type id must be 1 or 2 or 3 or 4 or 9"
+          });
+        }
         const { table_name, query } = getTemplateTypeUUID(
           temp_type_id,
           dept_id,
           user_uuid
         );
         const templateList = await table_name.findAll(query);
-        console.log("line no 41 ", templateList);
+        //console.log("line no 41 ", templateList);
         return res.status(httpStatus.OK).json({
           statusCode: 200,
           responseContents: getTempData(temp_type_id, templateList),
@@ -49,7 +55,9 @@ const tmpmstrController = () => {
               ? emr_constants.TEMPLATE_FETCH_SUCCESS
               : emr_constants.NO_RECORD_FOUND
         });
-      } else {
+
+      }
+      else {
         return res.status(400).send({
           code: httpStatus[400],
           message: "No Request Body or Search key Found "
@@ -115,7 +123,13 @@ const tmpmstrController = () => {
     const user_uuid = req.headers.user_uuid;
     const { temp_id, temp_type_id, dept_id } = req.query;
     try {
-      if (user_uuid && temp_id && temp_type_id && dept_id) {
+      if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && dept_id > 0) {
+        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: "templete type id must be 1 or 2 or 3 or 4 or 9"
+          });
+        }
         const { table_name, query } = getTemplatedetailsUUID(
           temp_type_id,
           temp_id,
@@ -164,16 +178,11 @@ const tmpmstrController = () => {
 
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
-
+        console.log(exists);
         //chechking display order allocation
         //const dspexists = await dspExists(display_order, userUUID);
 
-        if (
-          exists &&
-          exists.length > 0 &&
-          (exists[0].dataValues.is_active == 1 || 0) &&
-          exists[0].dataValues.status == 1
-        ) {
+        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
@@ -183,7 +192,7 @@ const tmpmstrController = () => {
         //   //template not exits and display order already allocated
         //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
         // }
-        else if (
+        else if ( 
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID &&
           templateMasterReqData &&
@@ -1121,6 +1130,7 @@ const nameExists = (temp_name, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
+        order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
         where: { name: temp_name, user_uuid: userUUID }
       });
@@ -1198,6 +1208,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
         table_name: tempmstrTbl,
         query: getVitalsQuery(temp_type_id, dept_id, user_uuid)
       };
+
     case "9":
       return {
         table_name: vw_diet,
