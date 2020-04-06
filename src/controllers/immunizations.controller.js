@@ -285,6 +285,9 @@ const immunizationsController = () => {
             const offset = pageNo * itemsPerPage;
             let fieldSplitArr = [];
             if (postData.sortField) {
+                if (postData.sortField == 'modified_date'){
+                    postData.sortField = 'i_modified_date';
+                }
                 fieldSplitArr = postData.sortField.split('.');
                 if (fieldSplitArr.length == 1) {
                     sortArr[0] = postData.sortField;
