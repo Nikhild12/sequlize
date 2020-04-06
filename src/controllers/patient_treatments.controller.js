@@ -116,13 +116,13 @@ const PatientTreatmentController = () => {
             patientLab
           );
         }
-        if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
-          patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
-          patientInvestigation.details.forEach((i) => {
-            i.patient_treatment_uuid = patientTKCreatedData.uuid;
-          });
-          investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
-        }
+        // if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
+        //   patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+        //   patientInvestigation.details.forEach((i) => {
+        //     i.patient_treatment_uuid = patientTKCreatedData.uuid;
+        //   });
+        //   investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
+        // }
         if (patientTreatmentAttributes.isRadiologyAvailable(patientRadiology)) {
           patientRadiology.header.patient_treatment_uuid = patientTKCreatedData.uuid;
           patientRadiology.details.forEach((r) => {
@@ -266,15 +266,15 @@ const PatientTreatmentController = () => {
             });
 
           }
-          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
-          if (repeatInvestOrder && repeatInvestOrder.length > 0) {
-            response.forEach((r) => {
-              r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
-                return rI.order_id === r.order_id;
-              });
-            });
+          // const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
+          // if (repeatInvestOrder && repeatInvestOrder.length > 0) {
+          //   response.forEach((r) => {
+          //     r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
+          //       return rI.order_id === r.order_id;
+          //     });
+          //   });
 
-          }
+          // }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
       }
