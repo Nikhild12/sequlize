@@ -178,16 +178,11 @@ const tmpmstrController = () => {
 
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
-
+        console.log(exists);
         //chechking display order allocation
         //const dspexists = await dspExists(display_order, userUUID);
 
-        if (
-          exists &&
-          exists.length > 0 &&
-          (exists[0].dataValues.is_active == 1 || 0) &&
-          exists[0].dataValues.status == 1
-        ) {
+        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
@@ -197,7 +192,7 @@ const tmpmstrController = () => {
         //   //template not exits and display order already allocated
         //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
         // }
-        else if (
+        else if ( 
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID &&
           templateMasterReqData &&
@@ -1135,6 +1130,7 @@ const nameExists = (temp_name, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
+        order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
         where: { name: temp_name, user_uuid: userUUID }
       });
