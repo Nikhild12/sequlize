@@ -5386,12 +5386,6 @@
             "type": "integer"
           },
           {
-            "in": "header",
-            "name": "critical_care_type",
-            "required": true,
-            "type": "integer"
-          },
-          {
             "in": "body",
             "name": "update CCC",
             "required": true,
@@ -10757,7 +10751,6 @@
         "is_active": {
           "type": "boolean"
         }
-        
       }
     },
     "getDiagnosis": {
@@ -12279,6 +12272,10 @@
         "headers": {
           "type": "object",
           "properties": {
+            "critical_care_type": {
+              "type": "integer",
+              "example": 1
+            },
             "patient_uuid": {
               "type": "integer",
               "example": 1

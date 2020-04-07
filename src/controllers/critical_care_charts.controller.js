@@ -283,39 +283,39 @@ const CCchartsController = () => {
 
         if (Object.keys(req.body).length != 0) {
             try {
-                let { user_uuid, critical_care_type } = req.headers;
+                let { user_uuid } = req.headers;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 //let cdate = moment(new Date()).format('YYYY-MM-DD');
 
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
-                if (user_uuid && data1 && data2 && critical_care_type) {
+                if (user_uuid && data1 && data2) {
 
-                    switch (critical_care_type) {
-                        case "1":
+                    switch (data1.critical_care_type) {
+                        case 1:
                             // let abc = await updateonCdate(ventilatorTbl, data2[0].uuid);
                             // fetchedDate = moment(abc.dataValues.from_date).format('YYYY-MM-DD');
                             // if (fetchedDate != cdate){ 
                             //      return res.status(400).send({ code: httpStatus[400], message: "update notpossible" });}
                             createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
                             break;
-                        case "2":
+                        case 2:
                             createdData2 = await Promise.all(updateCCCdata(abgTbl, data1, data2, user_uuid));
                             break;
-                        case "3":
+                        case 3:
                             createdData3 = await Promise.all(updateCCCdata(monitorTbl, data1, data2, user_uuid));
                             break;
-                        case "4":
+                        case 4:
                             createdData4 = await Promise.all(updateCCCdata(in_out_takeTbl, data1, data2, user_uuid));
                             break;
-                        case "5":
+                        case 5:
                             createdData5 = await Promise.all(updateCCCdata(bpTbl, data1, data2, user_uuid));
                             break;
-                        case "6":
+                        case 6:
                             createdData6 = await Promise.all(updateCCCdata(diabetesTbl, data1, data2, user_uuid));
                             break;
-                        case "7":
+                        case 7:
                             createdData7 = await Promise.all(updateCCCdata(dialysisTbl, data1, data2, user_uuid));
                             break;
                     }
