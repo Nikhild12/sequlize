@@ -11,6 +11,9 @@ const emr_constants = require('../config/constants');
 const immunizationScheduleTbl = db.immunization_schedule;
 const immunization = db.immunizations;
 const schedules = db.schedules;
+const scheduleflagsTbl = db.schedule_flags;
+
+const routestbl = db.routes;
 
 const immunizationScheduleController = () => {
     /**
@@ -180,7 +183,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
-                    immunization_name: {
+                    immunization_uuid: {
                         [Op.like]: '%' + getsearch.search + '%',
                     },
 
@@ -197,10 +200,10 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
                 ];
             }
-            if (postData.immunization_name && /\S/.test(postData.immunization_name)) {
+            if (postData.immunization_uuid && /\S/.test(postData.immunization_uuid)) {
                 findQuery.where = {
                     [Op.and]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.immunization_name')), postData.immunization_name.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.immunization_uuid')), postData.immunization_name.toLowerCase()),
                     ]
                 };
             }
@@ -267,7 +270,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
             immunizationScheduleTbl.findAll({
                 where: {
                     [Op.or]: [{
-                        immunization_name: postData.immunization_name
+                        immunization_uuid: postData.immunization_uuid
                     }]
                 }
             }).then(async (result) => {
@@ -340,7 +343,9 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                     ],
                     offset: offset,
                     limit: itemsPerPage,
-                    order: [['uuid', 'DESC']]
+                    order: [['uuid', 'DESC']],
+                    status:1,
+                    is_active:1
                 })
                     .then((data) => {
                         return res

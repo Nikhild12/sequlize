@@ -34,18 +34,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        immunization_name: {
-            type: DataTypes.STRING(250),
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_name')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_name')
-                }
-            }
-        },
+       
         immunization_schedule_flag_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -86,26 +75,11 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        duration: {
-            type: DataTypes.STRING(250),
+        duration_period_uuid: {
+           type: DataTypes.INTEGER,
             allowNull: true
         },
-        immunization_period_uuid: {
-            type: DataTypes.STRING(250),
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_period_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_period_uuid')
-                },
-                min: {
-                    args: 1,
-                    msg: emr_constants.GetMinimumMessage('immunization_period_uuid')
-                }
-            }
-        },
+        
         display_order: {
             type: DataTypes.STRING(250),
             allowNull: true
@@ -149,6 +123,7 @@ module.exports = (sequelize, DataTypes) => {
         immunization_schedule.belongsTo(models.schedules, {
             foreignKey: "schedule_uuid"
         });
+       
     };
 
     return immunization_schedule;

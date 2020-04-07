@@ -8972,9 +8972,7 @@
         "immunization_uuid": {
           "type": "integer"
         },
-        "immunization_name": {
-          "type": "string"
-        },
+        
         "immunization_schedule_flag_uuid": {
           "type": "integer"
         },
@@ -8984,21 +8982,17 @@
         "immunization_dosage_uuid": {
           "type": "integer"
         },
-        "duration": {
-          "type": "string"
-        },
-        "immunization_period_uuid": {
+        "duration_period_uuid": {
           "type": "integer"
         },
+        
         "displayorder": {
           "type": "string"
         },
-        "status": {
-          "type": "integer"
-        },
-        "revision": {
+        "is_active": {
           "type": "integer"
         }
+      
       }
     },
     "getimmunizationSchedule": {
