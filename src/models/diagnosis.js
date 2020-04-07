@@ -139,6 +139,31 @@ module.exports = (sequelize, DataTypes) => {
              foreignKey: "diagnosis_version_uuid",
             //  targetKey : "uuid"
          });
+          diagnosis.belongsTo(models.diagnosis_type, {
+             foreignKey: "diagnosis_type_uuid",
+            //  targetKey : "uuid"
+         });
+           diagnosis.belongsTo(models.body_side, {
+             foreignKey: "side_uuid",
+            //  targetKey : "uuid"
+         });
+           diagnosis.belongsTo(models.body_site, {
+             foreignKey: "body_site_uuid",
+            //  targetKey : "uuid"
+         });
+            diagnosis.belongsTo(models.diagnosis_grade, {
+             foreignKey: "diagnosis_version_uuid",
+            //  targetKey : "uuid"
+         });
+             diagnosis.belongsTo(models.positions, {
+             foreignKey: "diagnosis_version_uuid",
+            //  targetKey : "uuid"
+         });
+              diagnosis.belongsTo(models.diagnosis_region, {
+             foreignKey: "diagnosis_version_uuid",
+            //  targetKey : "uuid"
+         });
+
      };
 
     return diagnosis;
