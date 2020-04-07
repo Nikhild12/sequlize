@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             },
             procedure_category_uuid:{
-                type: DataTypes.BOOLEAN,
+                type: DataTypes.INTEGER,
                 defaultValue: 1
             },
             procedure_sub_category_uuid:{
