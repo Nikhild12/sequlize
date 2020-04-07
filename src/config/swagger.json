@@ -5217,6 +5217,44 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/diseases/get-by-filtersP": {
+      "post": {
+        "description": "To get list of diseases based on filter",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "searchParams",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/searchParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diseases"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDiseases"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diseases/create": {
       "post": {
         "description": "To create Disease API",
@@ -7861,6 +7899,18 @@
           "diseases_is_default": {
             "type": "boolean"
           }
+        }
+      }
+    },
+
+    "searchParams":{
+      "type": "object",
+      "properties": {
+        "searchBy": {
+          "type": "string"
+        },
+        "searchValue": {
+          "type": "string"
         }
       }
     },

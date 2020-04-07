@@ -9,6 +9,9 @@ const diseasesController = require("../controllers/diseases.controller");
 diseasesRoutes
   .route("/get-by-filters")
   .get(diseasesController.getDiseasesByFilters);
+  diseasesRoutes
+  .route("/get-by-filtersP")
+  .post(diseasesController.getDiseasesByFilters);
 
 diseasesRoutes
   .route("/create")
