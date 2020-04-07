@@ -248,13 +248,13 @@ const immunizationScheduleController = () => {
                 }
             }).then(async (result) => {
                 if (result.length != 0) {
-                    return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+                    // return res.status(400).send({ statusCode: 400, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
-                    // return res.send({
-                    //     statusCode: 400,
-                    //     status: "error",
-                    //     msg: "Record already Found. Please enter immunizations Schedule"
-                    // });
+                    return res.send({
+                        statusCode: 400,
+                        status: "error",
+                        msg: "Please enter New immunizations Schedule"
+                    });
                 } else {
                     await immunizationScheduleTbl.create(postData, {
                         returning: true
@@ -281,8 +281,9 @@ const immunizationScheduleController = () => {
         } else {
 
             res.send({
+                 statusCode: 422,
                 status: 'failed',
-                msg: 'Please enter immunizations details'
+                msg: 'Please enter immunizations details and headers'
             });
         }
     };
