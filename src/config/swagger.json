@@ -3354,6 +3354,11 @@
             "in": "query",
             "name": "favourite_type_id",
             "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "is_master",
+            "type": "boolean"
           }
         ],
         "tags": [

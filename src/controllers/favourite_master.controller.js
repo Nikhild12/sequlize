@@ -93,7 +93,7 @@ const getFavouritesAttributes = [
   "im_is_emar",
   "sm_uuid",
   "sm_store_code",
-  "sm_store_name"
+  "sm_store_name",
 ];
 
 // Fav Treatment Kit Att
@@ -110,7 +110,7 @@ const treatmentKitAtt = [
   "tk_uuid",
   "tk_code",
   "tk_name",
-  "tk_treatment_kit_type_uuid"
+  "tk_treatment_kit_type_uuid",
 ];
 
 const getTreatmentByIdInVWAtt = [
@@ -119,7 +119,7 @@ const getTreatmentByIdInVWAtt = [
   "tk_name",
   "tk_treatment_kit_type_uuid",
   "tk_status",
-  "tk_active"
+  "tk_active",
 ];
 let gedTreatmentKitDrug = [
   "im_code",
@@ -139,7 +139,7 @@ let gedTreatmentKitDrug = [
   "di_name",
   "tkd_drug_instruction_uuid",
   "tkd_quantity",
-  "tkd_duration"
+  "tkd_duration",
 ];
 
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
@@ -148,7 +148,7 @@ let getTreatmentKitDiaAtt = [
   "tkdm_diagnosis_uuid",
   "td_name",
   "td_code",
-  "td_description"
+  "td_description",
 ];
 getTreatmentKitDiaAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitDiaAtt];
 
@@ -156,11 +156,11 @@ let getTreatmentKitInvestigationAtt = [
   "tkim_test_master_uuid",
   "tm_code",
   "tm_name",
-  "tm_description"
+  "tm_description",
 ];
 getTreatmentKitInvestigationAtt = [
   ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitInvestigationAtt
+  ...getTreatmentKitInvestigationAtt,
 ];
 
 let getTreatmentKitRadiologyAtt = [
@@ -168,12 +168,12 @@ let getTreatmentKitRadiologyAtt = [
   "tm_name",
   "tm_description",
   "tkrm_test_master_uuid",
-  "tkrm_treatment_kit_uuid"
+  "tkrm_treatment_kit_uuid",
 ];
 
 getTreatmentKitRadiologyAtt = [
   ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitRadiologyAtt
+  ...getTreatmentKitRadiologyAtt,
 ];
 
 let getTreatmentKitLabAtt = [
@@ -181,7 +181,7 @@ let getTreatmentKitLabAtt = [
   "tm_name",
   "tm_description",
   "tklm_test_master_uuid",
-  "tklm_treatment_kit_uuid"
+  "tklm_treatment_kit_uuid",
 ];
 
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
@@ -224,8 +224,8 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
     [statusKey]: emr_constants.IS_ACTIVE,
     [Op.or]: [
       { tsm_dept: { [Op.eq]: dept_id }, tsm_public: { [Op.eq]: 1 } },
-      { tsm_userid: { [Op.eq]: user_uuid } }
-    ]
+      { tsm_userid: { [Op.eq]: user_uuid } },
+    ],
   };
 }
 
@@ -236,8 +236,8 @@ function getTreatmentQuery(dept_id, user_uuid) {
     fm_favourite_type_uuid: 8,
     [Op.or]: [
       { fm_dept: { [Op.eq]: dept_id }, fm_public: { [Op.eq]: 1 } },
-      { fm_userid: { [Op.eq]: user_uuid } }
-    ]
+      { fm_userid: { [Op.eq]: user_uuid } },
+    ],
   };
 }
 
@@ -248,8 +248,8 @@ function getDietFavouriteQuery(dept_id, user_uuid) {
     fm_favourite_type_uuid: 9,
     [Op.or]: [
       { fm_dept: { [Op.eq]: dept_id }, fm_public: { [Op.eq]: 1 } },
-      { fm_userid: { [Op.eq]: user_uuid } }
-    ]
+      { fm_userid: { [Op.eq]: user_uuid } },
+    ],
   };
 }
 
@@ -257,7 +257,7 @@ function getTreatmentKitByIdQuery(treatmentId) {
   return {
     tk_uuid: treatmentId,
     tk_status: emr_constants.IS_ACTIVE,
-    tk_active: emr_constants.IS_ACTIVE
+    tk_active: emr_constants.IS_ACTIVE,
   };
 }
 
@@ -276,24 +276,24 @@ function getFavouriteQueryForDuplicate(
         [Op.or]: [
           {
             tsm_dept: { [Op.eq]: dept_id },
-            tsm_public: { [Op.eq]: active_boolean }
+            tsm_public: { [Op.eq]: active_boolean },
           },
-          { tsm_userid: { [Op.eq]: user_id } }
-        ]
+          { tsm_userid: { [Op.eq]: user_id } },
+        ],
       },
       {
         [Op.or]: [
           {
             tsm_favourite_type_uuid: fav_type_id,
-            [searchKey]: searchvalue
+            [searchKey]: searchvalue,
           },
           {
             tsm_favourite_type_uuid: fav_type_id,
-            tsm_display_order: display_order
-          }
-        ]
-      }
-    ]
+            tsm_display_order: display_order,
+          },
+        ],
+      },
+    ],
   };
 }
 
@@ -304,27 +304,40 @@ function getDisplayOrderByFavType(fav_type_id, user_id, dept_id) {
     [Op.or]: [
       {
         tsm_dept: { [Op.eq]: dept_id },
-        tsm_public: { [Op.eq]: active_boolean }
+        tsm_public: { [Op.eq]: active_boolean },
       },
-      { tsm_userid: { [Op.eq]: user_id } }
-    ]
+      { tsm_userid: { [Op.eq]: user_id } },
+    ],
   };
 }
 
-function getFavouriteById(fav_id) {
-  return {
+function getFavouriteById(fav_id, isMaster) {
+  const favouriteByIdQuery = {
     tsm_uuid: fav_id,
     tsm_active: active_boolean,
-    tsm_status: active_boolean
+    tsm_status: active_boolean,
   };
+
+  // If it's from Clinical Master Req
+  // not including the is_active property
+  if (isMaster === "true") {
+    delete favouriteByIdQuery.tsm_active;
+  }
+  return favouriteByIdQuery;
 }
 
-function getFavouriteByIdQuery(fav_id) {
-  return {
+function getFavouriteByIdQuery(fav_id, isMaster, activeKey) {
+  const favouriteByIdQuery = {
     fm_uuid: fav_id,
-    fm_active: active_boolean,
-    fm_status: active_boolean
+    [activeKey]: active_boolean,
+    fm_status: active_boolean,
   };
+  // If it's from Clinical Master Req
+  // not including the is_active property
+  if (isMaster === "true") {
+    delete favouriteByIdQuery[activeKey];
+  }
+  return favouriteByIdQuery;
 }
 
 function getFavouriteRadiologyQuery(user_id, fav_type_id) {
@@ -335,7 +348,7 @@ function getFavouriteRadiologyQuery(user_id, fav_type_id) {
     fm_userid: user_id,
     rtm_uuid: neQuery,
     rtm_is_active: emr_constants.IS_ACTIVE,
-    rtm_status: emr_constants.IS_ACTIVE
+    rtm_status: emr_constants.IS_ACTIVE,
   };
 }
 
@@ -392,13 +405,13 @@ const TickSheetMasterController = () => {
             search_value,
             favouriteMasterReqData.favourite_type_uuid,
             display_order
-          )
+          ),
         });
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
           const {
             duplicate_msg,
-            duplicate_code
+            duplicate_code,
           } = emr_all_favourites.favouriteDuplicateMessage(
             checkingForSameFavourite,
             search_key,
@@ -414,11 +427,11 @@ const TickSheetMasterController = () => {
                 favouriteMasterReqData.favourite_type_uuid,
                 user_uuid,
                 department_uuid
-              )
+              ),
             });
 
             if (displayOrders && displayOrders.length > 0) {
-              displayOrdersList = displayOrders.map(dO => {
+              displayOrdersList = displayOrders.map((dO) => {
                 return dO.tsm_display_order;
               });
               displayOrdersList = [...new Set(displayOrdersList)].sort(
@@ -430,7 +443,7 @@ const TickSheetMasterController = () => {
             return res.status(400).send({
               code: duplicate_code,
               message: duplicate_msg,
-              displayOrdersList
+              displayOrdersList,
             });
           } else {
             return res
@@ -442,7 +455,7 @@ const TickSheetMasterController = () => {
         const favouriteMasterCreatedData = await favouriteMasterTbl.create(
           favouriteMasterReqData,
           {
-            returning: true
+            returning: true,
           }
         );
 
@@ -456,7 +469,7 @@ const TickSheetMasterController = () => {
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
           fmd,
           {
-            returning: true
+            returning: true,
           }
         );
 
@@ -470,8 +483,8 @@ const TickSheetMasterController = () => {
             message: "Inserted Favourite Master Successfully",
             responseContents: {
               headers: favouriteMasterReqData,
-              details: favouriteMasterDetailsReqData
-            }
+              details: favouriteMasterDetailsReqData,
+            },
           });
         }
       } catch (ex) {
@@ -485,7 +498,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request Body or Search key Found "
+        message: "No Request Body or Search key Found ",
       });
     }
   };
@@ -504,7 +517,7 @@ const TickSheetMasterController = () => {
       if (isNaN(fav_type_id)) {
         return res.status(400).send({
           code: httpStatus[400],
-          message: emr_constants.PROPER_FAV_ID
+          message: emr_constants.PROPER_FAV_ID,
         });
       }
       let favList = [];
@@ -524,7 +537,7 @@ const TickSheetMasterController = () => {
           code: httpStatus.OK,
           message: returnMessage,
           responseContents: favList,
-          responseContentLength: favList.length
+          responseContentLength: favList.length,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -535,7 +548,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request headers or Query Param Found or Bad Request "
+        message: "No Request headers or Query Param Found or Bad Request ",
       });
     }
   };
@@ -547,7 +560,7 @@ const TickSheetMasterController = () => {
    */
   const _getFavouriteById = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { favourite_id, favourite_type_id } = req.query;
+    let { favourite_id, favourite_type_id, is_master } = req.query;
     let tickSheetData;
     if (user_uuid && favourite_id) {
       try {
@@ -556,44 +569,53 @@ const TickSheetMasterController = () => {
           if (isNaN(favourite_type_id)) {
             return res.status(400).send({
               code: httpStatus[400],
-              message: emr_constants.PROPER_FAV_ID
+              message: emr_constants.PROPER_FAV_ID,
             });
           } else if (favourite_type_id === 9) {
             tickSheetData = await vmTreatmentFavouriteDiet.findAll({
               attributes: emr_attributes_diet.favouriteDietAttributes,
-              where: getFavouriteByIdQuery(favourite_id)
+              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_active'),
             });
           } else if (favourite_type_id === 3) {
-            tickSheetData = await vmFavouriteRadiology.findAll({
-              attributes: emr_attributes_radiology.radiolodyAttributes,
-              where: getFavouriteByIdQuery(favourite_id)
+            tickSheetData = await vmFavouriteRad.findAll({
+              attributes: emr_all_favourites.favouriteRadVWAttributes(),
+              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_is_active'),
             });
           } else if (favourite_type_id === 7) {
             tickSheetData = await vwFavouriteInvestigation.findAll({
               attributes: emr_attributes_investigation.investigationAttributes,
-              where: getFavouriteByIdQuery(favourite_id)
+              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_active'),
+            });
+          } else if (favourite_type_id === 2) {
+            tickSheetData = await vwFavouriteLab.findAll({
+              attributes: emr_all_favourites.favouriteLabVWAttributes(),
+              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_is_active'),
             });
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
               attributes: getFavouritesAttributes,
-              where: getFavouriteById(favourite_id)
+              where: getFavouriteById(favourite_id, is_master),
             });
           }
         } else {
           tickSheetData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
-            where: getFavouriteById(favourite_id)
+            where: getFavouriteById(favourite_id, is_master),
           });
         }
 
         if (favourite_type_id === 9) {
           favouriteList = getAllDietFavsInReadableFormat(tickSheetData);
         } else if (favourite_type_id === 3) {
-          favouriteList = emr_attributes_radiology.getRadiologyResponse(
+          favouriteList = emr_all_favourites.favouriteRadResponse(
             tickSheetData
           );
         } else if (favourite_type_id === 7) {
           favouriteList = emr_attributes_investigation.getInvestigationResponse(
+            tickSheetData
+          );
+        } else if (favourite_type_id === 2) {
+          favouriteList = emr_all_favourites.favouriteLabResponse(
             tickSheetData
           );
         } else {
@@ -608,7 +630,7 @@ const TickSheetMasterController = () => {
           code: httpStatus.OK,
           message: returnMessage,
           responseContents: favouriteList[0],
-          responseContentLength: favouriteList.length
+          responseContentLength: favouriteList.length,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -619,7 +641,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request headers or Query Param Found"
+        message: "No Request headers or Query Param Found",
       });
     }
   };
@@ -652,26 +674,26 @@ const TickSheetMasterController = () => {
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteMasterReqData.favourite_id,
-            status: emr_constants.IS_ACTIVE
-          }
+            status: emr_constants.IS_ACTIVE,
+          },
         });
 
         if (updatingRecord && updatingRecord.length === 0) {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST,
-            message: emr_constants.NO_CONTENT_MESSAGE
+            message: emr_constants.NO_CONTENT_MESSAGE,
           });
         }
 
         const updatedFavouriteData = await Promise.all([
           favouriteMasterTbl.update(favouriteMasterUpdateData, {
-            where: { uuid: favouriteMasterReqData.favourite_id }
+            where: { uuid: favouriteMasterReqData.favourite_id },
           }),
           favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, {
             where: {
-              favourite_master_uuid: favouriteMasterReqData.favourite_id
-            }
-          })
+              favourite_master_uuid: favouriteMasterReqData.favourite_id,
+            },
+          }),
         ]);
         favouriteTransStatus = true;
 
@@ -679,7 +701,7 @@ const TickSheetMasterController = () => {
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Updated Successfully",
-            requestContent: favouriteMasterReqData
+            requestContent: favouriteMasterReqData,
           });
         }
       } catch (ex) {
@@ -693,7 +715,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -718,16 +740,16 @@ const TickSheetMasterController = () => {
         status: 0,
         is_active: 0,
         modified_by: user_uuid,
-        modified_date: new Date()
+        modified_date: new Date(),
       };
       try {
         const updateFavouriteAsync = await Promise.all([
           favouriteMasterTbl.update(updatedFavouriteData, {
-            where: { uuid: favouriteId }
+            where: { uuid: favouriteId },
           }),
           favouritMasterDetailsTbl.update(updatedFavouriteData, {
-            where: { favourite_master_uuid: favouriteId }
-          })
+            where: { favourite_master_uuid: favouriteId },
+          }),
         ]);
 
         const isDeleteSuccess = updateFavouriteAsync[0][0] === 1;
@@ -766,7 +788,7 @@ const TickSheetMasterController = () => {
       try {
         const treatMentFav = await vmTreatmentFavourite.findAll({
           attributes: treatmentKitAtt,
-          where: getTreatmentQuery(departmentId, user_uuid)
+          where: getTreatmentQuery(departmentId, user_uuid),
         });
 
         const favouriteList = getAllTreatmentFavsInReadable(treatMentFav);
@@ -778,7 +800,7 @@ const TickSheetMasterController = () => {
           code: httpStatus.OK,
           message: returnMessage,
           responseContents: favouriteList,
-          responseContentLength: favouriteList.length
+          responseContentLength: favouriteList.length,
         });
       } catch (error) {
         console.log(`Exception Happened ${error}`);
@@ -789,7 +811,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -812,8 +834,8 @@ const TickSheetMasterController = () => {
         );
         const favourite_details = await favouriteMasterTbl.findAll({
           where: {
-            uuid: favouriteId
-          }
+            uuid: favouriteId,
+          },
         });
 
         const responseCount =
@@ -828,7 +850,7 @@ const TickSheetMasterController = () => {
           );
           if (favourite_details && favourite_details.length > 0) {
             favouriteList.favourite_details = {
-              display_order: favourite_details[0].display_order
+              display_order: favourite_details[0].display_order,
             };
           }
         }
@@ -841,7 +863,7 @@ const TickSheetMasterController = () => {
           code: httpStatus.OK,
           message: returnMessage,
           responseContents: favouriteList,
-          responseContentLength: responseCount > 0 ? 1 : 0
+          responseContentLength: responseCount > 0 ? 1 : 0,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -852,7 +874,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -865,7 +887,7 @@ const TickSheetMasterController = () => {
       try {
         const dietFav = await vmTreatmentFavouriteDiet.findAll({
           attributes: emr_attributes_diet.favouriteDietAttributes,
-          where: getDietFavouriteQuery(departmentId, user_uuid)
+          where: getDietFavouriteQuery(departmentId, user_uuid),
         });
 
         const favouriteList = getAllDietFavsInReadableFormat(dietFav);
@@ -877,7 +899,7 @@ const TickSheetMasterController = () => {
           code: httpStatus.OK,
           message: returnMessage,
           responseContents: favouriteList,
-          responseContentLength: favouriteList.length
+          responseContentLength: favouriteList.length,
         });
       } catch (error) {
         console.log(`Exception Happened ${error}`);
@@ -888,7 +910,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -920,7 +942,7 @@ const TickSheetMasterController = () => {
       let findQuery = {
         offset: offset,
         limit: itemsPerPage,
-        attributes: emr_all_favourites.getAllFavouritesAttributes()
+        attributes: emr_all_favourites.getAllFavouritesAttributes(),
       };
 
       if (searchKey) {
@@ -946,7 +968,7 @@ const TickSheetMasterController = () => {
           responseContents: emr_all_favourites.getFavouritesInHumanReadableFormat(
             allFavouritesData.rows
           ),
-          totalRecords: allFavouritesData.count
+          totalRecords: allFavouritesData.count,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -957,7 +979,7 @@ const TickSheetMasterController = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -971,7 +993,7 @@ const TickSheetMasterController = () => {
     getTreatmentKitFavourite: _getTreatmentKitFavourite,
     getTreatmentFavById: _getTreatmentFavById,
     getFavouriteDiet: _getFavouriteDiet,
-    getAllFavourites: _getAllFavourites
+    getAllFavourites: _getAllFavourites,
   };
 };
 
@@ -988,7 +1010,7 @@ function getFavouriteMasterDetailsWithUUID(
   // Assigning tick Sheet Master Id
   // to tick sheet Master Details Id
   // creating a Promise Array to push All async
-  detailsData.forEach(mD => {
+  detailsData.forEach((mD) => {
     mD = emr_utility.assignDefaultValuesAndUUIdToObject(
       mD,
       masterData,
@@ -998,8 +1020,8 @@ function getFavouriteMasterDetailsWithUUID(
     masterDetailsPromise = [
       ...masterDetailsPromise,
       detailsTbl.create(mD, {
-        returning: true
-      })
+        returning: true,
+      }),
     ];
   });
   return masterDetailsPromise;
@@ -1009,7 +1031,7 @@ function getFavouriteMasterDetailsWithUUID(
 function getFavouritesInList(fetchedData) {
   let favouriteList = [];
 
-  fetchedData.forEach(tD => {
+  fetchedData.forEach((tD) => {
     favouriteList = [
       ...favouriteList,
       {
@@ -1060,8 +1082,8 @@ function getFavouritesInList(fetchedData) {
         diagnosis_id: tD.tmsd_diagnosis_uuid,
         diagnosis_name: tD.d_name,
         diagnosis_code: tD.d_code,
-        diagnosis_description: tD.d_description
-      }
+        diagnosis_description: tD.d_description,
+      },
     ];
   });
   return favouriteList;
@@ -1075,7 +1097,7 @@ function getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData) {
     display_order: favouriteMasterReqData.favourite_display_order,
     modified_by: user_uuid,
     modified_date: new Date(),
-    is_active: favouriteMasterReqData.is_active
+    is_active: favouriteMasterReqData.is_active,
   };
 }
 
@@ -1095,7 +1117,7 @@ function getFavouriteMasterDetailsUpdateData(
     vital_master_uuid: favouritMasterDetailsTbl.vital_master_id,
     diet_frequency_uuid: favouriteMasterReqData.diet_frequency_uuid,
     diet_category_uuid: favouriteMasterReqData.diet_category_uuid,
-    quantity: favouriteMasterReqData.quantity
+    quantity: favouriteMasterReqData.quantity,
   };
 }
 
@@ -1106,48 +1128,48 @@ function getSearchValueBySearchKey(details, search_key) {
     case "chiefComplaints":
       return {
         search_key: "cc_uuid",
-        search_value: details.chief_complaint_uuid
+        search_value: details.chief_complaint_uuid,
       };
     case "lab":
     case "radiology":
     case "investigations":
       return {
         search_key: "tsmd_test_master_uuid",
-        search_value: details.test_master_uuid
+        search_value: details.test_master_uuid,
       };
 
     case "diagnosis":
       return {
         search_key: "tmsd_diagnosis_uuid",
-        search_value: details.diagnosis_uuid
+        search_value: details.diagnosis_uuid,
       };
     case "treatment":
       return {
         search_key: "tsmd_treatment_kit_uuid",
-        search_value: details.treatment_kit_uuid
+        search_value: details.treatment_kit_uuid,
       };
     case "diet":
       return {
         search_key: "tsmd_diet_master_uuid",
-        search_value: details.diet_master_uuid
+        search_value: details.diet_master_uuid,
       };
 
     case "speciality":
       return {
         search_key: "tsmd_speciality_sketch_uuid",
-        search_value: details.speciality_sketch_uuid
+        search_value: details.speciality_sketch_uuid,
       };
     case "drug":
     default:
       return {
         search_key: "im_uuid",
-        search_value: details.item_master_uuid
+        search_value: details.item_master_uuid,
       };
   }
 }
 
 function getAllTreatmentFavsInReadable(treatFav) {
-  return treatFav.map(t => {
+  return treatFav.map((t) => {
     return {
       favourite_id: t.fm_uuid,
       favourite_name: t.tk_name,
@@ -1157,7 +1179,7 @@ function getAllTreatmentFavsInReadable(treatFav) {
       favourite_active: t.fm_active,
       favourite_type_id: t.fm_favourite_type_uuid,
       favourite_active: t.fm_active,
-      favourite_display_order: t.fm_display_order
+      favourite_display_order: t.fm_display_order,
     };
   });
 }
@@ -1212,7 +1234,7 @@ function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
 }
 
 function getDrugDetailsFromTreatment(drugArray) {
-  return drugArray.map(d => {
+  return drugArray.map((d) => {
     return {
       // Drug Details
       drug_name: d.im_name,
@@ -1240,51 +1262,51 @@ function getDrugDetailsFromTreatment(drugArray) {
       // Drug Instruction Details
       drug_instruction_code: d.di_code,
       drug_instruction_name: d.di_name,
-      drug_instruction_id: d.tkd_drug_instruction_uuid
+      drug_instruction_id: d.tkd_drug_instruction_uuid,
     };
   });
 }
 
 function getDiagnosisDetailsFromTreatment(diagnosisArray) {
-  return diagnosisArray.map(di => {
+  return diagnosisArray.map((di) => {
     return {
       diagnosis_id: di.tkdm_diagnosis_uuid,
       diagnosis_name: di.td_name,
       diagnosis_code: di.td_code,
-      diagnosis_description: di.td_description
+      diagnosis_description: di.td_description,
     };
   });
 }
 
 function getInvestigationDetailsFromTreatment(investigationArray) {
-  return investigationArray.map(iv => {
+  return investigationArray.map((iv) => {
     return {
       investigation_id: iv.tkim_test_master_uuid,
       investigation_name: iv.tm_name,
       investigation_code: iv.tm_name,
-      investigation_description: iv.tm_name
+      investigation_description: iv.tm_name,
     };
   });
 }
 
 function getRadiologyDetailsFromTreatment(radiology) {
-  return radiology.map(r => {
+  return radiology.map((r) => {
     return {
       radiology_id: r.tkrm_test_master_uuid,
       radiology_name: r.tm_name,
       radiology_code: r.tm_name,
-      radiology_description: r.tm_name
+      radiology_description: r.tm_name,
     };
   });
 }
 
 function getLabDetailsFromTreatment(lab) {
-  return lab.map(l => {
+  return lab.map((l) => {
     return {
       lab_id: l.tklm_test_master_uuid,
       lab_name: l.tm_name,
       lab_code: l.tm_name,
-      lab_description: l.tm_name
+      lab_description: l.tm_name,
     };
   });
 }
@@ -1309,29 +1331,29 @@ function getTreatmentFavByIdPromise(treatmentId, favouriteId) {
   return Promise.all([
     vmTreatmentFavouriteDrug.findAll({
       attributes: gedTreatmentKitDrug,
-      where: getTreatmentKitByIdQuery(treatmentId)
+      where: getTreatmentKitByIdQuery(treatmentId),
     }), // Drug Details
     vmTreatmentFavouriteDiagnosis.findAll({
       attributes: getTreatmentKitDiaAtt,
-      where: getTreatmentKitByIdQuery(treatmentId)
+      where: getTreatmentKitByIdQuery(treatmentId),
     }),
     vmTreatmentFavouriteInvesti.findAll({
       attributes: getTreatmentKitInvestigationAtt,
-      where: getTreatmentKitByIdQuery(treatmentId)
+      where: getTreatmentKitByIdQuery(treatmentId),
     }),
     vmTreatmentFavouriteRadiology.findAll({
       attributes: getTreatmentKitRadiologyAtt,
-      where: getTreatmentKitByIdQuery(treatmentId)
+      where: getTreatmentKitByIdQuery(treatmentId),
     }),
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
-      where: getTreatmentKitByIdQuery(treatmentId)
-    })
+      where: getTreatmentKitByIdQuery(treatmentId),
+    }),
   ]);
 }
 
 function getAllDietFavsInReadableFormat(dietFav) {
-  return dietFav.map(df => {
+  return dietFav.map((df) => {
     return {
       favourite_id: df.fm_uuid,
       favourite_name: df.tk_name,
@@ -1356,13 +1378,13 @@ function getAllDietFavsInReadableFormat(dietFav) {
       // Diet Category
       diet_category_id: df.fmd_diet_category_uuid,
       diet_category_name: df.dc_name,
-      diet_category_code: df.dc_code
+      diet_category_code: df.dc_code,
     };
   });
 }
 
 function getSpecialitySketchFavourite(sketchFav) {
-  return sketchFav.map(f => {
+  return sketchFav.map((f) => {
     return {
       favourite_id: f.uuid,
       favourite_name: getSpecialityFromFav(f.favourite_master_detail, "name"),
@@ -1373,7 +1395,7 @@ function getSpecialitySketchFavourite(sketchFav) {
       speciality_sketch_id:
         (f.favourite_master_detail &&
           f.favourite_master_detail.speciality_sketch_uuid) ||
-        0
+        0,
     };
   });
 }
@@ -1386,7 +1408,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
   if (fTyId === 3) {
     return vmFavouriteRad.findAll({
       attributes: emr_all_favourites.favouriteRadVWAttributes(),
-      where: emr_all_favourites.favouriteRadVWQuery(uId, fTyId)
+      where: emr_all_favourites.favouriteRadVWQuery(uId, fTyId),
     });
   } else if (fTyId === 7) {
     return vwFavouriteInvestigation.findAll({
@@ -1394,7 +1416,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
       where: emr_attributes_investigation.getFavouriteInvestigationQuery(
         uId,
         fTyId
-      )
+      ),
     });
   } else if (fTyId === 10) {
     return favouriteMasterTbl.findAll({
@@ -1406,10 +1428,10 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
         [Op.or]: [
           {
             department_uuid: { [Op.eq]: dId },
-            is_public: { [Op.eq]: emr_constants.IS_ACTIVE }
+            is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
           },
-          { user_uuid: { [Op.eq]: uId } }
-        ]
+          { user_uuid: { [Op.eq]: uId } },
+        ],
       },
 
       include: [
@@ -1419,22 +1441,22 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
           include: [
             {
               model: specialitySketchesTbl,
-              attributes: ["code", "name", "description"]
-            }
-          ]
-        }
-      ]
+              attributes: ["code", "name", "description"],
+            },
+          ],
+        },
+      ],
     });
   } else if (fTyId === 2) {
     return vwFavouriteLab.findAll({
       attributes: emr_all_favourites.favouriteLabVWAttributes(),
-      where: emr_all_favourites.favouriteLabVWQuery(uId, dId)
+      where: emr_all_favourites.favouriteLabVWQuery(uId, dId),
     });
   } else {
     return vmTickSheetMasterTbl.findAll({
       attributes: getFavouritesAttributes,
       where: getFavouriteQuery(dId, uId, fTyId),
-      order: [["tsm_display_order", "ASC"]]
+      order: [["tsm_display_order", "ASC"]],
     });
   }
 };
