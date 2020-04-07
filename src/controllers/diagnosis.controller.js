@@ -5,6 +5,14 @@ var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const diagnosisTbl = db.diagnosis;
 const diagnosisversionTb = db.diagnosis_version;
+const diagnosistypeTb = db.diagnosis_type;
+const bodysideTb = db.body_side;
+const bodysiteTb = db.body_site;
+
+const diagnosisregionTb = db.diagnosis_region;
+const positionsTb = db.positions;
+const diagnosis_gradeTb = db.diagnosis_grade;
+
 const emr_utilites = require("../services/utility.service");
 
 
@@ -247,7 +255,7 @@ const diagnosisController = () => {
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
+        let sortField = 'modified_by';
         let sortOrder = 'DESC';
 
         if (getsearch.pageNo) {
@@ -273,8 +281,45 @@ const diagnosisController = () => {
         let findQuery = {
             offset: offset,
             limit: itemsPerPage,
-
-            attributes: getDiagnosisAttributes()
+            order: [[sortField, sortOrder]],
+            attributes: getDiagnosisAttributes(),
+             include: [
+                    {
+                        model: diagnosisversionTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagnosistypeTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysideTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysiteTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagnosisregionTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: positionsTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagnosis_gradeTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    }
+                ]
 
 
 

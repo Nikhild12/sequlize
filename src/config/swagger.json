@@ -10756,16 +10756,8 @@
         },
         "is_active": {
           "type": "boolean"
-        },
-        "status": {
-          "type": "boolean"
-        },
-        "revision": {
-          "type": "string"
-        },
-        "created_by": {
-          "type": "integer"
         }
+        
       }
     },
     "getDiagnosis": {
