@@ -14439,13 +14439,16 @@
         "search": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
+        "schedule_uuid": {
+          "type": "integer"
         },
         "status": {
+          "type": "boolean"
+        },
+        "immunization_name": {
           "type": "string"
         },
-        "searchKey": {
+        "duration":{
           "type": "string"
         }
       }

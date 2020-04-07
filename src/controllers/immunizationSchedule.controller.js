@@ -176,30 +176,54 @@ const immunizationScheduleController = () => {
                     }
                 ]
             };
+if (getsearch.search && /\S/.test(getsearch.search)) {
 
-            if (postData.search && /\S/.test(postData.search)) {
+            findQuery.where = {
+                [Op.or]: [{
+                    immunization_name: {
+                        [Op.like]: '%' + getsearch.search + '%',
+                    },
+
+
+                }
+                
+
+                ]
+            };
+        }
+            if (postData.schedule_uuid && /\S/.test(postData.schedule_uuid)) {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.schedule_uuid'))),
 
                 ];
             }
-            if (postData.name && /\S/.test(postData.name)) {
+            if (postData.immunization_name && /\S/.test(postData.immunization_name)) {
                 findQuery.where = {
                     [Op.and]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('schedules.name')), postData.name.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.immunization_name')), postData.immunization_name.toLowerCase()),
                     ]
                 };
             }
 
-            // if (postData.Frequency && /\S/.test(postData.Frequency)) {
-            //     findQuery.where =
-            //         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('df_uuid')), 'LIKE', '%' + postData.Frequency);
+            if (postData.duration && /\S/.test(postData.duration)) {
+                findQuery.where =
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.duration')));
 
-            // }
-
-            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where = { is_active: postData.status };
             }
+
+         if (postData.is_active ==1 ) {
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+        }
+        else if(postData.is_active ==0) {
+         findQuery.where ={[Op.and]: [ {is_active:0}]};
+
+
+        }
+        else{
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+
+        }
+
             await immunizationScheduleTbl.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
