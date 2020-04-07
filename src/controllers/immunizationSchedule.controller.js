@@ -12,6 +12,7 @@ const immunizationScheduleTbl = db.immunization_schedule;
 const immunization = db.immunizations;
 const schedules = db.schedules;
 const scheduleflagsTbl = db.schedule_flags;
+const vw_immunische = db.vw_emr_immunization_schedule;
 
 const routestbl = db.routes;
 
@@ -179,7 +180,7 @@ const immunizationScheduleController = () => {
                     }
                 ]
             };
-if (getsearch.search && /\S/.test(getsearch.search)) {
+if (postData.search && /\S/.test(postData.search)) {
 
             findQuery.where = {
                 [Op.or]: [{
@@ -227,7 +228,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
         }
 
-            await immunizationScheduleTbl.findAndCountAll(findQuery)
+            await vw_immunische.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -262,7 +263,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
     const postimmunizationSchedule = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-
+        postData.modified_by = req.headers.user_uuid;
 
 
         if (postData) {
@@ -325,7 +326,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                 const page = postData.page ? postData.page : 1;
                 const itemsPerPage = postData.limit ? postData.limit : 10;
                 const offset = (page - 1) * itemsPerPage;
-                await immunizationScheduleTbl.findOne({
+                await vw_immunische.findOne({
                     where: {
                         uuid: postData.Id
                     },
