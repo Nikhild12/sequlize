@@ -5306,12 +5306,6 @@
             "type": "integer"
           },
           {
-            "in": "header",
-            "name": "critical_care_type",
-            "required": true,
-            "type": "integer"
-          },
-          {
             "in": "body",
             "name": "create CCcharts",
             "required": true,
@@ -7907,8 +7901,7 @@
         }
       }
     },
-
-    "searchParams":{
+    "searchParams": {
       "type": "object",
       "properties": {
         "searchBy": {
@@ -9027,7 +9020,6 @@
         "immunization_uuid": {
           "type": "integer"
         },
-        
         "immunization_schedule_flag_uuid": {
           "type": "integer"
         },
@@ -9040,14 +9032,12 @@
         "duration_period_uuid": {
           "type": "integer"
         },
-        
         "displayorder": {
           "type": "string"
         },
         "is_active": {
           "type": "integer"
         }
-      
       }
     },
     "getimmunizationSchedule": {
@@ -12016,6 +12006,10 @@
         "headers": {
           "type": "object",
           "properties": {
+            "critical_care_type": {
+              "type": "integer",
+              "example": 1
+            },
             "patient_uuid": {
               "type": "integer",
               "example": 1
@@ -14497,7 +14491,7 @@
         "immunization_name": {
           "type": "string"
         },
-        "duration":{
+        "duration": {
           "type": "string"
         }
       }
