@@ -119,6 +119,23 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+    // critical_care_charts.associate = models => {
+    //     critical_care_charts.hasOne(models.critical_care_concepts, {
+    //         foreignKey: "cc_chart_uuid",
+    //         as: 'critical_care_concepts'
+    //     });
+    //     critical_care_charts.belongsTo(models.critical_care_types, {
+    //         foreignKey: "critical_care_type_uuid",
+    //         as: 'critical_care_types'
+    //     });
+    //     critical_care_charts.hasMany(models.critical_care_uoms, {
+    //         foreignKey: "critical_care_uom_uuid",
+    //         as: 'critical_care_uoms'
+    //     });
+
+
+    // };
+
     critical_care_charts.associate = models => {
         critical_care_charts.hasOne(models.critical_care_concepts, {
             foreignKey: "cc_chart_uuid",
@@ -128,28 +145,23 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "critical_care_type_uuid",
             as: 'critical_care_types'
         });
-        critical_care_charts.hasMany(models.critical_care_uoms, {
-            foreignKey: "critical_care_uom_uuid",
-            as: 'critical_care_uoms'
-        });
-
-
-
-        // critical_care_charts.associate = models => {
-        //     critical_care_charts.hasOne(models.critical_care_concepts, {
-        //         foreignKey: "cc_chart_uuid",
-        //         as: 'critical_care_concepts'
-        //     });
-        // };
-        // critical_care_charts.associate = models => {
-        //     critical_care_charts.belongsTo(models.critical_care_types, {
-        //         foreignKey: "critical_care_type_uuid",
-        //         as: 'critical_care_types'
-        //     });
-
-
-
     };
+
+
+    // critical_care_charts.associate = models => {
+    //     critical_care_charts.hasOne(models.critical_care_concepts, {
+    //         foreignKey: "cc_chart_uuid",
+    //         as: 'critical_care_concepts'
+    //     });
+    // };
+    // critical_care_charts.associate = models => {
+    //     critical_care_charts.belongsTo(models.critical_care_types, {
+    //         foreignKey: "critical_care_type_uuid",
+    //         as: 'critical_care_types'
+    //     });
+
+
+
 
 
     return critical_care_charts;
