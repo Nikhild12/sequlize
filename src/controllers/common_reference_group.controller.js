@@ -53,6 +53,7 @@ const commonReferenceGroupController = () => {
                 postingData = {
                     offset: offset,
                     limit: itemsPerPage,
+                    attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                     order: [
                         [sortField, sortOrder],
                     ],
