@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                autoIncrement: true
+                
             },
             code: {
                 type: DataTypes.STRING(250),
