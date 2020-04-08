@@ -530,6 +530,7 @@ function getTemplateData(fetchedData) {
         {
           template_details_id: tD.tmd_uuid,
           template_details_displayorder: tD.tmd_display_order,
+          strength: tD.tmd_strength,
 
           drug_name: tD.im_name,
           drug_code: tD.im_code,
@@ -766,6 +767,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
         {
           template_details_uuid: dD.tmd_uuid,
           template_details_displayorder: dD.tmd_display_order,
+          strength: dD.tmd_strength,
 
           drug_name: dD.im_name,
           drug_code: dD.im_code,
