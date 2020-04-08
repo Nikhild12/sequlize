@@ -189,8 +189,9 @@ const ChiefComplaints = () => {
         chiefComplaintsData.code = chiefComplaintsData.code;
         chiefComplaintsData.name = chiefComplaintsData.name;
         chiefComplaintsData.description =chiefComplaintsData.description  
-        chiefComplaintsData.is_active = chiefComplaintsData.status =
-          emr_const.IS_ACTIVE;
+        chiefComplaintsData.is_active = chiefComplaintsData.is_active;
+        chiefComplaintsData.status = chiefComplaintsData.is_active;
+
         chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
         chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
         chiefComplaintsData.revision = 1;
@@ -225,7 +226,7 @@ const ChiefComplaints = () => {
       try {
         const chiefData = await chief_complaints_tbl.findOne({
           attributes: getChiefComplaintsAttributes,
-          where: { uuid: ChiefComplaints_id }
+          where: { uuid: ChiefComplaints_id,is_active:1,status:1 }
         });
 
         return res.status(httpStatus.OK).json({
@@ -290,6 +291,7 @@ const ChiefComplaints = () => {
     if (ChiefComplaints_id) {
       const updatedcheifcomplaintsData = {
         status: 0,
+        is_active:0,
         modified_by: user_uuid,
         modified_date: new Date()
       };
