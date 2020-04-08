@@ -437,10 +437,7 @@ const ChiefComplaints = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      where: {
-        is_active: 1,
-        status: 1
-      }
+      
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -462,7 +459,30 @@ const ChiefComplaints = () => {
       };
     }
 
-  
+  if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+
+
+                ]
+            };
+        }
+
+        
+        if (getsearch.is_active == 1) {
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+        }
+        else if (getsearch.is_active == 0) {
+            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+
+
+        }
+        else {
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+
+        }
     try {
       await chief_complaints_tbl
         .findAndCountAll(findQuery)

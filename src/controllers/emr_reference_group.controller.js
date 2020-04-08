@@ -66,8 +66,8 @@ const referenceGroupController = () => {
 
             if (postData.search && /\S/.test(postData.search)) {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('app_module.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
                     // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('district_master.state_master.name')), 'LIKE', '%' + searchData.search.toLowerCase() + '%'),
                     //Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('state_master.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
@@ -78,14 +78,14 @@ const referenceGroupController = () => {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
                         [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.code')), postData.refCodeName.toLowerCase()),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.name')), postData.refCodeName.toLowerCase()),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.code')), postData.refCodeName.toLowerCase()),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.name')), postData.refCodeName.toLowerCase()),
                         ]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.code')), postData.refCodeName.toLowerCase()),
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('reference_group.name')), postData.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.code')), postData.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.name')), postData.refCodeName.toLowerCase()),
                     ];
                 }
             }
