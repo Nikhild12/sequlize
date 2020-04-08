@@ -470,7 +470,7 @@ function getPatientData(responseData) {
       diagnosis_modified_date: rD.modified_date,
       diagnosis_performed_by: rD.performed_by,
       diagnosis_comments: rD.comments,
-
+      diagnosis_uuid: rD.diagnosis_uuid,
       diagnosis_name:
         rD.diagnosis && rD.diagnosis.name ? rD.diagnosis.name : rD.other_diagnosis,
       diagnosis_code:
