@@ -9168,7 +9168,20 @@
         "name": {
           "type": "string"
         },
+
         "Id": {
+          "type": "integer"
+        },
+        "color": {
+          "type": "string"
+        },
+        "language": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        },
+        "Is_default":{
           "type": "integer"
         }
       }
@@ -9207,7 +9220,16 @@
         "is_active": {
           "type": "integer"
         },
-        "revision": {
+        "color": {
+          "type": "string"
+        },
+        "language": {
+          "type": "integer"
+        },
+        "display_order": {
+          "type": "integer"
+        },
+        "Is_default":{
           "type": "integer"
         }
       }
@@ -11083,7 +11105,11 @@
         },
         "body_site": {
           "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
         }
+
       }
     },
     "getAllChiefMaster": {
@@ -11095,16 +11121,14 @@
         "paginationSize": {
           "type": "integer"
         },
-        "code": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+        
+        "status": {
+          "type": "integer"
         },
         "search": {
           "type": "string"
         },
-        "table_name": {
+        "searchKeyWord": {
           "type": "string"
         },
         "sortOrder": {
