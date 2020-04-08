@@ -14514,10 +14514,10 @@
     "getimmunizationScheduleReq": {
       "type": "object",
       "properties": {
-        "paginationSize": {
+        "pageNo": {
           "type": "integer"
         },
-        "pageNo": {
+        "paginationSize": {
           "type": "integer"
         },
         "sortField": {
@@ -14529,18 +14529,19 @@
         "search": {
           "type": "string"
         },
-        "schedule_uuid": {
+        "schedule": {
+          "type": "integer"
+        },
+        "immunization": {
+          "type": "integer"
+        },
+        "duration": {
           "type": "integer"
         },
         "status": {
           "type": "boolean"
-        },
-        "immunization_name": {
-          "type": "string"
-        },
-        "duration": {
-          "type": "string"
         }
+               
       }
     }
   }
