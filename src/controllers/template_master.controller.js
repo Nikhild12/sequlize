@@ -192,7 +192,7 @@ const tmpmstrController = () => {
         //   //template not exits and display order already allocated
         //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
         // }
-        else if ( 
+        else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID &&
           templateMasterReqData &&
@@ -234,7 +234,8 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
-
+      const temp_name = templateMasterReqData.name;
+      const temp_id = templateMasterReqData.template_id
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(
         user_uuid,
@@ -247,7 +248,16 @@ const tmpmstrController = () => {
       const tmpDtlsRmvdDrugs = req.body.removed_details;
 
       try {
-        if (
+
+        const exists = await nameExistsupdate(temp_name, user_uuid, temp_id);
+        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+          //template already exits
+          return res
+            .status(400)
+            .send({ code: httpStatus[400], message: "Template name exists" });
+        }
+        else if (
+          (exists.length == 0 || exists[0].dataValues.status == 0) &&
           user_uuid &&
           templateMasterReqData &&
           templateMasterDetailsReqData
@@ -1151,7 +1161,11 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, user_uuid: userUUID, uuid: temp_id }
+        where: {
+          name: temp_name,
+          user_uuid: userUUID,
+          uuid: { [Op.not]: temp_id }
+        }
       });
       if (value) {
         resolve(value);
