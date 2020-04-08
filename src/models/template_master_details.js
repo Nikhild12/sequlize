@@ -143,6 +143,10 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            strength:{
+                type: DataTypes.STRING(45),
+                allowNull: true
+            },
             drug_route_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

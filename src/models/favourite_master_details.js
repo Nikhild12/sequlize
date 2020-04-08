@@ -1,4 +1,4 @@
-const emr_constants = require('../config/constants');
+const emr_constants = require("../config/constants");
 
 module.exports = (sequelize, DataTypes) => {
   const TICK_SHEET_MASTER_DETAILS = sequelize.define(
@@ -8,180 +8,184 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         // allowNull : false,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       favourite_master_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
       test_master_type_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notNull: true,
-          min: 0
-        }
+          min: 0,
+        },
       },
 
       test_master_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
       item_master_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
       chief_complaint_uuid: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       vital_master_uuid: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       diagnosis_uuid: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
       drug_route_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
 
       drug_frequency_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
       duration: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       duration_period_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
       },
       treatment_kit_uuid: {
         type: DataTypes.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       diet_master_uuid: {
         type: DataTypes.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       diet_category_uuid: {
         type: DataTypes.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       diet_frequency_uuid: {
         type: DataTypes.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       drug_instruction_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: true
-        }
+          notNull: true,
+        },
+      },
+      strength: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
       },
       quantity: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       group_code: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       group_name: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
       display_order: {
         type: DataTypes.STRING(255),
         allowNull: false,
         validate: {
           notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('display_order')
+            msg: emr_constants.GetpleaseProvideMsg("display_order"),
           },
           notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('display_order')
+            msg: emr_constants.GetpleaseProvideMsg("display_order"),
           },
           min: {
             args: [0],
-            msg: emr_constants.GetZeroValidationMessage('display_order')
-          }
-        }
+            msg: emr_constants.GetZeroValidationMessage("display_order"),
+          },
+        },
       },
       comments: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: true,
       },
 
       is_active: {
         type: DataTypes.ENUM,
         values: ["0", "1"],
-        defaultValue: "1"
+        defaultValue: "1",
       },
 
       status: {
         type: DataTypes.ENUM,
         values: ["0", "1"],
-        defaultValue: "1"
+        defaultValue: "1",
       },
 
       revision: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       speciality_sketch_uuid: {
         type: DataTypes.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       created_date: "created_date",
       modified_date: "modified_date",
 
       created_by: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
       },
 
       modified_by: {
         type: DataTypes.INTEGER,
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,
       timestamps: false,
       createAt: "created_date",
-      updatedAt: "modified_date"
+      updatedAt: "modified_date",
     }
   );
 
-  TICK_SHEET_MASTER_DETAILS.associate = models => {
+  TICK_SHEET_MASTER_DETAILS.associate = (models) => {
     TICK_SHEET_MASTER_DETAILS.belongsTo(models.favourite_master, {
-      foreignKey: "favourite_master_uuid"
+      foreignKey: "favourite_master_uuid",
     });
 
     TICK_SHEET_MASTER_DETAILS.belongsTo(models.speciality_sketches, {
-      foreignKey: "speciality_sketch_uuid"
+      foreignKey: "speciality_sketch_uuid",
     });
   };
 
