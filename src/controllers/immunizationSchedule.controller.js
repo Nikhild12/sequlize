@@ -25,6 +25,121 @@ const immunizationScheduleController = () => {
      * @returns {*}
      */
 
+    const getimmunizationSchedule = async (req, res, next) => {
+        try {
+            const postData = req.body;
+            let pageNo = 0;
+            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            let sortArr = ['created_date', 'DESC'];
+
+
+            if (postData.pageNo) {
+                let temp = parseInt(postData.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (postData.sortField) {
+                fieldSplitArr = postData.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = postData.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = postData.sortOrder;
+                } else {
+                    sortArr.push(postData.sortOrder);
+                }
+            }
+            let findQuery = {
+                subQuery: false,
+                offset: offset,
+                limit: postData.paginationSize,
+                order: [
+                    sortArr
+                ],
+                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                where: {
+
+                }
+            };
+
+            if (postData.search && /\S/.test(postData.search)) {
+                console.log("this is sesarch-----------");
+                findQuery.where = {
+                    [Op.and]:[
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+
+                ]
+            };
+            }
+
+            if (postData.schedule && /\S/.test(postData.schedule)) {
+                findQuery.where = {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.col('schedule_uuid'), '=', + postData.schedule)
+                    ]
+                };
+            }
+            if (postData.immunization && /\S/.test(postData.immunization)) {
+                findQuery.where = {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.col('immunization_uuid'), '=', + postData.immunization)
+                    ]
+                };
+            }
+            if (postData.duration && /\S/.test(postData.duration)) {
+                findQuery.where = {
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.col('duration_period_uuid'), '=', + postData.duration)
+                    ]
+                };
+            }
+
+            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+                findQuery.where = { i_is_active: postData.status };
+            }
+            await vw_immunische.findAndCountAll(findQuery)
+                .then((data) => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            message: "Get Details Fetched successfully",
+                            req: '',
+                            responseContents: data.rows,
+                            totalRecords: data.count
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(409)
+                        .json({
+                            statusCode: 409,
+                            error: err
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+
 
     // const getimmunizationSchedule_old = async (req, res, next) => {
     //     let getsearch = req.body;
@@ -121,143 +236,143 @@ const immunizationScheduleController = () => {
     //     }
     // };
 
-    const getimmunizationSchedule = async (req, res, next) => {
-        try {
-            const postData = req.body;
-            let pageNo = 0;
-            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-            let sortArr = ['uuid', 'DESC'];
+    //     const getimmunizationSchedule = async (req, res, next) => {
+    //         try {
+    //             const postData = req.body;
+    //             let pageNo = 0;
+    //             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+    //             let sortArr = ['uuid', 'DESC'];
 
 
-            if (postData.pageNo) {
-                let temp = parseInt(postData.pageNo);
-                if (temp && (temp != NaN)) {
-                    pageNo = temp;
-                }
-            }
-            const offset = pageNo * itemsPerPage;
-            let fieldSplitArr = [];
-            if (postData.sortField) {
-                fieldSplitArr = postData.sortField.split('.');
-                if (fieldSplitArr.length == 1) {
-                    sortArr[0] = postData.sortField;
-                } else {
-                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
-                        const element = fieldSplitArr[idx];
-                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
-                    }
-                    sortArr = fieldSplitArr;
-                }
-            }
-            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
-                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
-                    sortArr[1] = postData.sortOrder;
-                } else {
-                    sortArr.push(postData.sortOrder);
-                }
-            }
-            let findQuery = {
-                subQuery: false,
-                offset: offset,
-                limit: postData.paginationSize,
-                order: [
-                    sortArr
-                ],
-                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                where: {
-                    status: 1
-                },
-                include: [
-                    {
-                        model: immunization,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: schedules,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    }
-                ]
-            };
-if (postData.search && /\S/.test(postData.search)) {
+    //             if (postData.pageNo) {
+    //                 let temp = parseInt(postData.pageNo);
+    //                 if (temp && (temp != NaN)) {
+    //                     pageNo = temp;
+    //                 }
+    //             }
+    //             const offset = pageNo * itemsPerPage;
+    //             let fieldSplitArr = [];
+    //             if (postData.sortField) {
+    //                 fieldSplitArr = postData.sortField.split('.');
+    //                 if (fieldSplitArr.length == 1) {
+    //                     sortArr[0] = postData.sortField;
+    //                 } else {
+    //                     for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+    //                         const element = fieldSplitArr[idx];
+    //                         fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+    //                     }
+    //                     sortArr = fieldSplitArr;
+    //                 }
+    //             }
+    //             if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+    //                 if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+    //                     sortArr[1] = postData.sortOrder;
+    //                 } else {
+    //                     sortArr.push(postData.sortOrder);
+    //                 }
+    //             }
+    //             let findQuery = {
+    //                 subQuery: false,
+    //                 offset: offset,
+    //                 limit: postData.paginationSize,
+    //                 order: [
+    //                     sortArr
+    //                 ],
+    //                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+    //                 where: {
+    //                     status: 1
+    //                 },
+    //                 include: [
+    //                     {
+    //                         model: immunization,
+    //                         attributes: ['uuid', 'name'],
+    //                         required: false
+    //                     },
+    //                     {
+    //                         model: schedules,
+    //                         attributes: ['uuid', 'name'],
+    //                         required: false
+    //                     }
+    //                 ]
+    //             };
+    // if (postData.search && /\S/.test(postData.search)) {
 
-            findQuery.where = {
-                [Op.or]: [{
-                    immunization_uuid: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-
-
-                }
-                
-
-                ]
-            };
-        }
-            if (postData.schedule_uuid && /\S/.test(postData.schedule_uuid)) {
-                findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.schedule_uuid'))),
-
-                ];
-            }
-            if (postData.immunization_uuid && /\S/.test(postData.immunization_uuid)) {
-                findQuery.where = {
-                    [Op.and]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.immunization_uuid')), postData.immunization_name.toLowerCase()),
-                    ]
-                };
-            }
-
-            if (postData.duration && /\S/.test(postData.duration)) {
-                findQuery.where =
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.duration')));
-
-            }
-
-         if (postData.is_active ==1 ) {
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
-        }
-        else if(postData.is_active ==0) {
-         findQuery.where ={[Op.and]: [ {is_active:0}]};
+    //             findQuery.where = {
+    //                 [Op.or]: [{
+    //                     immunization_uuid: {
+    //                         [Op.like]: '%' + postData.search + '%',
+    //                     },
 
 
-        }
-        else{
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
+    //                 }
 
-        }
 
-            await vw_immunische.findAndCountAll(findQuery)
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            message: "Get Details Fetched successfully",
-                            req: '',
-                            responseContents: data.rows,
-                            totalRecords: data.count
-                        });
-                })
-                .catch(err => {
-                    return res
-                        .status(409)
-                        .json({
-                            statusCode: 409,
-                            error: err
-                        });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
-    };
+    //                 ]
+    //             };
+    //         }
+    //             if (postData.schedule_uuid && /\S/.test(postData.schedule_uuid)) {
+    //                 findQuery.where[Op.or] = [
+    //                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.schedule_uuid'))),
+
+    //                 ];
+    //             }
+    //             if (postData.immunization_uuid && /\S/.test(postData.immunization_uuid)) {
+    //                 findQuery.where = {
+    //                     [Op.and]: [
+    //                         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.immunization_uuid')), postData.immunization_name.toLowerCase()),
+    //                     ]
+    //                 };
+    //             }
+
+    //             if (postData.duration && /\S/.test(postData.duration)) {
+    //                 findQuery.where =
+    //                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('immunization_schedule.duration')));
+
+    //             }
+
+    //          if (postData.is_active ==1 ) {
+    //          findQuery.where ={[Op.and]: [ {is_active:1}]};
+    //         }
+    //         else if(postData.is_active ==0) {
+    //          findQuery.where ={[Op.and]: [ {is_active:0}]};
+
+
+    //         }
+    //         else{
+    //          findQuery.where ={[Op.and]: [ {is_active:1}]};
+
+    //         }
+
+    //             await vw_immunische.findAndCountAll(findQuery)
+    //                 .then((data) => {
+    //                     return res
+    //                         .status(httpStatus.OK)
+    //                         .json({
+    //                             statusCode: 200,
+    //                             message: "Get Details Fetched successfully",
+    //                             req: '',
+    //                             responseContents: data.rows,
+    //                             totalRecords: data.count
+    //                         });
+    //                 })
+    //                 .catch(err => {
+    //                     return res
+    //                         .status(409)
+    //                         .json({
+    //                             statusCode: 409,
+    //                             error: err
+    //                         });
+    //                 });
+    //         } catch (err) {
+    //             const errorMsg = err.errors ? err.errors[0].message : err.message;
+    //             return res
+    //                 .status(httpStatus.INTERNAL_SERVER_ERROR)
+    //                 .json({
+    //                     status: "error",
+    //                     msg: errorMsg
+    //                 });
+    //         }
+    //     };
 
 
     const postimmunizationSchedule = async (req, res, next) => {
@@ -309,7 +424,7 @@ if (postData.search && /\S/.test(postData.search)) {
         } else {
 
             res.send({
-                 statusCode: 422,
+                statusCode: 422,
                 status: 'failed',
                 msg: 'Please enter immunizations details and headers'
             });
@@ -345,8 +460,8 @@ if (postData.search && /\S/.test(postData.search)) {
                     offset: offset,
                     limit: itemsPerPage,
                     order: [['uuid', 'DESC']],
-                    status:1,
-                    is_active:1
+                    status: 1,
+                    is_active: 1
                 })
                     .then((data) => {
                         return res
