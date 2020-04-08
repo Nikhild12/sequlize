@@ -363,15 +363,15 @@ const diagnosisController = () => {
             };
         }
         if (getsearch.is_active == 1) {
-            findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
         }
         else if (getsearch.is_active == 0) {
-            findQuery.where = { [Op.and]: [{ is_active: 0 }] };
+            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
 
 
         }
         else {
-            findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
 
         }
         try {

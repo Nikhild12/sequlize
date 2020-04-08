@@ -59,6 +59,10 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
+        immunization_frequency_uuid:{
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         immunization_dosage_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,

@@ -189,8 +189,9 @@ const ChiefComplaints = () => {
         chiefComplaintsData.code = chiefComplaintsData.code;
         chiefComplaintsData.name = chiefComplaintsData.name;
         chiefComplaintsData.description =chiefComplaintsData.description  
-        chiefComplaintsData.is_active = chiefComplaintsData.status =
-          emr_const.IS_ACTIVE;
+        chiefComplaintsData.is_active = chiefComplaintsData.is_active;
+        chiefComplaintsData.status = chiefComplaintsData.is_active;
+
         chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
         chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
         chiefComplaintsData.revision = 1;
@@ -225,7 +226,7 @@ const ChiefComplaints = () => {
       try {
         const chiefData = await chief_complaints_tbl.findOne({
           attributes: getChiefComplaintsAttributes,
-          where: { uuid: ChiefComplaints_id }
+          where: { uuid: ChiefComplaints_id,is_active:1,status:1 }
         });
 
         return res.status(httpStatus.OK).json({
@@ -290,6 +291,7 @@ const ChiefComplaints = () => {
     if (ChiefComplaints_id) {
       const updatedcheifcomplaintsData = {
         status: 0,
+        is_active:0,
         modified_by: user_uuid,
         modified_date: new Date()
       };
@@ -435,10 +437,7 @@ const ChiefComplaints = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      where: {
-        is_active: 1,
-        status: 1
-      }
+      
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -460,7 +459,30 @@ const ChiefComplaints = () => {
       };
     }
 
-  
+  if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+
+
+                ]
+            };
+        }
+
+        
+        if (getsearch.is_active == 1) {
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+        }
+        else if (getsearch.is_active == 0) {
+            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+
+
+        }
+        else {
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+
+        }
     try {
       await chief_complaints_tbl
         .findAndCountAll(findQuery)

@@ -53,7 +53,7 @@ const chiefComplaintsController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-
+           where:{status:1,is_active:1}
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -201,7 +201,10 @@ const chiefComplaintsController = () => {
         const postData = req.body;
 
         await chiefComplaintTbl.update({
-            is_active: 0
+            is_active: 0,
+            status:0,
+             modified_by: req.headers.user_uuid,
+                modified_date: new Date()
         }, {
             where: {
                 uuid: postData.Id

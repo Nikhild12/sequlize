@@ -225,7 +225,7 @@ const commonReferenceGroupController = () => {
                         return res.send({
                             statusCode: 400,
                             status: "error",
-                            msg: "Record already Found. Please enter common reference group"
+                            msg: "Please enter new common reference group"
                         });
                     } else {
                         await common_tbl.create(postData, {
@@ -429,6 +429,10 @@ const commonReferenceGroupController = () => {
         //    postingData = {
         //     name: postData.name,
         //     code: postData.code,
+        //     display_order:postData.display_order,
+        //         language: postData.language,
+        //         color:postData.color,
+        //         Is_default:postData.Is_default,
         //     //   revision: postData.revision,
         //     is_active: postData.is_active,
         //       created_date: postData.created_date,
@@ -443,6 +447,10 @@ const commonReferenceGroupController = () => {
             postingData = {
                 name: postData.name,
                 code: postData.code,
+                 display_order:postData.display_order,
+                language: postData.language,
+                color:postData.color,
+                Is_default:postData.Is_default,
                 is_active: postData.is_active,
                 modified_by: postData.modified_by,
                 icon: postData.icon,
@@ -456,7 +464,7 @@ const commonReferenceGroupController = () => {
                 language: postData.language,
                 color: postData.color,
                 display_order: postData.display_order,
-                // Is_default: postData.Is_default
+                Is_default: postData.Is_default
             };
         }
         if (keyValue == 1) {

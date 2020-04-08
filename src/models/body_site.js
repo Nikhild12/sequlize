@@ -18,6 +18,22 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
+ language:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            } ,
+            color:{
+                type: DataTypes.STRING(250),
+                allowNull: true
+            }, 
+            display_order:{
+                type: DataTypes.STRING(250),
+                allowNull: true
+            }, 
+            Is_default: {
+                type: DataTypes.STRING(250),
+                allowNull: true
+            },
 
             status: {
                 type: DataTypes.BOOLEAN,
