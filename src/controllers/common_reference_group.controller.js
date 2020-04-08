@@ -28,8 +28,8 @@ const commonReferenceGroupController = () => {
             const common_tbl = db[table_name];
 
 
-            let sortField = 'name';
-            let sortOrder = 'ASC';
+            let sortField = 'created_date';
+            let sortOrder = 'DESC';
             let pageNo = 0;
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
             if (postData.pageNo) {
@@ -53,6 +53,7 @@ const commonReferenceGroupController = () => {
                 postingData = {
                     offset: offset,
                     limit: itemsPerPage,
+                    attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                     order: [
                         [sortField, sortOrder],
                     ],
@@ -112,7 +113,18 @@ const commonReferenceGroupController = () => {
                 }
                 /* gender Data */
 
+// if (postData.is_active == 1) {
+//             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+//         }
+//         else if (postData.is_active == 0) {
+//             query1.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
 
+
+//         }
+//         else {
+//             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+
+//         }
                 await common_tbl.findAndCountAll(postingData).then((data) => {
                         return res
                             .status(httpStatus.OK)
@@ -225,7 +237,7 @@ const commonReferenceGroupController = () => {
                         return res.send({
                             statusCode: 400,
                             status: "error",
-                            msg: "Record already Found. Please enter common reference group"
+                            msg: "Please enter new common reference group"
                         });
                     } else {
                         await common_tbl.create(postData, {
@@ -352,14 +364,15 @@ const commonReferenceGroupController = () => {
         postData.modified_by = req.headers.user_uuid;
         try {
 
-            if (postData.uuid) {
+            if (postData.Id) {
 
                 await common_tbl.update({
-                    is_active: postData.is_active,
-                    modified_by: postData.modified_by
+                    is_active: 0,
+                    status:0,
+                    // modified_by: postData.modified_by
                 }, {
                     where: {
-                        uuid: postData.uuid
+                        uuid: postData.Id
                     }
                 }).then((data) => {
                    
@@ -429,6 +442,10 @@ const commonReferenceGroupController = () => {
         //    postingData = {
         //     name: postData.name,
         //     code: postData.code,
+        //     display_order:postData.display_order,
+        //         language: postData.language,
+        //         color:postData.color,
+        //         Is_default:postData.Is_default,
         //     //   revision: postData.revision,
         //     is_active: postData.is_active,
         //       created_date: postData.created_date,
@@ -443,6 +460,10 @@ const commonReferenceGroupController = () => {
             postingData = {
                 name: postData.name,
                 code: postData.code,
+                 display_order:postData.display_order,
+                language: postData.language,
+                color:postData.color,
+                Is_default:postData.Is_default,
                 is_active: postData.is_active,
                 modified_by: postData.modified_by,
                 icon: postData.icon,
@@ -456,7 +477,7 @@ const commonReferenceGroupController = () => {
                 language: postData.language,
                 color: postData.color,
                 display_order: postData.display_order,
-                // Is_default: postData.Is_default
+                Is_default: postData.Is_default
             };
         }
         if (keyValue == 1) {

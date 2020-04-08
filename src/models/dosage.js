@@ -1,15 +1,12 @@
 
-
 module.exports = (sequelize, DataTypes) => {
-    const allergy_severity = sequelize.define(
-        "allergy_severity", {
+    const dosage = sequelize.define(
+        "dosage", {
             uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                primaryKey: true,
-                autoIncrement: true
+                
             },
-            // 1 to 21 columns
             code: {
                 type: DataTypes.STRING(250),
                 allowNull: true
@@ -18,47 +15,42 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
- language:{
+            display_order: {
+                type: DataTypes.INTEGER,         
+                       
+            },
+            language_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
-            } ,
-            color:{
-                type: DataTypes.STRING(250),
-                allowNull: true
-            }, 
-            display_order:{
-                type: DataTypes.STRING(250),
-                allowNull: true
-            }, 
-            Is_default: {
-                type: DataTypes.STRING(250),
-                allowNull: true
             },
-
-            status: {
+            is_defult: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1
-            },
-            revision: {
-                type: DataTypes.STRING,
-                defaultValue: 1
+                // allowNull: true
+
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
             },
+            status: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
+            },
+            revision: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+            },
             created_by: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-           
+
             modified_by: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-           
+
         }, {
-            tableName: "allergy_severity",
+            tableName: "dosage",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [{
@@ -66,7 +58,6 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-    
 
-    return allergy_severity;
+  return dosage;
 };

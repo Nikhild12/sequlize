@@ -530,6 +530,7 @@ function getTemplateData(fetchedData) {
         {
           template_details_id: tD.tmd_uuid,
           template_details_displayorder: tD.tmd_display_order,
+          strength: tD.tmd_strength,
 
           drug_name: tD.im_name,
           drug_code: tD.im_code,
@@ -766,6 +767,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
         {
           template_details_uuid: dD.tmd_uuid,
           template_details_displayorder: dD.tmd_display_order,
+          strength: dD.tmd_strength,
 
           drug_name: dD.im_name,
           drug_code: dD.im_code,
@@ -1143,7 +1145,23 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-
+const nameExistsupdate = (temp_name, userUUID, temp_id) => {
+  if (temp_name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = tempmstrTbl.findAll({
+        order: [['created_date', 'DESC']],
+        attributes: ["name", "is_active", "status"],
+        where: { name: temp_name, user_uuid: userUUID, uuid: temp_id }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "name does not existed" });
+      }
+    });
+  }
+};
 function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
   switch (temp_type_id) {
     case "1":

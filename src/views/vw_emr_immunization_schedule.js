@@ -11,12 +11,18 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true
             },
             schedule_uuid: {
-                type: DataTypes.STRING,
+                type: DataTypes.INTEGER,
                 allowNull: true,
             },
+            schedule_name:{
+                type: DataTypes.STRING
+            },
             immunization_uuid: {
-                type: DataTypes.STRING,
+                type: DataTypes.INTEGER,
                 allowNull: true,
+            },
+            immunization_name:{
+                type: DataTypes.STRING
             },
             immunization_schedule_flag_uuid: {
                 type: DataTypes.INTEGER,

@@ -97,8 +97,8 @@ const allergyMasterController = () => {
         if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
           findQuery.where = {
             [Op.and]: [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
               
               
             ]
@@ -108,7 +108,7 @@ const allergyMasterController = () => {
         if (getsearch.allergy_source_uuid &&  /\S/.test(getsearch.allergy_source_uuid)) {
           findQuery.where = {
             [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.is_active')), getsearch.allergy_source_uuid),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid),
             ]
           };
         }
