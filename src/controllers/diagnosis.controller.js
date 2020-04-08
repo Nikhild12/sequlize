@@ -284,11 +284,11 @@ const diagnosisController = () => {
             order: [[sortField, sortOrder]],
             attributes: getDiagnosisAttributes(),
              include: [
-                    {
-                        model: diagnosisversionTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
+                    // {
+                    //     model: diagnosisversionTb,
+                    //     attributes: ['uuid', 'name'],
+                    //     required: false
+                    // },
                     {
                         model: diagnosistypeTb,
                         attributes: ['uuid', 'name'],
