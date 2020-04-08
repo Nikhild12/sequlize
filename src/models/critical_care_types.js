@@ -75,11 +75,18 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+    // critical_care_types.associate = models => {
+    //     critical_care_types.hasOne(models.critical_care_charts, {
+    //         foreignKey: "critical_care_type_uuid",
+    //         as: 'critical_care_charts'
+    //     });
+    // };
     critical_care_types.associate = models => {
-        critical_care_types.hasOne(models.critical_care_charts, {
+        critical_care_types.hasMany(models.critical_care_charts, {
             foreignKey: "critical_care_type_uuid",
-            as: 'critical_care_charts'
+            // as: 'critical_care_concepts'
         });
     };
+
     return critical_care_types;
 };

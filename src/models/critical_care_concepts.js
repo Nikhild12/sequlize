@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
+            is_mandatory: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             is_default: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
