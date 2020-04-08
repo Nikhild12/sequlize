@@ -161,8 +161,23 @@ module.exports = (sequelize, DataTypes) => {
           },
 
         }
+      },
+      referal_reason_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: emr_constants.GetpleaseProvideMsg('referal_reason_uuid')
+          },
+          notEmpty: {
+            msg: emr_constants.GetpleaseProvideMsg('referal_reason_uuid')
+          },
+          min: {
+            args: [0],
+            msg: emr_constants.GetZeroValidationMessage('referal_reason_uuid')
+          },
 
-
+        }
       },
       is_reviewed: {
 

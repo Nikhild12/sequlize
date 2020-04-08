@@ -1,7 +1,6 @@
 const httpStatus = require("http-status");
 
 //Imports required files
-const httpStatus = require("http-status");
 const emr_constants = require("../config/constants");
 
 const sequelizeDb = require("../config/sequelize");
@@ -9,12 +8,12 @@ const sequelizeDb = require("../config/sequelize");
 const referalReasonsTbl = sequelizeDb.referal_reasons;
 
 const ReferalReasosnsController = () => {
-  const _getReferalReasons = (req, res) => {
+  const _getReferalReasons = async (req, res) => {
     const { user_uuid } = req.headers;
     try {
       if (user_uuid) {
         const referalResonsData = await referalReasonsTbl.findAll({
-          attributes: ['uuid', 'code', 'name', 'is_active', 'statu'],
+          attributes: ['uuid', 'code', 'name', 'is_active', 'status'],
           where: { is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE }
         });
         return res.status(200).send({ code: httpStatus.OK, message: 'ReferralReasons Details Fetched Successfully', responseContent: referalResonsData });

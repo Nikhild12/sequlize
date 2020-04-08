@@ -5180,6 +5180,33 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/referal-reasons/getReferralReasons": {
+      "get": {
+        "summary": "To get list of ReferalReasons",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ReferralReasons"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diseases/get-by-filters": {
       "get": {
         "description": "To get list of diseases based on filter",
@@ -9152,7 +9179,6 @@
         "name": {
           "type": "string"
         },
-
         "Id": {
           "type": "integer"
         },
@@ -9165,7 +9191,7 @@
         "display_order": {
           "type": "integer"
         },
-        "Is_default":{
+        "Is_default": {
           "type": "integer"
         }
       }
@@ -9213,7 +9239,7 @@
         "display_order": {
           "type": "integer"
         },
-        "Is_default":{
+        "Is_default": {
           "type": "integer"
         }
       }
@@ -11092,7 +11118,6 @@
         "is_active": {
           "type": "boolean"
         }
-
       }
     },
     "getAllChiefMaster": {
@@ -11104,7 +11129,6 @@
         "paginationSize": {
           "type": "integer"
         },
-        
         "status": {
           "type": "integer"
         },
@@ -12820,6 +12844,10 @@
           "example": 1
         },
         "referral_deptartment_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "referal_reason_uuid": {
           "type": "integer",
           "example": 1
         },
