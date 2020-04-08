@@ -347,9 +347,12 @@ const immunizationsController = () => {
                 };
             }
             if (postData.Frequency && /\S/.test(postData.Frequency)) {
-                findQuery.where =
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('df_uuid')), 'LIKE', '%' + postData.Frequency);
-
+                findQuery.where ={
+                    [Op.and]: [
+                    Sequelize.where(Sequelize.col('df_uuid'), '=', + postData.Frequency )
+                    //Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), postData.name.toLowerCase()),
+                ]
+            };
             }
 
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
