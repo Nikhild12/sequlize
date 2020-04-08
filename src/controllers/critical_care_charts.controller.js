@@ -27,7 +27,7 @@ const CCchartsController = () => {
     @returns {}
     */
 
-    const _createCCC = async (req, res) => {
+    const _createCCC_old = async (req, res) => {
         console.log('Request Body===', req.body);
         if (Object.keys(req.body).length != 0) {
             try {
@@ -103,6 +103,78 @@ const CCchartsController = () => {
 
     };
 
+    const _createCCC = async (req, res) => {
+
+        if (Object.keys(req.body).length != 0) {
+            try {
+                let { user_uuid } = req.headers;
+                let data1 = req.body.headers;
+                let data2 = req.body.observed_data;
+                let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
+
+                const body_header_validation_result = validate.validate(data1, ['patient_uuid', 'encounter_uuid', 'facility_uuid', 'encounter_type_uuid']);
+                if (!body_header_validation_result.status) {
+                    return res.status(400).send({ code: httpStatus[400], message: body_header_validation_result.errors });
+                }
+
+                for (let detail of data2) {
+                    let body_details_validation_result = validate.validate(detail, ['cc_chart_uuid', 'cc_concept_uuid', 'cc_concept_value_uuid', 'from_date', 'observed_value']);
+                    if (!body_details_validation_result.status) {
+                        return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });
+                    }
+                }
+
+                if (user_uuid && data1 && data2) {
+                    switch (data1.critical_care_type) {
+                        case 1:
+                            createdData1 = create_CC(ventilatorTbl, user_uuid, data1, data2);
+                            break;
+                        case 2:
+                            createdData2 = create_CC(abgTbl, user_uuid, data1, data2);
+                            break;
+                        case 3:
+                            createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
+                            break;
+                        case 4:
+                            createdData4 = create_CC(in_out_takeTbl, user_uuid, data1, data2);
+                            break;
+                        case 5:
+                            createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
+                            break;
+                        case 6:
+                            createdData6 = create_CC(diabetesTbl, user_uuid, data1, data2);
+                            break;
+                        case 7:
+                            createdData7 = create_CC(dialysisTbl, user_uuid, data1, data2);
+                            break;
+                    }
+                    if (createdData1) {
+                        res.send({ "statusCode": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData2) {
+                        res.send({ "statusCode": 200, "abg_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData3) {
+                        res.send({ "statusCode": 200, "monitor_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData4) {
+                        res.send({ "statusCode": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData5) {
+                        res.send({ "statusCode": 200, "bp_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData6) {
+                        res.send({ "statusCode": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
+                    } else if (createdData7) {
+                        res.send({ "statusCode": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
+                    }
+
+                } else {
+                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+                }
+            } catch (ex) {
+                res.send({ "status": 400, "message": ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+
+    };
     const _getCCCbypatientid = async (req, res) => {
 
         let { user_uuid } = req.headers;
@@ -211,39 +283,39 @@ const CCchartsController = () => {
 
         if (Object.keys(req.body).length != 0) {
             try {
-                let { user_uuid, critical_care_type } = req.headers;
+                let { user_uuid } = req.headers;
                 let data1 = req.body.headers;
                 let data2 = req.body.observed_data;
                 //let cdate = moment(new Date()).format('YYYY-MM-DD');
 
                 let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
 
-                if (user_uuid && data1 && data2 && critical_care_type) {
+                if (user_uuid && data1 && data2) {
 
-                    switch (critical_care_type) {
-                        case "1":
+                    switch (data1.critical_care_type) {
+                        case 1:
                             // let abc = await updateonCdate(ventilatorTbl, data2[0].uuid);
                             // fetchedDate = moment(abc.dataValues.from_date).format('YYYY-MM-DD');
                             // if (fetchedDate != cdate){ 
                             //      return res.status(400).send({ code: httpStatus[400], message: "update notpossible" });}
                             createdData1 = await Promise.all(updateCCCdata(ventilatorTbl, data1, data2, user_uuid));
                             break;
-                        case "2":
+                        case 2:
                             createdData2 = await Promise.all(updateCCCdata(abgTbl, data1, data2, user_uuid));
                             break;
-                        case "3":
+                        case 3:
                             createdData3 = await Promise.all(updateCCCdata(monitorTbl, data1, data2, user_uuid));
                             break;
-                        case "4":
+                        case 4:
                             createdData4 = await Promise.all(updateCCCdata(in_out_takeTbl, data1, data2, user_uuid));
                             break;
-                        case "5":
+                        case 5:
                             createdData5 = await Promise.all(updateCCCdata(bpTbl, data1, data2, user_uuid));
                             break;
-                        case "6":
+                        case 6:
                             createdData6 = await Promise.all(updateCCCdata(diabetesTbl, data1, data2, user_uuid));
                             break;
-                        case "7":
+                        case 7:
                             createdData7 = await Promise.all(updateCCCdata(dialysisTbl, data1, data2, user_uuid));
                             break;
                     }
@@ -447,6 +519,7 @@ module.exports = CCchartsController();
 async function create_CC(tablename, user_uuid, data1, data2) {
 
     data2.forEach((item, index) => {
+        item.critical_care_type = data1.critical_care_type;
         item.patient_uuid = data1.patient_uuid;
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
