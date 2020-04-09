@@ -9175,6 +9175,9 @@
       "properties": {
         "table_name": {
           "type": "string"
+        },
+        "Id": {
+          "type": "string"
         }
       }
     },

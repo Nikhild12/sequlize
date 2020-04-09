@@ -113,7 +113,18 @@ const commonReferenceGroupController = () => {
                 }
                 /* gender Data */
 
+// if (postData.is_active == 1) {
+//             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+//         }
+//         else if (postData.is_active == 0) {
+//             query1.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
 
+
+//         }
+//         else {
+//             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+
+//         }
                 await common_tbl.findAndCountAll(postingData).then((data) => {
                         return res
                             .status(httpStatus.OK)
@@ -353,14 +364,15 @@ const commonReferenceGroupController = () => {
         postData.modified_by = req.headers.user_uuid;
         try {
 
-            if (postData.uuid) {
+            if (postData.Id) {
 
                 await common_tbl.update({
-                    is_active: postData.is_active,
-                    modified_by: postData.modified_by
+                    is_active: 0,
+                    status:0,
+                    // modified_by: postData.modified_by
                 }, {
                     where: {
-                        uuid: postData.uuid
+                        uuid: postData.Id
                     }
                 }).then((data) => {
                    
