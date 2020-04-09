@@ -282,54 +282,8 @@ const diagnosisController = () => {
             offset: offset,
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
-            attributes: getDiagnosisAttributes(),
-            include: [
-                {
-                    model: diagverTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: diaggradeTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: bodysideTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: bodysiteTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: diagregionTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: positionsTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: diagcatTb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: diagschetb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                },
-                {
-                    model: diagtypetb,
-                    attributes: ['uuid', 'name'],
-                    required: false
-                }
-            ]
+            //attributes: getDiagnosisAttributes(),
+
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -377,6 +331,54 @@ const diagnosisController = () => {
             findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
         try {
+            findQuery.include = [
+                {
+                    model: diagverTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diaggradeTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: bodysideTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: bodysiteTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diagregionTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: positionsTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diagcatTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diagschetb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diagtypetb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                }
+            ];
+
             const data = await diagnosisTbl.findAndCountAll(findQuery);
 
             if (data) {
@@ -395,8 +397,8 @@ const diagnosisController = () => {
 
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-            .status(400)
-            .send({ code: httpStatus.BAD_REQUEST, message: err.message });
+                .status(400)
+                .send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
 
 
@@ -482,7 +484,7 @@ const diagnosisController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-           const data = await diagnosisTbl.findOne({
+            const data = await diagnosisTbl.findOne({
                 where: {
                     uuid: postData.Diagnosis_id,
                 },
@@ -537,25 +539,25 @@ const diagnosisController = () => {
                     }
                 ]
             });
-                if (data) {
+            if (data) {
                 const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
                 const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
                 const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
                 const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                }
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        responseContents: data
+                    });
+            }
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-            .status(400)
-            .send({ code: httpStatus.BAD_REQUEST, message: err.message });
+                .status(400)
+                .send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
     };
 
@@ -650,22 +652,47 @@ async function getdepDetails(user_uuid, depid, authorization) {
 function getfulldata(data, getcuDetails, getmuDetails, getdep) {
     let newdata = {
         "uuid": data.uuid,
-        "code": data.code,
-        "name": data.name,
-        "department_uuid": data.department_uuid,
+        "code": data.uuid,
+        "name": data.uuid,
+        "description": data.uuid,
+        "diagnosis_scheme_uuid": data.uuid,
+        "diagnosis_type_uuid": data.uuid,
+        "diagnosis_category_uuid": data.uuid,
+        "diagnosis_grade_uuid": data.uuid,
+        "diagnosis_region_uuid": data.uuid,
+        "diagnosis_version_uuid": data.uuid,
+        "speciality": data.uuid,
+        "synonym": data.uuid,
+        "referrence_link": data.uuid,
+        "length_Of_stay": data.uuid,
+        "body_site_uuid": data.uuid,
+        "side_uuid": data.uuid,
+        "position_id": data.uuid,
+        "in_house": data.uuid,
+        "is_notifibale": data.uuid,
+        "is_sensitive": data.uuid,
+        "is_billable": data.uuid,
+        "facility_uuid": data.uuid,
+        "department_uuid": data.uuid,
         "department_name": getdep.responseContent.name,
-        "description": data.description,
-        "sketch_name": data.sketch_name,
-        "status": data.status,
-        "revision": data.revision,
-        "is_active": data.is_active,
+        "comments": data.uuid,
+        "is_active": data.uuid,
+        "status": data.uuid,
+        "revision": data.uuid,
         "created_by_id": data.created_by,
         "created_by": getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name,
         "modified_by_id": data.modified_by,
         "modified_by": getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name,
-        "created_date": data.created_date,
-        "modified_date": data.modified_date,
-        "speciality_sketch_detail": data.speciality_sketch_detail
+        "diagnosis_version": data.diagnosis_version,
+        "diagnosis_grade": data.diagnosis_grade,
+        "body_side": data.body_side,
+        "body_site": data.body_site,
+        "diagnosis_region": data.diagnosis_region,
+        "position": data.position,
+        "diagnosis_category": data.diagnosis_category,
+        "diagnosis_scheme": data.diagnosis_scheme,
+        "diagnosis_type": data.diagnosis_type
+
     };
     return newdata;
 }

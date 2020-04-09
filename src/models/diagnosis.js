@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         diagnosis_version_uuid: {
             type: DataTypes.INTEGER,
-            defaultValue: 1
+            
         },
         speciality: {
             type: DataTypes.STRING(250),
@@ -132,7 +132,6 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     diagnosis.associate = models => {
-
         diagnosis.belongsTo(models.diagnosis_version, {
             foreignKey: "diagnosis_version_uuid",
             targetKey: "uuid",
@@ -178,7 +177,6 @@ module.exports = (sequelize, DataTypes) => {
             targetKey: "uuid",
             //as: "diagnosis_category"
         });
-        
     };
 
     return diagnosis;
