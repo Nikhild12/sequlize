@@ -754,6 +754,7 @@ const cccMasterController = () => {
                             model: conceptTbl,
                             as: 'critical_care_concepts',
                             required: false,
+                            order: [['display_order', 'DESC']],
                             attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                             where: { is_active: 1, status: 1 },
                             include: [

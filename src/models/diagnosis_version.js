@@ -68,12 +68,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    diagnosis_version.associate = models => {
-        diagnosis_version.belongsTo(models.diagnosis, {
-             foreignKey: "uuid",
-            //  targetKey : "diagnosis_version_uuid"
-         });
-     };
+    
 
     return diagnosis_version;
 };
