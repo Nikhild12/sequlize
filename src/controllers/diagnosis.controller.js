@@ -255,8 +255,8 @@ const diagnosisController = () => {
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'modified_by';
-        let sortOrder = 'DESC';
+        let sortField = 'name';
+        let sortOrder = 'ASC';
 
         if (getsearch.pageNo) {
             let temp = parseInt(getsearch.pageNo);
@@ -283,43 +283,43 @@ const diagnosisController = () => {
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
             attributes: getDiagnosisAttributes(),
-             include: [
+             // include: [
                     // {
                     //     model: diagnosisversionTb,
                     //     attributes: ['uuid', 'name'],
                     //     required: false
                     // },
-                    {
-                        model: diagnosistypeTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysideTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysiteTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagnosisregionTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: positionsTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagnosis_gradeTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    }
-                ]
+                //     {
+                //         model: diagnosistypeTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     },
+                //     {
+                //         model: bodysideTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     },
+                //     {
+                //         model: bodysiteTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     },
+                //     {
+                //         model: diagnosisregionTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     },
+                //     {
+                //         model: positionsTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     },
+                //     {
+                //         model: diagnosis_gradeTb,
+                //         attributes: ['uuid', 'name'],
+                //         required: false
+                //     }
+                // ]
 
 
 

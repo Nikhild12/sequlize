@@ -28,8 +28,8 @@ const commonReferenceGroupController = () => {
             const common_tbl = db[table_name];
 
 
-            let sortField = 'name';
-            let sortOrder = 'ASC';
+            let sortField = 'created_date';
+            let sortOrder = 'DESC';
             let pageNo = 0;
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
             if (postData.pageNo) {
