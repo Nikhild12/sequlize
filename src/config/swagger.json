@@ -5207,6 +5207,33 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api//transfer-reasons/getTransferReasons": {
+      "get": {
+        "summary": "To get list of TransferReasons",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TransferReasons"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diseases/get-by-filters": {
       "get": {
         "description": "To get list of diseases based on filter",
@@ -12979,6 +13006,10 @@
           "type": "integer",
           "example": 1
         },
+        "transfer_reason_uuid": {
+          "type": "integer",
+          "example": 1
+        },
         "transfer_comments": {
           "type": "string",
           "example": "enter some thing"
@@ -14541,7 +14572,6 @@
         "status": {
           "type": "boolean"
         }
-               
       }
     }
   }
