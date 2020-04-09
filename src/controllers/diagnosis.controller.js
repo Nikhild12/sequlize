@@ -385,8 +385,8 @@ const diagnosisController = () => {
                     .json({
                         message: "success",
                         statusCode: 200,
-                        responseContents: (findData.rows ? findData.rows : []),
-                        totalRecords: (findData.count ? findData.count : 0),
+                        responseContents: (data.rows ? data.rows : []),
+                        totalRecords: (data.count ? data.count : 0),
 
                     });
             }
@@ -395,10 +395,8 @@ const diagnosisController = () => {
 
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    message: "error",
-                });
+            .status(400)
+            .send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
 
 
@@ -484,7 +482,7 @@ const diagnosisController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await diagnosisTbl.findOne({
+           const data = await diagnosisTbl.findOne({
                 where: {
                     uuid: postData.Diagnosis_id,
                 },
@@ -539,7 +537,7 @@ const diagnosisController = () => {
                     }
                 ]
             })
-                .then((data) => {
+                if (data) {
                     return res
                         .status(httpStatus.OK)
                         .json({
@@ -547,16 +545,13 @@ const diagnosisController = () => {
                             req: '',
                             responseContents: data
                         });
-                });
+                }
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
+            .status(400)
+            .send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
     };
 
