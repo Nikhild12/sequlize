@@ -214,7 +214,7 @@ const diagnosisController = () => {
                 }
             });
 
-            diagnosisData.code =diagnosisData.code;
+            diagnosisData.code = diagnosisData.code;
             diagnosisData.name = diagnosisData.name;
 
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
@@ -283,53 +283,53 @@ const diagnosisController = () => {
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
             attributes: getDiagnosisAttributes(),
-             include: [
-                    {
-                        model: diagverTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diaggradeTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysideTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysiteTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagregionTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: positionsTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagcatTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagschetb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagtypetb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    }
-                ]
+            include: [
+                {
+                    model: diagverTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: diaggradeTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: bodysideTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: bodysiteTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: diagregionTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: positionsTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: diagcatTb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: diagschetb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                },
+                {
+                    model: diagtypetb,
+                    attributes: ['uuid', 'name'],
+                    required: false
+                }
+            ]
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -368,42 +368,29 @@ const diagnosisController = () => {
             };
         }
         if (getsearch.is_active == 1) {
-            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+            findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
         else if (getsearch.is_active == 0) {
-            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+            findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
         }
         else {
-            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+            findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
         try {
-            await diagnosisTbl.findAndCountAll(findQuery)
+            const data = await diagnosisTbl.findAndCountAll(findQuery)
 
+            if (data) {
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        message: "success",
+                        statusCode: 200,
+                        responseContents: (findData.rows ? findData.rows : []),
+                        totalRecords: (findData.count ? findData.count : 0),
 
-                .then((findData) => {
+                    });
+            }
 
-                    return res
-
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "success",
-                            statusCode: 200,
-                            responseContents: (findData.rows ? findData.rows : []),
-                            totalRecords: (findData.count ? findData.count : 0),
-
-                        });
-                })
-                .catch(err => {
-
-                    return res;
-                    console.log('\n err...', err)
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "error",
-                            err: err,
-                            req: ''
-                        });
-                });
         } catch (err) {
 
             const errorMsg = err.errors ? err.errors[0].message : err.message;
