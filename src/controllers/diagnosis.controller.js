@@ -308,8 +308,6 @@ const diagnosisController = () => {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-
-
                 ]
             };
         }
@@ -333,11 +331,6 @@ const diagnosisController = () => {
         try {
             findQuery.include = [
                 {
-                    model: diagverTb,
-                    attributes: ['uuid', 'name'],
-                    //required: false
-                },
-                {
                     model: diaggradeTb,
                     attributes: ['uuid', 'name'],
                     //required: false
@@ -349,6 +342,11 @@ const diagnosisController = () => {
                 },
                 {
                     model: bodysiteTb,
+                    attributes: ['uuid', 'name'],
+                    //required: false
+                },
+                {
+                    model: diagverTb,
                     attributes: ['uuid', 'name'],
                     //required: false
                 },

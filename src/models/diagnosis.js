@@ -134,47 +134,47 @@ module.exports = (sequelize, DataTypes) => {
     diagnosis.associate = models => {
         diagnosis.belongsTo(models.diagnosis_version, {
             foreignKey: "diagnosis_version_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_version"
         });
         diagnosis.belongsTo(models.diagnosis_type, {
             foreignKey: "diagnosis_type_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_type"
         });
         diagnosis.belongsTo(models.body_side, {
             foreignKey: "side_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "body_side"
         });
         diagnosis.belongsTo(models.body_site, {
             foreignKey: "body_site_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "body_site"
         });
         diagnosis.belongsTo(models.diagnosis_grade, {
             foreignKey: "diagnosis_grade_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_grade"
         });
         diagnosis.belongsTo(models.diagnosis_scheme, {
             foreignKey: "diagnosis_scheme_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_scheme"
         });
         diagnosis.belongsTo(models.diagnosis_region, {
             foreignKey: "diagnosis_region_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_region"
         });
         diagnosis.belongsTo(models.positions, {
             foreignKey: "position_id",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "positions"
         });
         diagnosis.belongsTo(models.diagnosis_category, {
             foreignKey: "diagnosis_category_uuid",
-            targetKey: "uuid",
+            //targetKey: "uuid",
             //as: "diagnosis_category"
         });
     };
