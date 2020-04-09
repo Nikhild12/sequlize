@@ -27,7 +27,7 @@ const allergyMasterController = () => {
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
+        let sortField = 'modified_date';
         let sortOrder = 'DESC';
 
         if (getsearch.pageNo) {
@@ -112,7 +112,7 @@ const allergyMasterController = () => {
             ]
           };
         }
-if (getsearch.is_active ==1 ) {
+       if (getsearch.is_active ==1 ) {
          findQuery.where ={[Op.and]: [ {is_active:1}]};
         }
         else if(getsearch.is_active ==0) {

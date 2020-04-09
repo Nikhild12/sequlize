@@ -42,7 +42,7 @@ const proceduresController = () => {
     const itemsPerPage = getsearch.paginationSize
       ? getsearch.paginationSize
       : 10;
-    let sortField = "created_date";
+    let sortField = "modified_date";
     let sortOrder = "DESC";
 
     if (getsearch.pageNo) {
@@ -69,7 +69,7 @@ const proceduresController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      where: { is_active: 1, status: 1 },
+      // where: { is_active: 1, status: 1 },
       include: [{
         model: procedureNoteTbl,
         // include: [
@@ -139,6 +139,43 @@ const proceduresController = () => {
         ]
       };
     }
+ if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
+          findQuery.where = {
+            [Op.and]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+              
+              
+            ]
+          };
+        }
+        
+        if (getsearch.procedure_scheme_uuid &&  /\S/.test(getsearch.procedure_scheme_uuid)) {
+          findQuery.where = {
+            [Op.and]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid),
+            ]
+          };
+        }
+         if (getsearch.procedure_type_uuid &&  /\S/.test(getsearch.procedure_type_uuid)) {
+          findQuery.where = {
+            [Op.and]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_scheme_uuid),
+            ]
+          };
+        }
+       if (getsearch.is_active ==1 ) {
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+        }
+        else if(getsearch.is_active ==0) {
+         findQuery.where ={[Op.and]: [ {is_active:0}]};
+
+
+        }
+        else{
+         findQuery.where ={[Op.and]: [ {is_active:1}]};
+
+        }
 
     try {
       await proceduresTbl
@@ -190,7 +227,7 @@ const proceduresController = () => {
             return res.send({
               statusCode: 400,
               status: "error",
-              msg: "Record already Found. Please enter procedures Master"
+              msg: " Please enter procedures Master"
             });
           } else {
             await proceduresTbl
