@@ -556,7 +556,7 @@ const diagnosisController = () => {
                     .json({
                         statusCode: 200,
                         req: '',
-                        responseContents: data
+                        responseContents: getdata
                     });
             }
 
