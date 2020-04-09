@@ -132,11 +132,6 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     diagnosis.associate = models => {
-        diagnosis.belongsTo(models.diagnosis_version, {
-            foreignKey: "diagnosis_version_uuid",
-            //targetKey: "uuid",
-            //as: "diagnosis_version"
-        });
         diagnosis.belongsTo(models.diagnosis_type, {
             foreignKey: "diagnosis_type_uuid",
             //targetKey: "uuid",
@@ -151,6 +146,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "body_site_uuid",
             //targetKey: "uuid",
             //as: "body_site"
+        });
+        diagnosis.belongsTo(models.diagnosis_version, {
+            foreignKey: "diagnosis_version_uuid",
+            //targetKey: "uuid",
+            //as: "diagnosis_version"
         });
         diagnosis.belongsTo(models.diagnosis_grade, {
             foreignKey: "diagnosis_grade_uuid",
