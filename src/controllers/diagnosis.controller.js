@@ -536,8 +536,12 @@ const diagnosisController = () => {
                         required: false
                     }
                 ]
-            })
+            });
                 if (data) {
+                const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
+                const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
+                const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
+                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
                     return res
                         .status(httpStatus.OK)
                         .json({
@@ -641,4 +645,27 @@ async function getdepDetails(user_uuid, depid, authorization) {
     };
     const dep_details = await rp(options);
     return dep_details;
+}
+
+function getfulldata(data, getcuDetails, getmuDetails, getdep) {
+    let newdata = {
+        "uuid": data.uuid,
+        "code": data.code,
+        "name": data.name,
+        "department_uuid": data.department_uuid,
+        "department_name": getdep.responseContent.name,
+        "description": data.description,
+        "sketch_name": data.sketch_name,
+        "status": data.status,
+        "revision": data.revision,
+        "is_active": data.is_active,
+        "created_by_id": data.created_by,
+        "created_by": getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name,
+        "modified_by_id": data.modified_by,
+        "modified_by": getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name,
+        "created_date": data.created_date,
+        "modified_date": data.modified_date,
+        "speciality_sketch_detail": data.speciality_sketch_detail
+    };
+    return newdata;
 }
