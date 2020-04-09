@@ -377,7 +377,7 @@ const diagnosisController = () => {
             findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
         try {
-            const data = await diagnosisTbl.findAndCountAll(findQuery)
+            const data = await diagnosisTbl.findAndCountAll(findQuery);
 
             if (data) {
                 return res
