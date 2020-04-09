@@ -333,47 +333,56 @@ const diagnosisController = () => {
                 {
                     model: diaggradeTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_grade',
+                    required: false
                 },
                 {
                     model: bodysideTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'body_side',
+                    required: false
                 },
                 {
                     model: bodysiteTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'body_site',
+                    required: false
                 },
                 {
                     model: diagverTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_version',
+                    required: false
                 },
                 {
                     model: diagregionTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_region',
+                    required: false
                 },
                 {
                     model: positionsTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'positions',
+                    required: false
                 },
                 {
                     model: diagcatTb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_category',
+                    required: false
                 },
                 {
                     model: diagschetb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_scheme',
+                    required: false
                 },
                 {
                     model: diagtypetb,
                     attributes: ['uuid', 'name'],
-                    //required: false
+                    as: 'diagnosis_type',
+                    required: false
                 }
             ];
 
