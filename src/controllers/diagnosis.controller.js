@@ -4,14 +4,15 @@ var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const diagnosisTbl = db.diagnosis;
-const diagnosisversionTb = db.diagnosis_version;
-const diagnosistypeTb = db.diagnosis_type;
-const bodysideTb = db.body_side;
-const bodysiteTb = db.body_site;
-
-const diagnosisregionTb = db.diagnosis_region;
+const diagverTb = db.diagnosis_version;
+const diagregionTb = db.diagnosis_region;
 const positionsTb = db.positions;
-const diagnosis_gradeTb = db.diagnosis_grade;
+const diaggradeTb = db.diagnosis_grade;
+const diagcatTb = db.diagnosis_category;
+const diagtypetb = db.diagnosis_type;
+const diagschetb = db.diagnosis_scheme;
+const bodysiteTb = db.body_site;
+const bodysideTb = db.body_side;
 
 const emr_utilites = require("../services/utility.service");
 
@@ -261,7 +262,6 @@ const diagnosisController = () => {
         if (getsearch.pageNo) {
             let temp = parseInt(getsearch.pageNo);
 
-
             if (temp && (temp != NaN)) {
                 pageNo = temp;
             }
@@ -283,46 +283,53 @@ const diagnosisController = () => {
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
             attributes: getDiagnosisAttributes(),
-             // include: [
-                    // {
-                    //     model: diagnosisversionTb,
-                    //     attributes: ['uuid', 'name'],
-                    //     required: false
-                    // },
-                //     {
-                //         model: diagnosistypeTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     },
-                //     {
-                //         model: bodysideTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     },
-                //     {
-                //         model: bodysiteTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     },
-                //     {
-                //         model: diagnosisregionTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     },
-                //     {
-                //         model: positionsTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     },
-                //     {
-                //         model: diagnosis_gradeTb,
-                //         attributes: ['uuid', 'name'],
-                //         required: false
-                //     }
-                // ]
-
-
-
+             include: [
+                    {
+                        model: diagverTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diaggradeTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysideTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysiteTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagregionTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: positionsTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagcatTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagschetb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagtypetb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    }
+                ]
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -332,8 +339,6 @@ const diagnosisController = () => {
                     name: {
                         [Op.like]: '%' + getsearch.search + '%',
                     },
-
-
                 }, {
                     code: {
                         [Op.like]: '%' + getsearch.search + '%',
@@ -367,12 +372,9 @@ const diagnosisController = () => {
         }
         else if (getsearch.is_active == 0) {
             findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
-
-
         }
         else {
             findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-
         }
         try {
             await diagnosisTbl.findAndCountAll(findQuery)
@@ -392,7 +394,6 @@ const diagnosisController = () => {
                         });
                 })
                 .catch(err => {
-
 
                     return res;
                     console.log('\n err...', err)
@@ -415,8 +416,6 @@ const diagnosisController = () => {
 
 
     };
-
-
 
 
     const _deleteDiagnosis = async (req, res) => {
@@ -501,11 +500,57 @@ const diagnosisController = () => {
             await diagnosisTbl.findOne({
                 where: {
                     uuid: postData.Diagnosis_id,
-
                 },
                 attributes: getDiagnosisAttributes(),
                 offset: offset,
-                limit: itemsPerPage
+                limit: itemsPerPage,
+                include: [
+                    {
+                        model: diagverTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diaggradeTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysideTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: bodysiteTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagregionTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: positionsTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagcatTb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagschetb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    },
+                    {
+                        model: diagtypetb,
+                        attributes: ['uuid', 'name'],
+                        required: false
+                    }
+                ]
             })
                 .then((data) => {
                     return res
@@ -559,7 +604,7 @@ const diagnosisController = () => {
             });
         }
 
-    }
+    };
     // --------------------------------------------return----------------------------------
     return {
         getDiagnosisFilter: _getDiagnosisFilter,
@@ -576,3 +621,42 @@ const diagnosisController = () => {
 
 
 module.exports = diagnosisController();
+
+async function getuserDetails(user_uuid, docid, authorization) {
+    console.log(user_uuid, docid, authorization);
+    let options = {
+        uri: config.wso2AppUrl + 'users/getusersById',
+        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+        //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+        method: "POST",
+        headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+        },
+        body: { "Id": docid },
+        //body: {},
+        json: true
+    };
+    const user_details = await rp(options);
+    return user_details;
+}
+
+async function getdepDetails(user_uuid, depid, authorization) {
+    console.log(depid);
+    let options = {
+        uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
+        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
+        //   uri:
+        //     "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments",
+        method: "POST",
+        headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+        },
+        body: { "uuid": depid },
+        //body: { pageNo: 0, paginationSize: 100 },
+        json: true
+    };
+    const dep_details = await rp(options);
+    return dep_details;
+}
