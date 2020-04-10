@@ -471,10 +471,10 @@ const ChiefComplaints = () => {
         }
 
         
-        if (getsearch.is_active == 1) {
+        if (getsearch.status == 1) {
             findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
         }
-        else if (getsearch.is_active == 0) {
+        else if (getsearch.status == 0) {
             findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
 
 

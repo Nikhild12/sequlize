@@ -221,7 +221,7 @@ const commonReferenceGroupController = () => {
         const common_tbl = db[table_name];
         postData.created_by = req.body.user_uuid;
         try {
-            if (postData) {
+            if (postData &&common_tbl && db[table_name]) {
                 common_tbl.findAll({
                     where: {
                         [Op.or]: [{
