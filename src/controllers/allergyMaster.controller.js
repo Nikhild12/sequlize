@@ -112,18 +112,18 @@ const allergyMasterController = () => {
             ]
           };
         }
-       if (getsearch.status ==1 ) {
-         findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
+        if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            findQuery.where = { is_active: postData.status };
         }
-        else if(getsearch.is_active ==0) {
-         findQuery.where ={[Op.and]: [ {is_active:0},{status:0}]};
-
-
-        }
-        else{
-         findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
-
-        }
+    //    if (getsearch.status ==1 ) {
+    //      findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
+    //     }
+    //     if(getsearch.is_active ==0) {
+    //      findQuery.where ={[Op.and]: [ {is_active:0},{status:0}]};
+    //     }
+    //     // else{
+    //     //  findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
+    //     // }
 
         
         try {
