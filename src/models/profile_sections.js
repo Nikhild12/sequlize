@@ -51,19 +51,19 @@ module.exports = (sequelize, DataTypes) => {
             activity_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('activity_uuid')
-                    }
-                }
+                allowNull: true
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
+                //     },
+                //     min: {
+                //         args: [1],
+                //         msg: emr_constants.GetZeroValidationMessage('activity_uuid')
+                //     }
+                // }
 
 
             },
