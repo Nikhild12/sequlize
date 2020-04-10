@@ -43,7 +43,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
       is_active_encounter: emr_constants.IS_ACTIVE,
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
-      encounter_type_uuid: etypeId
+      encounter_type_uuid: etypeId,
     },
     include: [
       {
@@ -53,10 +53,10 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
           doctor_uuid: dId,
           department_uuid: deptId,
           is_active: emr_constants.IS_ACTIVE,
-          status: emr_constants.IS_ACTIVE
-        }
-      }
-    ]
+          status: emr_constants.IS_ACTIVE,
+        },
+      },
+    ],
   };
 
   if (etypeId === 1) {
@@ -65,7 +65,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
         Sequelize.fn("date", Sequelize.col("encounter_date")),
         "<=",
         moment().format("YYYY-MM-DD")
-      )
+      ),
     ];
   } else if (etypeId === 2 || etypeId === "2") {
     delete encounterQuery.include[0].where.doctor_uuid;
@@ -89,7 +89,7 @@ const Encounter = () => {
       from_date,
       to_date,
       departmentId,
-      encounterType
+      encounterType,
     } = req.query;
 
     try {
@@ -104,7 +104,7 @@ const Encounter = () => {
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
-          responseContents: encounterData
+          responseContents: encounterData,
         });
       } else if (
         user_uuid &&
@@ -126,12 +126,12 @@ const Encounter = () => {
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
-          responseContents: encounterData
+          responseContents: encounterData,
         });
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
         });
       }
     } catch (ex) {
@@ -158,12 +158,12 @@ const Encounter = () => {
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
-          responseContents: encounterData
+          responseContents: encounterData,
         });
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
         });
       }
     } catch (ex) {
@@ -213,13 +213,13 @@ const Encounter = () => {
         ) {
           return res.status(400).send({
             code: httpStatus[400],
-            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`
+            message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`,
           });
         }
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
+          message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`,
         });
       }
       // Assigning
@@ -258,40 +258,43 @@ const Encounter = () => {
 
         is_enc_doc_avail =
           encounterDoctorData && encounterDoctorData.length > 0;
-        if (encounter_type_uuid === 2 || encounter_type_uuid === 3) {
-          if (encounterData && encounterData.length > 0) {
-            encounterPromise = [
-              ...encounterPromise,
-              encounter_tbl.update(
-                {
-                  is_active_encounter: emr_constants.IS_IN_ACTIVE,
-                  is_active: emr_constants.IS_IN_ACTIVE,
-                  status: emr_constants.IS_IN_ACTIVE
-                },
-                {
-                  where: { uuid: encounterData[0].uuid }
-                }
-              ),
-              encounter_doctors_tbl.update(
-                {
-                  encounter_doctor_status: emr_constants.IS_IN_ACTIVE,
-                  is_active: emr_constants.IS_IN_ACTIVE,
-                  status: emr_constants.IS_IN_ACTIVE
-                },
-                {
-                  where: { encounter_uuid: encounterData[0].uuid }
-                }
-              )
-            ];
-          }
-        } else if (
-          encounter_type_uuid === 1 &&
+        // if (encounter_type_uuid === 2 || encounter_type_uuid === 3) {
+        // if (encounterData && encounterData.length > 0) {
+        //   encounterPromise = [
+        //     ...encounterPromise,
+        //     encounter_tbl.update(
+        //       {
+        //         is_active_encounter: emr_constants.IS_IN_ACTIVE,
+        //         is_active: emr_constants.IS_IN_ACTIVE,
+        //         status: emr_constants.IS_IN_ACTIVE,
+        //       },
+        //       {
+        //         where: { uuid: encounterData[0].uuid },
+        //       }
+        //     ),
+        //     encounter_doctors_tbl.update(
+        //       {
+        //         encounter_doctor_status: emr_constants.IS_IN_ACTIVE,
+        //         is_active: emr_constants.IS_IN_ACTIVE,
+        //         status: emr_constants.IS_IN_ACTIVE,
+        //       },
+        //       {
+        //         where: { encounter_uuid: encounterData[0].uuid },
+        //       }
+        //     ),
+        //   ];
+        // }
+        // }
+        if (
+          (encounter_type_uuid === 1 ||
+            encounter_type_uuid === 2 ||
+            encounter_type_uuid === 3) &&
           is_enc_avail &&
           is_enc_doc_avail
         ) {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST,
-            message: emr_constants.DUPLICATE_ENCOUNTER
+            message: emr_constants.DUPLICATE_ENCOUNTER,
           });
         }
 
@@ -299,8 +302,8 @@ const Encounter = () => {
           encounterPromise = [
             ...encounterPromise,
             encounter_tbl.create(encounter, {
-              returning: true
-            })
+              returning: true,
+            }),
           ];
         }
         const createdEncounterData = await Promise.all(encounterPromise);
@@ -325,7 +328,7 @@ const Encounter = () => {
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Encounter Successfully",
-            responseContents: { encounter, encounterDoctor }
+            responseContents: { encounter, encounterDoctor },
           });
         }
       } catch (ex) {
@@ -346,7 +349,7 @@ const Encounter = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -374,8 +377,8 @@ const Encounter = () => {
             total_pages: 2,
             current_page: +page_no + 1,
             visit_history,
-            responseContentLength: visit_history.length
-          }
+            responseContentLength: visit_history.length,
+          },
         });
       } catch (ex) {
         console.log(ex);
@@ -386,7 +389,7 @@ const Encounter = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -407,22 +410,22 @@ const Encounter = () => {
             {
               is_active_encounter: emr_constants.IS_IN_ACTIVE,
               is_active: emr_constants.IS_IN_ACTIVE,
-              status: emr_constants.IS_IN_ACTIVE
+              status: emr_constants.IS_IN_ACTIVE,
             },
             {
-              where: { uuid: encounterId }
+              where: { uuid: encounterId },
             }
           ),
           encounter_doctors_tbl.update(
             {
               encounter_doctor_status: emr_constants.IS_IN_ACTIVE,
               is_active: emr_constants.IS_IN_ACTIVE,
-              status: emr_constants.IS_IN_ACTIVE
+              status: emr_constants.IS_IN_ACTIVE,
             },
             {
-              where: { encounter_uuid: encounterId }
+              where: { encounter_uuid: encounterId },
             }
-          )
+          ),
         ];
 
         let deleteEnPromise = await Promise.all(encounterPromise);
@@ -444,7 +447,7 @@ const Encounter = () => {
           : emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
           code: httpStatus.OK,
-          message: responseMessage
+          message: responseMessage,
         });
       } catch (ex) {
         console.log(ex);
@@ -466,7 +469,7 @@ const Encounter = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -478,7 +481,7 @@ const Encounter = () => {
       discharge_type_uuid: req.body.discharge_type_uuid,
       discharge_date: req.body.discharge_date,
       modified_by: user_uuid,
-      modified_date: new Date()
+      modified_date: new Date(),
     };
     try {
       if (user_uuid && updatedata) {
@@ -487,8 +490,8 @@ const Encounter = () => {
             facility_uuid: updatedata.facility_uuid,
             uuid: updatedata.encounter_uuid,
             patient_uuid: updatedata.patient_uuid,
-            encounter_type_uuid: updatedata.encounter_type_uuid
-          }
+            encounter_type_uuid: updatedata.encounter_type_uuid,
+          },
         });
         if (ec_updated) {
           return res
@@ -519,10 +522,10 @@ const Encounter = () => {
           {
             tat_end_time: tat_end_time,
             modified_by: user_uuid,
-            modified_date: new Date()
+            modified_date: new Date(),
           },
           {
-            where: { uuid: encounterDoctorId }
+            where: { uuid: encounterDoctorId },
           }
         );
 
@@ -532,7 +535,7 @@ const Encounter = () => {
             : emr_constants.NO_CONTENT_MESSAGE;
         return res.status(200).send({
           code: httpStatus.OK,
-          message: returnMessage
+          message: returnMessage,
         });
       } catch (ex) {
         console.log(ex);
@@ -543,7 +546,7 @@ const Encounter = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.PLEASE_PROVIDE} ${emr_constants.END_DATE}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.PLEASE_PROVIDE} ${emr_constants.END_DATE}`,
       });
     }
   };
@@ -556,7 +559,7 @@ const Encounter = () => {
       if (user_uuid && patient_uuid) {
         const docList = await vw_patientdoc.findAll({
           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-          where: { ed_patient_uuid: patient_uuid }
+          where: { ed_patient_uuid: patient_uuid },
           //group: ['ed_created_date']
         });
         if (docList) {
@@ -568,13 +571,13 @@ const Encounter = () => {
         } else {
           return res.status(400).send({
             code: httpStatus[400],
-            message: "patient information not found"
+            message: "patient information not found",
           });
         }
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: "No Request Body or Search key Found ",
         });
       }
     } catch (ex) {
@@ -594,19 +597,19 @@ const Encounter = () => {
         const updateVal = {
           is_active: emr_constants.IS_IN_ACTIVE,
           modified_by: user_uuid,
-          is_active_encounter: emr_constants.IS_IN_ACTIVE
+          is_active_encounter: emr_constants.IS_IN_ACTIVE,
         };
         const updateEncQuery = {
-          where: { uuid: encounterId }
+          where: { uuid: encounterId },
         };
         const updateEncDocQuery = {
-          where: { encounter_uuid: encounterId }
+          where: { encounter_uuid: encounterId },
         };
         let encPromise = [];
         encPromise = [
           ...encPromise,
           encounter_tbl.update(updateVal, updateEncQuery),
-          encounter_doctors_tbl.update(updateVal, updateEncDocQuery)
+          encounter_doctors_tbl.update(updateVal, updateEncDocQuery),
         ];
         const encounterPromise = await Promise.all(encPromise);
         const responseCode =
@@ -617,7 +620,7 @@ const Encounter = () => {
             : emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
           code: responseCode,
-          message: responseMessage
+          message: responseMessage,
         });
       } catch (ex) {
         console.log("Exception happened", ex);
@@ -628,7 +631,7 @@ const Encounter = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -645,31 +648,32 @@ const Encounter = () => {
         const latestEncounterRecord = await vw_latest_encounter.findAll({
           attributes: enc_att.getLatestEncounterAttributes(),
           where: enc_att.getLatestEncounterQuery(patientId, encounterTypeId),
-          order: [["ed_uuid", "desc"]]
+          order: [["ed_uuid", "desc"]],
         });
 
         const {
           responseCode,
-          responseMessage
+          responseMessage,
         } = enc_att.getLatestEncounterResponse(latestEncounterRecord);
         return res.status(200).send({
           code: responseCode,
           message: responseMessage,
           responseContents: enc_att.modifiedLatestEncounterRecord(
             latestEncounterRecord
-          )[0]
+          )[0],
         });
       } catch (error) {
         console.log(error);
 
-        return res
-        .status(httpStatus.INTERNAL_SERVER_ERROR)
-        .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: error.message,
+        });
       }
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
       });
     }
   };
@@ -684,7 +688,7 @@ const Encounter = () => {
     getPatientDoc: _getPatientDoc,
     closeEncounter: _closeEncounter,
     getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate,
-    getLatestEncounterByPatientId: _getLatestEncounterByPatientId
+    getLatestEncounterByPatientId: _getLatestEncounterByPatientId,
   };
 };
 
@@ -692,8 +696,8 @@ module.exports = Encounter();
 
 function getCreatedEncounterId(createdEncounterData) {
   return createdEncounterData.length > 1
-    ? createdEncounterData[2].uuid
-    : createdEncounterData[0].uuid;
+    ? (createdEncounterData[2] && createdEncounterData[2].uuid) || 0
+    : (createdEncounterData[0] && createdEncounterData[0].uuid) || 0;
 }
 
 function getEncounterQuery(pId, from_date, to_date) {
@@ -711,12 +715,12 @@ function getEncounterQuery(pId, from_date, to_date) {
             Sequelize.fn("date", Sequelize.col("encounter_date")),
             "<=",
             moment(to_date).format("YYYY-MM-DD")
-          )
-        ]
+          ),
+        ],
       },
       is_active_encounter: emr_constants.IS_ACTIVE,
       is_active: emr_constants.IS_ACTIVE,
-      status: emr_constants.IS_ACTIVE
+      status: emr_constants.IS_ACTIVE,
     },
     include: [
       {
@@ -724,10 +728,10 @@ function getEncounterQuery(pId, from_date, to_date) {
         attributes: ["uuid", "code", "name"],
         where: {
           is_active: emr_constants.IS_ACTIVE,
-          status: emr_constants.IS_ACTIVE
-        }
-      }
-    ]
+          status: emr_constants.IS_ACTIVE,
+        },
+      },
+    ],
   };
 }
 
@@ -738,8 +742,8 @@ async function getEncounterQueryByPatientId(pId, etypeId) {
       is_active_encounter: emr_constants.IS_ACTIVE,
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
-      encounter_type_uuid: etypeId
-    }
+      encounter_type_uuid: etypeId,
+    },
   };
   if (etypeId === 1) {
     query.where[Op.and] = [
@@ -747,7 +751,7 @@ async function getEncounterQueryByPatientId(pId, etypeId) {
         Sequelize.fn("date", Sequelize.col("encounter_date")),
         "<=",
         moment().format("YYYY-MM-DD")
-      )
+      ),
     ];
   }
   return encounter_tbl.findAll(query);
@@ -761,8 +765,8 @@ async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
       department_uuid: deptId,
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
-      encounter_uuid: enId
-    }
+      encounter_uuid: enId,
+    },
   });
 }
 
@@ -776,11 +780,11 @@ async function getuserDetails(user_uuid, docid, authorization) {
     method: "POST",
     headers: {
       Authorization: authorization,
-      user_uuid: user_uuid
+      user_uuid: user_uuid,
     },
     //body: { "Id": docid },
     body: {},
-    json: true
+    json: true,
   };
   const user_details = await rp(options);
   return user_details;
@@ -796,11 +800,11 @@ async function getdepDetails(user_uuid, depid, authorization) {
     method: "POST",
     headers: {
       Authorization: authorization,
-      user_uuid: user_uuid
+      user_uuid: user_uuid,
     },
     //body: { "uuid": depid },
     body: { pageNo: 0, paginationSize: 100 },
-    json: true
+    json: true,
   };
   const dep_details = await rp(options);
   return dep_details;
@@ -821,7 +825,7 @@ function getpddata(docList, getuDetails, getdep) {
       doctor_uuid: docList[0].doctor_uuid,
       doctor_name: doc_name,
       department_uuid: docList[0].department_uuid,
-      department_name: getdep.responseContent.name
+      department_name: getdep.responseContent.name,
     };
 
     return { Doc_info: doc_data };

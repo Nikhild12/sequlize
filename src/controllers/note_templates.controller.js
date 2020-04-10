@@ -142,7 +142,7 @@ const noteTemplatesController = () => {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "Record already Found. Please ente Note Template"
+                        msg: "Please ente new  Note Template"
                     });
                 } else {
                     await noteTemplatesTbl.create(postData, {
