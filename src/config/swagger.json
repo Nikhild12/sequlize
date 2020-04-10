@@ -8402,7 +8402,39 @@
     "getProcedures": {
       "type": "object",
       "properties": {
-        "search": {
+         "pageNo": {
+          "type": "string",
+          "example": ""
+        },
+         "paginationSize": {
+          "type": "string",
+          "example": ""
+        },
+         "sortField": {
+          "type": "string",
+          "example": ""
+        },
+         "sortOrder": {
+          "type": "string",
+          "example": ""
+        },
+         "searchKeyWord": {
+          "type": "string",
+          "example": ""
+        },
+         "search": {
+          "type": "string",
+          "example": ""
+        },
+         "procedure_scheme_uuid": {
+          "type": "string",
+          "example": ""
+        },
+         "procedure_type_uuid": {
+          "type": "string",
+          "example": ""
+        },
+        "is_active": {
           "type": "string",
           "example": ""
         }
