@@ -317,8 +317,8 @@ const diagnosisController = () => {
         if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
             findQuery.where = {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
                 ]
             };
         }
