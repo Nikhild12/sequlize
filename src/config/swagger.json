@@ -3952,7 +3952,6 @@
         "x-throttling-tier": "Unlimited"
       }
     },
-    
     "/api/chief-complaints-master/getByFilters": {
       "get": {
         "description": "To get a Chief Complaints either by filters or By Id",
@@ -8495,35 +8494,35 @@
     "getProcedures": {
       "type": "object",
       "properties": {
-         "pageNo": {
+        "pageNo": {
           "type": "string",
           "example": ""
         },
-         "paginationSize": {
+        "paginationSize": {
           "type": "string",
           "example": ""
         },
-         "sortField": {
+        "sortField": {
           "type": "string",
           "example": ""
         },
-         "sortOrder": {
+        "sortOrder": {
           "type": "string",
           "example": ""
         },
-         "searchKeyWord": {
+        "searchKeyWord": {
           "type": "string",
           "example": ""
         },
-         "search": {
+        "search": {
           "type": "string",
           "example": ""
         },
-         "procedure_scheme_uuid": {
+        "procedure_scheme_uuid": {
           "type": "string",
           "example": ""
         },
-         "procedure_type_uuid": {
+        "procedure_type_uuid": {
           "type": "string",
           "example": ""
         },
@@ -14400,6 +14399,9 @@
         "profiles": {
           "type": "object",
           "properties": {
+            "profile_uuid": {
+              "type": "integer"
+            },
             "profile_type_uuid": {
               "type": "integer"
             },
