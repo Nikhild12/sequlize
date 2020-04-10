@@ -50,26 +50,26 @@ const patient_previous_discharge_summary = () => {
         //check patient admitted or not in IP MANAGEMENT
         const { patient_uuid, encounter_uuid, allergy_uuids, chief_complaint_uuids, vital_uuids, diagnosis_uuids } = postData;
         //get patient allergy details
-        let patient_allergy_res=[],patient_vitals_res=[],patient_diagnosis_res=[],patient_cheif_complaint_res=[];
-        if(allergy_uuids && allergy_uuids.length > 0){
-          patient_allergy_res =  await getPatientAllergies(allergy_uuids, patient_uuid, encounter_uuid);
+        let patient_allergy_res = [], patient_vitals_res = [], patient_diagnosis_res = [], patient_cheif_complaint_res = [];
+        if (allergy_uuids && allergy_uuids.length > 0) {
+          patient_allergy_res = await getPatientAllergies(allergy_uuids, patient_uuid, encounter_uuid);
         } else {
-          patient_allergy_res=[];
+          patient_allergy_res = [];
         }
-        if((vital_uuids && vital_uuids.length > 0)){
-          patient_vitals_res =   await getPatientVitals(vital_uuids, patient_uuid, encounter_uuid);
+        if ((vital_uuids && vital_uuids.length > 0)) {
+          patient_vitals_res = await getPatientVitals(vital_uuids, patient_uuid, encounter_uuid);
         } else {
-          patient_vitals_res =[];
+          patient_vitals_res = [];
         }
-        if (chief_complaint_uuids && chief_complaint_uuids.length > 0){
+        if (chief_complaint_uuids && chief_complaint_uuids.length > 0) {
           patient_cheif_complaint_res = await getPatientChiefComplaints(chief_complaint_uuids, patient_uuid, encounter_uuid);
         } else {
-          patient_cheif_complaint_res=[];
+          patient_cheif_complaint_res = [];
         }
-        if(diagnosis_uuids && diagnosis_uuids.length > 0){
+        if (diagnosis_uuids && diagnosis_uuids.length > 0) {
           patient_diagnosis_res = await getPatientDiagnosis(diagnosis_uuids, patient_uuid, encounter_uuid);
-        }else{
-          patient_diagnosis_res=[];
+        } else {
+          patient_diagnosis_res = [];
         }
 
         // const patinet_treatmentKit_res =  await getPatienyTreatmentKit(patient_uuid, doctor_uuid, encounter_uuid);
@@ -260,6 +260,7 @@ function getPatinetVitalQuery(vital_uuids, patient_uuid, encounter_uuid) {
     attributes: [
       "pv_uuid",
       "pv_encounter_uuid",
+      "pv_encounter_type_uuid",
       "pv_vital_master_uuid",
       "pv_vital_type_uuid",
       "pv_vital_value_type_uuid",
@@ -274,6 +275,7 @@ function getPatinetVitalQuery(vital_uuids, patient_uuid, encounter_uuid) {
       "um_name",
       "pv_created_date",
       "d_name",
+      "ut_name",
       "u_first_name",
       "u_middle_name",
       "u_last_name",
@@ -307,12 +309,15 @@ function PPVitalsList(getPatientVitals) {
         patient_uuid: pV.pv_patient_uuid,
         created_date: pV.pv_created_date,
         doctor_uuid: pV.pv_doctor_uuid,
+        doctor_title:pV.ut_name,
         doctor_firstname: pV.u_first_name,
         doctor_middlename: pV.u_middle_name,
         doctor_lastlename: pV.u_last_name,
         department_name: pV.d_name,
         institution_uuid: pV.f_uuid,
         institution_name: pV.f_name,
+        encounter_uuid: pV.pv_encounter_uuid,
+        encounter_type_uuid: pV.pv_encounter_type_uuid,
         encounter_type_code: pV.et_code,
         encounter_type_name: pV.et_name,
         patient_facility_uuid: pV.pv_facility_uuid,
@@ -464,7 +469,7 @@ function getDClist(fetchedData, p_id, created_date) {
 
 async function getPatientChiefComplaints(chief_complaint_uuids, patient_uuid, encounter_uuid) {
 
-let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
+  let patient_cc_res = await vw_patient_cheif_complaintsTbl.findAll({
     where: {
       pcc_uuid: {
         [Op.in]: chief_complaint_uuids
@@ -503,9 +508,13 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
         department: item.d_name,
         encounter_uuid: item.pcc_encounter_uuid,
         encounter_type_uuid: item.pcc_encounter_type_uuid,
-        encounter_type: emr_constants.getEncounterType(item.pcc_encounter_type_uuid),
+        encounter_type_code: item.et_code,
+        encounter_type_name: item.et_name,
         consultation_uuid: item.pcc_consultation_uuid,
-        performed_by: item.u_first_name,
+        performed_by_title:item.ut_name,
+        performed_by_first_name: item.u_first_name,
+        performed_by_middle_name: item.u_middle_name,
+        performed_by_last_name: item.u_last_name,
         chief_complaint_details: [...getCheifComplaintList(patient_cc_res, item.pcc_patient_uuid, item.pcc_created_date)]
       };
     });
@@ -554,14 +563,26 @@ async function getPatientDiagnosis(diagnosis_uuids, patient_uuid, encounter_uuid
       status: emr_constants.IS_ACTIVE
     },
     order: [['uuid', 'DESC']],
-    include: [{
-      model: diagnosisTbl,
-      attributes: ['uuid', 'code', 'name', 'description'],
-      where: {
-        is_active: emr_constants.IS_ACTIVE,
-        status: emr_constants.IS_ACTIVE
+    include: [
+      {
+        model: diagnosisTbl,
+        attributes: ['uuid', 'code', 'name', 'description'],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+        }
+      },
+      {
+        model: encounterTypeTbl,
+        as: 'encounter_type',
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+        }
       }
-    }]
+    ]
   }, { returning: true });
   if (diagnosis_res) {
     const data = await getGetDiagnosis(diagnosis_res);
@@ -581,7 +602,9 @@ function getGetDiagnosis(diagnosis_res) {
         department_uuid: item.department_uuid,
         patient_uuid: item.patient_uuid,
         encounter_uuid: item.encounter_uuid,
-        encounter_type: emr_constants.getEncounterType(item.encounter_type_uuid),
+        encounter_type_uuid: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.uuid :"",
+        encounter_type_code: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.code :"",
+        encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name :"",
         diagnosis_uuid: item.diagnosis_uuid,
         performed_by: item.performed_by,
         performed_date: item.performed_date,

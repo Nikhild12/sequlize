@@ -97,6 +97,15 @@ module.exports = (sequelize, DataTypes) => {
             u_uuid:{
                 type: DataTypes.INTEGER
             },
+            et_code:{
+                type: DataTypes.STRING(8)
+            },
+            et_name:{
+                type: DataTypes.STRING(255)
+            },
+            ut_name:{
+                type: DataTypes.STRING(255)
+            },
             u_first_name:{
                 type: DataTypes.STRING(255)
             },

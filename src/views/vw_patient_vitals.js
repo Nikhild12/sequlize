@@ -97,6 +97,9 @@ module.exports = (sequelize, DataTypes) => {
             d_name: {
                 type: DataTypes.STRING(100),
             },
+            ut_name:{
+                type: DataTypes.STRING(255),
+            },
             u_first_name: {
                 type: DataTypes.STRING(255),
             },
