@@ -216,14 +216,20 @@ const diagnosisController = () => {
                 }
             });
 
-            diagnosisData.code = diagnosisData.code;
-            diagnosisData.name = diagnosisData.name;
-
+            diagnosisData.code = req.body.code;
+            diagnosisData.name = req.body.name;
+            diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
+            diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
+            diagnosisData.diagnosis_category_uuid = req.body.diagnosis_category_uuid;
+            diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
+            diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
+            diagnosisData.position_id = req.body.position_id;
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
             diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
             diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
             diagnosisData.created_date = diagnosisData.modified_date = new Date();
             diagnosisData.revision = 1;
+            
             try {
                 const diagnosisCreatedData = await diagnosisTbl.create(diagnosisData, {
                     returning: true

@@ -14581,6 +14581,9 @@
         "profiles": {
           "type": "object",
           "properties": {
+            "profile_uuid": {
+              "type": "integer"
+            },
             "profile_type_uuid": {
               "type": "integer"
             },
