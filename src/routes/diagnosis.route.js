@@ -15,5 +15,6 @@ diagnosisRoutes.route('/getDiagnosisAutoSearch').post(diagnosisCtrl.getdiagnosis
 diagnosisRoutes.route("/deleteDiagnosis").post(diagnosisCtrl.deleteDiagnosis);
 diagnosisRoutes.route("/updateDiagnosisById").post(diagnosisCtrl.updateDiagnosisById);
 diagnosisRoutes.route("/getDaignosisById").post(diagnosisCtrl.getDaignosisById);
+diagnosisRoutes.route("/getDaignosisByUUId").post(diagnosisCtrl.getDaignosisByUUId);
 
 module.exports = diagnosisRoutes;

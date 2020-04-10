@@ -3914,6 +3914,45 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/diagnosis/getDaignosisByUUId": {
+      "post": {
+        "description": "To get a diagnosis by Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Diagnosis_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/getDaignosisById"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "Diagnosis"
+        ],
+        "responses": {
+          "200": {
+            "description": "fetch the details Successfully",
+            "schema": {
+              "$ref": "#/definitions/getDaignosisById"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    
     "/api/chief-complaints-master/getByFilters": {
       "get": {
         "description": "To get a Chief Complaints either by filters or By Id",
