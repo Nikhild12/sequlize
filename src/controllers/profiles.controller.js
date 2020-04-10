@@ -182,7 +182,7 @@ const profilesController = () => {
         ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         where: {
-          // p_status: 1,
+          p_is_active: 1,
         }
       };
 
