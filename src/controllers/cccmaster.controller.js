@@ -653,7 +653,7 @@ const cccMasterController = () => {
                 });
         }
     };
-    const getcccMasterByType = async (req, res, next) => {
+    const getcccMasterByType_old1 = async (req, res, next) => {
         const postData = req.body;
         const criticalId = [];
         const concepId = [];
@@ -713,6 +713,73 @@ const cccMasterController = () => {
                         });
                 });
             //return res.send({ conceptDetails_Tab: conceptDetails_Tab, criticalType: criticalType, ccMaster: ccMaster, conceptTbl_data: conceptTbl_data });
+        } catch (err) {
+            console.log(err);
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+    const getcccMasterByType = async (req, res, next) => {
+        const postData = req.body;
+        const criticalId = [];
+        const concepId = [];
+        if (!postData.type) {
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "info",
+                    msg: 'Required type: type'
+                });
+        }
+        try {
+            let result = await criticalcareTypeTbl.findOne({
+                attributes: ['uuid', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status'],
+                where: { name: postData.type },
+                include: [{
+                    model: cccMasterTbl,
+                    required: false,
+                    model: cccMasterTbl,
+                    attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+                        , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                        'status'],
+                    where: { is_active: 1, status: 1 },
+                    include: [
+                        {
+                            model: conceptTbl,
+                            as: 'critical_care_concepts',
+                            required: false,
+                            order: [['display_order', 'DESC']],
+                            attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                            where: { is_active: 1, status: 1 },
+                            include: [
+                                {
+                                    model: conceptdetailsTbl,
+                                    as: 'critical_care_concept_values',
+                                    required: false,
+                                    attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                    where: { is_active: 1, status: 1 },
+                                }
+                            ]
+                        }]
+                }]
+
+            }, { returning: true })
+
+            // return res.send({ results: result });
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    statusCode: 200,
+                    req: '',
+                    responseContents: result
+                });
+
         } catch (err) {
             console.log(err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;

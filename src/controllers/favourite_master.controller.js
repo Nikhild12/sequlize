@@ -94,6 +94,7 @@ const getFavouritesAttributes = [
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
+  "tsmd_strength",
 ];
 
 // Fav Treatment Kit Att
@@ -574,22 +575,38 @@ const TickSheetMasterController = () => {
           } else if (favourite_type_id === 9) {
             tickSheetData = await vmTreatmentFavouriteDiet.findAll({
               attributes: emr_attributes_diet.favouriteDietAttributes,
-              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_active'),
+              where: getFavouriteByIdQuery(
+                favourite_id,
+                is_master,
+                "fm_active"
+              ),
             });
           } else if (favourite_type_id === 3) {
             tickSheetData = await vmFavouriteRad.findAll({
               attributes: emr_all_favourites.favouriteRadVWAttributes(),
-              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_is_active'),
+              where: getFavouriteByIdQuery(
+                favourite_id,
+                is_master,
+                "fm_is_active"
+              ),
             });
           } else if (favourite_type_id === 7) {
             tickSheetData = await vwFavouriteInvestigation.findAll({
               attributes: emr_attributes_investigation.investigationAttributes,
-              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_active'),
+              where: getFavouriteByIdQuery(
+                favourite_id,
+                is_master,
+                "fm_active"
+              ),
             });
           } else if (favourite_type_id === 2) {
             tickSheetData = await vwFavouriteLab.findAll({
               attributes: emr_all_favourites.favouriteLabVWAttributes(),
-              where: getFavouriteByIdQuery(favourite_id, is_master, 'fm_is_active'),
+              where: getFavouriteByIdQuery(
+                favourite_id,
+                is_master,
+                "fm_is_active"
+              ),
             });
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
@@ -1057,6 +1074,7 @@ function getFavouritesInList(fetchedData) {
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_is_emar: tD.im_is_emar,
+        drug_strength: tD.tsmd_strength,
 
         // Store Master Details
         store_id: tD.sm_uuid,

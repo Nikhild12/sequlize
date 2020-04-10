@@ -56,6 +56,12 @@ const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
 const patientTransferRoute = require("./patient_transfer.route");
 
+//Import ReferalReasons routes
+
+const referalReasonsroute = require("./referal_reasons.route");
+
+const trsnferReasonsRoute = require("./transfer_reasons.route");
+
 //EMR CRITICAL CARE CHARTS ROUTES
 const CCCRoute = require("./CC_charts.route");
 
@@ -149,6 +155,11 @@ serviceRouter.use("/chiefComplaintCategory", chiefComplaintCategoryRoutes);
 // Treatment Kit Routes
 serviceRouter.use("/treatment-kit", treatmentKitRoute);
 
+//ReferalReasons routes
+
+serviceRouter.use("/referal-reasons", referalReasonsroute);
+
+serviceRouter.use("/transfer-reasons", trsnferReasonsRoute);
 //Patient Allergy History Routes
 
 serviceRouter.use("/patient-allergy", patientAllergieRoute);

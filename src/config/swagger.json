@@ -5180,6 +5180,60 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/referal-reasons/getReferralReasons": {
+      "get": {
+        "summary": "To get list of ReferalReasons",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "ReferralReasons"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
+    "/api//transfer-reasons/getTransferReasons": {
+      "get": {
+        "summary": "To get list of TransferReasons",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "TransferReasons"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully"
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/diseases/get-by-filters": {
       "get": {
         "description": "To get list of diseases based on filter",
@@ -9184,7 +9238,6 @@
         "name": {
           "type": "string"
         },
-
         "Id": {
           "type": "integer"
         },
@@ -9197,7 +9250,7 @@
         "display_order": {
           "type": "integer"
         },
-        "Is_default":{
+        "Is_default": {
           "type": "integer"
         }
       }
@@ -9206,6 +9259,9 @@
       "type": "object",
       "properties": {
         "table_name": {
+          "type": "string"
+        },
+        "Id": {
           "type": "string"
         }
       }
@@ -9245,7 +9301,7 @@
         "display_order": {
           "type": "integer"
         },
-        "Is_default":{
+        "Is_default": {
           "type": "integer"
         }
       }
@@ -10050,6 +10106,9 @@
               },
               "speciality_sketch_uuid": {
                 "type": "integer"
+              },
+              "strength": {
+                "type": "string"
               }
             }
           }
@@ -11124,7 +11183,6 @@
         "is_active": {
           "type": "boolean"
         }
-
       }
     },
     "getAllChiefMaster": {
@@ -11136,7 +11194,6 @@
         "paginationSize": {
           "type": "integer"
         },
-        
         "status": {
           "type": "integer"
         },
@@ -12855,6 +12912,10 @@
           "type": "integer",
           "example": 1
         },
+        "referal_reason_uuid": {
+          "type": "integer",
+          "example": 1
+        },
         "referral_comments": {
           "type": "string",
           "example": "enter some thing"
@@ -12974,6 +13035,10 @@
           "example": 1
         },
         "transfer_ward_uuid": {
+          "type": "integer",
+          "example": 1
+        },
+        "transfer_reason_uuid": {
           "type": "integer",
           "example": 1
         },
@@ -14512,10 +14577,10 @@
     "getimmunizationScheduleReq": {
       "type": "object",
       "properties": {
-        "paginationSize": {
+        "pageNo": {
           "type": "integer"
         },
-        "pageNo": {
+        "paginationSize": {
           "type": "integer"
         },
         "sortField": {
@@ -14527,17 +14592,17 @@
         "search": {
           "type": "string"
         },
-        "schedule_uuid": {
+        "schedule": {
+          "type": "integer"
+        },
+        "immunization": {
+          "type": "integer"
+        },
+        "duration": {
           "type": "integer"
         },
         "status": {
           "type": "boolean"
-        },
-        "immunization_name": {
-          "type": "string"
-        },
-        "duration": {
-          "type": "string"
         }
       }
     }

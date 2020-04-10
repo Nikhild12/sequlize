@@ -94,6 +94,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         values: ["0", "1"]
       },
+      tmd_strength: {
+        type: DataTypes.STRING(45),
+        allowNull: true
+      },
       dr_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false

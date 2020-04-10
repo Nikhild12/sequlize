@@ -137,7 +137,9 @@ const patient_immunization_Schedules = () => {
 
             if (user_uuid) {
                 const immunizationData = await viewPatientImmunzationSchedulesTbl.findAll({
-                    attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
+                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
+                    attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+
                     order: [['pis_immunization_date', 'DESC']],
                     where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
 

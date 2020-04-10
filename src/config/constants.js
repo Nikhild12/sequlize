@@ -72,6 +72,10 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} Department Id`;
       case "referral_deptartment_uuid":
         return `${returnProvideMsg} Referral Department Id`;
+      case "referal_reason_uuid":
+        return `${returnProvideMsg} Referral Reason Id`;
+      case "transfer_reason_uuid":
+        return `${returnProvideMsg} Transfer Reason Id`;
       case "transfer_department_uuid":
         return `${returnProvideMsg} Transfer Department Id`;
       case "role_uuid":
@@ -194,6 +198,10 @@ module.exports = Object.freeze({
         return `Facility Id ${lengthMessage}`;
       case "referral_facility_uuid":
         return `Referral Facility Id ${lengthMessage}`;
+      case "referal_reason_uuid":
+        return `Referral Reason Id ${lengthMessage}`;
+      case "transfer_reason_uuid":
+        return `Transfer Reason Id ${lengthMessage}`;
       case "consultation_uuid":
         return `Consultation Id ${lengthMessage}`;
       case "treatment_kit_type_uuid":
@@ -249,6 +257,10 @@ module.exports = Object.freeze({
         return `Facility Id ${validationMessage}`;
       case "referral_facility_uuid":
         return `Referral Facility Id ${validationMessage}`;
+      case "referal_reason_uuid":
+        return `Referral Reason Id ${validationMessage}`;
+      case "transfer_reason_uuid":
+        return `Transfer Reason Id ${validationMessage}`;
       case "diagnosis_uuid":
         return `Diagnosis Id ${validationMessage}`;
       case "test_master_uuid":
