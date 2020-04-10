@@ -329,62 +329,62 @@ const diagnosisController = () => {
             findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
         try {
-            findQuery.include = [
-                {
-                    model: diaggradeTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_grade',
-                    required: false
-                },
-                {
-                    model: bodysideTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'body_side',
-                    required: false
-                },
-                {
-                    model: bodysiteTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'body_site',
-                    required: false
-                },
-                {
-                    model: diagverTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_version',
-                    required: false
-                },
-                {
-                    model: diagregionTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_region',
-                    required: false
-                },
-                {
-                    model: positionsTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'positions',
-                    required: false
-                },
-                {
-                    model: diagcatTb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_category',
-                    required: false
-                },
-                {
-                    model: diagschetb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_scheme',
-                    required: false
-                },
-                {
-                    model: diagtypetb,
-                    attributes: ['uuid', 'name'],
-                    as: 'diagnosis_type',
-                    required: false
-                }
-            ];
+            // findQuery.include = [
+            //     {
+            //         model: diaggradeTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_grade',
+            //         required: false
+            //     },
+            //     {
+            //         model: bodysideTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'body_side',
+            //         required: false
+            //     },
+            //     {
+            //         model: bodysiteTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'body_site',
+            //         required: false
+            //     },
+            //     {
+            //         model: diagverTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_version',
+            //         required: false
+            //     },
+            //     {
+            //         model: diagregionTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_region',
+            //         required: false
+            //     },
+            //     {
+            //         model: positionsTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'positions',
+            //         required: false
+            //     },
+            //     {
+            //         model: diagcatTb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_category',
+            //         required: false
+            //     },
+            //     {
+            //         model: diagschetb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_scheme',
+            //         required: false
+            //     },
+            //     {
+            //         model: diagtypetb,
+            //         attributes: ['uuid', 'name'],
+            //         as: 'diagnosis_type',
+            //         required: false
+            //     }
+            // ];
 
             const data = await diagnosisTbl.findAndCountAll(findQuery);
 
@@ -483,88 +483,144 @@ const diagnosisController = () => {
         });
 
     };
-    const _getDaignosisById = async (req, res, next) => {
+    // const _getDaignosisById = async (req, res, next) => {
+    //     const postData = req.body;
+
+    //     try {
+
+           
+    //         const data = await diagnosisTbl.findOne({
+    //             where: {
+    //                 uuid: postData.Diagnosis_id,
+    //             },
+    //             attributes: getDiagnosisAttributes(),
+    //             offset: offset,
+    //             limit: itemsPerPage,
+    //             // include: [
+    //             //     // {
+    //             //     //     model: diagverTb,
+    //             //     //     attributes: ['uuid', 'name'],
+    //             //     //     required: false
+    //             //     // },
+    //             //     {
+    //             //         model: diaggradeTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: bodysideTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: bodysiteTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: diagregionTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: positionsTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: diagcatTb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: diagschetb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     },
+    //             //     {
+    //             //         model: diagtypetb,
+    //             //         attributes: ['uuid', 'name'],
+    //             //         required: false
+    //             //     }
+    //             // ]
+    //         });
+    //         if (data) {
+    //             // const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
+    //             // const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
+    //             // const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
+    //             // const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
+    //             return res
+    //                 .status(httpStatus.OK)
+    //                 .json({
+    //                     statusCode: 200,
+    //                     req: '',
+    //                     responseContents: data
+    //                 });
+    //         }
+
+    //     } catch (err) {
+    //         const errorMsg = err.errors ? err.errors[0].message : err.message;
+    //         return res
+    //             .status(400)
+    //             .send({ code: httpStatus.BAD_REQUEST, message: err.message });
+    //     }
+    // };
+const _getDaignosisById = async (req, res, next) => {
+        // console.log('_getDaignosisById...........', req.body);
         const postData = req.body;
-
         try {
+            if (postData.Diagnosis_id <= 0) {
+                return res.status(400).send({ code: 400, message: 'Please provide Valid  id' });
 
+            }
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            const data = await diagnosisTbl.findOne({
+            await diagnosisTbl.findOne({
                 where: {
-                    uuid: postData.Diagnosis_id,
+                    uuid: postData.Diagnosis_id
                 },
-                attributes: getDiagnosisAttributes(),
                 offset: offset,
                 limit: itemsPerPage,
-                include: [
-                    {
-                        model: diagverTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diaggradeTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysideTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: bodysiteTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagregionTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: positionsTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagcatTb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagschetb,
-                        attributes: ['uuid', 'name'],
-                        required: false
-                    },
-                    {
-                        model: diagtypetb,
-                        attributes: ['uuid', 'name'],
-                        required: false
+                attributes: getDiagnosisAttributes(),
+                // include: [{
+                //     model: allergySourceTbl,
+                //     required:false,
+                //     // as: 'source' 
+                //     attributes: ['uuid','name'],
+                //     where: {status: 1, is_active: 1}
+                // }
+                // ,
+                // {
+                //     model: allergySeverityTbl,
+                //     required:false,
+                //     // as: 'source' 
+                //     attributes: ['uuid','name'],
+                //     where: {status: 1, is_active: 1}
+                // }
+                // ]
+            })
+                .then((data) => {
+                    if (!data) {
+                        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Id' });
                     }
-                ]
-            });
-            if (data) {
-                const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
-                const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
-                const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
-                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
-                return res
-                    .status(httpStatus.OK)
-                    .json({
-                        statusCode: 200,
-                        req: '',
-                        responseContents: data
-                    });
-            }
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            req: '',
+                            responseContents: data
+                        });
+                });
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-                .status(400)
-                .send({ code: httpStatus.BAD_REQUEST, message: err.message });
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
         }
     };
 

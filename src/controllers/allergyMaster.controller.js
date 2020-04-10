@@ -292,7 +292,7 @@ const allergyMasterController = () => {
 
 
     const getAlleryMasterById = async (req, res, next) => {
-        console.log('getAlleryMasterById', req.body);
+        
         const postData = req.body;
         try {
             if (postData.Allergy_id <= 0) {
