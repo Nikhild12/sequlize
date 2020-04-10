@@ -57,23 +57,23 @@ const allergyMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            // where: { is_active: 1 },
+            //where: { is_active: 1 },
             include: [{
                 model: allergySourceTbl,
-                required:false,
+                required: false,
                 // as: 'source' 
-                attributes: ['uuid','name'],
+                attributes: ['uuid', 'name'],
                 // where: {status: 1, is_active: 1}
             }
-            ,
+                ,
             {
                 model: allergySeverityTbl,
-                required:false,
+                required: false,
                 // as: 'source' 
-                attributes: ['uuid','name'],
+                attributes: ['uuid', 'name'],
                 // where: {status: 1, is_active: 1}
             }
-        ]
+            ]
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -94,38 +94,38 @@ const allergyMasterController = () => {
                 ]
             };
         }
-        if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
-          findQuery.where = {
-            [Op.and]: [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-              
-              
-            ]
-          };
-        }
-        
-        if (getsearch.allergy_source_uuid &&  /\S/.test(getsearch.allergy_source_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid),
-            ]
-          };
-        }
-        if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-            findQuery.where = { is_active: postData.status };
-        }
-    //    if (getsearch.status ==1 ) {
-    //      findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
-    //     }
-    //     if(getsearch.is_active ==0) {
-    //      findQuery.where ={[Op.and]: [ {is_active:0},{status:0}]};
-    //     }
-    //     // else{
-    //     //  findQuery.where ={[Op.and]: [ {is_active:1},{status:1}]};
-    //     // }
+        if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
 
-        
+
+                ]
+            };
+        }
+
+        if (getsearch.allergy_source_uuid && /\S/.test(getsearch.allergy_source_uuid)) {
+            findQuery.where = {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid),
+                ]
+            };
+        }
+        // if (getsearch.status && /\S/.test(getsearch.status)) {
+        //     findQuery.where = { is_active: postData.status };
+        // }
+        if (getsearch.status == 1) {
+            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+          }
+          if (getsearch.status == 0) {
+            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+          }
+        //   else{
+        //     findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+        //   }
+
+
         try {
             await allergyMastersTbl.findAndCountAll(findQuery)
 
@@ -233,7 +233,7 @@ const allergyMasterController = () => {
 
             await allergyMastersTbl.update({
                 is_active: 0,
-                status:0
+                status: 0
             }, {
                 where: {
                     uuid: postData.Allergy_id
@@ -292,7 +292,7 @@ const allergyMasterController = () => {
 
 
     const getAlleryMasterById = async (req, res, next) => {
-        
+
         const postData = req.body;
         try {
             if (postData.Allergy_id <= 0) {
@@ -310,18 +310,18 @@ const allergyMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: allergySourceTbl,
-                    required:false,
+                    required: false,
                     // as: 'source' 
-                    attributes: ['uuid','name'],
-                    where: {status: 1, is_active: 1}
+                    attributes: ['uuid', 'name'],
+                    where: { status: 1, is_active: 1 }
                 }
-                ,
+                    ,
                 {
                     model: allergySeverityTbl,
-                    required:false,
+                    required: false,
                     // as: 'source' 
-                    attributes: ['uuid','name'],
-                    where: {status: 1, is_active: 1}
+                    attributes: ['uuid', 'name'],
+                    where: { status: 1, is_active: 1 }
                 }
                 ]
             })
