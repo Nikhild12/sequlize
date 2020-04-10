@@ -285,8 +285,17 @@ const diagnosisController = () => {
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
             attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+            where:{ is_active: 1 ,  status: 1 }
 
         };
+
+        // if (getsearch.search && /\S/.test(getsearch.search)) {
+        //     findQuery.where = {
+        //         [Op.and]: [
+        //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        //         ]
+        //     };
+        // }
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
 
@@ -308,8 +317,8 @@ const diagnosisController = () => {
         if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
             findQuery.where = {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
                 ]
             };
         }
@@ -317,21 +326,22 @@ const diagnosisController = () => {
         if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
             findQuery.where = {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
                 ]
             };
         }
+        
         if (getsearch.is_active == 1) {
             findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
         }
-        else if (getsearch.is_active == 0) {
+        if (getsearch.is_active == 0) {
             findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
         }
-        else {
-            findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
-        }
+         
+             
+         
         try {
-            
+            console.log(findQuery);
             const data = await vw_diagnosis.findAndCountAll(findQuery);
 
             if (data) {
@@ -432,13 +442,13 @@ const diagnosisController = () => {
         const postData = req.body;
 
         try {
-           
+
             const data = await vw_diagnosis.findOne({
                 where: {
                     uuid: postData.Diagnosis_id,
                 },
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                                
+                git
             });
             if (data) {
                 return res
