@@ -218,7 +218,12 @@ const diagnosisController = () => {
 
             diagnosisData.code = diagnosisData.code;
             diagnosisData.name = diagnosisData.name;
-
+            diagnosisData.diagnosis_scheme_uuid = diagnosisData.diagnosis_scheme_uuid;
+            diagnosisData.diagnosis_type_uuid = diagnosisData.diagnosis_type_uuid;
+            diagnosisData.diagnosis_category_uuid = diagnosisData.diagnosis_category_uuid;
+            diagnosisData.diagnosis_grade_uuid = diagnosisData.diagnosis_grade_uuid;
+            diagnosisData.diagnosis_region_uuid = diagnosisData.diagnosis_region_uuid;
+            diagnosisData.position_id = diagnosisData.position_id;
             diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
             diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
             diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
