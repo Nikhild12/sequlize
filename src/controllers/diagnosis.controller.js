@@ -448,7 +448,7 @@ const diagnosisController = () => {
                     uuid: postData.Diagnosis_id,
                 },
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                git
+                
             });
             if (data) {
                 return res
