@@ -193,7 +193,7 @@ const diagnosisController = () => {
             user_uuid
         } = req.headers;
         const diagnosisData = req.body;
-console.log("diagnosisData......////",diagnosisData)
+
         if (user_uuid && diagnosisData) {
 
             diagnosisTbl.findAll({
@@ -217,29 +217,29 @@ console.log("diagnosisData......////",diagnosisData)
             });
 
 
-            // diagnosisData.code = diagnosisData.code;
-            // diagnosisData.name = req.body.name;
-            // diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
-            // diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
-            // diagnosisData.diagnosis_category_uuid = req.body.diagnosis_category_uuid;
-            // diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
-            // diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
-            // diagnosisData.position_id = req.body.position_id;
+            diagnosisData.code = diagnosisData.code;
+            diagnosisData.name = req.body.name;
+            diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
+            diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
+            diagnosisData.diagnosis_category_uuid = req.body.diagnosis_category_uuid;
+            diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
+            diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
+            diagnosisData.position_id = req.body.position_id;
 
            
-            // diagnosisData.description = diagnosisData.description ;
-            // diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
-            // diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
-            // diagnosisData.created_date = diagnosisData.modified_date = new Date();
-            // diagnosisData.revision = 1;
+            diagnosisData.description = diagnosisData.description ;
+            diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
+            diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
+            diagnosisData.created_date = diagnosisData.modified_date = new Date();
+            diagnosisData.revision = 1;
             
             try {
                 const diagnosisCreatedData = await diagnosisTbl.create(diagnosisData, {
                     returning: true
                 });
-console.log("diagnosisCreatedData..........",diagnosisCreatedData);
+
                 if (diagnosisCreatedData) {
-                    // diagnosisData.uuid = diagnosisCreatedData.uuid;
+                    diagnosisData.uuid = diagnosisCreatedData.uuid;
                     return res.status(200).send({
 
                         code: 200,
