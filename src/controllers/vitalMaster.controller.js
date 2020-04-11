@@ -210,14 +210,15 @@ const vitalmstrController = () => {
         ]
       };
     }
-    if (getsearch.status == 1) {
+    if (getsearch.is_active == 1 || getsearch.status == 1) {
       findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
     }
-    else if (getsearch.status == 0) {
+    if (getsearch.is_active == 0 || getsearch.status == 0) {
       findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
-    }else{
-      findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
     }
+    // else{
+    //   findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+    // }
     
     try {
       const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });

@@ -63,7 +63,12 @@ const referenceGroupController = () => {
                     is_active: 1
                 }
             };
-
+            
+            if (postData.table_name && /\S/.test(postData.table_name)) {
+                findQuery.where[Op.and] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.table_name')), 'LIKE', '%' + postData.table_name.toLowerCase() + '%'),
+                    ];
+            }
             if (postData.search && /\S/.test(postData.search)) {
                 findQuery.where[Op.or] = [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
@@ -95,10 +100,16 @@ const referenceGroupController = () => {
             //     findQuery.where['$app_module.uuid$'] = postData.moduleId;
             // }
 
-
-            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where['is_active'] = postData.status;
+            if (postData.status == 1) {
+                findQuery.where = { [Op.and]: [{ is_active: 1 }] };
             }
+            if (postData.status == 0) {
+                findQuery.where = { [Op.and]: [{ is_active: 0 }] };
+            }
+
+            // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+            //     findQuery.where['is_active'] = postData.status;
+            // }
 
             await emr_reference_group_tbl.findAndCountAll(findQuery)
                 .then((data) => {

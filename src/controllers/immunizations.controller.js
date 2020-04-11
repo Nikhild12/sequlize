@@ -354,10 +354,15 @@ const immunizationsController = () => {
                 ]
             };
             }
-
-            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where = { i_is_active: postData.status };
+            if (postData.status == 1) {
+                findQuery.where = { [Op.and]: [{ i_is_active: 1 }, { i_status: 1 }] };
             }
+            if (postData.status == 0) {
+                findQuery.where = { [Op.and]: [{ i_is_active: 0 }, { i_status: 0 }] };
+            }
+            // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+            //     findQuery.where = { i_is_active: postData.status };
+            // }
             await immunizationsVwTbl.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
