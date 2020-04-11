@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
- language:{
+            language:{
                 type: DataTypes.INTEGER,
                 allowNull: true
             } ,
@@ -27,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
             }, 
             display_order:{
-                type: DataTypes.STRING(250),
+                type: DataTypes.INTEGER,
                 allowNull: true
             }, 
             Is_default: {
-                type: DataTypes.STRING(250),
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
 
@@ -41,7 +41,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
+                defaultValue: 1
+                
             },
             is_active: {
                 type: DataTypes.BOOLEAN,

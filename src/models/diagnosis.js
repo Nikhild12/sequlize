@@ -22,23 +22,27 @@ module.exports = (sequelize, DataTypes) => {
         },
         diagnosis_scheme_uuid: {
             type: DataTypes.INTEGER,
+             allowNull: true
         },
         diagnosis_type_uuid: {
             type: DataTypes.INTEGER,
+             allowNull: true
         },
         diagnosis_category_uuid: {
             type: DataTypes.INTEGER,
+             allowNull: true
         },
         diagnosis_grade_uuid: {
             type: DataTypes.INTEGER,
-            // allowNull: true
+            allowNull: true
         },
         diagnosis_region_uuid: {
             type: DataTypes.INTEGER,
-            // allowNull: true
+            allowNull: true
         },
         diagnosis_version_uuid: {
             type: DataTypes.INTEGER,
+             allowNull: true
             
         },
         speciality: {
