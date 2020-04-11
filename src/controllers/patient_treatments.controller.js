@@ -266,15 +266,15 @@ const PatientTreatmentController = () => {
             });
 
           }
-          // const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
-          // if (repeatInvestOrder && repeatInvestOrder.length > 0) {
-          //   response.forEach((r) => {
-          //     r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
-          //       return rI.order_id === r.order_id;
-          //     });
-          //   });
+          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
+          if (repeatInvestOrder && repeatInvestOrder.length > 0) {
+            response.forEach((r) => {
+              r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
+                return rI.order_id === r.order_id;
+              });
+            });
 
-          // }
+          }
         }
         return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
       }
@@ -300,9 +300,9 @@ const PatientTreatmentController = () => {
           diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
 
         }
-        if (patientPrescription && Array.isArray(patientPrescription)) {
-          let updatePrescriptionDetails = req.body.patientPrescription[0].drug_details;
-          prescriptionUpdated = updatePrescriptionDetails && updatePrescriptionDetails.length > 0 ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
+        if (patientPrescription) {
+          let updatePrescriptionDetails = req.body.patientPrescription;
+          prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
         }
         if (patientLab) {
           let updateLabDetails = req.body.patientLab;
@@ -791,9 +791,9 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
       user_uuid: user_uuid,
       Authorization: authorization
     },
-    {
-      details: updatePrescriptionDetails
-    }
+
+    updatePrescriptionDetails
+
   );
 
 

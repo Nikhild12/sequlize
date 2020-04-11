@@ -13888,48 +13888,59 @@
           }
         },
         "patientPrescription": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "drug_details": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "uuid": {
-                      "type": "number"
-                    },
-                    "prescription_uuid": {
-                      "type": "number"
-                    },
-                    "item_master_uuid": {
-                      "type": "number"
-                    },
-                    "drug_route_uuid": {
-                      "type": "number"
-                    },
-                    "drug_frequency_uuid": {
-                      "type": "number"
-                    },
-                    "duration": {
-                      "type": "number"
-                    },
-                    "duration_period_uuid": {
-                      "type": "number"
-                    },
-                    "drug_instruction_uuid": {
-                      "type": "number"
-                    },
-                    "prescribed_quantity": {
-                      "type": "number"
-                    },
-                    "generic_uuid": {
-                      "type": "number"
-                    },
-                    "comments": {
-                      "type": "string"
-                    }
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": "number"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "number"
+                  },
+                  "prescription_uuid": {
+                    "type": "number"
+                  },
+                  "item_master_uuid": {
+                    "type": "number"
+                  },
+                  "drug_route_uuid": {
+                    "type": "number"
+                  },
+                  "drug_frequency_uuid": {
+                    "type": "number"
+                  },
+                  "duration": {
+                    "type": "number"
+                  },
+                  "duration_period_uuid": {
+                    "type": "number"
+                  },
+                  "drug_instruction_uuid": {
+                    "type": "number"
+                  },
+                  "prescribed_quantity": {
+                    "type": "number"
+                  },
+                  "generic_uuid": {
+                    "type": "number"
+                  },
+                  "is_emar": {
+                    "type": "boolean"
+                  },
+                  "comments": {
+                    "type": "string"
                   }
                 }
               }
@@ -13944,19 +13955,76 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "string"
+                  "profile_uuid": {
+                    "type": "number"
                   },
-                  "test_name": {
-                    "type": "string"
+                  "test_master_uuid": {
+                    "type": "number"
                   },
-                  "patient_order_uuid": {
+                  "is_profile": {
+                    "type": "number"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "number"
+                  },
+                  "to_department_uuid": {
                     "type": "number"
                   },
                   "order_priority_uuid": {
                     "type": "number"
                   },
-                  "patient_treatment_uuid": {
+                  "group_uuid": {
+                    "type": "number"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "number"
+                  },
+                  "encounter_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_test_details_uuid": {
+                    "type": "number"
+                  },
+                  "order_request_date": {
+                    "type": "string"
+                  },
+                  "schedule_date": {
+                    "type": "string"
+                  },
+                  "vendor_test_uui": {
+                    "type": "number"
+                  },
+                  "vendor_sample_uuid": {
+                    "type": "number"
+                  },
+                  "diagnosis_uuid": {
+                    "type": "number"
+                  },
+                  "sample_identifier": {
+                    "type": "string"
+                  },
+                  "is_ordered": {
+                    "type": "number"
+                  },
+                  "sample_rejected_reason": {
+                    "type": "string"
+                  },
+                  "is_sample_rejected": {
+                    "type": "number"
+                  },
+                  "doctor_uuid": {
+                    "type": "number"
+                  },
+                  "from_department_uuid": {
+                    "type": "number"
+                  },
+                  "order_status_uuid": {
                     "type": "number"
                   }
                 }
@@ -14006,19 +14074,76 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "string"
+                  "profile_uuid": {
+                    "type": "number"
                   },
-                  "test_name": {
-                    "type": "string"
+                  "test_master_uuid": {
+                    "type": "number"
                   },
-                  "patient_order_uuid": {
+                  "is_profile": {
+                    "type": "number"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "number"
+                  },
+                  "to_department_uuid": {
                     "type": "number"
                   },
                   "order_priority_uuid": {
                     "type": "number"
                   },
-                  "patient_treatment_uuid": {
+                  "group_uuid": {
+                    "type": "number"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "number"
+                  },
+                  "encounter_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_test_details_uuid": {
+                    "type": "number"
+                  },
+                  "order_request_date": {
+                    "type": "string"
+                  },
+                  "schedule_date": {
+                    "type": "string"
+                  },
+                  "vendor_test_uui": {
+                    "type": "number"
+                  },
+                  "vendor_sample_uuid": {
+                    "type": "number"
+                  },
+                  "diagnosis_uuid": {
+                    "type": "number"
+                  },
+                  "sample_identifier": {
+                    "type": "string"
+                  },
+                  "is_ordered": {
+                    "type": "number"
+                  },
+                  "sample_rejected_reason": {
+                    "type": "string"
+                  },
+                  "is_sample_rejected": {
+                    "type": "number"
+                  },
+                  "doctor_uuid": {
+                    "type": "number"
+                  },
+                  "from_department_uuid": {
+                    "type": "number"
+                  },
+                  "order_status_uuid": {
                     "type": "number"
                   }
                 }
@@ -14068,19 +14193,76 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "string"
+                  "profile_uuid": {
+                    "type": "number"
                   },
-                  "test_name": {
-                    "type": "string"
+                  "test_master_uuid": {
+                    "type": "number"
                   },
-                  "patient_order_uuid": {
+                  "is_profile": {
+                    "type": "number"
+                  },
+                  "lab_master_type_uuid": {
+                    "type": "number"
+                  },
+                  "to_department_uuid": {
                     "type": "number"
                   },
                   "order_priority_uuid": {
                     "type": "number"
                   },
-                  "patient_treatment_uuid": {
+                  "group_uuid": {
+                    "type": "number"
+                  },
+                  "to_sub_department_uuid": {
+                    "type": "number"
+                  },
+                  "encounter_uuid": {
+                    "type": "number"
+                  },
+                  "to_location_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_uuid": {
+                    "type": "number"
+                  },
+                  "patient_order_test_details_uuid": {
+                    "type": "number"
+                  },
+                  "order_request_date": {
+                    "type": "string"
+                  },
+                  "schedule_date": {
+                    "type": "string"
+                  },
+                  "vendor_test_uui": {
+                    "type": "number"
+                  },
+                  "vendor_sample_uuid": {
+                    "type": "number"
+                  },
+                  "diagnosis_uuid": {
+                    "type": "number"
+                  },
+                  "sample_identifier": {
+                    "type": "string"
+                  },
+                  "is_ordered": {
+                    "type": "number"
+                  },
+                  "sample_rejected_reason": {
+                    "type": "string"
+                  },
+                  "is_sample_rejected": {
+                    "type": "number"
+                  },
+                  "doctor_uuid": {
+                    "type": "number"
+                  },
+                  "from_department_uuid": {
+                    "type": "number"
+                  },
+                  "order_status_uuid": {
                     "type": "number"
                   }
                 }
