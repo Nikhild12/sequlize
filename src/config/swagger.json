@@ -8929,6 +8929,15 @@
     "getreference": {
       "type": "object",
       "properties": {
+        "paginationSize": {
+          "type": "integer"
+        },
+        "pageNo": {
+          "type": "integer"
+        },
+        "refCodeName": {
+          "type": "string"
+        },
         "search": {
           "type": "string"
         },

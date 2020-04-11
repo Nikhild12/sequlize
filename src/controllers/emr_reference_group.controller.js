@@ -63,7 +63,12 @@ const referenceGroupController = () => {
                     is_active: 1
                 }
             };
-
+            
+            if (postData.table_name && /\S/.test(postData.table_name)) {
+                findQuery.where[Op.and] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.table_name')), 'LIKE', '%' + postData.table_name.toLowerCase() + '%'),
+                    ];
+            }
             if (postData.search && /\S/.test(postData.search)) {
                 findQuery.where[Op.or] = [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
