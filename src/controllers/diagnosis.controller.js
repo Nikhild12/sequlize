@@ -148,7 +148,8 @@ const diagnosisController = () => {
         const {
             user_uuid
         } = req.headers;
-        const searchValue = req.body;
+        const searchValue = req.body.searchValue;
+        console.log(searchValue);
         if (user_uuid && searchValue) {
             try {
                 let pageNo = 0;
@@ -161,7 +162,7 @@ const diagnosisController = () => {
                 }
                 const offset = pageNo * itemsPerPage;
                 const diagnosisData = await diagnosisTbl.findAll({
-                    where: getDiagnosisFilterByQuery("filterbythree", searchValue.search),
+                    where: getDiagnosisFilterByQuery("filterbythree", searchValue),
                     attributes: getDiagnosisAttributes().splice(0, 3),
                     offset: offset,
                     limit: itemsPerPage
