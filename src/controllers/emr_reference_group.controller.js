@@ -95,10 +95,16 @@ const referenceGroupController = () => {
             //     findQuery.where['$app_module.uuid$'] = postData.moduleId;
             // }
 
-
-            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where['is_active'] = postData.status;
+            if (postData.status == 1) {
+                findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
             }
+            if (postData.status == 0) {
+                findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
+            }
+
+            // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+            //     findQuery.where['is_active'] = postData.status;
+            // }
 
             await emr_reference_group_tbl.findAndCountAll(findQuery)
                 .then((data) => {
