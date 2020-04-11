@@ -212,12 +212,13 @@ const diagnosisController = () => {
                     return res.send({
                         code: 400,
                         status: "error",
-                        msg: "Record already Found. Please enter New diagnosis "
+                        msg: "Please enter New diagnosis"
                     });
                 }
             });
 
-            diagnosisData.code = req.body.code;
+
+            diagnosisData.code = diagnosisData.code;
             diagnosisData.name = req.body.name;
             diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
             diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
@@ -225,7 +226,9 @@ const diagnosisController = () => {
             diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
             diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
             diagnosisData.position_id = req.body.position_id;
-            diagnosisData.description = diagnosisData & diagnosisData.description ? diagnosisData.description : diagnosisData.name;
+
+           
+            diagnosisData.description = diagnosisData.description ;
             diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
             diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
             diagnosisData.created_date = diagnosisData.modified_date = new Date();
@@ -239,9 +242,11 @@ const diagnosisController = () => {
                 if (diagnosisCreatedData) {
                     diagnosisData.uuid = diagnosisCreatedData.uuid;
                     return res.status(200).send({
+
                         code: 200,
                         message: "Inserted Diagnosis Successfully",
                         responseContents: diagnosisData
+
                     });
                 }
             } catch (ex) {

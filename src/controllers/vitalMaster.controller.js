@@ -36,8 +36,8 @@ const vitalmstrController = () => {
       if (user_uuid && vitalsMasterData) {
 
 
-        vitalsMasterData.code = vitalsMasterData & vitalsMasterData.code ? vitalsMasterData.code : vitalsMasterData.name;
-        vitalsMasterData.description = vitalsMasterData & vitalsMasterData.description ? vitalsMasterData.description : vitalsMasterData.name;
+        vitalsMasterData.name =  vitalsMasterData.name;
+        vitalsMasterData.description =  vitalsMasterData.description ;
         vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();

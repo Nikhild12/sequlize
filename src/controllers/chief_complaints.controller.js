@@ -58,7 +58,8 @@ const getChiefComplaintsAttributes = [
   "is_active",
   "created_by",
   "modified_by",
-  "modified_date"
+  "modified_date",
+  "comments"
 ];
 
 function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
@@ -183,35 +184,34 @@ const ChiefComplaints = () => {
               msg: "Record already Found. Please enter New CHIEF COMPLAINT "
             });
           }
+          try {
+            chiefComplaintsData.code = chiefComplaintsData.code;
+            chiefComplaintsData.name = chiefComplaintsData.name;
+            chiefComplaintsData.description =chiefComplaintsData.description  
+            chiefComplaintsData.is_active = chiefComplaintsData.is_active;
+            chiefComplaintsData.status = chiefComplaintsData.is_active;
+    
+            chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
+            chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
+            chiefComplaintsData.revision = 1;
+            const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
+              chiefComplaintsData,
+              { returning: true }
+            );
+    
+            if (chiefComplaintsCreatedData) {
+              chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
+              return res.status(200).send({
+                statusCode: 200,
+                message: "Inserted Chief Complaints Successfully",
+                responseContents: chiefComplaintsData
+              });
+            }
+          } catch (ex) {
+            console.log(ex.message);
+            return res.status(400).send({ statusCode: 400, message: ex.message });
+          } 
         });
-
-      try {
-        chiefComplaintsData.code = chiefComplaintsData.code;
-        chiefComplaintsData.name = chiefComplaintsData.name;
-        chiefComplaintsData.description =chiefComplaintsData.description  
-        chiefComplaintsData.is_active = chiefComplaintsData.is_active;
-        chiefComplaintsData.status = chiefComplaintsData.is_active;
-
-        chiefComplaintsData.created_by = chiefComplaintsData.modified_by = user_uuid;
-        chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
-        chiefComplaintsData.revision = 1;
-        const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
-          chiefComplaintsData,
-          { returning: true }
-        );
-
-        if (chiefComplaintsCreatedData) {
-          chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
-          return res.status(200).send({
-            statusCode: 200,
-            message: "Inserted Chief Complaints Successfully",
-            responseContents: chiefComplaintsData
-          });
-        }
-      } catch (ex) {
-        console.log(ex.message);
-        return res.status(400).send({ statusCode: 400, message: ex.message });
-      }
     } else {
       return res
         .status(400)
