@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull:true
             },
             mnemonic:{
-                type: DataTypes.BOOLEAN,
+                type: DataTypes.INTEGER,
                 allowNull: true,
             },
             loinc_code_master_uuid:{
