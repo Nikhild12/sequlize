@@ -4,7 +4,8 @@ var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 
-const vw_diagnosis = db.vw_diagnosis;
+// const vw_diagnosis = db.vw_diagnosis;
+const vw_uom_diagnosis = db.vw_uom_diagnosis
 const diagnosisTbl = db.diagnosis;
 const diagverTb = db.diagnosis_version;
 const diagregionTb = db.diagnosis_region;
@@ -304,7 +305,7 @@ const diagnosisController = () => {
         // if (getsearch.search && /\S/.test(getsearch.search)) {
         //     findQuery.where = {
         //         [Op.and]: [
-        //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         //         ]
         //     };
         // }
@@ -329,8 +330,8 @@ const diagnosisController = () => {
         if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
             findQuery.where = {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
                 ]
             };
         }
@@ -338,7 +339,7 @@ const diagnosisController = () => {
         if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
             findQuery.where = {
                 [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
                 ]
             };
         }
@@ -354,7 +355,7 @@ const diagnosisController = () => {
          
         try {
             console.log(findQuery);
-            const data = await vw_diagnosis.findAndCountAll(findQuery);
+            const data = await vw_uom_diagnosis.findAndCountAll(findQuery);
 
             if (data) {
                 return res
@@ -455,7 +456,7 @@ const diagnosisController = () => {
 
         try {
 
-            const data = await vw_diagnosis.findOne({
+            const data = await vw_uom_diagnosis.findOne({
                 where: {
                     uuid: postData.Diagnosis_id,
                 },
