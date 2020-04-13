@@ -55,8 +55,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: 1,
             },
-            created_date: 'created_date',
-            modified_date: 'modified_date',
             created_by: {
 
                 type: DataTypes.INTEGER,
