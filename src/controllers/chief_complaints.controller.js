@@ -483,17 +483,15 @@ const ChiefComplaints = () => {
           {
             name: {
               [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            },
-            is_active: 1,
-            status:1
+            }
+            
 
           },
           {
             code: {
               [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            },
-            is_active: 1,
-            status:1
+            }
+            
           }
         ]
       }
