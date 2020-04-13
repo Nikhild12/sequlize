@@ -485,7 +485,6 @@ const ChiefComplaints = () => {
               [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
             }
             
-
           },
           {
             code: {
