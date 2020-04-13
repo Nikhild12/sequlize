@@ -187,12 +187,12 @@ const ChiefComplaints = () => {
           try {
             chiefComplaintsData.code = chiefComplaintsData.code;
             chiefComplaintsData.name = chiefComplaintsData.name;
-            chiefComplaintsData.description =chiefComplaintsData.description  
+            chiefComplaintsData.description =chiefComplaintsData.description  ;
             chiefComplaintsData.is_active = chiefComplaintsData.is_active;
             chiefComplaintsData.status = chiefComplaintsData.is_active;
     
             chiefComplaintsData.created_by = user_uuid;
-            chiefComplaintsData.created_date = chiefComplaintsData.modified_date = new Date();
+            chiefComplaintsData.created_date = new Date();
             chiefComplaintsData.revision = 1;
             const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
               chiefComplaintsData,
@@ -435,7 +435,7 @@ const ChiefComplaints = () => {
     }
     let findQuery = {
       offset: offset,
-      where:{is_active: 1, status: 1,},
+      //where:{is_active: 1, status: 1,},
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
       
@@ -459,18 +459,41 @@ const ChiefComplaints = () => {
       };
     }
 
+  // if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+  //           findQuery.where = {
+  //               [Op.and]: [
+  //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+  //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+  //               ]
+  //           };
+  //       }
+
   if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-            findQuery.where = {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + searchData.searchKeyWord.toLowerCase() + '%'),
+    findQuery.where = { [Op.and]: [
+      {
+        [Op.or]: [
+          {
+            name: {
+              [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+            },
+            is_active: 1,
+            status:1
 
+          },
+          {
+            code: {
+              [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+            },
+            is_active: 1,
+            status:1
+          }
+        ]
+      }
+      
+    ] 
+  };
+}
 
-                ]
-            };
-        }
-
-        
     if (getsearch.is_active == 1 || getsearch.status == 1) {
       findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
     }
