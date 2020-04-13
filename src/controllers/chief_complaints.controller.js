@@ -442,21 +442,29 @@ const ChiefComplaints = () => {
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
-      findQuery.where = {
+      findQuery.where = { [Op.and]: [
+        {
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+              },
+              is_active: 1,
+              status:1
+  
+            },
+            {
+              code: {
+                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+              },
+              is_active: 1,
+              status:1
+            }
+          ]
+        }
         
-        [Op.or]: [
-          {
-            name: {
-              [Op.like]: "%" + getsearch.search + "%"
-            }
-          },
-          {
-            code: {
-              [Op.like]: "%" + getsearch.search + "%"
-            }
-          }
-        ]
-      };
+      ] 
+    };
     }
 
   // if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
