@@ -447,7 +447,7 @@ const ChiefComplaints = () => {
           [Op.or]: [
             {
               name: {
-                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                [Op.like]: `%${getsearch.search.toLowerCase()}%`
               },
               is_active: 1,
               status:1
@@ -455,7 +455,7 @@ const ChiefComplaints = () => {
             },
             {
               code: {
-                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                [Op.like]: `%${getsearch.search.toLowerCase()}%`
               },
               is_active: 1,
               status:1
