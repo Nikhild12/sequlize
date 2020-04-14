@@ -74,11 +74,23 @@ module.exports = (sequelize, DataTypes) => {
                     notNull: true
                 }
 
+            },
+            created_date:{
+                type: DataTypes.DATE,
+                allowNull: true,
+
+            },
+            modified_date:{
+                type: DataTypes.DATE,
+                allowNull: true,
+
             }
+
         },
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
+            timestamps: false,
             indexes: [
                 {
                     fields: ["uuid"]

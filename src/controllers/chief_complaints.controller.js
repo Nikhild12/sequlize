@@ -75,7 +75,8 @@ function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
     body_site: ChiefComplaintsReqData.body_site,
     modified_by: user_uuid,
     modified_date: new Date(),
-    is_active: ChiefComplaintsReqData.is_active
+    is_active: ChiefComplaintsReqData.is_active,
+    status: ChiefComplaintsReqData.status
   };
 }
 
@@ -188,6 +189,7 @@ const ChiefComplaints = () => {
             chiefComplaintsData.status = chiefComplaintsData.is_active;
             chiefComplaintsData.created_by = user_uuid;
             chiefComplaintsData.created_date = new Date();
+            chiefComplaintsData.modified_date = null;
             chiefComplaintsData.revision = 1;
             const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
               chiefComplaintsData,
@@ -251,7 +253,7 @@ const ChiefComplaints = () => {
   const _updateChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
     const ChiefComplaintsReqData = req.body;
-
+    
     const ChiefComplaintsReqUpdateData = getChiefComplaintrUpdateData(
       user_uuid,
       ChiefComplaintsReqData
