@@ -435,6 +435,7 @@ const ChiefComplaints = () => {
     }
     let findQuery = {
       offset: offset,
+      where:{is_active: 1, status: 1,},
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
       
@@ -442,8 +443,7 @@ const ChiefComplaints = () => {
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
       findQuery.where = {
-        is_active: 1,
-        status: 1,
+        
         [Op.or]: [
           {
             name: {
@@ -471,18 +471,12 @@ const ChiefComplaints = () => {
         }
 
         
-        if (getsearch.status == 1) {
-            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-        }
-        else if (getsearch.status == 0) {
-            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
-
-
-        }
-        else {
-            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-
-        }
+    if (getsearch.is_active == 1 || getsearch.status == 1) {
+      findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+    }
+    if (getsearch.is_active == 0 || getsearch.status == 0) {
+      findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+    }
     try {
       await chief_complaints_tbl
         .findAndCountAll(findQuery)

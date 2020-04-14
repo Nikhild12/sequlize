@@ -11241,7 +11241,7 @@
         "paginationSize": {
           "type": "integer"
         },
-        "status": {
+        "is_active": {
           "type": "integer"
         },
         "search": {
@@ -11346,8 +11346,8 @@
           "example": "say somthing about related to fever"
         },
         "mnemonic": {
-          "type": "integer",
-          "example": 1
+          "type": "string",
+          "example": "string"
         },
         "loinc_code_master_uuid": {
           "type": "integer",
@@ -11375,6 +11375,10 @@
         },
         "is_default": {
           "type": "integer",
+          "example": 1
+        },
+        "is_active":{
+          "type": "boolean",
           "example": 1
         }
       }

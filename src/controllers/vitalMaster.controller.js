@@ -13,7 +13,7 @@ const vitalTypeTbl = db.vital_type;
 const vitalValueTypeTbl = db.vital_value_type;
 const vitalLonicTbl = db.vital_loinc;
 const vw_vitals_master = db.vw_vitals_master;
-
+const emr_uom = db.emr_uom;
 
 const vitalmstrController = () => {
 	/**
@@ -185,6 +185,7 @@ const vitalmstrController = () => {
       order: [
         [sortField, sortOrder],
       ],
+      
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {

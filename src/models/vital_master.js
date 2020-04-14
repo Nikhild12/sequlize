@@ -98,6 +98,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "vital_master_uuid",
             targetKey: "uuid"
         });
+        
     };
     return vital_masters;
 };
