@@ -437,7 +437,7 @@ const ChiefComplaints = () => {
     }
     let findQuery = {
       offset: offset,
-      //where:{is_active: 1, status: 1,},
+      where:{is_active: 1, status: 1,},
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
       
