@@ -70,7 +70,7 @@ function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
     name: ChiefComplaintsReqData.name,
     description: ChiefComplaintsReqData.description,
     chief_complaint_category_uuid:
-    ChiefComplaintsReqData.chief_complaint_category_uuid,
+      ChiefComplaintsReqData.chief_complaint_category_uuid,
     referrence_link: ChiefComplaintsReqData.referrence_link,
     body_site: ChiefComplaintsReqData.body_site,
     modified_by: user_uuid,
@@ -159,66 +159,66 @@ const ChiefComplaints = () => {
   };
   const _createChiefComplaints = async (req, res) => {
     if (Object.keys(req.body).length != 0) {
-    const { user_uuid } = req.headers;
-    const chiefComplaintsData = req.body;
+      const { user_uuid } = req.headers;
+      const chiefComplaintsData = req.body;
 
-    if (user_uuid && chiefComplaintsData) {
-      chief_complaints_tbl
-        .findAll({
-          where: {
-            [Op.or]: [
-              {
-                code: chiefComplaintsData.code
-              },
-              {
-                name: chiefComplaintsData.name
-              }
-            ]
-          }
-        })
-        .then(async result => {
-          if (result.length != 0) {
-            return res.send({
-              statusCode: 400,
-              status: "error",
-              msg: "Record already Found. Please enter New CHIEF COMPLAINT "
-            });
-          }
-          try {
-            
-            chiefComplaintsData.status = chiefComplaintsData.is_active;
-            chiefComplaintsData.created_by = user_uuid;
-            chiefComplaintsData.created_date = new Date();
-            chiefComplaintsData.modified_date = null;
-            chiefComplaintsData.revision = 1;
-            const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
-              chiefComplaintsData,
-              { returning: true }
-            );
-    
-            if (chiefComplaintsCreatedData) {
-              chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
-              return res.status(200).send({
-                statusCode: 200,
-                message: "Inserted Chief Complaints Successfully",
-                responseContents: chiefComplaintsData
+      if (user_uuid && chiefComplaintsData) {
+        chief_complaints_tbl
+          .findAll({
+            where: {
+              [Op.or]: [
+                {
+                  code: chiefComplaintsData.code
+                },
+                {
+                  name: chiefComplaintsData.name
+                }
+              ]
+            }
+          })
+          .then(async result => {
+            if (result.length != 0) {
+              return res.send({
+                statusCode: 400,
+                status: "error",
+                msg: "Record already Found. Please enter New CHIEF COMPLAINT "
               });
             }
-          } catch (ex) {
-            console.log(ex.message);
-            return res.status(400).send({ statusCode: 400, message: ex.message });
-          } 
-        });
+            try {
+
+              chiefComplaintsData.status = chiefComplaintsData.is_active;
+              chiefComplaintsData.created_by = user_uuid;
+              chiefComplaintsData.created_date = new Date();
+              chiefComplaintsData.modified_date = null;
+              chiefComplaintsData.revision = 1;
+              const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
+                chiefComplaintsData,
+                { returning: true }
+              );
+
+              if (chiefComplaintsCreatedData) {
+                chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
+                return res.status(200).send({
+                  statusCode: 200,
+                  message: "Inserted Chief Complaints Successfully",
+                  responseContents: chiefComplaintsData
+                });
+              }
+            } catch (ex) {
+              console.log(ex.message);
+              return res.status(400).send({ statusCode: 400, message: ex.message });
+            }
+          });
+      } else {
+        return res
+          .status(400)
+          .send({ statusCode: 400, message: "No Headers Found" });
+      }
     } else {
       return res
         .status(400)
-        .send({ statusCode: 400, message: "No Headers Found" });
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
     }
-  } else {
-    return res
-      .status(400)
-      .send({ code: httpStatus[400], message: "No Request Body Found" });
-  }
   };
   const _getChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -228,7 +228,7 @@ const ChiefComplaints = () => {
       try {
         const chiefData = await chief_complaints_tbl.findOne({
           attributes: getChiefComplaintsAttributes,
-          where: { uuid: ChiefComplaints_id,is_active:1,status:1 }
+          where: { uuid: ChiefComplaints_id, is_active: 1, status: 1 }
         });
 
         return res.status(httpStatus.OK).json({
@@ -253,7 +253,7 @@ const ChiefComplaints = () => {
   const _updateChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
     const ChiefComplaintsReqData = req.body;
-    
+
     const ChiefComplaintsReqUpdateData = getChiefComplaintrUpdateData(
       user_uuid,
       ChiefComplaintsReqData
@@ -293,7 +293,7 @@ const ChiefComplaints = () => {
     if (ChiefComplaints_id) {
       const updatedcheifcomplaintsData = {
         status: 0,
-        is_active:0,
+        is_active: 0,
         modified_by: user_uuid,
         modified_date: new Date()
       };
@@ -437,75 +437,104 @@ const ChiefComplaints = () => {
     }
     let findQuery = {
       offset: offset,
-      where:{is_active: 1, status: 1,},
+      where: { is_active: 1, status: 1, },
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      
+
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
-      findQuery.where = { [Op.and]: [
-        {
-          [Op.or]: [
-            {
-              name: {
-                [Op.like]: `%${getsearch.search.toLowerCase()}%`
+      findQuery.where = {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              {
+                name: {
+                  [Op.like]: `%${getsearch.search.toLowerCase()}%`
+                },
+                is_active: 1,
+                status: 1
+
               },
-              is_active: 1,
-              status:1
-  
-            },
-            {
-              code: {
-                [Op.like]: `%${getsearch.search.toLowerCase()}%`
-              },
-              is_active: 1,
-              status:1
-            }
-          ]
-        }
-        
-      ] 
-    };
+              {
+                code: {
+                  [Op.like]: `%${getsearch.search.toLowerCase()}%`
+                },
+                is_active: 1,
+                status: 1
+              }
+            ]
+          }
+
+        ]
+      };
     }
 
-  // if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-  //           findQuery.where = {
-  //               [Op.and]: [
-  //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-  //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-  //               ]
-  //           };
-  //       }
+    // if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+    //           findQuery.where = {
+    //               [Op.and]: [
+    //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+    //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+    //               ]
+    //           };
+    //       }
 
-  if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-    findQuery.where = { [Op.and]: [
-      {
-        [Op.or]: [
+    if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+      findQuery.where = {
+        [Op.and]: [
           {
-            name: {
-              [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            }
-            
-          },
-          {
-            code: {
-              [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            }
-            
+            [Op.or]: [
+              {
+                name: {
+                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                }
+
+              },
+              {
+                code: {
+                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                }
+
+              }
+            ]
           }
-        ]
-      }
-      
-    ] 
-  };
-}
 
-    if (getsearch.is_active == 1 || getsearch.status == 1) {
-      findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+        ]
+      };
+    }
+    if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
+      findQuery.where = {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              {
+                name: {
+                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                },
+                is_active: 1,
+                status: 1
+
+              },
+              {
+                code: {
+                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                },
+                is_active: 1,
+                status: 1
+
+              }
+            ]
+          }
+
+        ]
+      };
+    }
+
+    if (getsearch.is_active == 1 || getsearch.status == 1 ) {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
     }
     if (getsearch.is_active == 0 || getsearch.status == 0) {
-      findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+      findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
     }
     try {
       await chief_complaints_tbl
