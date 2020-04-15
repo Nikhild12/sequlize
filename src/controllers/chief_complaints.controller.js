@@ -70,14 +70,13 @@ function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
     name: ChiefComplaintsReqData.name,
     description: ChiefComplaintsReqData.description,
     chief_complaint_category_uuid:
-      ChiefComplaintsReqData.chief_complaint_category_uuid,
+    ChiefComplaintsReqData.chief_complaint_category_uuid,
     referrence_link: ChiefComplaintsReqData.referrence_link,
     body_site: ChiefComplaintsReqData.body_site,
     modified_by: user_uuid,
     modified_date: new Date(),
-    created_by: user_uuid,
-    created_date: new Date(),
-    is_active: ChiefComplaintsReqData.is_active
+    is_active: ChiefComplaintsReqData.is_active,
+    status: ChiefComplaintsReqData.status
   };
 }
 
@@ -159,6 +158,7 @@ const ChiefComplaints = () => {
     }
   };
   const _createChiefComplaints = async (req, res) => {
+    if (Object.keys(req.body).length != 0) {
     const { user_uuid } = req.headers;
     const chiefComplaintsData = req.body;
 
@@ -185,14 +185,11 @@ const ChiefComplaints = () => {
             });
           }
           try {
-            chiefComplaintsData.code = chiefComplaintsData.code;
-            chiefComplaintsData.name = chiefComplaintsData.name;
-            chiefComplaintsData.description =chiefComplaintsData.description  ;
-            chiefComplaintsData.is_active = chiefComplaintsData.is_active;
+            
             chiefComplaintsData.status = chiefComplaintsData.is_active;
-    
             chiefComplaintsData.created_by = user_uuid;
             chiefComplaintsData.created_date = new Date();
+            chiefComplaintsData.modified_date = null;
             chiefComplaintsData.revision = 1;
             const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
               chiefComplaintsData,
@@ -217,6 +214,11 @@ const ChiefComplaints = () => {
         .status(400)
         .send({ statusCode: 400, message: "No Headers Found" });
     }
+  } else {
+    return res
+      .status(400)
+      .send({ code: httpStatus[400], message: "No Request Body Found" });
+  }
   };
   const _getChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -251,7 +253,7 @@ const ChiefComplaints = () => {
   const _updateChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
     const ChiefComplaintsReqData = req.body;
-
+    
     const ChiefComplaintsReqUpdateData = getChiefComplaintrUpdateData(
       user_uuid,
       ChiefComplaintsReqData
@@ -435,7 +437,7 @@ const ChiefComplaints = () => {
     }
     let findQuery = {
       offset: offset,
-      //where:{is_active: 1, status: 1,},
+      where:{is_active: 1, status: 1,},
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
       
@@ -447,7 +449,7 @@ const ChiefComplaints = () => {
           [Op.or]: [
             {
               name: {
-                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                [Op.like]: `%${getsearch.search.toLowerCase()}%`
               },
               is_active: 1,
               status:1
@@ -455,7 +457,7 @@ const ChiefComplaints = () => {
             },
             {
               code: {
-                [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                [Op.like]: `%${getsearch.search.toLowerCase()}%`
               },
               is_active: 1,
               status:1
@@ -483,17 +485,14 @@ const ChiefComplaints = () => {
           {
             name: {
               [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            },
-            is_active: 1,
-            status:1
-
+            }
+            
           },
           {
             code: {
               [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-            },
-            is_active: 1,
-            status:1
+            }
+            
           }
         ]
       }

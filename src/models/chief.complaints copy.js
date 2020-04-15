@@ -39,12 +39,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            created_date: 'created_date',
-            modified_date: 'modified_date',
             created_by: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 0,
                 validate: {
                     notNull: true
                 }
@@ -54,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 0,
                 validate: {
                     notNull: true
                 }

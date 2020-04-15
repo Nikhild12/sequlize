@@ -55,12 +55,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: 1,
             },
-            created_date: 'created_date',
-            modified_date: 'modified_date',
             created_by: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 0,
                 validate: {
                     notNull: true
                 }
@@ -70,15 +69,28 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 0,
                 validate: {
                     notNull: true
                 }
 
+            },
+            created_date:{
+                type: DataTypes.DATE,
+                allowNull: true,
+
+            },
+            modified_date:{
+                type: DataTypes.DATE,
+                allowNull: true,
+
             }
+
         },
         {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
+            timestamps: false,
             indexes: [
                 {
                     fields: ["uuid"]
