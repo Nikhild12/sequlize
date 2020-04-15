@@ -267,7 +267,9 @@ const diagnosisController = () => {
     const _getDiagnosis = async (req, res, next) => {
 
         let getsearch = req.body;
-
+        
+        Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+   
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
         let sortField = 'name';
@@ -350,8 +352,7 @@ const diagnosisController = () => {
             findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
         }
          
-             
-         
+                    
         try {
             console.log(findQuery);
             const data = await vw_uom_diagnosis.findAndCountAll(findQuery);
