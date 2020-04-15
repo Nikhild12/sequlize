@@ -408,6 +408,9 @@ const ChiefComplaints = () => {
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
 
+   Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+   //console.log(getsearch);
+
     let pageNo = 0;
     const itemsPerPage = getsearch.paginationSize
       ? getsearch.paginationSize

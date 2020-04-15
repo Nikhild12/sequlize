@@ -159,7 +159,9 @@ const vitalmstrController = () => {
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
     let sortField = 'modified_date';
     let sortOrder = 'DESC';
-
+    
+    Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+   
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
 
