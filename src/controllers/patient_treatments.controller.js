@@ -116,13 +116,13 @@ const PatientTreatmentController = () => {
             patientLab
           );
         }
-        // if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
-        //   patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
-        //   patientInvestigation.details.forEach((i) => {
-        //     i.patient_treatment_uuid = patientTKCreatedData.uuid;
-        //   });
-        //   investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
-        // }
+        if (patientTreatmentAttributes.isInvistigationAvailable(patientInvestigation)) {
+          patientInvestigation.header.patient_treatment_uuid = patientTKCreatedData.uuid;
+          patientInvestigation.details.forEach((i) => {
+            i.patient_treatment_uuid = patientTKCreatedData.uuid;
+          });
+          investigationCreated = await patientTreatmentAttributes.createInvestgationHelper(req.headers, patientInvestigation);
+        }
         if (patientTreatmentAttributes.isRadiologyAvailable(patientRadiology)) {
           patientRadiology.header.patient_treatment_uuid = patientTKCreatedData.uuid;
           patientRadiology.details.forEach((r) => {
