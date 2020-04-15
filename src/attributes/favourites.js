@@ -86,7 +86,7 @@ const _favouriteDuplicateMessage = (favList, sKey, sVal, dO) => {
         : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
     duplicate_code = emr_constants.DUPLICATE_RECORD;
   } else if (foundFavByDO) {
-    duplicate_msg = `Already display Order '${dO}' has been added to your Favourite list.`;
+    duplicate_msg = `Already display Order '${dO}' has been added to your Favorite list.`;
     duplicate_code = emr_constants.DUPLICATE_DISPLAY_ORDER;
   }
 
