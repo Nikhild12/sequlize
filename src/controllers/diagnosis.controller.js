@@ -198,7 +198,7 @@ const diagnosisController = () => {
 
         if (user_uuid && diagnosisData) {
 
-            diagnosisTbl.findAll({
+            const result = await diagnosisTbl.findAll({
                 where: {
                     [Op.or]: [{
                         code: diagnosisData.code
@@ -208,17 +208,15 @@ const diagnosisController = () => {
                     }
                     ]
                 }
-            }).then(async (result) => {
-                if (result.length != 0) {
+            });
+            if (result && result.length > 0) {
                     return res.send({
                         code: 400,
                         status: "error",
                         msg: "Please enter New diagnosis"
                     });
                 }
-            });
-
-
+           else{
             diagnosisData.code = diagnosisData.code;
             diagnosisData.name = req.body.name;
             diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
@@ -257,6 +255,7 @@ const diagnosisController = () => {
                     message: ex.message
                 });
             }
+        }
         } else {
             return res.status(400).send({
                 code: 400,
