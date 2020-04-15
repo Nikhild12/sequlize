@@ -258,7 +258,7 @@ const CCchartsController = () => {
                     }
                 }
                 else if (data7) {
-                    if (data6.critical_care_charts !== null) {
+                    if (data7.critical_care_charts !== null) {
                         vdata = getdialysisData(data7);
                         return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                     } else {
