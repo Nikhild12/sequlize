@@ -195,7 +195,7 @@ const diagnosisController = () => {
             user_uuid
         } = req.headers;
         const diagnosisData = req.body;
-
+        if (Object.keys(req.body).length != 0) {
         if (user_uuid && diagnosisData) {
 
             const result = await diagnosisTbl.findAll({
@@ -262,6 +262,11 @@ const diagnosisController = () => {
                 message: 'No Headers Found'
             });
         }
+    }else {
+            return res
+              .status(400)
+              .send({ code: httpStatus[400], message: "No Request Body Found" });
+          }
 
     };
     const _getDiagnosis = async (req, res, next) => {
