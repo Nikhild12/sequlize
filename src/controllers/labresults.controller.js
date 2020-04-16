@@ -18,31 +18,31 @@ const LabResutlsController = () => {
    * @returns {*}
    */
 
-  
+
   const _getlabreusltsbyid = async (req, res, next) => {
-    const {user_uuid} = req.headers;
-    const {patient_order_uuid} = req.query;
+    const { user_uuid } = req.headers;
+    const { patient_order_uuid } = req.query;
     try {
-    if (user_uuid > 0 && patient_order_uuid > 0){
-     const result = await labvw.findOne({
-        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: {
-          po_uuid: patient_order_uuid
+      if (user_uuid > 0 && patient_order_uuid > 0) {
+        const result = await labvw.findOne({
+          attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          where: {
+            po_uuid: patient_order_uuid
+          }
+        });
+        if (result) {
+          return res.status(httpStatus.OK).json({
+            statusCode: 200,
+            req: "",
+            responseContents: result
+          });
         }
-      });
-      if (result) {
-        return res.status(httpStatus.OK).json({
-          statusCode: 200,
-          req: "",
-          responseContents: data
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
         });
       }
-    } else {
-        return res.status(400).send({
-            code: httpStatus[400],
-            message: "No Request Body or Search key Found "
-          });
-    }
     } catch (err) {
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -52,13 +52,13 @@ const LabResutlsController = () => {
     }
   };
 
-  
+
 
   // --------------------------------------------return----------------------------------
   return {
-    
+
     getlabreusltsbyid: _getlabreusltsbyid
-    
+
   };
 };
 
