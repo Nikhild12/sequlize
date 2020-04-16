@@ -6,6 +6,9 @@ const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
+// Lodash Import
+const _ = require("lodash");
+
 // Initialize Tick Sheet Master
 const favouriteMasterTbl = sequelizeDb.favourite_master;
 const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
@@ -530,6 +533,7 @@ const TickSheetMasterController = () => {
           dept_id
         );
         favList = getFavouritesRes(favouriteData, fav_type_id);
+        favList = _.orderBy(favList, ['favourite_display_order'], ['asc']);
         const returnMessage =
           favList && favList.length > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY

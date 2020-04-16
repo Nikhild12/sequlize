@@ -160,6 +160,8 @@ const _favouriteLabVWQuery = (uId, dId) => {
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
+    fmd_active: emr_constants.IS_ACTIVE,
+    fmd_status: emr_constants.IS_ACTIVE,
     [Op.and]: [
       {
         [Op.or]: [
@@ -190,6 +192,8 @@ const _favouriteRadVWQuery = (uId, dId) => {
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
+    fmd_active: emr_constants.IS_ACTIVE,
+    fmd_status: emr_constants.IS_ACTIVE,
     [Op.and]: [
       {
         [Op.or]: [
