@@ -55,6 +55,10 @@ const familyHistoryRoute = require("./family_history.route");
 const surgeryHistoryRoute = require("./patient_surgeries.route");
 const referralHistoryRoute = require("./patient_referral.route");
 const patientTransferRoute = require("./patient_transfer.route");
+//LabResult routes
+
+const labResultRoute = require("./labresult.route");
+
 
 //Import ReferalReasons routes
 
@@ -154,6 +158,9 @@ serviceRouter.use("/chiefComplaintCategory", chiefComplaintCategoryRoutes);
 
 // Treatment Kit Routes
 serviceRouter.use("/treatment-kit", treatmentKitRoute);
+
+//LabResult
+serviceRouter.use("/lab-result", labResultRoute);
 
 //ReferalReasons routes
 
