@@ -453,8 +453,8 @@ module.exports = specialitySketchesMasterController();
 async function getuserDetails(user_uuid, docid, authorization) {
     console.log(user_uuid, docid, authorization);
     let options = {
-        uri: config.wso2AppUrl + 'users/getusersById',
-        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+        //uri: config.wso2AppUrl + 'users/getusersById',
+        uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
         //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
         method: "POST",
         headers: {
@@ -502,9 +502,15 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep) {
         "revision": data.revision,
         "is_active": data.is_active,
         "created_by_id": data.created_by,
-        "created_by": getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name,
+        "created_by": 
+        getcuDetails.responseContents ? 
+        getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
+        : null,
         "modified_by_id": data.modified_by,
-        "modified_by": getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name,
+        "modified_by": 
+        getmuDetails.responseContents ?
+        getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
+        : null,
         "created_date": data.created_date,
         "modified_date": data.modified_date,
         "speciality_sketch_detail": data.speciality_sketch_detail

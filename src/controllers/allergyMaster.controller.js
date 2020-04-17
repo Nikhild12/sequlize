@@ -329,20 +329,9 @@ const allergyMasterController = () => {
             if (!data) {
                 return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
             } else {
-                //var getcuDetails = {},getmuDetails={};
-                //if (data.created_by > 0){
+                
                 const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
-                // } else {
-                //     getcuDetails.responseContents.title.name = null;
-                //     getcuDetails.responseContents.first_name = null;
-
-                // }
-                //if (data.modified_by > 0){
                 const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
-                // }else {
-                //     getmuDetials.responseContents.title.name = null;
-                //     getmuDetails.responseContents.first_name = null;
-                // }
                 const getdata = getfulldata(data, getcuDetails, getmuDetails);
                 return res
                     .status(httpStatus.OK)

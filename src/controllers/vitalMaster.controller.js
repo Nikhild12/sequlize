@@ -182,7 +182,7 @@ const vitalmstrController = () => {
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
-      where:{ is_active: 1},
+      where:{ is_active: 1, status: 1},
       limit: itemsPerPage,
       order: [
         [sortField, sortOrder],
@@ -214,15 +214,12 @@ const vitalmstrController = () => {
       };
     }
     if (getsearch.is_active == 1 || getsearch.status == 1) {
-      findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
+      findQuery.where = { is_active: 1, status: 1 };
     }
     if (getsearch.is_active == 0 || getsearch.status == 0) {
-      findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
+      findQuery.where = { is_active: 0, status: 0 };
     }
-    // else{
-    //   findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-    // }
-    
+        
     try {
       const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });
       if (result) {

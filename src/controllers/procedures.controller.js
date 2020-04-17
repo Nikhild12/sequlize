@@ -4,6 +4,7 @@ const sequelizeDb = require("../config/sequelize");
 // const sequelizeDb = require('../config/sequelize');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const rp = require("request-promise");
 
 const proceduresTbl = db.procedures;
 const procedureNoteTbl = db.procedure_note_templates;
@@ -139,43 +140,38 @@ const proceduresController = () => {
         ]
       };
     }
- if (getsearch.searchKeyWord &&  /\S/.test(getsearch.searchKeyWord)) {
-          findQuery.where = {
-            [Op.and]: [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-              
-              
-            ]
-          };
-        }
-        
-        if (getsearch.procedure_scheme_uuid &&  /\S/.test(getsearch.procedure_scheme_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid),
-            ]
-          };
-        }
-         if (getsearch.procedure_type_uuid &&  /\S/.test(getsearch.procedure_type_uuid)) {
-          findQuery.where = {
-            [Op.and]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_scheme_uuid),
-            ]
-          };
-        }
-       if (getsearch.is_active ==1 ) {
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
-        }
-        else if(getsearch.is_active ==0) {
-         findQuery.where ={[Op.and]: [ {is_active:0}]};
+    if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
+        ]
+      };
+    }
 
-
-        }
-        else{
-         findQuery.where ={[Op.and]: [ {is_active:1}]};
-
-        }
+    if (getsearch.procedure_scheme_uuid && /\S/.test(getsearch.procedure_scheme_uuid)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid),
+        ]
+      };
+    }
+    if (getsearch.procedure_type_uuid && /\S/.test(getsearch.procedure_type_uuid)) {
+      findQuery.where = {
+        [Op.and]: [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_scheme_uuid),
+        ]
+      };
+    }
+    if (getsearch.is_active == 1) {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+    }
+    else if (getsearch.is_active == 0) {
+      findQuery.where = { [Op.and]: [{ is_active: 0 }] };
+    }
+    else {
+      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
+    }
 
     try {
       await proceduresTbl
@@ -315,7 +311,7 @@ const proceduresController = () => {
       const page = postData.page ? postData.page : 1;
       const itemsPerPage = postData.limit ? postData.limit : 10;
       const offset = (page - 1) * itemsPerPage;
-      await proceduresTbl
+      const data = await proceduresTbl
         .findOne({
           where: {
             uuid: postData.Procedures_id
@@ -374,14 +370,21 @@ const proceduresController = () => {
           }],
           offset: offset,
           limit: itemsPerPage
-        })
-        .then(data => {
-          return res.status(httpStatus.OK).json({
-            statusCode: 200,
-            req: "",
-            responseContents: data
-          });
         });
+      if (!data) {
+        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
+      } else {
+        const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
+        const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
+        const getdata = getfulldata(data, getcuDetails, getmuDetails);
+        return res
+          .status(httpStatus.OK)
+          .json({
+            statusCode: 200,
+            req: '',
+            responseContents: getdata
+          });
+      }
     } catch (err) {
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -439,10 +442,75 @@ const proceduresController = () => {
     getprocedures,
     updateproceduresId,
     deleteprocedures,
-
     getproceduresById,
     getProceduresByFilters: _getProceduresByFilters
   };
 };
 
 module.exports = proceduresController();
+
+async function getuserDetails(user_uuid, docid, authorization) {
+  console.log(user_uuid, docid, authorization);
+  let options = {
+    uri: config.wso2AppUrl + 'users/getusersById',
+    //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+    //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+    method: "POST",
+    headers: {
+      Authorization: authorization,
+      user_uuid: user_uuid
+    },
+    body: { "Id": docid },
+    //body: {},
+    json: true
+  };
+  const user_details = await rp(options);
+  return user_details;
+}
+
+function getfulldata(data, getcuDetails, getmuDetails) {
+  let newdata = {
+    "uuid": data.uuid,
+    "procedure_scheme_uuid": data.procedure_scheme_uuid,
+    "code": data.code,
+    "name": data.name,
+    "procedure_technique_uuid": data.procedure_technique_uuid,
+    "procedure_version_uuid": data.procedure_version_uuid,
+    "procedure_region_uuid": data.procedure_region_uuid,
+    "procedure_type_uuid": data.procedure_type_uuid,
+    "procedure_category_uuid": data.procedure_category_uuid,
+    "procedure_sub_category_uuid": data.procedure_sub_category_uuid,
+    "operation_type_uuid": data.operation_type_uuid,
+    "anaesthesia_type_uuid": data.anaesthesia_type_uuid,
+    "speciality_uuid": data.speciality_uuid,
+    "equipment_uuid": data.equipment_uuid,
+    "body_site_uuid": data.body_site_uuid,
+    "duration": data.duration,
+    "description": data.description,
+    "is_active": data.is_active,
+    "status": data.status,
+    "revision": data.revision,
+    "created_by_id": data.created_by,
+    "created_by":
+      getcuDetails.responseContents ?
+        getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
+        : null,
+    "modified_by_id": data.modified_by,
+    "modified_by":
+      getmuDetails.responseContents ?
+        getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
+        : null,
+    "created_date": data.created_date,
+    "modified_date": data.modified_date,
+    "procedure_note_templates": data.procedure_note_templates,
+    "procedure_technique": data.procedure_technique,
+    "procedure_version": data.procedure_version,
+    "procedure_region": data.procedure_region,
+    "procedure_type": data.procedure_type,
+    "procedure_sub_category": data.procedure_sub_category,
+    "operation_type": data.operation_type,
+    "anesthesia_type": data.anesthesia_type,
+    "body_site": data.body_site,
+  };
+  return newdata;
+}

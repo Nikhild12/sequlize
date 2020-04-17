@@ -308,14 +308,6 @@ const diagnosisController = () => {
 
         };
 
-        // if (getsearch.search && /\S/.test(getsearch.search)) {
-        //     findQuery.where = {
-        //         [Op.and]: [
-        //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-        //         ]
-        //     };
-        // }
-
         if (getsearch.search && /\S/.test(getsearch.search)) {
             findQuery.where = {
               [Op.and]: [
