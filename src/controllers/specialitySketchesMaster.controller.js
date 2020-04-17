@@ -495,7 +495,7 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep) {
         "code": data.code,
         "name": data.name,
         "department_uuid": data.department_uuid,
-        "department_name": getdep.responseContent.name,
+        "department_name": getdep.responseContent ? getdep.responseContent.name : null,
         "description": data.description,
         "sketch_name": data.sketch_name,
         "status": data.status,

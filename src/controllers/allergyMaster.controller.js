@@ -341,8 +341,6 @@ const allergyMasterController = () => {
                         responseContents: getdata
                     });
             }
-
-
         } catch (err) {
             console.log (err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
