@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.STRING,
                 allowNull: true
-                       
+
             },
             language: {
 
@@ -57,24 +57,24 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
@@ -92,6 +92,13 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    
+
+    value_types.associate = models => {
+        value_types.belongsTo(models.profile_section_category_concepts, {
+            foreignKey: 'value_type_uuid',
+            as: 'profile_section_category_concepts'
+        });
+    };
+
     return value_types;
 };
