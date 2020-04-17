@@ -5,6 +5,7 @@ const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const rp = require("request-promise");
+var config = require("../config/config");
 
 const proceduresTbl = db.procedures;
 const procedureNoteTbl = db.procedure_note_templates;
