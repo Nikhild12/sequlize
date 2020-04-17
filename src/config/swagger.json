@@ -5840,6 +5840,42 @@
         "x-throttling-tier": "Unlimited"
       }
     },
+    "/api/lab-result/getLabResultById": {
+      "get": {
+        "description": "To get LabResult By Id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "user_uuid",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "patient_order_uuid",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "LabResult"
+        ],
+        "responses": {
+          "200": {
+            "description": "get Successfully",
+            "schema": {
+              "$ref": "#/definitions/getLabResult"
+            }
+          }
+        },
+        "x-auth-type": "Application & Application User",
+        "x-throttling-tier": "Unlimited"
+      }
+    },
     "/api/profiles/add": {
       "post": {
         "summary": "To create  profile Details ",
@@ -11377,7 +11413,7 @@
           "type": "integer",
           "example": 1
         },
-        "is_active":{
+        "is_active": {
           "type": "boolean",
           "example": 1
         }
@@ -12427,6 +12463,14 @@
         "period_uuid": {
           "type": "integer",
           "example": 1
+        }
+      }
+    },
+    "getLabResult": {
+      "type": "object",
+      "properties": {
+        "user_uuid": {
+          "type": "integer"
         }
       }
     },

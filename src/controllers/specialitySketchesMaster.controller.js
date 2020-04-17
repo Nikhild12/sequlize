@@ -263,7 +263,7 @@ const specialitySketchesMasterController = () => {
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
-                                console.log('req.files[i].path', req.files[i].path)
+                                console.log('req.files[i].path', req.files[i].path);
                                 sketchFileSave.push({
                                     speciality_sketch_uuid: specialityData.dataValues.uuid,
                                     sketch_path: req.files[i].path,
@@ -329,7 +329,7 @@ const specialitySketchesMasterController = () => {
                             description: attachmentData.description,
                             sketch_name: attachmentData.sketch_name,
                             modified_by: req.headers.user_uuid
-                        }
+                        };
 
                         await specialitySketchesMasterTbl.update(updateData,
                             {
@@ -340,7 +340,7 @@ const specialitySketchesMasterController = () => {
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
-                                console.log('req.files[i].path', req.files[i].path)
+                                console.log('req.files[i].path', req.files[i].path);
                                 sketchFileSave.push({
                                     speciality_sketch_uuid: attachmentData.Speciality_id,
                                     sketch_path: req.files[i].path,
@@ -395,9 +395,6 @@ const specialitySketchesMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
-                    //as: 'speciality_sketch_details',
-                    //required: false,
-                    // as: 'source' 
                     attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
                     where: { status: 1, is_active: 1 }
                 }]
@@ -407,12 +404,8 @@ const specialitySketchesMasterController = () => {
                 const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
                 const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
                 const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
-                //data.created_by = getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name;
-                //data.modified_by = getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name;
-                //data.department_name = getdep.responseContent.name;
                 const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
 
-                //Object.assign(data, {detapartment_name: getdep});
                 return res
                     .status(httpStatus.OK)
                     .json({
