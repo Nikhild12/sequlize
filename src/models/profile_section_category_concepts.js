@@ -147,6 +147,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_section_category_concept_uuid',
             as: 'profile_section_category_concept_values'
         });
+        profile_section_category_concepts.belongsTo(models.value_types, {
+            foreignKey: 'value_type_uuid',
+            as: 'value_types'
+        });
     };
 
 
