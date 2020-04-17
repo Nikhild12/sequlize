@@ -4,6 +4,7 @@ const sequelizeDb = require('../config/sequelize');
 // const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+const rp = require("request-promise");
 
 const emr_constants = require('../config/constants');
 
@@ -116,11 +117,11 @@ const allergyMasterController = () => {
         //     findQuery.where = { is_active: postData.status };
         // }
         if (getsearch.status == 1) {
-            findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-          }
-          if (getsearch.status == 0) {
-            findQuery.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
-          }
+            findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
+        }
+        if (getsearch.status == 0) {
+            findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
+        }
         //   else{
         //     findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
         //   }
@@ -292,8 +293,8 @@ const allergyMasterController = () => {
 
 
     const getAlleryMasterById = async (req, res, next) => {
-
         const postData = req.body;
+        //var getcuDetails = {},getmuDetails={};
         try {
             if (postData.Allergy_id <= 0) {
                 return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
@@ -302,7 +303,7 @@ const allergyMasterController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await allergyMastersTbl.findOne({
+            const data = await allergyMastersTbl.findOne({
                 where: {
                     uuid: postData.Allergy_id
                 },
@@ -324,21 +325,37 @@ const allergyMasterController = () => {
                     where: { status: 1, is_active: 1 }
                 }
                 ]
-            })
-                .then((data) => {
-                    if (!data) {
-                        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
-                    }
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
+            });
+            if (!data) {
+                return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
+            } else {
+                //var getcuDetails = {},getmuDetails={};
+                //if (data.created_by > 0){
+                const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
+                // } else {
+                //     getcuDetails.responseContents.title.name = null;
+                //     getcuDetails.responseContents.first_name = null;
+
+                // }
+                //if (data.modified_by > 0){
+                const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
+                // }else {
+                //     getmuDetials.responseContents.title.name = null;
+                //     getmuDetails.responseContents.first_name = null;
+                // }
+                const getdata = getfulldata(data, getcuDetails, getmuDetails);
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        responseContents: getdata
+                    });
+            }
+
 
         } catch (err) {
+            console.log (err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -363,3 +380,55 @@ const allergyMasterController = () => {
 
 
 module.exports = allergyMasterController();
+
+async function getuserDetails(user_uuid, docid, authorization) {
+    console.log(user_uuid, docid, authorization);
+    let options = {
+        uri: config.wso2AppUrl + 'users/getusersById',
+        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
+        //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+        method: "POST",
+        headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+        },
+        body: { "Id": docid },
+        //body: {},
+        json: true
+    };
+    const user_details = await rp(options);
+    return user_details;
+}
+
+function getfulldata(data, getcuDetails, getmuDetails) {
+    let newdata = {
+        "uuid": data.uuid,
+        "allergey_code": data.allergey_code,
+        "allergy_name": data.allergy_name,
+        "allergy_type_uuid": data.allergy_type_uuid,
+        "allergy_description":data.allergy_description,
+        "comments": data.comments,
+        "allergy_source_uuid": data.allergy_source_uuid,
+        "allergy_severity_uuid": data.allergy_severity_uuid,
+        "status": data.status,
+        "revision": data.revision,
+        "is_active": data.is_active,
+        "created_by_id": data.created_by,
+        "created_by": 
+        getcuDetails.responseContents ? 
+        getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
+        : null,
+        "modified_by_id": data.modified_by,
+        "modified_by": 
+        getmuDetails.responseContents ?
+        getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
+        : null,
+        "created_date": data.created_date,
+        "modified_date": data.modified_date,
+        "allergy_source": data.allergy_source,
+        "allergy_severity":data.allergy_severity
+
+    };
+    return newdata;
+}
+

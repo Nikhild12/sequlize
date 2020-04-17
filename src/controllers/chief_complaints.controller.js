@@ -409,7 +409,7 @@ const ChiefComplaints = () => {
     let getsearch = req.body;
 
    Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
-   //console.log(getsearch);
+   console.log(getsearch);
 
     let pageNo = 0;
     const itemsPerPage = getsearch.paginationSize
@@ -473,15 +473,6 @@ const ChiefComplaints = () => {
       };
     }
 
-    // if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-    //           findQuery.where = {
-    //               [Op.and]: [
-    //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-    //                   Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-    //               ]
-    //           };
-    //       }
-
     if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
       findQuery.where = {
         [Op.and]: [
@@ -512,7 +503,7 @@ const ChiefComplaints = () => {
             [Op.or]: [
               {
                 name: {
-                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                  [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
                 },
                 is_active: 1,
                 status: 1
@@ -520,7 +511,7 @@ const ChiefComplaints = () => {
               },
               {
                 code: {
-                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
+                  [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
                 },
                 is_active: 1,
                 status: 1
@@ -534,10 +525,10 @@ const ChiefComplaints = () => {
     }
 
     if (getsearch.is_active == 1 || getsearch.status == 1 ) {
-      findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
+      findQuery.where = { is_active: 1 , status: 1 };
     }
     if (getsearch.is_active == 0 || getsearch.status == 0) {
-      findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
+      findQuery.where = { is_active: 0 , status: 0 };
     }
     try {
       await chief_complaints_tbl
