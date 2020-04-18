@@ -24,7 +24,7 @@ const LabResutlsController = () => {
     const { patient_order_uuid } = req.query;
     try {
       if (user_uuid > 0 && patient_order_uuid > 0) {
-        const result = await labvw.findOne({
+        const result = await labvw.findAll({
           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             po_uuid: patient_order_uuid
