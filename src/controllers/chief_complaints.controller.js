@@ -448,90 +448,33 @@ const ChiefComplaints = () => {
 
     };
 
-    if (getsearch.search && /\S/.test(getsearch.search)) {
-      findQuery.where = {
-        [Op.and]: [
-          {
-            [Op.or]: [
-              {
-                name: {
-                  [Op.like]: `%${getsearch.search.toLowerCase()}%`
-                },
-                is_active: 1,
-                status: 1
-
-              },
-              {
-                code: {
-                  [Op.like]: `%${getsearch.search.toLowerCase()}%`
-                },
-                is_active: 1,
-                status: 1
-              }
-            ]
-          }
-
-        ]
-      };
-    }
-
-    if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-      findQuery.where = {
-        [Op.and]: [
-          {
-            [Op.or]: [
-              {
-                name: {
-                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-                }
-
-              },
-              {
-                code: {
-                  [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-                }
-
-              }
-            ]
-          }
-
-        ]
-      };
-    }
     if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
-      findQuery.where = {
-        [Op.and]: [
-          {
-            [Op.or]: [
-              {
-                name: {
-                  [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
-                },
-                is_active: 1,
-                status: 1
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
 
-              },
-              {
-                code: {
-                  [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
-                },
-                is_active: 1,
-                status: 1
-
-              }
-            ]
-          }
-
-        ]
-      };
+    ];
     }
+   if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), getsearch.searchKeyWord.toLowerCase()),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), getsearch.searchKeyWord.toLowerCase()),
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), getsearch.searchKeyWord.toLowerCase()),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), getsearch.searchKeyWord.toLowerCase()),
+       ];
+    }
+   }
+   
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['is_active'] = getsearch.status;
+     }
 
-    if (getsearch.is_active == 1 || getsearch.status == 1 ) {
-      findQuery.where = { is_active: 1 , status: 1 };
-    }
-    if (getsearch.is_active == 0 || getsearch.status == 0) {
-      findQuery.where = { is_active: 0 , status: 0 };
-    }
     try {
       await chief_complaints_tbl
         .findAndCountAll(findQuery)

@@ -308,98 +308,30 @@ const diagnosisController = () => {
 
         };
 
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-            findQuery.where = {
-              [Op.and]: [
-                {
-                  [Op.or]: [
-                    {
-                      name: {
-                        [Op.like]: `%${getsearch.search.toLowerCase()}%`
-                      },
-                      is_active: 1,
-                      status: 1
-      
-                    },
-                    {
-                      code: {
-                        [Op.like]: `%${getsearch.search.toLowerCase()}%`
-                      },
-                      is_active: 1,
-                      status: 1
-                    }
-                  ]
-                }
-      
-              ]
-            };
-          }
-      
-          if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-            findQuery.where = {
-              [Op.and]: [
-                {
-                  [Op.or]: [
-                    {
-                      name: {
-                        [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-                      }
-      
-                    },
-                    {
-                      code: {
-                        [Op.like]: `%${getsearch.searchKeyWord.toLowerCase()}%`
-                      }
-      
-                    }
-                  ]
-                }
-      
-              ]
-            };
-          }
-          if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
-            findQuery.where = {
-              [Op.and]: [
-                {
-                  [Op.or]: [
-                    {
-                      name: {
-                        [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
-                      },
-                      is_active: 1,
-                      status: 1
-      
-                    },
-                    {
-                      code: {
-                        [Op.like]: `%${getsearch.searchKey.toLowerCase()}%`
-                      },
-                      is_active: 1,
-                      status: 1
-      
-                    }
-                  ]
-                }
-      
-              ]
-            };
-          }
-      
-          if (getsearch.is_active == 1 || getsearch.status == 1 ) {
-            findQuery.where = { is_active: 1 , status: 1 };
-          }
-          if (getsearch.is_active == 0 || getsearch.status == 0) {
-            findQuery.where = { is_active: 0 , status: 0 };
-          }
+      if (getsearch.search && /\S/.test(getsearch.search)) {
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-        if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
-            findQuery.where = {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid),
-                ]
-            };
-        }
+    ];
+    }
+   if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.searchKey)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.searchKey)
+       ];
+    }
+   }
+   
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['is_active'] = getsearch.status;
+     }
         
              
                     
