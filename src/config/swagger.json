@@ -10989,7 +10989,7 @@
     "deleteDiagnosis": {
       "type": "object",
       "properties": {
-        "Diagnosis_id": {
+        "Id": {
           "type": "integer"
         }
       }

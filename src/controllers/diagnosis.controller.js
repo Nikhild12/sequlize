@@ -434,13 +434,13 @@ const diagnosisController = () => {
 
         // plucking data req body
         const {
-            Diagnosis_id
+            Id
         } = req.body;
         const {
             user_uuid
         } = req.headers;
 
-        if (Diagnosis_id) {
+        if (Id) {
             const updateddiagnosisData = {
                 status: 0,
                 is_active: 0,
@@ -453,7 +453,7 @@ const diagnosisController = () => {
                     [
                         diagnosisTbl.update(updateddiagnosisData, {
                             where: {
-                                uuid: Diagnosis_id
+                                uuid: Id
                             }
                         })
 
