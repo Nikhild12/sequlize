@@ -188,8 +188,10 @@ const ChiefComplaints = () => {
 
               chiefComplaintsData.status = chiefComplaintsData.is_active;
               chiefComplaintsData.created_by = user_uuid;
+              chiefComplaintsData.modified_by = user_uuid;
+
               chiefComplaintsData.created_date = new Date();
-              chiefComplaintsData.modified_date = null;
+              chiefComplaintsData.modified_date = new Date();
               chiefComplaintsData.revision = 1;
               const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
                 chiefComplaintsData,

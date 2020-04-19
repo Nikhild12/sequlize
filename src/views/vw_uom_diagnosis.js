@@ -220,6 +220,14 @@ module.exports = (sequelize, DataTypes) => {
        facility_name:{
             type: DataTypes.STRING,
             allowNull: true,
+       },
+       created_date:{
+            type: DataTypes.STRING,
+            allowNull: true,
+       },
+       modified_date:{
+            type: DataTypes.STRING,
+            allowNull: true,
        }
     }, {
         tableName: "vw_uom_diagnosis",
