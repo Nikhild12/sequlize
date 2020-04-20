@@ -269,7 +269,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
     const getAlleryMasterById = async (req, res, next) => {
         const postData = req.body;
-        console.log("postData..........",postData.Allergy_id);
+        
         //var getcuDetails = {},getmuDetails={};
         try {
             if (postData.Allergy_id <= 0) {
