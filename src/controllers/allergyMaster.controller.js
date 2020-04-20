@@ -146,8 +146,9 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
         if (Object.keys(req.body).length != 0) {
             const postData = req.body;
             postData.created_by = req.headers.user_uuid;
-
-
+            postData.created_date = new Date();
+            postData.modified_date = new Date();
+            postData.modified_by = req.headers.user_uuid;
             allergyMastersTbl.findAll({
                 where: {
                     [Op.or]: [{
@@ -268,11 +269,11 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
     const getAlleryMasterById = async (req, res, next) => {
         const postData = req.body;
+        console.log("postData..........",postData.Allergy_id);
         //var getcuDetails = {},getmuDetails={};
         try {
             if (postData.Allergy_id <= 0) {
                 return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
-
             }
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
@@ -283,12 +284,13 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                 },
                 offset: offset,
                 limit: itemsPerPage,
+                //where: { status: 1, is_active: 1 },
                 include: [{
                     model: allergySourceTbl,
                     required: false,
                     // as: 'source' 
                     attributes: ['uuid', 'name'],
-                    where: { status: 1, is_active: 1 }
+                    // where: { status: 1, is_active: 1 }
                 }
                     ,
                 {
@@ -296,7 +298,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                     required: false,
                     // as: 'source' 
                     attributes: ['uuid', 'name'],
-                    where: { status: 1, is_active: 1 }
+                    // where: { status: 1, is_active: 1 }
                 }
                 ]
             });
@@ -336,6 +338,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
         deleteAlleryMaster,
 
         getAlleryMasterById
+
     };
 };
 
@@ -366,6 +369,7 @@ function getfulldata(data, getcuDetails, getmuDetails) {
         "uuid": data.uuid,
         "allergey_code": data.allergey_code,
         "allergy_name": data.allergy_name,
+        // "allergy_type_uuid": data.allergy_type_uuid,
         "allergy_description":data.allergy_description,
         "comments": data.comments,
         "allergy_source_uuid": data.allergy_source_uuid,

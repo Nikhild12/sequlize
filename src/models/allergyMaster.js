@@ -19,10 +19,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(250),
             allowNull: true
         },
-        allergy_type_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+        
         allergy_description: {
             type: DataTypes.STRING(250),
             allowNull: true
@@ -66,9 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
     allergy_masters.associate = models => {
-        allergy_masters.belongsTo(models.allergy_type, {
-            foreignKey: "allergy_type_uuid"
-        });
+        
         allergy_masters.belongsTo(models.allergy_source, {
             foreignKey: "allergy_source_uuid"
         });
