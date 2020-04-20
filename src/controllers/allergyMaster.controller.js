@@ -366,7 +366,6 @@ function getfulldata(data, getcuDetails, getmuDetails) {
         "uuid": data.uuid,
         "allergey_code": data.allergey_code,
         "allergy_name": data.allergy_name,
-        "allergy_type_uuid": data.allergy_type_uuid,
         "allergy_description":data.allergy_description,
         "comments": data.comments,
         "allergy_source_uuid": data.allergy_source_uuid,
