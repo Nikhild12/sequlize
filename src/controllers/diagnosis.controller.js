@@ -315,7 +315,7 @@ const diagnosisController = () => {
 
     ];
     }
-   if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
+   if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
       if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
                           [Op.or]: [
