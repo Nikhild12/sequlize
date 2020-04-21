@@ -164,7 +164,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "Please enter Allergy Master"
+                        msg: "Please enter new Allergy Master"
                     });
                 } else {
                     await allergyMastersTbl.create(postData, {
@@ -269,7 +269,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
     const getAlleryMasterById = async (req, res, next) => {
         const postData = req.body;
-        
+
         //var getcuDetails = {},getmuDetails={};
         try {
             if (postData.Allergy_id <= 0) {
