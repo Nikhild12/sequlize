@@ -26,7 +26,7 @@ const noteTemplatesController = () => {
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
+        let sortField = 'modified_date';
         let sortOrder = 'DESC';
 
         if (getsearch.pageNo) {

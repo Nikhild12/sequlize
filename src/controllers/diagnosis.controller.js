@@ -319,12 +319,12 @@ const diagnosisController = () => {
       if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
                           [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.searchKey)
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
       ]
         }];
        } else {
           findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.searchKey)
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
        ];
     }
    }

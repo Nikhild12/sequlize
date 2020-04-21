@@ -10964,10 +10964,7 @@
           "type": "string",
           "example": "string"
         },
-        "searchKeyWord": {
-          "type": "string",
-          "example": "string"
-        },
+        
         "diagnosis_version_uuid": {
           "type": "string",
           "example": "string"

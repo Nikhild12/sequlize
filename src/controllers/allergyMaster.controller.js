@@ -59,74 +59,47 @@ const allergyMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            //where: { is_active: 1 },
+            where:{ is_active: 1 ,  status: 1 },
             include: [{
                 model: allergySourceTbl,
                 required: false,
-                // as: 'source' 
-                attributes: ['uuid', 'name'],
-                // where: {status: 1, is_active: 1}
             }
                 ,
             {
                 model: allergySeverityTbl,
                 required: false,
-                // as: 'source' 
                 attributes: ['uuid', 'name'],
-                // where: {status: 1, is_active: 1}
             }
             ]
         };
 
-        if (getsearch.search && /\S/.test(getsearch.search)) {
 
-            findQuery.where = {
-                [Op.or]: [{
-                    allergey_code: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
+ 
+if (getsearch.search && /\S/.test(getsearch.search)) {
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-
-                }, {
-                    allergy_name: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-                }
-
-                ]
-            };
-        }
-        if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-            findQuery.where = {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-
-
-                ]
-            };
-        }
-
-        if (getsearch.allergy_source_uuid && /\S/.test(getsearch.allergy_source_uuid)) {
-            findQuery.where = {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid),
-                ]
-            };
-        }
-        // if (getsearch.status && /\S/.test(getsearch.status)) {
-        //     findQuery.where = { is_active: postData.status };
-        // }
-        if (getsearch.status == 1) {
-            findQuery.where = { [Op.and]: [{ is_active: 1 }, { status: 1 }] };
-        }
-        if (getsearch.status == 0) {
-            findQuery.where = { [Op.and]: [{ is_active: 0 }, { status: 0 }] };
-        }
-        //   else{
-        //     findQuery.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-        //   }
-
+    ];
+    }
+   if (getsearch.allergy_source_uuid && /\S/.test(getsearch.allergy_source_uuid)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_source_uuid')), getsearch.allergy_source_uuid)
+       ];
+    }
+   }
+   
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['is_active'] = getsearch.status;
+     }
+        
 
         try {
             await allergyMastersTbl.findAndCountAll(findQuery)
