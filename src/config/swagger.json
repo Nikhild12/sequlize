@@ -9445,13 +9445,11 @@
         "search": {
           "type": "string"
         },
-        "searchKeyWord": {
-          "type": "string"
-        },
+        
         "allergy_source_uuid": {
           "type": "integer"
         },
-        "is_active": {
+        "status": {
           "type": "boolean"
         }
       }
