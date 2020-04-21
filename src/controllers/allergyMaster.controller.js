@@ -274,7 +274,6 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
         try {
             if (postData.Allergy_id <= 0) {
                 return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
-
             }
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
@@ -339,6 +338,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
         deleteAlleryMaster,
 
         getAlleryMasterById
+
     };
 };
 
