@@ -285,7 +285,7 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
                 },
                 offset: offset,
                 limit: itemsPerPage,
-                where: { status: 1, is_active: 1 },
+                // where: { status: 1, is_active: 1 },
                 include: [{
                     model: allergySourceTbl,
                     required: false,
