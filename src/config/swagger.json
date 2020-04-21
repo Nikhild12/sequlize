@@ -9392,9 +9392,7 @@
     "addAllergyMaster": {
       "type": "object",
       "properties": {
-        "allergy_type_uuid": {
-          "type": "integer"
-        },
+        
         "allergey_code": {
           "type": "string"
         },
@@ -9460,9 +9458,7 @@
         "Allergy_id": {
           "type": "integer"
         },
-        "allergy_type_uuid": {
-          "type": "integer"
-        },
+        
         "allergey_code": {
           "type": "string"
         },
