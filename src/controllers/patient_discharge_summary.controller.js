@@ -131,7 +131,7 @@ async function getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid) {
     attributes: [
       'uuid', 'patient_uuid', 'encounter_uuid',
       'allergy_master_uuid', 'allergy_type_uuid',
-      'symptom', 'start_date', 'end_date',
+      'symptom', 'start_date', 'end_date', 'duration',
       'allergy_severity_uuid', 'allergy_source_uuid',
       'period_uuid', 'performed_date', 'performed_by',
       'patient_allergy_status_uuid'
@@ -151,10 +151,10 @@ async function getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid) {
         as: 'encounter',
         attributes: ["encounter_type_uuid"],
         required: false,
-        where: {
-          is_active: emr_constants.IS_ACTIVE,
-          status: emr_constants.IS_ACTIVE
-        },
+        // where: {
+        //   is_active: emr_constants.IS_ACTIVE,
+        //   status: emr_constants.IS_ACTIVE
+        // },
         include: [
           {
             model: encounterTypeTbl,
@@ -258,7 +258,7 @@ function getAllergyInfo(result) {
         allergy_type_uuid: item.allergy_type_uuid,
         allergy_type_code: item.allergy_type && item.allergy_type != null ? item.allergy_type.code : "",
         allergy_type_name: item.allergy_type && item.allergy_type != null ? item.allergy_type.name : "",
-
+        allergy_duration: item.duration,
         periods_code: item.periods && item.periods != null ? item.periods.code : "",
         periods_name: item.periods && item.periods != null ? item.periods.name : "",
 
@@ -331,15 +331,15 @@ function PPVitalsList(getPatientVitals) {
         patient_uuid: pV.pv_patient_uuid,
         created_date: pV.pv_created_date,
         doctor_uuid: pV.pv_doctor_uuid,
-        doctor_title:pV.ut_name,
+        doctor_title: pV.ut_name,
         doctor_firstname: pV.u_first_name,
         doctor_middlename: pV.u_middle_name,
         doctor_lastlename: pV.u_last_name,
         department_name: pV.d_name,
         institution_uuid: pV.f_uuid,
         institution_name: pV.f_name,
-        encounter_uuid:pV.pv_encounter_uuid,
-        encounter_type_uuid:pV.pv_encounter_type_uuid,
+        encounter_uuid: pV.pv_encounter_uuid,
+        encounter_type_uuid: pV.pv_encounter_type_uuid,
         encounter_type_code: pV.et_code,
         encounter_type_name: pV.et_name,
         PV_list: [
@@ -528,7 +528,7 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
         encounter_type_code: item.et_code,
         encounter_type_name: item.et_name,
         consultation_uuid: item.pcc_consultation_uuid,
-        performed_by_title:item.ut_name,
+        performed_by_title: item.ut_name,
         performed_by_first_name: item.u_first_name,
         performed_by_middle_name: item.u_middle_name,
         performed_by_last_name: item.u_last_name,
@@ -611,9 +611,9 @@ function getGetDiagnosis(diagnosis_res) {
         department_uuid: item.department_uuid,
         patient_uuid: item.patient_uuid,
         encounter_uuid: item.encounter_uuid,
-        encounter_type_uuid: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.uuid :"",
-        encounter_type_code: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.code :"",
-        encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name :"",
+        encounter_type_uuid: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.uuid : "",
+        encounter_type_code: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.code : "",
+        encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name : "",
         diagnosis_uuid: item.diagnosis_uuid,
         performed_by: item.performed_by,
         performed_date: item.performed_date,
