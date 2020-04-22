@@ -270,27 +270,27 @@ const immunizationsController = () => {
 
     const getimmunization = async (req, res, next) => {
         try {
-            const postData = req.body;
+            const getsearch = req.body;
             let pageNo = 0;
-            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
             let sortArr = ['i_modified_date', 'DESC'];
 
 
-            if (postData.pageNo) {
-                let temp = parseInt(postData.pageNo);
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
                 if (temp && (temp != NaN)) {
                     pageNo = temp;
                 }
             }
             const offset = pageNo * itemsPerPage;
             let fieldSplitArr = [];
-            if (postData.sortField) {
-                if (postData.sortField == 'modified_date'){
-                    postData.sortField = 'i_modified_date';
+            if (getsearch.sortField) {
+                if (getsearch.sortField == 'modified_date'){
+                    getsearch.sortField = 'i_modified_date';
                 }
-                fieldSplitArr = postData.sortField.split('.');
+                fieldSplitArr = getsearch.sortField.split('.');
                 if (fieldSplitArr.length == 1) {
-                    sortArr[0] = postData.sortField;
+                    sortArr[0] = getsearch.sortField;
                 } else {
                     for (let idx = 0; idx < fieldSplitArr.length; idx++) {
                         const element = fieldSplitArr[idx];
@@ -299,70 +299,65 @@ const immunizationsController = () => {
                     sortArr = fieldSplitArr;
                 }
             }
-            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+            if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
                 if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
-                    sortArr[1] = postData.sortOrder;
+                    sortArr[1] = getsearch.sortOrder;
                 } else {
-                    sortArr.push(postData.sortOrder);
+                    sortArr.push(getsearch.sortOrder);
                 }
             }
             let findQuery = {
                 subQuery: false,
                 offset: offset,
-                limit: postData.paginationSize,
+                limit: getsearch.paginationSize,
                 order: [
                     sortArr
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
-
+i_is_active:1,i_status:1
                 }
             };
 
-            if (postData.search && /\S/.test(postData.search)) {
-                findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+           
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-                ];
-            }
-            // if (postData.name && /\S/.test(postData.name)) {
-            //     if (findQuery.where[Op.or]) {
-            //         findQuery.where[Op.and] = [{
-            //             [Op.or]: [
-            //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-            //             ]
-            //         }];
-            //     } else {
-            //         findQuery.where[Op.or] = [
-            //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), 'LIKE', '%' + postData.name.toLowerCase()),
-            //         ];
-            //     }
-            // }
-
-            if (postData.name && /\S/.test(postData.name)) {
-                findQuery.where = {
-                    [Op.and]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), postData.name.toLowerCase()),
-                    ]
-                };
-            }
-            if (postData.Frequency && /\S/.test(postData.Frequency)) {
-                findQuery.where ={
-                    [Op.and]: [
-                    Sequelize.where(Sequelize.col('df_uuid'), '=', + postData.Frequency )
-                    //Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('i_name')), postData.name.toLowerCase()),
-                ]
-            };
-            }
-            if (postData.status == 1) {
-                findQuery.where = { [Op.and]: [{ i_is_active: 1 }, { i_status: 1 }] };
-            }
-            if (postData.status == 0) {
-                findQuery.where = { [Op.and]: [{ i_is_active: 0 }, { i_status: 0 }] };
-            }
-            // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-            //     findQuery.where = { i_is_active: postData.status };
-            // }
+    ];
+    }
+    if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.searchKey.toLowerCase())
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.searchKey.toLowerCase())
+       ];
+    }
+   }
+   if (getsearch.frequency_uuid && /\S/.test(getsearch.frequency_uuid)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.frequency_uuid)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.frequency_uuid)
+       ];
+    }
+   }
+   
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['i_is_active'] = getsearch.status;
+     }
+        
             await immunizationsVwTbl.findAndCountAll(findQuery)
                 .then((data) => {
                     return res

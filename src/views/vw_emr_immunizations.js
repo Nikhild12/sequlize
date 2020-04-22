@@ -34,8 +34,8 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            i_instruction_uuid: {
-                type: DataTypes.INTEGER,
+            i_instruction: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             i_schedule_flag_uuid: {
@@ -104,18 +104,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            di_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            di_code: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            di_name: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
+            
             sf_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

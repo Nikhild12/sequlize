@@ -52,9 +52,9 @@ const _modifiedLatestEncounterRecord = records => {
         createdDate: r.ed_created_date,
         titleName:r.t_name,
         titleId: r.t_uuid,
-        doctorFirstName: r.u_first_name.trim(),
-        doctorLastName: r.u_last_name.trim(),
-        doctorMiddleName: r.u_middle_name.trim(),
+        doctorFirstName: r.u_first_name,
+        doctorLastName: r.u_last_name,
+        doctorMiddleName: r.u_middle_name,
         departmentName: r.d_name,
         departmentId: r.ed_department_uuid
     };
