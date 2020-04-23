@@ -295,6 +295,11 @@ const Encounter = () => {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST,
             message: emr_constants.DUPLICATE_ENCOUNTER,
+            existingDetails: {
+              encounter_id: (encounterData && encounterData[0].uuid) || 0,
+              encounter_doctor_id:
+                (encounterDoctorData && encounterDoctorData[0].uuid) || 0,
+            },
           });
         }
 
