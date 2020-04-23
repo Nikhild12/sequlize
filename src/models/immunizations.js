@@ -66,17 +66,10 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        instruction_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('instruction_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('instruction_uuid')
-                }
-            }
+        instruction: {
+            type: DataTypes.STRING(250),
+            allowNull: false
+            
         },
         schedule_flag_uuid: {
             type: DataTypes.INTEGER,

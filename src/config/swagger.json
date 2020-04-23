@@ -9015,21 +9015,16 @@
         "period_uuid": {
           "type": "integer"
         },
-        "instruction_uuid": {
-          "type": "integer"
+        "instruction": {
+          "type": "string"
         },
         "schedule_flag_uuid": {
           "type": "integer"
         },
-        "is_default": {
-          "type": "integer"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "revision": {
-          "type": "integer"
+        "is_active": {
+          "type": "boolean"
         }
+        
       }
     },
     "getimmunizationReq": {
@@ -9053,11 +9048,11 @@
         "name": {
           "type": "string"
         },
-        "Frequency": {
-          "type": "string"
+        "frequency_uuid": {
+          "type": "integer"
         },
         "status": {
-          "type": "string"
+          "type": "boolean"
         },
         "searchKey": {
           "type": "string"
