@@ -323,7 +323,7 @@ i_is_active:1,i_status:1
             if (getsearch.search && /\S/.test(getsearch.search)) {
          findQuery.where[Op.or] = [
            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
     ];
     }
