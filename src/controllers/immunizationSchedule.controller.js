@@ -325,6 +325,7 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
     const updateimmunizationScheduleById = async (req, res, next) => {
         const postData = req.body;
         postData.modified_by = req.headers.user_uuid;
+        postData.modifed_date=new Date();
         await immunizationScheduleTbl.update(
             postData, {
             where: {
