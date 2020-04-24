@@ -59,8 +59,8 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        immunization_frequency_uuid:{
-            type: DataTypes.INTEGER,
+        duration:{
+            type: DataTypes.STRING,
             allowNull: false,
         },
         immunization_dosage_uuid: {

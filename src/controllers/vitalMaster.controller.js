@@ -190,35 +190,44 @@ const vitalmstrController = () => {
       
     };
 
-    if (getsearch.search && /\S/.test(getsearch.search)) {
+           
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-      findQuery.where = {
-        name: {
-          [Op.like]: '%' + getsearch.search + '%',
-        }
-        
-      };
+    ];
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
-      findQuery.where = {
-        [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase()),
-        ]
-      };
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
+       ];
     }
-    if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
-      findQuery.where = {
-        [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid),
-        ]
-      };
+   }
+   if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
+       ];
     }
-    if (getsearch.is_active == 1 || getsearch.status == 1) {
-      findQuery.where = { is_active: 1, status: 1 };
-    }
-    if (getsearch.is_active == 0 || getsearch.status == 0) {
-      findQuery.where = { is_active: 0, status: 0 };
-    }
+   }
+   
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['i_is_active'] = getsearch.status;
+     }
         
     try {
       const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });

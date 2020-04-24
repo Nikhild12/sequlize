@@ -32,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            immunization_frequency_uuid: {
-                type: DataTypes.INTEGER,
+            duration: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             immunization_dosage_uuid: {
@@ -86,18 +86,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            df_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            df_code: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            df_name: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
+           
             dp_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
