@@ -59,6 +59,10 @@ const patientTransferRoute = require("./patient_transfer.route");
 
 const labResultRoute = require("./labresult.route");
 
+//RadiologyResult routes
+
+const radiologyResultRoute = require("./radiology_result.route");
+
 
 //Import ReferalReasons routes
 
@@ -161,6 +165,10 @@ serviceRouter.use("/treatment-kit", treatmentKitRoute);
 
 //LabResult
 serviceRouter.use("/lab-result", labResultRoute);
+
+//RadiologyResult
+
+serviceRouter.use("/radiology_result", radiologyResultRoute);
 
 //ReferalReasons routes
 
