@@ -126,53 +126,56 @@ const proceduresController = () => {
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
-      findQuery.where = {
-        [Op.or]: [
-          {
-            code: {
-              [Op.like]: "%" + getsearch.search + "%"
-            }
-          },
-          {
-            name: {
-              [Op.like]: "%" + getsearch.search + "%"
-            }
-          }
-        ]
-      };
+         findQuery.where[Op.or] = [
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+    ];
     }
     if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
-      findQuery.where = {
-        [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord.toLowerCase() + '%'),
-        ]
-      };
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+       ];
     }
-
-    if (getsearch.procedure_scheme_uuid && /\S/.test(getsearch.procedure_scheme_uuid)) {
-      findQuery.where = {
-        [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid),
-        ]
-      };
+   }
+   if (getsearch.procedure_scheme_uuid && /\S/.test(getsearch.procedure_scheme_uuid)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid)
+       ];
     }
-    if (getsearch.procedure_type_uuid && /\S/.test(getsearch.procedure_type_uuid)) {
-      findQuery.where = {
-        [Op.and]: [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_scheme_uuid),
-        ]
-      };
+   }
+     if (getsearch.procedure_type_uuid && /\S/.test(getsearch.procedure_type_uuid)) {
+      if (findQuery.where[Op.or]) {
+               findQuery.where[Op.and] = [{
+                          [Op.or]: [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_type_uuid)
+      ]
+        }];
+       } else {
+          findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_type_uuid)
+       ];
     }
-    if (getsearch.is_active == 1) {
-      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
-    }
-    else if (getsearch.is_active == 0) {
-      findQuery.where = { [Op.and]: [{ is_active: 0 }] };
-    }
-    else {
-      findQuery.where = { [Op.and]: [{ is_active: 1 }] };
-    }
+   }
+     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+     findQuery.where['is_active'] = getsearch.status;
+     }
 
     try {
       await proceduresTbl
@@ -204,6 +207,9 @@ const proceduresController = () => {
   const postprocedures = async (req, res, next) => {
     const postData = req.body;
     postData.created_by = req.headers.user_uuid;
+    postData.modified_by = req.headers.user_uuid;
+    postData.created_date = new Date();
+    postData. modified_date= new Date();
 
     if (postData) {
       proceduresTbl
@@ -262,7 +268,7 @@ const proceduresController = () => {
     await proceduresTbl
       .update(
         {
-          is_active: 0
+          is_active: 0,status:0
         },
         {
           where: {
@@ -290,6 +296,7 @@ const proceduresController = () => {
   const updateproceduresId = async (req, res, next) => {
     const postData = req.body;
     postData.modified_by = req.headers.user_uuid;
+    postData.modified_date=new Date();
     await proceduresTbl
       .update(postData, {
         where: {

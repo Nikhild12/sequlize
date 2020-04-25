@@ -191,7 +191,7 @@ const vitalmstrController = () => {
     };
 
            
-            if (getsearch.search && /\S/.test(getsearch.search)) {
+    if (getsearch.search && /\S/.test(getsearch.search)) {
          findQuery.where[Op.or] = [
            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
            // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -210,8 +210,8 @@ const vitalmstrController = () => {
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
        ];
     }
-   }
-   if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
+    }
+    if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
       if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
                           [Op.or]: [
@@ -223,7 +223,7 @@ const vitalmstrController = () => {
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
        ];
     }
-   }
+    }
    
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
      findQuery.where['i_is_active'] = getsearch.status;
