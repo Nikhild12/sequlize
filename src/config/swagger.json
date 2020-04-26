@@ -6045,6 +6045,39 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/treatment-kit/autoSearch": {
+			"post": {
+				"description": "To get list of TreatmentKits based on search",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "searchParams",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getTreatmentKitAutoSearch"
+						}
+					}
+				],
+				"produces": [ "application/json", "application/xml" ],
+				"tags": [ "TreatmentKit" ],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getDiseases"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/encounter/update-tat-time": {
 			"put": {
 				"summary": "To update ",
@@ -13435,6 +13468,20 @@
 					"type": "string"
 				},
 				"searchKey": {
+					"type": "string"
+				}
+			}
+		},
+		"getTreatmentKitAutoSearch": {
+			"type": "object",
+			"properties": {
+				"departmentId": {
+					"type": "integer"
+				},
+				"searchKey": {
+					"type": "string"
+				},
+				"searchValue": {
 					"type": "string"
 				}
 			}
