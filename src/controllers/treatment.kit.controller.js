@@ -285,7 +285,18 @@ const TreatMent_Kit = () => {
    */
   const _getTreatmentKitByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { searchKey, searchValue, departmentId } = req.query;
+    //const { searchKey, searchValue, departmentId } = req.query;
+
+    let searchKey, searchValue, departmentId;
+
+    // If method is GET in query
+    if (req.method === "GET") {
+      ({ searchKey, searchValue, departmentId } = req.query);
+    } else if (req.method === "POST") {
+
+      ({ searchKey, searchValue, departmentId } = req.body);
+    }
+
 
     if (user_uuid && searchKey && searchValue) {
       try {
@@ -683,8 +694,8 @@ const TreatMent_Kit = () => {
         const deleteTreatmentKitPromise = await Promise.all(
           deleteTreatmentPromise
         );
-          console.log(deleteTreatmentKitPromise[0]);
-          
+        console.log(deleteTreatmentKitPromise[0]);
+
         const responseCode =
           deleteTreatmentKitPromise[0][0] === 1
             ? httpStatus.OK
