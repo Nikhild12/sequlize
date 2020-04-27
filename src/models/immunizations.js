@@ -20,51 +20,23 @@ module.exports = (sequelize, DataTypes) => {
         },
         route_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('route_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('route_uuid')
-                }
-            }
+            allowNull: false
+            
         },
         frequency_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
-                }
-            }
+            allowNull: false
+           
         },
         duration: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('duration')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('duration')
-                }
-            }
+            allowNull: false
+            
         },
         period_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                }
-            }
+            
         },
         instruction: {
             type: DataTypes.STRING(250),
@@ -73,15 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         schedule_flag_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
-                }
-            }
+            allowNull: false
         },
         status: {
             type: DataTypes.BOOLEAN,
