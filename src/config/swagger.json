@@ -1146,6 +1146,39 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/Reference/addreference": {
+			"post": {
+				"description": "To get Successfully",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "tablename",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/addreference"
+						}
+					}
+				],
+				"produces": [ "application/json", "application/xml" ],
+				"tags": [ "Reference" ],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/addreference"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/immunizations/addimmunization": {
 			"post": {
 				"description": "Inserted Successfully",
@@ -8040,6 +8073,20 @@
 				"code": {
 					"type": "string"
 				}
+			}
+		},
+		"addreference": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"table_name": {
+					"type": "string"
+				}				
 			}
 		},
 		"addimmunization": {
