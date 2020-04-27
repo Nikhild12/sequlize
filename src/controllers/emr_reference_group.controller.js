@@ -54,7 +54,7 @@ const referenceGroupController = () => {
                 subQuery: false,
                 offset: offset,
                 limit: itemsPerPage,
-               
+
                 order: [
                     sortArr
                 ],
@@ -63,11 +63,11 @@ const referenceGroupController = () => {
                     is_active: 1
                 }
             };
-            
+
             if (postData.table_name && /\S/.test(postData.table_name)) {
                 findQuery.where[Op.and] = [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('emr_reference_group.table_name')), 'LIKE', '%' + postData.table_name.toLowerCase() + '%'),
-                    ];
+                ];
             }
             if (postData.search && /\S/.test(postData.search)) {
                 findQuery.where[Op.or] = [
@@ -132,15 +132,135 @@ const referenceGroupController = () => {
                     status: "error",
                     msg: errorMsg
                 });
-         }
-      };
+        }
+    };
 
+    const addreferenceGroup = async (req, res, next) => {
+        const { user_uuid } = req.headers;
+        const reqdata = req.body;
+        if (Object.keys(req.body).length != 0) {
+
+            if (user_uuid && reqdata) {
+
+                try {
+
+                    const code_exits = await codeexists(reqdata.code);
+                    const name_exits = await nameexists(reqdata.name);
+                    const tblname_exits = await tblnameexists(reqdata.table_name);
+
+                    if (code_exits && code_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "code already exists" });
+
+                    } else if (name_exits && name_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "name already exists" });
+
+                    } else if (tblname_exits && tblname_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "Table name already exists" });
+                    } else {
+
+                        reqdata.created_by = reqdata.modified_by = user_uuid;
+                        reqdata.created_date = reqdata.modified_date = new Date();
+                        reqdata.database_name = "dev_hmis_emr_18_12_2019";
+                        reqdata.activity_uuid = 176;
+                        reqdata.module_uuid = 37;
+                        reqdata.revision = reqdata.is_active = reqdata.Is_default = reqdata.display_order = 1;
+                        reqdata.language = 0;
+
+                        const insdata = await emr_reference_group_tbl.create(reqdata, { returning: true });
+                        if (insdata) {
+                            return res.status(200).send({
+                                code: httpStatus.OK,
+                                message: "reference inserted Successfully",
+                                responseContent: insdata
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.log(err);
+                    const errorMsg = err.errors ? err.errors[0].message : err.message;
+                    return res
+                        .status(httpStatus.INTERNAL_SERVER_ERROR)
+                        .json({
+                            status: "error",
+                            msg: errorMsg
+                        });
+                }
+            } else {
+                return res
+                    .status(400)
+                    .send({ code: httpStatus[400], message: "No Request Body Found" });
+            }
+        } else {
+            return res
+                .status(400)
+                .send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+    };
     return {
-        getreferenceGroupController
-
+        getreferenceGroupController,
+        addreferenceGroup
     };
 };
 
 
 module.exports = referenceGroupController();
 
+const codeexists = (code, userUUID) => {
+    if (code !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = emr_reference_group_tbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["code"],
+                where: { code: code}
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
+
+const nameexists = (name) => {
+    if (name !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = emr_reference_group_tbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["name"],
+                where: { name: name }
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
+
+const tblnameexists = (tblname) => {
+    if (tblname !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = emr_reference_group_tbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["table_name"],
+                where: { table_name: tblname }
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
