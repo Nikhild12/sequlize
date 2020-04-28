@@ -21,50 +21,50 @@ module.exports = (sequelize, DataTypes) => {
         route_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('route_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('route_uuid')
-                }
-            }
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('route_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('route_uuid')
+            //     }
+            // }
         },
         frequency_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
-                }
-            }
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('frequency_uuid')
+            //     }
+            // }
         },
         duration: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('duration')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('duration')
-                }
-            }
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('duration')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('duration')
+            //     }
+            // }
         },
         period_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                }
-            }
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('period_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('period_uuid')
+            //     }
+            // }
         },
         instruction: {
             type: DataTypes.STRING(250),
@@ -74,14 +74,14 @@ module.exports = (sequelize, DataTypes) => {
         schedule_flag_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
-                }
-            }
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('schedule_flag_uuid')
+            //     }
+            // }
         },
         status: {
             type: DataTypes.BOOLEAN,
