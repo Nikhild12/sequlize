@@ -172,6 +172,15 @@ module.exports = (sequelize, DataTypes) => {
       tsm_display_order: {
         type: DataTypes.INTEGER,
       },
+      sm_uuid: {
+        type: DataTypes.INTEGER
+      },
+      sm_store_code: {
+        type: DataTypes.STRING
+      },
+      sm_store_name: {
+        type: DataTypes.STRING
+      }
     }
   );
 
