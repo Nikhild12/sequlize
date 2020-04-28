@@ -6,6 +6,7 @@ var Op = Sequelize.Op;
 
 
 const emr_reference_group_tbl = db.emr_reference_group;
+const vw_ref = db.vw_emr_reference;
 // const module_tbl = db.app_module;
 // const activity_tbl = db.activity;
 
@@ -202,9 +203,50 @@ const referenceGroupController = () => {
                 .send({ code: httpStatus[400], message: "No Request Body Found" });
         }
     };
+
+    const getAllreference = async (req, res, next) => {
+
+        try {
+
+            const { user_uuid } = req.headers;
+
+            if (user_uuid > 0) {
+
+                const data = await vw_ref.findAndCountAll(
+                    {
+                        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                    });
+                if (data) {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            message: "Get Details Fetched successfully",
+                            req: '',
+                            responseContents: data.rows,
+                            totalRecords: data.count
+                        });
+                }
+            } else {
+                return res
+                    .status(400)
+                    .send({ code: httpStatus[400], message: "your not authorized" });
+            }
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
     return {
         getreferenceGroupController,
-        addreferenceGroup
+        addreferenceGroup,
+        getAllreference
     };
 };
 
@@ -217,7 +259,7 @@ const codeexists = (code, userUUID) => {
             let value = emr_reference_group_tbl.findAll({
                 //order: [['created_date', 'DESC']],
                 attributes: ["code"],
-                where: { code: code}
+                where: { code: code }
             });
             if (value) {
                 resolve(value);

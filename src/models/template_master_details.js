@@ -143,7 +143,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            strength:{
+            strength: {
                 type: DataTypes.STRING(45),
                 allowNull: true
             },
@@ -225,7 +225,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            display_order:{
+            display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -237,6 +237,9 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     min: 0
                 }
+            },
+            injection_room_uuid: {
+                type: DataTypes.INTEGER
             },
             comments: {
                 type: DataTypes.STRING(500),
@@ -272,6 +275,7 @@ module.exports = (sequelize, DataTypes) => {
                     notNull: true
                 }
             },
+
         },
         {
             createdAt: 'created_date',
@@ -290,7 +294,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "vital_master_uuid"
         });
     };
-    
+
 
     return template_master_details;
 };

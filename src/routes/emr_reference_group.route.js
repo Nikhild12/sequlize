@@ -5,5 +5,6 @@ const emrrefereneRoutes = express.Router(); // eslint-disable-line new-cap
 
 emrrefereneRoutes.route("/getreference").post(emrreferenceCtrl.getreferenceGroupController);
 emrrefereneRoutes.route("/addreference").post(emrreferenceCtrl.addreferenceGroup);
+emrrefereneRoutes.route("/getAllreference").get(emrreferenceCtrl.getAllreference);
 
 module.exports = emrrefereneRoutes;
