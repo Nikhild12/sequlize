@@ -683,6 +683,87 @@ const Encounter = () => {
     }
   };
 
+  const _createEncounterBulk = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const encounters = req.body;
+
+    let encs = [], encDocs = [];
+    const isEncs = encounters && Array.isArray(encounters) && encounters.length > 0;
+    if (isEncs) {
+      encs = encounters.map((e) => e.encounter);
+      encDocs = encounters.map((e) => e.encounterDoctor);
+
+      if (encDocs.length !== encs.length) {
+        return res.status(400).send({
+          code: httpStatus[400], message: 'Please Provide Proper Encounter List'
+        });
+      }
+    }
+
+    const {
+      isEncTypeId,
+      isEncPatId,
+      isEncDeptId,
+      isEncDocttId,
+      isEncDocDeptId,
+    } = enc_att.checkingAllRequiredFields(encs, encDocs);
+
+    if (
+      user_uuid &&
+      isEncs &&
+      isEncTypeId &&
+      isEncPatId &&
+      isEncDeptId &&
+      isEncDocttId &&
+      isEncDocDeptId
+    ) {
+      try {
+
+        encs.forEach((e) => {
+          e = emr_utility.createIsActiveAndStatus(e, user_uuid);
+          e.is_active_encounter = emr_constants.IS_ACTIVE;
+          e.encounter_date = new Date();
+        });
+
+        const createdEncounter = await encounter_tbl.bulkCreate(encs, { returning: true });
+
+        encDocs.forEach((e, idx) => {
+          e = emr_utility.createIsActiveAndStatus(e, user_uuid);
+          e.encounter_uuid = createdEncounter[idx] && createdEncounter[idx].uuid || 0;
+          e.patient_uuid = createdEncounter[idx] && createdEncounter[idx].patient_uuid || 0;
+        });
+        const createdEncounterDoctor = await encounter_doctors_tbl.bulkCreate(encDocs, { returning: true });
+
+
+
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Inserted Encounters Successfully",
+          requestedContents: encounters,
+          responseContents: createdEncounter.map((cE, idx) => {
+            return { encounters: cE, encounterDoctor: createdEncounterDoctor[idx] };
+          }),
+        });
+
+      } catch (ex) {
+        console.log(ex);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: ex.message,
+        });
+      }
+    } else {
+      const message = enc_att.createEncounterBulk400Message(isEncs, isEncTypeId, isEncPatId, isEncDeptId,
+        isEncDocttId,
+        isEncDocDeptId);
+
+      return res.status(400).send({
+        code: httpStatus[400],
+        message
+      });
+    }
+  };
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
@@ -694,6 +775,7 @@ const Encounter = () => {
     closeEncounter: _closeEncounter,
     getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate,
     getLatestEncounterByPatientId: _getLatestEncounterByPatientId,
+    createEncounterBulk: _createEncounterBulk,
   };
 };
 

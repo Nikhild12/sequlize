@@ -315,7 +315,7 @@ const immunizationsController = () => {
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
-i_is_active:1,i_status:1
+                i_is_active:1,i_status:1
                 }
             };
 
@@ -564,14 +564,14 @@ i_is_active:1,i_status:1
 
     const updateimmunizationById = async (req, res, next) => {
         const postData = req.body;
-        console.log("this is update -----------");
+        
         if (Object.keys(postData).length != 0) {
             if (postData.Id && req.headers.user_uuid) {
-                console.log("this is 1st if---------");
+                
 
                 postData.modified_by = req.headers.user_uuid;
 
-                console.log("this is before update----------");
+                
                 await immunizationsTbl.update(
                     postData, {
                     where: {
