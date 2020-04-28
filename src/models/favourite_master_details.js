@@ -170,6 +170,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      injection_room_uuid: {
+        type: DataTypes.INTEGER
+      }
     },
     {
       freezeTableName: true,
