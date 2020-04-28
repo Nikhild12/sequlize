@@ -1364,7 +1364,7 @@
 			}
 		},
 		"/api/Reference/getAllreference": {
-			"get": {
+			"post": {
 				"description": "To get all reference",
 				"parameters": [
 					{
