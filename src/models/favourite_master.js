@@ -116,9 +116,6 @@ module.exports = (sequelize, DataTypes) => {
       modified_by: {
         type: DataTypes.INTEGER,
         allowNull: false
-      },
-      injection_room_uuid: {
-        type: DataTypes.INTEGER
       }
     },
     {
