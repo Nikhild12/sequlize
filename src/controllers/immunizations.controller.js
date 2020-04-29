@@ -310,53 +310,49 @@ const immunizationsController = () => {
                 subQuery: false,
                 offset: offset,
                 limit: getsearch.paginationSize,
+                where: { i_is_active:1,i_status:1},
                 order: [
                     sortArr
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                where: {
-                i_is_active:1,i_status:1
-                }
+                
             };
 
            
             if (getsearch.search && /\S/.test(getsearch.search)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+            findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
            // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-    ];
-    }
-    if (getsearch.name && /\S/.test(getsearch.name)) {
-      if (findQuery.where[Op.or]) {
+           ];
+           }
+           if (getsearch.name && /\S/.test(getsearch.name)) {
+           if (findQuery.where[Op.or]) {
+           findQuery.where[Op.and] = [{
+                          [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.name.toLowerCase())]
+           }];
+           } else {
+           findQuery.where[Op.or] = [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.name.toLowerCase())];
+           }
+           }
+           if (getsearch.Frequency && /\S/.test(getsearch.Frequency)) {
+           if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.name.toLowerCase())
-      ]
-        }];
-       } else {
-          findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.name.toLowerCase())
-       ];
-    }
-   }
-   if (getsearch.Frequency && /\S/.test(getsearch.Frequency)) {
-      if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.Frequency)
-      ]
-        }];
-       } else {
+                          [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.Frequency)]
+           }];
+           } else {
           findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.Frequency)
-       ];
-    }
-   }
+          ];
+          }
+          }
    
-    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['i_is_active'] = getsearch.status;
-     }
+          if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+          findQuery.where['i_is_active'] = getsearch.status;
+          findQuery.where['i_status'] = getsearch.status;
+
+          }
+      
         
             await immunizationsVwTbl.findAndCountAll(findQuery)
                 .then((data) => {
@@ -391,10 +387,10 @@ const immunizationsController = () => {
 
 
     const postimmunization = async (req, res, next) => {
-        const postData = req.body;
+        let postData = req.body;
         postData.created_by = req.headers.user_uuid;
         postData.modified_by = req.headers.user_uuid;
-
+        postData.status=postData.is_active;
         if (Object.keys(postData).length != 0) {
             immunizationsTbl.findAll({
                 where: {
@@ -447,41 +443,8 @@ const immunizationsController = () => {
         }
     };
 
-    // const getimmunizationById = async (req, res, next) => {
-    //     const postData = req.body;
-    //     try {
-
-    //         const page = postData.page ? postData.page : 1;
-    //         const itemsPerPage = postData.limit ? postData.limit : 10;
-    //         const offset = (page - 1) * itemsPerPage;
-    //         await immunizationsTbl.findOne({
-    //                 where: {
-    //                     uuid: postData.Id
-    //                 },
-    //                 offset: offset,
-    //                 limit: itemsPerPage
-    //             })
-    //             .then((data) => {
-    //                 return res
-    //                     .status(httpStatus.OK)
-    //                     .json({
-    //                         statusCode: 200,
-    //                         req: '',
-    //                         responseContents: data
-    //                     });
-    //             });
-
-    //     } catch (err) {
-    //         const errorMsg = err.errors ? err.errors[0].message : err.message;
-    //         return res
-    //             .status(httpStatus.INTERNAL_SERVER_ERROR)
-    //             .json({
-    //                 status: "error",
-    //                 msg: errorMsg
-    //             });
-    //     }
-    // };
-
+   
+    
     const getimmunizationById = async (req, res, next) => {
         const postData = req.body;
 
@@ -531,7 +494,8 @@ const immunizationsController = () => {
         const user_uuid = req.headers;
         if (user_uuid && postData.Id) {
             await immunizationsTbl.update({
-                status: 0
+                status: 0,
+                is_active:0
             }, {
                 where: {
                     uuid: postData.Id
@@ -563,8 +527,8 @@ const immunizationsController = () => {
 
 
     const updateimmunizationById = async (req, res, next) => {
-        const postData = req.body;
-        
+        let postData = req.body;
+        postData.status=postData.is_active;
         if (Object.keys(postData).length != 0) {
             if (postData.Id && req.headers.user_uuid) {
                 
