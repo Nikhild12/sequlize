@@ -8092,9 +8092,7 @@
 				"search": {
 					"type": "string"
 				},
-				"name": {
-					"type": "string"
-				},
+				
 				"frequency_uuid": {
 					"type": "integer"
 				},
