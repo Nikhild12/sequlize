@@ -8122,13 +8122,13 @@
 					"type": "string"
 				},
 				
-				"frequency_uuid": {
+				"Frequency": {
 					"type": "integer"
 				},
 				"status": {
 					"type": "boolean"
 				},
-				"searchKey": {
+				"name": {
 					"type": "string"
 				}
 			}
