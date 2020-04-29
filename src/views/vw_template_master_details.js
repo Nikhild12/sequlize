@@ -90,9 +90,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN
       },
       im_acive: {
-        type: DataTypes.ENUM,
-        allowNull: false,
-        values: ["0", "1"]
+        type: DataTypes.BOOLEAN
+        //allowNull: false
+        //values: ["0", "1"]
       },
       tmd_strength: {
         type: DataTypes.STRING(45),
