@@ -565,7 +565,7 @@ function getTemplateData(fetchedData) {
           store_code: tD.sm_store_code,
           store_name: tD.sm_store_name,
 
-          is_active: tD.im_acive[0] === 1 ? true : false
+          is_active: tD.im_acive
         }
       ];
     });
