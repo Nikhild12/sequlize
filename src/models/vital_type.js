@@ -19,6 +19,22 @@ module.exports = (sequelize, DataTypes) => {
                 unique:true,
                 allowNull:true
             },
+            language:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            display_order:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            color:{
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            Is_default:{
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
+            },
             is_active:{
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
