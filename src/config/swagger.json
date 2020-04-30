@@ -9241,7 +9241,7 @@
 				"search": {
 					"type": "string"
 				},
-				"Frequency": {
+				"frequency_uuid": {
 					"type": "integer"
 				},
 				"status": {

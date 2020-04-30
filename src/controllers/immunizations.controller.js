@@ -335,14 +335,14 @@ const immunizationsController = () => {
            findQuery.where[Op.or] = [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_name')), getsearch.name.toLowerCase())];
            }
            }
-           if (getsearch.Frequency && /\S/.test(getsearch.Frequency)) {
+           if (getsearch.frequency_uuid && /\S/.test(getsearch.frequency_uuid)) {
            if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
-                          [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.Frequency)]
+                          [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.frequency_uuid)]
            }];
            } else {
           findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.Frequency)
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_frequency_uuid')), getsearch.frequency_uuid)
           ];
           }
           }
