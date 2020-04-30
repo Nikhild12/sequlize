@@ -1372,6 +1372,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "reference",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllreference"
+						}
 					}
 				],
 				"produces": [
@@ -9176,14 +9184,35 @@
 				},
 				"table_name": {
 					"type": "string"
+				},
+				"activity_uuid":{
+					"type":"integer"
 				}
 			}
 		},
 		"getAllreference": {
 			"type": "object",
 			"properties": {
-				"user_uuid": {
+				"pageNo": {
 					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"search": {
+					"type": "string"
+				},
+				"module_uuid": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "boolean"
 				}
 			}
 		},

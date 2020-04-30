@@ -168,7 +168,7 @@ const referenceGroupController = () => {
                         reqdata.created_by = reqdata.modified_by = user_uuid;
                         reqdata.created_date = reqdata.modified_date = new Date();
                         reqdata.database_name = "dev_hmis_emr_18_12_2019";
-                        reqdata.activity_uuid = 176;
+                        //reqdata.activity_uuid = 176;
                         reqdata.module_uuid = 37;
                         reqdata.revision = reqdata.is_active = reqdata.Is_default = reqdata.display_order = 1;
                         reqdata.language = 0;
@@ -205,17 +205,78 @@ const referenceGroupController = () => {
     };
 
     const getAllreference = async (req, res, next) => {
+        let getsearch = req.body;
 
+        let pageNo = 0;
+        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+        let sortField = 'modified_date';
+        let sortOrder = 'DESC';
+
+        Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+
+        if (getsearch.pageNo) {
+            let temp = parseInt(getsearch.pageNo);
+
+
+            if (temp && (temp != NaN)) {
+                pageNo = temp;
+            }
+        }
+
+        const offset = pageNo * itemsPerPage;
+
+
+        if (getsearch.sortField) {
+
+            sortField = getsearch.sortField;
+        }
+
+        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+            sortOrder = getsearch.sortOrder;
+        }
+        let findQuery = {
+            offset: offset,
+            limit: itemsPerPage,
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+            order: [
+                [sortField, sortOrder],
+            ],
+            where: { is_active: 1 },
+
+        };
+
+        if (getsearch.search && /\S/.test(getsearch.search)) {
+            findQuery.where[Op.or] = [
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+            ];
+        }
+        if (getsearch.module_uuid && /\S/.test(getsearch.module_uuid)) {
+            if (findQuery.where[Op.or]) {
+                findQuery.where[Op.and] = [{
+                    [Op.or]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.module_uuid)
+                    ]
+                }];
+            } else {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.module_uuid)
+                ];
+            }
+        }
+
+        if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            findQuery.where['is_active'] = getsearch.status;
+        }
         try {
 
             const { user_uuid } = req.headers;
 
             if (user_uuid > 0) {
 
-                const data = await vw_ref.findAndCountAll(
-                    {
-                        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                    });
+                const data = await vw_ref.findAndCountAll(findQuery);
                 if (data) {
                     return res
                         .status(httpStatus.OK)
