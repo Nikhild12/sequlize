@@ -169,7 +169,8 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
 
 
     const postimmunizationSchedule = async (req, res, next) => {
-        const postData = req.body;
+        let postData = req.body;
+        postData.status=postData.is_active;
         postData.created_by = req.headers.user_uuid;
         postData.modified_by = req.headers.user_uuid;
         postData.created_date=new Date();
@@ -182,7 +183,11 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
                 where: {
                     [Op.or]: [{
                         immunization_uuid: postData.immunization_uuid
-                    }]
+                    },
+                    {
+                        schedule_uuid: postData.schedule_uuid
+                    },
+                    ]
                 }
             }).then(async (result) => {
                 if (result.length != 0) {
@@ -323,7 +328,9 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
     };
 
     const updateimmunizationScheduleById = async (req, res, next) => {
-        const postData = req.body;
+        let postData = req.body;
+        postData.status=postData.is_active;
+
         postData.modified_by = req.headers.user_uuid;
         postData.modifed_date=new Date();
         await immunizationScheduleTbl.update(
