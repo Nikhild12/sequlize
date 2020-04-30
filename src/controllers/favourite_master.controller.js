@@ -1142,6 +1142,7 @@ function getFavouriteMasterDetailsUpdateData(
     diet_frequency_uuid: favouriteMasterReqData.diet_frequency_uuid,
     diet_category_uuid: favouriteMasterReqData.diet_category_uuid,
     quantity: favouriteMasterReqData.quantity,
+    injection_room_uuid: favouriteMasterReqData.injection_room_uuid || 0
   };
 }
 
