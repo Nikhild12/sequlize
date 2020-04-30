@@ -157,64 +157,69 @@ const ChiefComplaints = () => {
       });
     }
   };
+
   const _createChiefComplaints = async (req, res) => {
+
     if (Object.keys(req.body).length != 0) {
+
       const { user_uuid } = req.headers;
       const chiefComplaintsData = req.body;
 
-      if (user_uuid && chiefComplaintsData) {
-        chief_complaints_tbl
-          .findAll({
-            where: {
-              [Op.or]: [
-                {
-                  code: chiefComplaintsData.code
-                },
-                {
-                  name: chiefComplaintsData.name
-                }
-              ]
-            }
-          })
-          .then(async result => {
-            if (result.length != 0) {
-              return res.send({
-                statusCode: 400,
-                status: "error",
-                msg: "Record already Found. Please enter New CHIEF COMPLAINT "
+      if (user_uuid > 0 && chiefComplaintsData) {
+        
+        try {
+
+          const code_exits = await codeexists(req.body.code);
+          const name_exits = await nameexists(req.body.name);
+          const tblname_exits = await codenameexists(req.body.code, req.body.name);
+
+          if (tblname_exits && tblname_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ code: httpStatus[400], message: "code and name already exists" });
+          }
+          else if (code_exits && code_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ code: httpStatus[400], message: "code already exists" });
+
+          } else if (name_exits && name_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ code: httpStatus[400], message: "name already exists" });
+
+          } else {
+
+            chiefComplaintsData.status = chiefComplaintsData.is_active;
+            chiefComplaintsData.created_by = user_uuid;
+            chiefComplaintsData.modified_by = user_uuid;
+
+            chiefComplaintsData.created_date = new Date();
+            chiefComplaintsData.modified_date = new Date();
+            chiefComplaintsData.revision = 1;
+
+            const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
+              chiefComplaintsData,
+              { returning: true }
+            );
+
+            if (chiefComplaintsCreatedData) {
+              chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
+              return res.status(200).send({
+                statusCode: 200,
+                message: "Inserted Chief Complaints Successfully",
+                responseContents: chiefComplaintsData
               });
             }
-            try {
-
-              chiefComplaintsData.status = chiefComplaintsData.is_active;
-              chiefComplaintsData.created_by = user_uuid;
-              chiefComplaintsData.modified_by = user_uuid;
-
-              chiefComplaintsData.created_date = new Date();
-              chiefComplaintsData.modified_date = new Date();
-              chiefComplaintsData.revision = 1;
-              const chiefComplaintsCreatedData = await chief_complaints_tbl.create(
-                chiefComplaintsData,
-                { returning: true }
-              );
-
-              if (chiefComplaintsCreatedData) {
-                chiefComplaintsData.uuid = chiefComplaintsCreatedData.uuid;
-                return res.status(200).send({
-                  statusCode: 200,
-                  message: "Inserted Chief Complaints Successfully",
-                  responseContents: chiefComplaintsData
-                });
-              }
-            } catch (ex) {
-              console.log(ex.message);
-              return res.status(400).send({ statusCode: 400, message: ex.message });
-            }
-          });
+          }
+        } catch (ex) {
+          console.log(ex.message);
+          return res.status(400).send({ statusCode: 400, message: ex.message });
+        }
       } else {
         return res
           .status(400)
-          .send({ statusCode: 400, message: "No Headers Found" });
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } else {
       return res
@@ -222,6 +227,8 @@ const ChiefComplaints = () => {
         .send({ code: httpStatus[400], message: "No Request Body Found" });
     }
   };
+
+
   const _getChiefComplaintsById = async (req, res) => {
     const { user_uuid } = req.headers;
     const { ChiefComplaints_id } = req.body;
@@ -410,8 +417,8 @@ const ChiefComplaints = () => {
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
 
-   Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
-   console.log(getsearch);
+    Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+    console.log(getsearch);
 
     let pageNo = 0;
     const itemsPerPage = getsearch.paginationSize
@@ -449,31 +456,31 @@ const ChiefComplaints = () => {
     };
 
     if (getsearch.searchKey && /\S/.test(getsearch.searchKey)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
+      findQuery.where[Op.or] = [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
 
-    ];
+      ];
     }
-   if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
+    if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), getsearch.searchKeyWord.toLowerCase()),
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), getsearch.searchKeyWord.toLowerCase()),
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), getsearch.searchKeyWord.toLowerCase()),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), getsearch.searchKeyWord.toLowerCase()),
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
+      } else {
+        findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), getsearch.searchKeyWord.toLowerCase()),
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), getsearch.searchKeyWord.toLowerCase()),
-       ];
+        ];
+      }
     }
-   }
-   
+
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['is_active'] = getsearch.status;
-     }
+      findQuery.where['is_active'] = getsearch.status;
+    }
 
     try {
       await chief_complaints_tbl
@@ -514,3 +521,57 @@ const ChiefComplaints = () => {
 };
 
 module.exports = ChiefComplaints();
+
+const codeexists = (code, userUUID) => {
+  if (code !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = chief_complaints_tbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["code"],
+        where: { code: code }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const nameexists = (name) => {
+  if (name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = chief_complaints_tbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["name"],
+        where: { name: name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const codenameexists = (code, name) => {
+  if (code !== undefined && name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = chief_complaints_tbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["code", "name"],
+        where: { code: code, name: name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
