@@ -69,16 +69,10 @@ const immunizationScheduleController = () => {
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
-
+                 is_active:1,status:1
                 }
             };
-
-            
-           
-            
-
-
-               if (getsearch.search && /\S/.test(getsearch.search)) {
+         if (getsearch.search && /\S/.test(getsearch.search)) {
          findQuery.where[Op.or] = [
            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.schedule_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.immunization_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -129,6 +123,8 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
    }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
      findQuery.where['is_active'] = getsearch.status;
+     findQuery.where['status'] = getsearch.status;
+
      }
             await vw_immunische.findAndCountAll(findQuery)
                 .then((data) => {
@@ -162,12 +158,6 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
     };
 
 
-
-    
-
-    
-
-
     const postimmunizationSchedule = async (req, res, next) => {
         let postData = req.body;
         postData.status=postData.is_active;
@@ -176,12 +166,11 @@ if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid))
         postData.created_date=new Date();
         postData.modifed_date=new Date();
 
-
         if (postData) {
 
             immunizationScheduleTbl.findAll({
                 where: {
-                    [Op.or]: [{
+                    [Op.and]: [{
                         immunization_uuid: postData.immunization_uuid
                     },
                     {
