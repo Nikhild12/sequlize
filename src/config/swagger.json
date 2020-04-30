@@ -8558,10 +8558,8 @@
 				},
 				"is_active": {
 					"type": "integer"
-				},
-				"revision": {
-					"type": "integer"
 				}
+				
 			}
 		},
 		"getnotetemplatebytype": {
@@ -8674,12 +8672,10 @@
 				"display_order": {
 					"type": "integer"
 				},
-				"status": {
-					"type": "integer"
-				},
-				"revision": {
+				"is_active": {
 					"type": "integer"
 				}
+		
 			}
 		},
 		"getprocedures-note-template": {
