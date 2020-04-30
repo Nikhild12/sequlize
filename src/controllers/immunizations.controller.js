@@ -392,6 +392,7 @@ const immunizationsController = () => {
         postData.modified_by = req.headers.user_uuid;
         postData.status=postData.is_active;
         if (Object.keys(postData).length != 0) {
+            
             immunizationsTbl.findAll({
                 where: {
                     [Op.or]: [
@@ -407,7 +408,7 @@ const immunizationsController = () => {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "Record already Found. Please enter immunizations"
+                        msg: "Name already exists"
                     });
                 } else {
                     await immunizationsTbl.create(postData, {

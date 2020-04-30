@@ -37,27 +37,13 @@ module.exports = (sequelize, DataTypes) => {
        
         immunization_schedule_flag_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_flag_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_schedule_flag_uuid')
-                }
-            }
+            allowNull: false
+           
         },
         immunization_route_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_route_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_route_uuid')
-                }
-            }
+            allowNull: false
+            
         },
         duration:{
             type: DataTypes.STRING,
@@ -65,19 +51,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         immunization_dosage_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
-                },
-                min: {
-                    args: 1,
-                    msg: emr_constants.GetMinimumMessage('immunization_dosage_uuid')
-                }
-            }
+            allowNull: false
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('immunization_dosage_uuid')
+            //     },
+            //     min: {
+            //         args: 1,
+            //         msg: emr_constants.GetMinimumMessage('immunization_dosage_uuid')
+            //     }
+            // }
         },
         duration_period_uuid: {
            type: DataTypes.INTEGER,
