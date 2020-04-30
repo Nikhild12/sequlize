@@ -228,6 +228,8 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
+        console.log({getPPV});
+        
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -404,7 +406,8 @@ function getPPVQuery(user_uuid, patient_uuid, department_uuid) {
       "u_middle_name",
       "u_last_name",
       "et_code",
-      "et_name"
+      "et_name",
+      "pv_vital_uom_uuid"
     ],
     limit: 10,
     where: {
@@ -462,6 +465,7 @@ function getPVlist(fetchedData, p_id, created_date) {
 
   if (filteredData && filteredData.length > 0) {
     pv_list = filteredData.map(pV => {
+      
       return {
         // patient vital values
         patient_vital_uuid: pV.pv_uuid,
@@ -477,10 +481,13 @@ function getPVlist(fetchedData, p_id, created_date) {
 
         // uom master table values
         uom_code: pV.um_code,
-        uom_name: pV.um_name
+        uom_name: pV.um_name,
+        uom_uuid: pV.pv_vital_uom_uuid
       };
     });
   }
+
+  
   return pv_list;
 }
 
