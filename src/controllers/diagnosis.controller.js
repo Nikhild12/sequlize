@@ -196,85 +196,87 @@ const diagnosisController = () => {
         } = req.headers;
         const diagnosisData = req.body;
         if (Object.keys(req.body).length != 0) {
-        if (user_uuid && diagnosisData) {
 
-            const result = await diagnosisTbl.findAll({
-                where: {
-                    [Op.or]: [{
-                        code: diagnosisData.code
-                    },
-                    {
-                        name: diagnosisData.name
+            if (user_uuid && diagnosisData) {
+
+                try {
+
+                    const code_exits = await codeexists(req.body.code);
+                    const name_exits = await nameexists(req.body.name);
+                    const tblname_exits = await codenameexists(req.body.code, req.body.name);
+
+                    if (tblname_exits && tblname_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "code and name already exists" });
                     }
-                    ]
-                }
-            });
-            if (result && result.length > 0) {
-                    return res.send({
+                    else if (code_exits && code_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "code already exists" });
+
+                    } else if (name_exits && name_exits.length > 0) {
+                        return res
+                            .status(400)
+                            .send({ code: httpStatus[400], message: "name already exists" });
+
+                    } else {
+
+                        diagnosisData.code = diagnosisData.code;
+                        diagnosisData.name = req.body.name;
+                        diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
+                        diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
+                        diagnosisData.diagnosis_category_uuid = req.body.diagnosis_category_uuid;
+                        diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
+                        diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
+                        diagnosisData.position_id = req.body.position_id;
+
+                        diagnosisData.description = diagnosisData.description;
+                        diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
+                        diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
+                        diagnosisData.created_date = diagnosisData.modified_date = new Date();
+                        diagnosisData.revision = 1;
+
+                        const diagnosisCreatedData = await diagnosisTbl.create(diagnosisData, {
+                            returning: true
+                        });
+
+                        if (diagnosisCreatedData) {
+                            diagnosisData.uuid = diagnosisCreatedData.uuid;
+                            return res.status(200).send({
+                                code: 200,
+                                message: "Inserted Diagnosis Successfully",
+                                responseContents: diagnosisData
+                            });
+                        }
+                    }
+                } catch (ex) {
+
+                    return res.status(400).send({
                         code: 400,
-                        status: "error",
-                        msg: "Please enter New diagnosis"
+                        message: ex.message
                     });
                 }
-           else{
-            diagnosisData.code = diagnosisData.code;
-            diagnosisData.name = req.body.name;
-            diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
-            diagnosisData.diagnosis_type_uuid = req.body.diagnosis_type_uuid;
-            diagnosisData.diagnosis_category_uuid = req.body.diagnosis_category_uuid;
-            diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
-            diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
-            diagnosisData.position_id = req.body.position_id;
-
-           
-            diagnosisData.description = diagnosisData.description ;
-            diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
-            diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
-            diagnosisData.created_date = diagnosisData.modified_date = new Date();
-            diagnosisData.revision = 1;
-            
-            try {
-                const diagnosisCreatedData = await diagnosisTbl.create(diagnosisData, {
-                    returning: true
-                });
-
-                if (diagnosisCreatedData) {
-                    diagnosisData.uuid = diagnosisCreatedData.uuid;
-                    return res.status(200).send({
-
-                        code: 200,
-                        message: "Inserted Diagnosis Successfully",
-                        responseContents: diagnosisData
-
-                    });
-                }
-            } catch (ex) {
-
+            } else {
                 return res.status(400).send({
                     code: 400,
-                    message: ex.message
+                    message: 'No Headers Found'
                 });
             }
-        }
         } else {
-            return res.status(400).send({
-                code: 400,
-                message: 'No Headers Found'
-            });
-        }
-    }else {
             return res
-              .status(400)
-              .send({ code: httpStatus[400], message: "No Request Body Found" });
-          }
+                .status(400)
+                .send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
 
     };
+    
     const _getDiagnosis = async (req, res, next) => {
 
         let getsearch = req.body;
-        
+
         Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
-   
+
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
         let sortField = 'name';
@@ -304,37 +306,37 @@ const diagnosisController = () => {
             limit: itemsPerPage,
             order: [[sortField, sortOrder]],
             attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-            where:{ is_active: 1 ,  status: 1 }
+            where: { is_active: 1, status: 1 }
 
         };
 
-      if (getsearch.search && /\S/.test(getsearch.search)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        if (getsearch.search && /\S/.test(getsearch.search)) {
+            findQuery.where[Op.or] = [
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-    ];
-    }
-   if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
-      if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
-      ]
-        }];
-       } else {
-          findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
-       ];
-    }
-   }
-   
-    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['is_active'] = getsearch.status;
-     }
-        
-             
-                    
+            ];
+        }
+        if (getsearch.diagnosis_version_uuid && /\S/.test(getsearch.diagnosis_version_uuid)) {
+            if (findQuery.where[Op.or]) {
+                findQuery.where[Op.and] = [{
+                    [Op.or]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
+                    ]
+                }];
+            } else {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_uom_diagnosis.diagnosis_version_uuid')), getsearch.diagnosis_version_uuid)
+                ];
+            }
+        }
+
+        if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            findQuery.where['is_active'] = getsearch.status;
+        }
+
+
+
         try {
             console.log(findQuery);
             const data = await vw_uom_diagnosis.findAndCountAll(findQuery);
@@ -443,7 +445,7 @@ const diagnosisController = () => {
                     uuid: postData.Diagnosis_id,
                 },
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                
+
             });
             if (data) {
                 return res
@@ -573,6 +575,60 @@ const diagnosisController = () => {
 
 module.exports = diagnosisController();
 
+const codeexists = (code, userUUID) => {
+    if (code !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = diagnosisTbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["code"],
+                where: { code: code }
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
+
+const nameexists = (name) => {
+    if (name !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = diagnosisTbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["name"],
+                where: { name: name }
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
+
+const codenameexists = (code, name) => {
+    if (code !== undefined && name !== undefined) {
+        return new Promise((resolve, reject) => {
+            let value = diagnosisTbl.findAll({
+                //order: [['created_date', 'DESC']],
+                attributes: ["code", "name"],
+                where: { code: code, name: name }
+            });
+            if (value) {
+                resolve(value);
+                return value;
+            } else {
+                reject({ message: "code does not existed" });
+            }
+        });
+    }
+};
+
 async function getuserDetails(user_uuid, docid, authorization) {
     console.log(user_uuid, docid, authorization);
     let options = {
@@ -659,3 +715,4 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep) {
     };
     return newdata;
 }
+
