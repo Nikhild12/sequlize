@@ -872,6 +872,7 @@ const TickSheetMasterController = () => {
           if (favourite_details && favourite_details.length > 0) {
             favouriteList.favourite_details = {
               display_order: favourite_details[0].display_order,
+              favourite_id: +(favouriteId)
             };
           }
         }
