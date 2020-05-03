@@ -8567,7 +8567,6 @@
 				"is_active": {
 					"type": "integer"
 				}
-				
 			}
 		},
 		"getnotetemplatebytype": {
@@ -8683,7 +8682,6 @@
 				"is_active": {
 					"type": "integer"
 				}
-		
 			}
 		},
 		"getprocedures-note-template": {
@@ -9185,8 +9183,8 @@
 				"table_name": {
 					"type": "string"
 				},
-				"activity_uuid":{
-					"type":"integer"
+				"activity_uuid": {
+					"type": "integer"
 				}
 			}
 		},
@@ -12330,16 +12328,13 @@
 				"search": {
 					"type": "string"
 				},
-				"codename": {
-					"type": "string"
-				},
 				"departmentId": {
 					"type": "integer"
 				},
 				"status": {
-					"type": "string"
+					"type": "boolean"
 				},
-				"searchKey": {
+				"codename": {
 					"type": "string"
 				}
 			}
