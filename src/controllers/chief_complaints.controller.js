@@ -237,7 +237,7 @@ const ChiefComplaints = () => {
       try {
         const chiefData = await chief_complaints_tbl.findOne({
           attributes: getChiefComplaintsAttributes,
-          where: { uuid: ChiefComplaints_id, is_active: 1, status: 1 }
+          where: { uuid: ChiefComplaints_id }
         });
 
         return res.status(httpStatus.OK).json({

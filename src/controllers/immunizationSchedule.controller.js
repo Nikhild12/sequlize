@@ -30,7 +30,7 @@ const immunizationScheduleController = () => {
             const getsearch = req.body;
             let pageNo = 0;
             const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-            let sortArr = ['created_date', 'DESC'];
+            let sortArr = ['modifed_date', 'DESC'];
 
 
             if (getsearch.pageNo) {
@@ -84,43 +84,57 @@ const immunizationScheduleController = () => {
     ];
     }
     if (getsearch.schedule_uuid && /\S/.test(getsearch.schedule_uuid)) {
-      if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.schedule_uuid')), getsearch.schedule_uuid)
-        ]}]
-       } else {
-          findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.schedule_uuid')), getsearch.schedule_uuid)
-       ];
-    }
-   }
-   if (getsearch.immunization_uuid && /\S/.test(getsearch.immunization_uuid)) {
-      if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.immunization_uuid')), getsearch.immunization_uuid)
-      ]
-        }];
-       } else {
-          findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.immunization_uuid')), getsearch.immunization_uuid)
-       ];
-    }
-   }
-if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid)) {
-      if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.duration_period_uuid')), getsearch.duration_period_uuid)
-      ]
-        }];
-       } else {
-          findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.duration_period_uuid')), getsearch.duration_period_uuid)
-       ];
-    }
-   }
+                findQuery.where['$vw_emr_immunization_schedule.schedule_uuid$'] = getsearch.schedule_uuid;
+            }
+
+            if (getsearch.immunization_uuid && /\S/.test(getsearch.immunization_uuid)) {
+                findQuery.where['$vw_emr_immunization_schedule.immunization_uuid$'] = getsearch.immunization_uuid;
+            }
+
+            if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid)) {
+                findQuery.where['$vw_emr_immunization_schedule.duration_period_uuid$'] = getsearch.duration_period_uuid;
+            }
+//     if (getsearch.schedule_uuid && /\S/.test(getsearch.schedule_uuid)) {
+//       if (findQuery.where[Op.or]) {
+//                findQuery.where[Op.and] = [{
+//                           [Op.or]: [
+//         Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.schedule_uuid')), getsearch.schedule_uuid)
+//         ]}]
+//        } else {
+//           findQuery.where[Op.or] = [
+//           Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.schedule_uuid')), getsearch.schedule_uuid)
+//        ]
+//     }
+//    }
+
+//  if (getsearch.immunization_uuid && /\S/.test(getsearch.immunization_uuid)) {
+//       if (findQuery.where[Op.or] ) {
+//                findQuery.where[Op.and] = [{
+//                           [Op.or]: [
+//         Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.immunization_uuid')), getsearch.immunization_uuid)
+//       ]}]
+        
+//        } else {
+//           findQuery.where[Op.or] = [
+//           Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.immunization_uuid')), getsearch.immunization_uuid)
+//        ]
+//     }
+//      }
+
+// if (getsearch.duration_period_uuid && /\S/.test(getsearch.duration_period_uuid)) {
+//                if (findQuery.where[Op.or]) {
+//                findQuery.where[Op.and] = [{
+//                           [Op.or]: [
+//         Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.duration_period_uuid')), getsearch.duration_period_uuid)
+//         ]}]
+//         } else {
+//           findQuery.where[Op.or] = [
+//           Sequelize.where(Sequelize.fn(Sequelize.col('vw_emr_immunization_schedule.duration_period_uuid')), getsearch.duration_period_uuid)
+//        ]
+//     }
+//    }
+
+  
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
      findQuery.where['is_active'] = getsearch.status;
      findQuery.where['status'] = getsearch.status;
