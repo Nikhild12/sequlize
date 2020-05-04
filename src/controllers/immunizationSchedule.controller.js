@@ -24,7 +24,7 @@ const immunizationScheduleController = () => {
             const getsearch = req.body;
             let pageNo = 0;
             const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-            let sortArr = ['modifed_date', 'DESC'];
+            let sortArr = ['modified_date', 'DESC'];
 
 
             if (getsearch.pageNo) {
