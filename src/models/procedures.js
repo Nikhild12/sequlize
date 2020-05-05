@@ -84,6 +84,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: 1,
             },
+            display_order:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
