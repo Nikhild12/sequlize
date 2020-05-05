@@ -95,6 +95,9 @@ const sketchRouter = require("./patient_speciality_sketches.route");
 //snomed details routes
 const smRouter = require("./snomed_details.route");
 
+//progress Notes details routes
+const progressRoute = require("./progress_notes.route");
+
 const serviceRouter = express.Router();
 
 //Discharge summary
@@ -247,5 +250,8 @@ serviceRouter.use("/sketch", sketchRouter);
 
 // Diseases Routes
 serviceRouter.use("/diseases", diseasesRoute);
+
+// progressNotes Routes
+serviceRouter.use("/progress", progressRoute);
 
 module.exports = serviceRouter;
