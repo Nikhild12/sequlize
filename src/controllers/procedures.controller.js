@@ -71,7 +71,7 @@ const proceduresController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      // where: { is_active: 1, status: 1 },
+      where: { is_active: 1, status: 1 },
       include: [{
         model: procedureNoteTbl,
         // include: [
@@ -175,6 +175,8 @@ const proceduresController = () => {
    }
      if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
      findQuery.where['is_active'] = getsearch.status;
+     findQuery.where['status'] = getsearch.status;
+
      }
 
     try {
