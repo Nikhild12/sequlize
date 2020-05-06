@@ -118,6 +118,9 @@ const vitalslonicController = () => {
     const postvitalslonic = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
+        postData.modified_by = req.headers.user_uuid;
+        postData.modified_date = new Date();
+        postData.created_date = new Date();
        
         
 
@@ -125,12 +128,10 @@ const vitalslonicController = () => {
 
             vital_loincTbl.findAll({
                 where: {
-                  [Op.or]: [{
-                    loinc_code: postData.loinc_code
-                    },
-                    {
-                        loinc_name: postData.loinc_name
+                  [Op.and]: [{
+                    vital_master_uuid: postData.vital_master_uuid
                     }
+
                   ]
                 }
               }).then(async (result) =>{
@@ -138,7 +139,7 @@ const vitalslonicController = () => {
                     return res.send({
                         statusCode: 400,
                       status: "error",
-                      msg: "Record already Found. Please enter vitals lonic"
+                      msg: ". Please enter new vitals master"
                     });
                   } else{
                     await vital_loincTbl.create(postData, {
@@ -177,7 +178,8 @@ const vitalslonicController = () => {
         const postData = req.body;
 
         await vital_loincTbl.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.vitals_lonic_id
