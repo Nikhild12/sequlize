@@ -8084,7 +8084,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -8128,7 +8128,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -8161,7 +8161,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					}

@@ -12,7 +12,7 @@ const emr_utility = require('../services/utility.service');
 
 // Initialize Tick Sheet Master
 const progressNotesTbl = sequelizeDb.progress_notes;
-
+const vwProgressNotesTbl = sequelizeDb.vw_progress_notes;
 const progress_notes = () => {
 
 
@@ -55,12 +55,12 @@ const progress_notes = () => {
      */
     const _getProgressNotesDetailsById = async (req, res) => {
 
-        const { uuid } = req.query;
+        const { progressNotes_uuid } = req.query;
         const { user_uuid } = req.headers;
 
         try {
-            if (user_uuid && uuid) {
-                const notesData = await progressNotesTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
+            if (user_uuid && progressNotes_uuid) {
+                const notesData = await vwProgressNotesTbl.findOne({ where: { p_uuid: progressNotes_uuid, p_created_by: user_uuid } }, { returning: true });
                 if (!notesData) {
                     return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
                 }
@@ -83,11 +83,11 @@ const progress_notes = () => {
 
     const _deleteProgressNotes = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { uuid } = req.query;
-        if (user_uuid && uuid) {
+        const { progressNotes_uuid } = req.query;
+        if (user_uuid && progressNotes_uuid) {
             const updatedProgressData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
             try {
-                const data = await progressNotesTbl.update(updatedProgressData, { where: { uuid: uuid } }, { returning: true });
+                const data = await progressNotesTbl.update(updatedProgressData, { where: { uuid: progressNotes_uuid } }, { returning: true });
                 if (data) {
                     return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
                 } else {
@@ -117,12 +117,12 @@ const progress_notes = () => {
     const _updateProgressNotes = async (req, res) => {
         try {
             const { user_uuid } = req.headers;
-            let { uuid } = req.query;
+            let { progressNotes_uuid } = req.query;
             let postdata = req.body;
             let selector = {
-                where: { uuid: uuid, status: 1, is_active: 1 }
+                where: { uuid: progressNotes_uuid, status: 1, is_active: 1 }
             };
-            if (user_uuid && uuid) {
+            if (user_uuid && progressNotes_uuid) {
                 const data = await progressNotesTbl.update(postdata, selector, { returning: true });
                 if (data) {
                     return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
@@ -146,7 +146,7 @@ const progress_notes = () => {
 
         try {
             if (user_uuid) {
-                const notesData = await progressNotesTbl.findAll();
+                const notesData = await vwProgressNotesTbl.findAll();
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
             }
             else {
