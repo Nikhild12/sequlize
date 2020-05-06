@@ -976,7 +976,7 @@
 						"name": "add",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/getNoteTemplate1"
+							"$ref": "#/definitions/getNoteTemplate"
 						}
 					}
 				],
@@ -9038,18 +9038,10 @@
 		"getNoteTemplate": {
 			"type": "object",
 			"properties": {
-				"Procedures_id": {
-					"type": "integer"
-				}
-			}
-		},
-		"getNoteTemplate1": {
-			"type": "object",
-			"properties": {
 				"Id": {
 					"type": "integer"
 				},
-				"codeName": {
+				"code": {
 					"type": "string"
 				},
 				"name": {
