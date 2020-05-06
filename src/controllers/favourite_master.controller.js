@@ -98,6 +98,7 @@ const getFavouritesAttributes = [
   "sm_store_code",
   "sm_store_name",
   "tsmd_strength",
+  "tsmd_treatment_kit_uuid"
 ];
 
 // Fav Treatment Kit Att
