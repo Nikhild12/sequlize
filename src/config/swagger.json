@@ -970,6 +970,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "add",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getNoteTemplate1"
+						}
 					}
 				],
 				"produces": [
@@ -9030,10 +9038,18 @@
 		"getNoteTemplate": {
 			"type": "object",
 			"properties": {
+				"Procedures_id": {
+					"type": "integer"
+				}
+			}
+		},
+		"getNoteTemplate1": {
+			"type": "object",
+			"properties": {
 				"Id": {
 					"type": "integer"
 				},
-				"code": {
+				"codeName": {
 					"type": "string"
 				},
 				"name": {
