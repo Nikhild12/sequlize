@@ -139,65 +139,134 @@ if (getsearch.search && /\S/.test(getsearch.search)) {
 
     };
 
-    const postAlleryMaster = async (req, res, next) => {
+    // const postAlleryMaster = async (req, res, next) => {
 
 
 
-        if (Object.keys(req.body).length != 0) {
-            const postData = req.body;
-            postData.created_by = req.headers.user_uuid;
+    //     if (Object.keys(req.body).length != 0) {
+    //         const postData = req.body;
+    //         postData.created_by = req.headers.user_uuid;
+    //         postData.created_date = new Date();
+    //         postData.modified_date = new Date();
+    //         postData.modified_by = req.headers.user_uuid;
+    //         allergyMastersTbl.findAll({
+    //             where: {
+    //                 [Op.or]: [{
+    //                     allergey_code: postData.allergey_code
+    //                 },
+    //                 {
+    //                     allergy_name: postData.allergy_name
+    //                 }
+    //                 ]
+    //             }
+    //         }).then(async (result) => {
+    //             if (result.length != 0) {
+    //                 return res.send({
+    //                     statusCode: 400,
+    //                     status: "error",
+    //                     msg: "Record already exists"
+    //                 });
+    //             } else {
+    //                 await allergyMastersTbl.create(postData, {
+    //                     returning: true
+    //                 }).then(data => {
+
+    //                     res.send({
+    //                         statusCode: 200,
+    //                         msg: "Inserted Allery Master details Successfully",
+    //                         req: postData,
+    //                         responseContents: data
+    //                     });
+    //                 }).catch(err => {
+
+    //                     res.send({
+    //                         status: "failed",
+    //                         msg: "failed to Allery Master details",
+    //                         error: err
+    //                     });
+    //                 });
+    //             }
+    //         });
+
+
+    //     } else {
+
+    //         res.send({
+    //             status: 'failed',
+    //             msg: 'No Request Body Found'
+    //         });
+    //     }
+    // };
+
+const postAlleryMaster = async (req, res) => {
+
+    if (Object.keys(req.body).length != 0) {
+
+      const { user_uuid } = req.headers;
+      const postData = req.body;
+
+      if (user_uuid > 0 && postData) {
+        
+        try {
+
+          const code_exits = await codeexists(req.body.allergey_code);
+          const name_exits = await nameexists(req.body.allergy_name);
+          const tblname_exits = await codenameexists(req.body.allergey_code, req.body.allergy_name);
+
+          if (tblname_exits && tblname_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "code and name already exists" });
+          }
+          else if (code_exits && code_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "code already exists" });
+
+          } else if (name_exits && name_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "name already exists" });
+
+          } else {
+
+            postData.status = postData.is_active;
+            postData.created_by = user_uuid;
+            postData.modified_by = user_uuid;
+
             postData.created_date = new Date();
             postData.modified_date = new Date();
-            postData.modified_by = req.headers.user_uuid;
-            allergyMastersTbl.findAll({
-                where: {
-                    [Op.or]: [{
-                        allergey_code: postData.allergey_code
-                    },
-                    {
-                        allergy_name: postData.allergy_name
-                    }
-                    ]
-                }
-            }).then(async (result) => {
-                if (result.length != 0) {
-                    return res.send({
-                        statusCode: 400,
-                        status: "error",
-                        msg: "Record already exists"
-                    });
-                } else {
-                    await allergyMastersTbl.create(postData, {
-                        returning: true
-                    }).then(data => {
+            postData.revision = 1;
 
-                        res.send({
-                            statusCode: 200,
-                            msg: "Inserted Allery Master details Successfully",
-                            req: postData,
-                            responseContents: data
-                        });
-                    }).catch(err => {
+            const allergyCreatedData = await allergyMastersTbl.create(
+              postData,
+              { returning: true }
+            );
 
-                        res.send({
-                            status: "failed",
-                            msg: "failed to Allery Master details",
-                            error: err
-                        });
-                    });
-                }
-            });
-
-
-        } else {
-
-            res.send({
-                status: 'failed',
-                msg: 'No Request Body Found'
-            });
+            if (allergyCreatedData) {
+              postData.uuid = allergyCreatedData.uuid;
+              return res.status(200).send({
+                statusCode: 200,
+                message: "Inserted Allergy Master Successfully",
+                responseContents: postData
+              });
+            }
+          }
+        } catch (ex) {
+          console.log(ex.message);
+          return res.status(400).send({ statusCode: 400, message: ex.message });
         }
-    };
-
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
+    } else {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+  };
 
     const deleteAlleryMaster = async (req, res, next) => {
         if (Object.keys(req.body).length != 0) {
@@ -395,4 +464,57 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     };
     return newdata;
 }
+const codeexists = (code, userUUID) => {
+  if (code !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = allergyMastersTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["allergey_code"],
+        where: { allergey_code: code }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const nameexists = (name) => {
+  if (name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = allergyMastersTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["allergy_name"],
+        where: { allergy_name: name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const codenameexists = (code, name) => {
+  if (code !== undefined && name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = allergyMastersTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["allergey_code", "allergy_name"],
+        where: { allergey_code:code,  allergy_name:name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
 

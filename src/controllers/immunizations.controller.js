@@ -435,12 +435,6 @@ const immunizationsController = () => {
 
         } else {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-
-
-            // res.send({
-            //     status: 'failed',
-            //     msg: 'Please enter immunizations details'
-            // });
         }
     };
 

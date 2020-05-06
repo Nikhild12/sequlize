@@ -130,44 +130,72 @@ const procedureNoteTemplatesController = () => {
 
     const postprocedureNoteTemplates = async (req, res, next) => {
         const postData = req.body;
+        postData.status=postData.is_active;
         postData.created_by = req.headers.user_uuid;
+        postData.modified_by = req.headers.user_uuid;
+        postData.created_date = new Date();
+        postData.modified_date = new Date();
         if (postData) {
-            await procedureNoteTemplatesTbl.create(postData, {
-                returning: true
-            }).then(data => {
 
-                res.send({
-                    statusCode: 200,
-                    msg: "Inserted procedures note tmplate details Successfully",
-                    req: postData,
-                    responseContents: data
-                });
-            }).catch(err => {
+            procedureNoteTemplatesTbl.findAll({
+                where: {
+                    [Op.and]: [{
+                        procedure_uuid: postData.procedure_uuid
+                    }
+                    
+                    ]
+                }
+            }).then(async (result) => {
+                if (result.length != 0) {
+                    // return res.status(400).send({ statusCode: 400, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
-                res.send({
-                    status: "failed",
-                    msg: "failed to procedures note tmplate details",
-                    error: err
-                });
+                    return res.send({
+                        statusCode: 400,
+                        status: "error",
+                        msg: "Please enter New procedure"
+                    });
+                } else {
+                    await procedureNoteTemplatesTbl.create(postData, {
+                        returning: true
+                    }).then(data => {
+
+                        res.send({
+                            statusCode: 200,
+                            msg: "Inserted procedure note template details Successfully",
+                            req: postData,
+                            responseContents: data
+                        });
+                    }).catch(err => {
+
+                        res.send({
+                            status: "failed",
+                            msg: "failed to procedure note template details",
+                            error: err
+                        });
+                    });
+                }
             });
-
 
 
         } else {
 
             res.send({
+                statusCode: 422,
                 status: 'failed',
-                msg: 'Please enter procedures note template details'
+                msg: 'Please enter procedure note template details and headers'
             });
         }
     };
+
+        
 
 
     const deleteprocedureNoteTemplates = async (req, res, next) => {
         const postData = req.body;
 
         await procedureNoteTemplatesTbl.update({
-            status: 0
+            status: 0,
+            is_active:0
         }, {
             where: {
                 uuid: postData.Procedures_id_NT

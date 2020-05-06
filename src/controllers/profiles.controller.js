@@ -253,24 +253,27 @@ const profilesController = () => {
 
   const _getAllProfiles = async (req, res, next) => {
     try {
-      const postData = req.body;
+      const getsearch = req.body;
       let pageNo = 0;
-      const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-      let sortArr = ['p_uuid', 'DESC'];
+      const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+      let sortArr = ['modified_date', 'DESC'];
 
 
-      if (postData.pageNo) {
-        let temp = parseInt(postData.pageNo);
+      if (getsearch.pageNo) {
+        let temp = parseInt(getsearch.pageNo);
         if (temp && (temp != NaN)) {
           pageNo = temp;
         }
       }
       const offset = pageNo * itemsPerPage;
       let fieldSplitArr = [];
-      if (postData.sortField) {
-        fieldSplitArr = postData.sortField.split('.');
+      if (getsearch.sortField) {
+        if (getsearch.sortField == 'modified_date') {
+          getsearch.sortField = 'modified_date';
+        }
+        fieldSplitArr = getsearch.sortField.split('.');
         if (fieldSplitArr.length == 1) {
-          sortArr[0] = postData.sortField;
+          sortArr[0] = getsearch.sortField;
         } else {
           for (let idx = 0; idx < fieldSplitArr.length; idx++) {
             const element = fieldSplitArr[idx];
@@ -279,60 +282,69 @@ const profilesController = () => {
           sortArr = fieldSplitArr;
         }
       }
-      if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+      if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
         if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
-          sortArr[1] = postData.sortOrder;
+          sortArr[1] = getsearch.sortOrder;
         } else {
-          sortArr.push(postData.sortOrder);
+          sortArr.push(getsearch.sortOrder);
         }
       }
       let findQuery = {
         subQuery: false,
         offset: offset,
-        limit: postData.paginationSize,
+        limit: getsearch.paginationSize,
+        where: { p_is_active: 1, p_status: 1 },
         order: [
           sortArr
         ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-        where: {
-          p_is_active: 1,
-        }
+
       };
 
-      if (postData.search && /\S/.test(postData.search)) {
+
+      if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
         ];
       }
-      console.log('postData.codename==', postData.codename);
-      if (postData.codename && /\S/.test(postData.codename)) {
+      if (getsearch.codename && /\S/.test(getsearch.codename)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
             [Op.or]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_code')), getsearch.codename.toLowerCase()),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), getsearch.codename.toLowerCase())
+
             ]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_code')), getsearch.codename.toLowerCase()),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), getsearch.codename.toLowerCase())
+
+          ];
+        }
+      }
+      if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_department_uuid')), getsearch.departmentId)]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_department_uuid')), getsearch.departmentId)
           ];
         }
       }
 
-      if (postData.departmentId && /\S/.test(postData.departmentId)) {
-        // findQuery.where['p_department_uuid'] = postData.departmentId;      
-        findQuery.where =
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_department_uuid')), 'LIKE', '%' + postData.departmentId);
+      if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+        findQuery.where['p_is_active'] = getsearch.status;
+        findQuery.where['p_status'] = getsearch.status;
 
       }
-      if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-        //findQuery.where['p_is_active'] = postData.status;
-        findQuery.where = { p_is_active: postData.status };
-      }
+
+
       await profilesViewTbl.findAndCountAll(findQuery)
         .then((data) => {
           return res
@@ -361,127 +373,6 @@ const profilesController = () => {
           status: "error",
           msg: errorMsg
         });
-    }
-  };
-
-  const _getAllProfiles_old = async (req, res) => {
-
-    const { user_uuid } = req.headers;
-
-    try {
-      // let paginationSize = req.query.paginationSize;
-      let { paginationSize, pageNo, sortField, sortOrder, departmentId, status, searchKey } = req.body;
-      // pageNo = 0;
-      if (paginationSize) {
-        let records = parseInt(paginationSize);
-        if (records && (records != NaN)) {
-          paginationSize = records;
-        }
-      }
-      let itemsPerPage = paginationSize ? paginationSize : 10;
-      // let sortField = 'uuid';
-      //let sortOrder = 'DESC';
-
-      if (pageNo) {
-        let temp = parseInt(pageNo);
-        if (temp && (temp != NaN)) {
-          pageNo = temp;
-        }
-        console.log('pageNo===', pageNo);
-      }
-      pageNo = pageNo ? pageNo : 0;
-      const offset = pageNo * itemsPerPage;
-
-      console.log('offset===', offset);
-      if (sortField) {
-
-        sortField = sortField;
-      }
-
-      if (sortOrder && ((sortOrder == 'ASC') || (sortOrder == 'DESC'))) {
-
-        sortOrder = sortOrder;
-      }
-
-      let findQuery = {
-        offset: offset,
-        limit: itemsPerPage,
-        order: [
-          [sortField, sortOrder],
-        ],
-        where: { p_is_active: 1 }
-      };
-
-      if (sortField && /\S/.test(sortField)) {
-
-        findQuery.where = {
-          [Op.or]: [{
-            profile_code: {
-              [Op.like]: '%' + sortField + '%',
-            },
-
-
-          }, {
-            profile_name: {
-              [Op.like]: '%' + sortField + '%',
-            },
-          }
-
-          ]
-        };
-      }
-
-      if (typeof departmentId == 'string') {
-        findQuery.where['d_uuid'] = parseInt(departmentId);
-      }
-
-      if (typeof status == 'boolean') {
-        findQuery.where['p_status'] = status;
-      }
-      if (searchKey && /\S/.test(searchKey)) {
-        Object.assign(findQuery.where, {
-          [Op.or]: [
-            {
-              p_profile_code: {
-                [Op.like]: '%' + searchKey + '%',
-              }
-            },
-            {
-              p_profile_name: {
-                [Op.like]: '%' + searchKey + '%',
-              }
-
-            },
-            {
-              d_name: {
-                [Op.like]: '%' + searchKey + '%',
-              }
-            },
-            {
-              p_status: {
-                [Op.eq]: searchKey,
-              }
-            }
-
-          ]
-        });
-      }
-
-
-      if (user_uuid) {
-        const profileData = await profilesViewTbl.findAndCountAll({ attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] } }, findQuery,
-        );
-        if (profileData) {
-          return res.status(200).send({ code: httpStatus.OK, message: 'Fetched profile Details successfully', count: profileData.count, responseContents: profileData.rows });
-        }
-      }
-      else {
-        return res.status(422).send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
-      }
-    } catch (ex) {
-
-      console.log(ex.message);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
 

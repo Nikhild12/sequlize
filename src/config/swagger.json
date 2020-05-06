@@ -1372,6 +1372,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "reference",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllreference"
+						}
 					}
 				],
 				"produces": [
@@ -8028,6 +8036,176 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/progress/create": {
+			"post": {
+				"summary": "To create progressNotes details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "progress",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/addProgressNotes"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "Insterted ProgressNotes details Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/progress/update": {
+			"put": {
+				"summary": "To Update progress Notes details Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "progressNotes_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updateProgressNotes",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updateProgressNotes"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "Updated Successfully",
+						"schema": {
+							"$ref": "#/definitions/updateProgressNotes"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/progress/delete": {
+			"put": {
+				"summary": "Deleted progressNotes Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "progressNotes_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "Deleted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/progress/getById": {
+			"get": {
+				"summary": "To get progressNotes Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "progressNotes_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/progress/getAll": {
+			"get": {
+				"summary": "To get all the progressnotes Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "get All progress notes details"
+					}
+				}
+			}
 		}
 	},
 	"definitions": {
@@ -8553,13 +8731,9 @@
 				"duration": {
 					"type": "integer"
 				},
-				"status": {
-					"type": "integer"
-				},
 				"is_active": {
 					"type": "integer"
 				}
-				
 			}
 		},
 		"getnotetemplatebytype": {
@@ -8675,7 +8849,6 @@
 				"is_active": {
 					"type": "integer"
 				}
-		
 			}
 		},
 		"getprocedures-note-template": {
@@ -8790,13 +8963,7 @@
 				"duration": {
 					"type": "integer"
 				},
-				"status": {
-					"type": "integer"
-				},
 				"is_active": {
-					"type": "integer"
-				},
-				"revision": {
 					"type": "integer"
 				}
 			}
@@ -9176,14 +9343,35 @@
 				},
 				"table_name": {
 					"type": "string"
+				},
+				"activity_uuid": {
+					"type": "integer"
 				}
 			}
 		},
 		"getAllreference": {
 			"type": "object",
 			"properties": {
-				"user_uuid": {
+				"pageNo": {
 					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"search": {
+					"type": "string"
+				},
+				"module_uuid": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "boolean"
 				}
 			}
 		},
@@ -12301,16 +12489,13 @@
 				"search": {
 					"type": "string"
 				},
-				"codename": {
-					"type": "string"
-				},
 				"departmentId": {
 					"type": "integer"
 				},
 				"status": {
-					"type": "string"
+					"type": "boolean"
 				},
-				"searchKey": {
+				"codename": {
 					"type": "string"
 				}
 			}
@@ -15156,6 +15341,88 @@
 					"type": "integer"
 				},
 				"status": {
+					"type": "boolean"
+				}
+			}
+		},
+		"addProgressNotes": {
+			"type": "object",
+			"properties": {
+				"encounter_uuid": {
+					"type": "integer"
+				},
+				"encounter_type_uuid": {
+					"type": "integer"
+				},
+				"patient_uuid": {
+					"type": "integer"
+				},
+				"facility_uuid": {
+					"type": "integer"
+				},
+				"department_uuid": {
+					"type": "integer"
+				},
+				"progressnote_type_uuid": {
+					"type": "integer"
+				},
+				"captured_by": {
+					"type": "string"
+				},
+				"captured_on": {
+					"type": "string"
+				},
+				"daily_note": {
+					"type": "string"
+				},
+				"special_note": {
+					"type": "string"
+				},
+				"note_status_uuid": {
+					"type": "integer"
+				},
+				"is_phr": {
+					"type": "boolean"
+				}
+			}
+		},
+		"updateProgressNotes": {
+			"type": "object",
+			"properties": {
+				"encounter_uuid": {
+					"type": "integer"
+				},
+				"encounter_type_uuid": {
+					"type": "integer"
+				},
+				"patient_uuid": {
+					"type": "integer"
+				},
+				"facility_uuid": {
+					"type": "integer"
+				},
+				"department_uuid": {
+					"type": "integer"
+				},
+				"progressnote_type_uuid": {
+					"type": "integer"
+				},
+				"captured_by": {
+					"type": "string"
+				},
+				"captured_on": {
+					"type": "string"
+				},
+				"daily_note": {
+					"type": "string"
+				},
+				"special_note": {
+					"type": "string"
+				},
+				"note_status_uuid": {
+					"type": "integer"
+				},
+				"is_phr": {
 					"type": "boolean"
 				}
 			}

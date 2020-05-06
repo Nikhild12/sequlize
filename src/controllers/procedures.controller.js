@@ -71,7 +71,7 @@ const proceduresController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      // where: { is_active: 1, status: 1 },
+      where: { is_active: 1, status: 1 },
       include: [{
         model: procedureNoteTbl,
         // include: [
@@ -136,14 +136,14 @@ const proceduresController = () => {
       if (findQuery.where[Op.or]) {
                findQuery.where[Op.and] = [{
                           [Op.or]: [
-       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
       ]
         }];
        } else {
           findQuery.where[Op.or] = [
-         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
        ];
     }
    }
@@ -175,6 +175,8 @@ const proceduresController = () => {
    }
      if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
      findQuery.where['is_active'] = getsearch.status;
+     findQuery.where['status'] = getsearch.status;
+
      }
 
     try {
@@ -204,63 +206,77 @@ const proceduresController = () => {
     }
   };
 
-  const postprocedures = async (req, res, next) => {
-    const postData = req.body;
-    postData.created_by = req.headers.user_uuid;
-    postData.modified_by = req.headers.user_uuid;
-    postData.created_date = new Date();
-    postData. modified_date= new Date();
 
-    if (postData) {
-      proceduresTbl
-        .findAll({
-          where: {
-            [Op.or]: [
-              {
-                code: postData.code
-              },
-              {
-                name: postData.name
-              }
-            ]
+const postprocedures = async (req, res) => {
+
+    if (Object.keys(req.body).length != 0) {
+
+      const { user_uuid } = req.headers;
+      const postData = req.body;
+
+      if (user_uuid > 0 && postData) {
+        
+        try {
+
+          const code_exits = await codeexists(req.body.code);
+          const name_exits = await nameexists(req.body.name);
+          const tblname_exits = await codenameexists(req.body.code, req.body.name);
+
+          if (tblname_exits && tblname_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "code and name already exists" });
           }
-        })
-        .then(async result => {
-          if (result.length != 0) {
-            return res.send({
-              statusCode: 400,
-              status: "error",
-              msg: " Please enter procedures Master"
-            });
+          else if (code_exits && code_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "code already exists" });
+
+          } else if (name_exits && name_exits.length > 0) {
+            return res
+              .status(400)
+              .send({ statusCode: 400, message: "name already exists" });
+
           } else {
-            await proceduresTbl
-              .create(postData, {
-                returning: true
-              })
-              .then(data => {
-                res.send({
-                  statusCode: 200,
-                  msg: "Inserted procedures Master details Successfully",
-                  req: postData,
-                  responseContents: data
-                });
-              })
-              .catch(err => {
-                res.send({
-                  status: "failed",
-                  msg: "failed to procedures Master details",
-                  error: err
-                });
+
+            postData.status = postData.is_active;
+            postData.created_by = user_uuid;
+            postData.modified_by = user_uuid;
+
+            postData.created_date = new Date();
+            postData.modified_date = new Date();
+            postData.revision = 1;
+
+            const proceduresCreatedData = await proceduresTbl.create(
+              postData,
+              { returning: true }
+            );
+
+            if (proceduresCreatedData) {
+              postData.uuid = proceduresCreatedData.uuid;
+              return res.status(200).send({
+                statusCode: 200,
+                message: "Inserted Procedures Master Successfully",
+                responseContents: postData
               });
+            }
           }
-        });
+        } catch (ex) {
+          console.log(ex.message);
+          return res.status(400).send({ statusCode: 400, message: ex.message });
+        }
+      } else {
+        return res
+          .status(400)
+          .send({ code: httpStatus[400], message: "No Request Body Found" });
+      }
     } else {
-      res.send({
-        status: "failed",
-        msg: "Please enter procedures Master details"
-      });
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
     }
   };
+
 
   const deleteprocedures = async (req, res, next) => {
     const postData = req.body;
@@ -295,6 +311,7 @@ const proceduresController = () => {
 
   const updateproceduresId = async (req, res, next) => {
     const postData = req.body;
+    postData.status=postData.is_active;
     postData.modified_by = req.headers.user_uuid;
     postData.modified_date=new Date();
     await proceduresTbl
@@ -315,6 +332,9 @@ const proceduresController = () => {
 
   const getproceduresById = async (req, res, next) => {
     const postData = req.body;
+    postData.status=postData.is_active;
+    postData.modified_by=req.headers;
+    postData.modified_date=new Date();
     try {
       const page = postData.page ? postData.page : 1;
       const itemsPerPage = postData.limit ? postData.limit : 10;
@@ -380,7 +400,7 @@ const proceduresController = () => {
           limit: itemsPerPage
         });
       if (!data) {
-        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
+        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this procedures Id' });
       } else {
         const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
         const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
@@ -522,3 +542,57 @@ function getfulldata(data, getcuDetails, getmuDetails) {
   };
   return newdata;
 }
+
+const codeexists = (code, userUUID) => {
+  if (code !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = proceduresTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["code"],
+        where: { code: code }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const nameexists = (name) => {
+  if (name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = proceduresTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["name"],
+        where: { name: name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};
+
+const codenameexists = (code, name) => {
+  if (code !== undefined && name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = proceduresTbl.findAll({
+        //order: [['created_date', 'DESC']],
+        attributes: ["code", "name"],
+        where: { code:code,  name:name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "code does not existed" });
+      }
+    });
+  }
+};

@@ -65,13 +65,13 @@ const noteTemplatesController = () => {
 
             findQuery.where = {
                 [Op.or]: [{
-                    allergey_code: {
+                    code: {
                         [Op.like]: '%' + getsearch.search + '%',
                     },
 
 
                 }, {
-                    allergy_name: {
+                    name: {
                         [Op.like]: '%' + getsearch.search + '%',
                     },
                 }
@@ -79,6 +79,17 @@ const noteTemplatesController = () => {
                 ]
             };
         }
+
+        if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
+            findQuery.where = Object.assign(findQuery.where, {
+                code: getsearch.codeName
+            });
+        }
+        if (getsearch.codeName && /\S/.test(getsearch.status)) {
+            findQuery.where = Object.assign(findQuery.where, {
+                status: getsearch.status
+            });
+        }       
 
 
         try {
