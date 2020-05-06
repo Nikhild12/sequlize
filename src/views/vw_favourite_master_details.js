@@ -180,6 +180,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       sm_store_name: {
         type: DataTypes.STRING
+      },
+      tsmd_treatment_kit_uuid:{
+        type: DataTypes.INTEGER
       }
     }
   );
