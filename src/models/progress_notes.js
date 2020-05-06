@@ -67,6 +67,24 @@ module.exports = (sequelize, DataTypes) => {
                 // }
 
             },
+            department_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                //     },
+                //     min: {
+                //         args: [1],
+                //         msg: emr_constants.GetZeroValidationMessage('department_uuid')
+                //     }
+                // }
+
+            },
             patient_uuid: {
 
                 type: DataTypes.INTEGER,
