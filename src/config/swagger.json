@@ -8181,6 +8181,31 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/progress/getAll": {
+			"get": {
+				"summary": "To get all the progressnotes Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"ProgressNotes"
+				],
+				"responses": {
+					"200": {
+						"description": "get All progress notes details"
+					}
+				}
+			}
 		}
 	},
 	"definitions": {
