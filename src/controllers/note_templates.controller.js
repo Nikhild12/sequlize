@@ -83,6 +83,12 @@ const noteTemplatesController = () => {
                 code: getsearch.codeName
             });
         }
+        if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
+            findQuery.where = Object.assign(findQuery.where, {
+                name: getsearch.codeName
+            });
+        }
+
         if (getsearch.status && /\S/.test(getsearch.status)) {
             findQuery.where = Object.assign(findQuery.where, {
                 is_active: getsearch.status
