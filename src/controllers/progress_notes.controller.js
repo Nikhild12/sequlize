@@ -139,12 +139,32 @@ const progress_notes = () => {
 
         }
     };
+
+    const _getAllProgressNotesDetails = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+
+        try {
+            if (user_uuid) {
+                const notesData = await progressNotesTbl.findAll();
+                return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
     return {
 
         createProgressNotes: _createProgressNotes,
         getProgressNotesDetailsById: _getProgressNotesDetailsById,
         deleteProgressNotes: _deleteProgressNotes,
-        updateProgressNotes: _updateProgressNotes
+        updateProgressNotes: _updateProgressNotes,
+        getAllProgressNotesDetails: _getAllProgressNotesDetails
 
     };
 };

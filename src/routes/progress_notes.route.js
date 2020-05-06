@@ -11,6 +11,8 @@ progressNotesRoute.route('/create').post(progressNotesController.createProgressN
 progressNotesRoute.route('/delete').put(progressNotesController.deleteProgressNotes);
 progressNotesRoute.route('/getById').get(progressNotesController.getProgressNotesDetailsById);
 progressNotesRoute.route('/update').put(progressNotesController.updateProgressNotes);
+progressNotesRoute.route('/getAll').get(progressNotesController.getAllProgressNotesDetails);
+
 
 
 module.exports = progressNotesRoute;
