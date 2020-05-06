@@ -80,14 +80,18 @@ const noteTemplatesController = () => {
 
         if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
             findQuery.where = Object.assign(findQuery.where, {
-                code: getsearch.codeName
+                [Op.or]: [{
+                    code: getsearch.codeName,
+
+
+                }, {
+                    name: getsearch.codeName,
+                }
+
+                ]
             });
         }
-        if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
-            findQuery.where = Object.assign(findQuery.where, {
-                name: getsearch.codeName
-            });
-        }
+       
 
         if (getsearch.status && /\S/.test(getsearch.status)) {
             findQuery.where = Object.assign(findQuery.where, {
