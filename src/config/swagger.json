@@ -970,6 +970,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "add",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getNoteTemplate"
+						}
 					}
 				],
 				"produces": [
