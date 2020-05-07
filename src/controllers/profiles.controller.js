@@ -21,6 +21,8 @@ const sectionCategoryEntriesTbl = db.section_category_entries;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
+const profilesTypesTbl = db.profile_types;
+
 const Q = require('q');
 
 let page_no = 0;
@@ -615,8 +617,8 @@ const profilesController = () => {
 
     try {
       if (user_uuid) {
-        const valuesData = await valueTypesTbl.findAll();
-        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: valuesData });
+        const typesData = await valueTypesTbl.findAll();
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
       }
       else {
         return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
@@ -659,6 +661,29 @@ const profilesController = () => {
 
   };
 
+  /**
+       * Get All  valueTypes
+       * @param {*} req 
+       * @param {*} res 
+       */
+  const _getAllProfileNotesTypes = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+
+    try {
+      if (user_uuid) {
+        const typesData = await profilesTypesTbl.findAll();
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex.message);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -666,7 +691,10 @@ const profilesController = () => {
     getProfileById: _getProfileById,
     updateProfiles: _updateProfiles,
     addProfiles: _addProfiles,
-    getAllValueTypes: _getAllValueTypes
+    getAllValueTypes: _getAllValueTypes,
+    getAllProfileNotesTypes: _getAllProfileNotesTypes
+
+
 
 
 

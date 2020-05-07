@@ -8214,6 +8214,31 @@
 					}
 				}
 			}
+		},
+		"/api/profiles/getAllProfileTypes": {
+			"get": {
+				"summary": "To get all the profiletype Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get All profile type details"
+					}
+				}
+			}
 		}
 	},
 	"definitions": {
