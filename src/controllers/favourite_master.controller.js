@@ -1448,7 +1448,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
     return favouriteMasterTbl.findAll({
       attributes: ["uuid", "favourite_type_uuid", "code", "name"],
       where: {
-        favourite_type_uuid: fav_type_id,
+        favourite_type_uuid: fTyId,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
         [Op.or]: [
