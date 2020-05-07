@@ -970,6 +970,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "add",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getNoteTemplate"
+						}
 					}
 				],
 				"produces": [
@@ -8084,7 +8092,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -8128,7 +8136,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -8161,7 +8169,7 @@
 					},
 					{
 						"in": "query",
-						"name": "uuid",
+						"name": "progressNotes_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -9030,44 +9038,14 @@
 		"getNoteTemplate": {
 			"type": "object",
 			"properties": {
-				"Id": {
-					"type": "integer"
-				},
-				"code": {
+				"search": {
 					"type": "string"
 				},
-				"name": {
+				"codeName": {
 					"type": "string"
-				},
-				"note_template_type_uuid": {
-					"type": "integer"
-				},
-				"facility_uuid": {
-					"type": "integer"
-				},
-				"department_uuid": {
-					"type": "integer"
-				},
-				"note_type_uuid": {
-					"type": "integer"
 				},
 				"status": {
 					"type": "integer"
-				},
-				"is_active": {
-					"type": "integer"
-				},
-				"revision": {
-					"type": "integer"
-				},
-				"created_by": {
-					"type": "integer"
-				},
-				"modified_by": {
-					"type": "integer"
-				},
-				"created_date": {
-					"type": "string"
 				},
 				"modified_date": {
 					"type": "string"

@@ -57,12 +57,10 @@ const noteTemplatesController = () => {
                 [sortField, sortOrder],
             ],
             where: {
-                is_active: 1
             }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
-
             findQuery.where = {
                 [Op.or]: [{
                     code: {
@@ -82,14 +80,29 @@ const noteTemplatesController = () => {
 
         if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
             findQuery.where = Object.assign(findQuery.where, {
-                code: getsearch.codeName
+                [Op.or]: [{
+                    code: getsearch.codeName,
+
+
+                }, {
+                    name: getsearch.codeName,
+                }
+
+                ]
             });
         }
-        if (getsearch.codeName && /\S/.test(getsearch.status)) {
+       
+
+        if (getsearch.status && /\S/.test(getsearch.status)) {
             findQuery.where = Object.assign(findQuery.where, {
-                status: getsearch.status
+                is_active: getsearch.status
             });
-        }       
+        }          
+        if (!getsearch.status) {            
+            findQuery.where = Object.assign(findQuery.where, {
+                is_active: 1
+            });
+        }
 
 
         try {
@@ -133,9 +146,6 @@ const noteTemplatesController = () => {
     const postnoteTemplates = async (req, res, next) => {
         const postData = req.body;
         postData.created_by = req.headers.user_uuid;
-
-
-
         if (postData) {
 
             noteTemplatesTbl.findAll({
@@ -153,7 +163,7 @@ const noteTemplatesController = () => {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "Please ente new  Note Template"
+                        msg: "unique value"
                     });
                 } else {
                     await noteTemplatesTbl.create(postData, {

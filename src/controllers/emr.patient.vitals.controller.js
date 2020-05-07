@@ -409,7 +409,7 @@ function getPPVQuery(user_uuid, patient_uuid, department_uuid) {
       "et_name",
       "pv_vital_uom_uuid"
     ],
-    limit: 10,
+    //limit: 10,
     where: {
       vm_active: emrConstants.IS_ACTIVE,
       vm_status: emrConstants.IS_ACTIVE,
