@@ -5127,6 +5127,11 @@
 						"type": "integer"
 					},
 					{
+						"in": "query",
+						"name": "profile_type",
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "Profiles",
 						"schema": {
