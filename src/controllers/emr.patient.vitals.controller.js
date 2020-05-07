@@ -448,7 +448,8 @@ function PPVitalsList(getHistoryPatientVitals) {
     let PPV_list = patient_vitals_list.filter(
       obj => !uniq[obj.created_date] && (uniq[obj.created_date] = true)
     );
-    return { PPV_list: PPV_list };
+    
+    return { PPV_list: PPV_list.slice(0, 5) };
   } else {
     return {};
   }
