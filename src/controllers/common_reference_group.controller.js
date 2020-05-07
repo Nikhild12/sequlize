@@ -316,8 +316,10 @@ const commonReferenceGroupController = () => {
         const table_name = postData.table_name;
         const common_tbl = db[table_name];
 
-        // postData.created_by = req.headers.user_uuid
+        postData.status = postData.is_active;
         postData.modified_by = req.body.user_uuid;
+        postData.modified_date = new Date();
+
         try {
 
 
