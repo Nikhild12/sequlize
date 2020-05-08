@@ -35,7 +35,6 @@ const vitalmstrController = () => {
 
       if (user_uuid && vitalsMasterData) {
 
-
         vitalsMasterData.name =  vitalsMasterData.name;
         vitalsMasterData.description =  vitalsMasterData.description ;
         vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
@@ -51,7 +50,7 @@ const vitalmstrController = () => {
             //vital already exits
             return res
               .status(400)
-              .send({ code: httpStatus[400], message: "vital name already exists" });
+              .send({ statusCode: 400, message: "Name already exists" });
           } else {
 
             const vitalsCreatedData = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
@@ -71,7 +70,7 @@ const vitalmstrController = () => {
     } else {
       return res
         .status(400)
-        .send({ code: httpStatus[400], message: "No Request Body Found" });
+        .send({ statusCode: 400, message: "No Request Body Found" });
     }
   };
 
