@@ -535,6 +535,7 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "procedure_version": data.procedure_version,
     "procedure_region": data.procedure_region,
     "procedure_type": data.procedure_type,
+    "procedure_category": data.procedure_category,
     "procedure_sub_category": data.procedure_sub_category,
     "operation_type": data.operation_type,
     "anesthesia_type": data.anesthesia_type,
