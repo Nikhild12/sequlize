@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(100),
                 allowNull:true
             },
+            value_format: {
+                type: DataTypes.STRING(255),
+                allowNull:true
+            },
             mnemonic:{
                 type: DataTypes.INTEGER,
                 allowNull: true,
