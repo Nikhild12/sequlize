@@ -13016,6 +13016,9 @@
 					"patient_uuid": {
 						"type": "integer"
 					},
+					"encounter_type_uuid": {
+						"type": "integer"
+					},
 					"encounter_uuid": {
 						"type": "integer"
 					},

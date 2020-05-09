@@ -146,7 +146,12 @@ const progress_notes = () => {
 
         try {
             if (user_uuid) {
-                const notesData = await vwProgressNotesTbl.findAll();
+                const notesData = await vwProgressNotesTbl.findAll(
+                    {
+                        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+                        where: { p_is_active: 1, p_status: 1 }
+                    },
+                );
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
             }
             else {

@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
 
             },
+            encounter_type_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: true
+
+            },
             encounter_doctor_uuid: {
 
                 type: DataTypes.INTEGER,
@@ -63,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
             activity_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: true
 
             },
             profile_section_uuid: {
