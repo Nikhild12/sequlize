@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull:true
             },
             mnemonic:{
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(255),
                 allowNull: true,
             },
             loinc_code_master_uuid:{

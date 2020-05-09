@@ -13,15 +13,15 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             name: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING,
                 allowNull: true
             },
             description: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING,
                 allowNull: true
             },
             mnemonic: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: true,
             },
             loinc_code_master_uuid: {
