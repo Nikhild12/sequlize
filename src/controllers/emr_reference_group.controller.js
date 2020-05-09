@@ -217,7 +217,6 @@ const referenceGroupController = () => {
         if (getsearch.pageNo) {
             let temp = parseInt(getsearch.pageNo);
 
-
             if (temp && (temp != NaN)) {
                 pageNo = temp;
             }
@@ -253,16 +252,31 @@ const referenceGroupController = () => {
 
             ];
         }
-        if (getsearch.module_uuid && /\S/.test(getsearch.module_uuid)) {
+        if (getsearch.refCodeName && /\S/.test(getsearch.refCodeName)) {
             if (findQuery.where[Op.or]) {
                 findQuery.where[Op.and] = [{
                     [Op.or]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.module_uuid)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
                     ]
                 }];
             } else {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.module_uuid)
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
+                ];
+            }
+        }
+        if (getsearch.moduleId && /\S/.test(getsearch.moduleId)) {
+            if (findQuery.where[Op.or]) {
+                findQuery.where[Op.and] = [{
+                    [Op.or]: [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
+                    ]
+                }];
+            } else {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
                 ];
             }
         }
