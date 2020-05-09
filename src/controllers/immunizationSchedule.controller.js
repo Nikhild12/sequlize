@@ -148,6 +148,7 @@ const immunizationScheduleController = () => {
                     ]
                 }
             }).then(async (result) => {
+
                 if (result.length != 0) {
                     // return res.status(400).send({ statusCode: 400, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
 
@@ -157,6 +158,22 @@ const immunizationScheduleController = () => {
                         msg: "Please enter New immunizations Schedule"
                     });
                 } else {
+
+                    immunizationScheduleTbl.findAll({
+                        where: {
+                                display_order: postData.display_order
+                            }
+                    }).then(async (resultd) => {
+                        if (resultd.length != 0 && postData.display_order !="") {
+                            // return res.status(400).send({ statusCode: 400, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        
+                            return res.send({
+                                statusCode: 400,
+                                status: "error",
+                                msg: "Please enter New display order immunizations Schedule"
+                            });
+                        } else {
+
                     await immunizationScheduleTbl.create(postData, {
                         returning: true
                     }).then(data => {
@@ -175,6 +192,9 @@ const immunizationScheduleController = () => {
                             error: err
                         });
                     });
+
+                    }
+                });
                 }
             });
 
