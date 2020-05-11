@@ -466,16 +466,16 @@ const tmpmstrController = () => {
       };
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
-      findQuery.where ['tm_name'] = {
-                  [Op.like]: "%" + getsearch.name + "%"
-        };
-      }
-    
+      findQuery.where['tm_name'] = {
+        [Op.like]: "%" + getsearch.name + "%"
+      };
+    }
+
     if (getsearch.template_type_uuid && /\S/.test(getsearch.tm_template_type_uuid)) {
       findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
-    
-  }
-        
+
+    }
+
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       //findQuery.where['is_active'] = getsearch.status;
       findQuery.where['tm_status'] = getsearch.status;
@@ -537,6 +537,8 @@ function getTemplateMasterUpdateData(user_uuid, templateMasterReqData) {
 
 function getTemplateData(fetchedData) {
   let templateList = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
     temp_details = {
@@ -547,7 +549,13 @@ function getTemplateData(fetchedData) {
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
-      is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false
+      is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false,
+      created_by: createdby,
+      created_date: fetchedData[0].dataValues.tm_created_date,
+      modified_by: modifiedby,
+      modified_date: fetchedData[0].dataValues.tm_modified_date,
+      facility_name: fetchedData[0].dataValues.f_name,
+      department_name: fetchedData[0].dataValues.d_name,
     };
 
     fetchedData.forEach(tD => {
@@ -633,6 +641,8 @@ function getTemplateListData(fetchedData) {
 function getTemplateListData1(fetchedData) {
   let templateList = [],
     diet_details = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
     fetchedData.forEach(tD => {
@@ -642,12 +652,17 @@ function getTemplateListData1(fetchedData) {
           temp_details: {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
-
             template_department: tD.dataValues.tm_dept,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
-            is_public: tD.dataValues.tm_public[0] === 1 ? true : false
+            is_public: tD.dataValues.tm_public[0] === 1 ? true : false,
+            created_by: createdby,
+            created_date: tD.dataValues.tm_created_date,
+            modified_by: modifiedby,
+            modified_date: tD.dataValues.tm_modified_date,
+            facility_name: tD.dataValues.f_name,
+            department_name: tD.dataValues.d_name,
           },
           diet_details: [
             ...diet_details,
@@ -867,8 +882,11 @@ function getDietListForTemplate(fetchedData, template_id) {
 }
 
 function getLabListData(fetchedData) {
+  console.log(fetchedData[0]);
   let templateList = [],
     lab_details = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
     fetchedData.forEach(tD => {
@@ -885,7 +903,13 @@ function getLabListData(fetchedData) {
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
-            is_public: tD.dataValues.tm_is_public
+            is_public: tD.dataValues.tm_is_public,
+            created_by: createdby,
+            created_date: tD.dataValues.tm_created_date,
+            modified_by: modifiedby,
+            modified_date: tD.dataValues.tm_modified_date,
+            facility_name: tD.dataValues.f_name,
+            department_name: tD.dataValues.d_name,
           },
 
           lab_details: [
@@ -910,6 +934,8 @@ function getLabListData(fetchedData) {
 function getRisListData(fetchedData) {
   let templateList = [],
     lab_details = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
     fetchedData.forEach(tD => {
@@ -926,7 +952,13 @@ function getRisListData(fetchedData) {
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
-            is_public: tD.dataValues.tm_is_public
+            is_public: tD.dataValues.tm_is_public,
+            created_by: createdby,
+            created_date: fetchedData[0].dataValues.tm_created_date,
+            modified_by: modifiedby,
+            modified_date: fetchedData[0].dataValues.tm_modified_date,
+            facility_name: fetchedData[0].dataValues.f_name,
+            department_name: fetchedData[0].dataValues.d_name,
           },
 
           lab_details: [
