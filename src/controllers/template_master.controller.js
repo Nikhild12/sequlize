@@ -454,7 +454,8 @@ const tmpmstrController = () => {
       offset: offset,
       limit: itemsPerPage,
       order: [[sortField, sortOrder]],
-      attributes: { exclude: ["id", "createdAt", "updatedAt"] }
+      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+      where: { is_active: 1, tm_status: 1 },
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -463,6 +464,21 @@ const tmpmstrController = () => {
           [Op.like]: "%" + getsearch.search + "%"
         }
       };
+    }
+    if (getsearch.name && /\S/.test(getsearch.name)) {
+      findQuery.where ['tm_name'] = {
+                  [Op.like]: "%" + getsearch.name + "%"
+        };
+      }
+    
+    if (getsearch.template_type_uuid && /\S/.test(getsearch.tm_template_type_uuid)) {
+      findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
+    
+  }
+        
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+      //findQuery.where['is_active'] = getsearch.status;
+      findQuery.where['tm_status'] = getsearch.status;
     }
     try {
       if (user_uuid) {
