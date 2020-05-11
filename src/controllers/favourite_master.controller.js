@@ -98,7 +98,9 @@ const getFavouritesAttributes = [
   "sm_store_code",
   "sm_store_name",
   "tsmd_strength",
-  "tsmd_treatment_kit_uuid"
+  "tsmd_treatment_kit_uuid",
+  "tsmd_diet_master_uuid",
+  "tsmd_speciality_sketch_uuid"
 ];
 
 // Fav Treatment Kit Att
@@ -1436,7 +1438,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
       attributes: emr_all_favourites.favouriteRadVWAttributes(),
       where: emr_all_favourites.favouriteRadVWQuery(uId, fTyId),
     });
-  } else if (fTyId === 7) {
+  } else if (fTyId === 7) { // Investigation
     return vwFavouriteInvestigation.findAll({
       attributes: emr_attributes_investigation.investigationAttributes,
       where: emr_attributes_investigation.getFavouriteInvestigationQuery(

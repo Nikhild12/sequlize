@@ -5736,13 +5736,11 @@
 					{
 						"in": "query",
 						"name": "from_date",
-						"required": true,
 						"type": "string"
 					},
 					{
 						"in": "query",
 						"name": "to_date",
-						"required": true,
 						"type": "string"
 					},
 					{
