@@ -615,6 +615,30 @@ const TickSheetMasterController = () => {
                 "fm_is_active"
               ),
             });
+          } else if (favourite_type_id === 10) {
+            tickSheetData = await favouriteMasterTbl.findAll({
+              attributes: ["uuid", "favourite_type_uuid", "code", "name"],
+              where: {
+                favourite_type_uuid: favourite_type_id,
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE,
+                uuid: favourite_id
+              },
+
+              include: [
+                {
+                  model: favouritMasterDetailsTbl,
+                  attributes: ["uuid", "speciality_sketch_uuid"],
+                  include: [
+                    {
+                      model: specialitySketchesTbl,
+                      attributes: ["code", "name", "description"],
+                    },
+                  ],
+                },
+              ],
+            });
+
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
               attributes: getFavouritesAttributes,
@@ -642,6 +666,8 @@ const TickSheetMasterController = () => {
           favouriteList = emr_all_favourites.favouriteLabResponse(
             tickSheetData
           );
+        } else if (favourite_type_id === 10) {
+          favouriteList = getSpecialitySketchFavourite(tickSheetData);
         } else {
           favouriteList = getFavouritesInList(tickSheetData);
         }
