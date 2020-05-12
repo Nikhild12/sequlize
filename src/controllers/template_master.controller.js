@@ -549,7 +549,7 @@ function getTemplateData(fetchedData) {
     temp_details = {
       template_id: fetchedData[0].dataValues.tm_uuid,
       template_name: fetchedData[0].dataValues.tm_name,
-
+      template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
       template_department: fetchedData[0].dataValues.tm_dept,
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
@@ -561,6 +561,8 @@ function getTemplateData(fetchedData) {
       modified_date: fetchedData[0].dataValues.tm_modified_date,
       facility_name: fetchedData[0].dataValues.f_name,
       department_name: fetchedData[0].dataValues.d_name,
+      satus: fetchedData[0].dataValues.tm_status[0] === 1 ? true : false,
+      is_active: fetchedData[0].dataValues.tm_active[0] === 1 ? true : false
     };
 
     fetchedData.forEach(tD => {
