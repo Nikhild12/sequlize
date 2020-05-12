@@ -220,6 +220,11 @@ const commonReferenceGroupController = () => {
         // const table_name = "gender";
         const common_tbl = db[table_name];
         postData.created_by = req.body.user_uuid;
+        postData.modified_by=req.body.user_uuid;
+        postData.modified_date=new Date();
+        postData.created_date=new Date();
+        postData.status=postData.is_active;
+
         try {
             if (postData &&common_tbl && db[table_name]) {
                 common_tbl.findAll({
