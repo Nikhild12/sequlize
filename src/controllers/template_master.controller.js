@@ -423,13 +423,18 @@ const tmpmstrController = () => {
     const { user_uuid } = req.headers;
     let getsearch = req.body;
 
+    if (getsearch.sortField === "modified_date") {
+      getsearch.sortField = "tm_modified_date";
+      console.log (getsearch.sortField);
+    }
+
     pageNo = 0;
 
     const itemsPerPage = getsearch.paginationSize
       ? getsearch.paginationSize
       : 10;
-    let sortField = "tm_template_type_uuid";
-    let sortOrder = "ASC";
+    let sortField = "tm_modified_date";
+    let sortOrder = "DESC";
 
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
