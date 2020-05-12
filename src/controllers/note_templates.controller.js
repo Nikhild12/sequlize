@@ -91,14 +91,14 @@ const noteTemplatesController = () => {
                 ]
             });
         }
-       
+
 
         if (getsearch.status && /\S/.test(getsearch.status)) {
             findQuery.where = Object.assign(findQuery.where, {
                 is_active: getsearch.status
             });
-        }          
-        if (!getsearch.status) {            
+        }
+        if (!getsearch.status) {
             findQuery.where = Object.assign(findQuery.where, {
                 is_active: 1
             });
@@ -327,7 +327,7 @@ const noteTemplatesController = () => {
                     }
                     return noteTemplatesTbl.findAll({
                         where: {
-                            facility_uuid: req.headers.facility_uuid,
+                            //facility_uuid: req.headers.facility_uuid,
                             note_template_type_uuid: data.dataValues.uuid
                         }
                     })
@@ -410,7 +410,7 @@ async function getdepDetails(user_uuid, depid, authorization) {
 }
 
 async function getfacilityDetails(user_uuid, fid, authorization) {
-    
+
     let options = {
         uri: config.wso2AppUrl + 'facility/getFacilityByuuid',
         //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
