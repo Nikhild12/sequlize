@@ -49,7 +49,7 @@ const vitalmstrController = () => {
           if (exists && exists.length > 0) {
             //vital already exits
             return res
-              .status(400)
+              .status(200)
               .send({ statusCode: 400, message: "Name already exists" });
           } else {
 
