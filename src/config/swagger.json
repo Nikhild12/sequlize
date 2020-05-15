@@ -2828,6 +2828,12 @@
 						"required": true
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"type": "integer",
+						"required": true
+					},
+					{
 						"in": "query",
 						"name": "encounterType",
 						"type": "integer",
