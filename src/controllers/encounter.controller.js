@@ -36,7 +36,7 @@ let pageSize = 10;
 let offset;
 
 // Query
-function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
+function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
   let encounterQuery = {
     where: {
       patient_uuid: pId,
@@ -44,6 +44,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
       encounter_type_uuid: etypeId,
+      facility_uuid: fId
     },
     include: [
       {
@@ -85,7 +86,7 @@ const Encounter = () => {
    */
 
   const _getEncounterByDocAndPatientId = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const {
       patientId,
       doctorId,
@@ -123,7 +124,8 @@ const Encounter = () => {
             patientId,
             doctorId,
             departmentId,
-            encounterType
+            encounterType,
+            facility_uuid
           )
         );
         return res.status(200).send({
@@ -183,11 +185,9 @@ const Encounter = () => {
    * @param {*} res
    */
   const _createPatientEncounter = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     let { encounter, encounterDoctor } = req.body;
     let encounterPromise = [];
-    let encounterTransStatus = false;
-    let encounterTransaction;
     const is_all_req_fields_in_enc_is_pres =
       encounter &&
       encounter.encounter_type_uuid &&
@@ -241,13 +241,13 @@ const Encounter = () => {
         // if Encounter Type is 2 then check
         // for active encounter for type 1 if exists
         // closing it
-        // encounterTransaction = await sequelizeDb.sequelize.transaction();
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
         encounterData = await getEncounterQueryByPatientId(
           patient_uuid,
-          encounter_type_uuid
+          encounter_type_uuid,
+          facility_uuid
         );
 
         is_enc_avail = encounterData && encounterData.length > 0;
@@ -261,33 +261,6 @@ const Encounter = () => {
 
         is_enc_doc_avail =
           encounterDoctorData && encounterDoctorData.length > 0;
-        // if (encounter_type_uuid === 2 || encounter_type_uuid === 3) {
-        // if (encounterData && encounterData.length > 0) {
-        //   encounterPromise = [
-        //     ...encounterPromise,
-        //     encounter_tbl.update(
-        //       {
-        //         is_active_encounter: emr_constants.IS_IN_ACTIVE,
-        //         is_active: emr_constants.IS_IN_ACTIVE,
-        //         status: emr_constants.IS_IN_ACTIVE,
-        //       },
-        //       {
-        //         where: { uuid: encounterData[0].uuid },
-        //       }
-        //     ),
-        //     encounter_doctors_tbl.update(
-        //       {
-        //         encounter_doctor_status: emr_constants.IS_IN_ACTIVE,
-        //         is_active: emr_constants.IS_IN_ACTIVE,
-        //         status: emr_constants.IS_IN_ACTIVE,
-        //       },
-        //       {
-        //         where: { encounter_uuid: encounterData[0].uuid },
-        //       }
-        //     ),
-        //   ];
-        // }
-        // }
         if (
           (encounter_type_uuid === 1 ||
             encounter_type_uuid === 2 ||
@@ -331,8 +304,6 @@ const Encounter = () => {
             { returning: true }
           );
           encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-          // await encounterTransaction.commit();
-          // encounterTransStatus = true;
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Encounter Successfully",
@@ -341,18 +312,10 @@ const Encounter = () => {
         }
       } catch (ex) {
         console.log(ex);
-        // if (encounterTransaction) {
-        //   await encounterTransaction.rollback();
-        //   encounterTransStatus = true;
-        // }
 
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-      } finally {
-        // if (encounterTransaction && !encounterTransStatus) {
-        //   encounterTransaction.rollback();
-        // }
       }
     } else {
       return res.status(400).send({
@@ -855,7 +818,7 @@ function getEncounterQuery(pId, from_date, to_date) {
   };
 }
 
-async function getEncounterQueryByPatientId(pId, etypeId) {
+async function getEncounterQueryByPatientId(pId, etypeId, fId) {
   let query = {
     where: {
       patient_uuid: pId,
@@ -863,6 +826,7 @@ async function getEncounterQueryByPatientId(pId, etypeId) {
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
       encounter_type_uuid: etypeId,
+      facility_uuid: fId
     },
   };
   if (etypeId === 1) {
