@@ -149,6 +149,7 @@ const progress_notes = () => {
                 const notesData = await vwProgressNotesTbl.findAll(
                     {
                         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+                        order: [['p_uuid', 'DESC']],
                         where: { p_is_active: 1, p_status: 1 }
                     },
                 );
