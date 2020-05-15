@@ -59,6 +59,9 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId) {
     ],
   };
 
+
+
+
   if (etypeId === 1) {
     encounterQuery.where[Op.and] = [
       Sequelize.where(
@@ -764,6 +767,35 @@ const Encounter = () => {
     }
   };
 
+  const _getEncounterByAdmissionId = async (req, res) => {
+    const { user_uuid } = req.headers;
+
+    const { admission_id } = req.query;
+
+    if (user_uuid && emr_utility.isNumberValid(admission_id)) {
+      try {
+        const encounterData = await encounter_tbl.findAll(enc_att.getEncounterByAdmissionQuery(admission_id));
+        return res.status(200).send(
+          {
+            code: httpStatus.OK,
+            message: "Fetched Encounter Successfully",
+            responseContents: encounterData,
+          });
+      } catch (ex) {
+        console.log(ex);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+          code: httpStatus.INTERNAL_SERVER_ERROR,
+          message: ex.message,
+        });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
+      });
+    }
+  };
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
@@ -776,6 +808,7 @@ const Encounter = () => {
     getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate,
     getLatestEncounterByPatientId: _getLatestEncounterByPatientId,
     createEncounterBulk: _createEncounterBulk,
+    getEncounterByAdmissionId: _getEncounterByAdmissionId
   };
 };
 

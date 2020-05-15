@@ -45,7 +45,7 @@ const MyPatientListController = () => {
       isFromDateValid = moment(from_date).isValid();
     }
 
-    if (to_date) {
+    if (!to_date) {
       defToDate = moment().format("YYYY-MM-DD");
       isToDateValid = true;
     } else {
