@@ -615,6 +615,30 @@ const TickSheetMasterController = () => {
                 "fm_is_active"
               ),
             });
+          } else if (favourite_type_id === 10) {
+            tickSheetData = await favouriteMasterTbl.findAll({
+              attributes: ["uuid", "favourite_type_uuid", "code", "name"],
+              where: {
+                favourite_type_uuid: favourite_type_id,
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE,
+                uuid: favourite_id
+              },
+
+              include: [
+                {
+                  model: favouritMasterDetailsTbl,
+                  attributes: ["uuid", "speciality_sketch_uuid"],
+                  include: [
+                    {
+                      model: specialitySketchesTbl,
+                      attributes: ["code", "name", "description"],
+                    },
+                  ],
+                },
+              ],
+            });
+
           } else {
             tickSheetData = await vmTickSheetMasterTbl.findAll({
               attributes: getFavouritesAttributes,
@@ -642,6 +666,8 @@ const TickSheetMasterController = () => {
           favouriteList = emr_all_favourites.favouriteLabResponse(
             tickSheetData
           );
+        } else if (favourite_type_id === 10) {
+          favouriteList = getSpecialitySketchFavourite(tickSheetData);
         } else {
           favouriteList = getFavouritesInList(tickSheetData);
         }
@@ -940,7 +966,7 @@ const TickSheetMasterController = () => {
     }
   };
 
-  const _getAllFavourites = async (req, res) => {
+  const _getAllFavourites_0ld = async (req, res) => {
     const { user_uuid } = req.headers;
     let { recordsPerPage, searchPageNo, searchKey, searchValue } = req.body;
     let pageNo = 0;
@@ -1008,6 +1034,93 @@ const TickSheetMasterController = () => {
       });
     }
   };
+
+  const _getAllFavourites = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let getsearch = req.body;
+
+    pageNo = 0;
+
+    const itemsPerPage = getsearch.paginationSize
+      ? getsearch.paginationSize
+      : 10;
+    let sortField = "modified_date";
+    let sortOrder = "DESC";
+
+    if (getsearch.pageNo) {
+      let temp = parseInt(getsearch.pageNo);
+      if (temp && temp != NaN) {
+        pageNo = temp;
+      }
+    }
+
+    if (getsearch.sortField) {
+      sortField = getsearch.sortField;
+    }
+    if (
+      getsearch.sortOrder &&
+      (getsearch.sortOrder == "ASC" || getsearch.sortOrder == "DESC")
+    ) {
+      sortOrder = getsearch.sortOrder;
+    }
+
+    const offset = pageNo * itemsPerPage;
+
+    let findQuery = {
+      offset: offset,
+      limit: itemsPerPage,
+      order: [[sortField, sortOrder]],
+      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+      where: { is_active: 1, fm_status: 1 },
+    };
+
+    if (getsearch.search && /\S/.test(getsearch.search)) {
+      findQuery.where = {
+        fm_name: {
+          [Op.like]: "%" + getsearch.search + "%"
+        }
+      };
+    }
+    if (getsearch.name && /\S/.test(getsearch.name)) {
+      findQuery.where['fm_name'] = {
+        [Op.like]: "%" + getsearch.name + "%"
+      };
+    }
+
+    if (getsearch.faourite_type_uuid && /\S/.test(getsearch.fm_favourite_type_uuid)) {
+      findQuery.where['fm_favourite_type_uuid'] = getsearch.template_type_uuid;
+
+    }
+
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+      //findQuery.where['is_active'] = getsearch.status;
+      findQuery.where['fm_status'] = getsearch.status;
+    }
+
+    try {
+      if (user_uuid) {
+        const templateList = await vmAllFavourites.findAndCountAll(findQuery);
+
+        return res.status(httpStatus.OK).json({
+          statusCode: 200,
+          req: "",
+          responseContents: templateList.rows ? templateList.rows : [],
+          totalRecords: templateList.count ? templateList.count : 0
+        });
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: "No Request Body or Search key Found "
+        });
+      }
+    } catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
+    }
+  };
+
 
   return {
     createTickSheetMaster: _createTickSheetMaster,

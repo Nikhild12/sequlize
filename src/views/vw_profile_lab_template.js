@@ -108,6 +108,62 @@ module.exports = (sequelize, DataTypes) => {
             },
             lpm_is_active:{
                 type: DataTypes.BOOLEAN
+            },
+            tm_created_by: {
+                type: DataTypes.INTEGER,
+            },
+            tm_created_date: {
+                type: DataTypes.DATE,
+            },
+            tm_modified_by: {
+                type: DataTypes.INTEGER,
+            },
+            tm_modified_date: {
+                type: DataTypes.INTEGER,
+            },
+            f_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            f_name: {
+                type: DataTypes.STRING(100)
+            },
+            d_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            d_name: {
+                type: DataTypes.STRING(100)
+            },
+            uct_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            umt_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
             }
         },
         {

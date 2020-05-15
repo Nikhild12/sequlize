@@ -4,6 +4,11 @@ const httpStatus = require("http-status");
 // Emr Constants
 const emr_constants = require("../config/constants");
 
+// Sequelizer Import
+const sequelizeDb = require("../config/sequelize");
+
+// Table Import
+const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const _getLatestEncounterAttributes = () => {
   return [
     "ed_patient_uuid",
@@ -120,6 +125,27 @@ const _createEncounterBulk400Message = (isEncs, isEncType, isEncPat, isEncDeptId
   return message;
 };
 
+const _getEncounterByAdmissionQuery = (admissionId) => {
+  return {
+    where: {
+      admission_uuid: admissionId,
+      is_active_encounter: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE,
+    },
+    include: [
+      {
+        model: encounter_doctors_tbl,
+        attributes: ["uuid", "doctor_uuid"],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE,
+        },
+      },
+    ],
+  };
+};
+
 module.exports = {
   getLatestEncounterAttributes: _getLatestEncounterAttributes,
   getLatestEncounterQuery: _getLatestEncounterQuery,
@@ -127,5 +153,6 @@ module.exports = {
   modifiedLatestEncounterRecord: _modifiedLatestEncounterRecord,
   isRequiredFieldIsPresent: _isRequiredFieldIsPresent,
   checkingAllRequiredFields: _checkingAllRequiredFields,
-  createEncounterBulk400Message: _createEncounterBulk400Message
+  createEncounterBulk400Message: _createEncounterBulk400Message,
+  getEncounterByAdmissionQuery: _getEncounterByAdmissionQuery
 };

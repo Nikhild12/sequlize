@@ -6337,6 +6337,39 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/encounter/get-enc-by-admission-id": {
+			"get": {
+				"summary": "Encounter By Admission Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "admission_id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "sucessful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/emr-patient-vitals/getPreviousPatientVitals": {
 			"get": {
 				"description": "To get a EMR Previous Patient Vitals",

@@ -1,4 +1,4 @@
-const uuidparse = require ("uuid-parse");
+const uuidparse = require("uuid-parse");
 
 module.exports = (sequelize, DataTypes) => {
     const vw_template_master_diet = sequelize.define(
@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             tm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                primaryKey:true
+                primaryKey: true
             },
             tm_name: {
                 type: DataTypes.STRING(100),
@@ -21,21 +21,21 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_template_type_uuid :{
+            tm_template_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_status:{
+            tm_status: {
                 type: DataTypes.ENUM,
                 allowNull: false,
                 values: ["0", "1"]
             },
-            tm_active:{
+            tm_active: {
                 type: DataTypes.ENUM,
                 allowNull: false,
                 values: ["0", "1"]
             },
-            tm_public:{
+            tm_public: {
                 type: DataTypes.ENUM,
                 allowNull: false,
                 values: ["0", "1"]
@@ -52,24 +52,24 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_diet_master_uuid:{
+            tmd_diet_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_diet_category_uuid:{
+            tmd_diet_category_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            tmd_diet_frequency_uuid:{
+            tmd_diet_frequency_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            tmd_is_active:{
+            tmd_is_active: {
                 type: DataTypes.ENUM,
                 allowNull: false,
                 values: ["0", "1"]
             },
-            tmd_status:{
+            tmd_status: {
                 type: DataTypes.ENUM,
                 allowNull: false,
                 values: ["0", "1"]
@@ -102,15 +102,71 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            tmd_quantity:{
-                 type: DataTypes.INTEGER
-             }
+            tmd_quantity: {
+                type: DataTypes.INTEGER
+            },
+            tm_created_by: {
+                type: DataTypes.INTEGER,
+            },
+            tm_created_date: {
+                type: DataTypes.DATE,
+            },
+            tm_modified_by: {
+                type: DataTypes.INTEGER,
+            },
+            tm_modified_date: {
+                type: DataTypes.INTEGER,
+            },
+            f_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            f_name: {
+                type: DataTypes.STRING(100)
+            },
+            d_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            d_name: {
+                type: DataTypes.STRING(100)
+            },
+            uct_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            uc_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            umt_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            um_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            }
         },
         {
             tableName: "vw_template_master_diet",
             timestamps: false
         }
     );
-   
+
     return vw_template_master_diet;
 };
