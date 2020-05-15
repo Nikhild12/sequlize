@@ -20,110 +20,121 @@ const cccMasterController = () => {
     * @returns {*}
     */
 
+
     const getAllcccMaster = async (req, res, next) => {
         try {
-            let getsearch = req.body;
+            const getsearch = req.body;
             let pageNo = 0;
             const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-            let sortField = 'created_date';
-            let sortOrder = 'DESC';
-
+            let sortArr = ['modified_date', 'DESC'];
             if (getsearch.pageNo) {
                 let temp = parseInt(getsearch.pageNo);
-
-
                 if (temp && (temp != NaN)) {
                     pageNo = temp;
                 }
             }
-
             const offset = pageNo * itemsPerPage;
-
-
+            let fieldSplitArr = [];
             if (getsearch.sortField) {
-
-                sortField = getsearch.sortField;
+                if (getsearch.sortField == 'modified_date') {
+                    getsearch.sortField = 'modified_date';
+                }
+                fieldSplitArr = getsearch.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = getsearch.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
             }
-
-            if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-                sortOrder = getsearch.sortOrder;
+            if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = getsearch.sortOrder;
+                } else {
+                    sortArr.push(getsearch.sortOrder);
+                }
             }
             let findQuery = {
+                subQuery: false,
                 offset: offset,
-                limit: itemsPerPage,
-                order: [
-                    [sortField, sortOrder],
-                ],
+                limit: getsearch.paginationSize,
                 where: { is_active: 1, status: 1 },
-                // include: [
-                //     {
-                //         model: criticalcareTypeTbl,
-                //         as: 'critical_care_types'
-                //     }
-                //     // {
-                //     //     model: conceptTbl,
-                //     //     include: [{ model: conceptdetailsTbl }]
-                //     // }
-                // ]
+                order: [
+                    sortArr
+                ],
+                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
 
             };
             if (getsearch.search && /\S/.test(getsearch.search)) {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('cccMasterTbl.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-                findQuery.where = {
-                    [Op.or]: [{
-                        code: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-
-
-                    }, {
-                        name: {
-                            [Op.like]: '%' + getsearch.search + '%',
-                        },
-                    }
-
-                    ]
-                };
+                ];
             }
-            let data = await cccMasterTbl.findAndCountAll({
-                findQuery,
+            if (getsearch.ccc_type && /\S/.test(getsearch.ccc_type)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.ccc_type)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.ccc_type)
+                    ];
+                }
+            }
 
-                attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
-                    , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                    'status'],
+            if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+                findQuery.where['is_active'] = getsearch.status;
+                findQuery.where['status'] = getsearch.status;
+
+            }
+            const data = await criticalcareTypeTbl.findAll({
+                findQuery,
+                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active',
+                    'status', 'modified_date'],
                 where: {
                     is_active: 1, status: 1
                 },
                 include: [
                     {
-                        model: conceptTbl,
-                        as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        model: cccMasterTbl,
+                        as: 'critical_care_charts',
+                        attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+                            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                            'status', 'modified_date'],
                         where: { is_active: 1, status: 1 },
                         include: [
+
                             {
-                                model: conceptdetailsTbl,
-                                as: 'critical_care_concept_values',
-                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                model: conceptTbl,
+                                as: 'critical_care_concepts',
+                                attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                                 where: { is_active: 1, status: 1 },
-                            }
-                        ]
-                    }
-
-                ], returning: true
-            });
-
+                                include: [
+                                    {
+                                        model: conceptdetailsTbl,
+                                        as: 'critical_care_concept_values',
+                                        attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                        where: { is_active: 1, status: 1 },
+                                    }
+                                ]
+                            }]
+                    }]
+            })
             return res
                 .status(httpStatus.OK)
                 .json({
                     statusCode: 200,
+                    message: "Get Details Fetched successfully",
                     req: '',
-                    responseContents: (data.rows ? data.rows : [])
+                    responseContents: data,
+                    totalRecords: data.count
                 });
-
-        }
-        catch (err) {
+        } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -133,165 +144,6 @@ const cccMasterController = () => {
                 });
         }
     };
-    const getAllcccMaster_old = async (req, res, next) => {
-        let getsearch = req.body;
-        let pageNo = 0;
-        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
-        let sortOrder = 'DESC';
-
-        if (getsearch.pageNo) {
-            let temp = parseInt(getsearch.pageNo);
-
-
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
-        }
-
-        const offset = pageNo * itemsPerPage;
-
-
-        if (getsearch.sortField) {
-
-            sortField = getsearch.sortField;
-        }
-
-        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-            sortOrder = getsearch.sortOrder;
-        }
-        let findQuery = {
-            offset: offset,
-            limit: itemsPerPage,
-            order: [
-                [sortField, sortOrder],
-            ],
-            where: { is_active: 1, status: 1 },
-            include: [
-                {
-                    model: criticalcareTypeTbl,
-                    as: 'critical_care_types'
-                },
-                {
-                    model: conceptTbl,
-                    include: [{ model: conceptdetailsTbl }]
-                }
-            ]
-        };
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-
-            findQuery.where = {
-                [Op.or]: [{
-                    code: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-
-
-                }, {
-                    name: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-                }
-
-                ]
-            };
-        }
-        let data = await cccMasterTbl.findAndCountAll(findQuery,
-
-
-            { returning: true });
-
-        return res
-            .status(httpStatus.OK)
-            .json({
-                statusCode: 200,
-                req: '',
-                responseContents: (data.rows ? data.rows : [])
-            });
-
-    };
-    const postcccMaster_old = async (req, res, next) => {
-        try {
-            if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
-            }
-            const { user_uuid, facility_uuid } = req.headers;
-            let concept_detail_output;
-            // let transaction;
-
-            //let transaction_status = false;
-            try {
-
-                //   transaction = await db.sequelize.transaction();
-
-                //Body Request
-                const postData = req.body;
-                const postDatabody = req.body.body;
-                const postDatabody1 = req.body.body1;
-                const postDatabody2 = req.body.body2;
-
-                postDatabody.created_by = user_uuid;
-                postDatabody.modified_by = 0;
-                postData.created_by = req.headers.user_uuid
-                postData.code = postData.fieldname
-                postData.name = postData.fieldname;
-
-
-                let ccc_master_output = await cccMasterTbl.create(postDatabody, { returning: true });
-
-                postDatabody1.cc_chart_uuid = ccc_master_output.dataValues.uuid
-                postDatabody1.created_by = user_uuid;
-                postDatabody1.modified_by = 0;
-                postDatabody1.created_by = req.headers.user_uuid
-                let concept_output = await conceptTbl.create(postDatabody1, { returning: true });
-
-                let finalCConceptData = [];
-
-                postDatabody2.forEach(e => {
-                    let obj = {};
-                    obj.cc_concept_uuid = concept_output.dataValues.uuid;
-                    if (e.concept_value.length > 0) {
-                        e.concept_value.forEach(e2 => {
-                            let obj_copy = JSON.parse(JSON.stringify(obj));
-                            obj_copy.concept_value = e2.term
-                            finalCConceptData.push(obj_copy);
-                        })
-                    } else {
-                        let obj_copy = JSON.parse(JSON.stringify(obj));
-                        obj_copy.value_from = e.value_from1;
-                        obj_copy.value_to = e.value_to1;
-                        obj_copy.value_from = e.value_from2;
-                        obj_copy.value_to = e.value_to2;
-                        obj_copy.value_from = e.value_from3;
-                        obj_copy.value_to = e.value_to3;
-                        finalCConceptData.push(obj_copy);
-                    }
-                });
-
-                // if (finalCConceptData.length > 0) {
-                //     concept_detail_output = await conceptdetailsTbl.bulkCreate(finalCConceptData, { returning: true, transaction });
-                // }
-                //  await transaction.commit();
-                // transaction_status = true;
-                res.send({ statusCode: 200, message: "Created Successfully", responseContents: finalCConceptData })
-            } catch (err) {
-                console.log(err);
-                // if (transaction) await transaction.rollback();
-                // transaction_status = true;
-                throw err;
-            } finally {
-                // if (!transaction_status && transaction) {
-                //     await transaction.rollback();
-                // }
-            }
-        } catch (err) {
-            console.log(err);
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res.status(500).json({ status: "error", msg: errorMsg });
-        }
-
-    };
-
 
     const postcccMaster = async (req, res, next) => {
         try {
@@ -406,24 +258,6 @@ const cccMasterController = () => {
             });
         });
     };
-    const updatecccMasterById_old = async (req, res, next) => {
-        const postData = req.body;
-        postData.modified_by = req.headers.user_uuid;
-        await cccMasterTbl.update(
-            postData, {
-            where: {
-                uuid: postData.Ccc_id
-            }
-        }
-        ).then((data) => {
-            res.send({
-                statusCode: 200,
-                msg: "Updated Successfully",
-                req: postData,
-                responseContents: data
-            });
-        });
-    };
 
     const updatecccMasterById = async (req, res) => {
         const { user_uuid } = req.headers;
@@ -510,40 +344,6 @@ const cccMasterController = () => {
         return deferred.promise;
     };
 
-    const getcccMasterById_old = async (req, res, next) => {
-        const postData = req.body;
-        try {
-
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await cccMasterTbl.findOne({
-                where: {
-                    uuid: postData.Ccc_id
-                },
-                offset: offset,
-                limit: itemsPerPage
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
-
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
-    };
     const getcccMasterById = async (req, res, next) => {
         const postData = req.body;
         try {
@@ -589,132 +389,6 @@ const cccMasterController = () => {
                 });
 
         } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
-    };
-    const getcccMasterByType_old = async (req, res, next) => {
-        const postData = req.body;
-        const criticalId = [];
-        const concepId = [];
-        if (!postData.type) {
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "info",
-                    msg: 'Required type: type'
-                });
-        }
-        try {
-            let criticalType = await criticalcareTypeTbl.findOne({
-                where: {
-                    name: postData.type
-                }
-            })
-            let ccMaster = await cccMasterTbl.findAndCountAll({
-                where: {
-                    critical_care_type_uuid: criticalType.uuid
-                }
-            })
-            ccMaster.rows.forEach(e => {
-                criticalId.push(e.dataValues.uuid)
-            })
-            let conceptTbl_data = await conceptTbl.findAndCountAll({
-                where: {
-                    cc_chart_uuid: {
-                        [Op.in]: criticalId
-                    }
-                }
-            })
-            conceptTbl_data.rows.forEach(e1 => {
-                concepId.push(e1.dataValues.uuid)
-            })
-            let conceptDetails_Tab = await conceptdetailsTbl.findAndCountAll({
-                where: {
-                    cc_concept_uuid: {
-                        [Op.in]: concepId
-                    }
-                }
-            })
-            return res.send({ conceptDetails_Tab: conceptDetails_Tab, criticalType: criticalType, ccMaster: ccMaster, conceptTbl_data: conceptTbl_data });
-        } catch (err) {
-            console.log(err);
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
-    };
-    const getcccMasterByType_old1 = async (req, res, next) => {
-        const postData = req.body;
-        const criticalId = [];
-        const concepId = [];
-        // if (!postData.type) {
-        //     return res
-        //         .status(httpStatus.INTERNAL_SERVER_ERROR)
-        //         .json({
-        //             status: "info",
-        //             msg: 'Required type: type'
-        //         });
-        // }
-        try {
-            await criticalcareTypeTbl.findAll({
-                attributes: ['uuid', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status'],
-                where: { name: postData.type },
-                include: [
-                    {
-                        model: cccMasterTbl,
-                        as: 'critical_care_charts',
-                        attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
-                            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                            'status'],
-                        where: { is_active: 1, status: 1 },
-                        include: [
-                            {
-                                model: conceptTbl,
-                                as: 'critical_care_concepts',
-                                attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
-                                where: { is_active: 1, status: 1 },
-                                include: [
-                                    {
-                                        model: conceptdetailsTbl,
-                                        as: 'critical_care_concept_values',
-                                        attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
-                                        where: { is_active: 1, status: 1 },
-                                    }
-                                ]
-                            },
-                            // {
-                            //     model: criticalCareUomsTbl,
-                            //     as: 'critical_care_uoms',
-                            //     attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status', 'revision', 'created_by', 'created_date', 'modified_by', 'modified_date'],
-                            //     where: { is_active: 1, status: 1 }
-                            // }
-
-                        ],
-                    }
-                ]
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
-            //return res.send({ conceptDetails_Tab: conceptDetails_Tab, criticalType: criticalType, ccMaster: ccMaster, conceptTbl_data: conceptTbl_data });
-        } catch (err) {
-            console.log(err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -791,79 +465,7 @@ const cccMasterController = () => {
                 });
         }
     };
-    const getcccMasterByTypeById = async (req, res, next) => {
-        // console.log("inside api.........")
-        const postData = req.body;
-        if (!postData.type) {
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "info",
-                    msg: 'Required type: type'
-                });
-        }
-        try {
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
-            await criticalcareTypeTbl.findOne({
-                where: {
-                    critical_care_type_uuid: postData.typeId
-                }
-            })
-                .then((data) => {
-                    if (!data) {
-                        return res
-                            .status(httpStatus.INTERNAL_SERVER_ERROR)
-                            .json({
-                                status: "info",
-                                msg: 'Required type:type'
-                            });
-                    }
-                    cccMasterTbl.findOne({
-                        where: {
-                            // facility_uuid : req.headers.facility_uuid,
-                            cc_chart_uuid: data.dataValues.uuid
-                        }
-                    })
-                    // .then((data1) => {
-                    //     return res
-                    //         .status(httpStatus.OK)
-                    //         .json({
-                    //             message: "success",
-                    //             // statusCode: 200,
-                    //             // responseContents: data1 || [],
-                    //             // totalRecords: data1.length
 
-                    //         });
-                    // });
-                    conceptdetailsTbl.findAll({
-                        where: {
-                            cc_concept_uuid: data1.dataValues.uuid
-                        }
-                    })
-                        .then((data1) => {
-                            return res
-                                .status(httpStatus.OK)
-                                .json({
-                                    message: "success",
-                                    statusCode: 200,
-                                    responseContents: data1 || [],
-                                    totalRecords: data1.length
-
-                                });
-                        });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
-        }
-    };
     return {
         getcccMasterByType,
         postcccMaster,
