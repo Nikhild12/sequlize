@@ -2290,6 +2290,11 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "context_uuid",
+						"type": "integer"
 					}
 				],
 				"produces": [
