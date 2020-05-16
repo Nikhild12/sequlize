@@ -75,14 +75,14 @@ const cccMasterController = () => {
 
                 ];
             }
-            if (getsearch.ccc_type && /\S/.test(getsearch.ccc_type)) {
+            if (getsearch.cccType && /\S/.test(getsearch.cccType)) {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
-                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.ccc_type)]
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.cccType)]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.ccc_type)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.cccType)
                     ];
                 }
             }
@@ -92,7 +92,7 @@ const cccMasterController = () => {
                 findQuery.where['status'] = getsearch.status;
 
             }
-            const data = await criticalcareTypeTbl.findAll({
+            const data = await criticalcareTypeTbl.findAndCountAll({
                 findQuery,
                 attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active',
                     'status', 'modified_date'],
