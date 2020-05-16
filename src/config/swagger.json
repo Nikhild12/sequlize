@@ -684,6 +684,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "cccData",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllCccMaster"
+						}
 					}
 				],
 				"produces": [
@@ -695,10 +703,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "get All Ccc Master",
-						"schema": {
-							"$ref": "#/definitions/getAllCccMaster"
-						}
+						"description": "get All Ccc Master"
 					}
 				}
 			}
@@ -8731,7 +8736,29 @@
 		},
 		"getAllCccMaster": {
 			"type": "object",
-			"properties": {}
+			"properties": {
+				"paginationSize": {
+					"type": "integer"
+				},
+				"pageNo": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"search": {
+					"type": "string"
+				},
+				"cccType": {
+					"type": "string"
+				},
+				"status": {
+					"type": "boolean"
+				}
+			}
 		},
 		"deleteCccMaster": {
 			"type": "object",
