@@ -91,14 +91,19 @@ const EMRWorkflowSettings = () => {
 
   const _getEMRWorkFlowByUserId = async (req, res) => {
     const { user_uuid } = req.headers;
-
+    let { context_uuid } = req.query;
     if (user_uuid) {
       try {
+
+        if (!context_uuid) {
+          context_uuid = 2;
+        }
         const emr_data = await vm_emr_workflow.findAll({
           attributes: getEMRWorkFlowSettings,
           where: {
             ews_is_active: emr_constants.IS_ACTIVE,
-            ews_user_uuid: user_uuid
+            ews_user_uuid: user_uuid,
+            ews_context_uuid : context_uuid
           }
         });
 
