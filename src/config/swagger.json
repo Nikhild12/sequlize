@@ -9137,16 +9137,25 @@
 		"getNoteTemplate": {
 			"type": "object",
 			"properties": {
+				"paginationSize": {
+					"type": "integer"
+				},
+				"pageNo": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
 				"search": {
 					"type": "string"
 				},
-				"codeName": {
-					"type": "string"
-				},
 				"status": {
-					"type": "integer"
+					"type": "boolean"
 				},
-				"modified_date": {
+				"codename": {
 					"type": "string"
 				}
 			}

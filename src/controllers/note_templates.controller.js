@@ -11,6 +11,7 @@ const templateTypeTbl = db.template_type;
 const noteTemplatesTbl = db.note_templates;
 const noteTypeTbl = db.note_type;
 const noteTemplateTypeTbl = db.note_template_type;
+const vwNoteTemplateTbl = db.vw_note_template;
 
 const noteTemplatesController = () => {
     /**
@@ -22,6 +23,119 @@ const noteTemplatesController = () => {
      */
 
     const getnoteTemplates = async (req, res, next) => {
+        try {
+            const getsearch = req.body;
+            let pageNo = 0;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+            let sortArr = ['nt_modified_date', 'DESC'];
+
+
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (getsearch.sortField) {
+                if (getsearch.sortField == 'nt_modified_date') {
+                    getsearch.sortField = 'nt_modified_date';
+                }
+                fieldSplitArr = getsearch.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = getsearch.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = getsearch.sortOrder;
+                } else {
+                    sortArr.push(getsearch.sortOrder);
+                }
+            }
+            let findQuery = {
+                subQuery: false,
+                offset: offset,
+                limit: getsearch.paginationSize,
+                where: { nt_is_active: 1, nt_status: 1 },
+                order: [
+                    sortArr
+                ],
+                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+
+            };
+
+
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+                ];
+            }
+            if (getsearch.codename && /\S/.test(getsearch.codename)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
+
+                        ]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
+
+                    ];
+                }
+            }
+
+            if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+                findQuery.where['nt_is_active'] = getsearch.status;
+                findQuery.where['nt_status'] = getsearch.status;
+
+            }
+
+            await vwNoteTemplateTbl.findAndCountAll(findQuery)
+                .then((data) => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            message: "Get Details Fetched successfully",
+                            req: '',
+                            responseContents: data.rows,
+                            totalRecords: data.count
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(409)
+                        .json({
+                            statusCode: 409,
+                            error: err
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+    const getnoteTemplates1 = async (req, res, next) => {
         let getsearch = req.body;
 
         let pageNo = 0;
