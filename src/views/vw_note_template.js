@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-            nt_modified_date: {
+            modified_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
             },

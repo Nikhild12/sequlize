@@ -27,7 +27,7 @@ const noteTemplatesController = () => {
             const getsearch = req.body;
             let pageNo = 0;
             const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-            let sortArr = ['nt_modified_date', 'DESC'];
+            let sortArr = ['modified_date', 'DESC'];
 
 
             if (getsearch.pageNo) {
@@ -39,8 +39,8 @@ const noteTemplatesController = () => {
             const offset = pageNo * itemsPerPage;
             let fieldSplitArr = [];
             if (getsearch.sortField) {
-                if (getsearch.sortField == 'nt_modified_date') {
-                    getsearch.sortField = 'nt_modified_date';
+                if (getsearch.sortField == 'modified_date') {
+                    getsearch.sortField = 'modified_date';
                 }
                 fieldSplitArr = getsearch.sortField.split('.');
                 if (fieldSplitArr.length == 1) {
