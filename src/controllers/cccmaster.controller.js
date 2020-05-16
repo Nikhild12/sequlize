@@ -131,7 +131,7 @@ const cccMasterController = () => {
                     statusCode: 200,
                     message: "Get Details Fetched successfully",
                     req: '',
-                    responseContents: data,
+                    responseContents: data.rows,
                     totalRecords: data.count
                 });
         } catch (err) {
