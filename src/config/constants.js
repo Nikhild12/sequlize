@@ -56,7 +56,9 @@ module.exports = Object.freeze({
   PREVIOUS_PAT_CC_SUCCESS:
     "Fetched Previous Patient Chief Complaints Successfully",
   TEMPLATE_FETCH_SUCCESS: "Template Fetched Successfully",
-
+  REQUIRED_VALUE_NOT_FOUND: "Required Value Not Found",
+  PLEASE_SEND_CONTEXT_UUID: "Please send Context uuid in the first object"
+,
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -166,7 +168,7 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} immunization_route_uuid`;
       case "immunization_dosage_uuid":
         return `${returnProvideMsg} immunization_dosage_uuid`;
-      
+
       case "immunization_name":
         return `${returnProvideMsg} immunization_name`;
       default:
