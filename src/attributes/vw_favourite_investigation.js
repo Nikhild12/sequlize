@@ -20,7 +20,11 @@ const _investigationAttributes = [
   "ivtm_uuid",
   "ivtm_code",
   "ivtm_name",
-  "ivtm_description"
+  "ivtm_description",
+  "ivpm_uuid",
+  "ivpm_profile_code",
+  "ivpm_name",
+  "ivpm_description"
 ];
 
 const _getInvestigationResponse = radiology => {
@@ -35,7 +39,11 @@ const _getInvestigationResponse = radiology => {
       test_master_id: r.ivtm_uuid,
       test_master_code: r.ivtm_code,
       test_master_name: r.ivtm_name,
-      test_master_description: r.ivtm_description
+      test_master_description: r.ivtm_description,
+      profile_master_id: r.ivpm_uuid,
+      profile_master_code: r.ivpm_profile_code,
+      profile_master_name: r.ivpm_name,
+      profile_master_description: r.ivpm_description,
     };
   });
 };
