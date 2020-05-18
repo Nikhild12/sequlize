@@ -27,10 +27,11 @@ const getEMRWorkFlowSettings = [
   "activity_route_url"
 ];
 
-function getEMRByUserId(uId) {
+function getEMRByUserId(uId, cxtId) {
   return {
     where: {
       user_uuid: uId,
+      context_uuid: cxtId,
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE
     }
@@ -47,8 +48,15 @@ const EMRWorkflowSettings = () => {
       emrWorkflowSettingReqData.length > 0
     ) {
       try {
+        const { context_uuid } = emrWorkflowSettingReqData[0];
+        if (!context_uuid) {
+          return res.status(400).send({
+            code: emr_constants.REQUIRED_VALUE_NOT_FOUND,
+            message: `${emr_constants.PLEASE_SEND_CONTEXT_UUID}`
+          });
+        }
         const existingRecord = await emr_workflow_settings.findAll(
-          getEMRByUserId(user_uuid)
+          getEMRByUserId(user_uuid, context_uuid)
         );
 
         if (existingRecord && existingRecord.length > 0) {
@@ -103,7 +111,7 @@ const EMRWorkflowSettings = () => {
           where: {
             ews_is_active: emr_constants.IS_ACTIVE,
             ews_user_uuid: user_uuid,
-            ews_context_uuid : context_uuid
+            ews_context_uuid: context_uuid
           }
         });
 

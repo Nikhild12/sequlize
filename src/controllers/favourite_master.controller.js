@@ -841,7 +841,10 @@ const TickSheetMasterController = () => {
           where: getTreatmentQuery(departmentId, user_uuid),
         });
 
-        const favouriteList = getAllTreatmentFavsInReadable(treatMentFav);
+        let favouriteList = getAllTreatmentFavsInReadable(treatMentFav);
+        if (favouriteList && favouriteList.length > 0) {
+          favouriteList = _.orderBy(favouriteList, ['favourite_display_order'], ['asc']);
+        }
         const returnMessage =
           treatMentFav && treatMentFav.length > 0
             ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
