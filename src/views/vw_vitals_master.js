@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             value_format: {
                 type: DataTypes.STRING(255),
-                allowNull:true
+                allowNull: true
             },
             reference_range_from: {
                 type: DataTypes.INTEGER,
@@ -81,29 +81,38 @@ module.exports = (sequelize, DataTypes) => {
             modified_date: {
                 type: DataTypes.STRING
             },
-            vt_uuid:{
+            vt_uuid: {
                 type: DataTypes.INTEGER,
             },
-            vt_code:{
+            vt_code: {
                 type: DataTypes.STRING(50)
             },
-            vt_name:{
+            vt_name: {
                 type: DataTypes.STRING(50)
             },
-            vvt_uuid:{
+            vvt_uuid: {
                 type: DataTypes.INTEGER,
             },
-            vvt_code:{
+            vvt_code: {
                 type: DataTypes.STRING(50)
             },
-            vvt_name:{
+            vvt_name: {
                 type: DataTypes.STRING(50)
             },
-            um_code: {
-                type: DataTypes.STRING(50),
+            // um_code: {
+            //     type: DataTypes.STRING(50),
+            // },
+            // um_name: {
+            //     type: DataTypes.STRING(50),
+            // },
+            eu_uuid: {
+                type: DataTypes.INTEGER,
             },
-            um_name: {
-                type: DataTypes.STRING(50),
+            eu_code: {
+                type: DataTypes.STRING(50)
+            },
+            eu_name: {
+                type: DataTypes.STRING(50)
             },
             lm_code: {
                 type: DataTypes.STRING(50),
@@ -135,8 +144,8 @@ module.exports = (sequelize, DataTypes) => {
             freezeTableName: true,
         }
     );
-    vw_vitals_master.associate =  models => {
-        
+    vw_vitals_master.associate = models => {
+
         vw_vitals_master.hasOne(models.vital_loinc, {
             foreignKey: "vital_master_uuid",
             targetKey: "uuid"
