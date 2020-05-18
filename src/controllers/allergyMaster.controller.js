@@ -215,18 +215,18 @@ const postAlleryMaster = async (req, res) => {
 
           if (tblname_exits && tblname_exits.length > 0) {
             return res
-              .status(400)
+              .status(422)
               .send({ statusCode: 422, message: "code and name already exists" });
           }
           else if (code_exits && code_exits.length > 0) {
             return res
-              .status(400)
-              .send({ statusCode: 423, message: "code already exists" });
+              .status(422)
+              .send({ statusCode: 422, message: "code already exists" });
 
           } else if (name_exits && name_exits.length > 0) {
             return res
-              .status(400)
-              .send({ statusCode: 424, message: "name already exists" });
+              .status(422)
+              .send({ statusCode: 422, message: "name already exists" });
 
           } else {
 
