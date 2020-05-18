@@ -35,8 +35,8 @@ const vitalmstrController = () => {
 
       if (user_uuid && vitalsMasterData) {
 
-        vitalsMasterData.name =  vitalsMasterData.name;
-        vitalsMasterData.description =  vitalsMasterData.description ;
+        vitalsMasterData.name = vitalsMasterData.name;
+        vitalsMasterData.description = vitalsMasterData.description;
         vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
@@ -158,9 +158,7 @@ const vitalmstrController = () => {
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
     let sortField = 'modified_date';
     let sortOrder = 'DESC';
-    
-    Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
-   
+    // Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
 
@@ -181,55 +179,54 @@ const vitalmstrController = () => {
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
-      where:{ is_active: 1, status: 1},
+      where: { is_active: 1, status: 1 },
       limit: itemsPerPage,
+
       order: [
         [sortField, sortOrder],
       ],
-      
+
     };
 
-           
     if (getsearch.search && /\S/.test(getsearch.search)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+      findQuery.where[Op.or] = [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        // Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunizations.i_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-    ];
+      ];
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
+      } else {
+        findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
-       ];
-    }
+        ];
+      }
     }
     if (getsearch.vital_value_type_uuid && /\S/.test(getsearch.vital_value_type_uuid)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
+      } else {
+        findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.vital_value_type_uuid')), getsearch.vital_value_type_uuid)
-       ];
+        ];
+      }
     }
+    if (getsearch.hasOwnProperty('is_active') && /\S/.test(getsearch.is_active)) {
+      findQuery.where['is_active'] = getsearch.is_active;
     }
-   
-    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['is_active'] = getsearch.status;
-     }
-        
+
     try {
-      const result = await vw_vitals_master.findAndCountAll(findQuery,{returning: true });
+      const result = await vw_vitals_master.findAndCountAll(findQuery, { returning: true });
       if (result) {
         return res.status(200).send({
           statusCode: 200, message: "Fetched Vital Master details Successfully", responseContents: (result.rows ? result.rows : []),
@@ -251,7 +248,7 @@ const vitalmstrController = () => {
         const itemsPerPage = postData.limit ? postData.limit : 10;
         const offset = (page - 1) * itemsPerPage;
         await vitalmstrTbl.findOne({
-           //attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          //attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             uuid: postData.Vital_id
           },
@@ -303,7 +300,7 @@ const vitalmstrController = () => {
         const itemsPerPage = postData.limit ? postData.limit : 10;
         const offset = (page - 1) * itemsPerPage;
         await vw_vitals_master.findOne({
-           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          attributes: { exclude: ["id", "createdAt", "updatedAt"] },
           where: {
             uuid: postData.Vital_id
           },
@@ -313,7 +310,7 @@ const vitalmstrController = () => {
             {
               model: vitalLonicTbl,
               require: false,
-              
+
             }
           ]
         })
