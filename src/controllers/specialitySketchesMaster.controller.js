@@ -24,7 +24,7 @@ const specialitySketchesMasterController = () => {
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'created_date';
+        let sortField = 'modified_date';
         let sortOrder = 'DESC';
 
         if (getsearch.pageNo) {
@@ -54,7 +54,7 @@ const specialitySketchesMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where: { is_active: 1 }
+            where: { is_active: 1,status:1 }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {

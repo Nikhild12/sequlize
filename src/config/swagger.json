@@ -509,6 +509,14 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Speciality",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllSpeciality"
+						}
 					}
 				],
 				"produces": [
