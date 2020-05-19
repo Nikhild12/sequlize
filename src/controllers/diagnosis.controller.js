@@ -528,10 +528,14 @@ const diagnosisController = () => {
     const _getdiagnosisAutoSearch = async (req, res) => {
         const { user_uuid } = req.headers;
         const { searchValue } = req.body;
+        let sortField = 'name';
+        let sortOrder = 'ASC';
+        
         const isValidSearchVal = searchValue && emr_utilites.isStringValid(searchValue);
         if (searchValue && isValidSearchVal && user_uuid) {
             try {
                 const diagnosisAutoSearchData = await diagnosisTbl.findAll({
+                    order: [[sortField, sortOrder]],
                     where: emr_utilites.getFilterByThreeQueryForCodeAndName(searchValue),
                     attributes: getDiagnosisAttributes()
                 });
