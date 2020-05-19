@@ -26,7 +26,6 @@ const vmTreatmentFavouriteRadiology =
   sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
-const vmFavouriteRadiology = sequelizeDb.vw_favourite_radiology;
 
 const vmFavouriteRad = sequelizeDb.vw_favourite_ris;
 const vwFavouriteLab = sequelizeDb.vw_favourite_lab;
@@ -39,9 +38,6 @@ const emr_utility = require("../services/utility.service");
 
 // Favourite Diet Attributes
 const emr_attributes_diet = require("../attributes/favourite.diet");
-
-// Favourite Radiology Attributes
-const emr_attributes_radiology = require("../attributes/favourite_radiology");
 
 // Favourite Radiology Attributes
 const emr_attributes_investigation = require("../attributes/vw_favourite_investigation");
@@ -79,6 +75,7 @@ const getFavouritesAttributes = [
   "tsmd_duration",
   "tsm_favourite_type_uuid",
   "tsmd_test_master_uuid",
+  "tsmd_profile_master_uuid",
   "cc_name",
   "cc_code",
   "cc_uuid",
@@ -347,17 +344,7 @@ function getFavouriteByIdQuery(fav_id, isMaster, activeKey) {
   return favouriteByIdQuery;
 }
 
-function getFavouriteRadiologyQuery(user_id, fav_type_id) {
-  return {
-    fm_favourite_type_uuid: fav_type_id,
-    fm_status: active_boolean,
-    fm_active: active_boolean,
-    fm_userid: user_id,
-    rtm_uuid: neQuery,
-    rtm_is_active: emr_constants.IS_ACTIVE,
-    rtm_status: emr_constants.IS_ACTIVE,
-  };
-}
+
 
 const TickSheetMasterController = () => {
   /**
@@ -380,50 +367,37 @@ const TickSheetMasterController = () => {
     const { user_uuid } = req.headers;
 
     if (
-      favouriteMasterReqData &&
-      Array.isArray(favouriteMasterDetailsReqData) &&
-      favouriteMasterDetailsReqData.length > 0 &&
-      searchkey
+      favouriteMasterReqData && Array.isArray(favouriteMasterDetailsReqData) &&
+      favouriteMasterDetailsReqData.length > 0 && searchkey
     ) {
       const { department_uuid, display_order } = favouriteMasterReqData;
       favouriteMasterReqData.active_from = new Date();
       const fav_master_active = favouriteMasterReqData.is_active;
 
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
-        favouriteMasterReqData,
-        user_uuid
+        favouriteMasterReqData, user_uuid
       );
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
 
       try {
         const { search_key, search_value } = getSearchValueBySearchKey(
-          favouriteMasterDetailsReqData[0],
-          searchkey
+          favouriteMasterDetailsReqData[0], searchkey
         );
 
         // checking for duplicate before
         // creating a new favourite
+        const favourite_type_uuid = +(favouriteMasterReqData.favourite_type_uuid);
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
           where: getFavouriteQueryForDuplicate(
-            department_uuid,
-            user_uuid,
-            search_key,
-            search_value,
-            favouriteMasterReqData.favourite_type_uuid,
-            display_order
+            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order
           ),
         });
 
+
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
-          const {
-            duplicate_msg,
-            duplicate_code,
-          } = emr_all_favourites.favouriteDuplicateMessage(
-            checkingForSameFavourite,
-            search_key,
-            search_value,
-            display_order
+          const { duplicate_msg, duplicate_code, } = emr_all_favourites.favouriteDuplicateMessage(
+            checkingForSameFavourite, search_key, search_value, display_order
           );
 
           if (duplicate_code === emr_constants.DUPLICATE_DISPLAY_ORDER) {
@@ -431,9 +405,7 @@ const TickSheetMasterController = () => {
             const displayOrders = await vmTickSheetMasterTbl.findAll({
               attributes: ["tsm_display_order"],
               where: getDisplayOrderByFavType(
-                favouriteMasterReqData.favourite_type_uuid,
-                user_uuid,
-                department_uuid
+                favourite_type_uuid, user_uuid, department_uuid
               ),
             });
 
@@ -441,16 +413,10 @@ const TickSheetMasterController = () => {
               displayOrdersList = displayOrders.map((dO) => {
                 return dO.tsm_display_order;
               });
-              displayOrdersList = [...new Set(displayOrdersList)].sort(
-                (a, b) => {
-                  return a - b;
-                }
-              );
+              displayOrdersList = [...new Set(displayOrdersList)].sort((a, b) => a - b);
             }
             return res.status(400).send({
-              code: duplicate_code,
-              message: duplicate_msg,
-              displayOrdersList,
+              code: duplicate_code, message: duplicate_msg, displayOrdersList,
             });
           } else {
             return res
@@ -460,24 +426,15 @@ const TickSheetMasterController = () => {
         }
 
         const favouriteMasterCreatedData = await favouriteMasterTbl.create(
-          favouriteMasterReqData,
-          {
-            returning: true,
-          }
+          favouriteMasterReqData, { returning: true, }
         );
 
         let fmd = favouriteMasterDetailsReqData[0];
         fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
-          fmd,
-          favouriteMasterCreatedData,
-          user_uuid,
-          "favourite_master_uuid"
+          fmd, favouriteMasterCreatedData, user_uuid, "favourite_master_uuid"
         );
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
-          fmd,
-          {
-            returning: true,
-          }
+          fmd, { returning: true, }
         );
 
         if (favouriteMasterDetailsCreatedData) {
@@ -489,8 +446,7 @@ const TickSheetMasterController = () => {
             code: httpStatus.OK,
             message: "Inserted Favourite Master Successfully",
             responseContents: {
-              headers: favouriteMasterReqData,
-              details: favouriteMasterDetailsReqData,
+              headers: favouriteMasterReqData, details: favouriteMasterDetailsReqData
             },
           });
         }
@@ -499,8 +455,6 @@ const TickSheetMasterController = () => {
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-      } finally {
-        console.log("Finally");
       }
     } else {
       return res.status(400).send({
@@ -1140,33 +1094,6 @@ const TickSheetMasterController = () => {
 
 module.exports = TickSheetMasterController();
 
-function getFavouriteMasterDetailsWithUUID(
-  detailsTbl,
-  detailsData,
-  masterData,
-  reqUserUUId
-) {
-  let masterDetailsPromise = [];
-
-  // Assigning tick Sheet Master Id
-  // to tick sheet Master Details Id
-  // creating a Promise Array to push All async
-  detailsData.forEach((mD) => {
-    mD = emr_utility.assignDefaultValuesAndUUIdToObject(
-      mD,
-      masterData,
-      reqUserUUId,
-      "favourite_master_uuid"
-    );
-    masterDetailsPromise = [
-      ...masterDetailsPromise,
-      detailsTbl.create(mD, {
-        returning: true,
-      }),
-    ];
-  });
-  return masterDetailsPromise;
-}
 
 // Get Favourite API Response Model
 function getFavouritesInList(fetchedData) {
@@ -1277,11 +1204,10 @@ function getSearchValueBySearchKey(details, search_key) {
     case "lab":
     case "radiology":
     case "investigations":
-      return {
-        search_key: "tsmd_test_master_uuid",
-        search_value: details.test_master_uuid,
-      };
-
+      const testMasterId = +(details.test_master_uuid);
+      search_key = testMasterId && testMasterId > 0 ? 'tsmd_test_master_uuid' : 'tsmd_profile_master_uuid';
+      search_value = testMasterId && testMasterId > 0 ? details.test_master_uuid : details.profile_master_uuid;
+      return { search_key, search_value };
     case "diagnosis":
       return {
         search_key: "tmsd_diagnosis_uuid",
