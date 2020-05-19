@@ -61,7 +61,7 @@ const referenceGroupController = () => {
                 ],
 
                 where: {
-                    is_active: 1
+                    is_active: 1,status:1
                 }
             };
 
@@ -101,12 +101,13 @@ const referenceGroupController = () => {
             //     findQuery.where['$app_module.uuid$'] = postData.moduleId;
             // }
 
-            if (postData.status == 1) {
-                findQuery.where = { [Op.and]: [{ is_active: 1 }] };
-            }
-            if (postData.status == 0) {
-                findQuery.where = { [Op.and]: [{ is_active: 0 }] };
-            }
+            
+               if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+            findQuery.where['is_active'] = postData.status;
+            findQuery.where['status'] = postData.status;
+
+        }
+
 
             // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
             //     findQuery.where['is_active'] = postData.status;
@@ -204,15 +205,132 @@ const referenceGroupController = () => {
         }
     };
 
+    // const getAllreference = async (req, res, next) => {
+    //     let getsearch = req.body;
+
+    //     let pageNo = 0;
+    //     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    //     let sortField = 'modified_date';
+    //     let sortOrder = 'DESC';
+
+    //     Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+
+    //     if (getsearch.pageNo) {
+    //         let temp = parseInt(getsearch.pageNo);
+
+    //         if (temp && (temp != NaN)) {
+    //             pageNo = temp;
+    //         }
+    //     }
+
+    //     const offset = pageNo * itemsPerPage;
+
+
+    //     if (getsearch.sortField) {
+
+    //         sortField = getsearch.sortField;
+    //     }
+
+    //     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+    //         sortOrder = getsearch.sortOrder;
+    //     }
+    //     let findQuery = {
+    //         offset: offset,
+    //         limit: itemsPerPage,
+    //         where: { is_active: 1 },
+
+    //         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+    //         order: [
+    //             [sortField, sortOrder],
+    //         ],
+
+    //     };
+
+    //     if (getsearch.search && /\S/.test(getsearch.search)) {
+    //         findQuery.where[Op.or] = [
+    //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+    //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+    //         ];
+    //     }
+    //     if (getsearch.refCodeName && /\S/.test(getsearch.refCodeName)) {
+    //         if (findQuery.where[Op.or]) {
+    //             findQuery.where[Op.and] = [{
+    //                 [Op.or]: [
+    //                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
+    //                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
+    //                 ]
+    //             }];
+    //         } else {
+    //             findQuery.where[Op.or] = [
+    //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
+    //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
+    //             ];
+    //         }
+    //     }
+    //     if (getsearch.moduleId && /\S/.test(getsearch.moduleId)) {
+    //         if (findQuery.where[Op.or]) {
+    //             findQuery.where[Op.and] = [{
+    //                 [Op.or]: [
+    //                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
+    //                 ]
+    //             }];
+    //         } else {
+    //             findQuery.where[Op.or] = [
+    //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
+    //             ];
+    //         }
+    //     }
+
+    //     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+    //         findQuery.where['is_active'] = getsearch.status;
+    //         // findQuery.where['status'] = getsearch.status;
+
+    //     }
+    //     try {
+
+    //         const { user_uuid } = req.headers;
+
+    //         if (user_uuid > 0) {
+
+    //             const data = await vw_ref.findAndCountAll(findQuery);
+    //             if (data) {
+    //                 return res
+    //                     .status(httpStatus.OK)
+    //                     .json({
+    //                         statusCode: 200,
+    //                         message: "Get Details Fetched successfully",
+    //                         req: '',
+    //                         responseContents: data.rows,
+    //                         totalRecords: data.count
+    //                     });
+    //             }
+    //         } else {
+    //             return res
+    //                 .status(400)
+    //                 .send({ code: httpStatus[400], message: "your not authorized" });
+    //         }
+    //     } catch (err) {
+    //         const errorMsg = err.errors ? err.errors[0].message : err.message;
+    //         return res
+    //             .status(httpStatus.INTERNAL_SERVER_ERROR)
+    //             .json({
+    //                 status: "error",
+    //                 msg: errorMsg
+    //             });
+    //     }
+    // };
     const getAllreference = async (req, res, next) => {
+
         let getsearch = req.body;
+
+        Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
         let sortField = 'modified_date';
         let sortOrder = 'DESC';
-
-        Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
 
         if (getsearch.pageNo) {
             let temp = parseInt(getsearch.pageNo);
@@ -223,7 +341,6 @@ const referenceGroupController = () => {
         }
 
         const offset = pageNo * itemsPerPage;
-
 
         if (getsearch.sortField) {
 
@@ -237,18 +354,16 @@ const referenceGroupController = () => {
         let findQuery = {
             offset: offset,
             limit: itemsPerPage,
+            order: [[sortField, sortOrder]],
             attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-            order: [
-                [sortField, sortOrder],
-            ],
-            where: { is_active: 1 },
+            where: { is_active: 1 }
 
         };
 
-        if (getsearch.search && /\S/.test(getsearch.search)) {
+       if (getsearch.search && /\S/.test(getsearch.search)) {
             findQuery.where[Op.or] = [
-                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
             ];
         }
@@ -256,14 +371,14 @@ const referenceGroupController = () => {
             if (findQuery.where[Op.or]) {
                 findQuery.where[Op.and] = [{
                     [Op.or]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
                     ]
                 }];
             } else {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
                 ];
             }
         }
@@ -271,51 +386,46 @@ const referenceGroupController = () => {
             if (findQuery.where[Op.or]) {
                 findQuery.where[Op.and] = [{
                     [Op.or]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
                     ]
                 }];
             } else {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
                 ];
             }
         }
-
         if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
             findQuery.where['is_active'] = getsearch.status;
         }
+
+
+
         try {
+            console.log(findQuery);
+            const data = await vw_ref.findAndCountAll(findQuery);
 
-            const { user_uuid } = req.headers;
-
-            if (user_uuid > 0) {
-
-                const data = await vw_ref.findAndCountAll(findQuery);
-                if (data) {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            message: "Get Details Fetched successfully",
-                            req: '',
-                            responseContents: data.rows,
-                            totalRecords: data.count
-                        });
-                }
-            } else {
+            if (data) {
                 return res
-                    .status(400)
-                    .send({ code: httpStatus[400], message: "your not authorized" });
+                    .status(httpStatus.OK)
+                    .json({
+                        message: "success",
+                        statusCode: 200,
+                        responseContents: (data.rows ? data.rows : []),
+                        totalRecords: (data.count ? data.count : 0),
+
+                    });
             }
+
         } catch (err) {
+
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    status: "error",
-                    msg: errorMsg
-                });
+                .status(400)
+                .send({ code: httpStatus.BAD_REQUEST, message: err.message });
         }
+
+
     };
 
     return {
