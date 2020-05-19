@@ -31,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
       encounter_uuid: {
         type: DataTypes.INTEGER
       },
+      encounter_doctor_uuid: {
+        type: DataTypes.INTEGER
+      },
       encounter_type_uuid: {
         type: DataTypes.INTEGER
       },
