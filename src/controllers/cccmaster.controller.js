@@ -92,38 +92,37 @@ const cccMasterController = () => {
                 findQuery.where['status'] = getsearch.status;
 
             }
-            const data = await criticalcareTypeTbl.findAndCountAll({
+            const data = await cccMasterTbl.findAndCountAll({
                 findQuery,
-                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active',
-                    'status', 'modified_date'],
+                attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+            'status', 'modified_date'],
                 where: {
                     is_active: 1, status: 1
                 },
                 include: [
                     {
-                        model: cccMasterTbl,
-                        as: 'critical_care_charts',
-                        attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
-                            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                            'status', 'modified_date'],
+                        model: conceptTbl,
+                        as: 'critical_care_concepts',
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
                         include: [
-
                             {
-                                model: conceptTbl,
-                                as: 'critical_care_concepts',
-                                attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                                model: conceptdetailsTbl,
+                                as: 'critical_care_concept_values',
+                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
                                 where: { is_active: 1, status: 1 },
-                                include: [
-                                    {
-                                        model: conceptdetailsTbl,
-                                        as: 'critical_care_concept_values',
-                                        attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
-                                        where: { is_active: 1, status: 1 },
-                                    }
-                                ]
-                            }]
-                    }]
+                            }
+                        ]
+                    },
+                    {
+                        model:criticalcareTypeTbl,
+                        as :'critical_care_types',
+                        attributes:['uuid','name']
+                    }
+                ],
+                   
+              
             })
             return res
                 .status(httpStatus.OK)
