@@ -26,7 +26,7 @@ let offset;
 const MyPatientListController = () => {
   const _getMyPatientListByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { departmentId, from_date, to_date, doctor_id } = req.query;
+    let { departmentId, from_date, to_date, doctor_id } = req.body;
     let {
       page_no,
       page_size,
