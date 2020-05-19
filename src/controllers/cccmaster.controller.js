@@ -20,8 +20,7 @@ const cccMasterController = () => {
     * @returns {*}
     */
 
-
-    const getAllcccMaster = async (req, res, next) => {
+    const getAllcccMaster = async (req, res) => {
         try {
             const getsearch = req.body;
             let pageNo = 0;
@@ -58,9 +57,7 @@ const cccMasterController = () => {
                 }
             }
             let findQuery = {
-                subQuery: false,
-                offset: offset,
-                limit: getsearch.paginationSize,
+                // subQuery: false,
                 where: { is_active: 1, status: 1 },
                 order: [
                     sortArr
@@ -78,11 +75,11 @@ const cccMasterController = () => {
             if (getsearch.cccType && /\S/.test(getsearch.cccType)) {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
-                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.cccType)]
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_types.name')), getsearch.cccType)]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('criticalcareTypeTbl.name')), getsearch.cccType)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_types.name')), getsearch.cccType)
                     ];
                 }
             }
@@ -92,11 +89,13 @@ const cccMasterController = () => {
                 findQuery.where['status'] = getsearch.status;
 
             }
-            const data = await cccMasterTbl.findAndCountAll({
+            const data = await cccMasterTbl.findAll({
                 findQuery,
+                offset: offset,
+                limit: itemsPerPage,
                 attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
-            , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-            'status', 'modified_date'],
+                    , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                    'status', 'modified_date'],
                 where: {
                     is_active: 1, status: 1
                 },
@@ -116,13 +115,11 @@ const cccMasterController = () => {
                         ]
                     },
                     {
-                        model:criticalcareTypeTbl,
-                        as :'critical_care_types',
-                        attributes:['uuid','name']
+                        model: criticalcareTypeTbl,
+                        as: 'critical_care_types',
+                        attributes: ['uuid', 'name']
                     }
                 ],
-                   
-              
             })
             return res
                 .status(httpStatus.OK)
@@ -130,8 +127,8 @@ const cccMasterController = () => {
                     statusCode: 200,
                     message: "Get Details Fetched successfully",
                     req: '',
-                    responseContents: data.rows,
-                    totalRecords: data.count
+                    responseContents: data,
+                    totalRecords: data.length
                 });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
