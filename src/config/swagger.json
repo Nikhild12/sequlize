@@ -5746,28 +5746,6 @@
 						"type": "integer"
 					},
 					{
-						"in": "query",
-						"name": "departmentId",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"in": "query",
-						"name": "doctor_id",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"in": "query",
-						"name": "from_date",
-						"type": "string"
-					},
-					{
-						"in": "query",
-						"name": "to_date",
-						"type": "string"
-					},
-					{
 						"in": "body",
 						"name": "get list of patientlist",
 						"schema": {
@@ -12830,6 +12808,20 @@
 				"sort_order": {
 					"type": "string",
 					"example": "DESC"
+				},
+				"departmentId": {
+					"type": "integer",
+					"example": 1
+				},
+				"doctor_id": {
+					"type": "integer",
+					"example": 1
+				},
+				"from_date": {
+					"type": "string"
+				},
+				"to_date": {
+					"type": "string"
 				}
 			}
 		},
