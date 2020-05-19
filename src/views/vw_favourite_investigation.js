@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
       fm_favourite_type_uuid: {
         type: DataTypes.INTEGER
       },
+      tsmd_test_master_uuid: {
+        type: DataTypes.INTEGER
+      },
+      fmd_profile_master_uuid: {
+        type: DataTypes.INTEGER
+      },
       fm_active: {
         type: DataTypes.BOOLEAN
       },

@@ -89,6 +89,9 @@ module.exports = (sequelize, DataTypes) => {
       tsmd_test_master_uuid: {
         type: DataTypes.INTEGER,
       },
+      tsmd_profile_master_uuid: {
+        type: DataTypes.INTEGER,
+      },
       tsmd_strength: {
         type: DataTypes.STRING,
       },
@@ -181,7 +184,7 @@ module.exports = (sequelize, DataTypes) => {
       sm_store_name: {
         type: DataTypes.STRING
       },
-      tsmd_treatment_kit_uuid:{
+      tsmd_treatment_kit_uuid: {
         type: DataTypes.INTEGER
       }
     }

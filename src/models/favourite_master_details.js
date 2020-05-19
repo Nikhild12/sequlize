@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
           notNull: true,
         },
       },
+      profile_master_uuid: {
+        type: DataTypes.INTEGER
+      },
       item_master_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
