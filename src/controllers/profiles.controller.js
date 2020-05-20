@@ -295,7 +295,7 @@ const profilesController = () => {
       let findQuery = {
         subQuery: false,
         offset: offset,
-        limit: getsearch.paginationSize,
+        limit: itemsPerPage,
         where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type },
         order: [
           sortArr

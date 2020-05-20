@@ -532,7 +532,7 @@ const TreatMent_Kit = () => {
       let findQuery = {
         subQuery: false,
         offset: offset,
-        limit: postData.paginationSize,
+        limit: itemsPerPage,
         order: [sortArr],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
         where: {
