@@ -778,7 +778,7 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
     }
   });
 
-  return diagnosisPromise;
+  return Promise.all(diagnosisPromise);
 }
 
 async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
