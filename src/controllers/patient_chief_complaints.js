@@ -106,6 +106,7 @@ const PatientChiefComplaints = () => {
    */
   const _createChiefComplaints = async (req, res) => {
     const { user_uuid } = req.headers;
+    const { facility_uuid } = req.headers;
     const chiefComplaintsData = req.body;
 
     if (chiefComplaintsData && chiefComplaintsData.length > 0 && user_uuid) {
@@ -127,6 +128,7 @@ const PatientChiefComplaints = () => {
           cD = emr_utility.createIsActiveAndStatus(cD, user_uuid);
           cD.performed_date = new Date();
           cD.performed_by = user_uuid;
+          cD.facility_uuid = facility_uuid || 0;
         });
 
         const chiefComplaintsCreatedData = await patient_chief_complaints_tbl.bulkCreate(
@@ -319,12 +321,12 @@ function getPatientsChiefComplaintsInReadable(fetchedData) {
         chief_complaint_duration_id: fD.chief_complaint_duration_period_uuid,
         chief_complaint_duration_name:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.name
+            fD.chief_complaint_duration_period.name
             ? fD.chief_complaint_duration_period.name
             : "",
         chief_complaint_duration_code:
           fD.chief_complaint_duration_period &&
-          fD.chief_complaint_duration_period.code
+            fD.chief_complaint_duration_period.code
             ? fD.chief_complaint_duration_period.code
             : "",
         is_active: fD.is_active[0] === 1 ? true : false,
