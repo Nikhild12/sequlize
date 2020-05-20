@@ -7385,6 +7385,12 @@
 					},
 					{
 						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
 						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
