@@ -82,6 +82,13 @@ module.exports = (sequelize, DataTypes) => {
 
 
             },
+            p_created_date: {
+                type: DataTypes.DATE
+            },
+
+            modified_date: {
+                type: DataTypes.DATE
+            },
 
 
         },
