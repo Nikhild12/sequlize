@@ -126,58 +126,58 @@ const proceduresController = () => {
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+      findQuery.where[Op.or] = [
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-    ];
+      ];
     }
     if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
-         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
-       ];
+      } else {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.name')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.code')), 'LIKE', '%' + getsearch.searchKeyWord + '%'),
+        ];
+      }
     }
-   }
-   if (getsearch.procedure_scheme_uuid && /\S/.test(getsearch.procedure_scheme_uuid)) {
+    if (getsearch.procedure_scheme_uuid && /\S/.test(getsearch.procedure_scheme_uuid)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid)
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid)
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
+      } else {
+        findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_scheme_uuid')), getsearch.procedure_scheme_uuid)
-       ];
+        ];
+      }
     }
-   }
-     if (getsearch.procedure_type_uuid && /\S/.test(getsearch.procedure_type_uuid)) {
+    if (getsearch.procedure_type_uuid && /\S/.test(getsearch.procedure_type_uuid)) {
       if (findQuery.where[Op.or]) {
-               findQuery.where[Op.and] = [{
-                          [Op.or]: [
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_type_uuid)
-      ]
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_type_uuid)
+          ]
         }];
-       } else {
-          findQuery.where[Op.or] = [
+      } else {
+        findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('procedures.procedure_type_uuid')), getsearch.procedure_type_uuid)
-       ];
+        ];
+      }
     }
-   }
-     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['is_active'] = getsearch.status;
-     findQuery.where['status'] = getsearch.status;
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+      findQuery.where['is_active'] = getsearch.status;
+      findQuery.where['status'] = getsearch.status;
 
-     }
+    }
 
     try {
       await proceduresTbl
@@ -207,16 +207,24 @@ const proceduresController = () => {
   };
 
 
-const postprocedures = async (req, res) => {
+  const postprocedures = async (req, res) => {
 
     if (Object.keys(req.body).length != 0) {
 
       const { user_uuid } = req.headers;
       const postData = req.body;
+      if (user_uuid > 0 && postData.code && postData.name) {
 
-      if (user_uuid > 0 && postData) {
-        
         try {
+          const duplicateProcedureRecord = await findDuplicateProceduresByCodeAndName(
+            postData
+          );
+          if (duplicateProcedureRecord && duplicateProcedureRecord.length > 0) {
+            return res.status(400).send({
+              code: emr_constants.DUPLICATE_ENTRIE,
+              message: getDuplicateMsg(duplicateProcedureRecord)
+            });
+          }
 
           const code_exits = await codeexists(req.body.code);
           const name_exits = await nameexists(req.body.name);
@@ -284,7 +292,7 @@ const postprocedures = async (req, res) => {
     await proceduresTbl
       .update(
         {
-          is_active: 0,status:0
+          is_active: 0, status: 0
         },
         {
           where: {
@@ -311,9 +319,9 @@ const postprocedures = async (req, res) => {
 
   const updateproceduresId = async (req, res, next) => {
     const postData = req.body;
-    postData.status=postData.is_active;
+    postData.status = postData.is_active;
     postData.modified_by = req.headers.user_uuid;
-    postData.modified_date=new Date();
+    postData.modified_date = new Date();
     await proceduresTbl
       .update(postData, {
         where: {
@@ -332,9 +340,9 @@ const postprocedures = async (req, res) => {
 
   const getproceduresById = async (req, res, next) => {
     const postData = req.body;
-    postData.status=postData.is_active;
-    postData.modified_by=req.headers;
-    postData.modified_date=new Date();
+    postData.status = postData.is_active;
+    postData.modified_by = req.headers;
+    postData.modified_date = new Date();
     try {
       const page = postData.page ? postData.page : 1;
       const itemsPerPage = postData.limit ? postData.limit : 10;
@@ -586,7 +594,7 @@ const codenameexists = (code, name) => {
       let value = proceduresTbl.findAll({
         //order: [['created_date', 'DESC']],
         attributes: ["code", "name"],
-        where: { code:code,  name:name }
+        where: { code: code, name: name }
       });
       if (value) {
         resolve(value);
@@ -597,3 +605,20 @@ const codenameexists = (code, name) => {
     });
   }
 };
+async function findDuplicateProceduresByCodeAndName({ code, name }) {
+  // checking for Duplicate 
+  // before creating procedures 
+  return await proceduresTbl.findAll({
+    attributes: ['code', 'name', 'is_active'],
+    where: {
+      [Op.or]: [
+        { code: code },
+        { name: name }
+      ]
+    }
+  });
+}
+function getDuplicateMsg(record) {
+  return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
+}
+
