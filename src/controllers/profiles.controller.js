@@ -259,7 +259,7 @@ const profilesController = () => {
       const { profile_type } = req.query;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-      let sortArr = ['modified_date', 'DESC'];
+      let sortArr = ['p_created_date', 'DESC'];
 
 
       if (getsearch.pageNo) {
@@ -271,8 +271,8 @@ const profilesController = () => {
       const offset = pageNo * itemsPerPage;
       let fieldSplitArr = [];
       if (getsearch.sortField) {
-        if (getsearch.sortField == 'modified_date') {
-          getsearch.sortField = 'modified_date';
+        if (getsearch.sortField == 'p_created_date') {
+          getsearch.sortField = 'p_created_date';
         }
         fieldSplitArr = getsearch.sortField.split('.');
         if (fieldSplitArr.length == 1) {
