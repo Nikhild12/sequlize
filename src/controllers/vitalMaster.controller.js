@@ -32,7 +32,6 @@ const vitalmstrController = () => {
 
       const { user_uuid } = req.headers;
       const vitalsMasterData = req.body;
-
       if (user_uuid && vitalsMasterData) {
 
         vitalsMasterData.name = vitalsMasterData.name;
@@ -41,7 +40,6 @@ const vitalmstrController = () => {
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
         vitalsMasterData.revision = 1;
-        console.log(vitalsMasterData);
         try {
 
           const exists = await nameExists(vitalsMasterData.name);
@@ -54,7 +52,6 @@ const vitalmstrController = () => {
           } else {
 
             const vitalsCreatedData = await vitalmstrTbl.create(vitalsMasterData, { returning: true });
-
             if (vitalsCreatedData) {
               vitalsMasterData.uuid = vitalsCreatedData.uuid;
               return res.status(200).send({ statusCode: 200, message: "Inserted vitals Successfully", responseContents: vitalsMasterData });

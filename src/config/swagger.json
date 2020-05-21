@@ -11917,6 +11917,10 @@
 					"type": "integer",
 					"example": 1
 				},
+				"emr_uom_uuid": {
+					"type": "integer",
+					"example": 1
+				},
 				"uom_master_uuid": {
 					"type": "integer",
 					"example": 1
