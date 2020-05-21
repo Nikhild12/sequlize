@@ -119,7 +119,7 @@ const cccMasterController = () => {
                 findQuery.where['status'] = getsearch.status;
 
             }
-            const data = await cccMasterTbl.findAll(findQuery
+            const data = await cccMasterTbl.findAndCountAll(findQuery
 
                 // {
 
@@ -160,8 +160,8 @@ const cccMasterController = () => {
                     statusCode: 200,
                     message: "Get Details Fetched successfully",
                     req: '',
-                    responseContents: data,
-                    totalRecords: data.length
+                    totalRecords: data.count,
+                    responseContents: data.rows
                 });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
