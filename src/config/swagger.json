@@ -3623,6 +3623,16 @@
 						"name": "dept_id",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "isMaster",
+						"type": "boolean"
+					},
+					{
+						"in": "query",
+						"name": "createdUserId",
+						"type": "integer"
 					}
 				],
 				"produces": [

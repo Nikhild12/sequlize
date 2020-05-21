@@ -120,9 +120,11 @@ const tmpmstrController = () => {
   };
 
   const _gettempdetails = async (req, res) => {
-    const user_uuid = req.headers.user_uuid;
-    const { temp_id, temp_type_id, dept_id } = req.query;
+    let { user_uuid } = req.headers;
+    const { temp_id, temp_type_id, dept_id, isMaster, createdUserId } = req.query;
     try {
+
+      user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && dept_id > 0) {
         if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
           return res.status(400).send({
@@ -235,7 +237,7 @@ const tmpmstrController = () => {
       const { user_uuid } = req.headers;
       const templateMasterReqData = req.body.headers;
       const temp_name = templateMasterReqData.name;
-      const temp_id = templateMasterReqData.template_id
+      const temp_id = templateMasterReqData.template_id;
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(
         user_uuid,
@@ -425,7 +427,7 @@ const tmpmstrController = () => {
 
     if (getsearch.sortField === "modified_date") {
       getsearch.sortField = "tm_modified_date";
-      console.log (getsearch.sortField);
+      console.log(getsearch.sortField);
     }
 
     pageNo = 0;
