@@ -536,7 +536,7 @@ const TreatMent_Kit = () => {
         order: [sortArr],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
         where: {
-          // p_status: 1,
+          tk_status: 1, tk_is_active: 1
         }
       };
 
