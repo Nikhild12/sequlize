@@ -105,7 +105,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false
       },
-
+      lab_uuid:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       created_date: "created_date",
       modified_date: "modified_date",
 
