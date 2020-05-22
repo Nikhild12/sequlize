@@ -56,6 +56,9 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
+            modified_date: {
+                type: DataTypes.DATE
+            },
             d_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
