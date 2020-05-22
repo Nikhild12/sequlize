@@ -5,6 +5,52 @@ const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
+const _getFavouritesAttributes = [
+  "df_name",
+  "di_name",
+  "tsm_userid",
+  "tsm_active",
+  "tsm_name",
+  "tsm_uuid",
+  "tsmd_uuid",
+  "im_name",
+  "im_uuid",
+  "dr_uuid",
+  "dr_code",
+  "dp_name",
+  "dp_uuid",
+  "dp_code",
+  "di_uuid",
+  "di_name",
+  "di_code",
+  "df_uuid",
+  "df_code",
+  "tsm_display_order",
+  "tsmd_duration",
+  "tsm_favourite_type_uuid",
+  "tsmd_test_master_uuid",
+  "cc_name",
+  "cc_code",
+  "cc_uuid",
+  "vm_name",
+  "vm_uom",
+  "tsm_status",
+  "tsmd_test_master_uuid",
+  "ltm_code",
+  "ltm_name",
+  "ltm_description",
+  "tmsd_diagnosis_uuid",
+  "d_name",
+  "d_code",
+  "d_description",
+  "im_is_emar",
+  "sm_uuid",
+  "sm_store_code",
+  "sm_store_name",
+  "tsmd_strength",
+  "tsmd_treatment_kit_uuid"
+];
+
 const _getAllFavouritesAttributes = () => {
   return [
     "fm_uuid",
@@ -156,7 +202,15 @@ const _favouriteRadVWAttributes = () => {
  * @param {*} uId userId
  * @param {*} dId department Id
  */
-const _favouriteLabVWQuery = (uId, dId) => {
+const _favouriteLabVWQuery = (uId, dId, labId = 0) => {
+
+  labId = +(labId);
+  const labValidation = !labId || labId === 0;
+  const searchKey = labValidation ? 'fm_department_uuid' : 'fm_lab_uuid';
+  const searchValue = labValidation ? dId : labId;
+
+  console.log({searchKey, searchValue});
+  
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
@@ -166,8 +220,8 @@ const _favouriteLabVWQuery = (uId, dId) => {
       {
         [Op.or]: [
           {
-            fm_department_uuid: { [Op.eq]: dId },
-            fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
+            [searchKey]: { [Op.eq]: searchValue },
+            // fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
           },
           { fm_user_uuid: { [Op.eq]: uId } },
         ],
@@ -199,7 +253,7 @@ const _favouriteRadVWQuery = (uId, dId) => {
         [Op.or]: [
           {
             fm_department_uuid: { [Op.eq]: dId },
-            fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
+            // fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
           },
           { fm_user_uuid: { [Op.eq]: uId } },
         ],
@@ -260,6 +314,10 @@ const _favouriteRadResponse = (records) => {
   });
 };
 
+const _getFavQuryForCreate = () => {
+
+};
+
 module.exports = {
   getAllFavouritesAttributes: _getAllFavouritesAttributes,
   getFavouritesInHumanReadableFormat: _getFavouritesInHumanReadableFormat,
@@ -271,4 +329,6 @@ module.exports = {
   favouriteLabResponse: _favouriteLabResponse,
   favouriteRadVWQuery: _favouriteRadVWQuery,
   favouriteRadResponse: _favouriteRadResponse,
+  getFavQuryForCreate: _getFavQuryForCreate,
+  getFavouritesAttributes: _getFavouritesAttributes
 };

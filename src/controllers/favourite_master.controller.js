@@ -471,9 +471,9 @@ const TickSheetMasterController = () => {
    */
   const _getFavourites = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { dept_id, fav_type_id } = req.query;
+    let { dept_id, fav_type_id, lab_id } = req.query;
 
-    if (user_uuid && dept_id > 0 && fav_type_id) {
+    if (user_uuid && (dept_id > 0 || lab_id > 0) && fav_type_id) {
       fav_type_id = +fav_type_id;
       if (isNaN(fav_type_id)) {
         return res.status(400).send({
@@ -487,7 +487,8 @@ const TickSheetMasterController = () => {
         const favouriteData = await getFavouritesQuery(
           user_uuid,
           fav_type_id,
-          dept_id
+          dept_id,
+          lab_id
         );
         favList = getFavouritesRes(favouriteData, fav_type_id);
         favList = _.orderBy(favList, ['favourite_display_order'], ['asc']);
@@ -1474,7 +1475,7 @@ function getSpecialityFromFav(detail, property) {
   return (detail.speciality_sketch && detail.speciality_sketch[property]) || "";
 }
 
-const getFavouritesQuery = (uId, fTyId, dId) => {
+const getFavouritesQuery = (uId, fTyId, dId, labId) => {
   if (fTyId === 3) {
     return vmFavouriteRad.findAll({
       attributes: emr_all_favourites.favouriteRadVWAttributes(),
@@ -1498,7 +1499,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
         [Op.or]: [
           {
             department_uuid: { [Op.eq]: dId },
-            is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
+            // is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
           },
           { user_uuid: { [Op.eq]: uId } },
         ],
@@ -1520,7 +1521,7 @@ const getFavouritesQuery = (uId, fTyId, dId) => {
   } else if (fTyId === 2) {
     return vwFavouriteLab.findAll({
       attributes: emr_all_favourites.favouriteLabVWAttributes(),
-      where: emr_all_favourites.favouriteLabVWQuery(uId, dId),
+      where: emr_all_favourites.favouriteLabVWQuery(uId, dId, labId),
     });
   } else {
     return vmTickSheetMasterTbl.findAll({
