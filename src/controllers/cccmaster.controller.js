@@ -20,7 +20,147 @@ const cccMasterController = () => {
     * @returns {*}
     */
 
+
     const getAllcccMaster = async (req, res) => {
+        try {
+            const getsearch = req.body;
+            let pageNo = 0;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+            let sortArr = ['uuid', 'DESC'];
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (getsearch.sortField) {
+                if (getsearch.sortField == 'uuid') {
+                    getsearch.sortField = 'uuid';
+                }
+                fieldSplitArr = getsearch.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = getsearch.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = getsearch.sortOrder;
+                } else {
+                    sortArr.push(getsearch.sortOrder);
+                }
+            }
+            let findQuery = {
+                // subQuery: false,
+
+                where: { is_active: 1, status: 1 },
+                order: [
+                    sortArr
+                ],
+                //  attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                offset: offset,
+                limit: itemsPerPage,
+                attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
+                    , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
+                    'status', 'modified_date'],
+                where: {
+                    is_active: 1, status: 1
+                },
+                include: [
+                    {
+                        model: conceptTbl,
+                        as: 'critical_care_concepts',
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        where: { is_active: 1, status: 1 },
+                        include: [
+                            {
+                                model: conceptdetailsTbl,
+                                as: 'critical_care_concept_values',
+                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                where: { is_active: 1, status: 1 },
+                            }
+                        ]
+                    },
+                    {
+                        model: criticalcareTypeTbl,
+                        as: 'critical_care_types',
+                        attributes: ['uuid', 'name']
+                    }
+                ],
+
+            };
+            // if (getsearch.search && /\S/.test(getsearch.search)) {
+            //     findQuery.where[Op.or] = [
+            //         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+            //         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_types.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+            //     ];
+            // }
+
+
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+                Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            '$critical_care_charts.name$': {
+                                [Op.like]: '%' + getsearch.search + '%'
+                            }
+                        },
+                        // {
+                        //     '$critical_care_types.name$': {
+                        //         [Op.like]: '%' + getsearch.search + '%'
+                        //     }
+                        // }
+                    ]
+                });
+            }
+
+            if (getsearch.cccType && /\S/.test(getsearch.cccType)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_types.name')), getsearch.cccType)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_types.name')), getsearch.cccType)
+                    ];
+                }
+            }
+
+            if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+                findQuery.where['is_active'] = getsearch.status;
+                findQuery.where['status'] = getsearch.status;
+
+            }
+            const data = await cccMasterTbl.findAndCountAll(findQuery)
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    statusCode: 200,
+                    message: "Get Details Fetched successfully",
+                    req: '',
+                    totalRecords: data.count,
+                    responseContents: data.rows
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
+
+    const getAllcccMaster1 = async (req, res) => {
         try {
             const getsearch = req.body;
             let pageNo = 0;
