@@ -3654,7 +3654,11 @@
 					{
 						"in": "query",
 						"name": "dept_id",
-						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "lab_id",
 						"type": "integer"
 					},
 					{
