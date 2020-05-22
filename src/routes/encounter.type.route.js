@@ -8,5 +8,7 @@ const EncounterType = require('../controllers/encounter.type.controller');
 const EncounterTypeRoutes = express.Router();
 
 EncounterTypeRoutes.route('/getEncounterType').get(EncounterType.getEncounterTypeList);
+EncounterTypeRoutes.route('/getEncounterType').post(EncounterType.getEncounterTypeList);
+
 
 module.exports = EncounterTypeRoutes;
