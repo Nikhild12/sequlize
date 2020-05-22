@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tm_lab_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             tm_is_public:{
                 type: DataTypes.BOOLEAN
             },
