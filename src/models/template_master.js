@@ -23,10 +23,14 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            lab_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
             code: {
                 type: DataTypes.STRING(8),
                 allowNull: true
-            }, 
+            },
             name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
@@ -90,7 +94,7 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     min: 0
                 }
-            },             
+            },
             display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -106,30 +110,30 @@ module.exports = (sequelize, DataTypes) => {
             },
             active_from: {
                 type: DataTypes.DATE,
-                allowNull:true
+                allowNull: true
             },
             active_to: {
                 type: DataTypes.DATE,
-                allowNull:true
+                allowNull: true
             },
             comments: {
                 type: DataTypes.STRING(225),
-                allowNull:true
+                allowNull: true
             },
-            is_active:{
+            is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
                 //allowNull: false
             },
-            status:{
+            status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
                 //allowNull: false
             },
-            revision:{
-                type : DataTypes.INTEGER,
+            revision: {
+                type: DataTypes.INTEGER,
                 defaultValue: 1
-                
+
             },
             created_by: {
                 type: DataTypes.INTEGER,
@@ -158,12 +162,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-   template_master.associate = models => {
+    template_master.associate = models => {
         template_master.hasMany(models.template_master_details, {
             foreignKey: "template_master_uuid"
         });
-   };
-    
+    };
+
     return template_master;
 };
 
