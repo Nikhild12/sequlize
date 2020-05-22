@@ -259,8 +259,10 @@ const profilesController = () => {
       const { profile_type } = req.query;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-      let sortArr = ['p_created_date', 'DESC'];
-
+      // let sortArr = ['p_created_date', 'DESC'];
+      let sortArr = [];
+      let sortField = 'p_created_date';
+      let sortOrder = 'DESC';
 
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
@@ -297,8 +299,11 @@ const profilesController = () => {
         offset: offset,
         limit: itemsPerPage,
         where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type },
+        // order: [
+        //   sortArr
+        // ],
         order: [
-          sortArr
+          [sortField, sortOrder],
         ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
 
