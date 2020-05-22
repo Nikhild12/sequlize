@@ -2897,6 +2897,31 @@
 				}
 			}
 		},
+		"/api/encounter-type/getEncounterTypeByPost": {
+			"post": {
+				"description": "To get list of Encounter Type",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EncounterType"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter Type"
+					}
+				}
+			}
+		},
 		"/api/encounter/get-latest-enc-by-patient": {
 			"get": {
 				"description": "To get Latest Patient Record By Patient Id",
