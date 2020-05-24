@@ -9,6 +9,7 @@ var config = require("../config/config");
 const Op = Sequelize.Op;
 const specialitySketchesMasterTbl = db.speciality_sketches;
 const specialitySketcheDetailsTbl = db.speciality_sketch_details;
+const vwSpecialitySketchTbl = db.vw_speciality_sketch;
 
 const specialitySketchesMasterController = () => {
     /**
@@ -54,7 +55,7 @@ const specialitySketchesMasterController = () => {
             order: [
                 [sortField, sortOrder],
             ],
-            where: { is_active: 1,status:1 }
+            where: { is_active: 1, status: 1 }
         };
 
         if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -119,7 +120,7 @@ const specialitySketchesMasterController = () => {
             const postData = req.body;
             let pageNo = 0;
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-            let sortArr = ['created_date', 'DESC'];
+            let sortArr = ['s_created_date', 'DESC'];
 
 
             if (postData.pageNo) {
@@ -152,28 +153,27 @@ const specialitySketchesMasterController = () => {
             let findQuery = {
                 subQuery: false,
                 offset: offset,
-                limit: postData.paginationSize,
+                limit: itemsPerPage,
                 order: [
                     sortArr
                 ],
-                attributes: { "exclude": ['uuid','name','createdAt', 'updatedAt'] },
-                where: {
-                    // p_status: 1,
-                },
-                include: [{
-                    model: specialitySketcheDetailsTbl,
-                    //as: 'speciality_sketch_details',
-                    //required: false,
-                    // as: 'source' 
-                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
-                    where: { status: 1, is_active: 1 }
-                }]
+                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                where: { s_is_active: 1, s_status: 1 }
+
+                //     include: [{
+                //         model: specialitySketcheDetailsTbl,
+                //         //as: 'speciality_sketch_details',
+                //         //required: false,
+                //         // as: 'source' 
+                //         attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
+                //         where: { status: 1, is_active: 1 }
+                //     }]
             };
 
             if (postData.search && /\S/.test(postData.search)) {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_code')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
 
                 ];
             }
@@ -181,31 +181,29 @@ const specialitySketchesMasterController = () => {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
                         [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + postData.codename.toLowerCase()),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
                         ]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + postData.codename.toLowerCase()),
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + postData.codename.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_code')), 'LIKE', '%' + postData.codename.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_name')), 'LIKE', '%' + postData.codename.toLowerCase()),
                     ];
                 }
             }
 
             if (postData.departmentId && /\S/.test(postData.departmentId)) {
-                // findQuery.where['p_department_uuid'] = postData.departmentId;      
                 findQuery.where =
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('department_uuid')), 'LIKE', '%' + postData.departmentId);
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('s_department_uuid')), 'LIKE', '%' + postData.departmentId);
 
             }
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                //findQuery.where['p_is_active'] = postData.status;
                 findQuery.where = { is_active: postData.status };
             }
-            await specialitySketchesMasterTbl.findAndCountAll(findQuery,
-                
-                )
+            await vwSpecialitySketchTbl.findAndCountAll(findQuery,
+
+            )
                 .then((data) => {
                     return res
                         .status(httpStatus.OK)
@@ -502,15 +500,15 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep) {
         "revision": data.revision,
         "is_active": data.is_active,
         "created_by_id": data.created_by,
-        "created_by": 
-        getcuDetails.responseContents ? 
-        getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
-        : null,
+        "created_by":
+            getcuDetails.responseContents ?
+                getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
+                : null,
         "modified_by_id": data.modified_by,
-        "modified_by": 
-        getmuDetails.responseContents ?
-        getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
-        : null,
+        "modified_by":
+            getmuDetails.responseContents ?
+                getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
+                : null,
         "created_date": data.created_date,
         "modified_date": data.modified_date,
         "speciality_sketch_detail": data.speciality_sketch_detail
