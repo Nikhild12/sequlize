@@ -156,7 +156,7 @@ const specialitySketchesMasterController = () => {
                 order: [
                     sortArr
                 ],
-                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                attributes: { "exclude": ['uuid','name','createdAt', 'updatedAt'] },
                 where: {
                     // p_status: 1,
                 },
