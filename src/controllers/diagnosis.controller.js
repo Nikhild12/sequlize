@@ -162,7 +162,7 @@ const diagnosisController = () => {
                     }
                 }
                 const offset = pageNo * itemsPerPage;
-                const diagnosisData = await diagnosisTbl.findAll({
+                const diagnosisData = await diagnosisTbl.findAndCountAll({
                     where: getDiagnosisFilterByQuery("filterbythree", searchValue),
                     attributes: getDiagnosisAttributes().splice(0, 3),
                     offset: offset,
@@ -172,8 +172,8 @@ const diagnosisController = () => {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: "Fetched Diagnosis Data Successfully",
-                        responseContents: diagnosisData,
-
+                        responseContents: diagnosisData.rows,
+                        totalRecords: diagnosisData.count,
                     });
                 }
             } catch (error) {
