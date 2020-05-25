@@ -8970,7 +8970,32 @@
 		},
 		"getAllSpeciality": {
 			"type": "object",
-			"properties": {}
+			"properties": {
+				"paginationSize": {
+					"type": "integer"
+				},
+				"pageNo": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"search": {
+					"type": "string"
+				},
+				"departmentId": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "boolean"
+				},
+				"codename": {
+					"type": "string"
+				}
+			}
 		},
 		"deleteSpeciality": {
 			"type": "object",
@@ -10687,7 +10712,7 @@
 						"favourite_type_uuid": {
 							"type": "integer"
 						},
-						"lab_uuid":{
+						"lab_uuid": {
 							"type": "integer"
 						},
 						"department_uuid": {
@@ -10828,7 +10853,7 @@
 							"type": "integer",
 							"example": 1
 						},
-						"lab_uuid":{
+						"lab_uuid": {
 							"type": "integer"
 						},
 						"diagnosis_uuid": {

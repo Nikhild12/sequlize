@@ -144,13 +144,17 @@ const makeServiceCall = (req, res, next) => {
 					hostName: req.headers['host-name'] || null,
 					ModuleName: modulename || null,
 					APIName: req.url || null,
+					Status:  res.body.statusCode || null,
+					statusCode: res.body.statusCode || null,
 					reqId: req.headers['session_id'] || null,
 					IPAddress: req.headers['ip_address'] || null,
 					Token: req.headers['authorization'] || null,
 					LoginDate: getCurrentDateTime(null)
 				};
 				var logObj = JSON.parse(JSON.stringify(userLogActivityObj));
-				if (res && res.body && res.body.statusCode == 200) {
+				if (res && res.body
+					&& (!res.body.statusCode ||
+						(res.body.statusCode >= 200 && res.body.statusCode <= 299))) {
 					logObj.LogLevel = 'info';
 					logObj.errorResponse = ' Log-Level: ' + res.body.loglevel + ' - ' + ' statusCode: ' + res.body.statusCode;
 				} else {
@@ -161,7 +165,7 @@ const makeServiceCall = (req, res, next) => {
 				const zonetime = moment().format('Z');
 				logObj.UTCFormat = zoneplace + ' ' + zonetime;
 				logObj.APIRequestTime = moment(getCurrentDateTime(config.requestDate)).format('YYYY-MM-DD HH:mm:ss');
-				logObj.APIResponseTime =  moment(getCurrentDateTime(null)).format('YYYY-MM-DD HH:mm:ss');
+				logObj.APIResponseTime = moment(getCurrentDateTime(resp_dt)).format('YYYY-MM-DD HH:mm:ss');
 				logObj.APISpendTime = res.responseTime + ' milliseconds' || null;
 				logObj.url = req.url;
 				logObj.sqlquery = res.body.sql || null;

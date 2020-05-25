@@ -523,7 +523,7 @@ const cccMasterController = () => {
             await cccMasterTbl.findAll({
                 attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
                     , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                    'status'],
+                    'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                 where: {
                     uuid: postData.Ccc_id, is_active: 1, status: 1
                 },
@@ -531,13 +531,15 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple',
+                            'is_default', 'is_mandatory', 'display_order', 'is_active', 'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                         where: { is_active: 1, status: 1 },
                         include: [
                             {
                                 model: conceptdetailsTbl,
                                 as: 'critical_care_concept_values',
-                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active',
+                                    'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                                 where: { is_active: 1, status: 1 },
                             }
                         ]
