@@ -3596,7 +3596,11 @@
 					{
 						"in": "query",
 						"name": "dept_id",
-						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "lab_id",
 						"type": "integer"
 					},
 					{
@@ -3650,7 +3654,11 @@
 					{
 						"in": "query",
 						"name": "dept_id",
-						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "lab_id",
 						"type": "integer"
 					},
 					{
@@ -8046,6 +8054,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "query",
 						"name": "depertment_Id",
 						"required": true,
@@ -8956,7 +8970,32 @@
 		},
 		"getAllSpeciality": {
 			"type": "object",
-			"properties": {}
+			"properties": {
+				"paginationSize": {
+					"type": "integer"
+				},
+				"pageNo": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"search": {
+					"type": "string"
+				},
+				"departmentId": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "boolean"
+				},
+				"codename": {
+					"type": "string"
+				}
+			}
 		},
 		"deleteSpeciality": {
 			"type": "object",
@@ -10673,7 +10712,7 @@
 						"favourite_type_uuid": {
 							"type": "integer"
 						},
-						"lab_uuid":{
+						"lab_uuid": {
 							"type": "integer"
 						},
 						"department_uuid": {
@@ -10814,7 +10853,7 @@
 							"type": "integer",
 							"example": 1
 						},
-						"lab_uuid":{
+						"lab_uuid": {
 							"type": "integer"
 						},
 						"diagnosis_uuid": {

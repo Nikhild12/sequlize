@@ -31,9 +31,9 @@ const tmpmstrController = () => {
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { temp_type_id, dept_id } = req.query;
+    const { temp_type_id, dept_id, lab_id } = req.query;
     try {
-      if (user_uuid > 0 && temp_type_id > 0 && dept_id > 0) {
+      if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
           return res.status(400).send({
             code: httpStatus[400],
@@ -43,7 +43,8 @@ const tmpmstrController = () => {
         const { table_name, query } = getTemplateTypeUUID(
           temp_type_id,
           dept_id,
-          user_uuid
+          user_uuid,
+          lab_id
         );
         const templateList = await table_name.findAll(query);
         //console.log("line no 41 ", templateList);
@@ -121,11 +122,11 @@ const tmpmstrController = () => {
 
   const _gettempdetails = async (req, res) => {
     let { user_uuid } = req.headers;
-    const { temp_id, temp_type_id, dept_id, isMaster, createdUserId } = req.query;
+    const { temp_id, temp_type_id, dept_id, lab_id, isMaster, createdUserId } = req.query;
     try {
 
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
-      if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && dept_id > 0) {
+      if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
           return res.status(400).send({
             code: httpStatus[400],
@@ -136,7 +137,8 @@ const tmpmstrController = () => {
           temp_type_id,
           temp_id,
           dept_id,
-          user_uuid
+          user_uuid,
+          lab_id
         );
         const templateList = await table_name.findAll(query);
 
@@ -1236,7 +1238,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
     });
   }
 };
-function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
+function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, lab_id) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1248,6 +1250,10 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
         }
       };
     case "2":
+      lab_id = +(lab_id);
+      const labValidation = !lab_id || lab_id === 0;
+      const searchKey = labValidation ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const searchValue = labValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_lab,
         query: {
@@ -1263,7 +1269,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
             tmd_active: 1,
             [Op.or]: [
               {
-                tm_department_uuid: { [Op.eq]: dept_id },
+                [searchKey]: { [Op.eq]: searchValue },
                 "`tm_is_public`": { [Op.eq]: 1 }
               },
               { tm_user_uuid: { [Op.eq]: user_uuid } }
@@ -1313,7 +1319,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid) {
   }
 }
 
-function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
+function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1329,13 +1335,18 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid) {
         }
       };
     case "2":
+
+      lab_id = +(lab_id);
+      const labValidation = !lab_id || lab_id === 0;
+      const searchKey = labValidation ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const searchValue = labValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_lab,
         query: {
           where: {
             tm_uuid: temp_id,
             tm_user_uuid: user_uuid,
-            tm_department_uuid: dept_id,
+            [searchKey]: searchValue,
             tm_template_type_uuid: temp_type_id,
             //ltm_lab_master_type_uuid: 1,
             tm_is_active: 1,

@@ -208,8 +208,6 @@ const _favouriteLabVWQuery = (uId, dId, labId = 0) => {
   const labValidation = !labId || labId === 0;
   const searchKey = labValidation ? 'fm_department_uuid' : 'fm_lab_uuid';
   const searchValue = labValidation ? dId : labId;
-
-  console.log({searchKey, searchValue});
   
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
