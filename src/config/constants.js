@@ -58,7 +58,7 @@ module.exports = Object.freeze({
   TEMPLATE_FETCH_SUCCESS: "Template Fetched Successfully",
   REQUIRED_VALUE_NOT_FOUND: "Required Value Not Found",
   PLEASE_SEND_CONTEXT_UUID: "Please send Context uuid in the first object"
-,
+  ,
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -171,6 +171,10 @@ module.exports = Object.freeze({
 
       case "immunization_name":
         return `${returnProvideMsg} immunization_name`;
+      case "note_template_type_uuid":
+        return `${returnProvideMsg} note_template_type_uuid`;
+      case "note_type_uuid":
+        return `${returnProvideMsg} note_type_uuid`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
@@ -302,6 +306,10 @@ module.exports = Object.freeze({
         return `profile_section_category_concept_uuid ${validationMessage}`;
       case "display_order":
         return `display_order ${validationMessage}`;
+      case "note_template_type_uuid":
+        return `note_template_type_uuid ${validationMessage}`;
+      case "note_type_uuid":
+        return `note_type_uuid ${validationMessage}`;
       default:
         return `Value ${validationMessage}`;
     }

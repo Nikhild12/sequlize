@@ -277,7 +277,7 @@ const noteTemplatesController = () => {
                     return res.send({
                         statusCode: 400,
                         status: "error",
-                        msg: "unique value"
+                        msg: "duplicate record"
                     });
                 } else {
                     await noteTemplatesTbl.create(postData, {
