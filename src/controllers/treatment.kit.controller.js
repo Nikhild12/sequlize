@@ -543,17 +543,17 @@ const TreatMent_Kit = () => {
       if (postData.search && /\S/.test(postData.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("tk_code")),
+            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
             "LIKE",
             "%" + postData.search.toLowerCase() + "%"
           ),
           Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("tk_name")),
+            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
             "LIKE",
             "%" + postData.search.toLowerCase() + "%"
           ),
           Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
+            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.u_first_name")),
             "LIKE",
             "%" + postData.search.toLowerCase() + "%"
           )
@@ -565,12 +565,12 @@ const TreatMent_Kit = () => {
             {
               [Op.or]: [
                 Sequelize.where(
-                  Sequelize.fn("LOWER", Sequelize.col("tk_code")),
+                  Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
                   "LIKE",
                   "%" + postData.codename.toLowerCase()
                 ),
                 Sequelize.where(
-                  Sequelize.fn("LOWER", Sequelize.col("tk_name")),
+                  Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
                   "LIKE",
                   "%" + postData.codename.toLowerCase()
                 )
@@ -580,12 +580,12 @@ const TreatMent_Kit = () => {
         } else {
           findQuery.where[Op.or] = [
             Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("tk_code")),
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
               "LIKE",
               "%" + postData.codename.toLowerCase()
             ),
             Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("tk_name")),
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
               "LIKE",
               "%" + postData.codename.toLowerCase()
             )
@@ -594,7 +594,6 @@ const TreatMent_Kit = () => {
       }
 
       if (postData.departmentId && /\S/.test(postData.departmentId)) {
-        // findQuery.where['p_department_uuid'] = postData.departmentId;
         findQuery.where = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("d_uuid")),
           "LIKE",
@@ -602,11 +601,9 @@ const TreatMent_Kit = () => {
         );
       }
       if (postData.hasOwnProperty("status") && /\S/.test(postData.status)) {
-        //findQuery.where['p_is_active'] = postData.status;
         findQuery.where = { tk_is_active: postData.status };
       }
       if (postData.share && /\S/.test(postData.share)) {
-        // findQuery.where['p_department_uuid'] = postData.departmentId;
         findQuery.where = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("tk_is_public")),
           "LIKE",
