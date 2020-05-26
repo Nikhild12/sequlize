@@ -305,7 +305,6 @@ function PPVitalsList(getPatientVitals) {
   if (getPatientVitals && getPatientVitals.length > 0) {
     patient_vitals_list = getPatientVitals.map(pV => {
       return {
-        patient_vital_uuid: pV.pv_uuid,
         patient_uuid: pV.pv_patient_uuid,
         created_date: pV.pv_created_date,
         doctor_uuid: pV.pv_doctor_uuid,
@@ -355,6 +354,7 @@ function getPVlist(fetchedData, p_id, created_date) {
     pv_list = filteredData.map(pV => {
       return {
         // patient vital values
+        patient_vital_uuid: pV.pv_uuid,
         vital_master_uuid: pV.pv_vital_master_uuid,
         vital_value: pV.pv_vital_value,
         vital_performed_date: pV.pv_performed_date,
@@ -482,7 +482,6 @@ async function getPatientChiefComplaints(chief_complaint_uuids, patient_uuid, en
     order: [["pcc_uuid", "DESC"]],
 
   }, { returning: true });
-
   if (patient_cc_res) {
     let data = await getPatientChiefComplaintsOrganizeData(patient_cc_res);
     return data;
@@ -499,7 +498,6 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
     cc_result = patient_cc_res.map((item) => {
       return {
         // patient_cheif_complaint_uuid: item.pcc_uuid,
-        patient_cheif_complaint_uuid: item.pcc_uuid,
         created_date: item.pcc_created_date,
         patient_uuid: item.pcc_patient_uuid,
         institution_uuid: item.f_uuid,
@@ -536,6 +534,7 @@ function getCheifComplaintList(arr, patient_uuid, created_date) {
   });
   let data = filtered_data.map((item) => {
     return {
+      patient_cheif_complaint_uuid: item.pcc_uuid,
       cheif_complaint_uuid: item.pcc_chief_complaint_uuid,
       cheif_complaint_code: item.cc_code,
       cheif_complaint_name: item.cc_name,
