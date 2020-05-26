@@ -417,56 +417,84 @@ const profilesController = () => {
   @param {} req
   @param {} res
   */
-  const _getProfileById_old = async (req, res) => {
+  const _getProfileById = async (req, res) => {
 
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
-    if (user_uuid && profile_uuid) {
-      try {
-        const profileData = await profilesTbl.findAll({
-          attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
-          where: { uuid: profile_uuid, is_active: 1, status: 1 },
-          include: [
+    let findQuery = {
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+      where: { uuid: profile_uuid, is_active: 1, status: 1 },
+      include: [
+        {
+          model: profileSectionsTbl,
+          as: 'profile_sections',
+          attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+          where: { is_active: 1, status: 1 },
+          include: [{
+            model: sectionsTbl,
+            as: 'sections',
+            attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+            where: { is_active: 1, status: 1 },
+          },
+          {
+            model: profileSectionCategoriesTbl,
+            as: 'profile_section_categories',
+            attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+            where: { is_active: 1, status: 1 },
+            include: [{
+              model: categoriesTbl,
+              as: 'categories',
+              attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+              where: { is_active: 1, status: 1 },
+
+            },
             {
-              model: profileSectionsTbl,
-              as: 'profile_sections',
-              attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+              model: profileSectionCategoryConceptsTbl,
+              as: 'profile_section_category_concepts',
+              attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
               where: { is_active: 1, status: 1 },
               include: [{
-                model: sectionsTbl,
-                as: 'sections',
-                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+                model: valueTypesTbl,
+                as: 'value_types',
+                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
                 where: { is_active: 1, status: 1 },
               },
+              // include: [
               {
-                model: profileSectionCategoriesTbl,
-                as: 'profile_section_categories',
-                attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+                model: profileSectionCategoryConceptValuesTbl,
+                as: 'profile_section_category_concept_values',
+                attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
                 where: { is_active: 1, status: 1 },
-                include: [{
-                  model: categoriesTbl,
-                  as: 'categories',
-                  attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-                  where: { is_active: 1, status: 1 },
-
-                },
-                {
-                  model: profileSectionCategoryConceptsTbl,
-                  as: 'profile_section_category_concepts',
-                  attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-                  where: { is_active: 1, status: 1 },
-                  include: [{
-                    model: profileSectionCategoryConceptValuesTbl,
-                    as: 'profile_section_category_concept_values',
-                    attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
-                    where: { is_active: 1, status: 1 },
-                  }]
-                }]
               }]
+              //],
             }]
-        });
-        return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
+          }]
+        }]
 
+    };
+    let findQuery1 = {
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+      where: { uuid: profile_uuid, is_active: 1, status: 1 },
+      include: [
+        {
+          model: profileSectionsTbl,
+          as: 'profile_sections',
+          attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+          where: { is_active: 1, status: 1 }
+        }]
+
+    };
+    if (user_uuid && profile_uuid) {
+      try {
+        const profileData = await profilesTbl.findAll(findQuery);
+        // if (profileData[0].profile_sections[0].activity_uuid > 0) {
+        if (profileData.length == 0) {
+          const profileData1 = await profilesTbl.findAll(findQuery1);
+          return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData1 });
+        }
+        else {
+          return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
+        }
       } catch (ex) {
 
         console.log(`Exception Happened ${ex}`);
@@ -479,7 +507,7 @@ const profilesController = () => {
 
   };
 
-  const _getProfileById = async (req, res) => {
+  const _getProfileById1 = async (req, res) => {
 
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
