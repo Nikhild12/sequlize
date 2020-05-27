@@ -480,6 +480,7 @@ const ChiefComplaints = () => {
 
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
+      findQuery.where['status'] = getsearch.status;
     }
 
     try {
