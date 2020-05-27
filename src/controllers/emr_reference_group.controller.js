@@ -362,8 +362,8 @@ const referenceGroupController = () => {
 
        if (getsearch.search && /\S/.test(getsearch.search)) {
             findQuery.where[Op.or] = [
-                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
             ];
         }
@@ -371,14 +371,14 @@ const referenceGroupController = () => {
             if (findQuery.where[Op.or]) {
                 findQuery.where[Op.and] = [{
                     [Op.or]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
                     ]
                 }];
             } else {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.code')), getsearch.refCodeName.toLowerCase()),
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.name')), getsearch.refCodeName.toLowerCase()),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), getsearch.refCodeName.toLowerCase()),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), getsearch.refCodeName.toLowerCase()),
                 ];
             }
         }
@@ -386,12 +386,12 @@ const referenceGroupController = () => {
             if (findQuery.where[Op.or]) {
                 findQuery.where[Op.and] = [{
                     [Op.or]: [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
                     ]
                 }];
             } else {
                 findQuery.where[Op.or] = [
-                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_ref.module_uuid')), getsearch.moduleId)
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('module_uuid')), getsearch.moduleId)
                 ];
             }
         }

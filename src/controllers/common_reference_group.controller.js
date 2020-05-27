@@ -3,8 +3,7 @@ const httpStatus = require("http-status");
 const db = require("../config/sequelize");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-
-
+const checkDuplicate = require("../helpers/checkDuplicate.js");
 // const gender_tbl = db.gender;
 
 
@@ -227,24 +226,27 @@ const commonReferenceGroupController = () => {
 
         try {
             if (postData &&common_tbl && db[table_name]) {
-                common_tbl.findAll({
-                    where: {
-                        [Op.or]: [{
-                                code: postData.code
-                            },
-                            {
-                                name: postData.name
-                            }
-                        ]
-                    }
-                }).then(async (result) => {
-                    if (result.length != 0) {
-                        return res.send({
-                            statusCode: 400,
-                            status: "error",
-                            msg: "Please enter new common reference group"
-                        });
-                    } else {
+                duplicateResult = await checkDuplicate.checkExistsCreate(req.body,common_tbl,table_name);
+              
+                // common_tbl.findAll({
+                //     where: {
+                //         [Op.or]: [{
+                //                 code: postData.code
+                //             },
+                //             {
+                //                 name: postData.name
+                //             }
+                //         ]
+                //     }
+                // }).then(async (result) => {
+                //     if (result.length != 0) {
+                //         return res.send({
+                //             statusCode: 400,
+                //             status: "error",
+                //             msg: "Please enter new common reference group"
+                //         });
+                //     } 
+                if(duplicateResult.count == 0) {
                         await common_tbl.create(postData, {
                             returning: true
                         }).then(data => {
@@ -264,7 +266,15 @@ const commonReferenceGroupController = () => {
                             });
                         });
                     }
-                });
+                    else{
+                        return res.status(422).send({
+                            statusCode: 422,
+                            status: "failed",
+                            errorCode: duplicateResult.errorCode,
+                            msg: duplicateResult.msg
+                          });
+                    }
+                // });
 
                 // await common_tbl.create(dynamicField(postData, table_name, 1), {
                 //     returning: true,
@@ -327,8 +337,8 @@ const commonReferenceGroupController = () => {
 
         try {
 
-
-           
+duplicateResult = await checkDuplicate.checkExistsUpdate(req.body,common_tbl,tableName)
+           if(duplicateResult.count == 0){
             await common_tbl.update(dynamicField(postData, table_name, 0), {
                 // name: postData.name,
                 where: {
@@ -350,7 +360,14 @@ const commonReferenceGroupController = () => {
                     msg: "failed to update data",
                     error: err
                 });
-            });
+            });}else{
+                return res.status(422).send({
+                    statusCode: 422,
+                    status: "failed",
+                    errorCode: duplicateResult.errorCode,
+                    msg: duplicateResult.msg
+                  });
+            }
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;

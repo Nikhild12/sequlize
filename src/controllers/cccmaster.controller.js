@@ -104,20 +104,20 @@ const cccMasterController = () => {
             //     ];
             // }
 
-
+ 
             if (getsearch.search && /\S/.test(getsearch.search)) {
-                Object.assign(findQuery.where, {
+                Object.assign(findQuery.where, { 
                     [Op.or]: [
                         {
                             '$critical_care_charts.name$': {
                                 [Op.like]: '%' + getsearch.search + '%'
                             }
                         },
-                        // {
-                        //     '$critical_care_types.name$': {
-                        //         [Op.like]: '%' + getsearch.search + '%'
-                        //     }
-                        // }
+                        {
+                            '$critical_care_charts.code$': {
+                                [Op.like]: '%' + getsearch.search + '%'
+                            }
+                        }
                     ]
                 });
             }
@@ -134,6 +134,21 @@ const cccMasterController = () => {
                 }
             }
 
+            if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.name')), getsearch.codeName),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.code')), getsearch.codeName)
+                        ]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.name')), getsearch.codeName),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.code')), getsearch.codeName)
+                    ];
+                }
+            }
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
                 findQuery.where['status'] = getsearch.status;
