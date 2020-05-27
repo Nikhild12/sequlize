@@ -218,8 +218,8 @@ const vitalmstrController = () => {
         ];
       }
     }
-    if (getsearch.hasOwnProperty('is_active') && /\S/.test(getsearch.is_active)) {
-      findQuery.where['is_active'] = getsearch.is_active;
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+      findQuery.where['is_active'] = getsearch.status;
     }
 
     try {
