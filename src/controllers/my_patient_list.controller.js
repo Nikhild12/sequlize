@@ -27,69 +27,40 @@ const MyPatientListController = () => {
   const _getMyPatientListByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
     let { departmentId, from_date, to_date, doctor_id } = req.body;
-    let {
-      page_no,
-      page_size,
-      sort_order,
-      sort_field,
-      searchKey,
-      searchValue
-    } = req.body;
-    let defFromDate, defToDate;
-    let isFromDateValid, isToDateValid;
-    if (!from_date) {
-      defFromDate = moment().format("YYYY-MM-DD");
-      isFromDateValid = true;
-    } else {
-      defFromDate = moment(from_date).format("YYYY-MM-DD");
-      isFromDateValid = moment(from_date).isValid();
-    }
+    let { page_no, page_size, sort_order, sort_field, searchKey, searchValue } = req.body;
 
-    if (!to_date) {
-      defToDate = moment().format("YYYY-MM-DD");
-      isToDateValid = true;
-    } else {
-      defToDate = moment(to_date).format("YYYY-MM-DD");
-      isToDateValid = moment(to_date).isValid();
-    }
+    let isFromDateValid, isToDateValid, defFromDate, defToDate;
 
-    if (page_no) {
-      page_no = +page_no;
-      pageNo = page_no && !isNaN(page_no) ? page_no : pageNo;
-    }
-    if (page_size) {
-      page_size = +page_size;
-      pageSize = page_size && !isNaN(page_size) ? page_size : pageNo;
-    }
+    // Checking From Date
+    defFromDate = emr_utility.indiaTz(from_date).toDate();
+    isFromDateValid = emr_utility.checkDateValid(from_date);
 
-    sortOrder =
-      sort_order === "ASC" || sort_order === "DESC" ? sort_order : sortOrder;
+    // Checking To date
+    defToDate = emr_utility.indiaTz(to_date).toDate();
+    isToDateValid = emr_utility.checkDateValid(to_date);
+
+    // Checking Page Size and No
+    pageNo = page_no && !isNaN(+(page_no)) ? page_no : 0;
+    pageSize = page_size && !isNaN(+(page_size)) ? page_size : 10;
+
+    sortOrder = sort_order === "ASC" || sort_order === "DESC" ? sort_order : sortOrder;
     sortField = sort_field ? sort_field : sortField;
     if (
-      user_uuid &&
-      departmentId &&
-      isFromDateValid &&
-      isToDateValid &&
-      doctor_id
-    ) {
+      user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId) {
       try {
-        //
-        let mypatientListQuery = {};
-        mypatientListQuery.where = emr_utility.getDateQueryBtwColumn(
-          "ec_performed_date",
-          defFromDate,
-          defToDate
-        );
-        mypatientListQuery.where.ec_doctor_uuid = doctor_id;
-        mypatientListQuery.where.d_uuid = departmentId;
-        if (searchKey === "pa_pin" || searchKey === "pd_mobile") {
+        // 
+        let mypatientListQuery = {
+          where: {}
+        };
+        mypatientListQuery.where = emr_utility.comparingDateAndTime("ec_performed_date", defFromDate, defToDate);
+        mypatientListQuery.where.ec_doctor_uuid = +(doctor_id);
+        mypatientListQuery.where.d_uuid = +(departmentId);
+        if (["pa_pin", "pd_mobile", "p_old_pin"].includes(searchKey)) {
           mypatientListQuery.where[searchKey] = searchValue;
-          pageNo = 0;
-          pageSize = 10;
         }
 
         offset = pageNo * pageSize;
-        const myPatientList = await VWMyPatientList.findAll({
+        const myPatientList = await VWMyPatientList.findAndCountAll({
           offset: offset,
           limit: pageSize,
           order: [[`${sortField}`, `${sortOrder}`]],
@@ -97,20 +68,18 @@ const MyPatientListController = () => {
           attributes: myPatientlistAttributes.myPatientListAttributes
         });
         const returnMessage =
-          myPatientList.length > 0
-            ? emr_constants.MY_PATIENT_LIST
-            : emr_constants.NO_RECORD_FOUND;
+          myPatientList && myPatientList.rows.length > 0 ? emr_constants.MY_PATIENT_LIST : emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
           code: httpStatus.OK,
           message: returnMessage,
-          responseContents: getMyPatientListResponseForUIFormat(myPatientList),
-          responseLength: myPatientList.length
+          responseContents: myPatientList.rows,
+          responseLength: myPatientList.length,
+          totalRecords: myPatientList.count
         });
       } catch (ex) {
         console.log(ex);
         return res
-          .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+          .status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
     } else {
       offset;
@@ -126,15 +95,6 @@ const MyPatientListController = () => {
   };
 };
 module.exports = MyPatientListController();
-
-function getMyPatientListSearchQuery(offset, itemsPerPage, sortArr) {
-  return {
-    subQuery: false,
-    offset: offset,
-    limit: itemsPerPage,
-    order: [sortArr]
-  };
-}
 
 function getMyPatientListResponseForUIFormat(myPatientList) {
   return myPatientList.map(pL => {
