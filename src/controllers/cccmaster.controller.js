@@ -149,11 +149,14 @@ const cccMasterController = () => {
                     ];
                 }
             }
+            // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            //     findQuery.where['is_active'] = getsearch.status;
+            //     findQuery.where['status'] = getsearch.status;
+
+            // }
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
-                findQuery.where['status'] = getsearch.status;
-
-            }
+                }
             const data = await cccMasterTbl.findAndCountAll(findQuery)
             return res
                 .status(httpStatus.OK)
