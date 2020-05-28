@@ -537,7 +537,8 @@ const TreatMent_Kit = () => {
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
         where: {
           tk_status: 1, tk_is_active: 1
-        }
+        },
+        group: ['tk_uuid']
       };
 
       if (postData.search && /\S/.test(postData.search)) {
@@ -625,7 +626,7 @@ const TreatMent_Kit = () => {
             message: "Get Details Fetched successfully",
             req: "",
             responseContents: data.rows,
-            totalRecords: data.count
+            totalRecords: data.count.length ? data.count.length : data.count
           });
         })
         .catch(err => {
