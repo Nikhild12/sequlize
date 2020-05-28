@@ -178,35 +178,22 @@ const tmpmstrController = () => {
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
-        //let display_order = templateMasterReqData.display_order;
+        const temp_master_active = templateMasterReqData.is_active;
+
 
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
-        console.log(exists);
-        //chechking display order allocation
-        //const dspexists = await dspExists(display_order, userUUID);
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
             .send({ code: httpStatus[400], message: "Template name exists" });
-        }
-        // else if (dspexists && dspexists.length > 0) {
-        //   //template not exits and display order already allocated
-        //   return res.status(400).send({ code: httpStatus[400], message: "display order already allocated" });
-        // }
-        else if (
+        } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
-          userUUID &&
-          templateMasterReqData &&
-          templateMasterDetailsReqData.length > 0
+          userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
-          let createData = await createtemp(
-            userUUID,
-            templateMasterReqData,
-            templateMasterDetailsReqData
-          );
+          let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
             return res.status(200).send({
               code: httpStatus.OK,
@@ -1169,15 +1156,13 @@ function getTempData(temp_type_id, result) {
   }
 }
 
-async function createtemp(
-  userUUID,
-  templateMasterReqData,
-  templateMasterDetailsReqData
-) {
+async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, tIsActive) {
   templateMasterReqData = emr_utility.createIsActiveAndStatus(
     templateMasterReqData,
     userUUID
   );
+  templateMasterReqData.is_active = tIsActive ? 1 : 0;
+
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
 
   const templateMasterCreatedData = await tempmstrTbl.create(
@@ -1191,8 +1176,7 @@ async function createtemp(
     item.created_date = item.modified_date = new Date();
   });
   const dtls_result = await tempmstrdetailsTbl.bulkCreate(
-    templateMasterDetailsReqData,
-    { returning: true }
+    templateMasterDetailsReqData, { returning: true }
   );
   return {
     templateMasterReqData: templateMasterCreatedData,
