@@ -1,6 +1,7 @@
 const emr_constants = require("../config/constants");
 const Sequelize = require("sequelize");
 const moment = require("moment");
+const momentTimezone = require('moment-timezone');
 const request = require("request");
 const rp = require("request-promise");
 const Op = Sequelize.Op;
@@ -75,6 +76,15 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
   };
 };
 
+const _comparingDateAndTime = (col, fromDate, toDate) => {
+  return {
+    [col]: {
+      [Op.between]: [fromDate, toDate]
+    }
+  };
+};
+
+
 const _checkTATIsPresent = array => {
   return (isEveryEleTATHaving = array.every(pD => {
     return pD.tat_start_time && pD.tat_end_time;
@@ -96,7 +106,7 @@ const _postRequest = async (api, headers, data) => {
         headers: headers,
         json: data
       },
-      function(error, response, body) {
+      function (error, response, body) {
         console.log("\n body...", body);
 
         if (error) {
@@ -110,9 +120,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-                body.responseContents ||
-                body.benefMembers ||
-                body.req
+              body.responseContents ||
+              body.benefMembers ||
+              body.req
             );
           }
         } else if (body && body.status == "error") {
@@ -124,9 +134,9 @@ const _postRequest = async (api, headers, data) => {
           ) {
             resolve(
               body.responseContent ||
-                body.responseContents ||
-                body.benefMembers ||
-                body.req
+              body.responseContents ||
+              body.benefMembers ||
+              body.req
             );
           } else {
             reject(body);
@@ -170,6 +180,7 @@ const responseMessage = {
   dis: emr_constants.DISEASES_SUCCESS,
   p: emr_constants.PREVIOUS_PAT_CC_SUCCESS // Previous Patient Chief Complaints
 };
+
 const _getResponseMessageForSuccessRequest = (code, mName) => {
   if (code === 204) {
     return emr_constants.NO_RECORD_FOUND;
@@ -178,9 +189,26 @@ const _getResponseMessageForSuccessRequest = (code, mName) => {
   }
 };
 
+const _indiaTz = (date) => {
+  if (date && _checkDateValid(date)) {
+    return momentTimezone.tz(moment(date).toDate(), "Asia/Kolkata");
+  }
+  return momentTimezone.tz(Date.now(), "Asia/Kolkata");
+};
+
 const isEmpty = (obj) => {
-        return Object.keys(obj).length === 0;
-    };
+  return Object.keys(obj).length === 0;
+};
+
+const _checkDateValid = dateVar => {
+  if ((dateVar instanceof Date) || moment.isMoment(dateVar)) {
+    return true;
+  }
+  const parsedDate = Date.parse(dateVar);
+  return (isNaN(dateVar) && !isNaN(parsedDate));
+};
+
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -195,5 +223,8 @@ module.exports = {
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
   isStringValid: _isStringValid,
   isAllNumber: _isAllNumber,
-  isEmpty:isEmpty
+  isEmpty: isEmpty,
+  indiaTz: _indiaTz,
+  comparingDateAndTime: _comparingDateAndTime,
+  checkDateValid: _checkDateValid
 };

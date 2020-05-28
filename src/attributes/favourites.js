@@ -208,7 +208,7 @@ const _favouriteLabVWQuery = (uId, dId, labId = 0) => {
   const labValidation = !labId || labId === 0;
   const searchKey = labValidation ? 'fm_department_uuid' : 'fm_lab_uuid';
   const searchValue = labValidation ? dId : labId;
-  
+
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
@@ -246,29 +246,17 @@ const _favouriteRadVWQuery = (uId, dId) => {
     fm_status: emr_constants.IS_ACTIVE,
     fmd_active: emr_constants.IS_ACTIVE,
     fmd_status: emr_constants.IS_ACTIVE,
-    [Op.and]: [
+    fm_user_uuid: uId,
+    [Op.or]: [
       {
-        [Op.or]: [
-          {
-            fm_department_uuid: { [Op.eq]: dId },
-            // fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
-          },
-          { fm_user_uuid: { [Op.eq]: uId } },
-        ],
+        rtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        rtm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
       },
       {
-        [Op.or]: [
-          {
-            rtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-            rtm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-          },
-          {
-            rpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-            rpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-          },
-        ],
+        rpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        rpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
       },
-    ],
+    ]
   };
 };
 

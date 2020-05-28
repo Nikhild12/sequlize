@@ -43,7 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       ec_performed_date: {
         type: DataTypes.DATE
       },
-      ec_encounter_uuid:{
+      ec_encounter_uuid: {
+        type: DataTypes.INTEGER
+      },
+      p_old_pin: {
         type: DataTypes.INTEGER
       }
     },
