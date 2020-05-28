@@ -459,6 +459,7 @@ const ChiefComplaints = () => {
       findQuery.where[Op.or] = [
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.name')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.code')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%'),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('chief_complaints.description')), 'LIKE', '%' + getsearch.searchKey.toLowerCase() + '%')
 
       ];
     }
