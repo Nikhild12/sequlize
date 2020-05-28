@@ -178,11 +178,15 @@ const vitalmstrController = () => {
       offset: offset,
       where: { is_active: 1, status: 1 },
       limit: itemsPerPage,
-
+      include: [
+        {
+          model: vitalLonicTbl,
+          require: false,
+        }
+      ],
       order: [
         [sortField, sortOrder],
       ],
-
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -218,8 +222,8 @@ const vitalmstrController = () => {
         ];
       }
     }
-    if (getsearch.hasOwnProperty('is_active') && /\S/.test(getsearch.is_active)) {
-      findQuery.where['is_active'] = getsearch.is_active;
+    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+      findQuery.where['is_active'] = getsearch.status;
     }
 
     try {

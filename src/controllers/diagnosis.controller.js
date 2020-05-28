@@ -4,18 +4,8 @@ var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 
-// const vw_diagnosis = db.vw_diagnosis;
-const vw_uom_diagnosis = db.vw_uom_diagnosis
+const vw_uom_diagnosis = db.vw_uom_diagnosis;
 const diagnosisTbl = db.diagnosis;
-const diagverTb = db.diagnosis_version;
-const diagregionTb = db.diagnosis_region;
-const positionsTb = db.positions;
-const diaggradeTb = db.diagnosis_grade;
-const diagcatTb = db.diagnosis_category;
-const diagtypetb = db.diagnosis_type;
-const diagschetb = db.diagnosis_scheme;
-const bodysiteTb = db.body_site;
-const bodysideTb = db.body_side;
 
 const emr_utilites = require("../services/utility.service");
 
@@ -149,20 +139,19 @@ const diagnosisController = () => {
         const {
             user_uuid
         } = req.headers;
-        const searchValue = req.body.searchValue;
-        console.log(searchValue);
+        const { searchValue, paginationSize, pageNo } = req.body;
         if (user_uuid && searchValue) {
             try {
-                let pageNo = 0;
-                const itemsPerPage = searchValue.paginationSize ? searchValue.paginationSize : 10;
-                if (searchValue.pageNo) {
-                    let temp = parseInt(searchValue.pageNo);
+                let pageno = 0;
+                const itemsPerPage = paginationSize ? paginationSize : 10;
+                if (pageNo) {
+                    let temp = parseInt(pageNo);
                     if (temp && (temp != NaN)) {
-                        pageNo = temp;
+                        pageno = temp;
                     }
                 }
-                const offset = pageNo * itemsPerPage;
-                const diagnosisData = await diagnosisTbl.findAll({
+                const offset = pageno * itemsPerPage;
+                const diagnosisData = await diagnosisTbl.findAndCountAll({
                     where: getDiagnosisFilterByQuery("filterbythree", searchValue),
                     attributes: getDiagnosisAttributes().splice(0, 3),
                     offset: offset,
@@ -172,8 +161,8 @@ const diagnosisController = () => {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: "Fetched Diagnosis Data Successfully",
-                        responseContents: diagnosisData,
-
+                        responseContents: diagnosisData.rows,
+                        totalRecords: diagnosisData.count,
                     });
                 }
             } catch (error) {
@@ -270,12 +259,12 @@ const diagnosisController = () => {
         }
 
     };
-    
+
     const _getDiagnosis = async (req, res, next) => {
 
         let getsearch = req.body;
 
-        Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
+        // Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
 
         let pageNo = 0;
         const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
@@ -530,7 +519,7 @@ const diagnosisController = () => {
         const { searchValue } = req.body;
         let sortField = 'name';
         let sortOrder = 'ASC';
-        
+
         const isValidSearchVal = searchValue && emr_utilites.isStringValid(searchValue);
         if (searchValue && isValidSearchVal && user_uuid) {
             try {

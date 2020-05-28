@@ -104,20 +104,20 @@ const cccMasterController = () => {
             //     ];
             // }
 
-
+ 
             if (getsearch.search && /\S/.test(getsearch.search)) {
-                Object.assign(findQuery.where, {
+                Object.assign(findQuery.where, { 
                     [Op.or]: [
                         {
                             '$critical_care_charts.name$': {
                                 [Op.like]: '%' + getsearch.search + '%'
                             }
                         },
-                        // {
-                        //     '$critical_care_types.name$': {
-                        //         [Op.like]: '%' + getsearch.search + '%'
-                        //     }
-                        // }
+                        {
+                            '$critical_care_charts.code$': {
+                                [Op.like]: '%' + getsearch.search + '%'
+                            }
+                        }
                     ]
                 });
             }
@@ -134,11 +134,29 @@ const cccMasterController = () => {
                 }
             }
 
+            if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.name')), getsearch.codeName),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.code')), getsearch.codeName)
+                        ]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.name')), getsearch.codeName),
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.code')), getsearch.codeName)
+                    ];
+                }
+            }
+            // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            //     findQuery.where['is_active'] = getsearch.status;
+            //     findQuery.where['status'] = getsearch.status;
+
+            // }
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
-                findQuery.where['status'] = getsearch.status;
-
-            }
+                }
             const data = await cccMasterTbl.findAndCountAll(findQuery)
             return res
                 .status(httpStatus.OK)
@@ -523,7 +541,7 @@ const cccMasterController = () => {
             await cccMasterTbl.findAll({
                 attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
                     , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
-                    'status'],
+                    'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                 where: {
                     uuid: postData.Ccc_id, is_active: 1, status: 1
                 },
@@ -531,13 +549,15 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple',
+                            'is_default', 'is_mandatory', 'display_order', 'is_active', 'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                         where: { is_active: 1, status: 1 },
                         include: [
                             {
                                 model: conceptdetailsTbl,
                                 as: 'critical_care_concept_values',
-                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active', 'status'],
+                                attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active',
+                                    'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                                 where: { is_active: 1, status: 1 },
                             }
                         ]

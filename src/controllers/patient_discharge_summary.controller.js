@@ -516,7 +516,7 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
   if (patient_cc_res.length > 0) {
     cc_result = patient_cc_res.map((item) => {
       return {
-        patient_cheif_complaint_uuid: item.pcc_uuid,
+        
         created_date: item.pcc_created_date,
         patient_uuid: item.pcc_patient_uuid,
         institution_uuid: item.f_uuid,
@@ -553,6 +553,7 @@ function getCheifComplaintList(arr, patient_uuid, created_date) {
   });
   let data = filtered_data.map((item) => {
     return {
+      patient_cheif_complaint_uuid: item.pcc_uuid,
       cheif_complaint_uuid: item.pcc_chief_complaint_uuid,
       cheif_complaint_code: item.cc_code,
       cheif_complaint_name: item.cc_name,
