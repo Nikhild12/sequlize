@@ -178,11 +178,15 @@ const vitalmstrController = () => {
       offset: offset,
       where: { is_active: 1, status: 1 },
       limit: itemsPerPage,
-
+      include: [
+        {
+          model: vitalLonicTbl,
+          require: false,
+        }
+      ],
       order: [
         [sortField, sortOrder],
       ],
-
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
