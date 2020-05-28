@@ -135,6 +135,7 @@ app.get('/api/getAPIVersion', function (req, res) {
 const makeServiceCall = (req, res, next) => {
 	const modulename = "EMR";
 	let partUrl = req.url;
+	let resp_dt =new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'});
 	if (partUrl !== '/api/userslog/getUsersLogById') {
 		if (partUrl !== '/api/userslog/getUsersLog') {
 			if (req.headers) {
