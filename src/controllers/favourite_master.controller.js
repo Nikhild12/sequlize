@@ -226,10 +226,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
     tsm_favourite_type_uuid: tsmd_test_id,
     [activeKey]: emr_constants.IS_ACTIVE,
     [statusKey]: emr_constants.IS_ACTIVE,
-    [Op.or]: [
-      { tsm_dept: { [Op.eq]: dept_id }, tsm_public: { [Op.eq]: 1 } },
-      { tsm_userid: { [Op.eq]: user_uuid } },
-    ],
+    tsm_userid: user_uuid,
   };
 }
 
@@ -238,10 +235,7 @@ function getTreatmentQuery(dept_id, user_uuid) {
     fm_active: active_boolean,
     fm_status: active_boolean,
     fm_favourite_type_uuid: 8,
-    [Op.or]: [
-      { fm_dept: { [Op.eq]: dept_id }, fm_public: { [Op.eq]: 1 } },
-      { fm_userid: { [Op.eq]: user_uuid } },
-    ],
+    fm_userid: user_uuid
   };
 }
 
@@ -250,10 +244,7 @@ function getDietFavouriteQuery(dept_id, user_uuid) {
     fm_active: active_boolean,
     fm_status: active_boolean,
     fm_favourite_type_uuid: 9,
-    [Op.or]: [
-      { fm_dept: { [Op.eq]: dept_id }, fm_public: { [Op.eq]: 1 } },
-      { fm_userid: { [Op.eq]: user_uuid } },
-    ],
+    fm_userid: user_uuid
   };
 }
 
@@ -1496,13 +1487,7 @@ const getFavouritesQuery = (uId, fTyId, dId, labId) => {
         favourite_type_uuid: fTyId,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
-        [Op.or]: [
-          {
-            department_uuid: { [Op.eq]: dId },
-            // is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
-          },
-          { user_uuid: { [Op.eq]: uId } },
-        ],
+        user_uuid: uId,
       },
 
       include: [
