@@ -34,7 +34,7 @@ const tmpmstrController = () => {
     const { temp_type_id, dept_id, lab_id } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
-        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
+        if ([5, 6, 7, 8].includes(+(temp_type_id))) {
           return res.status(400).send({
             code: httpStatus[400],
             message: "templete type id must be 1 or 2 or 3 or 4 or 9"
@@ -47,7 +47,6 @@ const tmpmstrController = () => {
           lab_id
         );
         const templateList = await table_name.findAll(query);
-        //console.log("line no 41 ", templateList);
         return res.status(httpStatus.OK).json({
           statusCode: 200,
           responseContents: getTempData(temp_type_id, templateList),
@@ -1112,8 +1111,10 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
   return {
     attributes: { exclude: ["id", "createdAt", "updatedAt"] },
     where: {
-      user_uuid: user_uuid,
-      department_uuid: dept_id,
+      [Op.or]: [
+        { department_uuid: { [Op.eq]: dept_id }, is_public: { [Op.eq]: 1 } },
+        { user_uuid: { [Op.eq]: user_uuid } }
+      ],
       template_type_uuid: temp_type_id,
       status: 1,
       is_active: 1
