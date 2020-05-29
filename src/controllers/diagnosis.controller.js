@@ -197,17 +197,17 @@ const diagnosisController = () => {
                     if (tblname_exits && tblname_exits.length > 0) {
                         return res
                             .status(400)
-                            .send({ code: httpStatus[400], message: "code and name already exists" });
+                            .send({ code: 400, message: "code and name already exists" });
                     }
                     else if (code_exits && code_exits.length > 0) {
                         return res
                             .status(400)
-                            .send({ code: httpStatus[400], message: "code already exists" });
+                            .send({ code: 400, message: "code already exists" });
 
                     } else if (name_exits && name_exits.length > 0) {
                         return res
                             .status(400)
-                            .send({ code: httpStatus[400], message: "name already exists" });
+                            .send({ code: 400, message: "name already exists" });
 
                     } else {
 
