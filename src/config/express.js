@@ -133,7 +133,7 @@ app.get('/api/getAPIVersion', function (req, res) {
 
 //Logging - 19_02_2020
 const makeServiceCall = (req, res, next) => {
-	const modulename = "EMR";
+	const modulename = config.serverName;
 	let partUrl = req.url;
 	let resp_dt =new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'});
 	if (partUrl !== '/api/userslog/getUsersLogById') {
