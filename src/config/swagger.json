@@ -12884,27 +12884,28 @@
 		"getPatientListDetails": {
 			"type": "object",
 			"properties": {
-				"searchKey": {
-					"type": "string",
-					"example": "pa_pin or pd_mobile"
+				"pd_mobile": {
+					"type": "string"
 				},
-				"searchValue": {
-					"type": "string",
-					"example": "1"
+				"pd_pin": {
+					"type": "string"
 				},
-				"page_no": {
+				"p_old_pin": {
+					"type": "string"
+				},
+				"pageNo": {
 					"type": "integer",
-					"example": 1
+					"example": 0
 				},
-				"page_size": {
+				"paginationSize": {
 					"type": "integer",
-					"example": 1
+					"example": 10
 				},
-				"sort_field": {
+				"sortField": {
 					"type": "string",
 					"example": "d_uuid"
 				},
-				"sort_order": {
+				"sortOrder": {
 					"type": "string",
 					"example": "DESC"
 				},
