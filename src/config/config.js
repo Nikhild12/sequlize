@@ -85,6 +85,7 @@ const config = {
   wso2LisUrl: envVars.wso2_lisUrl,
   wso2RmisUrl: envVars.wso2RmisUrl,
   wso2InvestUrl: envVars.wso2InvestUrl,
-  wso2AppUrl: envVars.wso2AppUrl
+  wso2AppUrl: envVars.wso2AppUrl,
+  serverName: envVars.SERVER_NAME
 };
 module.exports = config;
