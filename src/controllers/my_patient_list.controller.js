@@ -16,18 +16,13 @@ const emr_utility = require("../services/utility.service");
 
 const myPatientlistAttributes = require("../attributes/my_patient_list");
 
-// Pagination Default Values
-let pageNo = 0;
-let sortOrder = "DESC";
-let sortField = "ec_performed_date";
-let pageSize = 10;
-let offset;
 
 const MyPatientListController = () => {
   const _getMyPatientListByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
     let { departmentId, from_date, to_date, doctor_id } = req.body;
-    let { page_no, page_size, sort_order, sort_field, searchKey, searchValue } = req.body;
+    let { pageNo, paginationSize, sortOrder, sortField } = req.body;
+    const rBody = req.body;
 
     let isFromDateValid, isToDateValid, defFromDate, defToDate;
 
@@ -40,11 +35,12 @@ const MyPatientListController = () => {
     isToDateValid = emr_utility.checkDateValid(to_date);
 
     // Checking Page Size and No
-    pageNo = page_no && !isNaN(+(page_no)) ? page_no : 0;
-    pageSize = page_size && !isNaN(+(page_size)) ? page_size : 10;
+    pageNo = pageNo && !isNaN(+(pageNo)) ? pageNo : 0;
+    paginationSize = paginationSize && !isNaN(+(paginationSize)) ? paginationSize : 10;
 
-    sortOrder = sort_order === "ASC" || sort_order === "DESC" ? sort_order : sortOrder;
-    sortField = sort_field ? sort_field : sortField;
+    // Checking Sort field and order
+    sortField = sortField && sortField === 'modified_date' ? 'ec_performed_date' : sortField;
+    sortOrder = sortOrder ? sortOrder : 'DESC';
     if (
       user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId) {
       try {
@@ -52,17 +48,19 @@ const MyPatientListController = () => {
         let mypatientListQuery = {
           where: {}
         };
+
+        // if ()
         mypatientListQuery.where = emr_utility.comparingDateAndTime("ec_performed_date", defFromDate, defToDate);
         mypatientListQuery.where.ec_doctor_uuid = +(doctor_id);
         mypatientListQuery.where.d_uuid = +(departmentId);
-        if (["pa_pin", "pd_mobile", "p_old_pin"].includes(searchKey)) {
-          mypatientListQuery.where[searchKey] = searchValue;
-        }
 
-        offset = pageNo * pageSize;
+        mypatientListQuery.where = getSearchValue(rBody, mypatientListQuery.where);
+
+
+        offset = pageNo * paginationSize;
         const myPatientList = await VWMyPatientList.findAndCountAll({
           offset: offset,
-          limit: pageSize,
+          limit: paginationSize,
           order: [[`${sortField}`, `${sortOrder}`]],
           where: mypatientListQuery.where,
           attributes: myPatientlistAttributes.myPatientListAttributes
@@ -116,3 +114,17 @@ function getMyPatientListResponseForUIFormat(myPatientList) {
     };
   });
 }
+
+
+const getSearchValue = (object, target) => {
+  if (object.hasOwnProperty('pd_mobile')) {
+    target['pd_mobile'] = object['pd_mobile'];
+  } else if (object.hasOwnProperty('pd_pin')) {
+    target['pa_pin'] = object['pd_pin'];
+  } else if (object.hasOwnProperty('p_old_pin')) {
+    target['p_old_pin'] = object['p_old_pin'];
+  } else {
+    return target;
+  }
+  return target;
+};
