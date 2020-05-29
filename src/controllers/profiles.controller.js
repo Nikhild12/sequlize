@@ -260,10 +260,10 @@ const profilesController = () => {
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
       // let sortArr = ['p_created_date', 'DESC'];
-      let sortArr = [];
+
       let sortField = 'p_created_date';
       let sortOrder = 'DESC';
-
+      let sortArr = [sortField, sortOrder];
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
         if (temp && (temp != NaN)) {
@@ -299,17 +299,17 @@ const profilesController = () => {
         offset: offset,
         limit: itemsPerPage,
         where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type },
-        // order: [
-        //   sortArr
-        // ],
         order: [
-          [sortField, sortOrder],
+          sortArr
         ],
+        // order: [
+        //   [sortField, sortOrder],
+        // ],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
 
       };
 
-
+      console.log('findQuery===', findQuery);
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
