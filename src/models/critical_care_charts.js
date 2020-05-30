@@ -63,15 +63,15 @@ module.exports = (sequelize, DataTypes) => {
             loinc_code_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
-                    },
-                    min: 0
-                }
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
+                //     },
+                //     min: 0
+                // }
             },
             comments: {
                 type: DataTypes.STRING(225),
