@@ -94,7 +94,7 @@ const cccMasterController = () => {
                         attributes: ['uuid', 'name']
                     }
                 ],
-
+                distinct: true
             };
             // if (getsearch.search && /\S/.test(getsearch.search)) {
             //     findQuery.where[Op.or] = [
@@ -104,9 +104,9 @@ const cccMasterController = () => {
             //     ];
             // }
 
- 
+
             if (getsearch.search && /\S/.test(getsearch.search)) {
-                Object.assign(findQuery.where, { 
+                Object.assign(findQuery.where, {
                     [Op.or]: [
                         {
                             '$critical_care_charts.name$': {
@@ -156,7 +156,7 @@ const cccMasterController = () => {
             // }
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
-                }
+            }
             const data = await cccMasterTbl.findAndCountAll(findQuery)
             return res
                 .status(httpStatus.OK)
