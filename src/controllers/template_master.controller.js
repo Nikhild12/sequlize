@@ -180,6 +180,7 @@ const tmpmstrController = () => {
         const temp_master_active = templateMasterReqData.is_active;
 
 
+
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
@@ -192,6 +193,8 @@ const tmpmstrController = () => {
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
+
+          templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
             return res.status(200).send({
