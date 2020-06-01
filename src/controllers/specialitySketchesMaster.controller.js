@@ -400,7 +400,7 @@ const specialitySketchesMasterController = () => {
             });
             if (data) {
 
-                const getcuDetails = await getuserDetails(user_uuid, data.dataValues.created_by, req.headers.authorization);
+                // const getcuDetails = await getuserDetails(user_uuid, data.dataValues.created_by, req.headers.authorization);
                 // const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
                 // const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
                 // const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
