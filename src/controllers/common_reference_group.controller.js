@@ -206,8 +206,8 @@ const commonReferenceGroupController = () => {
                 order: [
                     [sortField, sortOrder],
                 ],
-                where: { status: 1 },
             };
+            query1 = Sequelize.where(Sequelize.col(table_name + '.status'), 1);
 
             if (postData.name != null && postData.name != "") {
                 if (query1 != null) {
