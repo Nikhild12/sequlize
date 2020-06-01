@@ -393,23 +393,27 @@ const specialitySketchesMasterController = () => {
                 limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
+                    required: false,
                     attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
                     where: { status: 1, is_active: 1 }
                 }]
             });
-
             if (data) {
-                const getcuDetails = await getuserDetails(user_uuid, data.created_by, req.headers.authorization);
-                const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
-                const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
-                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
+
+                const getcuDetails = await getuserDetails(user_uuid, data.dataValues.created_by, req.headers.authorization);
+                // const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
+                // const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
+                // const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
+                // console.log(getdep);
+                
+                // console.log("getcuDetails",getcuDetails, ">>>>>>>>", "getmuDetails",getmuDetails, ">>>>>>>>", "getdep",getdep, ">>>>>>>>", "getdata",getdata);
 
                 return res
                     .status(httpStatus.OK)
                     .json({
                         statusCode: 200,
                         req: '',
-                        responseContents: getdata
+                        responseContents: data
                     });
 
             }
@@ -430,7 +434,7 @@ const specialitySketchesMasterController = () => {
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
                 .json({
                     status: "error",
-                    msg: errorMsg
+                    msg: err
                 });
         }
     };

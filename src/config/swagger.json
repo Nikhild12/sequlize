@@ -435,6 +435,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
 						"in": "body",
 						"name": "Speciality_id",
 						"required": true,

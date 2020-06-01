@@ -57,12 +57,17 @@ const cccMasterController = () => {
                     sortArr.push(getsearch.sortOrder);
                 }
             }
+
+            sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
+            sortArry = [sortArr[0], sortArr[1], sortArr[2]];
+            console.log(sortArry);
+
             let findQuery = {
                 // subQuery: false,
 
                 where: { is_active: 1, status: 1 },
                 order: [
-                    sortArr
+                    sortArry
                 ],
                 //  attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 offset: offset,

@@ -460,14 +460,15 @@ const commonReferenceGroupController = () => {
 
         try {
 
-            duplicateResult = await checkDuplicate.checkExistsUpdate(req.body, common_tbl, tableName)
-            if (duplicateResult.count == 0) {
-                await common_tbl.update(dynamicField(postData, table_name, 0), {
-                    // name: postData.name,
-                    where: {
-                        uuid: postData.Id
-                    }
-                }).then((data) => {
+duplicateResult = await checkDuplicate.checkExistsUpdate(req.body,common_tbl,table_name)
+           if(duplicateResult.count == 0){
+            await common_tbl.update(dynamicField(postData, table_name, 0), {
+                // name: postData.name,
+                where: {
+                    uuid: postData.Id
+                }
+            }).then((data) => {
+                
 
 
                     res.send({
