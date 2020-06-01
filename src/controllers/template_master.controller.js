@@ -85,7 +85,8 @@ const tmpmstrController = () => {
       }
       if (tempuuid) {
         const updatedtempData = {
-          status: 0,
+          status: emr_constants.IS_IN_ACTIVE,
+          is_active: emr_constants.IS_IN_ACTIVE,
           modified_by: userUUID,
           modified_date: new Date()
         };
@@ -468,15 +469,14 @@ const tmpmstrController = () => {
         [Op.like]: "%" + getsearch.name + "%"
       };
     }
-
-    if (getsearch.template_type_uuid && /\S/.test(getsearch.tm_template_type_uuid)) {
+    if (getsearch.template_type_uuid && /\S/.test(getsearch.template_type_uuid)) {
       findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
 
     }
 
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-      //findQuery.where['is_active'] = getsearch.status;
-      findQuery.where['tm_status'] = getsearch.status;
+      findQuery.where['is_active'] = getsearch.status;
+      //findQuery.where['tm_status'] = getsearch.status;
     }
     try {
       if (user_uuid) {

@@ -15033,6 +15033,12 @@
 				"sortField": {
 					"type": "string",
 					"example": "f_name"
+				},
+				"template_type_uuid": {
+					"type": "integer"
+				},
+				"status": {
+					"type": "string"
 				}
 			}
 		},
