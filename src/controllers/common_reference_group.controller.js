@@ -518,7 +518,7 @@ duplicateResult = await checkDuplicate.checkExistsUpdate(req.body,common_tbl,tab
                 await common_tbl.update({
                     is_active: 0,
                     status: 0,
-                    // modified_by: postData.modified_by
+                    modified_by: req.headers.user_uuid
                 }, {
                     where: {
                         uuid: postData.Id
