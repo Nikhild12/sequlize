@@ -198,7 +198,7 @@ const diagnosisController = () => {
                         return res
                             .status(200)
                             .send({ code: 400, message: "code and name already exists" });
-                    }
+                    } 
                     else if (code_exits && code_exits.length > 0) {
                         return res
                             .status(200)

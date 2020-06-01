@@ -194,7 +194,7 @@ const tmpmstrController = () => {
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
 
-          templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
+          // templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
             return res.status(200).send({
