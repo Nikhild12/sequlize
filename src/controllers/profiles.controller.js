@@ -317,23 +317,44 @@ const profilesController = () => {
 
         ];
       }
-      if (getsearch.codename && /\S/.test(getsearch.codename)) {
+      if (req.body.codename && /\S/.test(req.body.codename)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
             [Op.or]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_code')), getsearch.codename.toLowerCase()),
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), getsearch.codename.toLowerCase())
-
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')),'LIKE', '%' + req.body.codename.toLowerCase()+ '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' +req.body.codename.toLowerCase()+ '%'),
             ]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_code')), getsearch.codename.toLowerCase()),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), getsearch.codename.toLowerCase())
-
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')),'LIKE', '%' + req.body.codename.toLowerCase()+ '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' +req.body.codename.toLowerCase()+ '%'),
           ];
         }
       }
+      // if (getsearch.codename && /\S/.test(getsearch.codename)) {
+      //   Object.assign(findQuery.where, {
+      //     [Op.or]: [
+      //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), getsearch.codename.toLowerCase()),
+      //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), getsearch.codename.toLowerCase())
+      //           ]
+      //   })
+      //   // if (findQuery.where[Op.or]) {
+      //   //   findQuery.where[Op.and] = [{
+      //   //     [Op.or]: [
+      //   //       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), getsearch.codename.toLowerCase()),
+      //   //       Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), getsearch.codename.toLowerCase())
+
+      //   //     ]
+      //   //   }];
+      //   // } else {
+      //   //   findQuery.where[Op.or] = [
+      //   //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), getsearch.codename.toLowerCase()),
+      //   //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), getsearch.codename.toLowerCase())
+
+      //   //   ];
+      //   // }
+      // }
       if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
@@ -351,6 +372,7 @@ const profilesController = () => {
         findQuery.where['p_status'] = getsearch.status;
 
       }
+console.log(">>>>>",JSON.stringify(findQuery));
 
 
       await profilesViewTbl.findAndCountAll(findQuery)

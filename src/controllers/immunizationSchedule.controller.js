@@ -63,7 +63,7 @@ const immunizationScheduleController = () => {
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
-                 is_active:1,status:1
+                 is_active:1
                 }
             };
          if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -91,10 +91,9 @@ const immunizationScheduleController = () => {
 
   
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-     findQuery.where['is_active'] = getsearch.status;
-     findQuery.where['status'] = getsearch.status;
-
-     }
+        findQuery.where['is_active'] = getsearch.status;
+        // findQuery.where['status'] = getsearch.status;
+     }     
             await vw_immunische.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
@@ -307,7 +306,7 @@ const immunizationScheduleController = () => {
 
     const updateimmunizationScheduleById = async (req, res, next) => {
         let postData = req.body;
-        postData.status=postData.is_active;
+        // postData.status=postData.is_active;
 
         postData.modified_by = req.headers.user_uuid;
         postData.modifed_date=new Date();

@@ -85,7 +85,8 @@ const tmpmstrController = () => {
       }
       if (tempuuid) {
         const updatedtempData = {
-          status: 0,
+          status: emr_constants.IS_IN_ACTIVE,
+          is_active: emr_constants.IS_IN_ACTIVE,
           modified_by: userUUID,
           modified_date: new Date()
         };
@@ -180,6 +181,7 @@ const tmpmstrController = () => {
         const temp_master_active = templateMasterReqData.is_active;
 
 
+
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
@@ -192,6 +194,8 @@ const tmpmstrController = () => {
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
+
+          // templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
             return res.status(200).send({
@@ -465,15 +469,14 @@ const tmpmstrController = () => {
         [Op.like]: "%" + getsearch.name + "%"
       };
     }
-
-    if (getsearch.template_type_uuid && /\S/.test(getsearch.tm_template_type_uuid)) {
+    if (getsearch.template_type_uuid && /\S/.test(getsearch.template_type_uuid)) {
       findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
 
     }
 
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-      //findQuery.where['is_active'] = getsearch.status;
-      findQuery.where['tm_status'] = getsearch.status;
+      findQuery.where['is_active'] = getsearch.status;
+      //findQuery.where['tm_status'] = getsearch.status;
     }
     try {
       if (user_uuid) {

@@ -57,12 +57,21 @@ const cccMasterController = () => {
                     sortArr.push(getsearch.sortOrder);
                 }
             }
+
+            // sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
+            // sortArry = [sortArr[0], sortArr[1], sortArr[2]];
+            if(sortArr.length > 2){
+                sortArry = [sortArr[0], sortArr[1],sortArr[2]];
+            } else {
+                sortArry = [sortArr[0], sortArr[1]];
+            }
+            
             let findQuery = {
                 // subQuery: false,
 
                 where: { is_active: 1, status: 1 },
                 order: [
-                    sortArr
+                    sortArry
                 ],
                 //  attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 offset: offset,
@@ -77,8 +86,9 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid','concept_code','concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
+                        subQuery: false,
                         include: [
                             {
                                 model: conceptdetailsTbl,
@@ -168,6 +178,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
+            console.log(err,"sdfsdf")
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
