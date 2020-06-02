@@ -58,9 +58,10 @@ const cccMasterController = () => {
                 }
             }
 
-            sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
-            sortArry = [sortArr[0], sortArr[1], sortArr[2]];
-            console.log(sortArry);
+            // sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
+            // sortArry = [sortArr[0], sortArr[1], sortArr[2]];
+            sortArry = [sortArr[0], sortArr[1],sortArr[2]];
+            console.log(sortArry,"console");
 
             let findQuery = {
                 // subQuery: false,
@@ -82,8 +83,9 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid',['concept_code','concept_code'], 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
+                        subQuery: false,
                         include: [
                             {
                                 model: conceptdetailsTbl,
