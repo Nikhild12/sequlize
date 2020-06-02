@@ -186,6 +186,42 @@ module.exports = (sequelize, DataTypes) => {
       },
       tsmd_treatment_kit_uuid: {
         type: DataTypes.INTEGER
+      },
+      uct_name: {
+        type: DataTypes.STRING
+      },
+      uc_first_name: {
+        type: DataTypes.STRING
+      },
+      uc_middle_name: {
+        type: DataTypes.STRING
+      },
+      uc_last_name: {
+        type: DataTypes.STRING
+      },
+      umt_name: {
+        type: DataTypes.STRING
+      },
+      um_first_name: {
+        type: DataTypes.STRING
+      },
+      um_middle_name: {
+        type: DataTypes.STRING
+      },
+      um_last_name: {
+        type: DataTypes.STRING
+      },
+      fa_uuid: {
+        type: DataTypes.INTEGER
+      },
+      fa_name: {
+        type: DataTypes.STRING
+      },
+      de_uuid: {
+        type: DataTypes.INTEGER
+      },
+      de_name: {
+        type: DataTypes.STRING
       }
     }
   );

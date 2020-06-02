@@ -18,7 +18,19 @@ const _favouriteDietAttributes = [
   "df_code",
   "df_name",
   "dc_code",
-  "dc_name"
+  "dc_name",
+  "uct_name",
+  "uc_first_name",
+  "uc_middle_name",
+  "uc_last_name",
+  "umt_name",
+  "um_first_name",
+  "um_middle_name",
+  "um_last_name",
+  "fa_uuid",
+  "fa_name",
+  "dp_uuid",
+  "dp_name"
 ];
 
 module.exports = {

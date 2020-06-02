@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            fm_favourite_type_uuid :{
+            fm_favourite_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            fm_is_public:{
+            fm_is_public: {
                 type: DataTypes.BOOLEAN
             },
             fmd_uuid: {
@@ -33,89 +33,125 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            fmd_active:{
+            fmd_active: {
                 type: DataTypes.BOOLEAN
             },
-            fmd_status:{
+            fmd_status: {
                 type: DataTypes.BOOLEAN
             },
-            fm_description:{
+            fm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            fm_display_order:{
+            fm_display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            fmd_test_master_uuid:{
+            fmd_test_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            fm_status:{
+            fm_status: {
                 type: DataTypes.BOOLEAN
             },
-            fm_is_active:{
+            fm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            ltm_uuid:{
+            ltm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ltm_code:{
+            ltm_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            ltm_name:{
+            ltm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            ltm_description:{
+            ltm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            ltm_lab_master_type_uuid:{
+            ltm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ltm_status:{
+            ltm_status: {
                 type: DataTypes.BOOLEAN
             },
-            ltm_is_active:{
+            ltm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            lpm_uuid:{
+            lpm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_profile_code:{
+            lpm_profile_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            lpm_name:{
+            lpm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            lpm_description:{
+            lpm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            lpm_lab_master_type_uuid:{
+            lpm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_status:{
+            lpm_status: {
                 type: DataTypes.BOOLEAN
             },
-            lpm_is_active:{
+            lpm_is_active: {
                 type: DataTypes.BOOLEAN
+            },
+            uct_name: {
+                type: DataTypes.STRING
+            },
+            uc_first_name: {
+                type: DataTypes.STRING
+            },
+            uc_middle_name: {
+                type: DataTypes.STRING
+            },
+            uc_last_name: {
+                type: DataTypes.STRING
+            },
+            umt_name: {
+                type: DataTypes.STRING
+            },
+            um_first_name: {
+                type: DataTypes.STRING
+            },
+            um_middle_name: {
+                type: DataTypes.STRING
+            },
+            um_last_name: {
+                type: DataTypes.STRING
+            },
+            fa_uuid: {
+                type: DataTypes.INTEGER
+            },
+            fa_name: {
+                type: DataTypes.STRING
+            },
+            dp_uuid: {
+                type: DataTypes.INTEGER
+            },
+            dp_name: {
+                type: DataTypes.STRING
             }
         },
         {
-            tableName: "vw_favourite_lab" ,
+            tableName: "vw_favourite_lab",
             timestamps: false
         }
-        
+
     );
-   
+
     return VW_FAVOURITE_LAB;
 };

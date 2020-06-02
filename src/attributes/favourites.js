@@ -155,6 +155,18 @@ const favouriteViewAttributes = [
   "fmd_active",
   "fmd_status",
   "fmd_test_master_uuid",
+  "uct_name",
+  "uc_first_name",
+  "uc_middle_name",
+  "uc_last_name",
+  "umt_name",
+  "um_first_name",
+  "um_middle_name",
+  "um_last_name",
+  "fa_uuid",
+  "fa_name",
+  "dp_uuid",
+  "dp_name"
 ];
 
 const _favouriteLabVWAttributes = () => {
@@ -276,6 +288,10 @@ const _favouriteLabResponse = (records) => {
       profile_master_code: r.lpm_profile_code,
       profile_master_name: r.lpm_name,
       profile_master_description: r.lpm_description,
+      created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
+      modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
+      facility_name: r.fa_name,
+      department_name: r.dp_name
     };
   });
 };
@@ -296,6 +312,10 @@ const _favouriteRadResponse = (records) => {
       profile_master_code: r.rpm_profile_code,
       profile_master_name: r.rpm_name,
       profile_master_description: r.rpm_description,
+      created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
+      modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
+      facility_name: r.fa_name,
+      department_name: r.dp_name
     };
   });
 };
