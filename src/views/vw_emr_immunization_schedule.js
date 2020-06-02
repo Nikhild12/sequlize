@@ -158,7 +158,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             tableName: "vw_emr_immunization_schedule",
-            timestamps: false
+            timestamps: false,
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
     vw_emr_immunization_schedule.associate = models => {
