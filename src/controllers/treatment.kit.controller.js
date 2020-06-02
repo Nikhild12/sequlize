@@ -489,7 +489,7 @@ const TreatMent_Kit = () => {
   };
 
   // Get All  TreatmentKit List
-  const _getAllTreatmentKit = async (req, res, next) => {
+  const _getAllTreatmentKit1 = async (req, res, next) => {
     try {
       const postData = req.body;
       let pageNo = 0;
@@ -643,6 +643,151 @@ const TreatMent_Kit = () => {
       });
     }
   };
+
+  const _getAllTreatmentKit = async (req, res, next) => {
+    try {
+      const getsearch = req.body;    
+      let pageNo = 0;
+      const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+     
+    let sortArr = ["tk_uuid", "DESC"];    
+      let sortOrder = 'DESC';
+      if (getsearch.pageNo) {
+        let temp = parseInt(getsearch.pageNo);
+        if (temp && (temp != NaN)) {
+          pageNo = temp;
+        }
+      }
+      const offset = pageNo * itemsPerPage;
+      let fieldSplitArr = [];
+      if (getsearch.sortField) {
+        if (getsearch.sortField == 'modified_date') {
+          getsearch.sortField = 'modified_date';
+        }
+        fieldSplitArr = getsearch.sortField.split('.');
+        if (fieldSplitArr.length == 1) {
+          sortArr[0] = getsearch.sortField;
+        } else {
+          for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+            const element = fieldSplitArr[idx];
+            fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+          }
+          sortArr = fieldSplitArr;
+        }
+      }
+      if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+        if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+          sortArr[1] = getsearch.sortOrder;
+        } else {
+          sortArr.push(getsearch.sortOrder);
+        }
+      }
+      let findQuery = {
+        subQuery: false,
+        offset: offset,
+        limit: itemsPerPage,
+        where: { tk_status: 1, tk_is_active: 1 },
+        order: [sortArr],       
+        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+        group:['tk_uuid']
+       
+      };     
+      if (getsearch.search && /\S/.test(getsearch.search)) {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+
+        ];
+      }
+      if (req.body.codeName && /\S/.test(req.body.codeName)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')),'LIKE', '%' + req.body.codeName.toLowerCase()+ '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' +req.body.codeName.toLowerCase()+ '%'),
+            ]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')),'LIKE', '%' + req.body.codeName.toLowerCase()+ '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' +req.body.codeName.toLowerCase()+ '%'),
+          ];
+        }
+      }
+     
+      if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.d_uuid')), getsearch.departmentId)]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.d_uuid')), getsearch.departmentId)
+          ];
+        }
+      }
+
+      if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' +getsearch.createdBy.toLowerCase()+ '%')]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' +getsearch.createdBy.toLowerCase()+ '%')
+          ];
+        }
+      }
+
+      if (getsearch.share && /\S/.test(getsearch.share)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)
+          ];
+        }
+      }    
+
+      if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+        findQuery.where['tk_is_active'] = getsearch.status;}
+     
+      await treatmentKitViewTbl
+        .findAndCountAll(findQuery)
+        .then((data) => {
+          return res
+            .status(httpStatus.OK)
+            .json({
+              statusCode: 200,
+              message: "Get Details Fetched successfully",
+              req: '',
+              responseContents: data.rows,
+            totalRecords: data.count.length ? data.count.length : data.count
+            });
+        })
+        .catch(err => {
+          return res
+            .status(409)
+            .json({
+              statusCode: 409,
+              error: err
+            });
+        });
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  };
+
+
 
   const _deleteTreatmentKit = async (req, res) => {
     const { user_uuid } = req.headers;
