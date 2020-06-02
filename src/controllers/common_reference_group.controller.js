@@ -256,7 +256,7 @@ const commonReferenceGroupController = () => {
                 postingData['where'] = query1;
             }
             console.log(postingData);
-            
+
             await common_tbl.findAndCountAll(postingData).then((data) => {
                 return res
                     .status(httpStatus.OK)
@@ -349,7 +349,7 @@ const commonReferenceGroupController = () => {
 
         try {
             if (postData && common_tbl && db[table_name]) {
-                duplicateResult = await checkDuplicate.checkExistsCreate(req.body, common_tbl, table_name);
+                duplicateResult = await checkDuplicate.checkRefGroupExistsCreate(req.body, common_tbl, table_name);
 
                 // common_tbl.findAll({
                 //     where: {
@@ -460,15 +460,15 @@ const commonReferenceGroupController = () => {
 
         try {
 
-duplicateResult = await checkDuplicate.checkExistsUpdate(req.body,common_tbl,table_name)
-           if(duplicateResult.count == 0){
-            await common_tbl.update(dynamicField(postData, table_name, 0), {
-                // name: postData.name,
-                where: {
-                    uuid: postData.Id
-                }
-            }).then((data) => {
-                
+            duplicateResult = await checkDuplicate.checkRefGroupExistsUpdate(req.body, common_tbl, table_name)
+            if (duplicateResult.count == 0) {
+                await common_tbl.update(dynamicField(postData, table_name, 0), {
+                    // name: postData.name,
+                    where: {
+                        uuid: postData.Id
+                    }
+                }).then((data) => {
+
 
 
                     res.send({
