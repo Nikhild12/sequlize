@@ -542,7 +542,9 @@ const TreatMent_Kit = () => {
       };
 
       if (postData.search && /\S/.test(postData.search)) {
-        findQuery.where[Op.or] = [
+
+        findQuery.where = Object.assign(findQuery.where, {
+         [Op.or] : [
           Sequelize.where(
             Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
             "LIKE",
@@ -558,10 +560,13 @@ const TreatMent_Kit = () => {
             "LIKE",
             "%" + postData.search.toLowerCase() + "%"
           )
-        ];
+        ]
+      })
+      
       }
       if (postData.codename && /\S/.test(postData.codename)) {
-        findQuery.where = Object.assign(findQuery.where, {
+       
+        /* findQuery.where = Object.assign(findQuery.where, {
           [Op.or]: [
             Sequelize.where(
               Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
@@ -572,7 +577,19 @@ const TreatMent_Kit = () => {
                postData.codename.toLowerCase()
             )
           ]
-        });
+        }); */
+
+        let sharddname =  Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
+          postData.codename.toLowerCase()
+        ) 
+
+        let sharddname1 =  Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
+          postData.codename.toLowerCase()
+        ) 
+
+        findQuery.where = Object.assign(findQuery.where,{ [Op.or]: [sharddname,sharddname1]});
 
         /* if (findQuery.where[Op.or]) {
           
@@ -623,22 +640,19 @@ const TreatMent_Kit = () => {
         });
         /* findQuery.where = { tk_is_active: postData.status }; */
       }
-      if (postData.share && /\S/.test(postData.share)) {      
-        
-        findQuery.where = Object.assign(findQuery.where,{
-          [Op.and]:[ Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("tk_is_public")),
-           postData.share
-        ) ]});
+      if (postData.hasOwnProperty("status") && /\S/.test(postData.share)) {     
+         findQuery.where = Object.assign(findQuery.where, {
+          "tk_is_public": postData.share
+        });       
 
       }
-      if (postData.createdBy && /\S/.test(postData.createdBy)) {
-
-        findQuery.where = Object.assign(findQuery.where,{
-          [Op.and]:[ Sequelize.where(
+      if (postData.createdBy && /\S/.test(postData.createdBy)) {      
+        let shardd =  Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
            postData.createdBy
-        ) ]});
+        ) 
+        findQuery.where = Object.assign(findQuery.where,{shardd
+          });
 
 
         /* findQuery.where = Sequelize.where(
