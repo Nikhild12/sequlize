@@ -61,7 +61,7 @@ const cccMasterController = () => {
             // sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
             // sortArry = [sortArr[0], sortArr[1], sortArr[2]];
             sortArry = [sortArr[0], sortArr[1],sortArr[2]];
-            console.log(sortArry,"console");
+            // console.log(sortArry,"console");
 
             let findQuery = {
                 // subQuery: false,
