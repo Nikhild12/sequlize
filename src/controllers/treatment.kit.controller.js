@@ -561,19 +561,31 @@ const TreatMent_Kit = () => {
         ];
       }
       if (postData.codename && /\S/.test(postData.codename)) {
-        if (findQuery.where[Op.or]) {
+        findQuery.where = Object.assign(findQuery.where, {
+          [Op.or]: [
+            Sequelize.where(
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
+              postData.codename.toLowerCase()
+            ),
+            Sequelize.where(
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
+               postData.codename.toLowerCase()
+            )
+          ]
+        });
+
+        /* if (findQuery.where[Op.or]) {
+          
           findQuery.where[Op.and] = [
             {
               [Op.or]: [
                 Sequelize.where(
                   Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-                  "LIKE",
-                  "%" + postData.codename.toLowerCase()
+                  postData.codename.toLowerCase()
                 ),
                 Sequelize.where(
                   Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-                  "LIKE",
-                  "%" + postData.codename.toLowerCase()
+                   postData.codename.toLowerCase()
                 )
               ]
             }
@@ -582,41 +594,59 @@ const TreatMent_Kit = () => {
           findQuery.where[Op.or] = [
             Sequelize.where(
               Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-              "LIKE",
-              "%" + postData.codename.toLowerCase()
+               postData.codename.toLowerCase()
             ),
             Sequelize.where(
               Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-              "LIKE",
-              "%" + postData.codename.toLowerCase()
+              postData.codename.toLowerCase()
             )
           ];
-        }
+        } */
+
       }
 
       if (postData.departmentId && /\S/.test(postData.departmentId)) {
-        findQuery.where = Sequelize.where(
+        findQuery.where = Object.assign(findQuery.where, {
+          "d_uuid": postData.departmentId
+        });
+
+        /* findQuery.where = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("d_uuid")),
-          "LIKE",
-          "%" + postData.departmentId
-        );
+           postData.departmentId
+        ); */
+
       }
       if (postData.hasOwnProperty("status") && /\S/.test(postData.status)) {
-        findQuery.where = { tk_is_active: postData.status };
+        
+        findQuery.where = Object.assign(findQuery.where, {
+          "tk_is_active": postData.status
+        });
+        /* findQuery.where = { tk_is_active: postData.status }; */
       }
-      if (postData.share && /\S/.test(postData.share)) {
-        findQuery.where = Sequelize.where(
+      if (postData.share && /\S/.test(postData.share)) {      
+        
+        findQuery.where = Object.assign(findQuery.where,{
+          [Op.and]:[ Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("tk_is_public")),
-          "LIKE",
-          "%" + postData.share
-        );
+           postData.share
+        ) ]});
+
       }
       if (postData.createdBy && /\S/.test(postData.createdBy)) {
-        findQuery.where = Sequelize.where(
+
+        findQuery.where = Object.assign(findQuery.where,{
+          [Op.and]:[ Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
+           postData.createdBy
+        ) ]});
+
+
+        /* findQuery.where = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
           "LIKE",
           "%" + postData.createdBy
-        );
+        ); */
+        
       }
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
