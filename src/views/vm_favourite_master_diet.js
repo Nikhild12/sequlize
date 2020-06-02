@@ -64,6 +64,42 @@ module.exports = (sequelize, DataTypes) => {
       },
       dc_name: {
         type: DataTypes.STRING(255)
+      },
+      uct_name: {
+        type: DataTypes.STRING
+      },
+      uc_first_name: {
+        type: DataTypes.STRING
+      },
+      uc_middle_name: {
+        type: DataTypes.STRING
+      },
+      uc_last_name: {
+        type: DataTypes.STRING
+      },
+      umt_name: {
+        type: DataTypes.STRING
+      },
+      um_first_name: {
+        type: DataTypes.STRING
+      },
+      um_middle_name: {
+        type: DataTypes.STRING
+      },
+      um_last_name: {
+        type: DataTypes.STRING
+      },
+      fa_uuid: {
+        type: DataTypes.INTEGER
+      },
+      fa_name: {
+        type: DataTypes.STRING
+      },
+      dp_uuid: {
+        type: DataTypes.INTEGER
+      },
+      dp_name: {
+        type: DataTypes.STRING
       }
     },
     {

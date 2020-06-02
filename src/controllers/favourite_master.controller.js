@@ -18,12 +18,9 @@ const specialitySketchesTbl = sequelizeDb.speciality_sketches;
 
 // Get Treatment Fav Views
 const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
-const vmTreatmentFavouriteDiagnosis =
-  sequelizeDb.vw_favourite_treatment_diagnosis;
-const vmTreatmentFavouriteInvesti =
-  sequelizeDb.vw_favourite_treatment_investigation;
-const vmTreatmentFavouriteRadiology =
-  sequelizeDb.vw_favourite_treatment_radiology;
+const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
+const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
+const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 
@@ -97,7 +94,19 @@ const getFavouritesAttributes = [
   "tsmd_strength",
   "tsmd_treatment_kit_uuid",
   "tsmd_diet_master_uuid",
-  "tsmd_speciality_sketch_uuid"
+  "tsmd_speciality_sketch_uuid",
+  "uct_name",
+  "uc_first_name",
+  "uc_middle_name",
+  "uc_last_name",
+  "umt_name",
+  "um_first_name",
+  "um_middle_name",
+  "um_last_name",
+  "fa_uuid",
+  "fa_name",
+  "de_uuid",
+  "de_name"
 ];
 
 // Fav Treatment Kit Att
@@ -525,7 +534,7 @@ const TickSheetMasterController = () => {
               code: httpStatus[400],
               message: emr_constants.PROPER_FAV_ID,
             });
-          } else if (favourite_type_id === 9) {
+          } else if (favourite_type_id === 9) { // Diet
             tickSheetData = await vmTreatmentFavouriteDiet.findAll({
               attributes: emr_attributes_diet.favouriteDietAttributes,
               where: getFavouriteByIdQuery(
@@ -534,7 +543,7 @@ const TickSheetMasterController = () => {
                 "fm_active"
               ),
             });
-          } else if (favourite_type_id === 3) {
+          } else if (favourite_type_id === 3) { // Radiology
             tickSheetData = await vmFavouriteRad.findAll({
               attributes: emr_all_favourites.favouriteRadVWAttributes(),
               where: getFavouriteByIdQuery(
@@ -543,7 +552,7 @@ const TickSheetMasterController = () => {
                 "fm_is_active"
               ),
             });
-          } else if (favourite_type_id === 7) {
+          } else if (favourite_type_id === 7) { // Investigation
             tickSheetData = await vwFavouriteInvestigation.findAll({
               attributes: emr_attributes_investigation.investigationAttributes,
               where: getFavouriteByIdQuery(
@@ -552,7 +561,7 @@ const TickSheetMasterController = () => {
                 "fm_active"
               ),
             });
-          } else if (favourite_type_id === 2) {
+          } else if (favourite_type_id === 2) { // Lab
             tickSheetData = await vwFavouriteLab.findAll({
               attributes: emr_all_favourites.favouriteLabVWAttributes(),
               where: getFavouriteByIdQuery(
@@ -561,7 +570,7 @@ const TickSheetMasterController = () => {
                 "fm_is_active"
               ),
             });
-          } else if (favourite_type_id === 10) {
+          } else if (favourite_type_id === 10) { // Speciality Sketch
             tickSheetData = await favouriteMasterTbl.findAll({
               attributes: ["uuid", "favourite_type_uuid", "code", "name"],
               where: {
@@ -585,13 +594,13 @@ const TickSheetMasterController = () => {
               ],
             });
 
-          } else {
+          } else { // All
             tickSheetData = await vmTickSheetMasterTbl.findAll({
               attributes: getFavouritesAttributes,
               where: getFavouriteById(favourite_id, is_master),
             });
           }
-        } else {
+        } else { // All
           tickSheetData = await vmTickSheetMasterTbl.findAll({
             attributes: getFavouritesAttributes,
             where: getFavouriteById(favourite_id, is_master),
@@ -1145,6 +1154,14 @@ function getFavouritesInList(fetchedData) {
         diagnosis_name: tD.d_name,
         diagnosis_code: tD.d_code,
         diagnosis_description: tD.d_description,
+
+        // User details
+        created_user_name: `${tD.uct_name ? `${tD.uct_name} ` : ''}${tD.uc_first_name}${tD.uc_last_name ? `${tD.uc_last_name} ` : ''}`,
+        modified_user_name: `${tD.umt_name ? `${tD.umt_name} ` : ''}${tD.um_first_name}${tD.um_last_name ? `${tD.um_last_name} ` : ''}`,
+
+        // Facility and Department Name
+        facility_name: tD.fa_name,
+        department_name: tD.de_name
       },
     ];
   });

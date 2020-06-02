@@ -24,7 +24,19 @@ const _investigationAttributes = [
   "ivpm_uuid",
   "ivpm_profile_code",
   "ivpm_name",
-  "ivpm_description"
+  "ivpm_description",
+  "uct_name",
+  "uc_first_name",
+  "uc_middle_name",
+  "uc_last_name",
+  "umt_name",
+  "um_first_name",
+  "um_middle_name",
+  "um_last_name",
+  "fa_uuid",
+  "fa_name",
+  "dp_uuid",
+  "dp_name"
 ];
 
 const _getInvestigationResponse = radiology => {
@@ -44,6 +56,10 @@ const _getInvestigationResponse = radiology => {
       profile_master_code: r.ivpm_profile_code,
       profile_master_name: r.ivpm_name,
       profile_master_description: r.ivpm_description,
+      created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
+      modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
+      facility_name: r.fa_name,
+      department_name: r.dp_name
     };
   });
 };
