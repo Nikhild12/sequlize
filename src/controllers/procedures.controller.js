@@ -238,7 +238,7 @@ const proceduresController = () => {
           else if (code_exits && code_exits.length > 0) {
             return res
               .status(401)
-              .send({ statusCode: 401, message: "code already exists" });
+              .send({ statusCode: 400, message: "code already exists" });
 
           } else if (name_exits && name_exits.length > 0) {
             return res
@@ -247,7 +247,8 @@ const proceduresController = () => {
 
           } else {
 
-            postData.status = postData.is_active;
+            // postData.status = postData.is_active;
+            postData.status = emr_constants.IS_ACTIVE;
             postData.created_by = user_uuid;
             postData.modified_by = user_uuid;
 
