@@ -175,8 +175,8 @@ const proceduresController = () => {
     }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
-      findQuery.where['status'] = getsearch.status;
-
+      //findQuery.where['status'] = getsearch.status;
+      findQuery.where['status'] = emr_constants.IS_ACTIVE;
     }
 
     try {

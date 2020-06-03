@@ -49,20 +49,20 @@ module.exports = (sequelize, DataTypes) => {
             },
             mnemonic_code_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
-                    },
-                    min: 0
-                }
+                allowNull: true,
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('mnemonic_code_master_uuid')
+                //     },
+                //     min: 0
+                // }
             },
             loinc_code_master_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 // validate: {
                 //     notNull: {
                 //         msg: emr_constants.GetpleaseProvideMsg('loinc_code_master_uuid')
