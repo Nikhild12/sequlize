@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        Is_default:{
+        Is_defult:{
             type: DataTypes.BOOLEAN,
             defaultValue: 1
         },
