@@ -476,7 +476,7 @@ const tmpmstrController = () => {
 
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
-      //findQuery.where['tm_status'] = getsearch.status;
+      findQuery.where['tm_status'] = emr_constants.IS_ACTIVE;
     }
     try {
       if (user_uuid) {
