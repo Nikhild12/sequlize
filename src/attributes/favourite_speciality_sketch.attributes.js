@@ -64,7 +64,9 @@ const _getSpecialitySketchFavouriteRes = (sketchFav) => {
             created_user_name: `${f.uct_name ? `${f.uct_name} ` : ''}${f.uc_first_name}${f.uc_last_name ? `${f.uc_last_name} ` : ''}`,
             modified_user_name: `${f.umt_name ? `${f.umt_name} ` : ''}${f.um_first_name}${f.um_last_name ? `${f.um_last_name} ` : ''}`,
             facility_name: f.fa_name,
-            department_name: f.dp_name
+            department_name: f.dp_name,
+            favourite_active: f.fm_is_active,
+            favourite_display_order: f.fm_display_order
         };
 
     });
