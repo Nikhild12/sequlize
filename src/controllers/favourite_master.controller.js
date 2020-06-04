@@ -24,9 +24,11 @@ const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiolo
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
 
+
 const vmFavouriteRad = sequelizeDb.vw_favourite_ris;
 const vwFavouriteLab = sequelizeDb.vw_favourite_lab;
 const vmAllFavourites = sequelizeDb.vw_all_favourites;
+const vwSpecialitySketch = sequelizeDb.vw_favourite_speciality_sketch;
 
 const vwFavouriteInvestigation = sequelizeDb.vw_favourite_investigation;
 
@@ -41,6 +43,9 @@ const emr_attributes_investigation = require("../attributes/vw_favourite_investi
 
 // All Favourites Attributes
 const emr_all_favourites = require("../attributes/favourites");
+
+// Speciality Sketch Attributes
+const emr_speciality_favourite_att = require("../attributes/favourite_speciality_sketch.attributes");
 
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -199,7 +204,7 @@ let getTreatmentKitLabAtt = [
 
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
-function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id) {
+function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, isMaster) {
   let notNullSearchKey, activeKey, statusKey;
   tsmd_test_id =
     typeof tsmd_test_id === "string" ? +tsmd_test_id : tsmd_test_id;
@@ -248,7 +253,7 @@ function getTreatmentQuery(dept_id, user_uuid) {
   };
 }
 
-function getDietFavouriteQuery(dept_id, user_uuid) {
+function getDietFavouriteQuery(user_uuid) {
   return {
     fm_active: active_boolean,
     fm_status: active_boolean,
@@ -324,7 +329,7 @@ function getFavouriteById(fav_id, isMaster) {
 
   // If it's from Clinical Master Req
   // not including the is_active property
-  if (isMaster === "true") {
+  if (isMaster === "true" || isMaster) {
     delete favouriteByIdQuery.tsm_active;
   }
   return favouriteByIdQuery;
@@ -477,30 +482,24 @@ const TickSheetMasterController = () => {
       fav_type_id = +fav_type_id;
       if (isNaN(fav_type_id)) {
         return res.status(400).send({
-          code: httpStatus[400],
-          message: emr_constants.PROPER_FAV_ID,
+          code: httpStatus[400], message: emr_constants.PROPER_FAV_ID,
         });
       }
       let favList = [];
 
       try {
-        const favouriteData = await getFavouritesQuery(
-          user_uuid,
-          fav_type_id,
-          dept_id,
-          lab_id
-        );
+        const favouriteData = await getFavouritesQuery(user_uuid, fav_type_id, dept_id, lab_id);
+
         favList = getFavouritesRes(favouriteData, fav_type_id);
         favList = _.orderBy(favList, ['favourite_display_order'], ['asc']);
+
         const returnMessage =
           favList && favList.length > 0
-            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
-            : emr_constants.NO_RECORD_FOUND;
+            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+
         return res.status(httpStatus.OK).send({
-          code: httpStatus.OK,
-          message: returnMessage,
-          responseContents: favList,
-          responseContentLength: favList.length,
+          code: httpStatus.OK, message: returnMessage,
+          responseContents: favList, responseContentLength: favList.length,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -530,75 +529,9 @@ const TickSheetMasterController = () => {
         if (favourite_type_id) {
           favourite_type_id = +favourite_type_id;
           if (isNaN(favourite_type_id)) {
-            return res.status(400).send({
-              code: httpStatus[400],
-              message: emr_constants.PROPER_FAV_ID,
-            });
-          } else if (favourite_type_id === 9) { // Diet
-            tickSheetData = await vmTreatmentFavouriteDiet.findAll({
-              attributes: emr_attributes_diet.favouriteDietAttributes,
-              where: getFavouriteByIdQuery(
-                favourite_id,
-                is_master,
-                "fm_active"
-              ),
-            });
-          } else if (favourite_type_id === 3) { // Radiology
-            tickSheetData = await vmFavouriteRad.findAll({
-              attributes: emr_all_favourites.favouriteRadVWAttributes(),
-              where: getFavouriteByIdQuery(
-                favourite_id,
-                is_master,
-                "fm_is_active"
-              ),
-            });
-          } else if (favourite_type_id === 7) { // Investigation
-            tickSheetData = await vwFavouriteInvestigation.findAll({
-              attributes: emr_attributes_investigation.investigationAttributes,
-              where: getFavouriteByIdQuery(
-                favourite_id,
-                is_master,
-                "fm_active"
-              ),
-            });
-          } else if (favourite_type_id === 2) { // Lab
-            tickSheetData = await vwFavouriteLab.findAll({
-              attributes: emr_all_favourites.favouriteLabVWAttributes(),
-              where: getFavouriteByIdQuery(
-                favourite_id,
-                is_master,
-                "fm_is_active"
-              ),
-            });
-          } else if (favourite_type_id === 10) { // Speciality Sketch
-            tickSheetData = await favouriteMasterTbl.findAll({
-              attributes: ["uuid", "favourite_type_uuid", "code", "name"],
-              where: {
-                favourite_type_uuid: favourite_type_id,
-                is_active: emr_constants.IS_ACTIVE,
-                status: emr_constants.IS_ACTIVE,
-                uuid: favourite_id
-              },
-
-              include: [
-                {
-                  model: favouritMasterDetailsTbl,
-                  attributes: ["uuid", "speciality_sketch_uuid"],
-                  include: [
-                    {
-                      model: specialitySketchesTbl,
-                      attributes: ["code", "name", "description"],
-                    },
-                  ],
-                },
-              ],
-            });
-
-          } else { // All
-            tickSheetData = await vmTickSheetMasterTbl.findAll({
-              attributes: getFavouritesAttributes,
-              where: getFavouriteById(favourite_id, is_master),
-            });
+            return res.status(400).send({ code: httpStatus[400], message: emr_constants.PROPER_FAV_ID, });
+          } else {
+            tickSheetData = await getFavouriteQueryById(favourite_type_id, favourite_id, is_master);
           }
         } else { // All
           tickSheetData = await vmTickSheetMasterTbl.findAll({
@@ -607,35 +540,14 @@ const TickSheetMasterController = () => {
           });
         }
 
-        if (favourite_type_id === 9) {
-          favouriteList = getAllDietFavsInReadableFormat(tickSheetData);
-        } else if (favourite_type_id === 3) {
-          favouriteList = emr_all_favourites.favouriteRadResponse(
-            tickSheetData
-          );
-        } else if (favourite_type_id === 7) {
-          favouriteList = emr_attributes_investigation.getInvestigationResponse(
-            tickSheetData
-          );
-        } else if (favourite_type_id === 2) {
-          favouriteList = emr_all_favourites.favouriteLabResponse(
-            tickSheetData
-          );
-        } else if (favourite_type_id === 10) {
-          favouriteList = getSpecialitySketchFavourite(tickSheetData);
-        } else {
-          favouriteList = getFavouritesInList(tickSheetData);
-        }
+        favouriteList = getFavouritesRes(tickSheetData, favourite_type_id);
 
-        const returnMessage =
-          favouriteList && favouriteList.length > 0
-            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
-            : emr_constants.NO_RECORD_FOUND;
+        const returnMessage = favouriteList && favouriteList.length > 0
+          ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+
         return res.status(httpStatus.OK).send({
-          code: httpStatus.OK,
-          message: returnMessage,
-          responseContents: favouriteList[0],
-          responseContentLength: favouriteList.length,
+          code: httpStatus.OK, message: returnMessage,
+          responseContents: favouriteList[0], responseContentLength: favouriteList.length,
         });
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
@@ -896,7 +808,7 @@ const TickSheetMasterController = () => {
       try {
         const dietFav = await vmTreatmentFavouriteDiet.findAll({
           attributes: emr_attributes_diet.favouriteDietAttributes,
-          where: getDietFavouriteQuery(departmentId, user_uuid),
+          where: getDietFavouriteQuery(user_uuid),
         });
 
         const favouriteList = getAllDietFavsInReadableFormat(dietFav);
@@ -1462,26 +1374,7 @@ function getAllDietFavsInReadableFormat(dietFav) {
   });
 }
 
-function getSpecialitySketchFavourite(sketchFav) {
-  return sketchFav.map((f) => {
-    return {
-      favourite_id: f.uuid,
-      favourite_name: getSpecialityFromFav(f.favourite_master_detail, "name"),
-      favourite_code: getSpecialityFromFav(f.favourite_master_detail, "code"),
-      favourite_details_id:
-        (f.favourite_master_detail && f.favourite_master_detail.uuid) || 0,
 
-      speciality_sketch_id:
-        (f.favourite_master_detail &&
-          f.favourite_master_detail.speciality_sketch_uuid) ||
-        0,
-    };
-  });
-}
-
-function getSpecialityFromFav(detail, property) {
-  return (detail.speciality_sketch && detail.speciality_sketch[property]) || "";
-}
 
 const getFavouritesQuery = (uId, fTyId, dId, labId) => {
   if (fTyId === 3) {
@@ -1492,38 +1385,22 @@ const getFavouritesQuery = (uId, fTyId, dId, labId) => {
   } else if (fTyId === 7) { // Investigation
     return vwFavouriteInvestigation.findAll({
       attributes: emr_attributes_investigation.investigationAttributes,
-      where: emr_attributes_investigation.getFavouriteInvestigationQuery(
-        uId,
-        fTyId
-      ),
+      where: emr_attributes_investigation.getFavouriteInvestigationQuery(uId, fTyId),
     });
   } else if (fTyId === 10) {
-    return favouriteMasterTbl.findAll({
-      attributes: ["uuid", "favourite_type_uuid", "code", "name"],
-      where: {
-        favourite_type_uuid: fTyId,
-        is_active: emr_constants.IS_ACTIVE,
-        status: emr_constants.IS_ACTIVE,
-        user_uuid: uId,
-      },
-
-      include: [
-        {
-          model: favouritMasterDetailsTbl,
-          attributes: ["uuid", "speciality_sketch_uuid"],
-          include: [
-            {
-              model: specialitySketchesTbl,
-              attributes: ["code", "name", "description"],
-            },
-          ],
-        },
-      ],
+    return vwSpecialitySketch.findAll({
+      attributes: emr_speciality_favourite_att.getSpecialityFavouriteAtt,
+      where: emr_speciality_favourite_att.getFavouriteSpecialitySketchQuery(uId, fTyId),
     });
   } else if (fTyId === 2) {
     return vwFavouriteLab.findAll({
       attributes: emr_all_favourites.favouriteLabVWAttributes(),
       where: emr_all_favourites.favouriteLabVWQuery(uId, dId, labId),
+    });
+  } else if (fTyId === 9) {
+    return vmTreatmentFavouriteDiet.findAll({
+      attributes: emr_attributes_diet.favouriteDietAttributes,
+      where: getDietFavouriteQuery(uId),
     });
   } else {
     return vmTickSheetMasterTbl.findAll({
@@ -1540,10 +1417,50 @@ const getFavouritesRes = (favData, fTypeId) => {
   } else if (fTypeId === 7) {
     return emr_attributes_investigation.getInvestigationResponse(favData);
   } else if (fTypeId === 10) {
-    return getSpecialitySketchFavourite(favData);
+    return emr_speciality_favourite_att.getSpecialitySketchFavouriteRes(favData);
   } else if (fTypeId === 2) {
     return emr_all_favourites.favouriteLabResponse(favData);
+  } else if (fTypeId === 9) {
+    return getAllDietFavsInReadableFormat(favData);
   } else {
     return getFavouritesInList(favData);
   }
 };
+
+
+const getFavouriteQueryById = async (fTypeId, fId, is_master) => {
+
+  if (fTypeId === 9) { // Diet
+    return vmTreatmentFavouriteDiet.findAll({
+      attributes: emr_attributes_diet.favouriteDietAttributes,
+      where: getFavouriteByIdQuery(fId, is_master, "fm_active")
+    });
+  } else if (fTypeId === 3) { // Radiology
+    return vmFavouriteRad.findAll({
+      attributes: emr_all_favourites.favouriteRadVWAttributes(),
+      where: getFavouriteByIdQuery(fId, is_master, "fm_is_active")
+    });
+  } else if (fTypeId === 7) { // Investigation
+    return vwFavouriteInvestigation.findAll({
+      attributes: emr_attributes_investigation.investigationAttributes,
+      where: getFavouriteByIdQuery(fId, is_master, "fm_active")
+    });
+  } else if (fTypeId === 2) { // Lab
+    return vwFavouriteLab.findAll({
+      attributes: emr_all_favourites.favouriteLabVWAttributes(),
+      where: getFavouriteByIdQuery(fId, is_master, "fm_is_active")
+    });
+  } else if (fTypeId === 10) { // Speciality Sketch
+    return vwSpecialitySketch.findAll({
+      attributes: emr_speciality_favourite_att.getSpecialityFavouriteAtt,
+      where: getFavouriteByIdQuery(fId, is_master, "fm_is_active"),
+    });
+
+  } else { // All
+    return vmTickSheetMasterTbl.findAll({
+      attributes: getFavouritesAttributes,
+      where: getFavouriteById(fId, is_master),
+    });
+  }
+};
+
