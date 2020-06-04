@@ -191,6 +191,10 @@ module.exports = (sequelize, DataTypes) => {
         }]
     }
     );
-
+    patient_speciality_sketches.associate = model => {
+        patient_speciality_sketches.belongsTo(model.speciality_sketches, {
+            foreignKey: "speciality_sketch_uuid"
+        });
+    };
     return patient_speciality_sketches;
 };
