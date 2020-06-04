@@ -7559,7 +7559,7 @@
 				}
 			}
 		},
-		"/api/sketch/create": {
+		"/api/patient-speciality-sketch/create": {
 			"post": {
 				"description": "To create patient specality sketch details",
 				"parameters": [
@@ -7576,6 +7576,38 @@
 						"schema": {
 							"$ref": "#/definitions/addSketch"
 						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"patient-specality-Sketch"
+				],
+				"responses": {
+					"200": {
+						"description": "Insterted patient sketch details Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient-speciality-sketch/get-prev-by-patient": {
+			"get": {
+				"description": "To get patient specality sketch details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true
 					}
 				],
 				"produces": [

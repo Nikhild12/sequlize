@@ -187,15 +187,12 @@ serviceRouter.use("/patient-allergy", patientAllergieRoute);
 serviceRouter.use("/family-history", familyHistoryRoute);
 
 // Surgery History Routes
-
 serviceRouter.use("/surgery-history", surgeryHistoryRoute);
 
 // Referral History Routes
-
 serviceRouter.use("/patient-referral", referralHistoryRoute);
 
 // Patient Transfer ROutes
-
 serviceRouter.use("/patient-transfer", patientTransferRoute);
 
 // EMR History Settings Routes
@@ -246,7 +243,7 @@ serviceRouter.use("/certificates", certificateRouter);
 serviceRouter.use("/snomed", smRouter);
 
 //patient specality skecth Routes
-serviceRouter.use("/sketch", sketchRouter);
+serviceRouter.use("/patient-speciality-sketch", sketchRouter);
 
 // Diseases Routes
 serviceRouter.use("/diseases", diseasesRoute);

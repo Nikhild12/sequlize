@@ -57,8 +57,8 @@ module.exports = Object.freeze({
     "Fetched Previous Patient Chief Complaints Successfully",
   TEMPLATE_FETCH_SUCCESS: "Template Fetched Successfully",
   REQUIRED_VALUE_NOT_FOUND: "Required Value Not Found",
-  PLEASE_SEND_CONTEXT_UUID: "Please send Context uuid in the first object"
-  ,
+  PLEASE_SEND_CONTEXT_UUID: "Please send Context uuid in the first object",
+  PATIENT_SPECIALITY_SKETCH_FETCHED: "Successfully Fetched Patient Speciality Sketch",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {

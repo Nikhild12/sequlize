@@ -8,6 +8,7 @@ const patientSketchesController = require('../controllers/patient_speciality_ske
 const sketchRoute = Express.Router();
 
 sketchRoute.route('/create').post(patientSketchesController.createPatientSpecalitySketch);
+sketchRoute.route('/get-prev-by-patient').get(patientSketchesController.getPrevPatientSpecialitySketch);
 
 
 module.exports = sketchRoute;

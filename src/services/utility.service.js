@@ -178,7 +178,8 @@ const _isAllNumber = (...args) => {
 const responseMessage = {
   cc: emr_constants.CHIEF_COMPLIANT,
   dis: emr_constants.DISEASES_SUCCESS,
-  p: emr_constants.PREVIOUS_PAT_CC_SUCCESS // Previous Patient Chief Complaints
+  p: emr_constants.PREVIOUS_PAT_CC_SUCCESS, // Previous Patient Chief Complaints,
+  pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED // Patient Speciality Sketch Fe
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {
