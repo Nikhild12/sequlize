@@ -393,7 +393,7 @@ const specialitySketchesMasterController = () => {
                 include: [{
                     model: specialitySketcheDetailsTbl,
                     required: false,
-                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active', ''],
+                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active', 'created_by', 'modified_by'],
                     where: { status: 1, is_active: 1 }
                 }]
             });
