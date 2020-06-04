@@ -57,6 +57,9 @@ module.exports = (sequelize, DataTypes) => {
             fm_is_active: {
                 type: DataTypes.BOOLEAN
             },
+            fmd_speciality_sketch_uuid: {
+                type: DataTypes.INTEGER
+            },
             ss_name: {
                 type: DataTypes.STRING,
             },
