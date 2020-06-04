@@ -388,9 +388,9 @@
 					},
 					{
 						"in": "formData",
-						"name": "status",
+						"name": "is_active",
 						"required": true,
-						"type": "integer"
+						"type": "string"
 					},
 					{
 						"in": "formData",

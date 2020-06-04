@@ -250,14 +250,14 @@ const specialitySketchesMasterController = () => {
                     } else {
                         //attachmentData.consultation_uuid = userUUID;
                         //attachmentData.folder_name = 'ssketch';
-                        attachmentData.is_active = attachmentData.status = true;
+                        // attachmentData.is_active = attachmentData.status = true;
+                        attachmentData.status = true;
                         //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
                         attachmentData.created_by = attachmentData.modified_by = userUUID;
                         attachmentData.created_date = attachmentData.modified_date = new Date();
                         attachmentData.revision = 1;
 
                         let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
-
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
@@ -266,14 +266,13 @@ const specialitySketchesMasterController = () => {
                                     speciality_sketch_uuid: specialityData.dataValues.uuid,
                                     sketch_path: req.files[i].path,
                                     status: 1,
-                                    is_active: 1
+                                    //   is_active: 1
                                 });
                             }
                             if (sketchFileSave) {
                                 var specialitySketcheFiles = await specialitySketcheDetailsTbl.bulkCreate(sketchFileSave);
 
                             }
-
                         }
                         res.send({ "status": 200, "postData": attachmentData, "files": specialitySketcheFiles, "count": req.files.length, "message": "Inserted Speciality Sketche Master details Successfully " });
                     }
@@ -405,7 +404,7 @@ const specialitySketchesMasterController = () => {
                 // const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
                 // const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
                 // console.log(getdep);
-                
+
                 // console.log("getcuDetails",getcuDetails, ">>>>>>>>", "getmuDetails",getmuDetails, ">>>>>>>>", "getdep",getdep, ">>>>>>>>", "getdata",getdata);
 
                 return res
