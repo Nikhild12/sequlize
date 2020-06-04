@@ -199,7 +199,7 @@ const specialitySketchesMasterController = () => {
 
             }
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where = { is_active: postData.status };
+                findQuery.where = { s_is_active: postData.status };
             }
             await vwSpecialitySketchTbl.findAndCountAll(findQuery,
 
@@ -393,7 +393,7 @@ const specialitySketchesMasterController = () => {
                 include: [{
                     model: specialitySketcheDetailsTbl,
                     required: false,
-                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active'],
+                    attributes: ['speciality_sketch_uuid', 'sketch_path', 'status', 'is_active', ''],
                     where: { status: 1, is_active: 1 }
                 }]
             });
