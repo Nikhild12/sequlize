@@ -38,6 +38,7 @@ let offset;
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
   let encounterQuery = {
+    order: [["uuid", "desc"]],
     where: {
       patient_uuid: pId,
       is_active_encounter: emr_constants.IS_ACTIVE,
@@ -87,19 +88,11 @@ const Encounter = () => {
 
   const _getEncounterByDocAndPatientId = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    const {
-      patientId,
-      doctorId,
-      from_date,
-      to_date,
-      departmentId,
-      encounterType,
-    } = req.query;
+    const { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
 
     try {
       const is_mobile_request =
-        (doctorId === 0 || doctorId == 0) &&
-        (departmentId == 0 || departmentId === 0) &&
+        (doctorId === 0 || doctorId == 0) && (departmentId == 0 || departmentId === 0) &&
         (encounterType == 0 || encounterType === 0);
       if (user_uuid && patientId && is_mobile_request && from_date && to_date) {
         const encounterData = await encounter_tbl.findAll(
@@ -111,23 +104,18 @@ const Encounter = () => {
           responseContents: encounterData,
         });
       } else if (
-        user_uuid &&
-        patientId &&
-        patientId > 0 &&
-        doctorId &&
-        doctorId > 0 &&
-        departmentId &&
-        encounterType
+        user_uuid && patientId && patientId > 0 &&
+        doctorId && doctorId > 0 && departmentId && encounterType
       ) {
-        const encounterData = await encounter_tbl.findAll(
+        let encounterData = await encounter_tbl.findAll(
           getActiveEncounterQuery(
-            patientId,
-            doctorId,
-            departmentId,
-            encounterType,
-            facility_uuid
+            patientId, doctorId, departmentId, encounterType, facility_uuid
           )
         );
+
+        if (encounterData && encounterData.length > 0) {
+          encounterData = [encounterData[0]];
+        }
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
@@ -185,35 +173,26 @@ const Encounter = () => {
    * @param {*} res
    */
   const _createPatientEncounter = async (req, res) => {
-    const { user_uuid, facility_uuid } = req.headers;
+    const { user_uuid } = req.headers;
     let { encounter, encounterDoctor } = req.body;
     let encounterPromise = [];
     const is_all_req_fields_in_enc_is_pres =
-      encounter &&
-      encounter.encounter_type_uuid &&
-      encounter.patient_uuid &&
-      encounter.department_uuid;
-    const is_all_req_fields_in_encDoc_is_pres =
-      encounterDoctor &&
-      encounterDoctor.doctor_uuid &&
-      encounterDoctor.department_uuid;
+      encounter && encounter.encounter_type_uuid && encounter.patient_uuid && encounter.department_uuid;
 
-    if (
-      user_uuid &&
-      is_all_req_fields_in_enc_is_pres &&
-      is_all_req_fields_in_encDoc_is_pres &&
-      encounterDoctor
-    ) {
-      const { encounter_type_uuid, patient_uuid } = encounter;
+    const is_all_req_fields_in_encDoc_is_pres =
+      encounterDoctor && encounterDoctor.doctor_uuid && encounterDoctor.department_uuid;
+
+    if (user_uuid && is_all_req_fields_in_enc_is_pres && is_all_req_fields_in_encDoc_is_pres && encounterDoctor) {
+
+      let { encounter_type_uuid, patient_uuid, facility_uuid } = encounter;
       const { doctor_uuid, department_uuid } = encounterDoctor;
+
+      encounter_type_uuid = +(encounter_type_uuid);
 
       const { tat_start_time, tat_end_time } = encounterDoctor;
 
       if (tat_start_time && tat_end_time) {
-        if (
-          !moment(tat_start_time).isValid() ||
-          !moment(tat_end_time).isValid()
-        ) {
+        if (!moment(tat_start_time).isValid() || !moment(tat_end_time).isValid()) {
           return res.status(400).send({
             code: httpStatus[400],
             message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`,
@@ -229,11 +208,9 @@ const Encounter = () => {
       encounter = emr_utility.createIsActiveAndStatus(encounter, user_uuid);
       encounter.is_active_encounter = emr_constants.IS_ACTIVE;
       encounter.encounter_date = new Date();
+
       // Assigning
-      encounterDoctor = emr_utility.createIsActiveAndStatus(
-        encounterDoctor,
-        user_uuid
-      );
+      encounterDoctor = emr_utility.createIsActiveAndStatus(encounterDoctor, user_uuid);
       encounterDoctor.patient_uuid = encounter.patient_uuid;
       encounterDoctor.consultation_start_date = new Date();
 
@@ -244,30 +221,19 @@ const Encounter = () => {
         let encounterDoctorData, encounterData;
         let is_enc_avail, is_enc_doc_avail;
 
-        encounterData = await getEncounterQueryByPatientId(
-          patient_uuid,
-          encounter_type_uuid,
-          facility_uuid
-        );
+        encounterData = await getEncounterQueryByPatientId(patient_uuid, encounter_type_uuid, facility_uuid);
 
         is_enc_avail = encounterData && encounterData.length > 0;
+
         if (is_enc_avail) {
           encounterDoctorData = await getEncounterDoctorsQueryByPatientId(
-            encounterData[0].uuid,
-            doctor_uuid,
-            department_uuid
+            encounterData[0].uuid, doctor_uuid, department_uuid
           );
         }
 
-        is_enc_doc_avail =
-          encounterDoctorData && encounterDoctorData.length > 0;
-        if (
-          (encounter_type_uuid === 1 ||
-            encounter_type_uuid === 2 ||
-            encounter_type_uuid === 3) &&
-          is_enc_avail &&
-          is_enc_doc_avail
-        ) {
+        is_enc_doc_avail = encounterDoctorData && encounterDoctorData.length > 0;
+
+        if (([1, 2, 3].includes(encounter_type_uuid)) && is_enc_avail && is_enc_doc_avail) {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST,
             message: emr_constants.DUPLICATE_ENCOUNTER,
@@ -280,13 +246,9 @@ const Encounter = () => {
         }
 
         if (!is_enc_avail) {
-          encounterPromise = [
-            ...encounterPromise,
-            encounter_tbl.create(encounter, {
-              returning: true,
-            }),
-          ];
+          encounterPromise = [...encounterPromise, encounter_tbl.create(encounter, { returning: true, })];
         }
+
         const createdEncounterData = await Promise.all(encounterPromise);
 
         if (createdEncounterData) {
@@ -300,8 +262,7 @@ const Encounter = () => {
           }
 
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-            encounterDoctor,
-            { returning: true }
+            encounterDoctor, { returning: true }
           );
           encounterDoctor.uuid = createdEncounterDoctorData.uuid;
           return res.status(200).send({
@@ -314,8 +275,7 @@ const Encounter = () => {
         console.log(ex);
 
         return res
-          .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+          .status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
     } else {
       return res.status(400).send({
@@ -820,17 +780,23 @@ function getEncounterQuery(pId, from_date, to_date) {
 
 async function getEncounterQueryByPatientId(pId, etypeId, fId) {
   let query = {
+    order: [["uuid", "desc"]],
     where: {
       patient_uuid: pId,
       is_active_encounter: emr_constants.IS_ACTIVE,
       is_active: emr_constants.IS_ACTIVE,
       status: emr_constants.IS_ACTIVE,
       encounter_type_uuid: etypeId,
-      facility_uuid: fId
+      facility_uuid: fId,
     },
   };
   if (etypeId === 1) {
     query.where[Op.and] = [
+      Sequelize.where(
+        Sequelize.fn("date", Sequelize.col("encounter_date")),
+        ">=",
+        moment().format("YYYY-MM-DD")
+      ),
       Sequelize.where(
         Sequelize.fn("date", Sequelize.col("encounter_date")),
         "<=",
