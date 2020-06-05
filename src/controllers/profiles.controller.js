@@ -9,6 +9,9 @@ const emr_constants = require('../config/constants');
 
 const emr_utility = require('../services/utility.service');
 
+// Patient notes
+const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
+
 //Initialize profile opNotes
 const profilesTbl = db.profiles;
 const valueTypesTbl = db.value_types;
@@ -321,14 +324,14 @@ const profilesController = () => {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
             [Op.or]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')),'LIKE', '%' + req.body.codename.toLowerCase()+ '%'),
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' +req.body.codename.toLowerCase()+ '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + req.body.codename.toLowerCase() + '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + req.body.codename.toLowerCase() + '%'),
             ]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')),'LIKE', '%' + req.body.codename.toLowerCase()+ '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' +req.body.codename.toLowerCase()+ '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_code')), 'LIKE', '%' + req.body.codename.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('p_profile_name')), 'LIKE', '%' + req.body.codename.toLowerCase() + '%'),
           ];
         }
       }
@@ -372,7 +375,7 @@ const profilesController = () => {
         findQuery.where['p_status'] = getsearch.status;
 
       }
-console.log(">>>>>",JSON.stringify(findQuery));
+      console.log(">>>>>", JSON.stringify(findQuery));
 
 
       await profilesViewTbl.findAndCountAll(findQuery)
@@ -787,6 +790,41 @@ console.log(">>>>>",JSON.stringify(findQuery));
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
+  const _getPreviousPatientOPNotes = async (req, res) => {
+    const { user_uuid } = req.headers;
+    const { patient_uuid } = req.query;
+
+    if (user_uuid && patient_uuid > 0) {
+      try {
+
+        const getOPNotesByPId = await sectionCategoryEntriesTbl.findAll({
+          where: { patient_uuid, is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE },
+          order: [["uuid", "desc"]],
+          limit: 5,
+          attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date'],
+          include: [{
+            model: profilesTbl,
+            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+          }]
+        });
+        // Code and Message for Response
+        const code = emr_utility.getResponseCodeForSuccessRequest(getOPNotesByPId);
+        const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
+        const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
+        return res.status(200).send({ code: code, message, responseContents: notesResponse });
+
+
+      } catch (error) {
+        console.log('Exception happened', ex);
+        return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -795,12 +833,8 @@ console.log(">>>>>",JSON.stringify(findQuery));
     updateProfiles: _updateProfiles,
     addProfiles: _addProfiles,
     getAllValueTypes: _getAllValueTypes,
-    getAllProfileNotesTypes: _getAllProfileNotesTypes
-
-
-
-
-
+    getAllProfileNotesTypes: _getAllProfileNotesTypes,
+    getPreviousPatientOPNotes: _getPreviousPatientOPNotes
   };
 
 };
