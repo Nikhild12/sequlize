@@ -224,5 +224,10 @@ module.exports = (sequelize, DataTypes) => {
     //     });
     // };
 
+    section_category_entries.associate = model => {
+        section_category_entries.belongsTo(model.profiles, {
+            foreignKey: "profile_uuid"
+        });
+    };
     return section_category_entries;
 };
