@@ -7607,7 +7607,8 @@
 					{
 						"in": "query",
 						"name": "patient_uuid",
-						"required": true
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
