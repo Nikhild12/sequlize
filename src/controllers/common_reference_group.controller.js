@@ -206,8 +206,9 @@ const commonReferenceGroupController = () => {
                 order: [
                     [sortField, sortOrder],
                 ],
+                
             };
-            query1 = Sequelize.where(Sequelize.col(table_name + '.status'), 1);
+            query1 = [Sequelize.where(Sequelize.col(table_name + '.status'), 1)];
 
             if (postData.name != null && postData.name != "") {
                 if (query1 != null) {
@@ -229,16 +230,17 @@ const commonReferenceGroupController = () => {
                     };
                 }
             }
+console.log(postData.status != null , postData.status != "");
 
-            if (postData.status != null && postData.status != "") {
-                if (query1 != null) {
+            if (postData.status != null) {                
+                if (query1 != null) {                    
                     query1 = {
                         [Op.and]: [
                             query1,
                             Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
                         ]
                     };
-                } else {
+                } else {                    
                     query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
                 }
             }
@@ -253,9 +255,8 @@ const commonReferenceGroupController = () => {
                 }
             }
             if (query1 != null && query1 != "") {
-                postingData['where'] = query1;
+                postingData.where = query1;
             }
-            console.log(postingData);
 
             await common_tbl.findAndCountAll(postingData).then((data) => {
                 return res
