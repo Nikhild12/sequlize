@@ -175,6 +175,7 @@ let getTreatmentKitInvestigationAtt = [
   "tm_code",
   "tm_name",
   "tm_description",
+  "tkim_order_to_location_uuid"
 ];
 getTreatmentKitInvestigationAtt = [
   ...getTreatmentByIdInVWAtt,
@@ -187,6 +188,7 @@ let getTreatmentKitRadiologyAtt = [
   "tm_description",
   "tkrm_test_master_uuid",
   "tkrm_treatment_kit_uuid",
+  "tkrm_order_to_location_uuid"
 ];
 
 getTreatmentKitRadiologyAtt = [
@@ -200,6 +202,7 @@ let getTreatmentKitLabAtt = [
   "tm_description",
   "tklm_test_master_uuid",
   "tklm_treatment_kit_uuid",
+  "tklm_order_to_location_uuid"
 ];
 
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
@@ -748,26 +751,19 @@ const TickSheetMasterController = () => {
     if (user_uuid && treatmentId && favouriteId) {
       let favouriteList;
       try {
-        const treatmentById = await getTreatmentFavByIdPromise(
-          treatmentId,
-          favouriteId
-        );
+        const treatmentById = await getTreatmentFavByIdPromise(treatmentId, favouriteId);
         const favourite_details = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteId,
           },
         });
 
-        const responseCount =
-          treatmentById &&
-          treatmentById.reduce((acc, cur) => {
-            return acc + cur.length;
-          }, 0);
+        const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
+          return acc + cur.length;
+        }, 0);
         if (responseCount > 0) {
-          favouriteList = getTreatmentFavouritesInHumanUnderstandable(
-            treatmentById,
-            favouriteId
-          );
+          favouriteList = getTreatmentFavouritesInHumanUnderstandable(treatmentById, favouriteId);
+
           if (favourite_details && favourite_details.length > 0) {
             favouriteList.favourite_details = {
               display_order: favourite_details[0].display_order,
@@ -778,8 +774,7 @@ const TickSheetMasterController = () => {
 
         const returnMessage =
           responseCount > 0
-            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
-            : emr_constants.NO_RECORD_FOUND;
+            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         return res.status(httpStatus.OK).send({
           code: httpStatus.OK,
           message: returnMessage,
@@ -1276,6 +1271,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
       investigation_name: iv.tm_name,
       investigation_code: iv.tm_name,
       investigation_description: iv.tm_name,
+      order_to_location_uuid: iv.tkim_order_to_location_uuid
     };
   });
 }
@@ -1287,6 +1283,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
       radiology_name: r.tm_name,
       radiology_code: r.tm_name,
       radiology_description: r.tm_name,
+      order_to_location_uuid: r.tkrm_order_to_location_uuid
     };
   });
 }
@@ -1298,6 +1295,7 @@ function getLabDetailsFromTreatment(lab) {
       lab_name: l.tm_name,
       lab_code: l.tm_name,
       lab_description: l.tm_name,
+      order_to_location_uuid: l.tklm_order_to_location_uuid
     };
   });
 }
