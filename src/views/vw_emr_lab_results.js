@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             // allowNull: true
         },
+        tm_code: {
+            type: DataTypes.STRING,
+        },
+        tm_name: {
+            type: DataTypes.STRING,
+        },
         um_code: {
             type: DataTypes.STRING,
 
