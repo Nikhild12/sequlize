@@ -825,6 +825,30 @@ const profilesController = () => {
       });
     }
   };
+
+  const _getOPNotesDetailsById = async (req, res) => {
+
+    const { uuid } = req.query;
+    const { user_uuid } = req.headers;
+
+    try {
+      if (user_uuid && uuid) {
+        const notesData = await sectionCategoryEntriesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
+        if (!notesData) {
+          return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
+        }
+        return res.status(200).send({ code: httpStatus.OK, responseContent: notesData });
+      } else {
+        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+      }
+    }
+    catch (ex) {
+      console.log('Exception happened', ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+    }
+  };
+
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -834,7 +858,8 @@ const profilesController = () => {
     addProfiles: _addProfiles,
     getAllValueTypes: _getAllValueTypes,
     getAllProfileNotesTypes: _getAllProfileNotesTypes,
-    getPreviousPatientOPNotes: _getPreviousPatientOPNotes
+    getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
+    getOPNotesDetailsById: _getOPNotesDetailsById
   };
 
 };

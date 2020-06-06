@@ -17,6 +17,7 @@ profilesRoute.route('/add').post(profilesController.addProfiles);
 profilesRoute.route('/getAllValueTypes').get(profilesController.getAllValueTypes);
 profilesRoute.route('/getAllProfileTypes').get(profilesController.getAllProfileNotesTypes);
 profilesRoute.route('/get-prev-by-patient').get(profilesController.getPreviousPatientOPNotes);
+profilesRoute.route('/get-patient-by-id').get(profilesController.getOPNotesDetailsById);
 
 
 module.exports = profilesRoute;
