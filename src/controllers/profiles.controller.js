@@ -856,7 +856,7 @@ const profilesController = () => {
 
     try {
       if (user_uuid && patient_uuid) {
-        const patNotesData = await sectionCategoryEntriesTbl.findOne({ where: { patient_uuid: patient_uuid } }, { returning: true });
+        const patNotesData = await sectionCategoryEntriesTbl.findAll({ where: { patient_uuid: patient_uuid } }, { returning: true });
         if (!patNotesData) {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
