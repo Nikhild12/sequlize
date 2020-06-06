@@ -70,6 +70,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
+            order_to_location_uuid: {
+
+                type: DataTypes.INTEGER
+
+            },
             modified_by: {
 
                 type: DataTypes.INTEGER,

@@ -42,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       ivtm_status: {
         type: DataTypes.BOOLEAN
+      },
+      tkim_order_to_location_uuid: {
+        type: DataTypes.INTEGER
       }
     },
     {

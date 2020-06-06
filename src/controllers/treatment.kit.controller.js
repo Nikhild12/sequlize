@@ -85,29 +85,21 @@ const TreatMent_Kit = () => {
     // let treatTransStatus = false;
     //let treatmentTransaction;
     let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
-    let {
-      treatment_kit_investigation,
-      treatment_kit_radiology,
-      treatment_kit_diagnosis
-    } = req.body;
-    if (
-      user_uuid &&
-      treatment_kit &&
-      treatment_kit.name &&
-      treatment_kit.code
-    ) {
+    let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
+
+    if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
-          code: httpStatus.BAD_REQUEST,
-          message: emr_constants.TREATMENT_REQUIRED
+          code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED
         });
       }
       try {
+
         // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
-        const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(
-          treatment_kit
-        );
+
+        const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
+
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
@@ -123,18 +115,13 @@ const TreatMent_Kit = () => {
         });
         // Lab
         if (
-          treatment_kit_lab &&
-          Array.isArray(treatment_kit_lab) &&
-          treatment_kit_lab.length > 0 &&
+          treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 &&
           treatmentSavedData
         ) {
           // assigning Default Values
           treatment_kit_lab.forEach(l => {
             l = emr_utility.assignDefaultValuesAndUUIdToObject(
-              l,
-              treatmentSavedData,
-              user_uuid,
-              "treatment_kit_uuid"
+              l, treatmentSavedData, user_uuid, "treatment_kit_uuid"
             );
           });
 
@@ -544,28 +531,28 @@ const TreatMent_Kit = () => {
       if (postData.search && /\S/.test(postData.search)) {
 
         findQuery.where = Object.assign(findQuery.where, {
-         [Op.or] : [
-          Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-            "LIKE",
-            "%" + postData.search.toLowerCase() + "%"
-          ),
-          Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-            "LIKE",
-            "%" + postData.search.toLowerCase() + "%"
-          ),
-          Sequelize.where(
-            Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.u_first_name")),
-            "LIKE",
-            "%" + postData.search.toLowerCase() + "%"
-          )
-        ]
-      })
-      
+          [Op.or]: [
+            Sequelize.where(
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
+              "LIKE",
+              "%" + postData.search.toLowerCase() + "%"
+            ),
+            Sequelize.where(
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
+              "LIKE",
+              "%" + postData.search.toLowerCase() + "%"
+            ),
+            Sequelize.where(
+              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.u_first_name")),
+              "LIKE",
+              "%" + postData.search.toLowerCase() + "%"
+            )
+          ]
+        });
+
       }
       if (postData.codename && /\S/.test(postData.codename)) {
-       
+
         /* findQuery.where = Object.assign(findQuery.where, {
           [Op.or]: [
             Sequelize.where(
@@ -579,17 +566,17 @@ const TreatMent_Kit = () => {
           ]
         }); */
 
-        let sharddname =  Sequelize.where(
+        let sharddname = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
           postData.codename.toLowerCase()
-        ) 
+        );
 
-        let sharddname1 =  Sequelize.where(
+        let sharddname1 = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
           postData.codename.toLowerCase()
-        ) 
+        );
 
-        findQuery.where = Object.assign(findQuery.where,{ [Op.or]: [sharddname,sharddname1]});
+        findQuery.where = Object.assign(findQuery.where, { [Op.or]: [sharddname, sharddname1] });
 
         /* if (findQuery.where[Op.or]) {
           
@@ -634,25 +621,26 @@ const TreatMent_Kit = () => {
 
       }
       if (postData.hasOwnProperty("status") && /\S/.test(postData.status)) {
-        
+
         findQuery.where = Object.assign(findQuery.where, {
           "tk_is_active": postData.status
         });
         /* findQuery.where = { tk_is_active: postData.status }; */
       }
-      if (postData.hasOwnProperty("status") && /\S/.test(postData.share)) {     
-         findQuery.where = Object.assign(findQuery.where, {
+      if (postData.hasOwnProperty("status") && /\S/.test(postData.share)) {
+        findQuery.where = Object.assign(findQuery.where, {
           "tk_is_public": postData.share
-        });       
+        });
 
       }
-      if (postData.createdBy && /\S/.test(postData.createdBy)) {      
-        let shardd =  Sequelize.where(
+      if (postData.createdBy && /\S/.test(postData.createdBy)) {
+        let shardd = Sequelize.where(
           Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
-           postData.createdBy
-        ) 
-        findQuery.where = Object.assign(findQuery.where,{shardd
-          });
+          postData.createdBy
+        );
+        findQuery.where = Object.assign(findQuery.where, {
+          shardd
+        });
 
 
         /* findQuery.where = Sequelize.where(
@@ -660,7 +648,7 @@ const TreatMent_Kit = () => {
           "LIKE",
           "%" + postData.createdBy
         ); */
-        
+
       }
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
@@ -690,11 +678,11 @@ const TreatMent_Kit = () => {
 
   const _getAllTreatmentKit = async (req, res, next) => {
     try {
-      const getsearch = req.body;    
+      const getsearch = req.body;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-     
-    let sortArr = ["tk_uuid", "DESC"];    
+
+      let sortArr = ["tk_uuid", "DESC"];
       let sortOrder = 'DESC';
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
@@ -731,11 +719,11 @@ const TreatMent_Kit = () => {
         offset: offset,
         limit: itemsPerPage,
         where: { tk_status: 1, tk_is_active: 1 },
-        order: [sortArr],       
+        order: [sortArr],
         attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-        group:['tk_uuid']
-       
-      };     
+        group: ['tk_uuid']
+
+      };
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -748,18 +736,18 @@ const TreatMent_Kit = () => {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
             [Op.or]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')),'LIKE', '%' + req.body.codeName.toLowerCase()+ '%'),
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' +req.body.codeName.toLowerCase()+ '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
             ]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')),'LIKE', '%' + req.body.codeName.toLowerCase()+ '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' +req.body.codeName.toLowerCase()+ '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
           ];
         }
       }
-     
+
       if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
@@ -775,11 +763,11 @@ const TreatMent_Kit = () => {
       if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
-            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' +getsearch.createdBy.toLowerCase()+ '%')]
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.createdBy.toLowerCase() + '%')]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' +getsearch.createdBy.toLowerCase()+ '%')
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.createdBy.toLowerCase() + '%')
           ];
         }
       }
@@ -794,11 +782,12 @@ const TreatMent_Kit = () => {
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)
           ];
         }
-      }    
+      }
 
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-        findQuery.where['tk_is_active'] = getsearch.status;}
-     
+        findQuery.where['tk_is_active'] = getsearch.status;
+      }
+
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
         .then((data) => {
@@ -809,7 +798,7 @@ const TreatMent_Kit = () => {
               message: "Get Details Fetched successfully",
               req: '',
               responseContents: data.rows,
-            totalRecords: data.count.length ? data.count.length : data.count
+              totalRecords: data.count.length ? data.count.length : data.count
             });
         })
         .catch(err => {

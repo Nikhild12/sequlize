@@ -37,11 +37,14 @@ module.exports = (sequelize, DataTypes) => {
       tkrm_test_master_uuid: {
         type: DataTypes.INTEGER
       },
-      rtm_is_active:{
-          type: DataTypes.BOOLEAN
-      },
-      rtm_status:{
+      rtm_is_active: {
         type: DataTypes.BOOLEAN
+      },
+      rtm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      tkrm_order_to_location_uuid: {
+        type: DataTypes.INTEGER
       }
     },
     {
