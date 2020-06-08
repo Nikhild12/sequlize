@@ -77,7 +77,7 @@ const PatientTreatmentController = () => {
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
-            p.is_snomed = p.is_snomed || emr_constants.IS_ACTIVE;
+            p.is_snomed = p.is_snomed;
             p.is_patient_condition =
               p.is_patient_condition || emr_constants.IS_ACTIVE;
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
