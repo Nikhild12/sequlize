@@ -142,6 +142,7 @@ const getTreatmentByIdInVWAtt = [
 let gedTreatmentKitDrug = [
   "im_code",
   "im_name",
+  "im_strength",
   "tkd_item_master_uuid",
   "dr_code",
   "dr_name",
@@ -1249,6 +1250,9 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_instruction_code: d.di_code,
       drug_instruction_name: d.di_name,
       drug_instruction_id: d.tkd_drug_instruction_uuid,
+
+      // Strength
+      strength: d.strength
     };
   });
 }
@@ -1271,7 +1275,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
       investigation_name: iv.tm_name,
       investigation_code: iv.tm_name,
       investigation_description: iv.tm_name,
-      order_to_location_uuid: iv.tkim_order_to_location_uuid
+      order_to_location_uuid: iv.tkim_order_to_location_uuid,
     };
   });
 }

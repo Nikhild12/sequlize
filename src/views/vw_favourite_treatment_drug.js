@@ -40,6 +40,9 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(255)
 
             },
+            im_strength: {
+                type: DataTypes.STRING(255)
+            },
             tkd_item_master_uuid: {
 
                 type: DataTypes.INTEGER
