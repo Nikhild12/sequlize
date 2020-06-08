@@ -106,10 +106,13 @@ const TreatMent_Kit = () => {
             message: getDuplicateMsg(duplicateTreatmentRecord)
           });
         }
+
+        const treatment_active = treatment_kit.is_active;
         treatment_kit = emr_utility.createIsActiveAndStatus(
           treatment_kit,
           user_uuid
         );
+        treatment_kit.is_active = treatment_active;
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
