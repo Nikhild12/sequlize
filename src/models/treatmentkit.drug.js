@@ -133,6 +133,9 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            strength: {
+                type: DataTypes.STRING(255)
+            },
             is_active: {
 
                 type: DataTypes.BOOLEAN,
