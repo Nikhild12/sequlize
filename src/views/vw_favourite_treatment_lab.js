@@ -40,7 +40,34 @@ module.exports = (sequelize, DataTypes) => {
             },
             tklm_treatment_kit_uuid: {
                 type: DataTypes.INTEGER
-            }
+            },
+            tklm_order_priority_uuid: {
+                type: DataTypes.INTEGER
+            },
+            tklm_profile_master_uuid: {
+                type: DataTypes.INTEGER
+            },
+            pm_profile_code: {
+                type: DataTypes.STRING(255)
+            },
+            pm_name: {
+                type: DataTypes.STRING(255)
+            },
+            pm_description: {
+                type: DataTypes.STRING(255)
+            },
+            pm_status: {
+                type: DataTypes.BOOLEAN
+            },
+            pm_is_active: {
+                type: DataTypes.BOOLEAN
+            },
+            tm_status: {
+                type: DataTypes.BOOLEAN
+            },
+            tm_is_active: {
+                type: DataTypes.BOOLEAN
+            },
         },
         {
             freezeTableName: true

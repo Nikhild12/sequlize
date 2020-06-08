@@ -75,6 +75,9 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER
 
             },
+            order_priority_uuid: {
+                type: DataTypes.INTEGER
+            },
             modified_by: {
 
                 type: DataTypes.INTEGER,

@@ -176,7 +176,12 @@ let getTreatmentKitInvestigationAtt = [
   "tm_code",
   "tm_name",
   "tm_description",
-  "tkim_order_to_location_uuid"
+  "tkim_order_to_location_uuid",
+  "tkim_order_priority_uuid",
+  "pm_profile_code",
+  "pm_name",
+  "pm_description",
+  "tkim_profile_master_uuid"
 ];
 getTreatmentKitInvestigationAtt = [
   ...getTreatmentByIdInVWAtt,
@@ -189,7 +194,12 @@ let getTreatmentKitRadiologyAtt = [
   "tm_description",
   "tkrm_test_master_uuid",
   "tkrm_treatment_kit_uuid",
-  "tkrm_order_to_location_uuid"
+  "tkrm_order_to_location_uuid",
+  "tkrm_order_priority_uuid",
+  "tkrm_profile_master_uuid",
+  "pm_profile_code",
+  "pm_name",
+  "pm_description"
 ];
 
 getTreatmentKitRadiologyAtt = [
@@ -203,7 +213,12 @@ let getTreatmentKitLabAtt = [
   "tm_description",
   "tklm_test_master_uuid",
   "tklm_treatment_kit_uuid",
-  "tklm_order_to_location_uuid"
+  "tklm_order_to_location_uuid",
+  "tklm_order_priority_uuid",
+  "pm_profile_code",
+  "pm_name",
+  "pm_description",
+  "tklm_profile_master_uuid"
 ];
 
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
@@ -266,12 +281,29 @@ function getDietFavouriteQuery(user_uuid) {
   };
 }
 
-function getTreatmentKitByIdQuery(treatmentId) {
-  return {
+function getTreatmentKitByIdQuery(treatmentId, tType) {
+
+  let treatmentQuery = {
     tk_uuid: treatmentId,
     tk_status: emr_constants.IS_ACTIVE,
     tk_active: emr_constants.IS_ACTIVE,
   };
+  if (["Lab", "Investigation", "Radiology"].includes(tType)) {
+    treatmentQuery = {
+      ...treatmentQuery, [Op.or]: [
+        {
+          tm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+          tm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+        },
+        {
+          pm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+          pm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+        },
+      ]
+    };
+  }
+
+  return treatmentQuery;
 }
 
 function getFavouriteQueryForDuplicate(
@@ -1088,10 +1120,7 @@ function getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData) {
   };
 }
 
-function getFavouriteMasterDetailsUpdateData(
-  user_uuid,
-  favouriteMasterReqData
-) {
+function getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData) {
   return {
     drug_route_uuid: favouriteMasterReqData.drug_route_id,
     drug_frequency_uuid: favouriteMasterReqData.drug_frequency_id,
@@ -1271,11 +1300,13 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
 function getInvestigationDetailsFromTreatment(investigationArray) {
   return investigationArray.map((iv) => {
     return {
-      investigation_id: iv.tkim_test_master_uuid,
-      investigation_name: iv.tm_name,
-      investigation_code: iv.tm_name,
-      investigation_description: iv.tm_name,
+      investigation_id: iv.tkim_test_master_uuid || iv.tkim_profile_master_uuid,
+      investigation_name: iv.tm_name || iv.pm_name,
+      investigation_code: iv.tm_code || iv.pm_profile_code,
+      investigation_description: iv.tm_description || iv.pm_description,
       order_to_location_uuid: iv.tkim_order_to_location_uuid,
+      test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
+      order_priority_uuid: iv.tkim_order_priority_uuid
     };
   });
 }
@@ -1283,11 +1314,13 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
 function getRadiologyDetailsFromTreatment(radiology) {
   return radiology.map((r) => {
     return {
-      radiology_id: r.tkrm_test_master_uuid,
-      radiology_name: r.tm_name,
-      radiology_code: r.tm_name,
-      radiology_description: r.tm_name,
-      order_to_location_uuid: r.tkrm_order_to_location_uuid
+      radiology_id: r.tkrm_test_master_uuid || r.tkrm_profile_master_uuid,
+      radiology_name: r.tm_name || r.pm_name,
+      radiology_code: r.tm_code || r.pm_profile_code,
+      radiology_description: r.tm_description || r.pm_description,
+      order_to_location_uuid: r.tkrm_order_to_location_uuid,
+      test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
+      order_priority_uuid: r.tkrm_order_priority_uuid
     };
   });
 }
@@ -1295,11 +1328,13 @@ function getRadiologyDetailsFromTreatment(radiology) {
 function getLabDetailsFromTreatment(lab) {
   return lab.map((l) => {
     return {
-      lab_id: l.tklm_test_master_uuid,
-      lab_name: l.tm_name,
-      lab_code: l.tm_name,
-      lab_description: l.tm_name,
-      order_to_location_uuid: l.tklm_order_to_location_uuid
+      lab_id: l.tklm_test_master_uuid || l.tklm_profile_master_uuid,
+      lab_name: l.tm_name || l.pm_name,
+      lab_code: l.tm_code || l.pm_profile_code,
+      lab_description: l.tm_description || l.pm_description,
+      order_to_location_uuid: l.tklm_order_to_location_uuid,
+      test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
+      order_priority_uuid: l.tklm_order_priority_uuid
     };
   });
 }
@@ -1320,28 +1355,28 @@ function getTreatmentDetails(treatFav) {
   return { name, code, id, active };
 }
 
-function getTreatmentFavByIdPromise(treatmentId, favouriteId) {
+function getTreatmentFavByIdPromise(treatmentId) {
   return Promise.all([
     vmTreatmentFavouriteDrug.findAll({
       attributes: gedTreatmentKitDrug,
-      where: getTreatmentKitByIdQuery(treatmentId),
+      where: getTreatmentKitByIdQuery(treatmentId, "Drug"),
     }), // Drug Details
     vmTreatmentFavouriteDiagnosis.findAll({
       attributes: getTreatmentKitDiaAtt,
-      where: getTreatmentKitByIdQuery(treatmentId),
+      where: getTreatmentKitByIdQuery(treatmentId, "Diagnosis"),
     }),
     vmTreatmentFavouriteInvesti.findAll({
       attributes: getTreatmentKitInvestigationAtt,
-      where: getTreatmentKitByIdQuery(treatmentId),
-    }),
+      where: getTreatmentKitByIdQuery(treatmentId, "Investigation"),
+    }), // 
     vmTreatmentFavouriteRadiology.findAll({
       attributes: getTreatmentKitRadiologyAtt,
-      where: getTreatmentKitByIdQuery(treatmentId),
-    }),
+      where: getTreatmentKitByIdQuery(treatmentId, "Radiology"),
+    }), // Radiology
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
-      where: getTreatmentKitByIdQuery(treatmentId),
-    }),
+      where: getTreatmentKitByIdQuery(treatmentId, "Lab"),
+    }), // lab
   ]);
 }
 
@@ -1375,8 +1410,6 @@ function getAllDietFavsInReadableFormat(dietFav) {
     };
   });
 }
-
-
 
 const getFavouritesQuery = (uId, fTyId, dId, labId) => {
   if (fTyId === 3) {
@@ -1428,7 +1461,6 @@ const getFavouritesRes = (favData, fTypeId) => {
     return getFavouritesInList(favData);
   }
 };
-
 
 const getFavouriteQueryById = async (fTypeId, fId, is_master) => {
 
