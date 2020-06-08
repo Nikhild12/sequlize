@@ -45,7 +45,34 @@ module.exports = (sequelize, DataTypes) => {
       },
       tkrm_order_to_location_uuid: {
         type: DataTypes.INTEGER
-      }
+      },
+      tkrm_order_priority_uuid: {
+        type: DataTypes.INTEGER
+      },
+      tkrm_profile_master_uuid: {
+        type: DataTypes.INTEGER
+      },
+      pm_profile_code: {
+        type: DataTypes.STRING(255)
+      },
+      pm_name: {
+        type: DataTypes.STRING(255)
+      },
+      pm_description: {
+        type: DataTypes.STRING(255)
+      },
+      pm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      pm_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      tm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      tm_is_active: {
+        type: DataTypes.BOOLEAN
+      },
     },
     {
       freezeTableName: true
