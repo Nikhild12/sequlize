@@ -347,9 +347,14 @@ const immunizationsController = () => {
           }
           }
    
-          if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-          findQuery.where['i_is_active'] = getsearch.status;
+          if (getsearch.hasOwnProperty('i_is_active') && /\S/.test(getsearch.i_is_active)) {          
+            findQuery.where['i_is_active'] = (getsearch.i_is_active == true || getsearch.i_is_active == 'true' || getsearch.i_is_active == 1 ) ? 1 : 0;
         //   findQuery.where['i_status'] = getsearch.status;
+
+          }
+          if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+          //findQuery.where['i_is_active'] = getsearch.status;
+           findQuery.where['i_status'] = getsearch.status;
 
           }
       
@@ -489,8 +494,8 @@ const immunizationsController = () => {
         const user_uuid = req.headers;
         if (user_uuid && postData.Id) {
             await immunizationsTbl.update({
-                i_status: 0,
-                i_is_active:0
+                status: 0,
+                is_active:0
             }, {
                 where: {
                     uuid: postData.Id
