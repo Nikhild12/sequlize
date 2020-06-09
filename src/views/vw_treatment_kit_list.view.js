@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
             activefrom: {
                 type: DataTypes.DATE
             },
-            activeto: {
+            activeactiveto: {
                 type: DataTypes.DATE
             },
             description: {
