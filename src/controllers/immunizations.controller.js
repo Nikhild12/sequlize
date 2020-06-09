@@ -349,7 +349,7 @@ const immunizationsController = () => {
    
           if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
           findQuery.where['i_is_active'] = getsearch.status;
-          findQuery.where['i_status'] = getsearch.status;
+        //   findQuery.where['i_status'] = getsearch.status;
 
           }
       
@@ -489,8 +489,8 @@ const immunizationsController = () => {
         const user_uuid = req.headers;
         if (user_uuid && postData.Id) {
             await immunizationsTbl.update({
-                status: 0,
-                is_active:0
+                i_status: 0,
+                i_is_active:0
             }, {
                 where: {
                     uuid: postData.Id
