@@ -20,21 +20,12 @@ module.exports = (sequelize, DataTypes) => {
             },
             test_master_uuid: {
 
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('test_master_uuid')
-                    },
-                    min: {
-                        args: [0],
-                        msg: emr_constants.GetZeroValidationMessage('test_master_uuid')
-                    }
-                    // min: 0
-                }
+                type: DataTypes.INTEGER
+
+            },
+            profile_master_uuid: {
+
+                type: DataTypes.INTEGER
 
             },
             quantity: {
