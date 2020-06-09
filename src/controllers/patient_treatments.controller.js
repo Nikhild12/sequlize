@@ -81,6 +81,8 @@ const PatientTreatmentController = () => {
             p.is_patient_condition =
               p.is_patient_condition || emr_constants.IS_ACTIVE;
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
+            p.performed_by = user_uuid;
+            p.performed_date = new Date();
             p = utilityService.assignDefaultValuesAndUUIdToObject(
               p,
               patientTKCreatedData,
