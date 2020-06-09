@@ -12,5 +12,7 @@ treatmentKitRoute.route('/getByFilters').get(treatmentKitController.getTreatment
 treatmentKitRoute.route('/autoSearch').post(treatmentKitController.getTreatmentKitByFilters);
 treatmentKitRoute.route('/getAll').post(treatmentKitController.getAllTreatmentKit);
 treatmentKitRoute.route('/delete').delete(treatmentKitController.deleteTreatmentKit);
+treatmentKitRoute.route('/get-by-id').get(treatmentKitController.getTreatmentKitById);
+
 
 module.exports = treatmentKitRoute;

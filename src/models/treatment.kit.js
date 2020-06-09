@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         'treatment_kit',
         {
             uuid: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             treatment_kit_type_uuid: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             code: {
-                
+
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             name: {
-                
+
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
@@ -59,13 +59,16 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            description: {
+                type: DataTypes.STRING
+            },
             is_public: {
-                
+
                 type: DataTypes.BOOLEAN
 
             },
             facility_uuid: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -83,7 +86,7 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             department_uuid: {
-                
+
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -101,14 +104,14 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             user_uuid: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             activefrom: {
-                
+
                 type: DataTypes.DATE,
-                allowNull:false,
+                allowNull: false,
                 notNull: {
                     msg: emr_constants.GetpleaseProvideMsg('department_uuid')
                 },
@@ -118,42 +121,42 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             activeto: {
-                
+
                 type: DataTypes.DATE,
-                allowNull:true
+                allowNull: true
 
             },
             comments: {
-                
+
                 type: DataTypes.STRING
 
             },
             is_active: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             status: {
-                
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
 
             },
             revision: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             created_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
             modified_by: {
-                
+
                 type: DataTypes.INTEGER
 
             },
