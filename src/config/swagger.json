@@ -6087,7 +6087,7 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
-		"/api/profiles/add": {
+		"/api/emr-notes/add": {
 			"post": {
 				"summary": "To create  profile Details ",
 				"parameters": [
@@ -6111,7 +6111,7 @@
 					"application/xml"
 				],
 				"tags": [
-					"Profiles"
+					"Emr-notes"
 				],
 				"responses": {
 					"200": {
@@ -8381,9 +8381,9 @@
 				}
 			}
 		},
-		"/api/profiles/get-prev-by-patient": {
+		"/api/emr-notes/get-prev-by-patient": {
 			"get": {
-				"description": "To get patient notes details",
+				"summary": "To get patient notes details",
 				"parameters": [
 					{
 						"in": "header",
@@ -8403,7 +8403,7 @@
 					"application/xml"
 				],
 				"tags": [
-					"Profiles"
+					"Emr-notes"
 				],
 				"responses": {
 					"200": {
@@ -8414,9 +8414,9 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
-		"/api/profiles/get-patient-by-id": {
+		"/api/emr-notes/get-patient-by-id": {
 			"get": {
-				"description": "To get a emr patient op notes Data",
+				"summary": "To get a emr patient op notes Data",
 				"parameters": [
 					{
 						"in": "header",
@@ -8436,7 +8436,7 @@
 					"application/xml"
 				],
 				"tags": [
-					"Profiles"
+					"Emr-notes"
 				],
 				"responses": {
 					"200": {
@@ -8447,9 +8447,9 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
-		"/api/profiles/get-patient-by-patient-id": {
+		"/api/emr-notes/get-patient-by-patientId": {
 			"get": {
-				"description": "To get a emr patient op notes by patient Data",
+				"summary": "To get a emr patient op notes by patient Data",
 				"parameters": [
 					{
 						"in": "header",
@@ -8469,7 +8469,7 @@
 					"application/xml"
 				],
 				"tags": [
-					"Profiles"
+					"Emr-notes"
 				],
 				"responses": {
 					"200": {
@@ -12698,6 +12698,9 @@
 						},
 						"department_uuid": {
 							"type": "integer"
+						},
+						"is_active": {
+							"type": "string"
 						},
 						"sections": {
 							"type": "array",

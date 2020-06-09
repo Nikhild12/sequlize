@@ -13,12 +13,8 @@ profilesRoute.route('/getAll').post(profilesController.getAllProfiles);
 profilesRoute.route('/delete').put(profilesController.deleteProfiles);
 profilesRoute.route('/getById').get(profilesController.getProfileById);
 profilesRoute.route('/update').put(profilesController.updateProfiles);
-profilesRoute.route('/add').post(profilesController.addProfiles);
 profilesRoute.route('/getAllValueTypes').get(profilesController.getAllValueTypes);
 profilesRoute.route('/getAllProfileTypes').get(profilesController.getAllProfileNotesTypes);
-profilesRoute.route('/get-prev-by-patient').get(profilesController.getPreviousPatientOPNotes);
-profilesRoute.route('/get-patient-by-id').get(profilesController.getOPNotesDetailsById);
-profilesRoute.route('/get-patient-by-patient-id').get(profilesController.getOPNotesDetailsByPatId);
 
 
 module.exports = profilesRoute;

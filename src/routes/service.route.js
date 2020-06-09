@@ -98,6 +98,9 @@ const smRouter = require("./snomed_details.route");
 //progress Notes details routes
 const progressRoute = require("./progress_notes.route");
 
+//notes details routes
+const notesRoute = require("./emr_patient_notes.route");
+
 const serviceRouter = express.Router();
 
 //Discharge summary
@@ -250,5 +253,8 @@ serviceRouter.use("/diseases", diseasesRoute);
 
 // progressNotes Routes
 serviceRouter.use("/progress", progressRoute);
+
+// progressNotes Routes
+serviceRouter.use("/emr-notes", notesRoute);
 
 module.exports = serviceRouter;
