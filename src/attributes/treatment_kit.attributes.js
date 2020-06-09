@@ -37,9 +37,9 @@ const treatmentKitAtt = [
     "created_date",
     "d_uuid",
     "d_name",
-    "activeto",
+    "activeactiveto",
     "activefrom",
-    "description"
+    "description",
 ];
 
 // Treatment Kit Common Attributes
@@ -357,12 +357,13 @@ function getTreatmentDetails(treatFav) {
         treatment_active: treatFav[0].tk_is_active,
         treatment_created_date: treatFav[0].created_date,
         treatment_modified_date: treatFav[0].modified_date,
+        treatment_is_public: treatFav[0].tk_is_public,
         department_name: treatFav[0].d_name,
         department_code: treatFav[0].d_code,
         created_by: treatFav[0].uc_first_name,
         modified_by: treatFav[0].um_first_name,
         activefrom: treatFav[0].activefrom,
-        activeto: treatFav[0].activeto,
+        activeto: treatFav[0].activeactiveto    ,
         description: treatFav[0].description
     };
 
