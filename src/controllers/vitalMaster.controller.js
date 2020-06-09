@@ -173,11 +173,7 @@ const vitalmstrController = () => {
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
       sortOrder = getsearch.sortOrder;
     }
-    if (sortArr.length > 2) {
-      sortArry = [sortArr[0], sortArr[1], sortArr[2]];
-    } else {
-      sortArry = [sortArr[0], sortArr[1]];
-    }
+    
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
