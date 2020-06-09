@@ -548,7 +548,7 @@ const TreatMent_Kit = () => {
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
           return acc + cur.length;
         }, 0);
-
+        let favouriteList = {};
         if (responseCount > 0) {
           favouriteList = treatmentKitAtt.getTreatmentFavouritesInHumanUnderstandable(treatmentById);
         }
