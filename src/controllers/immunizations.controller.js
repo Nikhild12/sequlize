@@ -310,7 +310,7 @@ const immunizationsController = () => {
                 subQuery: false,
                 offset: offset,
                 limit: getsearch.paginationSize,
-                where: { i_is_active:1,i_status:1},
+                where: { i_is_active:1},
                 order: [
                     sortArr
                 ],
