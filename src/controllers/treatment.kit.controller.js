@@ -21,6 +21,9 @@ const treatmentkitInvestigationTbl =
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
 
+// Treatment Kit Attribute
+const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
+
 // Treatment Kit Filters Query Function
 const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
   searchBy = searchBy.toLowerCase();
@@ -328,356 +331,7 @@ const TreatMent_Kit = () => {
       });
     }
   };
-  // Get All  TreatmentKit List
-  const _getAllTreatmentKit_old = async (req, res) => {
-    const { user_uuid } = req.headers;
 
-    try {
-      // let paginationSize = req.query.paginationSize;
-      let {
-        recordsPerPage,
-        searchPageNo,
-        searchSortBy,
-        searchSortOrder,
-        searchName,
-        createdBy,
-        departmentId,
-        share,
-        status,
-        searchLetters
-      } = req.query;
-      let pageNo = 0;
-      if (recordsPerPage) {
-        let records = parseInt(recordsPerPage);
-        if (records && records != NaN) {
-          recordsPerPage = records;
-        }
-      }
-      let itemsPerPage = recordsPerPage ? recordsPerPage : 10;
-      let sortField = "tk_uuid";
-      let sortOrder = "DESC";
-      if (searchPageNo) {
-        let temp = parseInt(searchPageNo);
-        if (temp && temp != NaN) {
-          pageNo = temp;
-        }
-      }
-
-      const offset = pageNo * itemsPerPage;
-
-      if (searchSortBy) {
-        sortField = searchSortBy;
-      }
-
-      if (
-        searchSortOrder &&
-        (searchSortOrder == "ASC" || searchSortOrder == "DESC")
-      ) {
-        sortOrder = searchSortOrder;
-      }
-
-      let findQuery = {
-        offset: offset,
-        limit: itemsPerPage,
-        order: [[sortField, sortOrder]],
-        where: { tk_is_active: 1 }
-      };
-
-      if (searchName && /\S/.test(searchName)) {
-        findQuery.where = {
-          [Op.or]: [
-            {
-              tk_code: {
-                [Op.like]: "%" + searchName + "%"
-              }
-            },
-            {
-              tk_name: {
-                [Op.like]: "%" + searchName + "%"
-              }
-            }
-          ]
-        };
-      }
-      if (createdBy && /\S/.test(createdBy)) {
-        findQuery.where = {
-          u_first_name: {
-            [Op.like]: "%" + createdBy + "%"
-          }
-        };
-      }
-      if (typeof departmentId == "string") {
-        findQuery.where["d_uuid"] = parseInt(departmentId);
-      }
-      if (typeof share == "boolean") {
-        findQuery.where["tk_is_public"] = share;
-      }
-      if (typeof status == "boolean") {
-        findQuery.where["tk_status"] = status;
-      }
-      if (searchLetters && /\S/.test(searchLetters)) {
-        Object.assign(findQuery.where, {
-          [Op.or]: [
-            {
-              tk_code: {
-                [Op.like]: "%" + searchLetters + "%"
-              }
-            },
-            {
-              tk_name: {
-                [Op.like]: "%" + searchLetters + "%"
-              }
-            },
-            {
-              d_name: {
-                [Op.like]: "%" + searchLetters + "%"
-              }
-            },
-            {
-              tk_is_public: {
-                [Op.eq]: searchLetters
-              }
-            },
-            {
-              u_first_name: {
-                [Op.like]: "%" + searchLetters + "%"
-              }
-            },
-
-            {
-              tk_status: {
-                [Op.eq]: searchLetters
-              }
-            }
-          ]
-        });
-      }
-
-      if (user_uuid) {
-        const treatmentKitData = await treatmentKitViewTbl.findAndCountAll(
-          findQuery
-        );
-        if (treatmentKitData) {
-          return res.status(200).send({
-            code: httpStatus.OK,
-            message: "Fetched TreatmentKit Details successfully",
-            responseContents: treatmentKitData
-          });
-        }
-      } else {
-        return res.status(422).send({
-          code: httpStatus[400],
-          message: emr_constants.NO_RECORD_FOUND
-        });
-      }
-    } catch (ex) {
-      console.log(ex.message);
-      return res
-        .status(400)
-        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-    }
-  };
-
-  // Get All  TreatmentKit List
-  const _getAllTreatmentKit1 = async (req, res, next) => {
-    try {
-      const postData = req.body;
-      let pageNo = 0;
-      const itemsPerPage = postData.paginationSize
-        ? postData.paginationSize
-        : 10;
-      let sortArr = ["tk_uuid", "DESC"];
-
-      if (postData.pageNo) {
-        let temp = parseInt(postData.pageNo);
-        if (temp && temp != NaN) {
-          pageNo = temp;
-        }
-      }
-      const offset = pageNo * itemsPerPage;
-      let fieldSplitArr = [];
-      if (postData.sortField) {
-        fieldSplitArr = postData.sortField.split(".");
-        if (fieldSplitArr.length == 1) {
-          sortArr[0] = postData.sortField;
-        } else {
-          for (let idx = 0; idx < fieldSplitArr.length; idx++) {
-            const element = fieldSplitArr[idx];
-            fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/gi, "");
-          }
-          sortArr = fieldSplitArr;
-        }
-      }
-      if (
-        postData.sortOrder &&
-        (postData.sortOrder.toLowerCase() == "asc" ||
-          postData.sortOrder.toLowerCase() == "desc")
-      ) {
-        if (fieldSplitArr.length == 1 || fieldSplitArr.length == 0) {
-          sortArr[1] = postData.sortOrder;
-        } else {
-          sortArr.push(postData.sortOrder);
-        }
-      }
-      let findQuery = {
-        subQuery: false,
-        offset: offset,
-        limit: itemsPerPage,
-        order: [sortArr],
-        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: {
-          tk_status: 1, tk_is_active: 1
-        },
-        group: ['tk_uuid']
-      };
-
-      if (postData.search && /\S/.test(postData.search)) {
-
-        findQuery.where = Object.assign(findQuery.where, {
-          [Op.or]: [
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-              "LIKE",
-              "%" + postData.search.toLowerCase() + "%"
-            ),
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-              "LIKE",
-              "%" + postData.search.toLowerCase() + "%"
-            ),
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.u_first_name")),
-              "LIKE",
-              "%" + postData.search.toLowerCase() + "%"
-            )
-          ]
-        });
-
-      }
-      if (postData.codename && /\S/.test(postData.codename)) {
-
-        /* findQuery.where = Object.assign(findQuery.where, {
-          [Op.or]: [
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-              postData.codename.toLowerCase()
-            ),
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-               postData.codename.toLowerCase()
-            )
-          ]
-        }); */
-
-        let sharddname = Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-          postData.codename.toLowerCase()
-        );
-
-        let sharddname1 = Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-          postData.codename.toLowerCase()
-        );
-
-        findQuery.where = Object.assign(findQuery.where, { [Op.or]: [sharddname, sharddname1] });
-
-        /* if (findQuery.where[Op.or]) {
-          
-          findQuery.where[Op.and] = [
-            {
-              [Op.or]: [
-                Sequelize.where(
-                  Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-                  postData.codename.toLowerCase()
-                ),
-                Sequelize.where(
-                  Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-                   postData.codename.toLowerCase()
-                )
-              ]
-            }
-          ];
-        } else {
-          findQuery.where[Op.or] = [
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_code")),
-               postData.codename.toLowerCase()
-            ),
-            Sequelize.where(
-              Sequelize.fn("LOWER", Sequelize.col("vw_treatment_kit.tk_name")),
-              postData.codename.toLowerCase()
-            )
-          ];
-        } */
-
-      }
-
-      if (postData.departmentId && /\S/.test(postData.departmentId)) {
-        findQuery.where = Object.assign(findQuery.where, {
-          "d_uuid": postData.departmentId
-        });
-
-        /* findQuery.where = Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("d_uuid")),
-           postData.departmentId
-        ); */
-
-      }
-      if (postData.hasOwnProperty("status") && /\S/.test(postData.status)) {
-
-        findQuery.where = Object.assign(findQuery.where, {
-          "tk_is_active": postData.status
-        });
-        /* findQuery.where = { tk_is_active: postData.status }; */
-      }
-      if (postData.hasOwnProperty("status") && /\S/.test(postData.share)) {
-        findQuery.where = Object.assign(findQuery.where, {
-          "tk_is_public": postData.share
-        });
-
-      }
-      if (postData.createdBy && /\S/.test(postData.createdBy)) {
-        let shardd = Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
-          postData.createdBy
-        );
-        findQuery.where = Object.assign(findQuery.where, {
-          shardd
-        });
-
-
-        /* findQuery.where = Sequelize.where(
-          Sequelize.fn("LOWER", Sequelize.col("u_first_name")),
-          "LIKE",
-          "%" + postData.createdBy
-        ); */
-
-      }
-      await treatmentKitViewTbl
-        .findAndCountAll(findQuery)
-        .then(data => {
-          return res.status(httpStatus.OK).json({
-            statusCode: 200,
-            message: "Get Details Fetched successfully",
-            req: "",
-            responseContents: data.rows,
-            totalRecords: data.count.length ? data.count.length : data.count
-          });
-        })
-        .catch(err => {
-          return res.status(409).json({
-            statusCode: 409,
-            error: err
-          });
-        });
-    } catch (err) {
-      const errorMsg = err.errors ? err.errors[0].message : err.message;
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-        status: "error",
-        msg: errorMsg
-      });
-    }
-  };
 
   const _getAllTreatmentKit = async (req, res, next) => {
     try {
@@ -824,7 +478,6 @@ const TreatMent_Kit = () => {
   };
 
 
-
   const _deleteTreatmentKit = async (req, res) => {
     const { user_uuid } = req.headers;
     const { treatmentKitId } = req.query;
@@ -848,26 +501,11 @@ const TreatMent_Kit = () => {
           treatmentkitTbl.update(treatmentUpdateValue, {
             where: { uuid: treatmentKitId }
           }),
-          treatmentkitLabTbl.update(
-            treatmentUpdateValue,
-            treatementKitUpdateQuery
-          ),
-          treatmentkitRadiologyTbl.update(
-            treatmentUpdateValue,
-            treatementKitUpdateQuery
-          ),
-          treatmentkitDrugTbl.update(
-            treatmentUpdateValue,
-            treatementKitUpdateQuery
-          ),
-          treatmentkitInvestigationTbl.update(
-            treatmentUpdateValue,
-            treatementKitUpdateQuery
-          ),
-          treatmentKitDiagnosisTbl.update(
-            treatmentUpdateValue,
-            treatementKitUpdateQuery
-          )
+          treatmentkitLabTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Lab
+          treatmentkitRadiologyTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Radiology
+          treatmentkitDrugTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Drug
+          treatmentkitInvestigationTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Investigation
+          treatmentKitDiagnosisTbl.update(treatmentUpdateValue, treatementKitUpdateQuery) // Diagnosis
         ];
 
         const deleteTreatmentKitPromise = await Promise.all(
@@ -875,17 +513,11 @@ const TreatMent_Kit = () => {
         );
         console.log(deleteTreatmentKitPromise[0]);
 
-        const responseCode =
-          deleteTreatmentKitPromise[0][0] === 1
-            ? httpStatus.OK
-            : httpStatus.NO_CONTENT;
-        const responseMessage =
-          deleteTreatmentKitPromise[0][0] === 1
-            ? emr_constants.TREATMENT_DELETE_SUCCESS
-            : emr_constants.NO_RECORD_FOUND;
+        const responseCode = deleteTreatmentKitPromise[0][0] === 1 ? httpStatus.OK : httpStatus.NO_CONTENT;
+        const responseMessage = deleteTreatmentKitPromise[0][0] === 1
+          ? emr_constants.TREATMENT_DELETE_SUCCESS : emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
-          code: responseCode,
-          message: responseMessage
+          code: responseCode, message: responseMessage
         });
       } catch (ex) {
         console.log("Exception happened", ex);
@@ -901,11 +533,53 @@ const TreatMent_Kit = () => {
     }
   };
 
+  const _getTreatmentKitById = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    let { treatmentKitId } = req.query;
+
+    treatmentKitId = +(treatmentKitId);
+    if (user_uuid && (treatmentKitId && treatmentKitId > 0)) {
+      try {
+
+        const treatmentById = await treatmentKitAtt.getTreatmentFavByIdPromise(treatmentKitId);
+
+        // Checking Response
+        const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
+          return acc + cur.length;
+        }, 0);
+
+        if (responseCount > 0) {
+          favouriteList = treatmentKitAtt.getTreatmentFavouritesInHumanUnderstandable(treatmentById);
+        }
+        const returnMessage = responseCount > 0 ? emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+        return res.status(httpStatus.OK).send({
+          code: httpStatus.OK,
+          message: returnMessage,
+          responseContents: favouriteList,
+          responseContentLength: responseCount > 0 ? 1 : 0,
+        });
+      } catch (error) {
+        console.log("Exception happened", error);
+        return res
+          .status(500)
+          .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   return {
     createTreatmentKit: _createTreatmentKit,
     getTreatmentKitByFilters: _getTreatmentKitByFilters,
     getAllTreatmentKit: _getAllTreatmentKit,
-    deleteTreatmentKit: _deleteTreatmentKit
+    deleteTreatmentKit: _deleteTreatmentKit,
+    getTreatmentKitById: _getTreatmentKitById
   };
 };
 

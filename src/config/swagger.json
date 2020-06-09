@@ -5158,6 +5158,45 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/treatment-kit/get-by-id": {
+			"get": {
+				"summary": "To get the treatment kit Details By Given Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "treatmentKitId",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"TreatmentKit"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Treatment Kit Successfully"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/create": {
 			"post": {
 				"summary": "To create OPNotes profile Details ",
