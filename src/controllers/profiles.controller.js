@@ -28,122 +28,12 @@ const profilesTypesTbl = db.profile_types;
 
 const Q = require('q');
 
-let page_no = 0;
-let sort_order = "DESC";
-let sort_field = "p_uuid";
-let page_size = 10;
-let offset;
-
 const profilesController = () => {
   /**
    * Creating  profile opNotes
    * @param {*} req 
    * @param {*} res 
    */
-
-
-
-
-  const _createProfileOpNotes_old = async (req, res) => {
-    const { user_uuid } = req.headers;
-    let { profiles } = req.body;
-    let sectionsDetails = profiles.sections;
-
-    // creating profile
-    if (user_uuid && profiles.profile_code && profiles.profile_name) {
-      try {
-        let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [];
-        profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
-        //Profiles save
-        const profileResponse = await profilesTbl.create(profiles, { returning: true });
-
-        // Profile and Sections mapping
-        for (let i = 0; i < sectionsDetails.length; i++) {
-          const element = sectionsDetails[i];
-          profileSectionSave.push({
-            profile_uuid: profileResponse.uuid,
-            section_uuid: element.section_uuid,
-            activity_uuid: element.activity_uuid,
-            display_order: element.display_order
-          });
-        }
-        if (profileSectionSave.length > 0) {
-          var profileSectionResponse = await profileSectionsTbl.bulkCreate(profileSectionSave);
-          for (let i = 0; i < sectionsDetails.length; i++) {
-            for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
-              const element = sectionsDetails[i].categories[j];
-              CategorySave.push({
-                profile_section_uuid: profileSectionResponse[i].uuid,
-                category_uuid: element.category_uuid,
-                display_order: element.display_order
-              });
-            }
-          }
-          // profile_ Sections_categories mapping
-          if (CategorySave.length > 0) {
-            var categoriesResponse = await profileSectionCategoriesTbl.bulkCreate(CategorySave);
-            var index = 0;
-            for (let i = 0; i < sectionsDetails.length; i++) {
-              for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
-                index++;
-                for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
-                  const element = sectionsDetails[i].categories[j].concepts[k];
-                  ConceptsSave.push({
-                    profile_section_category_uuid: categoriesResponse[index - 1].uuid,
-                    code: element.code,
-                    name: element.name,
-                    description: element.description,
-                    value_type_uuid: element.value_type_uuid,
-                    is_mandatory: element.is_mandatory,
-                    display_order: element.display_order,
-                    is_multiple: element.is_multiple
-                  });
-                }
-              }
-            }
-            // profile_ Sections_categories_concepts mapping
-            if (ConceptsSave.length > 0) {
-              var conceptResponse = await profileSectionCategoryConceptsTbl.bulkCreate(ConceptsSave);
-              var index = 0;
-              for (let i = 0; i < sectionsDetails.length; i++) {
-                for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
-                  for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
-                    index++;
-                    for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
-                      const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
-                      conceptValuesSave.push({
-                        profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
-                        value_code: element.value_code,
-                        value_name: element.value_name,
-                        display_order: element.display_order
-                      });
-                    }
-                  }
-                }
-              }
-              // profile_ Sections_categories_concept_values mapping
-              if (conceptValuesSave.length > 0) {
-                var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(conceptValuesSave);
-              }
-            }
-          }
-        }
-        return res.status(200).send({
-          code: httpStatus.OK, message: emr_constants.PROFILES_SUCCESS, responseContents: {
-            profileResponse: profileResponse, profileSectionResponse: profileSectionResponse, categoriesResponse: categoriesResponse,
-            conceptResponse: conceptResponse,
-            conceptValuesResponse: conceptValuesResponse
-          }
-        });
-      }
-      catch (ex) {
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-      }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-    }
-  };
-
   const _createProfileOpNotes = async (req, res) => {
     const { user_uuid } = req.headers;
     let { profiles } = req.body;
@@ -532,75 +422,6 @@ const profilesController = () => {
 
   };
 
-  const _getProfileById1 = async (req, res) => {
-
-    const { user_uuid } = req.headers;
-    const { profile_uuid } = req.query;
-    if (user_uuid && profile_uuid) {
-      try {
-        const profileData = await profilesTbl.findAll({
-          attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
-          where: { uuid: profile_uuid, is_active: 1, status: 1 },
-          include: [
-            {
-              model: profileSectionsTbl,
-              as: 'profile_sections',
-              attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
-              where: { is_active: 1, status: 1 },
-              include: [{
-                model: sectionsTbl,
-                as: 'sections',
-                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
-                where: { is_active: 1, status: 1 },
-              },
-              {
-                model: profileSectionCategoriesTbl,
-                as: 'profile_section_categories',
-                attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
-                where: { is_active: 1, status: 1 },
-                include: [{
-                  model: categoriesTbl,
-                  as: 'categories',
-                  attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-                  where: { is_active: 1, status: 1 },
-
-                },
-                {
-                  model: profileSectionCategoryConceptsTbl,
-                  as: 'profile_section_category_concepts',
-                  attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-                  where: { is_active: 1, status: 1 },
-                  include: [{
-                    model: valueTypesTbl,
-                    as: 'value_types',
-                    attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
-                    where: { is_active: 1, status: 1 },
-                  },
-                  // include: [
-                  {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    as: 'profile_section_category_concept_values',
-                    attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
-                    where: { is_active: 1, status: 1 },
-                  }]
-                  //],
-                }]
-              }]
-            }]
-        });
-        return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData });
-
-      } catch (ex) {
-
-        console.log(`Exception Happened ${ex}`);
-        return res.status(400).send({ code: httpStatus[400], message: ex.message });
-
-      }
-    } else {
-      return res.status(400).send({ code: httpStatus[400], message: "No Request headers or request Found" });
-    }
-
-  };
   /**
       * update profiles
       * @param {*} req 
@@ -669,49 +490,6 @@ const profilesController = () => {
     return deferred.promise;
   };
 
-  const bulkUpdateProfile1 = async (req) => {
-    var deferred = new Q.defer();
-    var profileData = req;
-    var profileDetailsUpdate = [];
-    for (let i = 0; i < profileData.profiles.sections.length; i++) {
-      const element = profileData.profiles.sections[i];
-      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
-
-      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
-        const element = profileData.profiles.sections[i].categories[j];
-        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
-
-        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
-          const element = profileData.profiles.sections[i].categories[j].concepts[k];
-          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_bulkUpdateProfileuuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
-
-          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
-            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
-            profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
-          }
-        }
-      }
-    }
-    if (profileDetailsUpdate.length > 0) {
-      var response = await Q.allSettled(profileDetailsUpdate);
-      if (response.length > 0) {
-        var responseMsg = [];
-        for (let i = 0; i < response.length; i++) {
-          const element = response[i];
-          if (element.state == "rejected") {
-            responseMsg.push(element.reason);
-          }
-        }
-
-        if (responseMsg.length == 0) {
-          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
-        } else {
-          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
-        }
-      }
-    }
-    return deferred.promise;
-  };
   /**
         * Get All  valueTypes
         * @param {*} req 
@@ -735,40 +513,9 @@ const profilesController = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-  /**
-         * OPNotes main template save
-         * @param {*} req 
-         * @param {*} res 
-         */
-  const _addProfiles = async (req, res) => {
-
-    const { user_uuid } = req.headers;
-    let profiles = req.body;
-
-    if (user_uuid) {
-
-      profiles.is_active = profiles.status = true;
-      profiles.created_by = profiles.modified_by = user_uuid;
-      profiles.created_date = profiles.modified_date = new Date();
-      profiles.revision = 1;
-
-      try {
-        const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', reqContents: req.body });
-
-      }
-      catch (ex) {
-        console.log('Exception happened', ex);
-        return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-      }
-    } else {
-      return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
-    }
-
-  };
 
   /**
-       * Get All  valueTypes
+       * Get All notes types
        * @param {*} req 
        * @param {*} res 
        */
@@ -791,97 +538,15 @@ const profilesController = () => {
     }
   };
 
-  const _getPreviousPatientOPNotes = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const { patient_uuid } = req.query;
-
-    if (user_uuid && patient_uuid > 0) {
-      try {
-
-        const getOPNotesByPId = await sectionCategoryEntriesTbl.findAll({
-          where: { patient_uuid, is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE },
-          order: [["uuid", "desc"]],
-          limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date'],
-          include: [{
-            model: profilesTbl,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-          }]
-        });
-        // Code and Message for Response
-        const code = emr_utility.getResponseCodeForSuccessRequest(getOPNotesByPId);
-        const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
-        const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
-        return res.status(200).send({ code: code, message, responseContents: notesResponse });
-
-
-      } catch (error) {
-        console.log('Exception happened', ex);
-        return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex });
-      }
-    } else {
-      return res.status(400).send({
-        code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
-      });
-    }
-  };
-
-  const _getOPNotesDetailsById = async (req, res) => {
-
-    const { uuid } = req.query;
-    const { user_uuid } = req.headers;
-
-    try {
-      if (user_uuid && uuid) {
-        const notesData = await sectionCategoryEntriesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
-        if (!notesData) {
-          return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
-        }
-        return res.status(200).send({ code: httpStatus.OK, responseContent: notesData });
-      } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
-      }
-    }
-    catch (ex) {
-      console.log('Exception happened', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-    }
-  };
-
-
-  const _getOPNotesDetailsByPatId = async (req, res) => {
-
-    const { patient_uuid } = req.query;
-    const { user_uuid } = req.headers;
-
-    try {
-      if (user_uuid && patient_uuid) {
-        const patNotesData = await sectionCategoryEntriesTbl.findAll({ where: { patient_uuid: patient_uuid } }, { returning: true });
-        if (!patNotesData) {
-          return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
-        }
-        return res.status(200).send({ code: httpStatus.OK, responseContent: patNotesData });
-      } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
-      }
-    }
-    catch (ex) {
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-    }
-  };
-
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
     deleteProfiles: _deleteProfiles,
     getProfileById: _getProfileById,
     updateProfiles: _updateProfiles,
-    addProfiles: _addProfiles,
     getAllValueTypes: _getAllValueTypes,
-    getAllProfileNotesTypes: _getAllProfileNotesTypes,
-    getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
-    getOPNotesDetailsById: _getOPNotesDetailsById,
-    getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId
+    getAllProfileNotesTypes: _getAllProfileNotesTypes
+
   };
 
 };
