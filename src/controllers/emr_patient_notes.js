@@ -10,7 +10,11 @@ const emr_constants = require('../config/constants');
 
 const emr_utility = require('../services/utility.service');
 
+// Patient notes
+const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
+
 const sectionCategoryEntriesTbl = db.section_category_entries;
+const profilesTbl = db.profiles;
 
 const notesController = () => {
 
@@ -70,9 +74,10 @@ const notesController = () => {
                 return res.status(200).send({ code: code, message, responseContents: notesResponse });
 
 
-            } catch (error) {
-                console.log('Exception happened', ex);
-                return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex });
+            } catch (ex) {
+                console.log(`Exception Happened ${ex}`);
+                return res.status(400).send({ code: httpStatus[400], message: ex.message });
+
             }
         } else {
             return res.status(400).send({
