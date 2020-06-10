@@ -195,9 +195,9 @@ const PatientTreatmentController = () => {
 
 
   const _previousKitRepeatOrder = async (req, res) => {
-    const { user_uuid, facility_uuid, Authorization } = req.headers;
+    const { user_uuid, facility_uuid, authorization } = req.headers;
 
-    console.log({ Authorization });
+    console.log({ authorization });
 
     const { patient_uuid } = req.query;
     try {
@@ -216,7 +216,7 @@ const PatientTreatmentController = () => {
           orderIds.push(d.order_id);
         });
         console.log("Before getting Department");
-        const departmentsResponse = await getDepartments(user_uuid, Authorization, departmentIds);
+        const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
         console.log("After getting Department");
         if (departmentsResponse) {
           response.map((r, i) => {
@@ -228,7 +228,7 @@ const PatientTreatmentController = () => {
           });
         }
         console.log("Before getting Doctor");
-        const doctorResponse = await getDoctorDetails(user_uuid, Authorization, doctorIds);
+        const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
         if (doctorResponse) {
           response.map((r, i) => {
             for (let d of doctorResponse.responseContents) {
@@ -254,7 +254,7 @@ const PatientTreatmentController = () => {
 
 
           console.log("Before getting Lab");
-          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
           console.log("After getting Lab");
           if (repeatLabOrder && repeatLabOrder.length > 0) {
             response.forEach((l) => {
@@ -265,7 +265,7 @@ const PatientTreatmentController = () => {
           }
 
           console.log("Before getting Prescription");
-          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
+          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
           console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
@@ -275,7 +275,7 @@ const PatientTreatmentController = () => {
             });
           }
           console.log("Before getting Radiology");
-          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, orderIds);
           console.log("After getting Radiology");
           if (repeatRadilogyOrder && repeatRadilogyOrder.length > 0) {
             response.forEach((r) => {
@@ -287,7 +287,7 @@ const PatientTreatmentController = () => {
           }
 
           console.log("Before getting Investigation");
-          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
           console.log("After getting Investigation");
           if (repeatInvestOrder && repeatInvestOrder.length > 0) {
             response.forEach((r) => {
@@ -456,7 +456,7 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
     config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientTreatmentId',
     //url,
     {
-      "content-type": "application/json",
+      'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
@@ -479,7 +479,7 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
     //config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
     config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     {
-      "content-type": "application/json",
+      'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
@@ -501,7 +501,7 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
     config.wso2LisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     //url,
     {
-      "content-type": "application/json",
+      'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
@@ -526,7 +526,7 @@ async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, or
     config.wso2InvestUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     //url,
     {
-      "content-type": "application/json",
+      'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
@@ -550,7 +550,8 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
     method: 'POST',
     headers: {
       Authorization: Authorization,
-      user_uuid: user_uuid
+      user_uuid: user_uuid,
+      'Content-Type': 'application/json'
     },
     body: { "uuid": departmentIds },
     json: true
@@ -569,7 +570,8 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
     method: 'POST',
     headers: {
       Authorization: Authorization,
-      user_uuid: user_uuid
+      user_uuid: user_uuid,
+      'Content-Type': 'application/json'
     },
     body: { "uuid": doctorIds },
     json: true
