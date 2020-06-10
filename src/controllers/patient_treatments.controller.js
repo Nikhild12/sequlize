@@ -195,7 +195,7 @@ const PatientTreatmentController = () => {
 
 
   const _previousKitRepeatOrder = async (req, res) => {
-    const { user_uuid, facility_uuid, authorization } = req.headers;
+    const { user_uuid, facility_uuid, Authorization } = req.headers;
     const { patient_uuid } = req.query;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
@@ -211,7 +211,7 @@ const PatientTreatmentController = () => {
           orderIds.push(d.order_id);
         });
 
-        const departmentsResponse = await getDepartments(user_uuid, authorization, departmentIds);
+        const departmentsResponse = await getDepartments(user_uuid, Authorization, departmentIds);
         if (departmentsResponse) {
           response.map((r, i) => {
             for (let d of departmentsResponse.responseContent.rows) {
@@ -221,7 +221,7 @@ const PatientTreatmentController = () => {
             }
           });
         }
-        const doctorResponse = await getDoctorDetails(user_uuid, authorization, doctorIds);
+        const doctorResponse = await getDoctorDetails(user_uuid, Authorization, doctorIds);
         if (doctorResponse) {
           response.map((r, i) => {
             for (let d of doctorResponse.responseContents) {
@@ -242,7 +242,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, authorization }, orderIds);
+          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, Authorization }, orderIds);
           if (repeatLabOrder && repeatLabOrder.length > 0) {
             response.forEach((l) => {
               l.labDetails = repeatLabOrder.filter((rl) => {
@@ -251,7 +251,7 @@ const PatientTreatmentController = () => {
             });
 
           }
-          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, authorization, facility_uuid, orderIds, patient_uuid);
+          const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -259,7 +259,7 @@ const PatientTreatmentController = () => {
               });
             });
           }
-          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, authorization }, orderIds);
+          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, Authorization }, orderIds);
           if (repeatRadilogyOrder && repeatRadilogyOrder.length > 0) {
             response.forEach((r) => {
               r.radilogyDetails = repeatRadilogyOrder.filter((rm) => {
@@ -268,7 +268,7 @@ const PatientTreatmentController = () => {
             });
 
           }
-          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, authorization }, orderIds);
+          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, Authorization }, orderIds);
           if (repeatInvestOrder && repeatInvestOrder.length > 0) {
             response.forEach((r) => {
               r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
