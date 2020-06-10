@@ -54,24 +54,19 @@ const notesController = () => {
         const { user_uuid } = req.headers;
         const { patient_uuid } = req.query;
 
+        let filterQuery = {
+            patient_uuid: patient_uuid,
+            status: emr_constants.IS_ACTIVE,
+            is_active: emr_constants.IS_ACTIVE
+        };
         if (user_uuid && patient_uuid > 0) {
             try {
-
-                const getOPNotesByPId = await sectionCategoryEntriesTbl.findAll({
-                    where: { patient_uuid, is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE },
-                    order: [["uuid", "desc"]],
-                    // limit: 5,
-                    attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date'],
-                    include: [{
-                        model: profilesTbl,
-                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-                    }]
-                });
+                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 // Code and Message for Response
                 const code = emr_utility.getResponseCodeForSuccessRequest(getOPNotesByPId);
                 const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
-                const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
-                return res.status(200).send({ code: code, message, responseContents: notesResponse });
+                // const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
+                return res.status(200).send({ code: code, message, responseContents: getOPNotesByPId });
 
 
             } catch (ex) {
@@ -139,3 +134,22 @@ const notesController = () => {
 }
 
 module.exports = notesController();
+
+
+async function getPrevNotes(filterQuery, Sequelize) {
+    //console.log(filterQuery);
+    return sectionCategoryEntriesTbl.findAll({
+        where: filterQuery,
+        group: ['profile_uuid'],
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+            [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
+        ],
+        order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        limit: 10,
+        include: [{
+            model: profilesTbl,
+            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+        }],
+    });
+
+}
