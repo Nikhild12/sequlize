@@ -484,13 +484,17 @@ const Encounter = () => {
 
   const _getPatientDoc = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { patient_uuid } = req.query;
+    const { patient_uuid,enc_uuid } = req.query;
 
     try {
       if (user_uuid && patient_uuid) {
+        let wher_con = {ed_patient_uuid:patient_uuid};
+        if(enc_uuid){
+          wher_con.ed_encounter_uuid = enc_uuid;
+        }
         const docList = await vw_patientdoc.findAll({
           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-          where: { ed_patient_uuid: patient_uuid },
+          where: wher_con,
           //group: ['ed_created_date']
         });
         if (docList) {

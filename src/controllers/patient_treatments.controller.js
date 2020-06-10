@@ -456,8 +456,8 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
-    config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
-    //url,
+    //config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     {
       "content-type": "application/json",
       facility_uuid: facility_uuid || 1,
@@ -499,7 +499,8 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, order_id) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const investigationData = await utilityService.postRequest(
-    config.wso2InvestUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    //config.wso2InvestUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
+    config.wso2InvestUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
     //url,
     {
       "content-type": "application/json",
