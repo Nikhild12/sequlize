@@ -99,6 +99,12 @@ const _checkTATIsValid = array => {
   });
 };
 const _postRequest = async (api, headers, data) => {
+  console.log({ api });
+  console.log("\n");
+  console.log({ headers });
+  console.log("\n");
+  console.log({ data });
+
   return new Promise((resolve, reject) => {
     request.post(
       {

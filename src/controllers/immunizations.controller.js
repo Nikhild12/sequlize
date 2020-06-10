@@ -395,7 +395,7 @@ const immunizationsController = () => {
         let postData = req.body;
         postData.created_by = req.headers.user_uuid;
         postData.modified_by = req.headers.user_uuid;
-        postData.status=postData.is_active;
+        // postData.status=postData.is_active;
         if (Object.keys(postData).length != 0) {
             
             immunizationsTbl.findAll({

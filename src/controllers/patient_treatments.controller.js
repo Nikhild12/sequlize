@@ -196,10 +196,15 @@ const PatientTreatmentController = () => {
 
   const _previousKitRepeatOrder = async (req, res) => {
     const { user_uuid, facility_uuid, Authorization } = req.headers;
+
+    console.log({ Authorization });
+
     const { patient_uuid } = req.query;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
+        console.log("Treatment Kit Data");
+
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
         let departmentIds = [], doctorIds = [], orderIds = [];
@@ -235,6 +240,7 @@ const PatientTreatmentController = () => {
 
           const repeatOrderDiagnosisData = await getPrevOrderdDiagnosisData(orderIds);
           const responseDiagnosis = await getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData);
+          console.log("After getting Diagnosis");
           if (responseDiagnosis.length > 0) {
             response.forEach((e, index) => {
               e.diagnosis = responseDiagnosis.filter((rD) => {
@@ -243,16 +249,21 @@ const PatientTreatmentController = () => {
             });
           }
 
+
+          console.log("Before getting Lab");
           const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, Authorization }, orderIds);
+          console.log("After getting Lab");
           if (repeatLabOrder && repeatLabOrder.length > 0) {
             response.forEach((l) => {
               l.labDetails = repeatLabOrder.filter((rl) => {
                 return rl.order_id === l.order_id;
               });
             });
-
           }
+
+          console.log("Before getting Prescription");
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
+          console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -260,7 +271,9 @@ const PatientTreatmentController = () => {
               });
             });
           }
+          console.log("Before getting Radiology");
           const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, Authorization }, orderIds);
+          console.log("After getting Radiology");
           if (repeatRadilogyOrder && repeatRadilogyOrder.length > 0) {
             response.forEach((r) => {
               r.radilogyDetails = repeatRadilogyOrder.filter((rm) => {
@@ -269,7 +282,10 @@ const PatientTreatmentController = () => {
             });
 
           }
+
+          console.log("Before getting Investigation");
           const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, Authorization }, orderIds);
+          console.log("After getting Investigation");
           if (repeatInvestOrder && repeatInvestOrder.length > 0) {
             response.forEach((r) => {
               r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
@@ -502,6 +518,9 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 
 }
 async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, order_id) {
+
+  console.log({ _id: order_id });
+
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const investigationData = await utilityService.postRequest(
     //config.wso2InvestUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
