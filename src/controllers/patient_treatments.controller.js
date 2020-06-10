@@ -204,7 +204,7 @@ const PatientTreatmentController = () => {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
         console.log("Treatment Kit Data");
-        
+
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
         let departmentIds = [], doctorIds = [], orderIds = [];
@@ -251,7 +251,7 @@ const PatientTreatmentController = () => {
               });
             });
           }
-          
+
 
           console.log("Before getting Lab");
           const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, Authorization }, orderIds);
@@ -517,6 +517,9 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
 
 }
 async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, order_id) {
+
+  console.log({ _id: order_id });
+
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const investigationData = await utilityService.postRequest(
     //config.wso2InvestUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
