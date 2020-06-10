@@ -47,7 +47,7 @@ const tmpmstrController = () => {
           lab_id
         );
         const templateList = await table_name.findAll(query);
-        if (templateList != null && templateList != undefined && templateList.length > 0) {
+        if (templateList != null  && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,
             responseContents: getTempData(temp_type_id, templateList),
