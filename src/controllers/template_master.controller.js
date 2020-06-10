@@ -47,15 +47,21 @@ const tmpmstrController = () => {
           lab_id
         );
         const templateList = await table_name.findAll(query);
-        return res.status(httpStatus.OK).json({
-          statusCode: 200,
-          responseContents: getTempData(temp_type_id, templateList),
-          message:
-            templateList && templateList.length > 0
-              ? emr_constants.TEMPLATE_FETCH_SUCCESS
-              : emr_constants.NO_RECORD_FOUND
-        });
-
+        if (templateList != null  && templateList.length > 0) {
+          return res.status(httpStatus.OK).json({
+            statusCode: 200,
+            responseContents: getTempData(temp_type_id, templateList),
+            message:
+              templateList && templateList.length > 0
+                ? emr_constants.TEMPLATE_FETCH_SUCCESS
+                : emr_constants.NO_RECORD_FOUND
+          });
+        } else {
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: "No Data Found "
+          });
+        }
       }
       else {
         return res.status(400).send({
