@@ -447,6 +447,65 @@ const profilesController = () => {
     var deferred = new Q.defer();
     var profileData = req;
     var profileDetailsUpdate = [];
+    let conceptValuesSave = [];
+    let conceptuuids = [];
+    for (let i = 0; i < profileData.profiles.sections.length; i++) {
+      const element1 = profileData.profiles;
+      profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
+
+      const element = profileData.profiles.sections[i];
+      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
+
+      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
+        const element = profileData.profiles.sections[i].categories[j];
+        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
+
+        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
+          const element = profileData.profiles.sections[i].categories[j].concepts[k];
+          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_uuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
+
+          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
+            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
+            if (element.profile_section_category_concept_values_uuid) {
+              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+            }
+            else {
+              let elementArr = [];
+              elementArr.push(element);
+              let profilesReq = profileData.profiles;
+              let ValuesInfoDetails = [];
+              let proSec = profilesReq.sections;
+              var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
+            }
+          }
+        }
+      }
+    }
+    if (profileDetailsUpdate.length > 0) {
+      var response = await Q.allSettled(profileDetailsUpdate);
+      if (response.length > 0) {
+        var responseMsg = [];
+        for (let i = 0; i < response.length; i++) {
+          const element = response[i];
+          if (element.state == "rejected") {
+            responseMsg.push(element.reason);
+          }
+        }
+
+        if (responseMsg.length == 0) {
+          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
+        } else {
+          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
+        }
+      }
+    }
+    return deferred.promise;
+  };
+
+  const bulkUpdateProfile1 = async (req) => {
+    var deferred = new Q.defer();
+    var profileData = req;
+    var profileDetailsUpdate = [];
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
       const element1 = profileData.profiles;
       profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
@@ -567,6 +626,40 @@ async function findDuplicateProfilesByCodeAndName({ profile_code, profile_name }
   });
 }
 
+async function findDuplicateConValueByCodeAndName(profileData) {
+  // checking for Duplicate 
+  // before creating profiles 
+  let profilesReq = profileData.profiles;
+  let ValuesInfoDetails = [];
+  let proSec = profilesReq.sections;
+  proSec.forEach((sItem, section_idx) => {
+    let categories = sItem.categories;
+    categories.forEach((caItem, caIdx) => {
+      let concepts = caItem.concepts;
+      concepts.forEach((item, idx) => {
+        let conceptvalues = item.conceptvalues;
+        conceptvalues.forEach((item, idx) => {
+          ValuesInfoDetails = [...ValuesInfoDetails, {
+            value_code: item.value_code,
+            value_name: item.value_name,
+            display_order: item.display_order
+          }];
+        });
+      });
+    });
+  });
+  console.log('ValuesInfoDetails===', ValuesInfoDetails);
+  return await profileSectionCategoryConceptValuesTbl.findAll({
+    attributes: ['value_code', 'value_name', 'is_active'],
+    where: {
+      [Op.or]: [
+        { value_code: ValuesInfoDetails[0].value_code },
+        { value_name: ValuesInfoDetails[0].value_name }
+      ]
+    }
+  });
+}
+
 function getDuplicateMsg(record) {
   return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
 }
@@ -620,3 +713,21 @@ function getDuplicateMsg(record) {
     ? emr_constants.DUPLICATE_ACTIVE_MSG
     : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
 }
+const nameExists = (value_name) => {
+  if (value_name !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = profileSectionCategoryConceptValuesTbl.findAll({
+        order: [['created_date', 'DESC']],
+        attributes: ["value_name", "is_active", "status"],
+        where: { value_name: value_name }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "name does not existed" });
+      }
+    });
+  }
+};
+

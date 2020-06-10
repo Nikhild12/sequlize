@@ -60,7 +60,7 @@ const notesController = () => {
                 const getOPNotesByPId = await sectionCategoryEntriesTbl.findAll({
                     where: { patient_uuid, is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE },
                     order: [["uuid", "desc"]],
-                    limit: 5,
+                    // limit: 5,
                     attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date'],
                     include: [{
                         model: profilesTbl,
