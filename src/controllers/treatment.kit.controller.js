@@ -583,7 +583,7 @@ const TreatMent_Kit = () => {
           );
 
           // Checking for duplicate code and name
-          if (treatmentKitRecord && (treatment_kit.hasOwnProperty('name') || treatment_kit.hasOwnProperty('code'))) {
+          if (treatmentKitRecord && treatmentKitRecord.length > 0 && (treatment_kit.hasOwnProperty('name') || treatment_kit.hasOwnProperty('code'))) {
             const code = treatmentKitRecord.find((t) => t.code === treatment_kit.code);
             const name = treatmentKitRecord.find((t) => t.name === treatment_kit.name);
 
@@ -599,8 +599,14 @@ const TreatMent_Kit = () => {
           }
 
           // Updating Master Table i.e Treatment Kit Table
-          const updateTreatmentKit = treatmentkitTbl.update(treatment_kit, { where: { uuid: treatment_kit_uuid } });
-          updateTreatmentPromise = [...updateTreatmentPromise, updateTreatmentKit];
+          treatment_kit.modified_by = user_uuid;
+          treatment_kit.modified_date = new Date();
+          const updateTreatmentKit = await treatmentkitTbl.update(treatment_kit, { where: { uuid: treatment_kit_uuid } });
+
+          // Checking whether master record found or not
+          if (updateTreatmentKit && updateTreatmentKit.length > 0 && !updateTreatmentKit[0]) {
+            return res.status(200).send({ code: httpStatus.NO_CONTENT, message: emr_constants.NO_RECORD_FOUND });
+          }
 
           // Drug Update, Delete and Create
           if (treatment_kit_drug && Object.keys(treatment_kit_drug).length > 0) {
@@ -634,10 +640,8 @@ const TreatMent_Kit = () => {
 
           const updateTreatmentKitPromise = await Promise.all(updateTreatmentPromise);
 
-          const isUpdated = updateTreatmentKitPromise[0][0];
-          const code = isUpdated ? httpStatus.OK : httpStatus.NO_CONTENT;
-          const message = isUpdated ? emr_constants.TREATMENT_UPDATE : emr_constants.NO_RECORD_FOUND;
-
+          const code = httpStatus.OK;
+          const message = emr_constants.TREATMENT_UPDATE;
           return res.status(200).send({ code, message, responseContent: updateTreatmentKitPromise });
 
         } else {
