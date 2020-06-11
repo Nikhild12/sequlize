@@ -9,7 +9,9 @@ const emr_constants = require("../config/constants");
 // EMR Utitlize Import
 const emr_utility = require("../services/utility.service");
 
+// Get Treatment Kit List View
 const treatmentKitListViewTbl = sequelizeDb.vw_treatment_kit_list;
+
 // Get Treatment Fav Views
 const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
 const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
@@ -17,6 +19,12 @@ const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investiga
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 
+// Treatment Kit Table
+const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
+const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
+const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
+const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
+const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 
 const treatmentKitAtt = [
     "u_uuid",
@@ -250,10 +258,41 @@ const _getTreatmentFavouritesInHumanUnderstandable = (treatFav) => {
     return favouritesByIdResponse;
 };
 
+// treatment Drug Update
+const _updateDrug = (drug, uId, tkId) => {
+    return updateTreatmentKit(drug, treatmentkitDrugTbl, uId, tkId, 'treatment_kit_drug_id');
+};
+
+// treatment Diagnosis Update
+const _updateDiagnosis = (diagnosis, uId, tkId) => {
+    return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id');
+};
+
+// treatment Lab Update
+const _updateLab = (lab, uId, tkId) => {
+    return updateTreatmentKit(lab, treatmentkitLabTbl, uId, tkId, 'treatment_kit_lab_id');
+};
+
+// treatment Radiology Update
+const _updateRadiolgy = (radiology, uId, tkId) => {
+    return updateTreatmentKit(radiology, treatmentkitRadiologyTbl, uId, tkId, 'treatment_kit_radiology_id');
+};
+
+// treatment Investigation Update
+const _updateInvestigation = (investigation, uId, tkId) => {
+    return updateTreatmentKit(investigation, treatmentkitInvestigationTbl, uId, tkId, 'treatment_kit_investigation_id');
+};
+
+
 module.exports = {
     getTreatmentFavByIdPromise: _getTreatmentFavByIdPromise,
     getTreatmentKitByIdQuery: _getTreatmentKitByIdQuery,
-    getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable
+    getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable,
+    updateDrug: _updateDrug,
+    updateDiagnosis: _updateDiagnosis,
+    updateLab: _updateLab,
+    updateRadiolgy: _updateRadiolgy,
+    updateInvestigation: _updateInvestigation
 };
 
 // Returns Drug Details From Treatment Kit
@@ -322,7 +361,6 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
             test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: iv.tkim_order_priority_uuid,
             treatment_kit_investigation_id: iv.tkim_uuid
-
         };
     });
 }
@@ -381,4 +419,58 @@ function getTreatmentDetails(treatFav) {
         department_id: treatFav[0].d_uuid
     };
 
+}
+
+function updateTreatmentKit(object, table, uId, tkId, updateColumn) {
+    let updateArray = [];
+
+    // Deleting Records
+    if (object.hasOwnProperty("delete") && Array.isArray(object.delete)) {
+        updateArray = [...updateArray, ...deleteRecords(object.delete, table)];
+    }
+
+    // Updating Exisiting Record
+    if (object.hasOwnProperty("update") && Array.isArray(object.update)) {
+        updateArray = [...updateArray, ...updateRecords(object.update, table, uId, updateColumn)];
+    }
+
+    // Creating new Record
+    if (object.hasOwnProperty("create") && Array.isArray(object.create)) {
+        updateArray = [...updateArray, ...createRecords(object.create, table, uId, tkId)];
+    }
+
+    return updateArray;
+}
+
+// to delete treatment Kit Multiple Records
+function deleteRecords(records, table) {
+    return records.map((r) => {
+        return table.update(
+            { status: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE },
+            { where: { uuid: r } }
+        );
+    });
+}
+
+// to update treatment Kit Multiple Records
+function updateRecords(records, table, uId, columnName) {
+    return records.map((r) => {
+        r.modified_date = new Date();
+        r.modified_by = uId;
+        console.log(r);
+        
+        return table.update(r, { where: { uuid: r[columnName] } });
+    });
+}
+
+// to create new treatmetn kit Multiple Records
+function createRecords(records, table, uId, tkId) {
+    return records.map((r) => {
+        r.created_date = new Date();
+        r.created_by = uId;
+        r.modified_by = 0;
+        r.treatment_kit_uuid = tkId;
+        r.is_active = r.status = emr_constants.IS_ACTIVE;
+        return table.create(r, { returning: true });
+    });
 }

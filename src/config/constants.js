@@ -59,6 +59,8 @@ module.exports = Object.freeze({
   REQUIRED_VALUE_NOT_FOUND: "Required Value Not Found",
   PLEASE_SEND_CONTEXT_UUID: "Please send Context uuid in the first object",
   PATIENT_SPECIALITY_SKETCH_FETCHED: "Successfully Fetched Patient Speciality Sketch",
+  NO_TREATMETN_KIT_FOUND: "Treatment Kit Id",
+  TREATMENT_UPDATE: "Treatment Kit Updated Successfully",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
