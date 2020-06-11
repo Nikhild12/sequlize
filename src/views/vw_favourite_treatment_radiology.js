@@ -73,6 +73,9 @@ module.exports = (sequelize, DataTypes) => {
       tm_is_active: {
         type: DataTypes.BOOLEAN
       },
+      tkrm_uuid: {
+        type: DataTypes.INTEGER
+      }
     },
     {
       freezeTableName: true
