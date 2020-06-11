@@ -668,6 +668,7 @@ function getTemplateListData1(fetchedData) {
             modified_by: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
+            facility_uuid: tD.dataValues.f_name,
             department_name: tD.dataValues.d_name,
           },
           diet_details: [
@@ -915,6 +916,7 @@ function getLabListData(fetchedData) {
             modified_by: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
+            facility_uuid: tD.dataValues.f_uuid,
             department_name: tD.dataValues.d_name,
           },
 
@@ -964,6 +966,7 @@ function getRisListData(fetchedData) {
             modified_by: modifiedby,
             modified_date: fetchedData[0].dataValues.tm_modified_date,
             facility_name: fetchedData[0].dataValues.f_name,
+            facility_uuid: fetchedData[0].dataValues.f_uuid,
             department_name: fetchedData[0].dataValues.d_name,
           },
 
