@@ -16,8 +16,7 @@ const treatmentkitTbl = sequelizeDb.treatment_kit;
 const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
 const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
-const treatmentkitInvestigationTbl =
-  sequelizeDb.treatment_kit_investigation_map;
+const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
 
@@ -140,19 +139,11 @@ const TreatMent_Kit = () => {
           ];
         }
         // Drug
-        if (
-          treatment_kit_drug &&
-          Array.isArray(treatment_kit_drug) &&
-          treatment_kit_drug.length > 0 &&
-          treatmentSavedData
-        ) {
+        if (treatment_kit_drug && Array.isArray(treatment_kit_drug) && treatment_kit_drug.length > 0 && treatmentSavedData) {
           // assigning Default Values
           treatment_kit_drug.forEach(dr => {
             dr = emr_utility.assignDefaultValuesAndUUIdToObject(
-              dr,
-              treatmentSavedData,
-              user_uuid,
-              "treatment_kit_uuid"
+              dr, treatmentSavedData, user_uuid, "treatment_kit_uuid"
             );
           });
 
@@ -574,12 +565,109 @@ const TreatMent_Kit = () => {
     }
   };
 
+  const _updateTreatmentKitById = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
+    let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
+    if (user_uuid && Object.keys(req.body).length > 0) {
+      try {
+
+        let { treatment_kit_uuid } = treatment_kit;
+        let updateTreatmentPromise = [];
+
+        if (+(treatment_kit_uuid) > 0) {
+
+          // getting treatment kit record
+          const treatmentKitRecord = await treatmentkitTbl.findAll(
+            { attributes: ["code", "name"], where: { uuid: treatment_kit_uuid } }
+          );
+
+          // Checking for duplicate code and name
+          if (treatmentKitRecord && (treatment_kit.hasOwnProperty('name') || treatment_kit.hasOwnProperty('code'))) {
+            const code = treatmentKitRecord.find((t) => t.code === treatment_kit.code);
+            const name = treatmentKitRecord.find((t) => t.name === treatment_kit.name);
+
+
+            if (!code || !name) {
+              const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
+              if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
+                return res.status(400).send({
+                  code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord)
+                });
+              }
+            }
+          }
+
+          // Updating Master Table i.e Treatment Kit Table
+          const updateTreatmentKit = treatmentkitTbl.update(treatment_kit, { where: { uuid: treatment_kit_uuid } });
+          updateTreatmentPromise = [...updateTreatmentPromise, updateTreatmentKit];
+
+          // Drug Update, Delete and Create
+          if (treatment_kit_drug && Object.keys(treatment_kit_drug).length > 0) {
+            const drugArray = treatmentKitAtt.updateDrug(treatment_kit_drug, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...drugArray];
+          }
+
+          // Diagnosis Update, Delete and Create
+          if (treatment_kit_diagnosis && Object.keys(treatment_kit_diagnosis).length > 0) {
+            const diagnosisArray = treatmentKitAtt.updateDiagnosis(treatment_kit_diagnosis, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...diagnosisArray];
+          }
+
+          // Lab Update, Delete and Create
+          if (treatment_kit_lab && Object.keys(treatment_kit_lab).length > 0) {
+            const labArray = treatmentKitAtt.updateLab(treatment_kit_lab, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...labArray];
+          }
+
+          // Radiology Update, Delete and Create
+          if (treatment_kit_radiology && Object.keys(treatment_kit_radiology).length > 0) {
+            const radiologyArray = treatmentKitAtt.updateRadiolgy(treatment_kit_radiology, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...radiologyArray];
+          }
+
+          // Investigation Update, Delete and Create
+          if (treatment_kit_investigation && Object.keys(treatment_kit_investigation).length > 0) {
+            const investigationArray = treatmentKitAtt.updateInvestigation(treatment_kit_investigation, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...investigationArray];
+          }
+
+          const updateTreatmentKitPromise = await Promise.all(updateTreatmentPromise);
+
+          const isUpdated = updateTreatmentKitPromise[0][0];
+          const code = isUpdated ? httpStatus.OK : httpStatus.NO_CONTENT;
+          const message = isUpdated ? emr_constants.TREATMENT_UPDATE : emr_constants.NO_RECORD_FOUND;
+
+          return res.status(200).send({ code, message, responseContent: updateTreatmentKitPromise });
+
+        } else {
+          return res.status(400).send({
+            code: httpStatus[400],
+            message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_TREATMETN_KIT_FOUND} ${emr_constants.FOUND}`
+          });
+        }
+
+      } catch (error) {
+        console.log("Exception happened", error);
+        return res
+          .status(500)
+          .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
   return {
     createTreatmentKit: _createTreatmentKit,
     getTreatmentKitByFilters: _getTreatmentKitByFilters,
     getAllTreatmentKit: _getAllTreatmentKit,
     deleteTreatmentKit: _deleteTreatmentKit,
-    getTreatmentKitById: _getTreatmentKitById
+    getTreatmentKitById: _getTreatmentKitById,
+    updateTreatmentKitById: _updateTreatmentKitById
   };
 };
 
@@ -597,9 +685,7 @@ async function findDuplicateTreatmentKitByCodeAndName({ code, name }) {
 }
 
 function getDuplicateMsg(record) {
-  return record[0].is_active
-    ? emr_constants.DUPLICATE_ACTIVE_MSG
-    : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
+  return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
 }
 
 /**
@@ -611,18 +697,11 @@ function getDuplicateMsg(record) {
  */
 function checkTreatmentKit(req) {
   const { treatment_kit_lab, treatment_kit_drug } = req.body;
-  const {
-    treatment_kit_investigation,
-    treatment_kit_radiology,
-    treatment_kit_diagnosis
-  } = req.body;
+  const { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
 
   return (
-    !checkTreatmentKitObj(treatment_kit_lab) &&
-    !checkTreatmentKitDrug(treatment_kit_drug) &&
-    !checkTreatmentKitObj(treatment_kit_investigation) &&
-    !checkTreatmentKitObj(treatment_kit_radiology) &&
-    !checkTreatmentKitDiagnosis(treatment_kit_diagnosis)
+    !checkTreatmentKitObj(treatment_kit_lab) && !checkTreatmentKitDrug(treatment_kit_drug) &&
+    !checkTreatmentKitObj(treatment_kit_investigation) && !checkTreatmentKitObj(treatment_kit_radiology) && !checkTreatmentKitDiagnosis(treatment_kit_diagnosis)
   );
 }
 
