@@ -143,14 +143,14 @@ const progress_notes = () => {
     const _getAllProgressNotesDetails = async (req, res) => {
 
         const { user_uuid } = req.headers;
-
+        const { patient_uuid } = req.query;
         try {
             if (user_uuid) {
                 const notesData = await vwProgressNotesTbl.findAll(
                     {
                         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
                         order: [['p_uuid', 'DESC']],
-                        where: { p_is_active: 1, p_status: 1 }
+                        where: { p_patient_uuid: patient_uuid, p_is_active: 1, p_status: 1 }
                     },
                 );
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });

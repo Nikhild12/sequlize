@@ -7722,7 +7722,8 @@
 						"name": "Authorization",
 						"required": true,
 						"type": "string"
-					},					{
+					},
+					{
 						"in": "header",
 						"name": "facility_uuid",
 						"required": true,
@@ -8425,6 +8426,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -8555,6 +8562,33 @@
 				],
 				"tags": [
 					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/getProfilesDefault": {
+			"get": {
+				"summary": "To get profiles default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
 				],
 				"responses": {
 					"200": {
@@ -12572,10 +12606,10 @@
 				}
 			}
 		},
-		"updatetreatmentKit":{
+		"updatetreatmentKit": {
 			"type": "object",
-			"properties":{
-				"treatment_kit":{
+			"properties": {
+				"treatment_kit": {
 					"type": "object",
 					"properties": {
 						"treatment_kit_type_uuid": {
@@ -12602,20 +12636,20 @@
 						"is_active": {
 							"type": "boolean"
 						}
-					}					
+					}
 				},
 				"treatment_kit_drug": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
 						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_drug_id": {
@@ -12642,9 +12676,9 @@
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"item_master_uuid": {
@@ -12674,17 +12708,17 @@
 					}
 				},
 				"treatment_kit_diagnosis": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"diagnosis_uuid": {
@@ -12696,34 +12730,34 @@
 					}
 				},
 				"treatment_kit_lab": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_lab_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12732,10 +12766,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
@@ -12744,34 +12778,34 @@
 					}
 				},
 				"treatment_kit_radiology": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_radiology_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12780,10 +12814,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
@@ -12792,34 +12826,34 @@
 					}
 				},
 				"treatment_kit_investigation": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_investigation_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12828,10 +12862,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
