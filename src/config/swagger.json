@@ -371,7 +371,6 @@
 					{
 						"in": "formData",
 						"name": "description",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -383,7 +382,6 @@
 					{
 						"in": "formData",
 						"name": "folder_name",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -391,12 +389,6 @@
 						"name": "is_active",
 						"required": true,
 						"type": "string"
-					},
-					{
-						"in": "formData",
-						"name": "revision",
-						"required": true,
-						"type": "integer"
 					},
 					{
 						"in": "formData",
@@ -433,12 +425,6 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
-					},
-					{
-						"in": "header",
-						"name": "authorization",
-						"required": true,
-						"type": "string"
 					},
 					{
 						"in": "body",
