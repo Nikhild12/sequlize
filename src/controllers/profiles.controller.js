@@ -459,24 +459,24 @@ const profilesController = () => {
       profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
 
       const element = profileData.profiles.sections[i];
-      // if (element.profile_sections_uuid) {
-      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
-      // }
-      // else {
-      //   let elementArr3 = [];
-      //   elementArr3.push(element);
-      //   var sectionsResponse = await profileSectionsTbl.bulkCreate(elementArr3);
-      // }
+      if (element.profile_sections_uuid) {
+        profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
+      }
+      else {
+        let elementArr3 = [];
+        elementArr3.push(element);
+        var sectionsResponse = await profileSectionsTbl.bulkCreate(elementArr3);
+      }
       for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
         const element = profileData.profiles.sections[i].categories[j];
-        // if (element.profile_section_categories_uuid) {
-        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
-        // }
-        // else {
-        //   let elementArr2 = [];
-        //   elementArr2.push(element);
-        //   var categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
-        // }
+        if (element.profile_section_categories_uuid) {
+          profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
+        }
+        else {
+          let elementArr2 = [];
+          elementArr2.push(element);
+          var categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
+        }
         for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
           const element = profileData.profiles.sections[i].categories[j].concepts[k];
           if (element.profile_section_category_concepts_uuid) {

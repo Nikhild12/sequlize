@@ -53,9 +53,11 @@ const notesController = () => {
     const _getPreviousPatientOPNotes = async (req, res) => {
         const { user_uuid } = req.headers;
         const { patient_uuid } = req.query;
+        const { profile_type_uuid } = req.query;
 
         let filterQuery = {
             patient_uuid: patient_uuid,
+            profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
             is_active: emr_constants.IS_ACTIVE
         };
@@ -148,7 +150,7 @@ async function getPrevNotes(filterQuery, Sequelize) {
         limit: 10,
         include: [{
             model: profilesTbl,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
         }],
     });
 
