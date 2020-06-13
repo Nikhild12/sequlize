@@ -248,20 +248,17 @@ const specialitySketchesMasterController = () => {
                     } else if (err) {
                         res.send({ status: 400, message: err });
                     } else {
-                        //attachmentData.consultation_uuid = userUUID;
-                        //attachmentData.folder_name = 'ssketch';
-                        // attachmentData.is_active = attachmentData.status = true;
+
+                        attachmentData.is_active = Boolean(attachmentData.is_active);
                         attachmentData.status = true;
-                        //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
-                        attachmentData.created_by = attachmentData.modified_by = userUUID;
-                        attachmentData.created_date = attachmentData.modified_date = new Date();
+                        attachmentData.created_by = userUUID;
+                        attachmentData.created_date = new Date();
                         attachmentData.revision = 1;
 
                         let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
                         if (req.files.length > 0) {
                             let sketchFileSave = [];
                             for (let i = 0; i < req.files.length; i++) {
-                                console.log('req.files[i].path', req.files[i].path);
                                 sketchFileSave.push({
                                     speciality_sketch_uuid: specialityData.dataValues.uuid,
                                     sketch_path: req.files[i].path,
@@ -381,15 +378,12 @@ const specialitySketchesMasterController = () => {
         const { user_uuid } = req.headers;
         try {
 
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
+
             let data = await specialitySketchesMasterTbl.findOne({
                 where: {
-                    uuid: postData.Speciality_id
+                    uuid: postData.Speciality_id,
+                    status: 1
                 },
-                offset: offset,
-                limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
                     required: false,

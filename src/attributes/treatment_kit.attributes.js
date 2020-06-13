@@ -456,9 +456,7 @@ function deleteRecords(records, table) {
 function updateRecords(records, table, uId, columnName) {
     return records.map((r) => {
         r.modified_date = new Date();
-        r.modified_by = uId;
-        console.log(r);
-        
+        r.modified_by = uId;        
         return table.update(r, { where: { uuid: r[columnName] } });
     });
 }
