@@ -7712,7 +7712,7 @@
 					},
 					{
 						"in": "header",
-						"name": "Authorization",
+						"name": "authorization",
 						"required": true,
 						"type": "string"
 					},

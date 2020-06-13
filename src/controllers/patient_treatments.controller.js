@@ -251,7 +251,9 @@ const PatientTreatmentController = () => {
             });
           }
 
+          console.log("Before getting Prescription");
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
+          console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
