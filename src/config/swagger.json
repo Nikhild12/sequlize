@@ -371,7 +371,6 @@
 					{
 						"in": "formData",
 						"name": "description",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -383,7 +382,6 @@
 					{
 						"in": "formData",
 						"name": "folder_name",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -391,12 +389,6 @@
 						"name": "is_active",
 						"required": true,
 						"type": "string"
-					},
-					{
-						"in": "formData",
-						"name": "revision",
-						"required": true,
-						"type": "integer"
 					},
 					{
 						"in": "formData",
@@ -433,12 +425,6 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
-					},
-					{
-						"in": "header",
-						"name": "authorization",
-						"required": true,
-						"type": "string"
 					},
 					{
 						"in": "body",
@@ -5197,6 +5183,47 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/treatment-kit/update": {
+			"put": {
+				"summary": "To update the treatment kit Details By Given Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updatetreatmentKit",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatetreatmentKit"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"TreatmentKit"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Treatment Kit Successfully"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/create": {
 			"post": {
 				"summary": "To create OPNotes profile Details ",
@@ -5245,6 +5272,13 @@
 					{
 						"in": "query",
 						"name": "profile_type",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": true,
 						"type": "integer"
 					},
 					{
@@ -7680,7 +7714,7 @@
 						"in": "header",
 						"name": "authorization",
 						"required": true,
-						"type": "integer"
+						"type": "string"
 					},
 					{
 						"in": "header",
@@ -8385,6 +8419,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -8439,6 +8479,12 @@
 					{
 						"in": "query",
 						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -8515,6 +8561,33 @@
 				],
 				"tags": [
 					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/getProfilesDefault": {
+			"get": {
+				"summary": "To get profiles default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
 				],
 				"responses": {
 					"200": {
@@ -12527,6 +12600,275 @@
 					"properties": {
 						"diagnosis_uuid": {
 							"type": "integer"
+						}
+					}
+				}
+			}
+		},
+		"updatetreatmentKit": {
+			"type": "object",
+			"properties": {
+				"treatment_kit": {
+					"type": "object",
+					"properties": {
+						"treatment_kit_type_uuid": {
+							"type": "integer"
+						},
+						"treatment_kit_uuid": {
+							"type": "integer"
+						},
+						"code": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"is_public": {
+							"type": "boolean"
+						},
+						"activefrom": {
+							"type": "string"
+						},
+						"activeto": {
+							"type": "string"
+						},
+						"is_active": {
+							"type": "boolean"
+						}
+					}
+				},
+				"treatment_kit_drug": {
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						"update": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"treatment_kit_drug_id": {
+										"type": "integer"
+									},
+									"drug_route_uuid": {
+										"type": "integer"
+									},
+									"drug_frequency_uuid": {
+										"type": "integer"
+									},
+									"duration": {
+										"type": "string"
+									},
+									"duration_period_uuid": {
+										"type": "integer"
+									},
+									"drug_instruction_uuid": {
+										"type": "integer"
+									},
+									"quantity": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"create": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"item_master_uuid": {
+										"type": "integer"
+									},
+									"drug_route_uuid": {
+										"type": "integer"
+									},
+									"drug_frequency_uuid": {
+										"type": "integer"
+									},
+									"duration": {
+										"type": "string"
+									},
+									"duration_period_uuid": {
+										"type": "integer"
+									},
+									"drug_instruction_uuid": {
+										"type": "integer"
+									},
+									"quantity": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"treatment_kit_diagnosis": {
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						"create": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"diagnosis_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"treatment_kit_lab": {
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						"update": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"treatment_kit_lab_id": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						},
+						"create": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"test_master_uuid": {
+										"type": "integer"
+									},
+									"profile_master_uuid": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"treatment_kit_radiology": {
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						"update": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"treatment_kit_radiology_id": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						},
+						"create": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"test_master_uuid": {
+										"type": "integer"
+									},
+									"profile_master_uuid": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"treatment_kit_investigation": {
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						"update": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"treatment_kit_investigation_id": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
+						},
+						"create": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"test_master_uuid": {
+										"type": "integer"
+									},
+									"profile_master_uuid": {
+										"type": "integer"
+									},
+									"order_priority_uuid": {
+										"type": "integer"
+									},
+									"order_to_location_uuid": {
+										"type": "integer"
+									}
+								}
+							}
 						}
 					}
 				}

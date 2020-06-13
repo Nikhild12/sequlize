@@ -9,7 +9,9 @@ const emr_constants = require("../config/constants");
 // EMR Utitlize Import
 const emr_utility = require("../services/utility.service");
 
+// Get Treatment Kit List View
 const treatmentKitListViewTbl = sequelizeDb.vw_treatment_kit_list;
+
 // Get Treatment Fav Views
 const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
 const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
@@ -17,6 +19,12 @@ const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investiga
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 
+// Treatment Kit Table
+const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
+const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
+const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
+const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
+const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 
 const treatmentKitAtt = [
     "u_uuid",
@@ -73,6 +81,7 @@ let gedTreatmentKitDrug = [
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
     "tkd_duration",
+    "tkd_uuid"
 ];
 
 // Concating Drug Attributes
@@ -84,6 +93,7 @@ let getTreatmentKitDiaAtt = [
     "td_name",
     "td_code",
     "td_description",
+    "tdkm_uuid"
 ];
 
 // Concating Diagnosis
@@ -100,7 +110,8 @@ let getTreatmentKitInvestigationAtt = [
     "pm_profile_code",
     "pm_name",
     "pm_description",
-    "tkim_profile_master_uuid"
+    "tkim_profile_master_uuid",
+    "tkim_uuid"
 ];
 
 // Concating Investigation Attributes
@@ -118,7 +129,8 @@ let getTreatmentKitRadiologyAtt = [
     "tkrm_profile_master_uuid",
     "pm_profile_code",
     "pm_name",
-    "pm_description"
+    "pm_description",
+    "tkrm_uuid"
 ];
 
 // Concating Radiology Attributes
@@ -136,7 +148,8 @@ let getTreatmentKitLabAtt = [
     "pm_profile_code",
     "pm_name",
     "pm_description",
-    "tklm_profile_master_uuid"
+    "tklm_profile_master_uuid",
+    "tklm_uuid"
 ];
 
 // Concating Lab Attributes
@@ -245,10 +258,41 @@ const _getTreatmentFavouritesInHumanUnderstandable = (treatFav) => {
     return favouritesByIdResponse;
 };
 
+// treatment Drug Update
+const _updateDrug = (drug, uId, tkId) => {
+    return updateTreatmentKit(drug, treatmentkitDrugTbl, uId, tkId, 'treatment_kit_drug_id');
+};
+
+// treatment Diagnosis Update
+const _updateDiagnosis = (diagnosis, uId, tkId) => {
+    return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id');
+};
+
+// treatment Lab Update
+const _updateLab = (lab, uId, tkId) => {
+    return updateTreatmentKit(lab, treatmentkitLabTbl, uId, tkId, 'treatment_kit_lab_id');
+};
+
+// treatment Radiology Update
+const _updateRadiolgy = (radiology, uId, tkId) => {
+    return updateTreatmentKit(radiology, treatmentkitRadiologyTbl, uId, tkId, 'treatment_kit_radiology_id');
+};
+
+// treatment Investigation Update
+const _updateInvestigation = (investigation, uId, tkId) => {
+    return updateTreatmentKit(investigation, treatmentkitInvestigationTbl, uId, tkId, 'treatment_kit_investigation_id');
+};
+
+
 module.exports = {
     getTreatmentFavByIdPromise: _getTreatmentFavByIdPromise,
     getTreatmentKitByIdQuery: _getTreatmentKitByIdQuery,
-    getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable
+    getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable,
+    updateDrug: _updateDrug,
+    updateDiagnosis: _updateDiagnosis,
+    updateLab: _updateLab,
+    updateRadiolgy: _updateRadiolgy,
+    updateInvestigation: _updateInvestigation
 };
 
 // Returns Drug Details From Treatment Kit
@@ -284,7 +328,10 @@ function getDrugDetailsFromTreatment(drugArray) {
             drug_instruction_id: d.tkd_drug_instruction_uuid,
 
             // Strength
-            strength: d.strength
+            strength: d.strength,
+
+            // treatment kit Drug
+            treatment_kit_drug_id: d.tkd_uuid
         };
     });
 }
@@ -297,6 +344,7 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
             diagnosis_name: di.td_name,
             diagnosis_code: di.td_code,
             diagnosis_description: di.td_description,
+            treatment_kit_diagnosis_id: di.tdkm_uuid
         };
     });
 }
@@ -311,7 +359,8 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
             investigation_description: iv.tm_description || iv.pm_description,
             order_to_location_uuid: iv.tkim_order_to_location_uuid,
             test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
-            order_priority_uuid: iv.tkim_order_priority_uuid
+            order_priority_uuid: iv.tkim_order_priority_uuid,
+            treatment_kit_investigation_id: iv.tkim_uuid
         };
     });
 }
@@ -326,7 +375,8 @@ function getRadiologyDetailsFromTreatment(radiology) {
             radiology_description: r.tm_description || r.pm_description,
             order_to_location_uuid: r.tkrm_order_to_location_uuid,
             test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
-            order_priority_uuid: r.tkrm_order_priority_uuid
+            order_priority_uuid: r.tkrm_order_priority_uuid,
+            treatment_kit_radiology_id: r.tkrm_uuid
         };
     });
 }
@@ -341,7 +391,8 @@ function getLabDetailsFromTreatment(lab) {
             lab_description: l.tm_description || l.pm_description,
             order_to_location_uuid: l.tklm_order_to_location_uuid,
             test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
-            order_priority_uuid: l.tklm_order_priority_uuid
+            order_priority_uuid: l.tklm_order_priority_uuid,
+            treatment_kit_lab_id: l.tklm_uuid
         };
     });
 }
@@ -363,8 +414,61 @@ function getTreatmentDetails(treatFav) {
         created_by: treatFav[0].uc_first_name,
         modified_by: treatFav[0].um_first_name,
         activefrom: treatFav[0].activefrom,
-        activeto: treatFav[0].activeactiveto    ,
-        description: treatFav[0].description
+        activeto: treatFav[0].activeactiveto,
+        description: treatFav[0].description,
+        department_id: treatFav[0].d_uuid
     };
 
+}
+
+function updateTreatmentKit(object, table, uId, tkId, updateColumn) {
+    let updateArray = [];
+
+    // Deleting Records
+    if (object.hasOwnProperty("delete") && Array.isArray(object.delete)) {
+        updateArray = [...updateArray, ...deleteRecords(object.delete, table)];
+    }
+
+    // Updating Exisiting Record
+    if (object.hasOwnProperty("update") && Array.isArray(object.update)) {
+        updateArray = [...updateArray, ...updateRecords(object.update, table, uId, updateColumn)];
+    }
+
+    // Creating new Record
+    if (object.hasOwnProperty("create") && Array.isArray(object.create)) {
+        updateArray = [...updateArray, ...createRecords(object.create, table, uId, tkId)];
+    }
+
+    return updateArray;
+}
+
+// to delete treatment Kit Multiple Records
+function deleteRecords(records, table) {
+    return records.map((r) => {
+        return table.update(
+            { status: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE },
+            { where: { uuid: r } }
+        );
+    });
+}
+
+// to update treatment Kit Multiple Records
+function updateRecords(records, table, uId, columnName) {
+    return records.map((r) => {
+        r.modified_date = new Date();
+        r.modified_by = uId;        
+        return table.update(r, { where: { uuid: r[columnName] } });
+    });
+}
+
+// to create new treatmetn kit Multiple Records
+function createRecords(records, table, uId, tkId) {
+    return records.map((r) => {
+        r.created_date = new Date();
+        r.created_by = uId;
+        r.modified_by = 0;
+        r.treatment_kit_uuid = tkId;
+        r.is_active = r.status = emr_constants.IS_ACTIVE;
+        return table.create(r, { returning: true });
+    });
 }

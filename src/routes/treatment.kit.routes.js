@@ -13,6 +13,7 @@ treatmentKitRoute.route('/autoSearch').post(treatmentKitController.getTreatmentK
 treatmentKitRoute.route('/getAll').post(treatmentKitController.getAllTreatmentKit);
 treatmentKitRoute.route('/delete').delete(treatmentKitController.deleteTreatmentKit);
 treatmentKitRoute.route('/get-by-id').get(treatmentKitController.getTreatmentKitById);
+treatmentKitRoute.route('/update').put(treatmentKitController.updateTreatmentKitById);
 
 
 module.exports = treatmentKitRoute;

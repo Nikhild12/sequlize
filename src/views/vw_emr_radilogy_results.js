@@ -49,6 +49,30 @@ module.exports = (sequelize, DataTypes) => {
     lq_name: {
       type: DataTypes.STRING,
 
+    },
+    tm_code: {
+      type: DataTypes.STRING,
+
+    },
+    tm_name: {
+      type: DataTypes.STRING,
+
+    },
+    woa_uuid: {
+      type: DataTypes.INTEGER,
+
+    },
+    attachment_name: {
+      type: DataTypes.STRING,
+
+    },
+    file_path: {
+      type: DataTypes.STRING,
+
+    },
+    comments: {
+      type: DataTypes.STRING,
+
     }
 
   }, {

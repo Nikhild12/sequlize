@@ -74,8 +74,8 @@ module.exports = (sequelize, DataTypes) => {
     );
     speciality_sketches.associate = models => {
 
-        speciality_sketches.belongsTo(models.speciality_sketch_details, {
-            foreignKey: "uuid",
+        speciality_sketches.hasMany(models.speciality_sketch_details, {
+            foreignKey: "speciality_sketch_uuid",
             targetKey: "speciality_sketch_uuid"
         });
 

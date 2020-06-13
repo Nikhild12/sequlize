@@ -239,44 +239,31 @@ const specialitySketchesMasterController = () => {
     const postSpecialitySketcheMaster = async (req, res) => {
         let userUUID = req.headers.user_uuid;
         try {
+            console.log(req.files);
+
             if (userUUID) {
-                uploadD(req, res, async (err) => {
-                    const attachmentData = req.body;
+                const attachmentData = req.body;
+                attachmentData.is_active = Boolean(attachmentData.is_active);
+                attachmentData.status = true;
+                attachmentData.created_by = userUUID;
+                attachmentData.created_date = new Date();
+                attachmentData.revision = 1;
 
-                    if (err instanceof multer.MulterError) {
-                        res.send({ status: 400, message: err });
-                    } else if (err) {
-                        res.send({ status: 400, message: err });
-                    } else {
-                        //attachmentData.consultation_uuid = userUUID;
-                        //attachmentData.folder_name = 'ssketch';
-                        // attachmentData.is_active = attachmentData.status = true;
-                        attachmentData.status = true;
-                        //attachmentData.attached_date = moment(attachmentData.attached_date).format('YYYY-MM-DD HH:mm:ss');
-                        attachmentData.created_by = attachmentData.modified_by = userUUID;
-                        attachmentData.created_date = attachmentData.modified_date = new Date();
-                        attachmentData.revision = 1;
-
-                        let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
-                        if (req.files.length > 0) {
-                            let sketchFileSave = [];
-                            for (let i = 0; i < req.files.length; i++) {
-                                console.log('req.files[i].path', req.files[i].path);
-                                sketchFileSave.push({
-                                    speciality_sketch_uuid: specialityData.dataValues.uuid,
-                                    sketch_path: req.files[i].path,
-                                    status: 1,
-                                    //   is_active: 1
-                                });
-                            }
-                            if (sketchFileSave) {
-                                var specialitySketcheFiles = await specialitySketcheDetailsTbl.bulkCreate(sketchFileSave);
-
-                            }
-                        }
-                        res.send({ "status": 200, "postData": attachmentData, "files": specialitySketcheFiles, "count": req.files.length, "message": "Inserted Speciality Sketche Master details Successfully " });
+                let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
+                if (req.files.length > 0) {
+                    let sketchFileSave = [];
+                    for (let i = 0; i < req.files.length; i++) {
+                        sketchFileSave.push({
+                            speciality_sketch_uuid: specialityData.dataValues.uuid,
+                            sketch_path: req.files[i].path,
+                            status: 1,
+                        });
                     }
-                });
+                    if (sketchFileSave) {
+                        var specialitySketcheFiles = await specialitySketcheDetailsTbl.bulkCreate(sketchFileSave);
+                    }
+                }
+                res.send({ "status": 200, "postData": attachmentData, "files": specialitySketcheFiles, "count": req.files.length, "message": "Inserted Speciality Sketche Master details Successfully " });
             } else { return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); }
         }
         catch (ex) {
@@ -378,18 +365,12 @@ const specialitySketchesMasterController = () => {
     };
     const getSpecialitySketcheMasterById = async (req, res, next) => {
         const postData = req.body;
-        const { user_uuid } = req.headers;
         try {
-
-            const page = postData.page ? postData.page : 1;
-            const itemsPerPage = postData.limit ? postData.limit : 10;
-            const offset = (page - 1) * itemsPerPage;
             let data = await specialitySketchesMasterTbl.findOne({
                 where: {
-                    uuid: postData.Speciality_id
+                    uuid: postData.Speciality_id,
+                    status: 1
                 },
-                offset: offset,
-                limit: itemsPerPage,
                 include: [{
                     model: specialitySketcheDetailsTbl,
                     required: false,
@@ -399,21 +380,9 @@ const specialitySketchesMasterController = () => {
             });
             if (data) {
 
-                // const getcuDetails = await getuserDetails(user_uuid, data.dataValues.created_by, req.headers.authorization);
-                // const getmuDetails = await getuserDetails(user_uuid, data.modified_by, req.headers.authorization);
-                // const getdep = await getdepDetails(user_uuid, data.department_uuid, req.headers.authorization);
-                // const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep);
-                // console.log(getdep);
-
-                // console.log("getcuDetails",getcuDetails, ">>>>>>>>", "getmuDetails",getmuDetails, ">>>>>>>>", "getdep",getdep, ">>>>>>>>", "getdata",getdata);
-
-                return res
-                    .status(httpStatus.OK)
-                    .json({
-                        statusCode: 200,
-                        req: '',
-                        responseContents: data
-                    });
+                return res.status(httpStatus.OK).json({
+                    statusCode: 200, req: '', responseContents: data
+                });
 
             }
             else {
