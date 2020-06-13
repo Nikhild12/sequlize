@@ -1355,13 +1355,17 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
         }
       };
     case "3":
+        lab_id = +(lab_id);
+        const labValidation1 = !lab_id || lab_id === 0;
+        const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
+        const searchValue1 = labValidation1 ? dept_id : lab_id;
       return {
         table_name: vw_profile_ris,
         query: {
           where: {
             tm_uuid: temp_id,
             tm_user_uuid: user_uuid,
-            tm_department_uuid: dept_id,
+            [searchKey1]: searchValue1,
             tm_template_type_uuid: temp_type_id,
             rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
