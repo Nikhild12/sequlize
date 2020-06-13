@@ -140,13 +140,17 @@ module.exports = notesController();
 
 async function getPrevNotes(filterQuery, Sequelize) {
     //console.log(filterQuery);
+    let sortField = 'created_date';
+    let sortOrder = 'DESC';
+    let sortArr = [sortField, sortOrder];
     return sectionCategoryEntriesTbl.findAll({
         where: filterQuery,
         group: ['profile_uuid'],
         attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
             [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
-        order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        //order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        order: [sortArr],
         limit: 10,
         include: [{
             model: profilesTbl,
