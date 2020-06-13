@@ -151,6 +151,7 @@ const profilesController = () => {
     try {
       const getsearch = req.body;
       const { profile_type } = req.query;
+      const { department_uuid } = req.query;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
       // let sortArr = ['p_created_date', 'DESC'];
@@ -192,7 +193,7 @@ const profilesController = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type },
+        where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
         order: [
           sortArr
         ],
