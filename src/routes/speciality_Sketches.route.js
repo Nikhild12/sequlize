@@ -13,7 +13,7 @@ specialityRoutes.route("/createSpeciality").post(middleware.multerupload('/ssket
 specialityRoutes.route("/getAllSpeciality").post(specialitySketchesMasterCtrl.getAllSpecialitySketcheMaster);
 
 specialityRoutes.route("/deleteSpeciality").post(specialitySketchesMasterCtrl.deleteSpecialitySketcheMaster);
-specialityRoutes.route("/updateSpecialityById").post(specialitySketchesMasterCtrl.updateSpecialitySketcheMasterById);
+specialityRoutes.route("/updateSpecialityById").post(middleware.multerupload('/ssketch').array('file', 10), specialitySketchesMasterCtrl.updateSpecialitySketcheMasterById);
 specialityRoutes.route("/getSpecialityById").post(specialitySketchesMasterCtrl.getSpecialitySketcheMasterById);
 
 module.exports = specialityRoutes;
