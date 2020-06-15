@@ -490,15 +490,15 @@
 						"type": "file"
 					},
 					{
-						"in":"formData",
+						"in": "formData",
 						"name": "Speciality_id",
 						"type": "number"
 					},
 					{
-						"in":"formData",
+						"in": "formData",
 						"name": "delete",
 						"type": "string"
-					}					
+					}
 				],
 				"produces": [
 					"application/json",
@@ -9550,6 +9550,12 @@
 				},
 				"codename": {
 					"type": "string"
+				},
+				"departmentId": {
+					"type": "integer"
+				},
+				"note_template_type_uuid": {
+					"type": "integer"
 				}
 			}
 		},
