@@ -347,7 +347,7 @@ const specialitySketchesMasterController = () => {
                         ]);
                     }
                 }
-                res.send({ "status": 200, "responseContents": attachmentData, "files": bulkfilesUpdate, "count": req.files.length, "message": "Updated Successfully" });
+                res.send({ "status": 200, "responseContents": attachmentData, "files": sketchFileSave, "count": req.files.length, "message": "Updated Successfully" });
             } else { return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" }); }
         }
         catch (ex) {
