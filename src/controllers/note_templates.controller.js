@@ -98,6 +98,30 @@ const noteTemplatesController = () => {
                 }
             }
 
+            if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_department_uuid')), getsearch.departmentId)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_department_uuid')), getsearch.departmentId)
+                    ];
+                }
+            }
+
+            if (getsearch.note_template_type_uuid && /\S/.test(getsearch.note_template_type_uuid)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.note_template_type_uuid')), getsearch.note_template_type_uuid)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.note_template_type_uuid')), getsearch.note_template_type_uuid)
+                    ];
+                }
+            }
+
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['nt_is_active'] = getsearch.status;
                 findQuery.where['nt_status'] = getsearch.status;
