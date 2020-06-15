@@ -260,27 +260,27 @@ const _getTreatmentFavouritesInHumanUnderstandable = (treatFav) => {
 
 // treatment Drug Update
 const _updateDrug = (drug, uId, tkId) => {
-    return updateTreatmentKit(drug, treatmentkitDrugTbl, uId, tkId, 'treatment_kit_drug_id');
+    return updateTreatmentKit(drug, treatmentkitDrugTbl, uId, tkId, 'treatment_kit_drug_id', 'Drug');
 };
 
 // treatment Diagnosis Update
 const _updateDiagnosis = (diagnosis, uId, tkId) => {
-    return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id');
+    return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id', 'Diagnosis');
 };
 
 // treatment Lab Update
 const _updateLab = (lab, uId, tkId) => {
-    return updateTreatmentKit(lab, treatmentkitLabTbl, uId, tkId, 'treatment_kit_lab_id');
+    return updateTreatmentKit(lab, treatmentkitLabTbl, uId, tkId, 'treatment_kit_lab_id', 'Lab');
 };
 
 // treatment Radiology Update
 const _updateRadiolgy = (radiology, uId, tkId) => {
-    return updateTreatmentKit(radiology, treatmentkitRadiologyTbl, uId, tkId, 'treatment_kit_radiology_id');
+    return updateTreatmentKit(radiology, treatmentkitRadiologyTbl, uId, tkId, 'treatment_kit_radiology_id', 'Radiology');
 };
 
 // treatment Investigation Update
 const _updateInvestigation = (investigation, uId, tkId) => {
-    return updateTreatmentKit(investigation, treatmentkitInvestigationTbl, uId, tkId, 'treatment_kit_investigation_id');
+    return updateTreatmentKit(investigation, treatmentkitInvestigationTbl, uId, tkId, 'treatment_kit_investigation_id', 'Investigation');
 };
 
 
@@ -421,7 +421,7 @@ function getTreatmentDetails(treatFav) {
 
 }
 
-function updateTreatmentKit(object, table, uId, tkId, updateColumn) {
+function updateTreatmentKit(object, table, uId, tkId, updateColumn, tName) {
     let updateArray = [];
 
     // Deleting Records
@@ -430,7 +430,7 @@ function updateTreatmentKit(object, table, uId, tkId, updateColumn) {
     }
 
     // Updating Exisiting Record
-    if (object.hasOwnProperty("update") && Array.isArray(object.update)) {
+    if (object.hasOwnProperty("update") && Array.isArray(object.update) && tName !== 'Diagnosis') {
         updateArray = [...updateArray, ...updateRecords(object.update, table, uId, updateColumn)];
     }
 
@@ -456,7 +456,7 @@ function deleteRecords(records, table) {
 function updateRecords(records, table, uId, columnName) {
     return records.map((r) => {
         r.modified_date = new Date();
-        r.modified_by = uId;        
+        r.modified_by = uId;
         return table.update(r, { where: { uuid: r[columnName] } });
     });
 }
