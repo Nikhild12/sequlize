@@ -53,8 +53,14 @@ const profilesController = () => {
             message: getDuplicateMsg(duplicateProfileRecord)
           });
         }
+
+        profiles.status = true;
+        profiles.created_by = profiles.modified_by = user_uuid;
+        profiles.created_date = profiles.modified_date = new Date();
+        profiles.revision = 1;
+
         let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [];
-        profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
+        // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
         //Profiles save
         const profileResponse = await profilesTbl.create(profiles, { returning: true });
 
