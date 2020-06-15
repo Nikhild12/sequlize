@@ -59,7 +59,8 @@ const tmpmstrController = () => {
         } else {
           return res.status(200).send({
             code: httpStatus.OK,
-            message: "No Data Found "
+            message: "No Data Found ",
+            responseContents: { templates_lab_list: [] }
           });
         }
       }
