@@ -700,6 +700,52 @@ const profilesController = () => {
     }
   }
 
+  const _setDefaultProfiles = async (req, res) => {
+    try {
+      const { profile_uuid, profile_type_uuid } = req.body;
+      const { user_uuid } = req.headers;
+      // if (profile_uuid && profile_type_uuid) {
+      //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
+      // }
+      if ((profile_uuid || profile_type_uuid) && user_uuid) {
+        let postData = {}, updateData = {}, type = "";
+        if (profile_uuid) {
+          postData = { profile_uuid: profile_uuid, profile_type_uuid: 0 };
+          updateData = { profile_uuid: profile_uuid, modified_by: user_uuid };
+          type = "profiles";
+        }
+        if (profile_type_uuid) {
+          postData = { profile_uuid: 0, profile_type_uuid: profile_type_uuid };
+          updateData = { profile_type_uuid: profile_type_uuid, modified_by: user_uuid };
+          type = "profile_types";
+        }
+        postData.created_by = postData.user_uuid = user_uuid;
+        postData.modified_by = 0;
+        const checkUserExistsOrNot = await getUserProfiles(user_uuid, type);
+        if (checkUserExistsOrNot.status) {
+          const updateProfileId = await profilesDefaultTbl.update(updateData, { where: { user_uuid } });
+          if (updateProfileId && updateProfileId[0] != 0) {
+            return res.status(200).send({ statusCode: 200, message: type + " updated successfully" });
+          } else {
+            return res.status(400).send({ statusCode: 400, message: type + " not updated " });
+          }
+        } else {
+          const insertProfile = await profilesDefaultTbl.create(postData, { returning: true });
+          console.log('insertProfile===', insertProfile);
+          if (insertProfile) {
+            return res.status(201).send({ statusCode: 201, message: type + " inserted successfully " });
+          } else {
+            return res.status(400).send({ statusCode: 400, message: type + " inserted failed " });
+          }
+        }
+      } else {
+        return res.status(422).send({ statusCode: 422, req: req.body, message: "you are missing 'user_uuid / profile_id'" });
+      }
+
+    } catch (ex) {
+      return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -709,7 +755,7 @@ const profilesController = () => {
     getAllValueTypes: _getAllValueTypes,
     getAllProfileNotesTypes: _getAllProfileNotesTypes,
     getDefaultProfiles: _getDefaultProfiles,
-    // setDefaultProfiles: _setDefaultProfiles
+    setDefaultProfiles: _setDefaultProfiles
 
   };
 
@@ -835,4 +881,14 @@ const nameExists = (value_name) => {
     });
   }
 };
-
+async function getUserProfiles(user_uuid) {
+  let result = await profilesDefaultTbl.findOne({
+    where: { user_uuid: user_uuid }
+  }, { returning: true });
+  console.log('IsObjectEmpty(result)===', IsObjectEmpty(result))
+  if (result && IsObjectEmpty(result)) {
+    return { status: true, details: result };
+  } else {
+    return { status: false, details: {} };
+  }
+}

@@ -8597,6 +8597,41 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/profiles/setProfilesDefault": {
+			"post": {
+				"summary": "To create profile and profileType details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "profileDefault",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/addProfileDefault"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "Insterted ProgressNotes details Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -16147,6 +16182,17 @@
 				},
 				"is_phr": {
 					"type": "boolean"
+				}
+			}
+		},
+		"addProfileDefault": {
+			"type": "object",
+			"properties": {
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"profile_type_uuid": {
+					"type": "integer"
 				}
 			}
 		}
