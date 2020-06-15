@@ -601,7 +601,8 @@ function getvdList(fetchedData, p_id, from_date) {
             return {
                 ventilator_date: pV.dataValues.from_date,
                 ventilator_uuid: pV.dataValues.uuid,
-                ventilator_observed_value: pV.dataValues.observed_value,
+                //ventilator_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -735,7 +736,8 @@ function getadList(fetchedData, p_id, from_date) {
             return {
                 abg_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
-                abg_observed_value: pV.dataValues.observed_value,
+                // abg_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -799,7 +801,8 @@ function getmdList(fetchedData, p_id, from_date) {
             return {
                 monitor_date: pV.dataValues.from_date,
                 monitor_uuid: pV.dataValues.uuid,
-                monitor_observed_value: pV.dataValues.observed_value,
+                // monitor_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -860,7 +863,8 @@ function getioList(fetchedData, p_id, from_date) {
             return {
                 iot_date: pV.dataValues.from_date,
                 iot_uuid: pV.dataValues.uuid,
-                iot_observed_value: pV.dataValues.observed_value,
+                // iot_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -920,7 +924,8 @@ function getdbList(fetchedData, p_id, from_date) {
             return {
                 db_date: pV.dataValues.from_date,
                 db_uuid: pV.dataValues.uuid,
-                db_observed_value: pV.dataValues.observed_value,
+                // db_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -981,7 +986,8 @@ function getdlList(fetchedData, p_id, from_date) {
             return {
                 dl_date: pV.dataValues.from_date,
                 dl_uuid: pV.dataValues.uuid,
-                dl_observed_value: pV.dataValues.observed_value,
+                // dl_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -1042,7 +1048,8 @@ function getbpList(fetchedData, p_id, from_date) {
             return {
                 bp_date: pV.dataValues.from_date,
                 bp_uuid: pV.dataValues.uuid,
-                bp_observed_value: pV.dataValues.observed_value,
+                // bp_observed_value: pV.dataValues.observed_value,
+                observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
