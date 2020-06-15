@@ -459,19 +459,46 @@
 				"description": "To Update Speciality Master Data",
 				"parameters": [
 					{
-						"in": "header",
 						"name": "user_uuid",
+						"in": "header",
 						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "code",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "department_uuid",
 						"type": "integer"
 					},
 					{
-						"in": "body",
-						"name": "UpadteSpeciality",
-						"required": true,
-						"schema": {
-							"$ref": "#/definitions/updateSpecialityById"
-						}
-					}
+						"in": "formData",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"type": "file"
+					},
+					{
+						"in":"formData",
+						"name": "Speciality_id",
+						"type": "number"
+					},
+					{
+						"in":"formData",
+						"name": "delete",
+						"type": "string"
+					}					
 				],
 				"produces": [
 					"application/json",
