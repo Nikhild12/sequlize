@@ -199,7 +199,8 @@ const profilesController = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
+        where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
+        // where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
         order: [
           sortArr
         ],
@@ -210,7 +211,6 @@ const profilesController = () => {
 
       };
 
-      console.log('findQuery===', findQuery);
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -737,7 +737,6 @@ const profilesController = () => {
           }
         } else {
           const insertProfile = await profilesDefaultTbl.create(postData, { returning: true });
-          console.log('insertProfile===', insertProfile);
           if (insertProfile) {
             return res.status(201).send({ statusCode: 201, message: type + " inserted successfully " });
           } else {
@@ -805,7 +804,6 @@ async function findDuplicateConValueByCodeAndName(profileData) {
       });
     });
   });
-  console.log('ValuesInfoDetails===', ValuesInfoDetails);
   return await profileSectionCategoryConceptValuesTbl.findAll({
     attributes: ['value_code', 'value_name', 'is_active'],
     where: {
@@ -891,7 +889,6 @@ async function getUserProfiles(user_uuid) {
   let result = await profilesDefaultTbl.findOne({
     where: { user_uuid: user_uuid }
   }, { returning: true });
-  console.log('IsObjectEmpty(result)===', IsObjectEmpty(result))
   if (result && IsObjectEmpty(result)) {
     return { status: true, details: result };
   } else {
