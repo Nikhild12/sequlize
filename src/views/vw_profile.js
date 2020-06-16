@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
 
 
             },
+            pt_profile_type_name: {
+
+                type: DataTypes.STRING(255),
+
+            },
             p_facility_uuid:
             {
 
