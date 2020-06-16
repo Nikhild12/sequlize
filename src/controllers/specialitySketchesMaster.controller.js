@@ -314,8 +314,10 @@ const specialitySketchesMasterController = () => {
                 const specialityUpdate = await specialitySketchesMasterTbl.update(attachmentData, {
                     where: { uuid: attachmentData.Speciality_id }
                 });
+
+                let sketchFileSave = [];
                 if (req.files.length > 0 && specialityUpdate) {
-                    let sketchFileSave = [];
+                    
                     for (let i = 0; i < req.files.length; i++) {
                         sketchFileSave.push({
                             speciality_sketch_uuid: attachmentData.Speciality_id,
