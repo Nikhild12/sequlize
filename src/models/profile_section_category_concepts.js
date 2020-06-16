@@ -51,24 +51,24 @@ module.exports = (sequelize, DataTypes) => {
 
 
             },
-            value_type_uuid: {
+            // value_type_uuid: {
 
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('value_type_uuid')
-                    }
-                }
+            //     type: DataTypes.INTEGER,
+            //     allowNull: false,
+            //     validate: {
+            //         notNull: {
+            //             msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
+            //         },
+            //         notEmpty: {
+            //             msg: emr_constants.GetpleaseProvideMsg('value_type_uuid')
+            //         },
+            //         min: {
+            //             args: [1],
+            //             msg: emr_constants.GetZeroValidationMessage('value_type_uuid')
+            //         }
+            //     }
 
-            },
+            // },
             is_multiple: {
 
                 type: DataTypes.BOOLEAN,

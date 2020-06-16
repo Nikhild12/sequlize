@@ -26,21 +26,21 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
-            category_uuid: {
+            // category_uuid: {
 
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_uuid')
-                    },
-                }
+            //     type: DataTypes.INTEGER,
+            //     allowNull: false,
+            //     validate: {
+            //         notNull: {
+            //             msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+            //         },
+            //         notEmpty: {
+            //             msg: emr_constants.GetpleaseProvideMsg('category_uuid')
+            //         },
+            //     }
 
 
-            },
+            // },
             display_order: {
 
                 type: DataTypes.INTEGER,
