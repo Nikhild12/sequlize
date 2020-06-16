@@ -64,12 +64,14 @@ const _getInvestigationResponse = radiology => {
   });
 };
 
-const _getFavouriteInvestigationQuery = (user_id, fav_type_id) => {
+const _getFavouriteInvestigationQuery = (user_id, fav_type_id, dId, fId) => {
   return {
     fm_favourite_type_uuid: fav_type_id,
     fm_status: emr_constants.IS_ACTIVE,
     fm_active: emr_constants.IS_ACTIVE,
     fm_userid: user_id,
+    fm_dept: dId,
+    fa_uuid: fId,
     ivtm_uuid: neQuery,
     ivtm_is_active: emr_constants.IS_ACTIVE,
     ivtm_status: emr_constants.IS_ACTIVE

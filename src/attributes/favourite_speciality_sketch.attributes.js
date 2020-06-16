@@ -9,7 +9,7 @@ const Op = Sequelize.Op;
 const neQuery = { [Op.ne]: null };
 
 
-const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id) => {
+const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id, dId, fId) => {
     return {
         fm_favourite_type_uuid: fav_type_id,
         fm_status: emr_constants.IS_ACTIVE,
@@ -17,7 +17,9 @@ const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id) => {
         fm_user_uuid: user_id,
         fmd_speciality_sketch_uuid: neQuery,
         ss_is_active: emr_constants.IS_ACTIVE,
-        ss_status: emr_constants.IS_ACTIVE
+        ss_status: emr_constants.IS_ACTIVE,
+        fm_department_uuid: dId,
+        fa_uuid: fId
     };
 };
 
