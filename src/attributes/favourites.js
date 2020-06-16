@@ -214,75 +214,48 @@ const _favouriteRadVWAttributes = () => {
  * @param {*} uId userId
  * @param {*} dId department Id
  */
-const _favouriteLabVWQuery = (uId, dId, labId = 0) => {
+const _favouriteLabVWQuery = (uId, dId, fId, labId = 0) => {
 
   labId = +(labId);
   const labValidation = labId && labId > 0;
-  // const searchKey = labValidation ? 'fm_department_uuid' : 'fm_lab_uuid';
-  // const searchValue = labValidation ? dId : labId;
-
-  if (labValidation) {
-    return {
-      fm_is_active: emr_constants.IS_ACTIVE,
-      fm_status: emr_constants.IS_ACTIVE,
-      fmd_active: emr_constants.IS_ACTIVE,
-      fmd_status: emr_constants.IS_ACTIVE,
-      [Op.and]: [
-        {
-          [Op.or]: [
-            {
-              fm_lab_uuid: { [Op.eq]: labId },
-              // fm_is_public: { [Op.eq]: emr_constants.IS_ACTIVE },
-            },
-            { fm_user_uuid: { [Op.eq]: uId } },
-          ],
-        },
-        {
-          [Op.or]: [
-            {
-              ltm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-              ltm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-            },
-            {
-              lpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-              lpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-            },
-          ],
-        },
-      ],
-    };
-  } else {
-    return {
-      fm_is_active: emr_constants.IS_ACTIVE,
-      fm_status: emr_constants.IS_ACTIVE,
-      fmd_active: emr_constants.IS_ACTIVE,
-      fmd_status: emr_constants.IS_ACTIVE,
-      [Op.and]: [
-        { fm_user_uuid: { [Op.eq]: uId } },
-        {
-          [Op.or]: [
-            {
-              ltm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-              ltm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-            },
-            {
-              lpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-              lpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
-            },
-          ],
-        },
-      ],
-    };
-  }
-};
-
-const _favouriteRadVWQuery = (uId, dId) => {
+  const searchKey = labValidation ? 'fm_lab_uuid' : 'fm_department_uuid';
+  const searchValue = labValidation ? labId : dId;
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
     fmd_active: emr_constants.IS_ACTIVE,
     fmd_status: emr_constants.IS_ACTIVE,
     fm_user_uuid: uId,
+    [searchKey]: searchValue,
+    fa_uuid: fId,
+    [Op.or]: [
+      {
+        ltm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        ltm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+      },
+      {
+        lpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        lpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+      },
+    ],
+  };
+};
+
+/**
+ * 
+ * @param {*} uId user Id
+ * @param {*} dId department Id
+ * @param {*} fId facility Id
+ */
+const _favouriteRadVWQuery = (uId, dId, fId) => {
+  return {
+    fm_is_active: emr_constants.IS_ACTIVE,
+    fm_status: emr_constants.IS_ACTIVE,
+    fmd_active: emr_constants.IS_ACTIVE,
+    fmd_status: emr_constants.IS_ACTIVE,
+    fm_user_uuid: uId,
+    fa_uuid: fId,
+    fm_department_uuid: dId,
     [Op.or]: [
       {
         rtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
