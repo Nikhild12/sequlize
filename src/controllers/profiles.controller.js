@@ -345,7 +345,7 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
     let findQuery = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active'],
       where: { uuid: profile_uuid, is_active: 1, status: 1 },
       include: [
         {
@@ -751,6 +751,28 @@ const profilesController = () => {
       return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
+  const _getNotesByType = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    const { profile_type_uuid } = req.query;
+    try {
+      if (user_uuid) {
+        const typesData = await profilesTbl.findAll(
+          { where: { profile_type_uuid: profile_type_uuid } }, { returning: true }
+        );
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex.message);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -760,8 +782,8 @@ const profilesController = () => {
     getAllValueTypes: _getAllValueTypes,
     getAllProfileNotesTypes: _getAllProfileNotesTypes,
     getDefaultProfiles: _getDefaultProfiles,
-    setDefaultProfiles: _setDefaultProfiles
-
+    setDefaultProfiles: _setDefaultProfiles,
+    getNotesByType: _getNotesByType
   };
 
 };

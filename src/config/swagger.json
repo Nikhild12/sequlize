@@ -8665,6 +8665,39 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/profiles/get-notes-by-type": {
+			"get": {
+				"summary": "To get notes details by type",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
