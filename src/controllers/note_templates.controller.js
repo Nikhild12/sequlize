@@ -130,11 +130,11 @@ const noteTemplatesController = () => {
             if (getsearch.note_template_type_uuid && /\S/.test(getsearch.note_template_type_uuid)) {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
-                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.note_template_type_uuid')), getsearch.note_template_type_uuid)]
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_note_template_type_uuid')), getsearch.note_template_type_uuid)]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.note_template_type_uuid')), getsearch.note_template_type_uuid)
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_note_template_type_uuid')), getsearch.note_template_type_uuid)
                     ];
                 }
             }
