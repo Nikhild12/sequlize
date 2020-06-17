@@ -589,7 +589,15 @@ const TreatMent_Kit = () => {
 
 
             if (!code || !name) {
-              const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
+              let checkType;
+              if (!code && !name) {
+                checkType = 'both';
+              } else if (!code) {
+                checkType = 'code';
+              } else if (!name) {
+                checkType = 'name';
+              }
+              const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit, checkType);
               if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
                 return res.status(400).send({
                   code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord)
@@ -677,13 +685,19 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName({ code, name }) {
+async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
   // checking for Duplicate
   // before creating Treatment
+
+  let codeOrname = {
+    code: [{ code: code }],
+    name: [{ name: name }],
+    both: [{ code: code }, { name: name }]
+  };
   return await treatmentkitTbl.findAll({
     attributes: ["code", "name", "is_active"],
     where: {
-      [Op.or]: [{ code: code }, { name: name }]
+      [Op.or]: codeOrname[checkType]
     }
   });
 }
