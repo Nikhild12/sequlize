@@ -911,7 +911,8 @@ async function getUserProfiles(user_uuid) {
   let result = await profilesDefaultTbl.findOne({
     where: { user_uuid: user_uuid }
   }, { returning: true });
-  if (result && IsObjectEmpty(result)) {
+  if (result) {
+    //if (result && IsObjectEmpty(result)) {
     return { status: true, details: result };
   } else {
     return { status: false, details: {} };
