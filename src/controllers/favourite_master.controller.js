@@ -315,52 +315,38 @@ function getTreatmentKitByIdQuery(treatmentId, tType) {
 }
 
 function getFavouriteQueryForDuplicate(
-  dept_id,
-  user_id,
-  searchKey,
-  searchvalue,
-  fav_type_id,
-  display_order
+  dept_id, user_id, searchKey, searchvalue,
+  fav_type_id, display_order, fId
 ) {
   return {
     tsm_status: active_boolean,
-    [Op.and]: [
+    [Op.or]: [
       {
-        [Op.or]: [
-          {
-            tsm_dept: { [Op.eq]: dept_id },
-            tsm_public: { [Op.eq]: active_boolean },
-          },
-          { tsm_userid: { [Op.eq]: user_id } },
-        ],
+        tsm_favourite_type_uuid: fav_type_id,
+        [searchKey]: searchvalue,
+        tsm_dept: { [Op.eq]: dept_id },
+        tsm_userid: { [Op.eq]: user_id },
+        fa_uuid: { [Op.eq]: fId }
       },
       {
-        [Op.or]: [
-          {
-            tsm_favourite_type_uuid: fav_type_id,
-            [searchKey]: searchvalue,
-          },
-          {
-            tsm_favourite_type_uuid: fav_type_id,
-            tsm_display_order: display_order,
-          },
-        ],
-      },
-    ],
+        tsm_favourite_type_uuid: fav_type_id,
+        tsm_display_order: display_order,
+        tsm_dept: { [Op.eq]: dept_id },
+        tsm_userid: { [Op.eq]: user_id },
+        fa_uuid: { [Op.eq]: fId }
+      }
+    ]
   };
 }
 
-function getDisplayOrderByFavType(fav_type_id, user_id, dept_id) {
+function getDisplayOrderByFavType(fav_type_id, user_id, dept_id, fId) {
   return {
     tsm_status: active_boolean,
     tsm_favourite_type_uuid: fav_type_id,
-    [Op.or]: [
-      {
-        tsm_dept: { [Op.eq]: dept_id },
-        tsm_public: { [Op.eq]: active_boolean },
-      },
-      { tsm_userid: { [Op.eq]: user_id } },
-    ],
+    tsm_userid: user_id,
+    tsm_dept: dept_id,
+    tsm_active: active_boolean,
+    fa_uuid: fId
   };
 }
 
@@ -408,6 +394,7 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
   const _createTickSheetMaster = async (req, res) => {
+
     // plucking data req body
     let favouriteMasterReqData = req.body.headers;
     let favouriteMasterDetailsReqData = req.body.details;
@@ -422,12 +409,13 @@ const TickSheetMasterController = () => {
       const { department_uuid, display_order } = favouriteMasterReqData;
       favouriteMasterReqData.active_from = new Date();
       const fav_master_active = favouriteMasterReqData.is_active;
+      const fav_master_user_uuid = favouriteMasterReqData.user_uuid;
 
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData, user_uuid
       );
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
-
+      favouriteMasterReqData.user_uuid = fav_master_user_uuid ? fav_master_user_uuid : favouriteMasterReqData.user_uuid;
       try {
         const { search_key, search_value } = getSearchValueBySearchKey(
           favouriteMasterDetailsReqData[0], searchkey
@@ -436,10 +424,11 @@ const TickSheetMasterController = () => {
         // checking for duplicate before
         // creating a new favourite
         const favourite_type_uuid = +(favouriteMasterReqData.favourite_type_uuid);
+        const { facility_uuid } = favouriteMasterReqData;
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
           where: getFavouriteQueryForDuplicate(
-            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order
+            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid
           ),
         });
 
@@ -453,16 +442,14 @@ const TickSheetMasterController = () => {
             let displayOrdersList = [];
             const displayOrders = await vmTickSheetMasterTbl.findAll({
               attributes: ["tsm_display_order"],
-              where: getDisplayOrderByFavType(
-                favourite_type_uuid, user_uuid, department_uuid
-              ),
+              where: getDisplayOrderByFavType(favourite_type_uuid, user_uuid, department_uuid, facility_uuid),
             });
 
             if (displayOrders && displayOrders.length > 0) {
-              displayOrdersList = displayOrders.map((dO) => {
-                return dO.tsm_display_order;
-              });
+
+              displayOrdersList = displayOrders.map((dO) => dO.tsm_display_order);
               displayOrdersList = [...new Set(displayOrdersList)].sort((a, b) => a - b);
+
             }
             return res.status(400).send({
               code: duplicate_code, message: duplicate_msg, displayOrdersList,
@@ -489,8 +476,7 @@ const TickSheetMasterController = () => {
         if (favouriteMasterDetailsCreatedData) {
           // returning req data with inserted record Id
           favouriteMasterReqData.uuid = favouriteMasterCreatedData.uuid;
-          favouriteMasterDetailsReqData[0].uuid =
-            favouriteMasterDetailsCreatedData.uuid;
+          favouriteMasterDetailsReqData[0].uuid = favouriteMasterDetailsCreatedData.uuid;
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Favourite Master Successfully",
@@ -500,7 +486,6 @@ const TickSheetMasterController = () => {
           });
         }
       } catch (ex) {
-        favouriteTransStatus = true;
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -863,75 +848,6 @@ const TickSheetMasterController = () => {
         return res
           .status(400)
           .send({ code: httpStatus[400], message: error.message });
-      }
-    } else {
-      return res.status(400).send({
-        code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
-      });
-    }
-  };
-
-  const _getAllFavourites_0ld = async (req, res) => {
-    const { user_uuid } = req.headers;
-    let { recordsPerPage, searchPageNo, searchKey, searchValue } = req.body;
-    let pageNo = 0;
-    let perPageRecords = 10;
-    let itemsPerPage;
-    if (user_uuid) {
-      if (recordsPerPage) {
-        let records = parseInt(recordsPerPage);
-        if (records && records != NaN) {
-          recordsPerPage = records;
-        }
-      }
-      itemsPerPage = recordsPerPage ? recordsPerPage : perPageRecords;
-
-      if (searchPageNo) {
-        let temp = parseInt(searchPageNo);
-        if (temp && temp != NaN) {
-          pageNo = temp;
-        }
-      }
-
-      const offset = pageNo * itemsPerPage;
-
-      let findQuery = {
-        offset: offset,
-        limit: itemsPerPage,
-        attributes: emr_all_favourites.getAllFavouritesAttributes(),
-      };
-
-      if (searchKey) {
-        findQuery.where = emr_all_favourites.getSearchKeyWhere(
-          searchKey,
-          searchValue
-        );
-      }
-
-      try {
-        const allFavouritesData = await vmAllFavourites.findAndCountAll(
-          findQuery
-        );
-
-        const returnMessage =
-          allFavouritesData.rows && allFavouritesData.rows.length > 0
-            ? emr_constants.FETCHED_FAVOURITES_SUCCESSFULLY
-            : emr_constants.NO_RECORD_FOUND;
-        return res.status(httpStatus.OK).send({
-          code: httpStatus.OK,
-          message: returnMessage,
-          responseContentLength: allFavouritesData.rows.length,
-          responseContents: emr_all_favourites.getFavouritesInHumanReadableFormat(
-            allFavouritesData.rows
-          ),
-          totalRecords: allFavouritesData.count,
-        });
-      } catch (ex) {
-        console.log(`Exception Happened ${ex}`);
-        return res
-          .status(400)
-          .send({ code: httpStatus[400], message: ex.message });
       }
     } else {
       return res.status(400).send({
