@@ -47,7 +47,7 @@ const tmpmstrController = () => {
           lab_id
         );
         const templateList = await table_name.findAll(query);
-        if (templateList != null  && templateList.length > 0) {
+        if (templateList != null && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,
             responseContents: getTempData(temp_type_id, templateList),
@@ -1107,14 +1107,15 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
         include: [
           {
             model: vitalMasterTbl,
-            require: false,
             where: {
               status: 1,
               is_active: 1
-            }
+            },
+            required: false,
           }
-        ]
-      }
+        ],
+        required: false,
+      },
     ]
   };
 }
@@ -1167,6 +1168,39 @@ function getTempData(temp_type_id, result) {
       let templateDetails = result;
       return { templateDetails };
   }
+}
+
+function getVitalsDetailedQuery_old(temp_type_id, dept_id, user_uuid, temp_id) {
+  return {
+    attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+    where: {
+      uuid: temp_id,
+      user_uuid: user_uuid,
+      department_uuid: dept_id,
+      template_type_uuid: temp_type_id,
+      status: 1,
+      is_active: 1
+    },
+    include: [
+      {
+        model: tempmstrdetailsTbl,
+        where: {
+          status: 1,
+          is_active: 1
+        },
+        include: [
+          {
+            model: vitalMasterTbl,
+            require: false,
+            where: {
+              status: 1,
+              is_active: 1
+            }
+          }
+        ]
+      }
+    ]
+  };
 }
 
 async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, tIsActive) {
