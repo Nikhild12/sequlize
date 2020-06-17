@@ -693,7 +693,9 @@ const profilesController = () => {
     try {
       if (user_uuid) {
         const result = await profilesDefaultTbl.findOne({ where: { user_uuid: user_uuid } }, { returning: true });
-        if (result != null && IsObjectEmpty(result)) {
+        // if (result != null && IsObjectEmpty(result)) {
+        if (result != null) {
+
           return res.status(200).send({ statusCode: 200, message: emr_constants.FETCHED_SUCCESSFULLY, responseContent: result });
         } else {
           return res.status(400).send({ statusCode: 400, message: "No record found " });
@@ -756,10 +758,12 @@ const profilesController = () => {
 
     const { user_uuid } = req.headers;
     const { profile_type_uuid } = req.query;
+    const { department_uuid } = req.query;
     try {
       if (user_uuid) {
-        const typesData = await profilesTbl.findAll(
-          { where: { profile_type_uuid: profile_type_uuid } }, { returning: true }
+        const typesData = await profilesTbl.findAll({
+          where: { is_active: 1, status: 1, profile_type_uuid: profile_type_uuid, department_uuid: department_uuid },
+        }, { returning: true }
         );
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
       }
@@ -768,7 +772,7 @@ const profilesController = () => {
       }
     } catch (ex) {
 
-      console.log(ex.message);
+      console.log(ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };

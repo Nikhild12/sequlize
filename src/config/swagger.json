@@ -8681,6 +8681,12 @@
 						"name": "profile_type_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
