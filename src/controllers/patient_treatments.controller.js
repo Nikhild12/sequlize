@@ -251,7 +251,9 @@ const PatientTreatmentController = () => {
             });
           }
 
+          console.log("Before getting Prescription");
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
+          console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -581,7 +583,7 @@ async function getPrescriptionRseponse(prescriptions) {
             "uuid": e.uuid,
             "prescription_uuid": e.prescription_uuid,
             "comments": e.comments,
-
+            "prescribed_quantity":e.prescribed_quantity,
             //Drug Status
             "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
             "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,

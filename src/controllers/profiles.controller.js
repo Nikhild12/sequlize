@@ -25,6 +25,7 @@ const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
 const profilesTypesTbl = db.profile_types;
+const profilesDefaultTbl = db.profiles_default;
 
 const Q = require('q');
 
@@ -52,8 +53,14 @@ const profilesController = () => {
             message: getDuplicateMsg(duplicateProfileRecord)
           });
         }
+
+        profiles.status = true;
+        profiles.created_by = profiles.modified_by = user_uuid;
+        profiles.created_date = profiles.modified_date = new Date();
+        profiles.revision = 1;
+
         let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [];
-        profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
+        // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
         //Profiles save
         const profileResponse = await profilesTbl.create(profiles, { returning: true });
 
@@ -150,6 +157,7 @@ const profilesController = () => {
     try {
       const getsearch = req.body;
       const { profile_type } = req.query;
+      const { department_uuid } = req.query;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
       // let sortArr = ['p_created_date', 'DESC'];
@@ -191,7 +199,8 @@ const profilesController = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type },
+        where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
+        // where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
         order: [
           sortArr
         ],
@@ -202,7 +211,6 @@ const profilesController = () => {
 
       };
 
-      console.log('findQuery===', findQuery);
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -337,7 +345,7 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
     let findQuery = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active'],
       where: { uuid: profile_uuid, is_active: 1, status: 1 },
       include: [
         {
@@ -453,31 +461,38 @@ const profilesController = () => {
     var deferred = new Q.defer();
     var profileData = req;
     var profileDetailsUpdate = [];
-    let conceptValuesSave = [];
-    let conceptuuids = [];
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
       const element1 = profileData.profiles;
       profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
 
       const element = profileData.profiles.sections[i];
-      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
-
+      if (element.profile_sections_uuid) {
+        profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
+      }
+      else {
+        let elementArr3 = [];
+        elementArr3.push(element);
+        var sectionsResponse = await profileSectionsTbl.bulkCreate(elementArr3);
+      }
       for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
         const element = profileData.profiles.sections[i].categories[j];
-        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
-
+        if (element.profile_section_categories_uuid) {
+          profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
+        }
+        else {
+          let elementArr2 = [];
+          elementArr2.push(element);
+          var categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
+        }
         for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
           const element = profileData.profiles.sections[i].categories[j].concepts[k];
-          if (element.profile_section_category_concept_values_uuid) {
+          if (element.profile_section_category_concepts_uuid) {
             profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_uuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
           }
           else {
             let elementArr1 = [];
             elementArr1.push(element);
-            let profilesReq = profileData.profiles;
-            let ValuesInfoDetails = [];
-            let proSec = profilesReq.sections;
-            var conceptValuesResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr1);
+            var conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr1);
           }
           for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
             const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
@@ -487,9 +502,6 @@ const profilesController = () => {
             else {
               let elementArr = [];
               elementArr.push(element);
-              let profilesReq = profileData.profiles;
-              let ValuesInfoDetails = [];
-              let proSec = profilesReq.sections;
               var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             }
           }
@@ -671,6 +683,96 @@ const profilesController = () => {
     }
   };
 
+  /**
+       * Get profile default data
+       * @param {*} req 
+       * @param {*} res 
+       */
+  const _getDefaultProfiles = async (req, res) => {
+    const { user_uuid } = req.headers;
+    try {
+      if (user_uuid) {
+        const result = await profilesDefaultTbl.findOne({ where: { user_uuid: user_uuid } }, { returning: true });
+        if (result != null && IsObjectEmpty(result)) {
+          return res.status(200).send({ statusCode: 200, message: emr_constants.FETCHED_SUCCESSFULLY, responseContent: result });
+        } else {
+          return res.status(400).send({ statusCode: 400, message: "No record found " });
+        }
+      } else {
+        return res.status(422).send({ statusCode: 422, req: req.body, message: "user_uuid required" });
+      }
+    } catch (ex) {
+      return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  }
+
+  const _setDefaultProfiles = async (req, res) => {
+    try {
+      const { profile_uuid, profile_type_uuid } = req.body;
+      const { user_uuid } = req.headers;
+      // if (profile_uuid && profile_type_uuid) {
+      //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
+      // }
+      if ((profile_uuid || profile_type_uuid) && user_uuid) {
+        let postData = {}, updateData = {}, type = "";
+        if (profile_uuid) {
+          postData = { profile_uuid: profile_uuid, profile_type_uuid: 0 };
+          updateData = { profile_uuid: profile_uuid, modified_by: user_uuid };
+          type = "profiles";
+        }
+        if (profile_type_uuid) {
+          postData = { profile_uuid: 0, profile_type_uuid: profile_type_uuid };
+          updateData = { profile_type_uuid: profile_type_uuid, modified_by: user_uuid };
+          type = "profile_types";
+        }
+        postData.created_by = postData.user_uuid = user_uuid;
+        postData.modified_by = 0;
+        const checkUserExistsOrNot = await getUserProfiles(user_uuid, type);
+        if (checkUserExistsOrNot.status) {
+          const updateProfileId = await profilesDefaultTbl.update(updateData, { where: { user_uuid } });
+          if (updateProfileId && updateProfileId[0] != 0) {
+            return res.status(200).send({ statusCode: 200, message: type + " updated successfully" });
+          } else {
+            return res.status(400).send({ statusCode: 400, message: type + " not updated " });
+          }
+        } else {
+          const insertProfile = await profilesDefaultTbl.create(postData, { returning: true });
+          if (insertProfile) {
+            return res.status(201).send({ statusCode: 201, message: type + " inserted successfully " });
+          } else {
+            return res.status(400).send({ statusCode: 400, message: type + " inserted failed " });
+          }
+        }
+      } else {
+        return res.status(422).send({ statusCode: 422, req: req.body, message: "you are missing 'user_uuid / profile_id'" });
+      }
+
+    } catch (ex) {
+      return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
+  const _getNotesByType = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    const { profile_type_uuid } = req.query;
+    try {
+      if (user_uuid) {
+        const typesData = await profilesTbl.findAll(
+          { where: { profile_type_uuid: profile_type_uuid } }, { returning: true }
+        );
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex.message);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -678,8 +780,10 @@ const profilesController = () => {
     getProfileById: _getProfileById,
     updateProfiles: _updateProfiles,
     getAllValueTypes: _getAllValueTypes,
-    getAllProfileNotesTypes: _getAllProfileNotesTypes
-
+    getAllProfileNotesTypes: _getAllProfileNotesTypes,
+    getDefaultProfiles: _getDefaultProfiles,
+    setDefaultProfiles: _setDefaultProfiles,
+    getNotesByType: _getNotesByType
   };
 
 };
@@ -722,7 +826,6 @@ async function findDuplicateConValueByCodeAndName(profileData) {
       });
     });
   });
-  console.log('ValuesInfoDetails===', ValuesInfoDetails);
   return await profileSectionCategoryConceptValuesTbl.findAll({
     attributes: ['value_code', 'value_name', 'is_active'],
     where: {
@@ -804,4 +907,14 @@ const nameExists = (value_name) => {
     });
   }
 };
-
+async function getUserProfiles(user_uuid) {
+  let result = await profilesDefaultTbl.findOne({
+    where: { user_uuid: user_uuid }
+  }, { returning: true });
+  if (result) {
+    //if (result && IsObjectEmpty(result)) {
+    return { status: true, details: result };
+  } else {
+    return { status: false, details: {} };
+  }
+}

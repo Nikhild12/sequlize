@@ -371,7 +371,6 @@
 					{
 						"in": "formData",
 						"name": "description",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -383,7 +382,6 @@
 					{
 						"in": "formData",
 						"name": "folder_name",
-						"required": true,
 						"type": "string"
 					},
 					{
@@ -391,12 +389,6 @@
 						"name": "is_active",
 						"required": true,
 						"type": "string"
-					},
-					{
-						"in": "formData",
-						"name": "revision",
-						"required": true,
-						"type": "integer"
 					},
 					{
 						"in": "formData",
@@ -435,12 +427,6 @@
 						"type": "integer"
 					},
 					{
-						"in": "header",
-						"name": "authorization",
-						"required": true,
-						"type": "string"
-					},
-					{
 						"in": "body",
 						"name": "Speciality_id",
 						"required": true,
@@ -473,18 +459,45 @@
 				"description": "To Update Speciality Master Data",
 				"parameters": [
 					{
-						"in": "header",
 						"name": "user_uuid",
+						"in": "header",
 						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "code",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "department_uuid",
 						"type": "integer"
 					},
 					{
-						"in": "body",
-						"name": "UpadteSpeciality",
-						"required": true,
-						"schema": {
-							"$ref": "#/definitions/updateSpecialityById"
-						}
+						"in": "formData",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"type": "file"
+					},
+					{
+						"in": "formData",
+						"name": "Speciality_id",
+						"type": "number"
+					},
+					{
+						"in": "formData",
+						"name": "delete",
+						"type": "string"
 					}
 				],
 				"produces": [
@@ -3332,6 +3345,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "query",
 						"name": "dept_id",
 						"type": "integer"
@@ -4864,6 +4883,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -5285,7 +5310,8 @@
 					},
 					{
 						"in": "query",
-						"name": "profile_type",
+						"name": "department_uuid",
+						"required": true,
 						"type": "integer"
 					},
 					{
@@ -7719,10 +7745,11 @@
 					},
 					{
 						"in": "header",
-						"name": "Authorization",
+						"name": "authorization",
 						"required": true,
 						"type": "string"
-					},					{
+					},
+					{
 						"in": "header",
 						"name": "facility_uuid",
 						"required": true,
@@ -8425,6 +8452,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -8479,6 +8512,12 @@
 					{
 						"in": "query",
 						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -8559,6 +8598,144 @@
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/getProfilesDefault": {
+			"get": {
+				"summary": "To get profiles default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/setProfilesDefault": {
+			"post": {
+				"summary": "To create profile and profileType details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "profileDefault",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/addProfileDefault"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "Insterted ProgressNotes details Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/get-notes-by-type": {
+			"get": {
+				"summary": "To get notes details by type",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/commonReference/getReferenceByIdForLanguage": {
+			"post": {
+				"description": "get Reference Details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "tablename",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
 					}
 				},
 				"x-auth-type": "Application & Application User",
@@ -9455,6 +9632,12 @@
 				},
 				"codename": {
 					"type": "string"
+				},
+				"departmentId": {
+					"type": "integer"
+				},
+				"note_template_type_uuid": {
+					"type": "integer"
 				}
 			}
 		},
@@ -12572,10 +12755,10 @@
 				}
 			}
 		},
-		"updatetreatmentKit":{
+		"updatetreatmentKit": {
 			"type": "object",
-			"properties":{
-				"treatment_kit":{
+			"properties": {
+				"treatment_kit": {
 					"type": "object",
 					"properties": {
 						"treatment_kit_type_uuid": {
@@ -12602,20 +12785,20 @@
 						"is_active": {
 							"type": "boolean"
 						}
-					}					
+					}
 				},
 				"treatment_kit_drug": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
 						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_drug_id": {
@@ -12642,9 +12825,9 @@
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"item_master_uuid": {
@@ -12674,17 +12857,17 @@
 					}
 				},
 				"treatment_kit_diagnosis": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"diagnosis_uuid": {
@@ -12696,34 +12879,34 @@
 					}
 				},
 				"treatment_kit_lab": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_lab_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12732,10 +12915,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
@@ -12744,34 +12927,34 @@
 					}
 				},
 				"treatment_kit_radiology": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_radiology_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12780,10 +12963,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
@@ -12792,34 +12975,34 @@
 					}
 				},
 				"treatment_kit_investigation": {
-					"type":"object",
-					"properties":{
-						"delete":{
-							"type":"array",
+					"type": "object",
+					"properties": {
+						"delete": {
+							"type": "array",
 							"items": {
-								"type":"number"
+								"type": "number"
 							}
 						},
-						"update":{
+						"update": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"treatment_kit_investigation_id": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
 							}
 						},
-						"create":{
+						"create": {
 							"type": "array",
-							"items":{
+							"items": {
 								"type": "object",
 								"properties": {
 									"test_master_uuid": {
@@ -12828,10 +13011,10 @@
 									"profile_master_uuid": {
 										"type": "integer"
 									},
-									"order_priority_uuid":{
+									"order_priority_uuid": {
 										"type": "integer"
 									},
-									"order_to_location_uuid":{
+									"order_to_location_uuid": {
 										"type": "integer"
 									}
 								}
@@ -16114,6 +16297,28 @@
 				},
 				"is_phr": {
 					"type": "boolean"
+				}
+			}
+		},
+		"addProfileDefault": {
+			"type": "object",
+			"properties": {
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"profile_type_uuid": {
+					"type": "integer"
+				}
+			}
+		},
+		"getReferenceByIdForLanguage": {
+			"type": "object",
+			"properties": {
+				"table_name": {
+					"type": "string"
+				},
+				"Id": {
+					"type": "integer"
 				}
 			}
 		}

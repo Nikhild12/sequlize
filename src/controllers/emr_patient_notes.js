@@ -53,9 +53,11 @@ const notesController = () => {
     const _getPreviousPatientOPNotes = async (req, res) => {
         const { user_uuid } = req.headers;
         const { patient_uuid } = req.query;
+        const { profile_type_uuid } = req.query;
 
         let filterQuery = {
             patient_uuid: patient_uuid,
+            profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
             is_active: emr_constants.IS_ACTIVE
         };
@@ -138,17 +140,21 @@ module.exports = notesController();
 
 async function getPrevNotes(filterQuery, Sequelize) {
     //console.log(filterQuery);
+    let sortField = 'created_date';
+    let sortOrder = 'DESC';
+    let sortArr = [sortField, sortOrder];
     return sectionCategoryEntriesTbl.findAll({
         where: filterQuery,
         group: ['profile_uuid'],
         attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
             [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
-        order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        //order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        order: [sortArr],
         limit: 10,
         include: [{
             model: profilesTbl,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
         }],
     });
 

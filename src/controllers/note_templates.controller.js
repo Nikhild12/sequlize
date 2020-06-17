@@ -80,20 +80,61 @@ const noteTemplatesController = () => {
 
                 ];
             }
+
+
             if (getsearch.codename && /\S/.test(getsearch.codename)) {
+                findQuery.where = Object.assign(findQuery.where, {
+                    [Op.and]: [{
+                        [Op.or]: [{
+                            nt_code: {
+                                [Op.like]: '%' + getsearch.codename.toLowerCase() + '%',
+                            }
+                        }, {
+                            nt_name: {
+                                [Op.like]: '%' + getsearch.codename.toLowerCase() + '%',
+                            }
+                        }]
+                    }]
+                });
+            }
+            // if (getsearch.codename && /\S/.test(getsearch.codename)) {
+            //     if (findQuery.where[Op.or]) {
+            //         findQuery.where[Op.and] = [{
+            //             [Op.or]: [
+            //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
+            //                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
+
+            //             ]
+            //         }];
+            //     } else {
+            //         findQuery.where[Op.or] = [
+            //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
+            //             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
+
+            //         ];
+            //     }
+            // }
+
+            if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
-
-                        ]
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_department_uuid')), getsearch.departmentId)]
                     }];
                 } else {
                     findQuery.where[Op.or] = [
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_code')), getsearch.codename.toLowerCase()),
-                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_name')), getsearch.codename.toLowerCase())
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_department_uuid')), getsearch.departmentId)
+                    ];
+                }
+            }
 
+            if (getsearch.note_template_type_uuid && /\S/.test(getsearch.note_template_type_uuid)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_note_template_type_uuid')), getsearch.note_template_type_uuid)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_note_template.nt_note_template_type_uuid')), getsearch.note_template_type_uuid)
                     ];
                 }
             }

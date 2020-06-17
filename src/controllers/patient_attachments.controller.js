@@ -120,11 +120,11 @@ const patientAttachmentsController = () => {
 
     const _getAllAttachments = async (req, res) => {
         const { user_uuid } = req.headers;
-
+        const { patient_uuid } = req.query;
         try {
             if (user_uuid) {
                 const data = await attachmentTbl.findAll({
-                    where: { is_active: 1, status: 1 },
+                    where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
                     include: [
                         {
                             model: attachmentTypeTbl,
