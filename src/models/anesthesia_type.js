@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING(250),
         },
+        language_uuid: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         display_order: {
             type: DataTypes.INTEGER,
         },

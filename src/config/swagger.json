@@ -8698,6 +8698,49 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/commonReference/getReferenceByIdForLanguage": {
+			"post": {
+				"description": "get Reference Details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "tablename",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -16264,6 +16307,17 @@
 					"type": "integer"
 				},
 				"profile_type_uuid": {
+					"type": "integer"
+				}
+			}
+		},
+		"getReferenceByIdForLanguage": {
+			"type": "object",
+			"properties": {
+				"table_name": {
+					"type": "string"
+				},
+				"Id": {
 					"type": "integer"
 				}
 			}
