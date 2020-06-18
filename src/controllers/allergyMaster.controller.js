@@ -53,23 +53,25 @@ const allergyMasterController = () => {
 
       sortOrder = getsearch.sortOrder;
     }
+    let splitSortField;
+    if (sortField == "allergy_source.name") {
+      splitSortField = sortField.split('.');
+    }
     let findQuery = {
       offset: offset,
       limit: itemsPerPage,
-      order: [
-        [sortField, sortOrder],
-      ],
       where: { is_active: 1, status: 1 },
       include: [{
         model: allergySourceTbl,
         required: false,
-      }
-        ,
+      },
       {
         model: allergySeverityTbl,
         required: false,
         attributes: ['uuid', 'name'],
-      }
+      }],
+      order: [
+        sortField == "allergy_source.name" ? [allergySourceTbl, splitSortField[1], sortOrder] : [sortField, sortOrder]
       ]
     };
 
