@@ -351,6 +351,12 @@
 						"type": "string"
 					},
 					{
+						"name": "facility_uuid",
+						"in": "header",
+						"required": true,
+						"type": "string"
+					},
+					{
 						"in": "formData",
 						"name": "code",
 						"required": true,
