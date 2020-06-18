@@ -822,14 +822,14 @@ const TickSheetMasterController = () => {
   };
 
   const _getFavouriteDiet = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const { departmentId } = req.query;
 
     if (user_uuid && departmentId) {
       try {
         const dietFav = await vmTreatmentFavouriteDiet.findAll({
           attributes: emr_attributes_diet.favouriteDietAttributes,
-          where: getDietFavouriteQuery(user_uuid),
+          where: getDietFavouriteQuery(user_uuid, departmentId, facility_uuid),
         });
 
         const favouriteList = getAllDietFavsInReadableFormat(dietFav);
