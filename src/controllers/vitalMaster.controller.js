@@ -173,7 +173,7 @@ const vitalmstrController = () => {
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
       sortOrder = getsearch.sortOrder;
     }
-    
+
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
@@ -449,7 +449,7 @@ const nameExists = (name) => {
     return new Promise((resolve, reject) => {
       let value = vitalmstrTbl.findAll({
         attributes: ["name"],
-        where: { name: name }
+        where: { name: name, status: 1 }
       });
       if (value) {
         resolve(value);
