@@ -35,7 +35,7 @@ const progress_notes = () => {
             progressData.revision = 1;
 
             try {
-                await progressNotesTbl.create(progressData, { returing: true });
+                await progressNotesTbl.bulkCreate(progressData, { returing: true });
                 return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: progressData });
 
             }
