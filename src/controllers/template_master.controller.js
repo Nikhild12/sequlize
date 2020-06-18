@@ -1402,7 +1402,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
             tm_user_uuid: user_uuid,
             [searchKey1]: searchValue1,
             tm_template_type_uuid: temp_type_id,
-            rtm_lab_master_type_uuid: 2,
+            // rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
