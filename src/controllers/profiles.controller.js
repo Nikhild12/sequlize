@@ -710,39 +710,30 @@ const profilesController = () => {
 
   const _setDefaultProfiles = async (req, res) => {
     try {
-      const { profile_uuid, profile_type_uuid } = req.body;
       const { user_uuid } = req.headers;
+      let postData = req.body;
       // if (profile_uuid && profile_type_uuid) {
       //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
       // }
-      if ((profile_uuid || profile_type_uuid) && user_uuid) {
-        let postData = {}, updateData = {}, type = "";
-        if (profile_uuid) {
-          postData = { profile_uuid: profile_uuid, profile_type_uuid: 0 };
-          updateData = { profile_uuid: profile_uuid, modified_by: user_uuid };
-          type = "profiles";
-        }
-        if (profile_type_uuid) {
-          postData = { profile_uuid: 0, profile_type_uuid: profile_type_uuid };
-          updateData = { profile_type_uuid: profile_type_uuid, modified_by: user_uuid };
-          type = "profile_types";
-        }
+      if (postData.profile_uuid && postData.profile_type_uuid && user_uuid) {
+        let updateData = {}, type = "";
+        updateData = { profile_uuid: postData.profile_uuid, profile_type_uuid: postData.profile_type_uuid, modified_by: user_uuid };
         postData.created_by = postData.user_uuid = user_uuid;
         postData.modified_by = 0;
-        const checkUserExistsOrNot = await getUserProfiles(user_uuid, type);
+        const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
         if (checkUserExistsOrNot.status) {
           const updateProfileId = await profilesDefaultTbl.update(updateData, { where: { user_uuid } });
           if (updateProfileId && updateProfileId[0] != 0) {
-            return res.status(200).send({ statusCode: 200, message: type + " updated successfully" });
+            return res.status(200).send({ statusCode: 200, message: " updated successfully" });
           } else {
-            return res.status(400).send({ statusCode: 400, message: type + " not updated " });
+            return res.status(400).send({ statusCode: 400, message: " not updated " });
           }
         } else {
           const insertProfile = await profilesDefaultTbl.create(postData, { returning: true });
           if (insertProfile) {
-            return res.status(201).send({ statusCode: 201, message: type + " inserted successfully " });
+            return res.status(201).send({ statusCode: 201, message: " inserted successfully " });
           } else {
-            return res.status(400).send({ statusCode: 400, message: type + " inserted failed " });
+            return res.status(400).send({ statusCode: 400, message: " inserted failed " });
           }
         }
       } else {
