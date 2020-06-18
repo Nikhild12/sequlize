@@ -942,7 +942,7 @@ function getLabListData(fetchedData) {
 
 function getRisListData(fetchedData) {
   let templateList = [],
-    lab_details = [];
+  radiology_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
@@ -971,8 +971,8 @@ function getRisListData(fetchedData) {
             department_name: fetchedData[0].dataValues.d_name,
           },
 
-          lab_details: [
-            ...lab_details,
+          radiology_details: [
+            ...radiology_details,
             ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)
           ]
         }
@@ -984,7 +984,7 @@ function getRisListData(fetchedData) {
         !uniq[obj.temp_details.template_id] &&
         (uniq[obj.temp_details.template_id] = true)
     );
-    return { templates_lab_list: temp_list };
+    return { templates_radiology_list: temp_list };
   } else {
     return {};
   }
@@ -1025,15 +1025,15 @@ function getLabListForTemplate(fetchedData, template_id) {
 }
 
 function getRisListForTemplate(fetchedData, template_id) {
-  let lab_list = [];
+  let radiology_list = [];
   const filteredData = fetchedData.filter(fD => {
     return fD.dataValues.tm_uuid === template_id;
   });
 
   if (filteredData && filteredData.length > 0) {
     filteredData.forEach(lD => {
-      lab_list = [
-        ...lab_list,
+      radiology_list = [
+        ...radiology_list,
         {
           template_details_uuid: lD.tmd_uuid,
           template_details_displayorder: lD.tmd_display_order,
@@ -1055,7 +1055,7 @@ function getRisListForTemplate(fetchedData, template_id) {
       ];
     });
   }
-  return lab_list;
+  return radiology_list;
 }
 
 function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
@@ -1202,6 +1202,90 @@ function getVitalsDetailedQuery_old(temp_type_id, dept_id, user_uuid, temp_id) {
       }
     ]
   };
+}
+
+function getRisListData_old(fetchedData) {
+  let templateList = [],
+    lab_details = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+
+  if (fetchedData && fetchedData.length > 0) {
+    fetchedData.forEach(tD => {
+      templateList = [
+        ...templateList,
+        {
+          temp_details: {
+            template_id: tD.dataValues.tm_uuid,
+            template_name: tD.dataValues.tm_name,
+            template_department: tD.dataValues.tm_department_uuid,
+            user_uuid: tD.dataValues.tm_user_uuid,
+            template_description: tD.dataValues.tm_description,
+            template_displayorder: tD.dataValues.tm_display_order,
+            template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_is_active: tD.dataValues.tm_is_active,
+            template_status: tD.dataValues.tm_status,
+            is_public: tD.dataValues.tm_is_public,
+            created_by: createdby,
+            created_date: fetchedData[0].dataValues.tm_created_date,
+            modified_by: modifiedby,
+            modified_date: fetchedData[0].dataValues.tm_modified_date,
+            facility_name: fetchedData[0].dataValues.f_name,
+            facility_uuid: fetchedData[0].dataValues.f_uuid,
+            department_name: fetchedData[0].dataValues.d_name,
+          },
+
+          lab_details: [
+            ...lab_details,
+            ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)
+          ]
+        }
+      ];
+    });
+    let uniq = {};
+    let temp_list = templateList.filter(
+      obj =>
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
+    );
+    return { templates_lab_list: temp_list };
+  } else {
+    return {};
+  }
+}
+
+function getRisListForTemplate_old(fetchedData, template_id) {
+  let lab_list = [];
+  const filteredData = fetchedData.filter(fD => {
+    return fD.dataValues.tm_uuid === template_id;
+  });
+
+  if (filteredData && filteredData.length > 0) {
+    filteredData.forEach(lD => {
+      lab_list = [
+        ...lab_list,
+        {
+          template_details_uuid: lD.tmd_uuid,
+          template_details_displayorder: lD.tmd_display_order,
+          lab_test_uuid: lD.rtm_uuid,
+          lab_code: lD.rtm_code,
+          lab_name: lD.rtm_name,
+          lab_test_description: lD.rtm_description,
+          lab_test_status: lD.rtm_status,
+          lab_test_is_active: lD.rtm_is_active,
+          lab_type_uuid: lD.rtm_lab_master_type_uuid,
+          profile_test_uuid: lD.rpm_uuid,
+          profile_test_code: lD.rpm_profile_code,
+          profile_test_name: lD.rpm_name,
+          profile_test_description: lD.rpm_description,
+          profile_test_status: lD.rpm_status,
+          profile_test_active: lD.rpm_is_active,
+          //lab_type_uuid: lD.lpm_lab_master_type_uuid
+        }
+      ];
+    });
+  }
+  return lab_list;
 }
 
 async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, tIsActive) {
@@ -1449,9 +1533,9 @@ function getTemplateDetailsData(temp_type_id, list) {
     case "3":
       fetchdata = getTempData(temp_type_id, list);
       return fetchdata &&
-        fetchdata.templates_lab_list &&
-        fetchdata.templates_lab_list.length > 0
-        ? fetchdata.templates_lab_list[0]
+        fetchdata.templates_radiology_list &&
+        fetchdata.templates_radiology_list.length > 0
+        ? fetchdata.templates_radiology_list[0]
         : {};
     case "4":
       fetchdata = getTempData(temp_type_id, list);
