@@ -1,9 +1,6 @@
 const httpStatus = require("http-status");
 const db = require("../config/sequelize");
-const sequelizeDb = require('../config/sequelize');
 const Sequelize = require('sequelize');
-const multer = require('multer');
-const middleware = require('../middleware/middleware');
 const rp = require("request-promise");
 var config = require("../config/config");
 const Op = Sequelize.Op;
@@ -11,111 +8,18 @@ const specialitySketchesMasterTbl = db.speciality_sketches;
 const specialitySketcheDetailsTbl = db.speciality_sketch_details;
 const vwSpecialitySketchTbl = db.vw_speciality_sketch;
 
+const specialityAtt = require('../attributes/vw_speciality_list.attributes');
+
+const vwSpecialityList = db.vw_speciality_sketch_list;
+
 const specialitySketchesMasterController = () => {
     /**
     * Returns jwt token if valid username and password is provided
     * @param req
     * @param res
-    * @param next
     * @returns {*}
     */
-
-    const getAllSpecialitySketcheMaster_old = async (req, res, next) => {
-        let getsearch = req.body;
-
-        let pageNo = 0;
-        const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-        let sortField = 'modified_date';
-        let sortOrder = 'DESC';
-
-        if (getsearch.pageNo) {
-            let temp = parseInt(getsearch.pageNo);
-
-
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
-        }
-
-        const offset = pageNo * itemsPerPage;
-
-
-        if (getsearch.sortField) {
-
-            sortField = getsearch.sortField;
-        }
-
-        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-            sortOrder = getsearch.sortOrder;
-        }
-        let findQuery = {
-            offset: offset,
-            limit: itemsPerPage,
-            order: [
-                [sortField, sortOrder],
-            ],
-            where: { is_active: 1, status: 1 }
-        };
-
-        if (getsearch.search && /\S/.test(getsearch.search)) {
-
-            findQuery.where = {
-                [Op.or]: [{
-                    code: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-
-
-                }, {
-                    name: {
-                        [Op.like]: '%' + getsearch.search + '%',
-                    },
-                }
-
-                ]
-            };
-        }
-
-
-        try {
-            await specialitySketchesMasterTbl.findAndCountAll(findQuery)
-
-
-                .then((findData) => {
-
-                    return res
-
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "success",
-                            statusCode: 200,
-                            responseContents: (findData.rows ? findData.rows : []),
-                            totalRecords: (findData.count ? findData.count : 0),
-
-                        });
-                })
-                .catch(err => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            message: "error",
-                            err: err,
-                            req: ''
-                        });
-                });
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    message: "error",
-                });
-        }
-
-
-    };
-    const getAllSpecialitySketcheMaster = async (req, res, next) => {
+    const getAllSpecialitySketcheMaster = async (req, res) => {
         try {
             const postData = req.body;
             let pageNo = 0;
@@ -234,19 +138,19 @@ const specialitySketchesMasterController = () => {
         }
     };
 
-    const uploadD = multer({ storage: middleware.multerDynamicUpload('') }).any();
 
     const postSpecialitySketcheMaster = async (req, res) => {
-        let userUUID = req.headers.user_uuid;
+        let { user_uuid, facility_uuid, } = req.headers;
         try {
 
-            if (userUUID) {
+            if (user_uuid) {
                 const attachmentData = req.body;
                 attachmentData.is_active = Boolean(attachmentData.is_active);
                 attachmentData.status = true;
-                attachmentData.created_by = userUUID;
+                attachmentData.created_by = user_uuid;
                 attachmentData.created_date = new Date();
                 attachmentData.revision = 1;
+                attachmentData.facility_uuid = facility_uuid;
 
                 let specialityData = await specialitySketchesMasterTbl.create(attachmentData, { returning: true });
                 if (req.files.length > 0) {
@@ -256,7 +160,9 @@ const specialitySketchesMasterController = () => {
                             speciality_sketch_uuid: specialityData.dataValues.uuid,
                             sketch_path: req.files[i].path,
                             status: 1,
-                            is_active: 1
+                            is_active: 1,
+                            created_by: user_uuid,
+                            created_date: new Date()
                         });
                     }
                     if (sketchFileSave) {
@@ -271,7 +177,7 @@ const specialitySketchesMasterController = () => {
         }
     };
 
-    const deleteSpecialitySketcheMaster = async (req, res, next) => {
+    const deleteSpecialitySketcheMaster = async (req, res) => {
         const postData = req.body;
 
         await specialitySketchesMasterTbl.update({
@@ -295,7 +201,7 @@ const specialitySketchesMasterController = () => {
             });
         });
     };
-    const updateSpecialitySketcheMasterById = async (req, res, next) => {
+    const updateSpecialitySketcheMasterById = async (req, res) => {
         let userUUID = req.headers.user_uuid;
         try {
             if (userUUID) {
@@ -317,7 +223,7 @@ const specialitySketchesMasterController = () => {
 
                 let sketchFileSave = [];
                 if (req.files.length > 0 && specialityUpdate) {
-                    
+
                     for (let i = 0; i < req.files.length; i++) {
                         sketchFileSave.push({
                             speciality_sketch_uuid: attachmentData.Speciality_id,
@@ -356,25 +262,16 @@ const specialitySketchesMasterController = () => {
             res.send({ "status": 400, "message": ex.message });
         }
     };
-    const getSpecialitySketcheMasterById = async (req, res, next) => {
+    const getSpecialitySketcheMasterById = async (req, res) => {
         const postData = req.body;
         try {
-            let data = await specialitySketchesMasterTbl.findOne({
-                where: {
-                    uuid: postData.Speciality_id,
-                    status: 1
-                },
-                include: [{
-                    model: specialitySketcheDetailsTbl,
-                    required: false,
-                    attributes: ['speciality_sketch_uuid', 'uuid', 'sketch_path', 'status', 'is_active', 'created_by', 'modified_by'],
-                    where: { status: 1, is_active: 1 }
-                }]
-            });
+            let data = await vwSpecialityList.findAll(
+                specialityAtt.getSpecialityListById(postData.Speciality_id)
+            );
             if (data) {
 
                 return res.status(httpStatus.OK).json({
-                    statusCode: 200, req: '', responseContents: data
+                    statusCode: 200, req: '', responseContents: specialityAtt.getSpecialityResponse(data)
                 });
 
             }
