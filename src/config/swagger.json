@@ -3464,6 +3464,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "query",
 						"name": "departmentId",
 						"required": true,
