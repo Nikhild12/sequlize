@@ -63,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        facility_uuid: {
+            type: DataTypes.INTEGER,
+        }
     }, {
         tableName: "speciality_sketches",
         createdAt: 'created_date',
