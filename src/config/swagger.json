@@ -16237,44 +16237,51 @@
 			}
 		},
 		"addProgressNotes": {
-			"type": "object",
-			"properties": {
-				"encounter_uuid": {
-					"type": "integer"
-				},
-				"encounter_type_uuid": {
-					"type": "integer"
-				},
-				"patient_uuid": {
-					"type": "integer"
-				},
-				"facility_uuid": {
-					"type": "integer"
-				},
-				"department_uuid": {
-					"type": "integer"
-				},
-				"progressnote_type_uuid": {
-					"type": "integer"
-				},
-				"captured_by": {
-					"type": "string"
-				},
-				"captured_on": {
-					"type": "string"
-				},
-				"daily_note": {
-					"type": "string"
-				},
-				"special_note": {
-					"type": "string"
-				},
-				"note_status_uuid": {
-					"type": "integer"
-				},
-				"is_phr": {
-					"type": "boolean"
-				}
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"type": "object",
+						"properties": {
+							"encounter_uuid": {
+								"type": "integer"
+							},
+							"encounter_type_uuid": {
+								"type": "integer"
+							},
+							"patient_uuid": {
+								"type": "integer"
+							},
+							"facility_uuid": {
+								"type": "integer"
+							},
+							"department_uuid": {
+								"type": "integer"
+							},
+							"progressnote_type_uuid": {
+								"type": "integer"
+							},
+							"captured_by": {
+								"type": "string"
+							},
+							"captured_on": {
+								"type": "string"
+							},
+							"daily_note": {
+								"type": "string"
+							},
+							"special_note": {
+								"type": "string"
+							},
+							"note_status_uuid": {
+								"type": "integer"
+							},
+							"is_phr": {
+								"type": "boolean"
+							}
+						}
+					}
+				]
 			}
 		},
 		"updateProgressNotes": {
