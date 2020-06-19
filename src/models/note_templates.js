@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         note_type_uuid: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            defaultValue: 1
             // validate: {
             //     notNull: {
             //         msg: emr_constants.GetpleaseProvideMsg('note_type_uuid')
