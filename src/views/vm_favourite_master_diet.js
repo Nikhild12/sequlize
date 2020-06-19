@@ -100,6 +100,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       dp_name: {
         type: DataTypes.STRING
+      },
+      dm_status:{
+        type: DataTypes.BOOLEAN
+      },
+      dm_is_active:{
+        type: DataTypes.BOOLEAN
       }
     },
     {

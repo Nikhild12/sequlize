@@ -285,7 +285,9 @@ function getDietFavouriteQuery(user_uuid, dId, fId) {
     fm_favourite_type_uuid: 9,
     fm_userid: user_uuid,
     fm_dept: dId,
-    fa_uuid: fId
+    fa_uuid: fId,
+    dm_status: active_boolean,
+    dm_is_active: active_boolean
   };
 }
 
