@@ -7688,12 +7688,62 @@
 						"type": "integer"
 					},
 					{
-						"in": "body",
-						"name": "sketch",
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
-						"schema": {
-							"$ref": "#/definitions/addSketch"
-						}
+						"type": "integer"
+					},
+					{
+						"in": "formData",
+						"name": "department_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "encounter_type_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "doctor_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "consultation_uuid",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "speciality_sketch_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "comments",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"required": true,
+						"type": "file"
 					}
 				],
 				"produces": [
@@ -15780,42 +15830,7 @@
 					"type": "string"
 				}
 			}
-		},
-		"addSketch": {
-			"type": "object",
-			"properties": {
-				"facility_uuid": {
-					"type": "integer"
-				},
-				"department_uuid": {
-					"type": "integer"
-				},
-				"patient_uuid": {
-					"type": "integer"
-				},
-				"encounter_uuid": {
-					"type": "integer"
-				},
-				"encounter_type_uuid": {
-					"type": "integer"
-				},
-				"doctor_uuid": {
-					"type": "integer"
-				},
-				"consultation_uuid": {
-					"type": "integer"
-				},
-				"speciality_sketch_uuid": {
-					"type": "integer"
-				},
-				"sketch_path": {
-					"type": "string"
-				},
-				"comments": {
-					"type": "string"
-				}
-			}
-		},
+		},		
 		"addCategory": {
 			"type": "object",
 			"properties": {
