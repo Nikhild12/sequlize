@@ -9677,9 +9677,6 @@
 				"department_uuid": {
 					"type": "integer"
 				},
-				"note_type_uuid": {
-					"type": "integer"
-				},
 				"data_template": {
 					"type": "string"
 				},
