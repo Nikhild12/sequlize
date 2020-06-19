@@ -1065,6 +1065,8 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
     tmd_is_active: 1,
     tmd_status: 1,
     tm_template_type_uuid: temp_type_id,
+    dm_status: 1,
+    dm_is_active: 1,
     [Op.or]: [
       { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
       { tm_userid: { [Op.eq]: user_uuid } }
