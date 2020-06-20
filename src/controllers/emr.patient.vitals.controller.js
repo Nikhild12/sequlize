@@ -228,8 +228,8 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
-        console.log({getPPV});
-        
+        console.log({ getPPV });
+
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -413,7 +413,7 @@ function getPPVQuery(user_uuid, patient_uuid, department_uuid) {
     where: {
       vm_active: emrConstants.IS_ACTIVE,
       vm_status: emrConstants.IS_ACTIVE,
-      pv_doctor_uuid: user_uuid,
+      //  pv_doctor_uuid: user_uuid,
       pv_patient_uuid: patient_uuid,
       pv_department_uuid: department_uuid
     }
@@ -448,7 +448,7 @@ function PPVitalsList(getHistoryPatientVitals) {
     let PPV_list = patient_vitals_list.filter(
       obj => !uniq[obj.created_date] && (uniq[obj.created_date] = true)
     );
-    
+
     return { PPV_list: PPV_list.slice(0, 5) };
   } else {
     return {};
@@ -466,7 +466,7 @@ function getPVlist(fetchedData, p_id, created_date) {
 
   if (filteredData && filteredData.length > 0) {
     pv_list = filteredData.map(pV => {
-      
+
       return {
         // patient vital values
         patient_vital_uuid: pV.pv_uuid,
@@ -488,7 +488,7 @@ function getPVlist(fetchedData, p_id, created_date) {
     });
   }
 
-  
+
   return pv_list;
 }
 
