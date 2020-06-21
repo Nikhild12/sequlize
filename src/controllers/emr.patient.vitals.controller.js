@@ -223,7 +223,7 @@ const EMRPatientVitals = () => {
     const { patient_uuid } = req.query;
 
     try {
-      if (user_uuid && patient_uuid && department_uuid > 0) {
+      if (user_uuid && patient_uuid > 0) {
         let getPPV = await vw_patientVitalsTbl.findAll(
           getPPVQuery(user_uuid, patient_uuid),
           { returning: true }
