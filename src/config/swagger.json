@@ -6558,12 +6558,6 @@
 						"name": "patient_uuid",
 						"required": true,
 						"type": "integer"
-					},
-					{
-						"in": "query",
-						"name": "department_uuid",
-						"required": true,
-						"type": "integer"
 					}
 				],
 				"produces": [
@@ -15830,7 +15824,7 @@
 					"type": "string"
 				}
 			}
-		},		
+		},
 		"addCategory": {
 			"type": "object",
 			"properties": {
