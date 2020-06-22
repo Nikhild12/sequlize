@@ -31,7 +31,7 @@ const tmpmstrController = () => {
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { temp_type_id, dept_id, lab_id } = req.query;
+    const { temp_type_id, dept_id, lab_id } =  req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 7, 8].includes(+(temp_type_id))) {
@@ -57,6 +57,13 @@ const tmpmstrController = () => {
                 : emr_constants.NO_RECORD_FOUND
           });
         } else {
+          if(temp_type_id == 3){
+            return res.status(200).send({
+              code: httpStatus.OK,
+              message: "No Data Found ",
+              responseContents: { templates_radiology_list: [] }
+            });
+          }
           return res.status(200).send({
             code: httpStatus.OK,
             message: "No Data Found ",
@@ -986,7 +993,7 @@ function getRisListData(fetchedData) {
     );
     return { templates_radiology_list: temp_list };
   } else {
-    return {};
+    return {templates_radiology_list:[]};
   }
 }
 
