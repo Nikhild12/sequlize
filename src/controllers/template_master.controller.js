@@ -57,6 +57,13 @@ const tmpmstrController = () => {
                 : emr_constants.NO_RECORD_FOUND
           });
         } else {
+          if (temp_type_id == 3) {
+            return res.status(200).send({
+              code: httpStatus.OK,
+              message: "No Data Found ",
+              responseContents: { templates_radiology_list: [] }
+            });
+          }
           return res.status(200).send({
             code: httpStatus.OK,
             message: "No Data Found ",
@@ -942,7 +949,7 @@ function getLabListData(fetchedData) {
 
 function getRisListData(fetchedData) {
   let templateList = [],
-  radiology_details = [];
+    radiology_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
@@ -1476,10 +1483,10 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
         }
       };
     case "3":
-        lab_id = +(lab_id);
-        const labValidation1 = !lab_id || lab_id === 0;
-        const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
-        const searchValue1 = labValidation1 ? dept_id : lab_id;
+      lab_id = +(lab_id);
+      const labValidation1 = !lab_id || lab_id === 0;
+      const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const searchValue1 = labValidation1 ? dept_id : lab_id;
       return {
         table_name: vw_profile_ris,
         query: {
