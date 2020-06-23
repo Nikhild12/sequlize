@@ -64,13 +64,17 @@ const _getInvestigationResponse = radiology => {
   });
 };
 
-const _getFavouriteInvestigationQuery = (user_id, fav_type_id, dId, fId) => {
+const _getFavouriteInvestigationQuery = (user_id, fav_type_id, dId, fId, labId = 0) => {
+  labId = +(labId);
+  const labValidation = labId && labId > 0;
+  const searchKey = labValidation ? 'fm_lab_uuid' : 'fm_dept';
+  const searchValue = labValidation ? labId : dId;
   return {
     fm_favourite_type_uuid: fav_type_id,
     fm_status: emr_constants.IS_ACTIVE,
     fm_active: emr_constants.IS_ACTIVE,
     fm_userid: user_id,
-    fm_dept: dId,
+    [searchKey]: searchValue,
     fa_uuid: fId,
     ivtm_uuid: neQuery,
     ivtm_is_active: emr_constants.IS_ACTIVE,

@@ -110,6 +110,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       dp_name: {
         type: DataTypes.STRING
+      },
+      fm_lab_uuid: {
+        type: DataTypes.INTEGER
       }
     },
     {
