@@ -1341,12 +1341,12 @@ const getFavouritesQuery = (uId, fTyId, dId, labId, fId) => {
   if (fTyId === 3) {
     return vmFavouriteRad.findAll({
       attributes: emr_all_favourites.favouriteRadVWAttributes(),
-      where: emr_all_favourites.favouriteRadVWQuery(uId, dId, fId),
+      where: emr_all_favourites.favouriteRadVWQuery(uId, dId, fId, labId),
     });
   } else if (fTyId === 7) { // Investigation
     return vwFavouriteInvestigation.findAll({
       attributes: emr_attributes_investigation.investigationAttributes,
-      where: emr_attributes_investigation.getFavouriteInvestigationQuery(uId, fTyId, dId, fId),
+      where: emr_attributes_investigation.getFavouriteInvestigationQuery(uId, fTyId, dId, fId, labId),
     });
   } else if (fTyId === 10) {
     return vwSpecialitySketch.findAll({
