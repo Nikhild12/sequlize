@@ -60,12 +60,12 @@ const cccMasterController = () => {
 
             // sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
             // sortArry = [sortArr[0], sortArr[1], sortArr[2]];
-            if(sortArr.length > 2){
-                sortArry = [sortArr[0], sortArr[1],sortArr[2]];
+            if (sortArr.length > 2) {
+                sortArry = [sortArr[0], sortArr[1], sortArr[2]];
             } else {
                 sortArry = [sortArr[0], sortArr[1]];
             }
-            
+
             let findQuery = {
                 // subQuery: false,
 
@@ -86,7 +86,7 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid','concept_code','concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
                         subQuery: false,
                         include: [
@@ -178,7 +178,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
-            console.log(err,"sdfsdf")
+            console.log(err, "sdfsdf")
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -363,7 +363,7 @@ const cccMasterController = () => {
                 const postDatabody2 = req.body.body2;
 
                 postDatabody.created_by = user_uuid;
-                postDatabody.modified_by = 0;
+                postDatabody.modified_by = user_uuid;
                 postData.created_by = req.headers.user_uuid;
                 postData.code = postData.fieldname;
                 postData.name = postData.fieldname;
