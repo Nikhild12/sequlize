@@ -3265,6 +3265,33 @@
 				}
 			}
 		},
+		"/api/favourite-type/get-type": {
+			"get": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
