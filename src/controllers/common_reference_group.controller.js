@@ -540,9 +540,6 @@ const commonReferenceGroupController = () => {
                         status: 1
                     }
                 }).then((data) => {
-
-
-
                     res.send({
                         statusCode: 200,
                         msg: "Updated Successfully",
