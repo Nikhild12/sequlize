@@ -88,7 +88,7 @@ const Encounter = () => {
 
   const _getEncounterByDocAndPatientId = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    const { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
+    let { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
 
     try {
       const is_mobile_request =
@@ -107,6 +107,10 @@ const Encounter = () => {
         user_uuid && patientId && patientId > 0 &&
         doctorId && doctorId > 0 && departmentId && encounterType
       ) {
+
+
+        console.log('Encounter data type ', typeof encounterType);
+        encounterType = +(encounterType);
         let encounterData = await encounter_tbl.findAll(
           getActiveEncounterQuery(
             patientId, doctorId, departmentId, encounterType, facility_uuid
@@ -484,12 +488,12 @@ const Encounter = () => {
 
   const _getPatientDoc = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { patient_uuid,enc_uuid } = req.query;
+    const { patient_uuid, enc_uuid } = req.query;
 
     try {
       if (user_uuid && patient_uuid) {
-        let wher_con = {ed_patient_uuid:patient_uuid};
-        if(enc_uuid){
+        let wher_con = { ed_patient_uuid: patient_uuid };
+        if (enc_uuid) {
           wher_con.ed_encounter_uuid = enc_uuid;
         }
         const docList = await vw_patientdoc.findAll({
