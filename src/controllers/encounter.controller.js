@@ -68,7 +68,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
     encounterQuery.where[Op.and] = [
       Sequelize.where(
         Sequelize.fn("date", Sequelize.col("encounter_date")),
-        "<=",
+        "=",
         moment().format("YYYY-MM-DD")
       ),
     ];
