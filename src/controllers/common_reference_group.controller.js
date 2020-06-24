@@ -536,7 +536,8 @@ const commonReferenceGroupController = () => {
                 await common_tbl.update(dynamicField(postData, table_name, 0), {
                     // name: postData.name,
                     where: {
-                        uuid: postData.Id
+                        uuid: postData.Id,
+                        status: 1
                     }
                 }).then((data) => {
 
