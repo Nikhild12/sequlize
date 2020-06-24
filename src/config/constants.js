@@ -61,6 +61,7 @@ module.exports = Object.freeze({
   PATIENT_SPECIALITY_SKETCH_FETCHED: "Successfully Fetched Patient Speciality Sketch",
   NO_TREATMETN_KIT_FOUND: "Treatment Kit Id",
   TREATMENT_UPDATE: "Treatment Kit Updated Successfully",
+  FAVOURITE_TYPE: "Favourite Type Successfully Fetched",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {

@@ -106,6 +106,9 @@ const serviceRouter = express.Router();
 //Discharge summary
 const dischargeSummary = require("./discharge_summary.route");
 
+// Favourite Type
+const favouriteType = require('./favourite_type.route');
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -256,5 +259,8 @@ serviceRouter.use("/progress", progressRoute);
 
 // progressNotes Routes
 serviceRouter.use("/emr-notes", notesRoute);
+
+// favourite Type
+serviceRouter.use('/favourite-type', favouriteType);
 
 module.exports = serviceRouter;
