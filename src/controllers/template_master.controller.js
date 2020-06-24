@@ -30,8 +30,8 @@ const tmpmstrController = () => {
    */
 
   const _gettemplateByID = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const { temp_type_id, dept_id, lab_id } =  req.query;
+    const { user_uuid, facility_uuid } = req.headers;
+    const { temp_type_id, dept_id, lab_id } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 7, 8].includes(+(temp_type_id))) {
@@ -44,6 +44,7 @@ const tmpmstrController = () => {
           temp_type_id,
           dept_id,
           user_uuid,
+          facility_uuid,
           lab_id
         );
         const templateList = await table_name.findAll(query);
@@ -57,7 +58,7 @@ const tmpmstrController = () => {
                 : emr_constants.NO_RECORD_FOUND
           });
         } else {
-          if(temp_type_id == 3){
+          if (temp_type_id == 3) {
             return res.status(200).send({
               code: httpStatus.OK,
               message: "No Data Found ",
@@ -949,7 +950,7 @@ function getLabListData(fetchedData) {
 
 function getRisListData(fetchedData) {
   let templateList = [],
-  radiology_details = [];
+    radiology_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
@@ -1072,8 +1073,6 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
     tmd_is_active: 1,
     tmd_status: 1,
     tm_template_type_uuid: temp_type_id,
-    dm_status: 1,
-    dm_is_active: 1,
     [Op.or]: [
       { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
       { tm_userid: { [Op.eq]: user_uuid } }
@@ -1363,7 +1362,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
     });
   }
 };
-function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, lab_id) {
+function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1392,6 +1391,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, lab_id) {
             tm_status: 1,
             tmd_status: 1,
             tmd_active: 1,
+            f_uuid: fId,
             [Op.or]: [
               {
                 [searchKey]: { [Op.eq]: searchValue },
@@ -1483,10 +1483,10 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
         }
       };
     case "3":
-        lab_id = +(lab_id);
-        const labValidation1 = !lab_id || lab_id === 0;
-        const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
-        const searchValue1 = labValidation1 ? dept_id : lab_id;
+      lab_id = +(lab_id);
+      const labValidation1 = !lab_id || lab_id === 0;
+      const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const searchValue1 = labValidation1 ? dept_id : lab_id;
       return {
         table_name: vw_profile_ris,
         query: {

@@ -247,7 +247,12 @@ const _favouriteLabVWQuery = (uId, dId, fId, labId = 0) => {
  * @param {*} dId department Id
  * @param {*} fId facility Id
  */
-const _favouriteRadVWQuery = (uId, dId, fId) => {
+const _favouriteRadVWQuery = (uId, dId, fId, labId = 0) => {
+
+  labId = +(labId);
+  const labValidation = labId && labId > 0;
+  const searchKey = labValidation ? 'fm_lab_uuid' : 'fm_department_uuid';
+  const searchValue = labValidation ? labId : dId;
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
@@ -255,7 +260,7 @@ const _favouriteRadVWQuery = (uId, dId, fId) => {
     fmd_status: emr_constants.IS_ACTIVE,
     fm_user_uuid: uId,
     fa_uuid: fId,
-    fm_department_uuid: dId,
+    [searchKey]: searchValue,
     [Op.or]: [
       {
         rtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
