@@ -994,7 +994,7 @@ function getRisListData(fetchedData) {
     );
     return { templates_radiology_list: temp_list };
   } else {
-    return {};
+    return {templates_radiology_list:[]};
   }
 }
 
