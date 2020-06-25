@@ -16,6 +16,8 @@ const _investigationAttributes = [
   "fm_active",
   "fm_public",
   "fm_status",
+  "fm_created_date",
+  "fm_modified_date",
   "fm_display_order",
   "ivtm_uuid",
   "ivtm_code",
@@ -36,7 +38,8 @@ const _investigationAttributes = [
   "fa_uuid",
   "fa_name",
   "dp_uuid",
-  "dp_name"
+  "dp_name",
+  "fm_description"
 ];
 
 const _getInvestigationResponse = radiology => {
@@ -59,7 +62,10 @@ const _getInvestigationResponse = radiology => {
       created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
       modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
       facility_name: r.fa_name,
-      department_name: r.dp_name
+      department_name: r.dp_name,
+      created_date: r.fm_created_date,
+      modified_date: r.fm_modified_date,
+      favourite_description: r.fm_description
     };
   });
 };

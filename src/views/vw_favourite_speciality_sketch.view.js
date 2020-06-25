@@ -43,6 +43,12 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
+            fm_created_date: {
+                type: DataTypes.DATE
+            },
+            fm_modified_date: {
+                type: DataTypes.DATE
+            },
             fm_display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
