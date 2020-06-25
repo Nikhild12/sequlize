@@ -8871,6 +8871,42 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/investigation_result/getInvestigationResultById": {
+			"get": {
+				"description": "To get investigation By Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_order_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"InvestigationResult"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getInvestigationResult"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -11234,18 +11270,17 @@
 				}
 			}
 		},
-
-		"getFavouriteType":{
+		"getFavouriteType": {
 			"type": "object",
-			"properties":{
-				"name":{
-					"type":"string"
+			"properties": {
+				"name": {
+					"type": "string"
 				},
 				"pageNo": {
-					"type":"number"
+					"type": "number"
 				},
-				"paginationSize":{
-					"type":"number"
+				"paginationSize": {
+					"type": "number"
 				}
 			}
 		},
@@ -16428,6 +16463,14 @@
 					"type": "string"
 				},
 				"Id": {
+					"type": "integer"
+				}
+			}
+		},
+		"getInvestigationResult": {
+			"type": "object",
+			"properties": {
+				"user_uuid": {
 					"type": "integer"
 				}
 			}
