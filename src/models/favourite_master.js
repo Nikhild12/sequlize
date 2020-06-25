@@ -92,7 +92,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false
       },
-      lab_uuid:{
+      lab_uuid: {
         type: DataTypes.INTEGER,
         allowNull: true
       },
@@ -106,6 +106,9 @@ module.exports = (sequelize, DataTypes) => {
       modified_by: {
         type: DataTypes.INTEGER,
         allowNull: false
+      },
+      description: {
+        type: DataTypes.STRING
       }
     },
     {
