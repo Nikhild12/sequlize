@@ -21,19 +21,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         note_template_type_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notNull: {
-                    msg: emr_constants.GetpleaseProvideMsg('note_template_type_uuid')
-                },
-                notEmpty: {
-                    msg: emr_constants.GetpleaseProvideMsg('note_template_type_uuid')
-                },
-                min: {
-                    args: [1],
-                    msg: emr_constants.GetZeroValidationMessage('note_template_type_uuid')
-                }
-            }
+            allowNull: true,
+            // validate: {
+            //     notNull: {
+            //         msg: emr_constants.GetpleaseProvideMsg('note_template_type_uuid')
+            //     },
+            //     notEmpty: {
+            //         msg: emr_constants.GetpleaseProvideMsg('note_template_type_uuid')
+            //     },
+            //     min: {
+            //         args: [1],
+            //         msg: emr_constants.GetZeroValidationMessage('note_template_type_uuid')
+            //     }
+            // }
         },
         note_type_uuid: {
             type: DataTypes.INTEGER,
