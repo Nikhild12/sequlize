@@ -199,8 +199,8 @@ const profilesController = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
-        // where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
+        where: { p_status: 1, p_department_uuid: department_uuid },
+        // where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
         order: [
           sortArr
         ],
@@ -270,7 +270,7 @@ const profilesController = () => {
 
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
         findQuery.where['p_is_active'] = getsearch.status;
-        findQuery.where['p_status'] = getsearch.status;
+        findQuery.where['p_status'] = 1;
 
       }
       console.log(">>>>>", JSON.stringify(findQuery));
