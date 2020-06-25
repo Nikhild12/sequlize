@@ -143,7 +143,7 @@ module.exports = (sequelize, DataTypes) => {
         });
         critical_care_charts.belongsTo(models.critical_care_types, {
             foreignKey: "critical_care_type_uuid",
-            as: 'critical_care_types'
+           // as: 'critical_care_types'
         });
     };
 
