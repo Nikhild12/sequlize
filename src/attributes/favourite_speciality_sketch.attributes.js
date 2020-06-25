@@ -9,7 +9,7 @@ const Op = Sequelize.Op;
 const neQuery = { [Op.ne]: null };
 
 
-const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id) => {
+const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id, dId, fId) => {
     return {
         fm_favourite_type_uuid: fav_type_id,
         fm_status: emr_constants.IS_ACTIVE,
@@ -17,7 +17,9 @@ const _getFavouriteSpecialitySketchQuery = (user_id, fav_type_id) => {
         fm_user_uuid: user_id,
         fmd_speciality_sketch_uuid: neQuery,
         ss_is_active: emr_constants.IS_ACTIVE,
-        ss_status: emr_constants.IS_ACTIVE
+        ss_status: emr_constants.IS_ACTIVE,
+        fm_department_uuid: dId,
+        fa_uuid: fId
     };
 };
 
@@ -48,7 +50,10 @@ const _getSpecialityFavouriteAtt = [
     "fa_uuid",
     "fa_name",
     "dp_uuid",
-    "dp_name"
+    "dp_name",
+    "fm_created_date",
+    "fm_modified_date",
+    "fm_description"
 ];
 
 
@@ -66,7 +71,11 @@ const _getSpecialitySketchFavouriteRes = (sketchFav) => {
             facility_name: f.fa_name,
             department_name: f.dp_name,
             favourite_active: f.fm_is_active,
-            favourite_display_order: f.fm_display_order
+            favourite_display_order: f.fm_display_order,
+            created_date: f.fm_created_date,
+            modified_date: f.fm_modified_date,
+            favourite_type_id: f.fm_favourite_type_uuid,
+            favourite_description: f.fm_description
         };
 
     });

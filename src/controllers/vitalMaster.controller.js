@@ -36,7 +36,7 @@ const vitalmstrController = () => {
 
         vitalsMasterData.name = vitalsMasterData.name;
         vitalsMasterData.description = vitalsMasterData.description;
-        vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
+       // vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
         vitalsMasterData.revision = 1;
@@ -173,7 +173,7 @@ const vitalmstrController = () => {
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
       sortOrder = getsearch.sortOrder;
     }
-    
+
     let findQuery = {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       offset: offset,
@@ -449,7 +449,7 @@ const nameExists = (name) => {
     return new Promise((resolve, reject) => {
       let value = vitalmstrTbl.findAll({
         attributes: ["name"],
-        where: { name: name }
+        where: { name: name, status: 1 }
       });
       if (value) {
         resolve(value);

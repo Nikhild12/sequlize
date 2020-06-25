@@ -16,6 +16,8 @@ const _investigationAttributes = [
   "fm_active",
   "fm_public",
   "fm_status",
+  "fm_created_date",
+  "fm_modified_date",
   "fm_display_order",
   "ivtm_uuid",
   "ivtm_code",
@@ -36,7 +38,8 @@ const _investigationAttributes = [
   "fa_uuid",
   "fa_name",
   "dp_uuid",
-  "dp_name"
+  "dp_name",
+  "fm_description"
 ];
 
 const _getInvestigationResponse = radiology => {
@@ -59,17 +62,26 @@ const _getInvestigationResponse = radiology => {
       created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
       modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
       facility_name: r.fa_name,
-      department_name: r.dp_name
+      department_name: r.dp_name,
+      created_date: r.fm_created_date,
+      modified_date: r.fm_modified_date,
+      favourite_description: r.fm_description
     };
   });
 };
 
-const _getFavouriteInvestigationQuery = (user_id, fav_type_id) => {
+const _getFavouriteInvestigationQuery = (user_id, fav_type_id, dId, fId, labId = 0) => {
+  labId = +(labId);
+  const labValidation = labId && labId > 0;
+  const searchKey = labValidation ? 'fm_lab_uuid' : 'fm_dept';
+  const searchValue = labValidation ? labId : dId;
   return {
     fm_favourite_type_uuid: fav_type_id,
     fm_status: emr_constants.IS_ACTIVE,
     fm_active: emr_constants.IS_ACTIVE,
     fm_userid: user_id,
+    [searchKey]: searchValue,
+    fa_uuid: fId,
     ivtm_uuid: neQuery,
     ivtm_is_active: emr_constants.IS_ACTIVE,
     ivtm_status: emr_constants.IS_ACTIVE

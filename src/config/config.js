@@ -1,7 +1,6 @@
 const Joi = require("joi");
 
-require("dotenv").config();
-//require("dotenv").config({ path: __dirname + '/../../.env' });
+require("dotenv").config({ path: __dirname + '/../../.env' });
 
 const envVarsSchema = Joi.object({
   PG_DB_LOGGING: Joi.string().default(0),

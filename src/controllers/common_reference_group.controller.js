@@ -4,6 +4,8 @@ const db = require("../config/sequelize");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const checkDuplicate = require("../helpers/checkDuplicate.js");
+var config = require("../config/config");
+const rp = require('request-promise');
 // const gender_tbl = db.gender;
 
 
@@ -206,7 +208,7 @@ const commonReferenceGroupController = () => {
                 order: [
                     [sortField, sortOrder],
                 ],
-                
+
             };
             query1 = [Sequelize.where(Sequelize.col(table_name + '.status'), 1)];
 
@@ -230,17 +232,17 @@ const commonReferenceGroupController = () => {
                     };
                 }
             }
-console.log(postData.status != null , postData.status != "");
+            console.log(postData.status != null, postData.status != "");
 
-            if (postData.status != null) {                
-                if (query1 != null) {                    
+            if (postData.status != null) {
+                if (query1 != null) {
                     query1 = {
                         [Op.and]: [
                             query1,
                             Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
                         ]
                     };
-                } else {                    
+                } else {
                     query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
                 }
             }
@@ -289,6 +291,76 @@ console.log(postData.status != null , postData.status != "");
         }
     };
 
+    async function getlanguageDetails(user_uuid, data, authorization) {
+        let options = {
+            uri: config.wso2AppUrl + 'commonReference/getReferenceById',
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: authorization,
+                user_uuid: user_uuid
+            },
+            body: {
+                "table_name": "language",
+                "Id": data.language_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        return user_details.responseContents[0];
+    }
+
+
+    const getReferenceByIdForLanguage = async (req, res, next) => {
+        const postData = req.body;
+        // const table_name = "gender";
+        // const table_name = "department";
+        const table_name = postData.table_name;
+        const common_tbl = db[table_name];
+
+        try {
+            /* gender Data */
+            let data = await common_tbl.findOne({
+                where: {
+                    uuid: postData.Id
+                }
+
+            })
+
+            if (data != null) {
+                console.log("data", data.dataValues);
+                const getlanguageDetailsdata = await getlanguageDetails(req.headers.user_uuid, data.dataValues, req.headers.authorization);
+                console.log("data", getlanguageDetailsdata);
+                data.dataValues.language_details = getlanguageDetailsdata;
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        responseContent: data,
+                        totalRecords: data.length
+                    });
+            } else {
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: httpStatus.OK,
+                        msg: "Reference Data's not found",
+                        req: ''
+                    });
+            }
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+                    msg: errorMsg
+                });
+        }
+    };
+
     const getReferenceById = async (req, res, next) => {
         const postData = req.body;
         // const table_name = "gender";
@@ -298,10 +370,7 @@ console.log(postData.status != null , postData.status != "");
 
         try {
             /* gender Data */
-
-
             await common_tbl.findOne({
-
                 where: {
                     uuid: postData.Id
                 }
@@ -337,6 +406,7 @@ console.log(postData.status != null , postData.status != "");
                 });
         }
     };
+
     const addReference = async (req, res, next) => {
         const postData = req.body;
         const table_name = postData.table_name;
@@ -466,12 +536,10 @@ console.log(postData.status != null , postData.status != "");
                 await common_tbl.update(dynamicField(postData, table_name, 0), {
                     // name: postData.name,
                     where: {
-                        uuid: postData.Id
+                        uuid: postData.Id,
+                        status: 1
                     }
                 }).then((data) => {
-
-
-
                     res.send({
                         statusCode: 200,
                         msg: "Updated Successfully",
@@ -643,6 +711,7 @@ console.log(postData.status != null , postData.status != "");
         deleteReference,
         updateReference,
         getReferenceById,
+        getReferenceByIdForLanguage
     };
 };
 

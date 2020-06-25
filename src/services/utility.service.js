@@ -180,7 +180,8 @@ const responseMessage = {
   cc: emr_constants.CHIEF_COMPLIANT,
   dis: emr_constants.DISEASES_SUCCESS,
   p: emr_constants.PREVIOUS_PAT_CC_SUCCESS, // Previous Patient Chief Complaints,
-  pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED // Patient Speciality Sketch Fe
+  pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED, // Patient Speciality Sketch Fe,
+  favty: emr_constants.FAVOURITE_TYPE // Favourite Type
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {

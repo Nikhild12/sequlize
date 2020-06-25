@@ -28,15 +28,12 @@ const progress_notes = () => {
         let progressData = req.body;
 
         if (user_uuid) {
-
-            progressData.is_active = progressData.status = true;
-            progressData.created_by = progressData.modified_by = user_uuid;
-            progressData.created_date = progressData.modified_date = new Date();
-            progressData.revision = 1;
-
+            progressData.forEach(element => {
+                element = emr_utility.createIsActiveAndStatus(element, user_uuid);
+            });
             try {
-                await progressNotesTbl.create(progressData, { returing: true });
-                return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: progressData });
+                let progressResponse = await progressNotesTbl.bulkCreate(progressData, { returing: true });
+                return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: progressResponse });
 
             }
             catch (ex) {

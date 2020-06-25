@@ -89,11 +89,31 @@ const immunizationScheduleController = () => {
                 findQuery.where['$vw_emr_immunization_schedule.duration_period_uuid$'] = getsearch.duration_period_uuid;
             }
 
+  if (getsearch.status && (getsearch.status.toLowerCase() == "active" || getsearch.status.toLowerCase() == "inactive")) {
+        let is_active_input = 0;
+        if (getsearch.status.toLowerCase() == "active") {
+          is_active_input = 1;
+        } else {
+          is_active_input = 0;
+        }
+        findQuery.where = Object.assign(findQuery.where, {
+          is_active: {
+            [Op.eq]: is_active_input
+          }
+        });
+      } else {
+        findQuery.where = Object.assign(findQuery.where, {
+          is_active: {
+            [Op.eq]: 1
+          }
+        });
+      }
+
   
-    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-        findQuery.where['is_active'] = getsearch.status;
-        // findQuery.where['status'] = getsearch.status;
-     }     
+    // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+    //     findQuery.where['is_active'] = getsearch.status;
+    //     // findQuery.where['status'] = getsearch.status;
+    //  }     
             await vw_immunische.findAndCountAll(findQuery)
                 .then((data) => {
                     return res

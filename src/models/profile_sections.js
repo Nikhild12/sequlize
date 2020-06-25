@@ -30,24 +30,24 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
-            section_uuid: {
+            // section_uuid: {
 
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('section_uuid')
-                    }
-                }
+            //     type: DataTypes.INTEGER,
+            //     allowNull: false,
+            //     validate: {
+            //         notNull: {
+            //             msg: emr_constants.GetpleaseProvideMsg('section_uuid')
+            //         },
+            //         notEmpty: {
+            //             msg: emr_constants.GetpleaseProvideMsg('section_uuid')
+            //         },
+            //         min: {
+            //             args: [1],
+            //             msg: emr_constants.GetZeroValidationMessage('section_uuid')
+            //         }
+            //     }
 
-            },
+            // },
             activity_uuid: {
 
                 type: DataTypes.INTEGER,

@@ -154,16 +154,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false
       },
-      tm_created_by:{
+      tm_created_by: {
         type: DataTypes.INTEGER,
       },
-      tm_created_date:{
+      tm_created_date: {
         type: DataTypes.DATE,
       },
-      tm_modified_by:{
+      tm_modified_by: {
         type: DataTypes.INTEGER,
       },
-      tm_modified_date:{
+      tm_modified_date: {
         type: DataTypes.INTEGER,
       },
       f_uuid: {
@@ -210,7 +210,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       }
-
     },
     {
       timestamps: false

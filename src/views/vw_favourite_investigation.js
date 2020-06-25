@@ -37,6 +37,12 @@ module.exports = (sequelize, DataTypes) => {
       fm_display_order: {
         type: DataTypes.INTEGER
       },
+      fm_created_date: {
+        type: DataTypes.DATE
+      },
+      fm_modified_date: {
+        type: DataTypes.DATE
+      },
       ivtm_uuid: {
         type: DataTypes.INTEGER
       },
@@ -109,6 +115,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       dp_name: {
+        type: DataTypes.STRING
+      },
+      fm_lab_uuid: {
+        type: DataTypes.INTEGER
+      },
+      fm_description: {
         type: DataTypes.STRING
       }
     },

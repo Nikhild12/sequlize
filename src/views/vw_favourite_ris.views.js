@@ -57,6 +57,12 @@ module.exports = (sequelize, DataTypes) => {
             fm_is_active: {
                 type: DataTypes.BOOLEAN
             },
+            fm_created_date: {
+                type: DataTypes.DATE
+            },
+            fm_modified_date: {
+                type: DataTypes.DATE
+            },
             rtm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -144,6 +150,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             dp_name: {
                 type: DataTypes.STRING
+            },
+            fm_lab_uuid: {
+                type: DataTypes.INTEGER
             }
         },
         {

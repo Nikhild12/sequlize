@@ -199,8 +199,8 @@ const profilesController = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
-        // where: { p_is_active: 1, p_status: 1, p_profile_type_uuid: profile_type, p_department_uuid: department_uuid },
+        where: { p_status: 1, p_department_uuid: department_uuid },
+        // where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
         order: [
           sortArr
         ],
@@ -270,7 +270,7 @@ const profilesController = () => {
 
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
         findQuery.where['p_is_active'] = getsearch.status;
-        findQuery.where['p_status'] = getsearch.status;
+        findQuery.where['p_status'] = 1;
 
       }
       console.log(">>>>>", JSON.stringify(findQuery));
@@ -345,7 +345,7 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
     let findQuery = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active'],
       where: { uuid: profile_uuid, is_active: 1, status: 1 },
       include: [
         {
@@ -450,6 +450,7 @@ const profilesController = () => {
         let bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
         return res.send({ status: 'success', statusCode: 200, msg: 'success', responseContents: bulkUpdateProfileResponse });
       } catch (err) {
+        console.log('err===', err);
         return res.send({ status: 'error', statusCode: 400, msg: 'failed', error: err.message });
       }
     } else {
@@ -458,6 +459,109 @@ const profilesController = () => {
   };
 
   const bulkUpdateProfile = async (req) => {
+    var deferred = new Q.defer();
+    var profileData = req;
+    var profileDetailsUpdate = [];
+    var sectionsResponse = [];
+    var categoryResponse = [];
+    var conceptsResponse = [];
+    for (let i = 0; i < profileData.profiles.sections.length; i++) {
+      const element1 = profileData.profiles;
+      profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
+
+      const element = profileData.profiles.sections[i];
+      if (element.profile_sections_uuid) {
+        profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
+      }
+      else {
+        let elementArr3 = [];
+        // elementArr3.push(element);
+        elementArr3.push({
+          profile_uuid: profileData.profiles.profile_uuid,
+          section_uuid: element.section_uuid,
+          activity_uuid: element.activity_uuid,
+          display_order: element.display_order
+        });
+        sectionsResponse = await profileSectionsTbl.bulkCreate(elementArr3);
+      }
+      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
+        const element = profileData.profiles.sections[i].categories[j];
+        if (element.profile_section_categories_uuid) {
+          profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
+        }
+        else {
+          let elementArr2 = [];
+          // elementArr2.push(element);
+          elementArr2.push({
+            profile_section_uuid: sectionsResponse[0].uuid,
+            category_uuid: element.category_uuid,
+            display_order: element.display_order
+          });
+          categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
+        }
+        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
+          const element = profileData.profiles.sections[i].categories[j].concepts[k];
+          if (element.profile_section_category_concepts_uuid) {
+            profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_uuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
+          }
+          else {
+            let elementArr1 = [];
+            // elementArr1.push(element);
+            var index = 0;
+            elementArr1.push({
+              profile_section_category_uuid: categoryResponse[0].uuid,
+              code: element.code,
+              name: element.name,
+              description: element.description,
+              value_type_uuid: element.value_type_uuid,
+              is_mandatory: element.is_mandatory,
+              display_order: element.display_order,
+              is_multiple: element.is_multiple
+            });
+            conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr1);
+          }
+          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
+            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
+            if (element.profile_section_category_concept_values_uuid) {
+              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+            }
+            else {
+              let elementArr = [];
+              // elementArr.push(element);
+              elementArr.push({
+                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
+                value_code: element.value_code,
+                value_name: element.value_name,
+                display_order: element.display_order
+              });
+              var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
+            }
+          }
+        }
+      }
+    }
+    if (profileDetailsUpdate.length > 0) {
+      var response = await Q.allSettled(profileDetailsUpdate);
+      if (response.length > 0) {
+        var responseMsg = [];
+        for (let i = 0; i < response.length; i++) {
+          const element = response[i];
+          if (element.state == "rejected") {
+            responseMsg.push(element.reason);
+          }
+        }
+
+        if (responseMsg.length == 0) {
+          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
+        } else {
+          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
+        }
+      }
+    }
+    return deferred.promise;
+  };
+
+  const bulkUpdateProfiles1 = async (req) => {
     var deferred = new Q.defer();
     var profileData = req;
     var profileDetailsUpdate = [];
@@ -504,112 +608,6 @@ const profilesController = () => {
               elementArr.push(element);
               var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             }
-          }
-        }
-      }
-    }
-    if (profileDetailsUpdate.length > 0) {
-      var response = await Q.allSettled(profileDetailsUpdate);
-      if (response.length > 0) {
-        var responseMsg = [];
-        for (let i = 0; i < response.length; i++) {
-          const element = response[i];
-          if (element.state == "rejected") {
-            responseMsg.push(element.reason);
-          }
-        }
-
-        if (responseMsg.length == 0) {
-          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
-        } else {
-          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
-        }
-      }
-    }
-    return deferred.promise;
-  };
-
-  const bulkUpdateProfile_valworki = async (req) => {
-    var deferred = new Q.defer();
-    var profileData = req;
-    var profileDetailsUpdate = [];
-    let conceptValuesSave = [];
-    let conceptuuids = [];
-    for (let i = 0; i < profileData.profiles.sections.length; i++) {
-      const element1 = profileData.profiles;
-      profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
-
-      const element = profileData.profiles.sections[i];
-      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
-
-      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
-        const element = profileData.profiles.sections[i].categories[j];
-        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
-
-        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
-          const element = profileData.profiles.sections[i].categories[j].concepts[k];
-          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_uuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
-
-          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
-            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
-            if (element.profile_section_category_concept_values_uuid) {
-              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
-            }
-            else {
-              let elementArr = [];
-              elementArr.push(element);
-              let profilesReq = profileData.profiles;
-              let ValuesInfoDetails = [];
-              let proSec = profilesReq.sections;
-              var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
-            }
-          }
-        }
-      }
-    }
-    if (profileDetailsUpdate.length > 0) {
-      var response = await Q.allSettled(profileDetailsUpdate);
-      if (response.length > 0) {
-        var responseMsg = [];
-        for (let i = 0; i < response.length; i++) {
-          const element = response[i];
-          if (element.state == "rejected") {
-            responseMsg.push(element.reason);
-          }
-        }
-
-        if (responseMsg.length == 0) {
-          deferred.resolve({ status: 'success', statusCode: 200, msg: 'Updated successfully.', responseContents: response });
-        } else {
-          deferred.resolve({ status: 'error', statusCode: 400, msg: 'Not Updated.', responseContents: responseMsg });
-        }
-      }
-    }
-    return deferred.promise;
-  };
-
-  const bulkUpdateProfile1 = async (req) => {
-    var deferred = new Q.defer();
-    var profileData = req;
-    var profileDetailsUpdate = [];
-    for (let i = 0; i < profileData.profiles.sections.length; i++) {
-      const element1 = profileData.profiles;
-      profileDetailsUpdate.push(await profilesTbl.update({ profile_type_uuid: element1.profile_type_uuid, profile_code: element1.profile_code, profile_name: element1.profile_name, profile_description: element1.profile_description, facility_uuid: element1.facility_uuid, department_uuid: element1.department_uuid }, { where: { uuid: element1.profile_uuid } }));
-
-      const element = profileData.profiles.sections[i];
-      profileDetailsUpdate.push(await profileSectionsTbl.update({ section_uuid: element.section_uuid, activity_uuid: element.activity_uuid, display_order: element.display_order }, { where: { uuid: element.profile_sections_uuid } }));
-
-      for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
-        const element = profileData.profiles.sections[i].categories[j];
-        profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({ category_uuid: element.category_uuid, display_order: element.display_order }, { where: { uuid: element.profile_section_categories_uuid } }));
-
-        for (let k = 0; k < profileData.profiles.sections[i].categories[j].concepts.length; k++) {
-          const element = profileData.profiles.sections[i].categories[j].concepts[k];
-          profileDetailsUpdate.push(await profileSectionCategoryConceptsTbl.update({ code: element.code, name: element.name, description: element.description, value_type_uuid: element.value_type_uuid, is_multiple: element.is_multiple, is_mandatory: element.is_mandatory, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concepts_uuid } }));
-
-          for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
-            const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
-            profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
           }
         }
       }
@@ -693,7 +691,9 @@ const profilesController = () => {
     try {
       if (user_uuid) {
         const result = await profilesDefaultTbl.findOne({ where: { user_uuid: user_uuid } }, { returning: true });
-        if (result != null && IsObjectEmpty(result)) {
+        // if (result != null && IsObjectEmpty(result)) {
+        if (result != null) {
+
           return res.status(200).send({ statusCode: 200, message: emr_constants.FETCHED_SUCCESSFULLY, responseContent: result });
         } else {
           return res.status(400).send({ statusCode: 400, message: "No record found " });
@@ -708,39 +708,30 @@ const profilesController = () => {
 
   const _setDefaultProfiles = async (req, res) => {
     try {
-      const { profile_uuid, profile_type_uuid } = req.body;
       const { user_uuid } = req.headers;
+      let postData = req.body;
       // if (profile_uuid && profile_type_uuid) {
       //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
       // }
-      if ((profile_uuid || profile_type_uuid) && user_uuid) {
-        let postData = {}, updateData = {}, type = "";
-        if (profile_uuid) {
-          postData = { profile_uuid: profile_uuid, profile_type_uuid: 0 };
-          updateData = { profile_uuid: profile_uuid, modified_by: user_uuid };
-          type = "profiles";
-        }
-        if (profile_type_uuid) {
-          postData = { profile_uuid: 0, profile_type_uuid: profile_type_uuid };
-          updateData = { profile_type_uuid: profile_type_uuid, modified_by: user_uuid };
-          type = "profile_types";
-        }
+      if (postData.profile_uuid && postData.profile_type_uuid && user_uuid) {
+        let updateData = {}, type = "";
+        updateData = { profile_uuid: postData.profile_uuid, profile_type_uuid: postData.profile_type_uuid, modified_by: user_uuid };
         postData.created_by = postData.user_uuid = user_uuid;
         postData.modified_by = 0;
-        const checkUserExistsOrNot = await getUserProfiles(user_uuid, type);
+        const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
         if (checkUserExistsOrNot.status) {
           const updateProfileId = await profilesDefaultTbl.update(updateData, { where: { user_uuid } });
           if (updateProfileId && updateProfileId[0] != 0) {
-            return res.status(200).send({ statusCode: 200, message: type + " updated successfully" });
+            return res.status(200).send({ statusCode: 200, message: " updated successfully" });
           } else {
-            return res.status(400).send({ statusCode: 400, message: type + " not updated " });
+            return res.status(400).send({ statusCode: 400, message: " not updated " });
           }
         } else {
           const insertProfile = await profilesDefaultTbl.create(postData, { returning: true });
           if (insertProfile) {
-            return res.status(201).send({ statusCode: 201, message: type + " inserted successfully " });
+            return res.status(201).send({ statusCode: 201, message: " inserted successfully " });
           } else {
-            return res.status(400).send({ statusCode: 400, message: type + " inserted failed " });
+            return res.status(400).send({ statusCode: 400, message: " inserted failed " });
           }
         }
       } else {
@@ -751,6 +742,30 @@ const profilesController = () => {
       return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
+
+  const _getNotesByType = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    const { profile_type_uuid } = req.query;
+    const { department_uuid } = req.query;
+    try {
+      if (user_uuid) {
+        const typesData = await profilesTbl.findAll({
+          where: { is_active: 1, status: 1, profile_type_uuid: profile_type_uuid, department_uuid: department_uuid },
+        }, { returning: true }
+        );
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
+      }
+      else {
+        return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+      }
+    } catch (ex) {
+
+      console.log(ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -760,8 +775,8 @@ const profilesController = () => {
     getAllValueTypes: _getAllValueTypes,
     getAllProfileNotesTypes: _getAllProfileNotesTypes,
     getDefaultProfiles: _getDefaultProfiles,
-    setDefaultProfiles: _setDefaultProfiles
-
+    setDefaultProfiles: _setDefaultProfiles,
+    getNotesByType: _getNotesByType
   };
 
 };
@@ -889,7 +904,8 @@ async function getUserProfiles(user_uuid) {
   let result = await profilesDefaultTbl.findOne({
     where: { user_uuid: user_uuid }
   }, { returning: true });
-  if (result && IsObjectEmpty(result)) {
+  if (result) {
+    //if (result && IsObjectEmpty(result)) {
     return { status: true, details: result };
   } else {
     return { status: false, details: {} };

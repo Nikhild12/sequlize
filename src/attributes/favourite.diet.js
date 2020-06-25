@@ -30,7 +30,12 @@ const _favouriteDietAttributes = [
   "fa_uuid",
   "fa_name",
   "dp_uuid",
-  "dp_name"
+  "dp_name",
+  "dm_status",
+  "dm_is_active",
+  "fm_created_date",
+  "fm_modified_date",
+  "fm_description"
 ];
 
 module.exports = {
