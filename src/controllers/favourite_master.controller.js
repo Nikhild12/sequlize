@@ -110,7 +110,9 @@ const getFavouritesAttributes = [
   "fa_uuid",
   "fa_name",
   "de_uuid",
-  "de_name"
+  "de_name",
+  "tsm_created_date",
+  "tsm_modified_date"
 ];
 
 // Fav Treatment Kit Att
@@ -416,6 +418,8 @@ const TickSheetMasterController = () => {
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData, user_uuid
       );
+      favouriteMasterReqData.modified_date = null;
+      favouriteMasterReqData.modified_by = null;
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
       favouriteMasterReqData.user_uuid = fav_master_user_uuid ? fav_master_user_uuid : favouriteMasterReqData.user_uuid;
       try {
@@ -604,19 +608,15 @@ const TickSheetMasterController = () => {
     const favouriteMasterReqData = req.body;
 
     const favouriteMasterUpdateData = getFavouriteMasterUpdateData(
-      user_uuid,
-      favouriteMasterReqData
+      user_uuid, favouriteMasterReqData
     );
     const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(
-      user_uuid,
-      favouriteMasterReqData
+      user_uuid, favouriteMasterReqData
     );
 
     if (
-      user_uuid &&
-      favouriteMasterReqData &&
-      favouriteMasterReqData.hasOwnProperty("favourite_id") &&
-      favouriteMasterReqData.hasOwnProperty("is_active")
+      user_uuid && favouriteMasterReqData &&
+      favouriteMasterReqData.hasOwnProperty("favourite_id") && favouriteMasterReqData.hasOwnProperty("is_active")
     ) {
       try {
         const updatingRecord = await favouriteMasterTbl.findAll({
@@ -974,6 +974,10 @@ function getFavouritesInList(fetchedData) {
         favourite_name: tD.tsm_name,
 
         favourite_details_id: tD.tsmd_uuid,
+        favourite_type_id: tD.tsm_favourite_type_uuid,
+        created_date: tD.tsm_created_date,
+        modified_date: tD.tsm_modified_date,
+        favourite_description: tD.tsm_description,
 
         // Drug Details
         drug_name: tD.im_name,
@@ -1317,6 +1321,9 @@ function getAllDietFavsInReadableFormat(dietFav) {
       favourite_active: df.fm_active,
       favourite_display_order: df.fm_display_order,
       department_id: df.fm_dept,
+      created_date: df.fm_created_date,
+      modified_date: df.fm_modified_date,
+      favourite_description: df.fm_description,
 
       // Diet Master
       diet_master_id: df.fmd_diet_master_uuid,
