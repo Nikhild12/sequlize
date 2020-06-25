@@ -61,7 +61,7 @@ const referenceGroupController = () => {
                 ],
 
                 where: {
-                    is_active: 1,status:1
+                    is_active: 1, status: 1
                 }
             };
 
@@ -101,12 +101,12 @@ const referenceGroupController = () => {
             //     findQuery.where['$app_module.uuid$'] = postData.moduleId;
             // }
 
-            
-               if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-            findQuery.where['is_active'] = postData.status;
-            findQuery.where['status'] = postData.status;
 
-        }
+            if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
+                findQuery.where['is_active'] = postData.status;
+                findQuery.where['status'] = postData.status;
+
+            }
 
 
             // if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
@@ -360,7 +360,7 @@ const referenceGroupController = () => {
 
         };
 
-       if (getsearch.search && /\S/.test(getsearch.search)) {
+        if (getsearch.search && /\S/.test(getsearch.search)) {
             findQuery.where[Op.or] = [
                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
@@ -444,7 +444,7 @@ const codeexists = (code, userUUID) => {
             let value = emr_reference_group_tbl.findAll({
                 //order: [['created_date', 'DESC']],
                 attributes: ["code"],
-                where: { code: code }
+                where: { code: code, status: 1 }
             });
             if (value) {
                 resolve(value);
@@ -462,7 +462,7 @@ const nameexists = (name) => {
             let value = emr_reference_group_tbl.findAll({
                 //order: [['created_date', 'DESC']],
                 attributes: ["name"],
-                where: { name: name }
+                where: { name: name, status: 1 }
             });
             if (value) {
                 resolve(value);
