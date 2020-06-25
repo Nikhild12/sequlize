@@ -3292,6 +3292,41 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/favourite-type/get-type-advance": {
+			"post": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getFavouriteType",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getFavouriteType"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
@@ -11196,6 +11231,21 @@
 					"tat_end_time": {
 						"type": "string"
 					}
+				}
+			}
+		},
+
+		"getFavouriteType":{
+			"type": "object",
+			"properties":{
+				"name":{
+					"type":"string"
+				},
+				"pageNo": {
+					"type":"number"
+				},
+				"paginationSize":{
+					"type":"number"
 				}
 			}
 		},

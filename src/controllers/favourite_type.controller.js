@@ -18,14 +18,24 @@ const FavouriteType = () => {
 
     const _getFavouriteType = async (req, res) => {
 
+        let name, pageNo, paginationSize;
+        let query = {
+            attributes: { exclude: ['modified_by', 'modified_date'] },
+        };
+        if (req.method === "POST") {
+            ({ name, pageNo = 0, paginationSize = 10 } = req.body);
+            const offset = pageNo * paginationSize;
+            query.where = emr_utility.getFilterByThreeQueryForCodeAndName(name);
+            query.offset = offset;
+            query.limit = paginationSize;
+        } else {
+            query.where = {
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE
+            };
+        }
         try {
-            const favouriteTypeList = await favourite_type.findAll({
-                attributes: { exclude: ['modified_by', 'modified_date'] },
-                where: {
-                    is_active: emr_constants.IS_ACTIVE,
-                    status: emr_constants.IS_ACTIVE
-                }
-            });
+            const favouriteTypeList = await favourite_type.findAll(query);
             const code = emr_utility.getResponseCodeForSuccessRequest(favouriteTypeList);
             const message = emr_utility.getResponseMessageForSuccessRequest(code, 'favty');
 
@@ -41,6 +51,8 @@ const FavouriteType = () => {
         }
 
     };
+
+
     return {
         getFavouriteType: _getFavouriteType
     };

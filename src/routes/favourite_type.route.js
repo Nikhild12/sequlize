@@ -8,6 +8,7 @@ const favouriteTypeController = require('../controllers/favourite_type.controlle
 const favouriteTypeRoute = express.Router();
 
 favouriteTypeRoute.route('/get-type').get(favouriteTypeController.getFavouriteType);
+favouriteTypeRoute.route('/get-type-advance').post(favouriteTypeController.getFavouriteType);
 
 
 module.exports = favouriteTypeRoute;
