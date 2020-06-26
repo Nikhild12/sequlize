@@ -65,7 +65,10 @@ const _getInvestigationResponse = radiology => {
       department_name: r.dp_name,
       created_date: r.fm_created_date,
       modified_date: r.fm_modified_date,
-      favourite_description: r.fm_description
+      favourite_description: r.fm_description,
+      user_uuid: r.fm_userid,
+      facility_id: r.fa_uuid,
+      department_id: r.dp_uuid
     };
   });
 };
