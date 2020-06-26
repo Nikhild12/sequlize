@@ -15960,6 +15960,9 @@
 				},
 				"category_group_uuid": {
 					"type": "integer"
+				},
+				"display_order": {
+					"type": "integer"
 				}
 			}
 		},
