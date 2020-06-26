@@ -419,7 +419,7 @@ const TickSheetMasterController = () => {
         favouriteMasterReqData, user_uuid
       );
       favouriteMasterReqData.modified_date = null;
-      favouriteMasterReqData.modified_by = null;
+      favouriteMasterReqData.modified_by = 0;
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
       favouriteMasterReqData.user_uuid = fav_master_user_uuid ? fav_master_user_uuid : favouriteMasterReqData.user_uuid;
       try {
