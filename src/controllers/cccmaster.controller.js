@@ -579,7 +579,7 @@ const cccMasterController = () => {
                     {
                         require: false,
                         model: criticalcareTypeTbl,
-                        as: 'critical_care_type',
+                        as: 'critical_care_types',
                         where: { is_active: 1, status: 1 },
                     }
 
@@ -612,6 +612,14 @@ const cccMasterController = () => {
                         statusCode: 200,
                         req: '',
                         responseContents: result
+                    });
+            } else {
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        msg: "No Data Found"
                     });
             }
 
