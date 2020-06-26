@@ -688,9 +688,11 @@ const profilesController = () => {
        */
   const _getDefaultProfiles = async (req, res) => {
     const { user_uuid } = req.headers;
+    const { profile_type_uuid } = req.query;
+
     try {
       if (user_uuid) {
-        const result = await profilesDefaultTbl.findOne({ where: { user_uuid: user_uuid } }, { returning: true });
+        const result = await profilesDefaultTbl.findOne({ where: { user_uuid: user_uuid, profile_type_uuid: profile_type_uuid } }, { returning: true });
         // if (result != null && IsObjectEmpty(result)) {
         if (result != null) {
 
