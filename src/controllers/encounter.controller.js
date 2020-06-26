@@ -28,6 +28,7 @@ const vw_latest_encounter = sequelizeDb.vw_latest_encounter;
 const emr_constants = require("../config/constants");
 
 const emr_mock_json = require("../config/emr_mock_json");
+const utilityService = require("../services/utility.service");
 
 let pageNo = 0;
 let sortOrder = "DESC";
@@ -69,7 +70,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
       Sequelize.where(
         Sequelize.fn("date", Sequelize.col("encounter_date")),
         "=",
-        moment().format("YYYY-MM-DD")
+        utilityService.indiaTz().format("YYYY-MM-DD")
       ),
     ];
   } else if (etypeId === 2 || etypeId === "2") {
