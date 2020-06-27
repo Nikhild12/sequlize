@@ -21,7 +21,8 @@ const anesthesia_type = db.anesthesia_type;
 const body_site = db.body_site;
 const noteTemplatetypeTbl = db.note_template_type;
 const npotetemplateTbl = db.note_templates;
-
+const equipment = db.equipment;
+const speciality_sketches = db.speciality_sketches;
 // Constants Import
 const emr_constants = require("../config/constants");
 
@@ -404,7 +405,15 @@ const proceduresController = () => {
           {
             model: body_site,
             attributes: ['uuid', 'name']
-          }],
+          },
+        {
+          model: equipment,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: speciality_sketches,
+          attributes: ['uuid', 'name']
+        }],
           offset: offset,
           limit: itemsPerPage
         });
