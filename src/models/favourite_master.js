@@ -104,8 +104,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       modified_by: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.INTEGER
       },
       description: {
         type: DataTypes.STRING

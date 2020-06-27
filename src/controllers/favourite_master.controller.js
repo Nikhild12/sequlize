@@ -419,7 +419,7 @@ const TickSheetMasterController = () => {
         favouriteMasterReqData, user_uuid
       );
       favouriteMasterReqData.modified_date = null;
-      favouriteMasterReqData.modified_by = null;
+      favouriteMasterReqData.modified_by = 0;
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
       favouriteMasterReqData.user_uuid = fav_master_user_uuid ? fav_master_user_uuid : favouriteMasterReqData.user_uuid;
       try {
@@ -978,6 +978,10 @@ function getFavouritesInList(fetchedData) {
         created_date: tD.tsm_created_date,
         modified_date: tD.tsm_modified_date,
         favourite_description: tD.tsm_description,
+        user_uuid: tD.tsm_userid,
+        facility_id: tD.fa_uuid,
+        department_id: tD.de_uuid,
+
 
         // Drug Details
         drug_name: tD.im_name,
@@ -1324,6 +1328,9 @@ function getAllDietFavsInReadableFormat(dietFav) {
       created_date: df.fm_created_date,
       modified_date: df.fm_modified_date,
       favourite_description: df.fm_description,
+      user_uuid: df.fm_userid,
+      facility_id: df.fa_uuid,
+      department_id: df.dp_uuid,
 
       // Diet Master
       diet_master_id: df.fmd_diet_master_uuid,

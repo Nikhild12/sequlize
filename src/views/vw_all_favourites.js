@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
       created_date:{
         type: DataTypes.DATE
       },
+      ft_name:{
+        type: DataTypes.STRING
+      },
       ft_is_active: {
         type: DataTypes.BOOLEAN
       },

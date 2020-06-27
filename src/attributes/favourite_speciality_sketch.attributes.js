@@ -75,7 +75,10 @@ const _getSpecialitySketchFavouriteRes = (sketchFav) => {
             created_date: f.fm_created_date,
             modified_date: f.fm_modified_date,
             favourite_type_id: f.fm_favourite_type_uuid,
-            favourite_description: f.fm_description
+            favourite_description: f.fm_description,
+            user_uuid: f.fm_user_uuid,
+            facility_id: f.fa_uuid,
+            department_id: f.dp_uuid
         };
 
     });
