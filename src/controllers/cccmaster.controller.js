@@ -8,6 +8,8 @@ const conceptTbl = db.critical_care_concepts;
 const conceptdetailsTbl = db.critical_care_concept_values;
 const criticalcareTypeTbl = db.critical_care_types;
 const criticalCareUomsTbl = db.critical_care_uoms;
+const valueTypesTbl = db.value_types;
+
 const config = require('../config/config');
 const Q = require('q');
 const rp = require('request-promise');
@@ -90,8 +92,14 @@ const cccMasterController = () => {
                         as: 'critical_care_concepts',
                         attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
-                        subQuery: false,
+                        //  subQuery: false,
                         include: [
+                            {
+                                model: valueTypesTbl,
+                                as: 'value_types',
+                                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+                                where: { is_active: 1, status: 1 },
+                            },
                             {
                                 model: conceptdetailsTbl,
                                 as: 'critical_care_concept_values',
@@ -180,7 +188,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
-            console.log(err, "sdfsdf")
+            console.log('"sdfsdf"==', err)
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -624,6 +632,7 @@ const cccMasterController = () => {
             }
 
         } catch (err) {
+            console.log('err===', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
