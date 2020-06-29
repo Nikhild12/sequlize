@@ -71,7 +71,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING
       },
       is_snomed: {
-        type: DataTypes.ENUM,
+        type: DataTypes.BOOLEAN,
         values: ["0", "1"],
         defaultValue: "1"
       },

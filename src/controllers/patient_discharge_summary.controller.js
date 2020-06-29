@@ -516,7 +516,7 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
   if (patient_cc_res.length > 0) {
     cc_result = patient_cc_res.map((item) => {
       return {
-        
+
         created_date: item.pcc_created_date,
         patient_uuid: item.pcc_patient_uuid,
         institution_uuid: item.f_uuid,
@@ -619,7 +619,8 @@ function getGetDiagnosis(diagnosis_res) {
         performed_by: item.performed_by,
         performed_date: item.performed_date,
         diagnosis_uuid: item.diagnosis_uuid,
-        diagnosis_type: "ICD 10",
+        // diagnosis_type: "ICD 10",
+        diagnosis_type: item.is_snomed ? "SNOMED" : "ICD 10",
         diagnosis_code: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.code : "",
         diagnosis_name: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.name : "",
         diagnosis_desc: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.description : "",
