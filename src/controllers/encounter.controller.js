@@ -28,6 +28,7 @@ const vw_latest_encounter = sequelizeDb.vw_latest_encounter;
 const emr_constants = require("../config/constants");
 
 const emr_mock_json = require("../config/emr_mock_json");
+const utilityService = require("../services/utility.service");
 
 let pageNo = 0;
 let sortOrder = "DESC";
@@ -68,8 +69,8 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
     encounterQuery.where[Op.and] = [
       Sequelize.where(
         Sequelize.fn("date", Sequelize.col("encounter_date")),
-        "<=",
-        moment().format("YYYY-MM-DD")
+        "=",
+        utilityService.indiaTz().format("YYYY-MM-DD")
       ),
     ];
   } else if (etypeId === 2 || etypeId === "2") {
@@ -88,7 +89,7 @@ const Encounter = () => {
 
   const _getEncounterByDocAndPatientId = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    const { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
+    let { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
 
     try {
       const is_mobile_request =
@@ -107,6 +108,10 @@ const Encounter = () => {
         user_uuid && patientId && patientId > 0 &&
         doctorId && doctorId > 0 && departmentId && encounterType
       ) {
+
+
+        console.log('Encounter data type ', typeof encounterType);
+        encounterType = +(encounterType);
         let encounterData = await encounter_tbl.findAll(
           getActiveEncounterQuery(
             patientId, doctorId, departmentId, encounterType, facility_uuid
@@ -484,12 +489,12 @@ const Encounter = () => {
 
   const _getPatientDoc = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { patient_uuid,enc_uuid } = req.query;
+    const { patient_uuid, enc_uuid } = req.query;
 
     try {
       if (user_uuid && patient_uuid) {
-        let wher_con = {ed_patient_uuid:patient_uuid};
-        if(enc_uuid){
+        let wher_con = { ed_patient_uuid: patient_uuid };
+        if (enc_uuid) {
           wher_con.ed_encounter_uuid = enc_uuid;
         }
         const docList = await vw_patientdoc.findAll({

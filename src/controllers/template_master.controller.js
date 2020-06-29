@@ -31,7 +31,7 @@ const tmpmstrController = () => {
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    const { temp_type_id, dept_id, lab_id } = req.query;
+    let { temp_type_id, dept_id, lab_id } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 7, 8].includes(+(temp_type_id))) {
@@ -58,17 +58,17 @@ const tmpmstrController = () => {
                 : emr_constants.NO_RECORD_FOUND
           });
         } else {
-          if (temp_type_id == 3) {
-            return res.status(200).send({
-              code: httpStatus.OK,
-              message: "No Data Found ",
-              responseContents: { templates_radiology_list: [] }
-            });
-          }
+          temp_type_id = +(temp_type_id);
+          const responseContent = {
+            1: { templates_list: [] },
+            2: { templates_lab_list: [] },
+            3: { templates_radiology_list: [] },
+            4: { templateDetails: [] }
+          };
           return res.status(200).send({
             code: httpStatus.OK,
             message: "No Data Found ",
-            responseContents: { templates_lab_list: [] }
+            responseContents: responseContent && responseContent[temp_type_id] ? responseContent[temp_type_id] : responseContent[1]
           });
         }
       }
@@ -677,7 +677,7 @@ function getTemplateListData1(fetchedData) {
             modified_by: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
-            facility_uuid: tD.dataValues.f_name,
+            facility_uuid: tD.dataValues.f_uuid,
             department_name: tD.dataValues.d_name,
           },
           diet_details: [
@@ -994,7 +994,7 @@ function getRisListData(fetchedData) {
     );
     return { templates_radiology_list: temp_list };
   } else {
-    return {};
+    return { templates_radiology_list: [] };
   }
 }
 
@@ -1066,7 +1066,22 @@ function getRisListForTemplate(fetchedData, template_id) {
   return radiology_list;
 }
 
-function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
+function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId) {
+  return {
+    tm_status: 1,
+    tm_active: 1,
+    tmd_is_active: 1,
+    tmd_status: 1,
+    tm_template_type_uuid: temp_type_id,
+    f_uuid: fId,
+    [Op.or]: [
+      { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
+      { tm_userid: { [Op.eq]: user_uuid } }
+    ]
+  };
+}
+
+function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
   return {
     tm_status: 1,
     tm_active: 1,
@@ -1075,12 +1090,14 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id) {
     tm_template_type_uuid: temp_type_id,
     dm_status: 1,
     dm_is_active: 1,
+    f_uuid: fId,
     [Op.or]: [
       { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
       { tm_userid: { [Op.eq]: user_uuid } }
     ]
   };
 }
+
 
 function getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id) {
   return {
@@ -1131,7 +1148,7 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
   };
 }
 
-function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
+function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
   return {
     attributes: { exclude: ["id", "createdAt", "updatedAt"] },
     where: {
@@ -1141,7 +1158,8 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid) {
       ],
       template_type_uuid: temp_type_id,
       status: 1,
-      is_active: 1
+      is_active: 1,
+      facility_uuid: fId
     },
     include: [
       {
@@ -1179,123 +1197,6 @@ function getTempData(temp_type_id, result) {
       let templateDetails = result;
       return { templateDetails };
   }
-}
-
-function getVitalsDetailedQuery_old(temp_type_id, dept_id, user_uuid, temp_id) {
-  return {
-    attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-    where: {
-      uuid: temp_id,
-      user_uuid: user_uuid,
-      department_uuid: dept_id,
-      template_type_uuid: temp_type_id,
-      status: 1,
-      is_active: 1
-    },
-    include: [
-      {
-        model: tempmstrdetailsTbl,
-        where: {
-          status: 1,
-          is_active: 1
-        },
-        include: [
-          {
-            model: vitalMasterTbl,
-            require: false,
-            where: {
-              status: 1,
-              is_active: 1
-            }
-          }
-        ]
-      }
-    ]
-  };
-}
-
-function getRisListData_old(fetchedData) {
-  let templateList = [],
-    lab_details = [];
-  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
-  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
-
-  if (fetchedData && fetchedData.length > 0) {
-    fetchedData.forEach(tD => {
-      templateList = [
-        ...templateList,
-        {
-          temp_details: {
-            template_id: tD.dataValues.tm_uuid,
-            template_name: tD.dataValues.tm_name,
-            template_department: tD.dataValues.tm_department_uuid,
-            user_uuid: tD.dataValues.tm_user_uuid,
-            template_description: tD.dataValues.tm_description,
-            template_displayorder: tD.dataValues.tm_display_order,
-            template_type_uuid: tD.dataValues.tm_template_type_uuid,
-            template_is_active: tD.dataValues.tm_is_active,
-            template_status: tD.dataValues.tm_status,
-            is_public: tD.dataValues.tm_is_public,
-            created_by: createdby,
-            created_date: fetchedData[0].dataValues.tm_created_date,
-            modified_by: modifiedby,
-            modified_date: fetchedData[0].dataValues.tm_modified_date,
-            facility_name: fetchedData[0].dataValues.f_name,
-            facility_uuid: fetchedData[0].dataValues.f_uuid,
-            department_name: fetchedData[0].dataValues.d_name,
-          },
-
-          lab_details: [
-            ...lab_details,
-            ...getRisListForTemplate(fetchedData, tD.dataValues.tm_uuid)
-          ]
-        }
-      ];
-    });
-    let uniq = {};
-    let temp_list = templateList.filter(
-      obj =>
-        !uniq[obj.temp_details.template_id] &&
-        (uniq[obj.temp_details.template_id] = true)
-    );
-    return { templates_lab_list: temp_list };
-  } else {
-    return {};
-  }
-}
-
-function getRisListForTemplate_old(fetchedData, template_id) {
-  let lab_list = [];
-  const filteredData = fetchedData.filter(fD => {
-    return fD.dataValues.tm_uuid === template_id;
-  });
-
-  if (filteredData && filteredData.length > 0) {
-    filteredData.forEach(lD => {
-      lab_list = [
-        ...lab_list,
-        {
-          template_details_uuid: lD.tmd_uuid,
-          template_details_displayorder: lD.tmd_display_order,
-          lab_test_uuid: lD.rtm_uuid,
-          lab_code: lD.rtm_code,
-          lab_name: lD.rtm_name,
-          lab_test_description: lD.rtm_description,
-          lab_test_status: lD.rtm_status,
-          lab_test_is_active: lD.rtm_is_active,
-          lab_type_uuid: lD.rtm_lab_master_type_uuid,
-          profile_test_uuid: lD.rpm_uuid,
-          profile_test_code: lD.rpm_profile_code,
-          profile_test_name: lD.rpm_name,
-          profile_test_description: lD.rpm_description,
-          profile_test_status: lD.rpm_status,
-          profile_test_active: lD.rpm_is_active,
-          //lab_type_uuid: lD.lpm_lab_master_type_uuid
-        }
-      ];
-    });
-  }
-  return lab_list;
 }
 
 async function createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, tIsActive) {
@@ -1371,7 +1272,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
         table_name: vw_template,
         query: {
           order: [["tm_display_order", "ASC"]],
-          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
+          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
       };
@@ -1385,10 +1286,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
         query: {
           order: [["tm_display_order", "ASC"]],
           where: {
-            //tm_user_uuid: user_uuid,
-            //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            //ltm_lab_master_type_uuid: 1,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
@@ -1410,14 +1308,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
         query: {
           order: [["tm_display_order", "ASC"]],
           where: {
-            //tm_user_uuid: user_uuid,
-            //tm_department_uuid: dept_id,
             tm_template_type_uuid: temp_type_id,
-            //rtm_lab_master_type_uuid: 2,
             tm_is_active: 1,
             tm_status: 1,
             tmd_status: 1,
             tmd_active: 1,
+            f_uuid: fId,
             [Op.or]: [
               {
                 tm_department_uuid: { [Op.eq]: dept_id },
@@ -1431,7 +1327,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
     case "4":
       return {
         table_name: tempmstrTbl,
-        query: getVitalsQuery(temp_type_id, dept_id, user_uuid)
+        query: getVitalsQuery(temp_type_id, dept_id, user_uuid, fId)
       };
 
     case "9":
@@ -1439,7 +1335,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
         table_name: vw_diet,
         query: {
           order: [["tm_display_order", "ASC"]],
-          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id),
+          where: getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
       };
@@ -1462,7 +1358,6 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
         }
       };
     case "2":
-
       lab_id = +(lab_id);
       const labValidation = !lab_id || lab_id === 0;
       const searchKey = labValidation ? 'tm_department_uuid' : 'tm_lab_uuid';
@@ -1558,64 +1453,5 @@ function getTemplateDetailsData(temp_type_id, list) {
     case "9":
       fetchdata = getTempData(temp_type_id, list);
       return fetchdata;
-  }
-}
-
-//function for chechking display order allocated or not
-const dspExists = (display_order, userUUID) => {
-  if (display_order !== undefined) {
-    return new Promise((resolve, reject) => {
-      let value = tempmstrTbl.findAll({
-        attributes: ["user_uuid", "display_order", "is_active", "status"],
-        where: { display_order: display_order, user_uuid: userUUID }
-      });
-      if (value) {
-        resolve(value);
-        return value;
-      } else {
-        reject({ message: "not existed" });
-      }
-    });
-  }
-};
-
-function getAllTempData(fetchedData) {
-  let templateList = [];
-
-  if (fetchedData && fetchedData.length > 0) {
-    fetchedData.forEach(tD => {
-      templateList = [
-        ...templateList,
-        {
-          template_id: tD.dataValues.tm_uuid,
-          template_name: tD.dataValues.tm_name,
-          template_status: tD.dataValues.tm_status,
-          template_isactive: tD.dataValues.is_active,
-          template_is_public: tD.dataValues.tm_is_public,
-          template_type_id: tD.dataValues.tm_template_type_uuid,
-          template_type: tD.dataValues.tt_name,
-          template_type_status: tD.dataValues.tt_status,
-          template_type_isactive: tD.dataValues.tt_is_active,
-          facility_id: tD.dataValues.tm_facility_uuid,
-          facility_name: tD.dataValues.f_name,
-          facility_isactive: tD.dataValues.f_is_active,
-          facility_status: tD.dataValues.f_status,
-          department_id: tD.dataValues.tm_department_uuid,
-          departiment_name: tD.dataValues.d_name,
-          user_uuid: tD.dataValues.tm_user_uuid,
-          doctor_name:
-            tD.dataValues.u_first_name +
-            " " +
-            tD.dataValues.u_middle_name +
-            " " +
-            tD.dataValues.u_last_name,
-          doctor_isactive: tD.dataValues.u_is_active,
-          doctor_status: tD.dataValues.u_status
-        }
-      ];
-    });
-    return { templates_list: templateList };
-  } else {
-    return {};
   }
 }

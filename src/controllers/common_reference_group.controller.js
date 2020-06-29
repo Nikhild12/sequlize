@@ -537,7 +537,7 @@ const commonReferenceGroupController = () => {
                     // name: postData.name,
                     where: {
                         uuid: postData.Id,
-                        status:1
+                        status: 1
                     }
                 }).then((data) => {
                     res.send({

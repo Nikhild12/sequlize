@@ -3265,6 +3265,68 @@
 				}
 			}
 		},
+		"/api/favourite-type/get-type": {
+			"get": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/favourite-type/get-type-advance": {
+			"post": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getFavouriteType",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getFavouriteType"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
@@ -8675,6 +8737,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -8803,6 +8871,42 @@
 						"description": "get Successfully",
 						"schema": {
 							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/investigation_result/getInvestigationResultById": {
+			"get": {
+				"description": "To get investigation By Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_order_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"InvestigationResult"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getInvestigationResult"
 						}
 					}
 				},
@@ -11169,6 +11273,20 @@
 					"tat_end_time": {
 						"type": "string"
 					}
+				}
+			}
+		},
+		"getFavouriteType": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"pageNo": {
+					"type": "number"
+				},
+				"paginationSize": {
+					"type": "number"
 				}
 			}
 		},
@@ -15848,6 +15966,9 @@
 				},
 				"category_group_uuid": {
 					"type": "integer"
+				},
+				"display_order": {
+					"type": "integer"
 				}
 			}
 		},
@@ -16351,6 +16472,14 @@
 					"type": "string"
 				},
 				"Id": {
+					"type": "integer"
+				}
+			}
+		},
+		"getInvestigationResult": {
+			"type": "object",
+			"properties": {
+				"user_uuid": {
 					"type": "integer"
 				}
 			}

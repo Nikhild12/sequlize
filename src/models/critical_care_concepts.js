@@ -105,6 +105,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "cc_concept_uuid",
             as: 'critical_care_concept_values'
         });
+        concepts.belongsTo(models.value_types, {
+            foreignKey: "value_type_uuid",
+            as: 'value_types'
+        });
     };
 
     // concepts.associate = models => {

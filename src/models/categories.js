@@ -69,6 +69,12 @@ module.exports = (sequelize, DataTypes) => {
 
 
             },
+            display_order: {
+
+                type: DataTypes.INTEGER,
+                allowNull: true
+
+            },
             is_active: {
 
                 type: DataTypes.BOOLEAN,

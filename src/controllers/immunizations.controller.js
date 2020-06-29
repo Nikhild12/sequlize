@@ -347,11 +347,33 @@ const immunizationsController = () => {
           }
           }
    
-          if (getsearch.hasOwnProperty('i_is_active') && /\S/.test(getsearch.i_is_active)) {          
-            findQuery.where['i_is_active'] = (getsearch.i_is_active == true || getsearch.i_is_active == 'true' || getsearch.i_is_active == 1 ) ? 1 : 0;
-        //   findQuery.where['i_status'] = getsearch.status;
-
+          if (getsearch.i_is_active && (getsearch.i_is_active.toLowerCase() == "active" || getsearch.i_is_active.toLowerCase() == "inactive")) {
+            let is_active_input = 0;
+            if (getsearch.i_is_active.toLowerCase() == "active") {
+              is_active_input = 1;
+            } else {
+              is_active_input = 0;
+            }
+            findQuery.where = Object.assign(findQuery.where, {
+                i_is_active: {
+                [Op.eq]: is_active_input
+              }
+            });
+          } else {
+            findQuery.where = Object.assign(findQuery.where, {
+                i_is_active: {
+                [Op.eq]: 1
+              }
+            });
           }
+    
+
+        //   if (getsearch.hasOwnProperty('i_is_active') && /\S/.test(getsearch.i_is_active)) {          
+        //     findQuery.where['i_is_active'] = (getsearch.i_is_active == true || getsearch.i_is_active == 'true' || getsearch.i_is_active == 1 ) ? 1 : 0;
+        // //   findQuery.where['i_status'] = getsearch.status;
+
+        //   }
+
           if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
           //findQuery.where['i_is_active'] = getsearch.status;
            findQuery.where['i_status'] = getsearch.status;
