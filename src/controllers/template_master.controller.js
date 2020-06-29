@@ -193,18 +193,19 @@ const tmpmstrController = () => {
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
+        let displayOrder = templateMasterReqData.name;
         const temp_master_active = templateMasterReqData.is_active;
 
 
 
         //checking template already exits or not
-        const exists = await nameExists(temp_name, userUUID);
+        const exists = await nameExists(temp_name, displayOrder, userUUID);
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "Template name exists" });
+            .send({ code: httpStatus[400], message: "Template name or displayOrder exists" });
         } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
@@ -1227,13 +1228,13 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name, userUUID) => {
+const nameExists = (temp_name, displayOrder, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
-        attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, user_uuid: userUUID }
+        attributes: ["name", "display_order","is_active", "status"],
+        where: { name: temp_name, display_order: displayOrder, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);
