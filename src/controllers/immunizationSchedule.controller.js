@@ -17,7 +17,7 @@ const vw_immunische = db.vw_emr_immunization_schedule;
 const routestbl = db.routes;
 
 const immunizationScheduleController = () => {
-   
+
 
     const getimmunizationSchedule = async (req, res, next) => {
         try {
@@ -63,21 +63,20 @@ const immunizationScheduleController = () => {
                 ],
                 attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                 where: {
-                 is_active:1
                 }
             };
-         if (getsearch.search && /\S/.test(getsearch.search)) {
-         findQuery.where[Op.or] = [
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.schedule_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.immunization_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.dr_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+            if (getsearch.search && /\S/.test(getsearch.search)) {
+                findQuery.where[Op.or] = [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.schedule_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.immunization_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.dr_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
-           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.dp_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_immunization_schedule.dp_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
 
 
-    ];
-    }
-    if (getsearch.schedule_uuid && /\S/.test(getsearch.schedule_uuid)) {
+                ];
+            }
+            if (getsearch.schedule_uuid && /\S/.test(getsearch.schedule_uuid)) {
                 findQuery.where['$vw_emr_immunization_schedule.schedule_uuid$'] = getsearch.schedule_uuid;
             }
 
@@ -148,11 +147,11 @@ const immunizationScheduleController = () => {
 
     const postimmunizationSchedule = async (req, res, next) => {
         let postData = req.body;
-        postData.status=postData.is_active;
+        postData.status = postData.is_active;
         postData.created_by = req.headers.user_uuid;
         postData.modified_by = req.headers.user_uuid;
-        postData.created_date=new Date();
-        postData.modifed_date=new Date();
+        postData.created_date = new Date();
+        postData.modifed_date = new Date();
 
         if (postData) {
 
@@ -180,12 +179,12 @@ const immunizationScheduleController = () => {
 
                     immunizationScheduleTbl.findAll({
                         where: {
-                                display_order: postData.display_order
-                            }
+                            display_order: postData.display_order
+                        }
                     }).then(async (resultd) => {
-                        if (resultd.length != 0 && postData.display_order !="") {
+                        if (resultd.length != 0 && postData.display_order != "") {
                             // return res.status(400).send({ statusCode: 400, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
-        
+
                             return res.send({
                                 statusCode: 400,
                                 status: "error",
@@ -193,27 +192,27 @@ const immunizationScheduleController = () => {
                             });
                         } else {
 
-                    await immunizationScheduleTbl.create(postData, {
-                        returning: true
-                    }).then(data => {
+                            await immunizationScheduleTbl.create(postData, {
+                                returning: true
+                            }).then(data => {
 
-                        res.send({
-                            statusCode: 200,
-                            msg: "Inserted immunizations Schedule details Successfully",
-                            req: postData,
-                            responseContents: data
-                        });
-                    }).catch(err => {
+                                res.send({
+                                    statusCode: 200,
+                                    msg: "Inserted immunizations Schedule details Successfully",
+                                    req: postData,
+                                    responseContents: data
+                                });
+                            }).catch(err => {
 
-                        res.send({
-                            status: "failed",
-                            msg: "failed to immunizations Schedule details",
-                            error: err
-                        });
+                                res.send({
+                                    status: "failed",
+                                    msg: "failed to immunizations Schedule details",
+                                    error: err
+                                });
+                            });
+
+                        }
                     });
-
-                    }
-                });
                 }
             });
 
@@ -295,7 +294,7 @@ const immunizationScheduleController = () => {
 
             await immunizationScheduleTbl.update({
                 status: 0,
-                is_active:0
+                is_active: 0
             }, {
                 where: {
                     uuid: postData.Id
@@ -329,7 +328,7 @@ const immunizationScheduleController = () => {
         // postData.status=postData.is_active;
 
         postData.modified_by = req.headers.user_uuid;
-        postData.modifed_date=new Date();
+        postData.modifed_date = new Date();
         await immunizationScheduleTbl.update(
             postData, {
             where: {
