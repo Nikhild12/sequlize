@@ -585,7 +585,8 @@ async function getPatientDiagnosis(diagnosis_uuids, patient_uuid, encounter_uuid
   }, { returning: true });
   if (diagnosis_res) {
     const data = await getGetDiagnosis(diagnosis_res);
-    return data;
+    const getSnomedData = await getSnomedDatails(diagnosis_uuids, patient_uuid, encounter_uuid);
+    return [...data,...getSnomedData];
   } else {
     return [];
   }
@@ -616,4 +617,54 @@ function getGetDiagnosis(diagnosis_res) {
     });
   }
   return diagnosis_result;
+}
+
+async function getSnomedDatails(diagnosis_uuids, patient_uuid, encounter_uuid){
+  let diagnosis_snomed_result=[];
+  const diagnosis_snomed_res = await patient_diagnosisTbl.findAll({
+    where: {
+      uuid: {
+        [Op.in]: diagnosis_uuids
+      },
+      patient_uuid: patient_uuid,
+      encounter_uuid: encounter_uuid,
+      is_snomed:emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE
+    },
+    order: [['uuid', 'DESC']],
+    include: [
+      {
+        model: encounterTypeTbl,
+        as: 'encounter_type',
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+        }
+      }
+    ]
+  }, { returning: true });
+  if (diagnosis_snomed_res && diagnosis_snomed_res.length > 0) {
+    diagnosis_snomed_result = diagnosis_snomed_res.map((item) => {
+      return {
+        patient_diagnosis_uuid: item.uuid,
+        facility_uuid: item.facility_uuid,
+        department_uuid: item.department_uuid,
+        patient_uuid: item.patient_uuid,
+        encounter_uuid: item.encounter_uuid,
+        encounter_type_uuid: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.uuid : "",
+        encounter_type_code: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.code : "",
+        encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name : "",
+        performed_by: item.performed_by,
+        performed_date: item.performed_date,
+        diagnosis_uuid:item.diagnosis_uuid,
+        diagnosis_code: item.diagnosis_uuid,
+        diagnosis_type: "SNOMED",
+        diagnosis_name: item.other_diagnosis
+      };
+    });     
+  }
+  return diagnosis_snomed_result;
 }
