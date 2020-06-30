@@ -570,7 +570,7 @@ function getventilatorData(fetchedData) {
 
         vList = fetchedData.map((tD) => {
             return {
-                ventilator_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getvdList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -578,7 +578,7 @@ function getventilatorData(fetchedData) {
         });
         let uniq = {};
         let fV_list = vList.filter(
-            obj => !uniq[obj.ventilator_date] && (uniq[obj.ventilator_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
 
         return { "ventilator_details": ventilator_details, "observed_values": fV_list };
@@ -599,7 +599,7 @@ function getvdList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         vd_list = filteredData.map(pV => {
             return {
-                ventilator_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 ventilator_uuid: pV.dataValues.uuid,
                 //ventilator_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -703,7 +703,7 @@ function getabgData(fetchedData) {
         };
         abgList = fetchedData.map((tD) => {
             return {
-                abg_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getadList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -712,7 +712,7 @@ function getabgData(fetchedData) {
 
         let uniq = {};
         let ab_list = abgList.filter(
-            obj => !uniq[obj.abg_date] && (uniq[obj.abg_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "abg_details": abg_details, "observed_values": ab_list };
     }
@@ -734,7 +734,7 @@ function getadList(fetchedData, p_id, from_date) {
         ad_list = filteredData.map(pV => {
             //if (pV.critical_care_charts === !null && pV.critical_care_charts.critical_care_types === !null){
             return {
-                abg_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
                 // abg_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -771,7 +771,7 @@ function getmonitorData(fetchedData) {
 
         mList = fetchedData.map((tD) => {
             return {
-                monitor_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getmdList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -779,7 +779,7 @@ function getmonitorData(fetchedData) {
         });
         let uniq = {};
         let mtr_list = mList.filter(
-            obj => !uniq[obj.monitor_date] && (uniq[obj.monitor_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "monitor_details": monitor_details, "observed_values": mtr_list };
     }
@@ -799,7 +799,7 @@ function getmdList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         md_list = filteredData.map(pV => {
             return {
-                monitor_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 monitor_uuid: pV.dataValues.uuid,
                 // monitor_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -833,7 +833,7 @@ function getinoutData(fetchedData) {
 
         ioList = fetchedData.map((tD) => {
             return {
-                iot_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getioList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -841,7 +841,7 @@ function getinoutData(fetchedData) {
         });
         let uniq = {};
         let iot_list = ioList.filter(
-            obj => !uniq[obj.iot_date] && (uniq[obj.iot_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "in_out_take_details": in_out_take_details, "observed_values": iot_list };
     }
@@ -861,7 +861,7 @@ function getioList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         io_list = filteredData.map(pV => {
             return {
-                iot_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 iot_uuid: pV.dataValues.uuid,
                 // iot_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -894,7 +894,7 @@ function getdiabetesData(fetchedData) {
 
         dbList = fetchedData.map((tD) => {
             return {
-                db_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getdbList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -902,7 +902,7 @@ function getdiabetesData(fetchedData) {
         });
         let uniq = {};
         let db_list = dbList.filter(
-            obj => !uniq[obj.db_date] && (uniq[obj.db_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "diabetes details": diabetes_details, "observed_values": db_list };
     }
@@ -922,7 +922,7 @@ function getdbList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         db_list = filteredData.map(pV => {
             return {
-                db_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 db_uuid: pV.dataValues.uuid,
                 // db_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -956,7 +956,7 @@ function getdialysisData(fetchedData) {
 
         dlList = fetchedData.map((tD) => {
             return {
-                dl_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getdlList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -964,7 +964,7 @@ function getdialysisData(fetchedData) {
         });
         let uniq = {};
         let dl_list = dlList.filter(
-            obj => !uniq[obj.dl_date] && (uniq[obj.dl_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "dialysis details": dialysis_details, "observed_values": dl_list };
     }
@@ -984,7 +984,7 @@ function getdlList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         dl_list = filteredData.map(pV => {
             return {
-                dl_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 dl_uuid: pV.dataValues.uuid,
                 // dl_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
@@ -1018,7 +1018,7 @@ function getbpData(fetchedData) {
 
         bpList = fetchedData.map((tD) => {
             return {
-                bp_date: tD.dataValues.from_date,
+                observed_date: tD.dataValues.from_date,
                 dList: [...dList,
                 ...getbpList(fetchedData, tD.patient_uuid, tD.from_date)
                 ]
@@ -1026,7 +1026,7 @@ function getbpData(fetchedData) {
         });
         let uniq = {};
         let bp_list = bpList.filter(
-            obj => !uniq[obj.bp_date] && (uniq[obj.bp_date] = true)
+            obj => !uniq[obj.observed_date] && (uniq[obj.observed_date] = true)
         );
         return { "bp details": bp_details, "observed_values": bp_list };
     }
@@ -1046,7 +1046,7 @@ function getbpList(fetchedData, p_id, from_date) {
     if (filteredData && filteredData.length > 0) {
         bp_list = filteredData.map(pV => {
             return {
-                bp_date: pV.dataValues.from_date,
+                observed_date: pV.dataValues.from_date,
                 bp_uuid: pV.dataValues.uuid,
                 // bp_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
