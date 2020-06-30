@@ -16153,6 +16153,9 @@
 									"section_uuid": {
 										"type": "integer"
 									},
+									"profile_uuid": {
+										"type": "integer"
+									},
 									"activity_uuid": {
 										"type": "integer"
 									},
@@ -16167,6 +16170,9 @@
 												"profile_section_categories_uuid": {
 													"type": "integer"
 												},
+												"profile_sections_uuid": {
+													"type": "integer"
+												},
 												"category_uuid": {
 													"type": "integer"
 												},
@@ -16179,6 +16185,9 @@
 														"type": "object",
 														"properties": {
 															"profile_section_category_concepts_uuid": {
+																"type": "integer"
+															},
+															"profile_section_categories_uuid": {
 																"type": "integer"
 															},
 															"code": {
@@ -16208,6 +16217,9 @@
 																	"type": "object",
 																	"properties": {
 																		"profile_section_category_concept_values_uuid": {
+																			"type": "integer"
+																		},
+																		"profile_section_category_concepts_uuid": {
 																			"type": "integer"
 																		},
 																		"value_code": {
