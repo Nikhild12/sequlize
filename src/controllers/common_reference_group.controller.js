@@ -216,7 +216,7 @@ const commonReferenceGroupController = () => {
                 if (query1 != null) {
                     query1 = {
                         [Op.and]: [{
-                            query1,
+                            ...query1,
                             [Op.or]: [
                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.name.toLowerCase() + '%')
@@ -257,7 +257,7 @@ const commonReferenceGroupController = () => {
                 }
             }
             if (query1 != null && query1 != "") {
-                postingData.where = query1;
+                postingData['where'] = query1;
             }
 
              // remove it after demo on 30/06/2020
