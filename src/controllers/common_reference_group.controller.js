@@ -260,6 +260,8 @@ const commonReferenceGroupController = () => {
                 postingData['where'] = query1;
             }
 
+             // remove it after demo on 30/06/2020
+            postingData.where.is_active = 1;
             await common_tbl.findAndCountAll(postingData).then((data) => {
                 return res
                     .status(httpStatus.OK)
