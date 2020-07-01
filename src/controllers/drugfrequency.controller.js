@@ -17,45 +17,29 @@ const drugfrequencyController = () => {
      */
 
     const _getDrugFrequency = async (req, res, next) => {
-        let getsearch = req.headers;
-        let postData = req.query;
-
-        let pageNo = 0;
-        let facility_uuid = getsearch.facility_uuid;
-        const { paginationSize = 30 } = postData;
-        const { sortField = 'modified_date' } = postData;
-        const { sortOrder = 'DESC' } = postData;
-
-        let temp = parseInt(postData.pageNo);
-
-        if (temp && (temp != NaN)) {
-            pageNo = temp;
-        }
-        const offset = pageNo * paginationSize;
-
+        const { pageNo = 0, paginationSize = 30, sortField = 'modified_date', sortOrder = 'DESC' } = req.query;
+        const facility_uuid = req.headers.facility_uuid;
+        const message = 'No Data Found';
         let findQuery = {
-            offset: offset,
+            offset: pageNo * paginationSize,
             limit: parseInt(paginationSize),
             where: {
                 is_active: 1,
                 status: 1,
-                facility_uuid: facility_uuid
+                facility_uuid
             },
             order: [[sortField, sortOrder]],
-
         };
-
         try {
             let data = await drug_frequencyTbl.findAndCountAll(findQuery);
 
-            if (data.rows.length == 0) {
+            if (data.rows.length === 0) {
                 return res
                     .status(httpStatus.OK)
                     .json({
-                        statusCode: 200,
-                        message: "success",
-                        req: '',
-                        msg: "No Data Found"
+                        code: 204,
+                        message,
+                        req: ''
                     });
             } else {
                 return res
@@ -64,7 +48,7 @@ const drugfrequencyController = () => {
                         message: "success",
                         statusCode: 200,
                         responseContents: data.rows,
-                        totalRecords: (data.count ? data.count : 0),
+                        totalRecords: data.count,
 
                     });
             }
@@ -78,8 +62,6 @@ const drugfrequencyController = () => {
                     err: errorMsg
                 });
         }
-
-
     };
 
     // --------------------------------------------return----------------------------------
