@@ -8913,6 +8913,51 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/drug_frequencyResult/getdrugfrequency": {
+			"get": {
+				"summary": "To get drugfrequency default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "paginationSize",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "pageNo",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "sortField",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"drug_frequency"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
