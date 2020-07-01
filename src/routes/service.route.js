@@ -112,6 +112,9 @@ const favouriteType = require('./favourite_type.route');
 //investigation results
 const investigationResult = require('./emr_investigation_results.route');
 
+//drug frequency results
+const drugfrequencyRoutes = require('./drug-frequency-results.route');
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -268,5 +271,9 @@ serviceRouter.use('/favourite-type', favouriteType);
 
 // investigation result
 serviceRouter.use('/investigation_result', investigationResult);
+// drugfrequency result
+serviceRouter.use('/drug-frequencyResult', drugfrequencyRoutes);
+
+
 
 module.exports = serviceRouter;
