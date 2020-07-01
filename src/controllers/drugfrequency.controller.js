@@ -18,45 +18,32 @@ const drugfrequencyController = () => {
 
     const _getDrugFrequency = async (req, res, next) => {
         let getsearch = req.headers;
+        let postData = req.query;
 
         let pageNo = 0;
-        const { paginationSize = 30 } = getsearch;
-        let sortField = 'modified_date';
-        let sortOrder = 'DESC';
+        let facility_uuid = getsearch.facility_uuid;
+        const { paginationSize = 30 } = postData;
+        const { sortField = 'modified_date' } = postData;
+        const { sortOrder = 'DESC' } = postData;
 
-        if (getsearch.pageNo) {
-            let temp = parseInt(getsearch.pageNo);
+        let temp = parseInt(postData.pageNo);
 
-
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
+        if (temp && (temp != NaN)) {
+            pageNo = temp;
         }
-
         const offset = pageNo * paginationSize;
-
-
-        if (getsearch.sortField) {
-
-            sortField = getsearch.sortField;
-        }
-
-        if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
-            sortOrder = getsearch.sortOrder;
-        }
 
         let findQuery = {
             offset: offset,
-            limit: paginationSize,
-            where: { is_active: 1, status: 1 },
+            limit: parseInt(paginationSize),
+            where: {
+                is_active: 1,
+                status: 1,
+                facility_uuid: facility_uuid
+            },
+            order: [[sortField, sortOrder]],
+
         };
-
-
-        if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-            findQuery.where['is_active'] = getsearch.status;
-        }
-
 
         try {
             let data = await drug_frequencyTbl.findAndCountAll(findQuery);
