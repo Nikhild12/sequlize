@@ -754,8 +754,10 @@ const profilesController = () => {
         updateData = { profile_uuid: postData.profile_uuid, profile_type_uuid: postData.profile_type_uuid, modified_by: user_uuid };
         postData.created_by = postData.user_uuid = user_uuid;
         postData.modified_by = 0;
-        const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
-        if (checkUserExistsOrNot.status) {
+        //  const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
+        const checkProfileExistsOrNot = await getProfiles(postData.profile_uuid);
+        //   if (checkUserExistsOrNot.status) {
+        if (checkProfileExistsOrNot.status) {
           const updateProfileId = await profilesDefaultTbl.update(updateData, { where: { user_uuid } });
           if (updateProfileId && updateProfileId[0] != 0) {
             return res.status(200).send({ statusCode: 200, message: " updated successfully" });
@@ -775,6 +777,7 @@ const profilesController = () => {
       }
 
     } catch (ex) {
+      console.log('ex===', ex);
       return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
@@ -939,6 +942,18 @@ const nameExists = (value_name) => {
 async function getUserProfiles(user_uuid) {
   let result = await profilesDefaultTbl.findOne({
     where: { user_uuid: user_uuid }
+  }, { returning: true });
+  if (result) {
+    //if (result && IsObjectEmpty(result)) {
+    return { status: true, details: result };
+  } else {
+    return { status: false, details: {} };
+  }
+}
+
+async function getProfiles(profile_uuid) {
+  let result = await profilesDefaultTbl.findOne({
+    where: { profile_uuid: profile_uuid }
   }, { returning: true });
   if (result) {
     //if (result && IsObjectEmpty(result)) {
