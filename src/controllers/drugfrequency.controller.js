@@ -1,79 +1,61 @@
+// Import HttpStatus
 const httpStatus = require("http-status");
-const db = require("../config/sequelize");
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
-const rp = require("request-promise");
-var config = require("../config/config");
 
+// Import DB
+const db = require("../config/sequelize");
+
+// Import EMR Constants
+const emr_constants = require('../config/constants');
+
+// Initialize tbl
 const drug_frequencyTbl = db.drug_frequency;
 
-const drugfrequencyController = () => {
+const DrugFrequencyController = () => {
     /**
      * Returns jwt token if valid username and password is provided
      * @param req
      * @param res
-     * @param next
      * @returns {*}
      */
 
-    const _getDrugFrequency = async (req, res, next) => {
+    const _getDrugFrequency = async (req, res) => {
+        const { facility_uuid } = req.headers;
         const { pageNo = 0, paginationSize = 30, sortField = 'modified_date', sortOrder = 'DESC' } = req.query;
-        const facility_uuid = req.headers.facility_uuid;
-        const message = 'No Data Found';
-        let findQuery = {
+
+        const findQuery = {
             offset: pageNo * paginationSize,
-            limit: parseInt(paginationSize),
+            limit: +(paginationSize),
             where: {
-                is_active: 1,
-                status: 1,
+                is_active: emr_constants.IS_ACTIVE,
+                status: emr_constants.IS_ACTIVE,
                 facility_uuid
             },
             order: [[sortField, sortOrder]],
         };
         try {
             let data = await drug_frequencyTbl.findAndCountAll(findQuery);
-
-            if (data.rows.length === 0) {
-                return res
-                    .status(httpStatus.OK)
-                    .json({
-                        code: 204,
-                        message,
-                        req: ''
-                    });
-            } else {
-                return res
-                    .status(httpStatus.OK)
-                    .json({
-                        message: "success",
-                        statusCode: 200,
-                        responseContents: data.rows,
-                        totalRecords: data.count,
-
-                    });
-            }
+            const code = data.rows.length === 0 ? 204 : 200;
+            const message = data.rows.length === 0 ? emr_constants.NO_RECORD_FOUND : emr_constants.DRUG_FREQUENCY;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    message, code, responseContents: data.rows, totalRecords: data.count,
+                });
 
         } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            console.log("Exception happened", error);
             return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    message: "error",
-                    err: errorMsg
-                });
+                .status(500)
+                .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
         }
     };
 
-    // --------------------------------------------return----------------------------------
     return {
-
-
         getDrugFrequency: _getDrugFrequency,
-
     };
 };
 
 
-module.exports = drugfrequencyController();
+module.exports = DrugFrequencyController();
 
 
