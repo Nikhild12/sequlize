@@ -108,6 +108,7 @@ const diagnosisController = () => {
                     attributes: getDiagnosisAttributes(),
                     limit: +(paginationSize),
                     offset: +(pageNo) * +(paginationSize),
+                    order: [["uuid", "desc"]],
                 });
                 if (diagnosisData && diagnosisData.length > 0) {
                     return res.status(200).send({
