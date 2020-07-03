@@ -732,7 +732,7 @@ const profilesController = () => {
 
           return res.status(200).send({ statusCode: 200, message: emr_constants.FETCHED_SUCCESSFULLY, responseContent: result });
         } else {
-          return res.status(400).send({ statusCode: 400, message: "No record found " });
+          return res.status(200).send({ statusCode: 200, message: "No record found " });
         }
       } else {
         return res.status(422).send({ statusCode: 422, req: req.body, message: "user_uuid required" });
