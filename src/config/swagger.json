@@ -3031,6 +3031,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "createPatientDiagnosis",
 						"required": true,
@@ -8908,6 +8914,63 @@
 						"schema": {
 							"$ref": "#/definitions/getInvestigationResult"
 						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/drug-frequencyResult/getdrugfrequency": {
+			"get": {
+				"summary": "To get drugfrequency default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "paginationSize",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "pageNo",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"drug_frequency"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
 					}
 				},
 				"x-auth-type": "Application & Application User",
@@ -16153,6 +16216,9 @@
 									"section_uuid": {
 										"type": "integer"
 									},
+									"profile_uuid": {
+										"type": "integer"
+									},
 									"activity_uuid": {
 										"type": "integer"
 									},
@@ -16167,6 +16233,9 @@
 												"profile_section_categories_uuid": {
 													"type": "integer"
 												},
+												"profile_sections_uuid": {
+													"type": "integer"
+												},
 												"category_uuid": {
 													"type": "integer"
 												},
@@ -16179,6 +16248,9 @@
 														"type": "object",
 														"properties": {
 															"profile_section_category_concepts_uuid": {
+																"type": "integer"
+															},
+															"profile_section_categories_uuid": {
 																"type": "integer"
 															},
 															"code": {
@@ -16208,6 +16280,9 @@
 																	"type": "object",
 																	"properties": {
 																		"profile_section_category_concept_values_uuid": {
+																			"type": "integer"
+																		},
+																		"profile_section_category_concepts_uuid": {
 																			"type": "integer"
 																		},
 																		"value_code": {

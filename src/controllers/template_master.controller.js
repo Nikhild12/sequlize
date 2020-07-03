@@ -201,11 +201,18 @@ const tmpmstrController = () => {
         //checking template already exits or not
         const exists = await nameExists(temp_name,displayOrder, userUUID);
 
+        const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
+        if (displayOrderexists.length > 0) {
+          return res
+            .status(400)
+            .send({ code: httpStatus[400], message: "displayOrder exists" });
+        }
+
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "Template name or displayOrder exists" });
+            .send({ code: httpStatus[400], message: "Template name  exists" });
         } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
@@ -559,7 +566,7 @@ function getTemplateData(fetchedData) {
       template_id: fetchedData[0].dataValues.tm_uuid,
       template_name: fetchedData[0].dataValues.tm_name,
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
-      template_department: fetchedData[0].dataValues.tm_dept,
+            template_department: fetchedData[0].dataValues.tm_dept,
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
@@ -918,6 +925,7 @@ function getLabListData(fetchedData) {
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_type_name: tD.dataValues.tm_template_type_name,
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
@@ -1245,6 +1253,24 @@ const nameExists = (temp_name,displayOrder, userUUID) => {
     });
   }
 };
+const displayOrderExists = (displayOrder, userUUID) => {
+  if (displayOrder !== undefined) {
+    return new Promise((resolve, reject) => {
+      let value = tempmstrTbl.findAll({
+        attributes: ["display_order"],
+        where: { display_order: displayOrder, user_uuid: userUUID, status: 1 }
+      });
+      if (value) {
+        resolve(value);
+        return value;
+      } else {
+        reject({ message: "displayOrder does not existed" });
+      }
+    });
+  }
+};
+
+
 const nameExistsupdate = (temp_name, userUUID, temp_id) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
