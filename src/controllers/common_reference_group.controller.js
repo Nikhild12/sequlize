@@ -6,6 +6,7 @@ var Op = Sequelize.Op;
 const checkDuplicate = require("../helpers/checkDuplicate.js");
 var config = require("../config/config");
 const rp = require('request-promise');
+const emr_constants = require("../config/constants");
 // const gender_tbl = db.gender;
 
 
@@ -171,7 +172,78 @@ const commonReferenceGroupController = () => {
 
 
     //     };
+
+
     const getReference = async (req, res, next) => {
+        try {
+            const { search, status = 1, name, table_name, pageNo = 0, paginationSize = 10, sortField = 'display_order', sortOrder = 'ASC' } = req.body;
+            const common_tbl = db[table_name];
+            let postingData = {
+                offset: pageNo * paginationSize,
+                limit: +(paginationSize),
+                order: [
+                    [sortField, sortOrder],
+                ],
+                where: {}
+            };
+
+            if (name && /\S/.test(name)) {
+                postingData.where = Object.assign(postingData.where, {
+                    [Op.and]: [{
+                        [Op.or]: [{
+                            code: {
+                                [Op.like]: '%' + name.toLowerCase() + '%',
+                            }
+                        }, {
+                            name: {
+                                [Op.like]: '%' + name.toLowerCase() + '%',
+                            }
+                        }]
+                    }]
+                });
+            }
+
+            if (search && /\S/.test(search)) {
+                postingData.where = Object.assign(postingData.where, {
+                    [Op.and]: [{
+                        [Op.or]: [{
+                            code: {
+                                [Op.like]: '%' + search.toLowerCase() + '%',
+                            }
+                        }, {
+                            name: {
+                                [Op.like]: '%' + search.toLowerCase() + '%',
+                            }
+                        }
+                        ]
+                    }]
+                });
+            }
+
+            // remove it after demo on 30/06/2020
+            postingData.where.is_active = status;
+            let data = await common_tbl.findAndCountAll(postingData);
+
+            const code = data.rows.length === 0 ? 204 : 200;
+            const message = data.rows.length === 0 ? emr_constants.NO_RECORD_FOUND : emr_constants.DRUG_FREQUENCY;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    message, code, responseContents: data.rows, totalRecords: data.count,
+                });
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    msg: errorMsg
+                });
+        }
+    };
+
+    const getReference_old = async (req, res, next) => {
         const postData = req.body;
         const table_name = req.body.table_name;
         const common_tbl = db[table_name];
@@ -260,7 +332,7 @@ const commonReferenceGroupController = () => {
                 postingData['where'] = query1;
             }
 
-             // remove it after demo on 30/06/2020
+            // remove it after demo on 30/06/2020
             postingData.where.is_active = 1;
             await common_tbl.findAndCountAll(postingData).then((data) => {
                 return res
