@@ -97,25 +97,23 @@ const diagnosisController = () => {
     const _getDiagnosisFilter = async (req, res) => {
 
 
-        const {
-            user_uuid
-        } = req.headers;
-        const {
-            searchBy,
-            searchValue
-        } = req.query;
+        const { user_uuid } = req.headers;
+        const { searchBy, searchValue, pageNo = 0, paginationSize = 50 } = req.query;
 
         if (user_uuid && searchBy && searchValue) {
 
             try {
                 const diagnosisData = await diagnosisTbl.findAll({
                     where: getDiagnosisFilterByQuery(searchBy, searchValue),
-                    attributes: getDiagnosisAttributes()
+                    attributes: getDiagnosisAttributes(),
+                    limit: +(paginationSize),
+                    offset: +(pageNo) * +(paginationSize),
+                    order: [["uuid", "desc"]],
                 });
                 if (diagnosisData && diagnosisData.length > 0) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData ? diagnosisData : []
                     });
                 } else {
@@ -160,7 +158,7 @@ const diagnosisController = () => {
                 if (diagnosisData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData.rows,
                         totalRecords: diagnosisData.count,
                     });
@@ -198,7 +196,7 @@ const diagnosisController = () => {
                         return res
                             .status(200)
                             .send({ code: 400, message: "code and name already exists" });
-                    } 
+                    }
                     else if (code_exits && code_exits.length > 0) {
                         return res
                             .status(200)
@@ -234,7 +232,7 @@ const diagnosisController = () => {
                             diagnosisData.uuid = diagnosisCreatedData.uuid;
                             return res.status(200).send({
                                 code: 200,
-                                message: "Inserted Diagnosis Successfully",
+                                message: "Inserted Diagnosis Successfully",
                                 responseContents: diagnosisData
                             });
                         }
@@ -386,7 +384,7 @@ const diagnosisController = () => {
                 if (updateddiagnosissAsync) {
                     return res.status(200).send({
                         code: 200,
-                        message: "Deleted Successfully"
+                        message: "Deleted Successfully"
                     });
                 }
 
@@ -417,7 +415,7 @@ const diagnosisController = () => {
         ).then((data) => {
             res.send({
                 code: 200,
-                msg: "Updated Successfully",
+                msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
             });
@@ -532,7 +530,7 @@ const diagnosisController = () => {
                 if (diagnosisAutoSearchData && diagnosisAutoSearchData.length > 0) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisAutoSearchData ? diagnosisAutoSearchData : []
                     });
                 } else {
