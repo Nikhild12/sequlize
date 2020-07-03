@@ -328,7 +328,7 @@ const PatientDiagnsis = () => {
           where: query,
           order: [["uuid", "desc"]],
           limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed'],
+          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed','created_date'],
           include: [{
             model: diagnosis_tbl,
             attributes: ['uuid', 'code', 'name', 'description']

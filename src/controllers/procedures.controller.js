@@ -558,6 +558,8 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "operation_type": data.operation_type,
     "anesthesia_type": data.anesthesia_type,
     "body_site": data.body_site,
+    "equipment": data.equipment,
+    "speciality_sketch": data.speciality_sketch,
   };
   return newdata;
 }

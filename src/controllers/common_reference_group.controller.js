@@ -219,8 +219,7 @@ const commonReferenceGroupController = () => {
                     }]
                 });
             }
-
-            // remove it after demo on 30/06/2020
+            
             postingData.where.is_active = status;
             let data = await common_tbl.findAndCountAll(postingData);
 
