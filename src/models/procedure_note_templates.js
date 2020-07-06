@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
+            category_uuid:{
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1

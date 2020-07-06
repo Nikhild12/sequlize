@@ -44,7 +44,7 @@ const getPatientDiagnosisAttributes = () => {
 
 const PatientDiagnsis = () => {
   const _createPatientDiagnosis = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const patientsDiagnosisData = req.body;
 
     // checking user id and
@@ -66,6 +66,32 @@ const PatientDiagnsis = () => {
             code: httpStatus[400],
             message: `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`
           });
+        }
+
+        // Checking Only For OP Diagnosis
+        const encounter_type_uuid = [...new Set(patientsDiagnosisData.map((pD) => Number(pD.encounter_type_uuid)))][0];
+        if (encounter_type_uuid === 1) {
+          const encounter_uuid = [...new Set(patientsDiagnosisData.map((pD) => pD.encounter_uuid))][0];
+          const department_uuid = [...new Set(patientsDiagnosisData.map((pD) => pD.department_uuid))][0];
+          const diagnosisIDs = patientsDiagnosisData.map((pD) => pD.diagnosis_uuid);
+
+          if (encounter_uuid && department_uuid && diagnosisIDs.length > 0) {
+            const existingRecord = await patient_diagnosis_tbl.findAll({
+              where: {
+                diagnosis_uuid: { [Op.in]: diagnosisIDs },
+                encounter_uuid,
+                facility_uuid,
+                department_uuid
+              }
+            });
+
+            if (existingRecord && existingRecord.length > 0) {
+              return res.status(400).send({
+                code: httpStatus[400],
+                message: emr_constants.DIAGNOSIS_ALREADY_EXISTS
+              });
+            }
+          }
         }
 
         const patientDiagnosisCreatedData = await _helperCreatePatientDiagnosis(
@@ -302,7 +328,7 @@ const PatientDiagnsis = () => {
           where: query,
           order: [["uuid", "desc"]],
           limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed'],
+          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed','created_date'],
           include: [{
             model: diagnosis_tbl,
             attributes: ['uuid', 'code', 'name', 'description']
@@ -328,7 +354,7 @@ const PatientDiagnsis = () => {
       });
     }
 
-  }
+  };
 
   return {
     createPatientDiagnosis: _createPatientDiagnosis,

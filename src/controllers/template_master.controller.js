@@ -199,7 +199,7 @@ const tmpmstrController = () => {
 
 
         //checking template already exits or not
-        const exists = await nameExists(temp_name, userUUID);
+        const exists = await nameExists(temp_name,displayOrder, userUUID);
 
         const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
         if (displayOrderexists.length > 0) {
@@ -566,7 +566,7 @@ function getTemplateData(fetchedData) {
       template_id: fetchedData[0].dataValues.tm_uuid,
       template_name: fetchedData[0].dataValues.tm_name,
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
-      template_department: fetchedData[0].dataValues.tm_dept,
+            template_department: fetchedData[0].dataValues.tm_dept,
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
@@ -925,6 +925,7 @@ function getLabListData(fetchedData) {
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_type_name: tD.dataValues.tm_template_type_name,
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
@@ -1235,19 +1236,19 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name, userUUID) => {
+const nameExists = (temp_name,displayOrder, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, user_uuid: userUUID }
+        where: { name: temp_name,display_order:displayOrder, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);
         return value;
       } else {
-        reject({ message: "name does not existed" });
+        reject({ message: "name or displayOrder does not existed" });
       }
     });
   }

@@ -97,20 +97,18 @@ const diagnosisController = () => {
     const _getDiagnosisFilter = async (req, res) => {
 
 
-        const {
-            user_uuid
-        } = req.headers;
-        const {
-            searchBy,
-            searchValue
-        } = req.query;
+        const { user_uuid } = req.headers;
+        const { searchBy, searchValue, pageNo = 0, paginationSize = 50 } = req.query;
 
         if (user_uuid && searchBy && searchValue) {
 
             try {
                 const diagnosisData = await diagnosisTbl.findAll({
                     where: getDiagnosisFilterByQuery(searchBy, searchValue),
-                    attributes: getDiagnosisAttributes()
+                    attributes: getDiagnosisAttributes(),
+                    limit: +(paginationSize),
+                    offset: +(pageNo) * +(paginationSize),
+                    order: [["uuid", "desc"]],
                 });
                 if (diagnosisData && diagnosisData.length > 0) {
                     return res.status(200).send({
@@ -198,7 +196,7 @@ const diagnosisController = () => {
                         return res
                             .status(200)
                             .send({ code: 400, message: "code and name already exists" });
-                    } 
+                    }
                     else if (code_exits && code_exits.length > 0) {
                         return res
                             .status(200)

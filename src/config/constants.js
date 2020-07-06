@@ -62,6 +62,8 @@ module.exports = Object.freeze({
   NO_TREATMETN_KIT_FOUND: "Treatment Kit Id",
   TREATMENT_UPDATE: "Treatment Kit Updated Successfully",
   FAVOURITE_TYPE: "Favourite Type Successfully Fetched",
+  DRUG_FREQUENCY: "Drug Frequency Successfully Fetched",
+  DIAGNOSIS_ALREADY_EXISTS: "Diagnosis already exists",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
