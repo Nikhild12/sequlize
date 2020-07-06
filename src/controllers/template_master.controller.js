@@ -30,7 +30,7 @@ const tmpmstrController = () => {
    */
 
   const _gettemplateByID = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const { temp_type_id, dept_id, lab_id } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
@@ -44,6 +44,7 @@ const tmpmstrController = () => {
           temp_type_id,
           dept_id,
           user_uuid,
+          facility_uuid,
           lab_id
         );
         const templateList = await table_name.findAll(query);
@@ -1354,7 +1355,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
     });
   }
 };
-function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, lab_id) {
+function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1383,6 +1384,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, lab_id) {
             tm_status: 1,
             tmd_status: 1,
             tmd_active: 1,
+            f_uuid: fId,
             [Op.or]: [
               {
                 [searchKey]: { [Op.eq]: searchValue },
