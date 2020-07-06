@@ -465,6 +465,7 @@ const profilesController = () => {
     var sectionsResponse = [];
     var categoryResponse = [];
     var conceptsResponse = [];
+    var conceptValuesResponse = [];
     var element3 = {};
     var element2 = {};
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
@@ -526,9 +527,9 @@ const profilesController = () => {
             const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
 
             if (element.profile_section_category_concept_values_uuid) {
-              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
             }
-            else {
+            else if (!conceptsResponse[0] == undefined) {
               let elementArr = [];
               // elementArr.push(element);
               elementArr.push({
@@ -537,7 +538,17 @@ const profilesController = () => {
                 value_name: element.value_name,
                 display_order: element.display_order
               });
-              var conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
+              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
+            } else {
+              let elementArray = [];
+              // elementArr.push(element);
+              elementArray.push({
+                profile_section_category_concept_uuid: element.profile_section_category_concept_uuid,
+                value_code: element.value_code,
+                value_name: element.value_name,
+                display_order: element.display_order
+              });
+              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
           }
         }
