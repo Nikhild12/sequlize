@@ -496,7 +496,7 @@ const profilesController = () => {
           // elementArr2.push(element);
           elementArr2.push({
             profile_section_uuid: sectionsResponse[0].uuid,
-            category_uuid: element.category_uuid,
+            category_uuid: element2.category_uuid,
             display_order: element.display_order
           });
           categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
@@ -511,7 +511,7 @@ const profilesController = () => {
             // elementArr1.push(element);
             var index = 0;
             elementArr1.push({
-              profile_section_category_uuid: element2.profile_section_categories_uuid,
+              profile_section_category_uuid: categoryResponse[0].uuid,
               code: element3.code,
               name: element3.name,
               description: element3.description,
@@ -526,13 +526,13 @@ const profilesController = () => {
             const element = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
 
             if (element.profile_section_category_concept_values_uuid) {
-              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({ value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
+              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({value_code: element.value_code, value_name: element.value_name, display_order: element.display_order }, { where: { uuid: element.profile_section_category_concept_values_uuid } }));
             }
             else {
               let elementArr = [];
               // elementArr.push(element);
               elementArr.push({
-                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
+                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element.value_code,
                 value_name: element.value_name,
                 display_order: element.display_order
