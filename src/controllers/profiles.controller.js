@@ -531,8 +531,7 @@ const profilesController = () => {
             }
             else if (!conceptsResponse[0] == undefined) {
               let elementArr = [];
-              // elementArr.push(element);
-              elementArr.push({
+                           elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element.value_code,
                 value_name: element.value_name,
@@ -541,8 +540,7 @@ const profilesController = () => {
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             } else {
               let elementArray = [];
-              // elementArr.push(element);
-              elementArray.push({
+                            elementArray.push({
                 profile_section_category_concept_uuid: element.profile_section_category_concept_uuid,
                 value_code: element.value_code,
                 value_name: element.value_name,
