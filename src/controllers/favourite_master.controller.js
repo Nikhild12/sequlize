@@ -868,7 +868,7 @@ const TickSheetMasterController = () => {
     const itemsPerPage = getsearch.paginationSize
       ? getsearch.paginationSize
       : 10;
-    let sortField = "modified_date";
+    let sortField = "created_date";
     let sortOrder = "DESC";
 
     if (getsearch.pageNo) {
