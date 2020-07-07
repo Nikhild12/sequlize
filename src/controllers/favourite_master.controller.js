@@ -418,8 +418,6 @@ const TickSheetMasterController = () => {
       favouriteMasterReqData = emr_utility.createIsActiveAndStatus(
         favouriteMasterReqData, user_uuid
       );
-      favouriteMasterReqData.modified_date = null;
-      favouriteMasterReqData.modified_by = 0;
       favouriteMasterReqData.is_active = fav_master_active ? 1 : 0;
       favouriteMasterReqData.user_uuid = fav_master_user_uuid ? fav_master_user_uuid : favouriteMasterReqData.user_uuid;
       try {
@@ -860,65 +858,40 @@ const TickSheetMasterController = () => {
   };
 
   const _getAllFavourites = async (req, res) => {
+    
     const { user_uuid } = req.headers;
-    let getsearch = req.body;
 
-    pageNo = 0;
-
-    const itemsPerPage = getsearch.paginationSize
-      ? getsearch.paginationSize
-      : 10;
-    let sortField = "created_date";
-    let sortOrder = "DESC";
-
-    if (getsearch.pageNo) {
-      let temp = parseInt(getsearch.pageNo);
-      if (temp && temp != NaN) {
-        pageNo = temp;
-      }
-    }
-
-    if (getsearch.sortField) {
-      sortField = getsearch.sortField;
-    }
-    if (
-      getsearch.sortOrder &&
-      (getsearch.sortOrder == "ASC" || getsearch.sortOrder == "DESC")
-    ) {
-      sortOrder = getsearch.sortOrder;
-    }
-
-    const offset = pageNo * itemsPerPage;
-
+    // Destructuring Req Body
+    const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
+    const { pageNo = 0, status = 1 } = req.body;
+    
+    
     let findQuery = {
-      offset: offset,
-      limit: itemsPerPage,
+      offset: +(pageNo) * +(paginationSize),
+      limit: +(paginationSize),
       order: [[sortField, sortOrder]],
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       where: { is_active: 1, fm_status: 1 },
     };
+    
+    findQuery.where['is_active'] = +(status);
 
-    if (getsearch.search && /\S/.test(getsearch.search)) {
+    if (req.body.search && /\S/.test(req.body.search)) {
       findQuery.where = {
         fm_name: {
-          [Op.like]: "%" + getsearch.search + "%"
+          [Op.like]: "%" + req.body.search + "%"
         }
       };
     }
-    if (getsearch.name && /\S/.test(getsearch.name)) {
+    if (req.body.name && /\S/.test(req.body.name)) {
       findQuery.where['fm_name'] = {
-        [Op.like]: "%" + getsearch.name + "%"
+        [Op.like]: "%" + req.body.name + "%"
       };
     }
 
-    if (getsearch.faourite_type_uuid && /\S/.test(getsearch.fm_favourite_type_uuid)) {
-      findQuery.where['fm_favourite_type_uuid'] = getsearch.template_type_uuid;
+    if (req.body.faourite_type_uuid && /\S/.test(req.body.fm_favourite_type_uuid)) {
+      findQuery.where['fm_favourite_type_uuid'] = req.body.template_type_uuid;
 
-    }
-
-    if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-      //findQuery.where['is_active'] = getsearch.status;
-      findQuery.where['fm_status'] = getsearch.status;
     }
 
     try {
