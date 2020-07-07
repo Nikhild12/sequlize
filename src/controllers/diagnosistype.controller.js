@@ -303,7 +303,8 @@ const DiagnosisTypeController = () => {
         const postData = req.body;
 
         await DiagnosisTypeTbl.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.Id
