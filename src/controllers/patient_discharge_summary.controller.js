@@ -27,6 +27,10 @@ const allergySeverityTbl = sequelizeDb.allergy_severity;
 const allergyTypeTbl = sequelizeDb.allergy_type;
 const periodsTbl = sequelizeDb.periods;
 
+//speciality sketch tables
+const patientSpecialitySketchesTbl = sequelizeDb.patient_speciality_sketches;
+const specialitySketchesTbl = sequelizeDb.speciality_sketches;
+
 // Patient Vitals View Import
 const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals;
 
@@ -54,9 +58,8 @@ const patient_discharge_summary = () => {
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_cheif_complaint_res = await getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid);
         const patient_diagnosis_res = await getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid);
-
-        // const patinet_treatmentKit_res =  await getPatienyTreatmentKit(patient_uuid, doctor_uuid, encounter_uuid);
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res } });
+        const patient_speciality_sketches = await getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid)
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res ,"speciality_sketches":patient_speciality_sketches} });
 
       }
       catch (ex) {
@@ -601,7 +604,7 @@ async function getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid) {
   const data = await getGetDiagnosis(diagnosis_res);
   const getSnomedData = await getSnomedDetails(patient_uuid, encounter_uuid);
 
-  return [...data,...getSnomedData];
+  return [...data, ...getSnomedData];
 }
 function getGetDiagnosis(diagnosis_res) {
   let diagnosis_result = [];
@@ -676,12 +679,56 @@ async function getSnomedDetails(patient_uuid, encounter_uuid) {
         encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name : "",
         performed_by: item.performed_by,
         performed_date: item.performed_date,
-        diagnosis_uuid:item.diagnosis_uuid,
+        diagnosis_uuid: item.diagnosis_uuid,
         diagnosis_code: item.diagnosis_uuid,
         diagnosis_type: "SNOMED",
         diagnosis_name: item.other_diagnosis
       };
-    });     
+    });
   }
   return diagnosis_snomed_result;
+}
+
+//speciality sketches
+
+async function getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid) {
+  const ss_result = await patientSpecialitySketchesTbl.findAll({
+    where: {
+      patient_uuid: patient_uuid,
+      encounter_uuid: encounter_uuid,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE
+    },
+    order: [["uuid", "desc"]],
+    limit: 5,
+    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'encounter_uuid', 'speciality_sketch_uuid', 'sketch_path', 'created_date'],
+    include: [{
+      model: specialitySketchesTbl,
+      attributes: ['uuid', 'code', 'name', 'description']
+    }]
+  });
+  if (ss_result && ss_result.length > 0) {
+    return await getSSOrganizeData(ss_result);
+  } else {
+    return [];
+  }
+}
+
+async function getSSOrganizeData(ss_result){
+  let ss_final = [];
+  if(ss_result && ss_result.length >0){
+    ss_final = ss_result.map((item)=>{
+        return {
+            patient_speciality_sketche_uuid: item.uuid,
+            patient_uuid:item.patient_uuid,
+            date:item.created_date,
+            encounter_uuid:item.encounter_uuid,
+            speciality_sketch_uuid: item.speciality_sketch_uuid,
+            sketch_path:item.sketch_path,
+            speciality_sketch_code: (item && item.speciality_sketch) ? item.speciality_sketch.code  :"",
+            speciality_sketch_name: (item && item.speciality_sketch) ? item.speciality_sketch.name  :"",
+        }
+    });
+  }
+  return ss_final;
 }
