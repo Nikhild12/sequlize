@@ -25,8 +25,7 @@ const specialitySketchesMasterController = () => {
             let pageNo = 0;
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
             let sortArr = ['s_created_date', 'DESC'];
-
-
+           
             if (postData.pageNo) {
                 let temp = parseInt(postData.pageNo);
                 if (temp && (temp != NaN)) {
@@ -181,7 +180,8 @@ const specialitySketchesMasterController = () => {
         const postData = req.body;
 
         await specialitySketchesMasterTbl.update({
-            is_active: 0
+            is_active: 0,
+            status: 0,
         }, {
             where: {
                 uuid: postData.Speciality_id
