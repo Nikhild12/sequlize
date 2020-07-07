@@ -304,7 +304,8 @@ const DiagnosisCategoryController = () => {
         const postData = req.body;
 
         await DiagnosisCategory.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.Id

@@ -302,7 +302,8 @@ const DiagnosisVersionController = () => {
         const postData = req.body;
 
         await DiagnosisVersion.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.Id
