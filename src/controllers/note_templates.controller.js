@@ -410,7 +410,7 @@ const noteTemplatesController = () => {
                 },
                 include: [
                     {
-                        model: noteTemplateTypeTbl,
+                        model: templateTypeTbl,
                         required: false,
                         where: { is_active: 1, status: 1 }
                     },
@@ -611,7 +611,7 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep, getfacility) {
                 : null,
         "created_date": data.created_date,
         "modified_date": data.modified_date,
-        "note_template_type": data.note_template_type,
+        "note_template_type": data.template_type,
         "note_type": data.note_type
 
     };
