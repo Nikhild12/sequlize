@@ -10,5 +10,6 @@ const certificateRoute = Express.Router();
 //profilesRoute.route('/getByFilters').get(profilesController.getProfilesByFilters);
 certificateRoute.route('/create').post(certfticateController.createPatientCertificates);
 certificateRoute.route('/getAll').get(certfticateController.getPatientCertificates);
+certificateRoute.route('/printpreviouscertificates').get(certfticateController.print_previous_certificates);
 
 module.exports = certificateRoute;

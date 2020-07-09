@@ -524,6 +524,7 @@ async function create_CC(tablename, user_uuid, data1, data2) {
         item.encounter_uuid = data1.encounter_uuid;
         item.facility_uuid = data1.facility_uuid;
         item.comments = data1.comments;
+        item.observed_value = item.observed_value;
         item.encounter_type_uuid = data1.encounter_type_uuid;
         item.modified_by = 0;
         item.created_date = item.modified_date = new Date();
