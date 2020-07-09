@@ -112,7 +112,10 @@ const getFavouritesAttributes = [
   "de_uuid",
   "de_name",
   "tsm_created_date",
-  "tsm_modified_date"
+  "tsm_modified_date",
+  "si_store_master_uuid",
+  "si_is_active",
+  "si_status"
 ];
 
 // Fav Treatment Kit Att
@@ -224,7 +227,7 @@ let getTreatmentKitLabAtt = [
 
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
-function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId) {
+function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   let notNullSearchKey, activeKey, statusKey;
   tsmd_test_id =
     typeof tsmd_test_id === "string" ? +tsmd_test_id : tsmd_test_id;
@@ -253,7 +256,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId) {
       statusKey = "d_status";
       break;
   }
-  return {
+  let favouriteQuery = {
     tsm_active: active_boolean,
     tsm_status: active_boolean,
     [notNullSearchKey]: neQuery,
@@ -264,6 +267,13 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId) {
     fa_uuid: fId,
     tsm_dept: dept_id
   };
+
+  if (+(fId) === 1) {
+    favouriteQuery.si_store_master_uuid = sMId;
+    favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
+    favouriteQuery.si_status = emr_constants.IS_ACTIVE;
+  }
+  return favouriteQuery;
 }
 
 function getTreatmentQuery(dept_id, user_uuid) {
@@ -509,7 +519,9 @@ const TickSheetMasterController = () => {
    */
   const _getFavourites = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    let { dept_id, fav_type_id, lab_id } = req.query;
+    let dept_id, fav_type_id, lab_id, store_master_uuid;
+
+    +({ dept_id, fav_type_id, lab_id, store_master_uuid } = req.query);
 
     if (user_uuid && (dept_id > 0 || lab_id > 0) && fav_type_id && facility_uuid > 0) {
       fav_type_id = +fav_type_id;
@@ -518,10 +530,15 @@ const TickSheetMasterController = () => {
           code: httpStatus[400], message: emr_constants.PROPER_FAV_ID,
         });
       }
+      if (+(fav_type_id) === 1 && !store_master_uuid) {
+        return res.status(400).send({
+          code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
+        });
+      }
       let favList = [];
 
       try {
-        const favouriteData = await getFavouritesQuery(user_uuid, fav_type_id, dept_id, lab_id, facility_uuid);
+        const favouriteData = await getFavouritesQuery(user_uuid, fav_type_id, dept_id, lab_id, facility_uuid, store_master_uuid);
 
         favList = getFavouritesRes(favouriteData, fav_type_id);
         favList = _.orderBy(favList, ['favourite_display_order'], ['asc']);
@@ -858,14 +875,14 @@ const TickSheetMasterController = () => {
   };
 
   const _getAllFavourites = async (req, res) => {
-    
+
     const { user_uuid } = req.headers;
 
     // Destructuring Req Body
     const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
     const { pageNo = 0, status = 1 } = req.body;
-    
-    
+
+
     let findQuery = {
       offset: +(pageNo) * +(paginationSize),
       limit: +(paginationSize),
@@ -873,7 +890,7 @@ const TickSheetMasterController = () => {
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
       where: { is_active: 1, fm_status: 1 },
     };
-    
+
     findQuery.where['is_active'] = +(status);
 
     if (req.body.search && /\S/.test(req.body.search)) {
@@ -975,6 +992,7 @@ function getFavouritesInList(fetchedData) {
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
+        store_master_uuid: tD.si_store_master_uuid,
 
         // Store Master Details
         store_id: tD.sm_uuid,
@@ -1324,7 +1342,16 @@ function getAllDietFavsInReadableFormat(dietFav) {
   });
 }
 
-const getFavouritesQuery = (uId, fTyId, dId, labId, fId) => {
+/**
+ * 
+ * @param {*} uId UserId
+ * @param {*} fTyId Favourite Type Id
+ * @param {*} dId Department Id
+ * @param {*} labId Lab Id
+ * @param {*} fId Facility Id
+ * @param {*} sM Store Master Id
+ */
+const getFavouritesQuery = (uId, fTyId, dId, labId, fId, sM) => {
   if (fTyId === 3) {
     return vmFavouriteRad.findAll({
       attributes: emr_all_favourites.favouriteRadVWAttributes(),
@@ -1353,7 +1380,7 @@ const getFavouritesQuery = (uId, fTyId, dId, labId, fId) => {
   } else {
     return vmTickSheetMasterTbl.findAll({
       attributes: getFavouritesAttributes,
-      where: getFavouriteQuery(dId, uId, fTyId, fId),
+      where: getFavouriteQuery(dId, uId, fTyId, fId, sM),
       order: [["tsm_display_order", "ASC"]],
     });
   }
