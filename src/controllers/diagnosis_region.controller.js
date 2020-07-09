@@ -304,7 +304,8 @@ const DiagnosisRegionController = () => {
         const postData = req.body;
 
         await DiagnosisRegion.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.Id

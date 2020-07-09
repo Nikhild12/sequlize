@@ -4,7 +4,7 @@ const Op = sequelize.Op;
 
 const db = require("../config/sequelize");
 const emr_utility = require("../services/utility.service");
-
+const note_templates_controller = require("../controllers/note_templates.controller");
 // Import EMR Constants
 const emr_constants = require("../config/constants");
 
@@ -158,19 +158,34 @@ const tmpmstrController = () => {
         const templateList = await table_name.findAll(query);
 
         if (templateList.length > 0) {
-          const templateData = getTemplateDetailsData(
-            temp_type_id,
-            templateList
-          );
+          if (temp_type_id == 4) {
+            const getdep = await note_templates_controller.getdepDetails(req.headers.user_uuid, templateList[0].department_uuid, req.headers.authorization);
 
-          return res
-            .status(httpStatus.OK)
-            .json({ statusCode: 200, req: "", responseContent: templateData });
+            const getfacility = await note_templates_controller.getfacilityDetails(req.headers.user_uuid, templateList[0].facility_uuid, req.headers.authorization);
+
+            if (getdep && getfacility) {
+              templateList[0].dataValues.department_name = getdep.responseContent.name;
+              templateList[0].dataValues.facility_name = getfacility.responseContents.name;
+              return res
+                .status(httpStatus.OK)
+                .json({ statusCode: 200, req: "", responseContent: templateList });
+            }
+          } else {
+            const templateData = getTemplateDetailsData(
+              temp_type_id,
+              templateList
+            );
+
+            return res
+              .status(httpStatus.OK)
+              .json({ statusCode: 200, req: "", responseContent: templateData });
+          }
         } else {
           return res
             .status(200)
             .send({ statusCode: 200, message: "No Record Found" });
         }
+
       } else {
         return res.status(400).send({
           code: httpStatus[400],
@@ -196,10 +211,8 @@ const tmpmstrController = () => {
         let displayOrder = templateMasterReqData.display_order;
         const temp_master_active = templateMasterReqData.is_active;
 
-
-
         //checking template already exits or not
-        const exists = await nameExists(temp_name,displayOrder, userUUID);
+        const exists = await nameExists(temp_name, displayOrder, userUUID);
 
         const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
         if (displayOrderexists.length > 0) {
@@ -566,7 +579,9 @@ function getTemplateData(fetchedData) {
       template_id: fetchedData[0].dataValues.tm_uuid,
       template_name: fetchedData[0].dataValues.tm_name,
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
-            template_department: fetchedData[0].dataValues.tm_dept,
+      template_department_name: fetchedData[0].dataValues.d_name,
+      template_department: fetchedData[0].dataValues.tm_dept,
+
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
@@ -575,6 +590,7 @@ function getTemplateData(fetchedData) {
       created_date: fetchedData[0].dataValues.tm_created_date,
       modified_by: modifiedby,
       modified_date: fetchedData[0].dataValues.tm_modified_date,
+      facility_uuid: fetchedData[0].dataValues.f_uuid,
       facility_name: fetchedData[0].dataValues.f_name,
       department_name: fetchedData[0].dataValues.d_name,
       satus: fetchedData[0].dataValues.tm_status[0] === 1 ? true : false,
@@ -635,7 +651,8 @@ function getTemplateListData(fetchedData) {
           temp_details: {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
-
+            created_by: tD.tm_created_by,
+            modified_by: tD.tm_modified_by,
             template_department: tD.dataValues.tm_dept,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
@@ -680,9 +697,11 @@ function getTemplateListData1(fetchedData) {
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
             is_public: tD.dataValues.tm_public[0] === 1 ? true : false,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: tD.dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
@@ -929,9 +948,11 @@ function getLabListData(fetchedData) {
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: tD.dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
@@ -979,9 +1000,11 @@ function getRisListData(fetchedData) {
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: fetchedData[0].dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: fetchedData[0].dataValues.tm_modified_date,
             facility_name: fetchedData[0].dataValues.f_name,
             facility_uuid: fetchedData[0].dataValues.f_uuid,
@@ -1236,13 +1259,13 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name,displayOrder, userUUID) => {
+const nameExists = (temp_name, displayOrder, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name,display_order:displayOrder, user_uuid: userUUID }
+        where: { name: temp_name, display_order: displayOrder, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);

@@ -131,7 +131,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "note_type_uuid",
             targetKey: "uuid"
         });
-        note_templates.belongsTo(models.note_template_type, {
+        note_templates.belongsTo(models.template_type, {
             foreignKey: "note_template_type_uuid"
         });
     };

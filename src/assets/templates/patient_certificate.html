@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Patient Certificates</title>
+    <meta charset="utf-8">
+    <style>
+        .table-header th {
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+
+        .table-header td {
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+
+        .table-header tr {
+            border-bottom: 1px solid #ccc;
+        }
+
+        .table-header1 td {
+            border: 1px solid #ccc;
+        }
+
+        .table-header1 th {
+            border-right: 1px solid #ccc;
+        }
+
+        @media print {
+            .first_tbl {
+                margin-top: 20px !important;
+                page-break-inside: avoid;
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin: 0 auto; font-family: poppins; font-size: 12px; width: 100%; height: 100%;">
+    <div style="float:left; width:calc(100% - 30px); padding: 0 15px;">
+        <div style="width: 100%; float: left; padding: 10px 0 0;">
+            <table borderspacing='1' bordercolor="#ccc" cellpadding='10' cellspacing='0'
+                style="width:100%; float:left; text-align: left; border:1px solid #ccc;">
+                <thead>
+                    <tr style="text-align: left; font-size: 14px; background-color:#e6eff8;">
+                        <th style="border-bottom:1px solid #ccc;" colspan="20">Patient Certificates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table style="width:100%; border:1px solid #ccc; border-right: 0;" cellpadding='10'
+                                cellspacing='0'>
+
+                                <tbody>
+
+                                    <tr class="table-header" style="border-bottom: 1px solid #ccc;">
+                                        <td>{{{data_template}}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

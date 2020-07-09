@@ -64,6 +64,7 @@ module.exports = Object.freeze({
   FAVOURITE_TYPE: "Favourite Type Successfully Fetched",
   DRUG_FREQUENCY: "Drug Frequency Successfully Fetched",
   DIAGNOSIS_ALREADY_EXISTS: "Diagnosis already exists",
+  PRESCRIPTION_STORE_MASTER: "Please send Store master uuid to get Prescription Favorutie/Template",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {

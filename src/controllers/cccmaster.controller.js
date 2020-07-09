@@ -446,7 +446,8 @@ const cccMasterController = () => {
         const postData = req.body;
 
         await cccMasterTbl.update({
-            is_active: 0
+            is_active: 0,
+            status:0
         }, {
             where: {
                 uuid: postData.Ccc_id
