@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{language.print}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    {{!-- <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'> --}}
+
+        <style>
+        
+
+ 
+        * {
+            box-sizing: border-box;
+        }
+
+        h2 {
+
+            font-weight: 600;
+        }
+
+        h4 {
+            font-weight: 600;
+            font-size: 16px;
+
+        }
+
+        h5 {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: -1px;
+        }
+
+        #header {
+            border-bottom: 1px solid black;
+            margin-bottom: 10px;
+
+        }
+
+        #headname {
+            padding-bottom: 20px;
+            padding-top: 20px;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+
+        .sub1 {
+            width: 10px;
+        }
+
+        .sub2 {
+            width: 45px;
+        }
+
+        .table>tbody>tr>td {
+            border-top: 0px !important;
+            font-size: 13px;
+        }
+
+        .logo1 {
+            margin: 27px 20px;
+        }
+
+        .logo2 {
+            margin: 30px -5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    {{!-- <div class="col-xs-2 text-left"> <img src="{{include '/assets/images/tnlogo.png' 'img'}}" alt="no image"
+            class="block-center logo1" style="width: 60px;height: auto;" /></div>
+    <div class="col-xs-8 text-center" id="headname">
+        <h4 style="font-weight: bold;">{{facilityname}}</h4>
+        <p class="sub_hed">{{facilityAdd1}},{{facilityAdd2}},{{facilityDisName}},{{facilityStateName}},{{facilityPinCode}}</p>
+        <p class="sub_hed">{{facilityLandNo}}</p>
+    </div>
+
+    <div class="col-xs-2 text-left">
+        <img src="{{include '/assets/images/nhm.png' 'img'}}" style="width: 60px;height: auto;"
+            class="block-center logo2 " /></div> --}}
+
+    <div class="col-xs-2 text-left"> <img src="{{include '/assets/images/tnlogo.png' 'img'}}" class="block-center logo1"
+            style="width: 60px;height: auto;" /></div>
+    <div class="col-xs-8 text-center"  id="headname">
+       <h4 style="font-weight: bold;margin-bottom:0px!important">{{facilityname}}</h4>
+        <p style="margin:0px !important;font-size:10px !important;font-weight:lighter!important">{{facilityAdd1}},{{facilityAdd2}},{{facilityDisName}},{{facilityStateName}},{{facilityPinCode}}</p>
+        <p style="margin:0px !important;font-size:10px !important;font-weight:lighter!important">{{facilityLandNo}}</p>
+    </div>
+
+    <div class="col-xs-2 text-left">
+        <img src="{{include '/assets/images/nhm.png' 'img'}}" style="width: 60px;height: auto;"
+            class="block-center logo2 " /></div>
+</body>
+
+</html>
