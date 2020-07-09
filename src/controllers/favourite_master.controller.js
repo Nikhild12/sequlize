@@ -268,7 +268,9 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
     tsm_dept: dept_id
   };
 
-  if (+(fId) === 1) {
+  if (+(tsmd_test_id) === 1) {
+    console.log("Entered One");
+    
     favouriteQuery.si_store_master_uuid = sMId;
     favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
     favouriteQuery.si_status = emr_constants.IS_ACTIVE;
@@ -992,7 +994,7 @@ function getFavouritesInList(fetchedData) {
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
-        store_master_uuid: tD.si_store_master_uuid,
+        store_master_uuid: tD.si_store_master_uuid || 0,
 
         // Store Master Details
         store_id: tD.sm_uuid,
