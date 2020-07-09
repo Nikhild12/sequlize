@@ -518,7 +518,9 @@ const noteTemplatesController = () => {
         updatenoteTemplatesById,
         deletenoteTemplatesr,
         getnoteTemplatesrById,
-        getNoteTemplateByType
+        getNoteTemplateByType,
+        getfacilityDetails,
+        getdepDetails
     };
 };
 
