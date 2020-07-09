@@ -269,7 +269,6 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   };
 
   if (+(tsmd_test_id) === 1) {
-    console.log("Entered One");
     
     favouriteQuery.si_store_master_uuid = sMId;
     favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
