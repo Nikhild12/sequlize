@@ -27,6 +27,10 @@ const allergySeverityTbl = sequelizeDb.allergy_severity;
 const allergyTypeTbl = sequelizeDb.allergy_type;
 const periodsTbl = sequelizeDb.periods;
 
+//speciality sketch tables
+const patientSpecialitySketchesTbl = sequelizeDb.patient_speciality_sketches;
+const specialitySketchesTbl = sequelizeDb.speciality_sketches;
+
 // Patient Vitals View Import
 const vw_patientVitalsTbl = sequelizeDb.vw_patient_vitals;
 
@@ -54,9 +58,8 @@ const patient_discharge_summary = () => {
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_cheif_complaint_res = await getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid);
         const patient_diagnosis_res = await getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid);
-
-        // const patinet_treatmentKit_res =  await getPatienyTreatmentKit(patient_uuid, doctor_uuid, encounter_uuid);
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res } });
+        const patient_speciality_sketches = await getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid)
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res ,"speciality_sketches":patient_speciality_sketches} });
 
       }
       catch (ex) {
@@ -516,7 +519,6 @@ function getPatientChiefComplaintsOrganizeData(patient_cc_res) {
   if (patient_cc_res.length > 0) {
     cc_result = patient_cc_res.map((item) => {
       return {
-        
         created_date: item.pcc_created_date,
         patient_uuid: item.pcc_patient_uuid,
         institution_uuid: item.f_uuid,
@@ -600,7 +602,9 @@ async function getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid) {
     ]
   }, { returning: true });
   const data = await getGetDiagnosis(diagnosis_res);
-  return data;
+  const getSnomedData = await getSnomedDetails(patient_uuid, encounter_uuid);
+
+  return [...data, ...getSnomedData];
 }
 function getGetDiagnosis(diagnosis_res) {
   let diagnosis_result = [];
@@ -619,7 +623,8 @@ function getGetDiagnosis(diagnosis_res) {
         performed_by: item.performed_by,
         performed_date: item.performed_date,
         diagnosis_uuid: item.diagnosis_uuid,
-        diagnosis_type: "ICD 10",
+        // diagnosis_type: "ICD 10",
+        diagnosis_type: item.is_snomed ? "SNOMED" : "ICD 10",
         diagnosis_code: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.code : "",
         diagnosis_name: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.name : "",
         diagnosis_desc: (item.diagnosis && item.diagnosis != null) ? item.diagnosis.description : "",
@@ -635,4 +640,95 @@ async function gettypes(tablename, user_uuid) {
   if (fetchedData) {
     return fetchedData;
   }
+}
+
+async function getSnomedDetails(patient_uuid, encounter_uuid) {
+  let diagnosis_snomed_result = [];
+  const diagnosis_snomed_res = await patient_diagnosisTbl.findAll({
+    where: {
+      patient_uuid: patient_uuid,
+      encounter_uuid: encounter_uuid,
+      is_snomed: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE
+    },
+    order: [['uuid', 'DESC']],
+    include: [
+      {
+        model: encounterTypeTbl,
+        as: 'encounter_type',
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+        }
+      }
+    ]
+  }, { returning: true });
+  if (diagnosis_snomed_res && diagnosis_snomed_res.length > 0) {
+    diagnosis_snomed_result = diagnosis_snomed_res.map((item) => {
+      return {
+        patient_diagnosis_uuid: item.uuid,
+        facility_uuid: item.facility_uuid,
+        department_uuid: item.department_uuid,
+        patient_uuid: item.patient_uuid,
+        encounter_uuid: item.encounter_uuid,
+        encounter_type_uuid: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.uuid : "",
+        encounter_type_code: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.code : "",
+        encounter_type_name: (item.encounter_type && item.encounter_type != null) ? item.encounter_type.name : "",
+        performed_by: item.performed_by,
+        performed_date: item.performed_date,
+        diagnosis_uuid: item.diagnosis_uuid,
+        diagnosis_code: item.diagnosis_uuid,
+        diagnosis_type: "SNOMED",
+        diagnosis_name: item.other_diagnosis
+      };
+    });
+  }
+  return diagnosis_snomed_result;
+}
+
+//speciality sketches
+
+async function getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid) {
+  const ss_result = await patientSpecialitySketchesTbl.findAll({
+    where: {
+      patient_uuid: patient_uuid,
+      encounter_uuid: encounter_uuid,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE
+    },
+    order: [["uuid", "desc"]],
+    limit: 5,
+    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'encounter_uuid', 'speciality_sketch_uuid', 'sketch_path', 'created_date'],
+    include: [{
+      model: specialitySketchesTbl,
+      attributes: ['uuid', 'code', 'name', 'description']
+    }]
+  });
+  if (ss_result && ss_result.length > 0) {
+    return await getSSOrganizeData(ss_result);
+  } else {
+    return [];
+  }
+}
+
+async function getSSOrganizeData(ss_result){
+  let ss_final = [];
+  if(ss_result && ss_result.length >0){
+    ss_final = ss_result.map((item)=>{
+        return {
+            patient_speciality_sketche_uuid: item.uuid,
+            patient_uuid:item.patient_uuid,
+            date:item.created_date,
+            encounter_uuid:item.encounter_uuid,
+            speciality_sketch_uuid: item.speciality_sketch_uuid,
+            sketch_path:item.sketch_path,
+            speciality_sketch_code: (item && item.speciality_sketch) ? item.speciality_sketch.code  :"",
+            speciality_sketch_name: (item && item.speciality_sketch) ? item.speciality_sketch.name  :"",
+        }
+    });
+  }
+  return ss_final;
 }
