@@ -209,6 +209,18 @@ module.exports = (sequelize, DataTypes) => {
       um_last_name: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      si_store_master_uuid: {
+        type: DataTypes.INTEGER
+      },
+      si_uuid: {
+        type: DataTypes.INTEGER
+      },
+      si_is_active: {
+        type: DataTypes.BOOLEAN,
+      },
+      si_status: {
+        type: DataTypes.BOOLEAN,
       }
     },
     {
