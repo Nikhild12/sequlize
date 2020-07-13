@@ -435,6 +435,7 @@ function getPPVQuery(user_uuid, patient_uuid) {
       "u_first_name",
       "u_middle_name",
       "u_last_name",
+      "ut_name",
       "et_code",
       "et_name",
       "pv_vital_uom_uuid"
@@ -501,6 +502,7 @@ function PPVitalsList(getHistoryPatientVitals) {
         created_by_lastlename: pV.u_last_name,
         encounter_type_code: pV.et_code,
         encounter_type_name: pV.et_name,
+        salutaion_name: pV.ut_name,
         PV_list: [
           ...PV_list,
           ...getPVlist(
@@ -550,7 +552,8 @@ function getPVlist(fetchedData, p_id, created_date) {
         // uom master table values
         uom_code: pV.um_code,
         uom_name: pV.um_name,
-        uom_uuid: pV.pv_vital_uom_uuid
+        uom_uuid: pV.pv_vital_uom_uuid,
+        salutaion_name: pV.ut_name
       };
     });
   }

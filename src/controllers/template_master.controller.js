@@ -4,7 +4,7 @@ const Op = sequelize.Op;
 
 const db = require("../config/sequelize");
 const emr_utility = require("../services/utility.service");
-
+const note_templates_controller = require("../controllers/note_templates.controller");
 // Import EMR Constants
 const emr_constants = require("../config/constants");
 
@@ -19,6 +19,7 @@ const vw_ris = db.vw_ris_template;
 const vw_all_temp = db.vw_all_templates;
 const vw_profile_ris = db.vw_profile_ris_template;
 const vw_profile_lab = db.vw_profile_lab_template;
+const vw_profile_invest = db.vw_profile_invest_template;
 
 const tmpmstrController = () => {
   /**
@@ -31,13 +32,18 @@ const tmpmstrController = () => {
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    let { temp_type_id, dept_id, lab_id } = req.query;
+    let { temp_type_id, dept_id, lab_id, store_master_uuid } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
-        if ([5, 6, 7, 8].includes(+(temp_type_id))) {
+        if ([5, 6, 8].includes(+(temp_type_id))) {
           return res.status(400).send({
             code: httpStatus[400],
-            message: "templete type id must be 1 or 2 or 3 or 4 or 9"
+            message: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9"
+          });
+        }
+        if (+(temp_type_id) === 1 && !store_master_uuid) {
+          return res.status(400).send({
+            code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
           });
         }
         const { table_name, query } = getTemplateTypeUUID(
@@ -45,7 +51,8 @@ const tmpmstrController = () => {
           dept_id,
           user_uuid,
           facility_uuid,
-          lab_id
+          lab_id,
+          store_master_uuid
         );
         const templateList = await table_name.findAll(query);
         if (templateList != null && templateList.length > 0) {
@@ -63,7 +70,8 @@ const tmpmstrController = () => {
             1: { templates_list: [] },
             2: { templates_lab_list: [] },
             3: { templates_radiology_list: [] },
-            4: { templateDetails: [] }
+            4: { templateDetails: [] },
+            7: { templates_invest_list: [] }
           };
           return res.status(200).send({
             code: httpStatus.OK,
@@ -142,10 +150,10 @@ const tmpmstrController = () => {
 
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
-        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 7 || temp_type_id == 8) {
+        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 8) {
           return res.status(400).send({
             code: httpStatus[400],
-            message: "templete type id must be 1 or 2 or 3 or 4 or 9"
+            message: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9"
           });
         }
         const { table_name, query } = getTemplatedetailsUUID(
@@ -158,19 +166,34 @@ const tmpmstrController = () => {
         const templateList = await table_name.findAll(query);
 
         if (templateList.length > 0) {
-          const templateData = getTemplateDetailsData(
-            temp_type_id,
-            templateList
-          );
+          if (temp_type_id == 4) {
+            const getdep = await note_templates_controller.getdepDetails(req.headers.user_uuid, templateList[0].department_uuid, req.headers.authorization);
 
-          return res
-            .status(httpStatus.OK)
-            .json({ statusCode: 200, req: "", responseContent: templateData });
+            const getfacility = await note_templates_controller.getfacilityDetails(req.headers.user_uuid, templateList[0].facility_uuid, req.headers.authorization);
+
+            if (getdep && getfacility) {
+              templateList[0].dataValues.department_name = getdep.responseContent.name;
+              templateList[0].dataValues.facility_name = getfacility.responseContents.name;
+              return res
+                .status(httpStatus.OK)
+                .json({ statusCode: 200, req: "", responseContent: templateList });
+            }
+          } else {
+            const templateData = getTemplateDetailsData(
+              temp_type_id,
+              templateList
+            );
+
+            return res
+              .status(httpStatus.OK)
+              .json({ statusCode: 200, req: "", responseContent: templateData });
+          }
         } else {
           return res
             .status(200)
             .send({ statusCode: 200, message: "No Record Found" });
         }
+
       } else {
         return res.status(400).send({
           code: httpStatus[400],
@@ -196,10 +219,8 @@ const tmpmstrController = () => {
         let displayOrder = templateMasterReqData.display_order;
         const temp_master_active = templateMasterReqData.is_active;
 
-
-
         //checking template already exits or not
-        const exists = await nameExists(temp_name,displayOrder, userUUID);
+        const exists = await nameExists(temp_name, displayOrder, userUUID);
 
         const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
         if (displayOrderexists.length > 0) {
@@ -566,7 +587,9 @@ function getTemplateData(fetchedData) {
       template_id: fetchedData[0].dataValues.tm_uuid,
       template_name: fetchedData[0].dataValues.tm_name,
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
-            template_department: fetchedData[0].dataValues.tm_dept,
+      template_department_name: fetchedData[0].dataValues.d_name,
+      template_department: fetchedData[0].dataValues.tm_dept,
+
       user_uuid: fetchedData[0].dataValues.tm_userid,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
@@ -575,6 +598,7 @@ function getTemplateData(fetchedData) {
       created_date: fetchedData[0].dataValues.tm_created_date,
       modified_by: modifiedby,
       modified_date: fetchedData[0].dataValues.tm_modified_date,
+      facility_uuid: fetchedData[0].dataValues.f_uuid,
       facility_name: fetchedData[0].dataValues.f_name,
       department_name: fetchedData[0].dataValues.d_name,
       satus: fetchedData[0].dataValues.tm_status[0] === 1 ? true : false,
@@ -635,7 +659,8 @@ function getTemplateListData(fetchedData) {
           temp_details: {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
-
+            created_by: tD.tm_created_by,
+            modified_by: tD.tm_modified_by,
             template_department: tD.dataValues.tm_dept,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
@@ -680,9 +705,11 @@ function getTemplateListData1(fetchedData) {
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
             is_public: tD.dataValues.tm_public[0] === 1 ? true : false,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: tD.dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
@@ -859,6 +886,8 @@ function getDrugsListForTemplate(fetchedData, template_id) {
           store_id: dD.sm_uuid,
           store_code: dD.sm_store_code,
           store_name: dD.sm_store_name,
+          store_master_uuid: dD.si_store_master_uuid || 0,
+
 
           is_active: dD.im_acive
         }
@@ -929,9 +958,11 @@ function getLabListData(fetchedData) {
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: tD.dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: tD.dataValues.tm_modified_date,
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
@@ -979,9 +1010,11 @@ function getRisListData(fetchedData) {
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
-            created_by: createdby,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
             created_date: fetchedData[0].dataValues.tm_created_date,
-            modified_by: modifiedby,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
             modified_date: fetchedData[0].dataValues.tm_modified_date,
             facility_name: fetchedData[0].dataValues.f_name,
             facility_uuid: fetchedData[0].dataValues.f_uuid,
@@ -1004,6 +1037,59 @@ function getRisListData(fetchedData) {
     return { templates_radiology_list: temp_list };
   } else {
     return { templates_radiology_list: [] };
+  }
+}
+
+function getInvestData(fetchedData) {
+  let templateList = [],
+    Invest_details = [];
+  const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+  const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
+
+  if (fetchedData && fetchedData.length > 0) {
+    fetchedData.forEach(tD => {
+      templateList = [
+        ...templateList,
+        {
+          temp_details: {
+            template_id: tD.dataValues.tm_uuid,
+            template_name: tD.dataValues.tm_name,
+            template_department: tD.dataValues.tm_department_uuid,
+            user_uuid: tD.dataValues.tm_user_uuid,
+            template_description: tD.dataValues.tm_description,
+            template_displayorder: tD.dataValues.tm_display_order,
+            template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_type_name: tD.dataValues.tm_template_type_name,
+            template_is_active: tD.dataValues.tm_is_active,
+            template_status: tD.dataValues.tm_status,
+            is_public: tD.dataValues.tm_is_public,
+            created_by: tD.dataValues.tm_created_by,
+            created_by_name: createdby,
+            created_date: fetchedData[0].dataValues.tm_created_date,
+            modified_by: tD.dataValues.tm_modified_by,
+            modified_by_name: modifiedby,
+            modified_date: fetchedData[0].dataValues.tm_modified_date,
+            facility_name: fetchedData[0].dataValues.f_name,
+            facility_uuid: fetchedData[0].dataValues.f_uuid,
+            department_name: fetchedData[0].dataValues.d_name,
+          },
+
+          Invest_details: [
+            ...Invest_details,
+            ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
+          ]
+        }
+      ];
+    });
+    let uniq = {};
+    let temp_list = templateList.filter(
+      obj =>
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
+    );
+    return { templates_invest_list: temp_list };
+  } else {
+    return { templates_invest_list: [] };
   }
 }
 
@@ -1075,7 +1161,42 @@ function getRisListForTemplate(fetchedData, template_id) {
   return radiology_list;
 }
 
-function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId) {
+
+function getInvestForTemplate(fetchedData, template_id) {
+  let Invest_list = [];
+  const filteredData = fetchedData.filter(fD => {
+    return fD.dataValues.tm_uuid === template_id;
+  });
+
+  if (filteredData && filteredData.length > 0) {
+    filteredData.forEach(lD => {
+      Invest_list = [
+        ...Invest_list,
+        {
+          template_details_uuid: lD.tmd_uuid,
+          template_details_displayorder: lD.tmd_display_order,
+          lab_test_uuid: lD.itm_uuid,
+          lab_code: lD.itm_code,
+          lab_name: lD.itm_name,
+          lab_test_description: lD.itm_description,
+          lab_test_status: lD.itm_status,
+          lab_test_is_active: lD.itm_is_active,
+          lab_type_uuid: lD.itm_lab_master_type_uuid,
+          profile_test_uuid: lD.ipm_uuid,
+          profile_test_code: lD.ipm_profile_code,
+          profile_test_name: lD.ipm_name,
+          profile_test_description: lD.ipm_description,
+          profile_test_status: lD.ipm_status,
+          profile_test_active: lD.ipm_is_active,
+          //lab_type_uuid: lD.lpm_lab_master_type_uuid
+        }
+      ];
+    });
+  }
+  return Invest_list;
+}
+
+function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId) {
   return {
     tm_status: 1,
     tm_active: 1,
@@ -1083,6 +1204,9 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId) {
     tmd_status: 1,
     tm_template_type_uuid: temp_type_id,
     f_uuid: fId,
+    si_store_master_uuid: sMId,
+    si_is_active: emr_constants.IS_ACTIVE,
+    si_status: emr_constants.IS_ACTIVE,
     [Op.or]: [
       { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
       { tm_userid: { [Op.eq]: user_uuid } }
@@ -1200,6 +1324,8 @@ function getTempData(temp_type_id, result) {
       return getLabListData(result);
     case "3":
       return getRisListData(result);
+    case "7":
+      return getInvestData(result);
     case "9":
       return getTemplateListData1(result);
     default:
@@ -1236,13 +1362,13 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name,displayOrder, userUUID) => {
+const nameExists = (temp_name, displayOrder, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name,display_order:displayOrder, user_uuid: userUUID }
+        where: { name: temp_name, display_order: displayOrder, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);
@@ -1292,14 +1418,14 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
     });
   }
 };
-function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
+function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId) {
   switch (temp_type_id) {
     case "1":
       return {
         table_name: vw_template,
         query: {
           order: [["tm_display_order", "ASC"]],
-          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId),
+          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
       };
@@ -1356,6 +1482,28 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
         table_name: tempmstrTbl,
         query: getVitalsQuery(temp_type_id, dept_id, user_uuid, fId)
       };
+    case "7":
+      return {
+        table_name: vw_profile_invest,
+        query: {
+          order: [["tm_display_order", "ASC"]],
+          where: {
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1,
+            f_uuid: fId,
+            [Op.or]: [
+              {
+                tm_department_uuid: { [Op.eq]: dept_id },
+                "`tm_is_public`": { [Op.eq]: 1 }
+              },
+              { tm_user_uuid: { [Op.eq]: user_uuid } }
+            ]
+          }
+        }
+      };
 
     case "9":
       return {
@@ -1408,9 +1556,9 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
       };
     case "3":
       lab_id = +(lab_id);
-      const labValidation1 = !lab_id || lab_id === 0;
-      const searchKey1 = labValidation1 ? 'tm_department_uuid' : 'tm_lab_uuid';
-      const searchValue1 = labValidation1 ? dept_id : lab_id;
+      const risValidation = !lab_id || lab_id === 0;
+      const searchKey1 = risValidation ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const searchValue1 = risValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_ris,
         query: {
@@ -1432,6 +1580,27 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
       return {
         table_name: tempmstrTbl,
         query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id)
+      };
+    case "7":
+      lab_id = +(lab_id);
+      const InvestValidation = !lab_id || lab_id === 0;
+      const investsearchKey = InvestValidation ? 'tm_department_uuid' : 'tm_lab_uuid';
+      const investsearchValue = InvestValidation ? dept_id : lab_id;
+      return {
+        table_name: vw_profile_invest,
+        query: {
+          where: {
+            tm_uuid: temp_id,
+            tm_user_uuid: user_uuid,
+            [investsearchKey]: investsearchValue,
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1
+          },
+          order: [["tm_display_order", "ASC"]]
+        }
       };
     case "9":
       return {
@@ -1476,6 +1645,13 @@ function getTemplateDetailsData(temp_type_id, list) {
         fetchdata.templateDetails &&
         fetchdata.templateDetails.length > 0
         ? fetchdata.templateDetails[0]
+        : {};
+    case "7":
+      fetchdata = getTempData(temp_type_id, list);
+      return fetchdata &&
+        fetchdata.templates_invest_list &&
+        fetchdata.templates_invest_list.length > 0
+        ? fetchdata.templates_invest_list[0]
         : {};
     case "9":
       fetchdata = getTempData(temp_type_id, list);

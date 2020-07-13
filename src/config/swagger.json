@@ -3436,6 +3436,11 @@
 					},
 					{
 						"in": "query",
+						"name": "store_master_uuid",
+						"type": "integer"
+					},
+					{
+						"in": "query",
 						"name": "fav_type_id",
 						"required": true,
 						"type": "integer"
@@ -3711,6 +3716,11 @@
 					},
 					{
 						"in": "query",
+						"name": "store_master_uuid",
+						"type": "integer"
+					},
+					{
+						"in": "query",
 						"name": "lab_id",
 						"type": "integer"
 					},
@@ -3917,6 +3927,16 @@
 					},
 					{
 						"in": "query",
+						"name": "pageNo",
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "paginationSize",
+						"type": "number"
+					},
+					{
+						"in": "query",
 						"name": "searchBy",
 						"required": true,
 						"type": "string"
@@ -3926,7 +3946,7 @@
 						"name": "searchValue",
 						"required": true,
 						"type": "string"
-					}
+					}					
 				],
 				"produces": [
 					"application/json",
@@ -8976,7 +8996,41 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/certificates/printpreviouscertificates": {
+			"get": {
+				"summary": "To get List of patient Certificates",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "certificate_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientCertficates"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
+
 	},
 	"definitions": {
 		"updatevitals": {

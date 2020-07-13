@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{language.print}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    {{!-- <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'> --}}
+
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div style="float:left; padding: 15px; width: calc(100% - 30px);">
+        <div style="width: 80px; float: left;"><img src="{{include '/assets/images/tnlogo.png' 'img'}}" alt="no image"
+                style="width: 100%;margin-left:20px" /></div>
+        <div style="width:calc(100% - 180px); float:left; text-align: center; padding:0 10px">
+            <h1 style="margin:5px 0 0 0;">{{results.facilityname}}</h1>
+            <p style="margin:0;">{{results.facilityAdd1}},{{results.facilityAdd2}},
+                {{results.facilityStateName}},{{results.facilityDisName}},600014</p>
+            <p style="margin:0;">{{results.landline}}</p>
+        </div>
+        <div style="width: 80px; float: right; text-align: right; vertical-align:middle;"><img
+                src="{{include '/assets/images/nhm.png' 'img'}}" style="width: 100%; margin-top: 20px;" /></div>
+    </div>
+</body>
+
+</html>

@@ -52,8 +52,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             s_status: {
 
-                type: DataTypes.BOOLEAN
-
+                type: DataTypes.BOOLEAN,
+                defaultValue:1
 
             },
             s_is_active: {
@@ -96,7 +96,12 @@ module.exports = (sequelize, DataTypes) => {
 
         },
         {
-            freezeTableName: true
+            freezeTableName: true,
+            defaultScope:{
+                where:{
+                    s_status:1
+                }
+            }
         }
     );
     return vw_speciality_sketch;

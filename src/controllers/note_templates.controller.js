@@ -410,7 +410,7 @@ const noteTemplatesController = () => {
                 },
                 include: [
                     {
-                        model: noteTemplateTypeTbl,
+                        model: templateTypeTbl,
                         required: false,
                         where: { is_active: 1, status: 1 }
                     },
@@ -518,7 +518,9 @@ const noteTemplatesController = () => {
         updatenoteTemplatesById,
         deletenoteTemplatesr,
         getnoteTemplatesrById,
-        getNoteTemplateByType
+        getNoteTemplateByType,
+        getfacilityDetails,
+        getdepDetails
     };
 };
 
@@ -611,7 +613,7 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep, getfacility) {
                 : null,
         "created_date": data.created_date,
         "modified_date": data.modified_date,
-        "note_template_type": data.note_template_type,
+        "note_template_type": data.template_type,
         "note_type": data.note_type
 
     };
