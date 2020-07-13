@@ -31,7 +31,7 @@ const tmpmstrController = () => {
 
   const _gettemplateByID = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
-    let { temp_type_id, dept_id, lab_id } = req.query;
+    let { temp_type_id, dept_id, lab_id, store_master_uuid } = req.query;
     try {
       if (user_uuid > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 7, 8].includes(+(temp_type_id))) {
@@ -40,12 +40,18 @@ const tmpmstrController = () => {
             message: "templete type id must be 1 or 2 or 3 or 4 or 9"
           });
         }
+        if (+(temp_type_id) === 1 && !store_master_uuid) {
+          return res.status(400).send({
+            code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
+          });
+        }
         const { table_name, query } = getTemplateTypeUUID(
           temp_type_id,
           dept_id,
           user_uuid,
           facility_uuid,
-          lab_id
+          lab_id,
+          store_master_uuid
         );
         const templateList = await table_name.findAll(query);
         if (templateList != null && templateList.length > 0) {
@@ -878,6 +884,8 @@ function getDrugsListForTemplate(fetchedData, template_id) {
           store_id: dD.sm_uuid,
           store_code: dD.sm_store_code,
           store_name: dD.sm_store_name,
+          store_master_uuid: dD.si_store_master_uuid || 0,
+
 
           is_active: dD.im_acive
         }
@@ -1098,7 +1106,7 @@ function getRisListForTemplate(fetchedData, template_id) {
   return radiology_list;
 }
 
-function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId) {
+function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId) {
   return {
     tm_status: 1,
     tm_active: 1,
@@ -1106,6 +1114,9 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId) {
     tmd_status: 1,
     tm_template_type_uuid: temp_type_id,
     f_uuid: fId,
+    si_store_master_uuid: sMId,
+    si_is_active: emr_constants.IS_ACTIVE,
+    si_status: emr_constants.IS_ACTIVE,
     [Op.or]: [
       { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
       { tm_userid: { [Op.eq]: user_uuid } }
@@ -1315,14 +1326,14 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
     });
   }
 };
-function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id) {
+function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId) {
   switch (temp_type_id) {
     case "1":
       return {
         table_name: vw_template,
         query: {
           order: [["tm_display_order", "ASC"]],
-          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId),
+          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
       };
