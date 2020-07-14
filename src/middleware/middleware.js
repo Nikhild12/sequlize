@@ -87,7 +87,7 @@ function createFolder(destinationPath) {
                 }
                 if (process.platform === 'linux') {
                     if (!fs.existsSync(fileServerPath + '/' + writeFilePath)) {
-                       // fs.mkdirSync(fileServerPath + '/' + writeFilePath);
+                        fs.mkdirSync(fileServerPath + '/' + writeFilePath);
                     }
                 } else {
                     if (!fs.existsSync(writeFilePath)) {
