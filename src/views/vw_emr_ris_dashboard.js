@@ -1,37 +1,28 @@
-const uuidparse = require ("uuid-parse");
+const uuidparse = require("uuid-parse");
 
 module.exports = (sequelize, DataTypes) => {
     const vw_emr_ris_dashboard = sequelize.define(
         "vw_emr_ris_dashboard",
         {
-            ed_patient_uuid: {
+            rpo_facility_uuid: {
                 type: DataTypes.INTEGER,
             },
-            ed_doctor_uuid: {
+            rpo_department_uuid: {
                 type: DataTypes.INTEGER,
             },
-            ed_department_uuid: {
+            rpo_doctor_uuid: {
                 type: DataTypes.INTEGER,
-            },
-            ed_consultation_start_date: {
-                type: DataTypes.DATE,
-            },
-            ed_is_active:{
-                type: DataTypes.BOOLEAN,
-            },
-            ed_status:{
-                type: DataTypes.BOOLEAN,
             },
             p_uuid: {
                 type: DataTypes.INTEGER,
             },
-            p_gender_uuid:{
+            p_gender_uuid: {
                 type: DataTypes.INTEGER,
             },
-            p_is_active:{
+            p_is_active: {
                 type: DataTypes.BOOLEAN,
             },
-            p_status:{
+            p_status: {
                 type: DataTypes.BOOLEAN,
             },
             pv_uuid: {
@@ -40,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
             pv_session_uuid: {
                 type: DataTypes.INTEGER,
             },
-            pv_registered_date:{
+            pv_registered_date: {
                 type: DataTypes.DATE,
             },
-            pv_is_active:{
+            pv_is_active: {
                 type: DataTypes.BOOLEAN,
             },
             s_uuid: {
@@ -55,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
             s_name: {
                 type: DataTypes.STRING(100)
             },
-            s_is_active:{
+            s_is_active: {
                 type: DataTypes.BOOLEAN,
             },
-            s_status:{
+            s_status: {
                 type: DataTypes.BOOLEAN,
             },
             rpo_uuid: {
@@ -67,13 +58,13 @@ module.exports = (sequelize, DataTypes) => {
             rpo_order_number: {
                 type: DataTypes.INTEGER,
             },
-            rpo_order_request_date:{
+            rpo_order_request_date: {
                 type: DataTypes.DATE,
             },
-            rpo_is_active:{
+            rpo_is_active: {
                 type: DataTypes.BOOLEAN,
             },
-            rpo_status:{
+            rpo_status: {
                 type: DataTypes.BOOLEAN,
             },
             g_uuid: {
@@ -85,18 +76,18 @@ module.exports = (sequelize, DataTypes) => {
             g_name: {
                 type: DataTypes.STRING(100)
             },
-            g_is_active:{
+            g_is_active: {
                 type: DataTypes.BOOLEAN,
             },
-            g_status:{
+            g_status: {
                 type: DataTypes.BOOLEAN,
             },
         },
         {
-            tableName: "vw_emr_ris_dashboard" ,
+            tableName: "vw_emr_ris_dashboard",
             timestamps: false
         }
     );
-   
+
     return vw_emr_ris_dashboard;
 };
