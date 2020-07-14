@@ -1071,11 +1071,12 @@ function getInvestData(fetchedData) {
           facility_name: fetchedData[0].dataValues.f_name,
           facility_uuid: fetchedData[0].dataValues.f_uuid,
           department_name: fetchedData[0].dataValues.d_name,
-          Invest_details: [
-            ...Invest_details,
-            ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
-          ]
-        }
+        
+        },
+        Invest_details: [
+          ...Invest_details,
+          ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
+        ]
       }
     });
     let uniq = {};
