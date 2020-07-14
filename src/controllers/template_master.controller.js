@@ -38,7 +38,7 @@ const tmpmstrController = () => {
         if ([5, 6, 8].includes(+(temp_type_id))) {
           return res.status(400).send({
             code: httpStatus[400],
-            message: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9"
+            message: emr_constants.TEMPLATE_REQUIRED_TYPES
           });
         }
         if (+(temp_type_id) === 1 && !store_master_uuid) {
@@ -150,10 +150,10 @@ const tmpmstrController = () => {
 
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
-        if (temp_type_id == 5 || temp_type_id == 6 || temp_type_id == 8) {
+        if ([5, 6, 8].includes(+(temp_type_id))) {
           return res.status(400).send({
             code: httpStatus[400],
-            message: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9"
+            message: emr_constants.TEMPLATE_REQUIRED_TYPES
           });
         }
         const { table_name, query } = getTemplatedetailsUUID(
@@ -1040,46 +1040,44 @@ function getRisListData(fetchedData) {
   }
 }
 
+
 function getInvestData(fetchedData) {
   let templateList = [],
-    Invest_details = [];
+  Invest_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
-    fetchedData.forEach(tD => {
-      templateList = [
-        ...templateList,
-        {
-          temp_details: {
-            template_id: tD.dataValues.tm_uuid,
-            template_name: tD.dataValues.tm_name,
-            template_department: tD.dataValues.tm_department_uuid,
-            user_uuid: tD.dataValues.tm_user_uuid,
-            template_description: tD.dataValues.tm_description,
-            template_displayorder: tD.dataValues.tm_display_order,
-            template_type_uuid: tD.dataValues.tm_template_type_uuid,
-            template_type_name: tD.dataValues.tm_template_type_name,
-            template_is_active: tD.dataValues.tm_is_active,
-            template_status: tD.dataValues.tm_status,
-            is_public: tD.dataValues.tm_is_public,
-            created_by: tD.dataValues.tm_created_by,
-            created_by_name: createdby,
-            created_date: fetchedData[0].dataValues.tm_created_date,
-            modified_by: tD.dataValues.tm_modified_by,
-            modified_by_name: modifiedby,
-            modified_date: fetchedData[0].dataValues.tm_modified_date,
-            facility_name: fetchedData[0].dataValues.f_name,
-            facility_uuid: fetchedData[0].dataValues.f_uuid,
-            department_name: fetchedData[0].dataValues.d_name,
-          },
-
-          Invest_details: [
-            ...Invest_details,
-            ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
-          ]
-        }
-      ];
+    templateList = fetchedData.map(tD => {
+      return {
+        temp_details: {
+          template_id: tD.dataValues.tm_uuid,
+          template_name: tD.dataValues.tm_name,
+          template_department: tD.dataValues.tm_department_uuid,
+          user_uuid: tD.dataValues.tm_user_uuid,
+          template_description: tD.dataValues.tm_description,
+          template_displayorder: tD.dataValues.tm_display_order,
+          template_type_uuid: tD.dataValues.tm_template_type_uuid,
+          template_type_name: tD.dataValues.tm_template_type_name,
+          template_is_active: tD.dataValues.tm_is_active,
+          template_status: tD.dataValues.tm_status,
+          is_public: tD.dataValues.tm_is_public,
+          created_by: tD.dataValues.tm_created_by,
+          created_by_name: createdby,
+          created_date: fetchedData[0].dataValues.tm_created_date,
+          modified_by: tD.dataValues.tm_modified_by,
+          modified_by_name: modifiedby,
+          modified_date: fetchedData[0].dataValues.tm_modified_date,
+          facility_name: fetchedData[0].dataValues.f_name,
+          facility_uuid: fetchedData[0].dataValues.f_uuid,
+          department_name: fetchedData[0].dataValues.d_name,
+        
+        },
+        Invest_details: [
+          ...Invest_details,
+          ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
+        ]
+      }
     });
     let uniq = {};
     let temp_list = templateList.filter(
@@ -1092,6 +1090,7 @@ function getInvestData(fetchedData) {
     return { templates_invest_list: [] };
   }
 }
+
 
 function getLabListForTemplate(fetchedData, template_id) {
   let lab_list = [];
@@ -1169,28 +1168,25 @@ function getInvestForTemplate(fetchedData, template_id) {
   });
 
   if (filteredData && filteredData.length > 0) {
-    filteredData.forEach(lD => {
-      Invest_list = [
-        ...Invest_list,
-        {
-          template_details_uuid: lD.tmd_uuid,
-          template_details_displayorder: lD.tmd_display_order,
-          lab_test_uuid: lD.itm_uuid,
-          lab_code: lD.itm_code,
-          lab_name: lD.itm_name,
-          lab_test_description: lD.itm_description,
-          lab_test_status: lD.itm_status,
-          lab_test_is_active: lD.itm_is_active,
-          lab_type_uuid: lD.itm_lab_master_type_uuid,
-          profile_test_uuid: lD.ipm_uuid,
-          profile_test_code: lD.ipm_profile_code,
-          profile_test_name: lD.ipm_name,
-          profile_test_description: lD.ipm_description,
-          profile_test_status: lD.ipm_status,
-          profile_test_active: lD.ipm_is_active,
-          //lab_type_uuid: lD.lpm_lab_master_type_uuid
-        }
-      ];
+    Invest_list = filteredData.map(lD => {
+      return {
+        template_details_uuid: lD.tmd_uuid,
+        template_details_displayorder: lD.tmd_display_order,
+        lab_test_uuid: lD.itm_uuid,
+        lab_code: lD.itm_code,
+        lab_name: lD.itm_name,
+        lab_test_description: lD.itm_description,
+        lab_test_status: lD.itm_status,
+        lab_test_is_active: lD.itm_is_active,
+        lab_type_uuid: lD.itm_lab_master_type_uuid,
+        profile_test_uuid: lD.ipm_uuid,
+        profile_test_code: lD.ipm_profile_code,
+        profile_test_name: lD.ipm_name,
+        profile_test_description: lD.ipm_description,
+        profile_test_status: lD.ipm_status,
+        profile_test_active: lD.ipm_is_active
+      }
+
     });
   }
   return Invest_list;

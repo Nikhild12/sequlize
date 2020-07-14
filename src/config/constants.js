@@ -65,6 +65,7 @@ module.exports = Object.freeze({
   DRUG_FREQUENCY: "Drug Frequency Successfully Fetched",
   DIAGNOSIS_ALREADY_EXISTS: "Diagnosis already exists",
   PRESCRIPTION_STORE_MASTER: "Please send Store master uuid to get Prescription Favorutie/Template",
+  TEMPLATE_REQUIRED_TYPES: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
