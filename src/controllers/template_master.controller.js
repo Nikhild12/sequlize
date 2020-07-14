@@ -38,7 +38,7 @@ const tmpmstrController = () => {
         if ([5, 6, 8].includes(+(temp_type_id))) {
           return res.status(400).send({
             code: httpStatus[400],
-            message:emr_constants.TEMPLATE_REQUIRED_TYPES
+            message: emr_constants.TEMPLATE_REQUIRED_TYPES
           });
         }
         if (+(temp_type_id) === 1 && !store_master_uuid) {
@@ -1043,44 +1043,46 @@ function getRisListData(fetchedData) {
 
 function getInvestData(fetchedData) {
   let templateList = [],
-    Invest_details = [];
+  Invest_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
   if (fetchedData && fetchedData.length > 0) {
     templateList = fetchedData.map(tD => {
       return {
-        template_id: tD.dataValues.tm_uuid,
-        template_name: tD.dataValues.tm_name,
-        template_department: tD.dataValues.tm_department_uuid,
-        user_uuid: tD.dataValues.tm_user_uuid,
-        template_description: tD.dataValues.tm_description,
-        template_displayorder: tD.dataValues.tm_display_order,
-        template_type_uuid: tD.dataValues.tm_template_type_uuid,
-        template_type_name: tD.dataValues.tm_template_type_name,
-        template_is_active: tD.dataValues.tm_is_active,
-        template_status: tD.dataValues.tm_status,
-        is_public: tD.dataValues.tm_is_public,
-        created_by: tD.dataValues.tm_created_by,
-        created_by_name: createdby,
-        created_date: fetchedData[0].dataValues.tm_created_date,
-        modified_by: tD.dataValues.tm_modified_by,
-        modified_by_name: modifiedby,
-        modified_date: fetchedData[0].dataValues.tm_modified_date,
-        facility_name: fetchedData[0].dataValues.f_name,
-        facility_uuid: fetchedData[0].dataValues.f_uuid,
-        department_name: fetchedData[0].dataValues.d_name,
-        Invest_details: [
-          ...Invest_details,
-          ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
-        ]
+        temp_details: {
+          template_id: tD.dataValues.tm_uuid,
+          template_name: tD.dataValues.tm_name,
+          template_department: tD.dataValues.tm_department_uuid,
+          user_uuid: tD.dataValues.tm_user_uuid,
+          template_description: tD.dataValues.tm_description,
+          template_displayorder: tD.dataValues.tm_display_order,
+          template_type_uuid: tD.dataValues.tm_template_type_uuid,
+          template_type_name: tD.dataValues.tm_template_type_name,
+          template_is_active: tD.dataValues.tm_is_active,
+          template_status: tD.dataValues.tm_status,
+          is_public: tD.dataValues.tm_is_public,
+          created_by: tD.dataValues.tm_created_by,
+          created_by_name: createdby,
+          created_date: fetchedData[0].dataValues.tm_created_date,
+          modified_by: tD.dataValues.tm_modified_by,
+          modified_by_name: modifiedby,
+          modified_date: fetchedData[0].dataValues.tm_modified_date,
+          facility_name: fetchedData[0].dataValues.f_name,
+          facility_uuid: fetchedData[0].dataValues.f_uuid,
+          department_name: fetchedData[0].dataValues.d_name,
+          Invest_details: [
+            ...Invest_details,
+            ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
+          ]
+        }
       }
     });
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-        !uniq[obj.template_id] &&
-        (uniq[obj.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
     return { templates_invest_list: temp_list };
   } else {
