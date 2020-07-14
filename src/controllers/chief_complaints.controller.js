@@ -519,11 +519,6 @@ const ChiefComplaints = () => {
     const { search,searchKeyWord, status = 1, pageNo = 0, paginationSize = 10, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
     Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
-    let temp = parseInt(pageNo);
-    if (temp && temp != NaN) {
-      pageNo = temp;
-    }
-
     let postingData = {
       offset: pageNo * paginationSize,
       where: { is_active: 1, status: 1, },
