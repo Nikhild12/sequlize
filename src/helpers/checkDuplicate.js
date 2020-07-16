@@ -51,7 +51,7 @@ module.exports = {
 
             if (data.is_default == true || data.is_default == 1) {
                 const checkdefault = await tablename.findAndCountAll({ where: { is_default: true } });
-                if (checkdefault.count == 0) { }
+                if (checkdefault.count == 0) { /* empty */ }
                 else if (checkdefault.rows[0].dataValues.uuid != data.Id) {
                     return { errorCode: "ERR1006", msg: "Default not allowed" };
                 }
@@ -298,7 +298,7 @@ module.exports = {
                         }
                     }
                 });
-                if (checkdefault.count == 0) { } else if (checkdefault.rows[0].dataValues.uuid != data.Id) {
+                if (checkdefault.count == 0) {/* empty */ } else if (checkdefault.rows[0].dataValues.uuid != data.Id) {
                     return {
                         errorCode: "ERR1003",
                         msg: "Default already selected"
