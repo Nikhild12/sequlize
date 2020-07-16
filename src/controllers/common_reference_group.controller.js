@@ -219,7 +219,7 @@ const commonReferenceGroupController = () => {
                     }]
                 });
             }
-            
+
             postingData.where.is_active = status;
             let data = await common_tbl.findAndCountAll(postingData);
 
@@ -399,7 +399,7 @@ const commonReferenceGroupController = () => {
                     uuid: postData.Id
                 }
 
-            })
+            });
 
             if (data != null) {
                 console.log("data", data.dataValues);
@@ -604,7 +604,7 @@ const commonReferenceGroupController = () => {
 
         try {
 
-            duplicateResult = await checkDuplicate.checkRefGroupExistsUpdate(req.body, common_tbl, table_name)
+            duplicateResult = await checkDuplicate.checkRefGroupExistsUpdate(req.body, common_tbl, table_name);
             if (duplicateResult.count == 0) {
                 await common_tbl.update(dynamicField(postData, table_name, 0), {
                     // name: postData.name,

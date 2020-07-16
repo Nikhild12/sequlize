@@ -1043,7 +1043,7 @@ function getRisListData(fetchedData) {
 
 function getInvestData(fetchedData) {
   let templateList = [],
-  Invest_details = [];
+    Invest_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
   const modifiedby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
 
@@ -1071,13 +1071,13 @@ function getInvestData(fetchedData) {
           facility_name: fetchedData[0].dataValues.f_name,
           facility_uuid: fetchedData[0].dataValues.f_uuid,
           department_name: fetchedData[0].dataValues.d_name,
-        
+
         },
         Invest_details: [
           ...Invest_details,
           ...getInvestForTemplate(fetchedData, tD.dataValues.tm_uuid)
         ]
-      }
+      };
     });
     let uniq = {};
     let temp_list = templateList.filter(
@@ -1185,8 +1185,7 @@ function getInvestForTemplate(fetchedData, template_id) {
         profile_test_description: lD.ipm_description,
         profile_test_status: lD.ipm_status,
         profile_test_active: lD.ipm_is_active
-      }
-
+      };
     });
   }
   return Invest_list;

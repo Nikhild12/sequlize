@@ -27,7 +27,7 @@ const investigationController = () => {
                         statusCode: 200,
                         messsage: "Investigation Result Fetched Successfully",
                         responseContents: result
-                    })
+                    });
                 }
                 else {
                     return res.status(200).send({ statusCode: 200, message: `${emr_constants.NO_RECORD_FOUND}` });
@@ -37,7 +37,7 @@ const investigationController = () => {
                 return res.status(400).send({
                     code: httpStatus[400],
                     message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
-                })
+                });
             }
         }
         catch (err) {
@@ -50,6 +50,6 @@ const investigationController = () => {
     };
     return {
         getInvestigationResultById: _getInvestigationResultById
-    }
-}
+    };
+};
 module.exports = investigationController();

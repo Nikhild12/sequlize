@@ -29,9 +29,9 @@ const ReferalReasosnsController = () => {
       console.log('Exception Happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
-  }
+  };
   return {
     getReferalReasons: _getReferalReasons
-  }
+  };
 };
 module.exports = ReferalReasosnsController();

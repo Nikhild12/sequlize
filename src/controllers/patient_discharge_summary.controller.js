@@ -58,8 +58,8 @@ const patient_discharge_summary = () => {
         const patient_vitals_res = await getPatientVitals(patient_uuid, doctor_uuid, encounter_uuid);
         const patient_cheif_complaint_res = await getPatientChiefComplaints(req, patient_uuid, doctor_uuid, encounter_uuid);
         const patient_diagnosis_res = await getPatientDiagnosis(patient_uuid, doctor_uuid, encounter_uuid);
-        const patient_speciality_sketches = await getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid)
-        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res ,"speciality_sketches":patient_speciality_sketches} });
+        const patient_speciality_sketches = await getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter_uuid);
+        return res.status(200).send({ code: httpStatus.OK, responseContent: { "allergy": patient_allergy_res, "vitals": patient_vitals_res, "cheif_complaints": patient_cheif_complaint_res, "diagnosis": patient_diagnosis_res, "speciality_sketches": patient_speciality_sketches } });
 
       }
       catch (ex) {
@@ -714,20 +714,20 @@ async function getPatientSpecialitySketches(patient_uuid, doctor_uuid, encounter
   }
 }
 
-async function getSSOrganizeData(ss_result){
+async function getSSOrganizeData(ss_result) {
   let ss_final = [];
-  if(ss_result && ss_result.length >0){
-    ss_final = ss_result.map((item)=>{
-        return {
-            patient_speciality_sketche_uuid: item.uuid,
-            patient_uuid:item.patient_uuid,
-            date:item.created_date,
-            encounter_uuid:item.encounter_uuid,
-            speciality_sketch_uuid: item.speciality_sketch_uuid,
-            sketch_path:item.sketch_path,
-            speciality_sketch_code: (item && item.speciality_sketch) ? item.speciality_sketch.code  :"",
-            speciality_sketch_name: (item && item.speciality_sketch) ? item.speciality_sketch.name  :"",
-        }
+  if (ss_result && ss_result.length > 0) {
+    ss_final = ss_result.map((item) => {
+      return {
+        patient_speciality_sketche_uuid: item.uuid,
+        patient_uuid: item.patient_uuid,
+        date: item.created_date,
+        encounter_uuid: item.encounter_uuid,
+        speciality_sketch_uuid: item.speciality_sketch_uuid,
+        sketch_path: item.sketch_path,
+        speciality_sketch_code: (item && item.speciality_sketch) ? item.speciality_sketch.code : "",
+        speciality_sketch_name: (item && item.speciality_sketch) ? item.speciality_sketch.name : "",
+      };
     });
   }
   return ss_final;
