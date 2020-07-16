@@ -750,7 +750,7 @@ const profilesController = () => {
     } catch (ex) {
       return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
-  }
+  };
 
   const _setDefaultProfiles = async (req, res) => {
     try {
@@ -927,7 +927,7 @@ async function findDuplicateProfileByCodeAndName({ profile_code, profile_name })
   });
 }
 
-function getDuplicateMsg(record) {
+function getDuplicateMsgs(record) {
   return record[0].is_active
     ? emr_constants.DUPLICATE_ACTIVE_MSG
     : emr_constants.DUPLICATE_IN_ACTIVE_MSG;

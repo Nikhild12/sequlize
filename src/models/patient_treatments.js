@@ -140,7 +140,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     PATIENT_TREATMENTS.belongsTo(models.encounter_type, {
       foreignKey: "encounter_type_uuid"
-    })
-  }
+    });
+  };
   return PATIENT_TREATMENTS;
 };

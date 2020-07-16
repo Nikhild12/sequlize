@@ -125,7 +125,7 @@
               catch (ex) {
                   return res.status(500).send({ status: "failed", statusCode: httpStatus.BAD_REQUEST, message: ex.message });
               }
-          }
+          };
       
           return {
       

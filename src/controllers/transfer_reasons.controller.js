@@ -29,9 +29,9 @@ const TransferReasosnsController = () => {
       console.log('Exception Happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
-  }
+  };
   return {
     getTransferReasons: _getTransferReasons
-  }
+  };
 };
 module.exports = TransferReasosnsController();
