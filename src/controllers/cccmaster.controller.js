@@ -356,6 +356,7 @@ const cccMasterController = () => {
     const postcccMaster = async (req, res, next) => {
         try {
             if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
+                /* empty */
             }
             const { user_uuid, facility_uuid } = req.headers;
             let concept_detail_output;

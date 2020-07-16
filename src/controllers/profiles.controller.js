@@ -750,7 +750,7 @@ const profilesController = () => {
     } catch (ex) {
       return res.status(500).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
-  }
+  };
 
   const _setDefaultProfiles = async (req, res) => {
     try {
