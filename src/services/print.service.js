@@ -238,11 +238,11 @@ printService().register('check_len', (arr) => {
 });
 
 printService().register('wait',(val)=>{
-console.log("wait =================>",val)
+console.log("wait =================>",val);
     setTimeout(()=>{
         return val;
-    },1000)
-})
+    },1000);
+});
 
 
 

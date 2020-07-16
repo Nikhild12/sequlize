@@ -177,7 +177,7 @@ const cccMasterController = () => {
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
             }
-            const data = await cccMasterTbl.findAndCountAll(findQuery)
+            const data = await cccMasterTbl.findAndCountAll(findQuery);
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -188,7 +188,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
-            console.log('"sdfsdf"==', err)
+            console.log('"sdfsdf"==', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -332,7 +332,7 @@ const cccMasterController = () => {
                 //     }
                 // ],
                 //}
-            )
+            );
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -447,7 +447,7 @@ const cccMasterController = () => {
 
         await cccMasterTbl.update({
             is_active: 0,
-            status:0
+            status: 0
         }, {
             where: {
                 uuid: postData.Ccc_id
@@ -595,7 +595,7 @@ const cccMasterController = () => {
                 ],
                 offset: offset,
                 limit: itemsPerPage
-            })
+            });
 
             if (result) {
                 let Emonic_Details = {};
@@ -710,7 +710,7 @@ const cccMasterController = () => {
                         }]
                 }]
 
-            }, { returning: true })
+            }, { returning: true });
 
             // return res.send({ results: result });
             return res
