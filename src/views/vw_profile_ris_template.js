@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tm_template_type_name :{
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             tm_department_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
