@@ -41,7 +41,7 @@ const FavouriteType = () => {
 
             return res
                 .status(200)
-                .send({ code, statusCode:code, message: message, responseContent: favouriteTypeList });
+                .send({ statusCode: code, message: message, responseContent: favouriteTypeList });
 
         } catch (ex) {
             console.log(ex);
