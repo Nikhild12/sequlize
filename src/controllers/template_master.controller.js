@@ -1007,6 +1007,7 @@ function getRisListData(fetchedData) {
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_type_name: tD.dataValues.tm_template_type_name,
             template_is_active: tD.dataValues.tm_is_active,
             template_status: tD.dataValues.tm_status,
             is_public: tD.dataValues.tm_is_public,
