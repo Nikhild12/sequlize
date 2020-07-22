@@ -191,7 +191,8 @@ const ChiefComplaints = () => {
 
           } else {
 
-            chiefComplaintsData.status = chiefComplaintsData.is_active;
+            chiefComplaintsData.status = 1;
+            chiefComplaintsData.is_active = chiefComplaintsData.is_active;
             chiefComplaintsData.created_by = user_uuid;
             chiefComplaintsData.modified_by = user_uuid;
 
@@ -516,7 +517,7 @@ const ChiefComplaints = () => {
 
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
-    const { search,searchKeyWord, status = 1, pageNo = 0, paginationSize = 10, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+    const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize = 10, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
     Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
     let postingData = {
