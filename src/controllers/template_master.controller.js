@@ -701,6 +701,8 @@ function getTemplateListData1(fetchedData) {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_dept,
+            template_template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_template_type_name: tD.dataValues.tm_template_type_name,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
