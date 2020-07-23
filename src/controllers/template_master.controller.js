@@ -75,7 +75,7 @@ const tmpmstrController = () => {
           };
           return res.status(200).send({
             code: httpStatus.OK,
-            message: "No Data Found ",
+            message: emr_constants.NO_RECORD_FOUND,
             responseContents: responseContent && responseContent[temp_type_id] ? responseContent[temp_type_id] : responseContent[1]
           });
         }
@@ -83,7 +83,7 @@ const tmpmstrController = () => {
       else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: emr_constants.NO_REQUEST_FOUND
         });
       }
     } catch (ex) {
@@ -103,7 +103,7 @@ const tmpmstrController = () => {
       if (tempuuid <= 0) {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "Please provide valid template id"
+          message: emr_constants.PROPER_TEMPLATE_ID
         });
       }
       if (tempuuid) {
@@ -134,7 +134,7 @@ const tmpmstrController = () => {
       } else {
         return res
           .status(400)
-          .send({ code: httpStatus[400], message: "No Request Body Found" });
+          .send({ code: httpStatus[400], message: emr_constants.NO_RECORD_FOUND });
       }
     } catch (ex) {
       return res
@@ -191,13 +191,13 @@ const tmpmstrController = () => {
         } else {
           return res
             .status(200)
-            .send({ statusCode: 200, message: "No Record Found" });
+            .send({ statusCode: 200, message: emr_constants.NO_RECORD_FOUND });
         }
 
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: emr_constants.NO_REQUEST_FOUND
         });
       }
     } catch (err) {
@@ -226,14 +226,14 @@ const tmpmstrController = () => {
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "displayOrder exists" });
+            .send({ code: httpStatus[400], message: emr_constants.NAME_DISPLAY_EXISTS });
         }
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "Template name  exists" });
+            .send({ code: httpStatus[400], message: emr_constants.NAME_DISPLAY_EXISTS });
         } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
@@ -248,13 +248,13 @@ const tmpmstrController = () => {
                 headers: templateMasterReqData,
                 details: templateMasterDetailsReqData
               },
-              message: "Template details Inserted Successfully"
+              message: emr_constants.TEMPLATE_INSERTED
             });
           }
         } else {
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "No Request Body Found" });
+            .send({ code: httpStatus[400], message: NO_REQUEST_FOUND });
         }
       } catch (err) {
         return res
@@ -264,7 +264,7 @@ const tmpmstrController = () => {
     } else {
       return res
         .status(400)
-        .send({ code: httpStatus[400], message: "No Request Body Found" });
+        .send({ code: httpStatus[400], message: NO_REQUEST_FOUND });
     }
   };
 
@@ -292,7 +292,7 @@ const tmpmstrController = () => {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: "Template name exists" });
+            .send({ code: httpStatus[400], message: emr_constants.NAME_DISPLAY_EXISTS });
         }
         else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
@@ -304,7 +304,7 @@ const tmpmstrController = () => {
           if (templateMasterReqData.template_id <= 0) {
             return res.status(400).send({
               code: httpStatus[400],
-              message: "Please provide valid template id"
+              message: emr_constants.GetpleaseProvideMsg('template_uuid')
             });
           }
           const del_temp_drugs =
@@ -340,7 +340,7 @@ const tmpmstrController = () => {
             //templateTransStatus = true;
             return res.status(200).send({
               code: httpStatus.OK,
-              message: "Updated Successfully",
+              message: emr_constants.UPDATE_SUCCESS,
               responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
             });
           }
@@ -349,7 +349,7 @@ const tmpmstrController = () => {
           // templateTransStatus = true;
           return res.status(400).send({
             code: httpStatus[400],
-            message: "No Request headers or Body Found"
+            message: emr_constants.NO_REQUEST_HEADERS_FOUND
           });
         }
       } catch (ex) {
@@ -367,7 +367,7 @@ const tmpmstrController = () => {
     } else {
       return res
         .status(400)
-        .send({ code: httpStatus[400], message: "No Request Body Found" });
+        .send({ code: httpStatus[400], message: emr_constants.NO_REQUEST_FOUND });
     }
   };
 
@@ -421,7 +421,7 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: "Updated Successfully",
+            message: emr_constants.UPDATE_SUCCESS,
             responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
           });
         }
@@ -440,14 +440,14 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: "Updated Successfully",
+            message: emr_constants.UPDATE_SUCCESS,
             responseContent: { new_temp_dtls }
           });
         }
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request headers or Body Found"
+          message: emr_constants.NO_REQUEST_HEADERS_FOUND
         });
       }
     } catch (ex) {
@@ -535,7 +535,7 @@ const tmpmstrController = () => {
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: emr_constants.NO_REQUEST_FOUND
         });
       }
     } catch (ex) {
@@ -701,6 +701,8 @@ function getTemplateListData1(fetchedData) {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_dept,
+            template_template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_template_type_name: tD.dataValues.tm_template_type_name,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
@@ -1370,7 +1372,7 @@ const nameExists = (temp_name, displayOrder, userUUID) => {
         resolve(value);
         return value;
       } else {
-        reject({ message: "name or displayOrder does not existed" });
+        reject({ message: emr_constants.NAME_DISPLAY_NOTEXISTS });
       }
     });
   }
@@ -1386,12 +1388,11 @@ const displayOrderExists = (displayOrder, userUUID) => {
         resolve(value);
         return value;
       } else {
-        reject({ message: "displayOrder does not existed" });
+        reject({ message: emr_constants.NAME_DISPLAY_NOTEXISTS });
       }
     });
   }
 };
-
 
 const nameExistsupdate = (temp_name, userUUID, temp_id) => {
   if (temp_name !== undefined) {
@@ -1409,7 +1410,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
         resolve(value);
         return value;
       } else {
-        reject({ message: "name does not existed" });
+        reject({ message:emr_constants.NAME_DISPLAY_NOTEXISTS });
       }
     });
   }
