@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tm_template_type_name: {
+                type: DataTypes.STRING(100),
+                allowNull: false,
+            },
             tm_status: {
                 type: DataTypes.ENUM,
                 allowNull: false,
