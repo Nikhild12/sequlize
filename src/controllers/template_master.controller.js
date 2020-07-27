@@ -158,7 +158,7 @@ const tmpmstrController = () => {
           });
         }
 
-        if (+(temp_type_id) === 1 && !store_master_uuid && (!isMaster || isMaster === 'false')) {
+        if (+(temp_type_id) === 1 && !store_master_uuid) {
           return res.status(400).send({
             code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
           });
@@ -169,8 +169,7 @@ const tmpmstrController = () => {
           dept_id,
           user_uuid,
           lab_id,
-          store_master_uuid,
-          isMaster
+          store_master_uuid
         );
         const templateList = await table_name.findAll(query);
 
@@ -1239,7 +1238,7 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
 }
 
 
-function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId, isMaster) {
+function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId) {
 
   let presTempQuery = {
     tm_uuid: tId,
@@ -1254,14 +1253,12 @@ function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId, isMaster) {
     ]
   };
 
-  // if it's not master request i.e CM,
-  // then add store master details in the query
-  if (!isMaster) {
+  if (+(ttId) === 1) {
     presTempQuery = {
       ...presTempQuery, ...{
-        si_store_master_uuid: sMId
-        // si_is_active: emr_constants.IS_ACTIVE,
-        // si_status: emr_constants.IS_ACTIVE,
+        si_store_master_uuid: sMId,
+        si_is_active: emr_constants.IS_ACTIVE,
+        si_status: emr_constants.IS_ACTIVE,
       }
     };
   }
@@ -1537,7 +1534,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
   }
 }
 
-function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id, sMId, isMaster) {
+function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id, sMId) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1548,8 +1545,7 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
             dept_id,
             temp_type_id,
             temp_id,
-            sMId,
-            isMaster
+            sMId
           ),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
