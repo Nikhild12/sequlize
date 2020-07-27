@@ -146,6 +146,7 @@ const tmpmstrController = () => {
   const _gettempdetails = async (req, res) => {
     let { user_uuid } = req.headers;
     const { temp_id, temp_type_id, dept_id, lab_id, isMaster, createdUserId } = req.query;
+    const { store_master_uuid } = req.query;
     try {
 
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
@@ -156,12 +157,20 @@ const tmpmstrController = () => {
             message: emr_constants.TEMPLATE_REQUIRED_TYPES
           });
         }
+
+        if (+(temp_type_id) === 1 && !store_master_uuid && (!isMaster || isMaster === 'false')) {
+          return res.status(400).send({
+            code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
+          });
+        }
         const { table_name, query } = getTemplatedetailsUUID(
           temp_type_id,
           temp_id,
           dept_id,
           user_uuid,
-          lab_id
+          lab_id,
+          store_master_uuid,
+          isMaster
         );
         const templateList = await table_name.findAll(query);
 
@@ -1230,19 +1239,33 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
 }
 
 
-function getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id) {
-  return {
-    tm_uuid: temp_id,
+function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId, isMaster) {
+
+  let presTempQuery = {
+    tm_uuid: tId,
     tm_status: 1,
     tm_active: 1,
     tmd_is_active: 1,
     tmd_status: 1,
-    tm_template_type_uuid: temp_type_id,
+    tm_template_type_uuid: ttId,
     [Op.or]: [
-      { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
-      { tm_userid: { [Op.eq]: user_uuid } }
+      { tm_dept: { [Op.eq]: dId }, tm_public: { [Op.eq]: 1 } },
+      { tm_userid: { [Op.eq]: uId } }
     ]
   };
+
+  // if it's not master request i.e CM,
+  // then add store master details in the query
+  if (!isMaster) {
+    presTempQuery = {
+      ...presTempQuery, ...{
+        si_store_master_uuid: sMId
+        // si_is_active: emr_constants.IS_ACTIVE,
+        // si_status: emr_constants.IS_ACTIVE,
+      }
+    };
+  }
+  return presTempQuery;
 }
 
 function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
@@ -1410,7 +1433,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
         resolve(value);
         return value;
       } else {
-        reject({ message:emr_constants.NAME_DISPLAY_NOTEXISTS });
+        reject({ message: emr_constants.NAME_DISPLAY_NOTEXISTS });
       }
     });
   }
@@ -1514,7 +1537,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
   }
 }
 
-function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id) {
+function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id, sMId, isMaster) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1524,7 +1547,9 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
             user_uuid,
             dept_id,
             temp_type_id,
-            temp_id
+            temp_id,
+            sMId,
+            isMaster
           ),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }
