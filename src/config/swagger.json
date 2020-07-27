@@ -3791,6 +3791,11 @@
 						"in": "query",
 						"name": "createdUserId",
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "store_master_uuid",
+						"type": "integer"
 					}
 				],
 				"produces": [
