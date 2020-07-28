@@ -71,8 +71,9 @@ module.exports = Object.freeze({
   PROPER_TEMPLATE_ID: "Please provide valid template id",
   NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
   TEMPLATE_INSERTED: "Template details Inserted Successfully",
-  UPDATE_SUCCESS: "Updated Successfully",
+  TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
   NAME_DISPLAY_NOTEXISTS:"name or displayOrder does not existed",
+  PATIENT_VITAILS_CREATED: "Vitals Saved Successfully",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {

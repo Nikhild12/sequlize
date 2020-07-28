@@ -348,7 +348,7 @@ const tmpmstrController = () => {
             //templateTransStatus = true;
             return res.status(200).send({
               code: httpStatus.OK,
-              message: emr_constants.UPDATE_SUCCESS,
+              message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
               responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
             });
           }
@@ -429,7 +429,7 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: emr_constants.UPDATE_SUCCESS,
+            message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
             responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
           });
         }
@@ -448,7 +448,7 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: emr_constants.UPDATE_SUCCESS,
+            message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
             responseContent: { new_temp_dtls }
           });
         }
