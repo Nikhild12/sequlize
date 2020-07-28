@@ -7,6 +7,7 @@ var Op = Sequelize.Op;
 const sequelizeDb = require("../config/sequelize");
 
 const emrConstants = require("../config/constants");
+
 // Initialize EMR Workflow
 const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 
@@ -97,7 +98,7 @@ const EMRPatientVitals = () => {
           if (emr_patient_vitals_response) {
             return res.status(200).send({
               code: httpStatus.OK,
-              message: "Inserted EMR Patient Vital Details  Successfully",
+              message: emrConstants.PATIENT_VITAILS_CREATED,
               responseContents: emrPatientVitalReqData
             });
           }
