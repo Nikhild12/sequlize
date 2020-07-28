@@ -724,6 +724,7 @@ function getTemplateListData1(fetchedData) {
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
             department_name: tD.dataValues.d_name,
+            is_active: tD.tm_active && tD.tm_active[0]? true : false
           },
           diet_details: [
             ...diet_details,
