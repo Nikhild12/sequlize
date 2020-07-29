@@ -102,7 +102,8 @@ const specialitySketchesMasterController = () => {
 
             }
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where = { s_is_active: postData.status };
+                
+                findQuery.where['s_is_active'] = postData.status;
             }
             await vwSpecialitySketchTbl.findAndCountAll(findQuery,
 

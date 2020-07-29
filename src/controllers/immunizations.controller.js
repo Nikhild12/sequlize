@@ -550,7 +550,7 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         let postData = req.body;
-        postData.status=postData.is_active;
+       
         if (Object.keys(postData).length != 0) {
             if (postData.Id && req.headers.user_uuid) {
                 
