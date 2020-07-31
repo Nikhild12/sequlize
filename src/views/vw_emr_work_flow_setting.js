@@ -56,6 +56,12 @@ module.exports = (sequelize, DataTypes) => {
             },
             activity_route_url: {
                 type: DataTypes.STRING(255),
+            },
+            act_is_active: {
+                type: DataTypes.BOOLEAN,
+            },
+            act_status: {
+                type: DataTypes.BOOLEAN,
             }
 
 
