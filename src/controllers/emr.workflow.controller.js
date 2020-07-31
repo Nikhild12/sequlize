@@ -111,7 +111,9 @@ const EMRWorkflowSettings = () => {
           where: {
             ews_is_active: emr_constants.IS_ACTIVE,
             ews_user_uuid: user_uuid,
-            ews_context_uuid: context_uuid
+            ews_context_uuid: context_uuid,
+            act_is_active: emr_constants.IS_ACTIVE,
+            act_status: emr_constants.IS_ACTIVE
           }
         });
 
