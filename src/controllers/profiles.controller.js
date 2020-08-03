@@ -688,7 +688,8 @@ const profilesController = () => {
 
     try {
       if (user_uuid) {
-        const typesData = await valueTypesTbl.findAll();
+        let findquery={where:{is_active:1,status:1}};
+        const typesData = await valueTypesTbl.findAll(findquery);
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: typesData });
       }
       else {

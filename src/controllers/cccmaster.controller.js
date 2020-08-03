@@ -566,7 +566,7 @@ const cccMasterController = () => {
                     , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
                     'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                 where: {
-                    uuid: postData.Ccc_id, is_active: 1, status: 1
+                    uuid: postData.Ccc_id
                 },
                 include: [
                     {
