@@ -228,7 +228,7 @@ const tmpmstrController = () => {
         const temp_master_active = templateMasterReqData.is_active;
 
         //checking template already exits or not
-        const exists = await nameExists(temp_name, displayOrder, userUUID);
+        const exists = await nameExists(temp_name, userUUID);
 
         const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
         if (displayOrderexists.length > 0) {
@@ -1381,13 +1381,13 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name, displayOrder, userUUID) => {
+const nameExists = (temp_name, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, display_order: displayOrder, user_uuid: userUUID }
+        where: { name: temp_name, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);
