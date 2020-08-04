@@ -146,6 +146,7 @@ const tmpmstrController = () => {
   const _gettempdetails = async (req, res) => {
     let { user_uuid } = req.headers;
     const { temp_id, temp_type_id, dept_id, lab_id, isMaster, createdUserId } = req.query;
+    const { store_master_uuid } = req.query;
     try {
 
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
@@ -156,12 +157,19 @@ const tmpmstrController = () => {
             message: emr_constants.TEMPLATE_REQUIRED_TYPES
           });
         }
+
+        if (+(temp_type_id) === 1 && !store_master_uuid) {
+          return res.status(400).send({
+            code: httpStatus[400], message: emr_constants.PRESCRIPTION_STORE_MASTER,
+          });
+        }
         const { table_name, query } = getTemplatedetailsUUID(
           temp_type_id,
           temp_id,
           dept_id,
           user_uuid,
-          lab_id
+          lab_id,
+          store_master_uuid
         );
         const templateList = await table_name.findAll(query);
 
@@ -220,7 +228,7 @@ const tmpmstrController = () => {
         const temp_master_active = templateMasterReqData.is_active;
 
         //checking template already exits or not
-        const exists = await nameExists(temp_name, displayOrder, userUUID);
+        const exists = await nameExists(temp_name, userUUID);
 
         const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
         if (displayOrderexists.length > 0) {
@@ -340,7 +348,7 @@ const tmpmstrController = () => {
             //templateTransStatus = true;
             return res.status(200).send({
               code: httpStatus.OK,
-              message: emr_constants.UPDATE_SUCCESS,
+              message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
               responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
             });
           }
@@ -421,7 +429,7 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: emr_constants.UPDATE_SUCCESS,
+            message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
             responseContent: { tm: temp_mas, tmd: temp_mas_dtls }
           });
         }
@@ -440,7 +448,7 @@ const tmpmstrController = () => {
           );
           return res.status(200).send({
             code: httpStatus.OK,
-            message: emr_constants.UPDATE_SUCCESS,
+            message: emr_constants.TEMPLATE_UPDATE_SUCCESS,
             responseContent: { new_temp_dtls }
           });
         }
@@ -701,6 +709,8 @@ function getTemplateListData1(fetchedData) {
             template_id: tD.dataValues.tm_uuid,
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_dept,
+            template_template_type_uuid: tD.dataValues.tm_template_type_uuid,
+            template_template_type_name: tD.dataValues.tm_template_type_name,
             user_uuid: tD.dataValues.tm_userid,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
@@ -714,6 +724,7 @@ function getTemplateListData1(fetchedData) {
             facility_name: tD.dataValues.f_name,
             facility_uuid: tD.dataValues.f_uuid,
             department_name: tD.dataValues.d_name,
+            is_active: tD.tm_active && tD.tm_active[0]? true : false
           },
           diet_details: [
             ...diet_details,
@@ -1228,19 +1239,31 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
 }
 
 
-function getTemplatesdetailsQuery(user_uuid, dept_id, temp_type_id, temp_id) {
-  return {
-    tm_uuid: temp_id,
+function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId) {
+
+  let presTempQuery = {
+    tm_uuid: tId,
     tm_status: 1,
     tm_active: 1,
     tmd_is_active: 1,
     tmd_status: 1,
-    tm_template_type_uuid: temp_type_id,
+    tm_template_type_uuid: ttId,
     [Op.or]: [
-      { tm_dept: { [Op.eq]: dept_id }, tm_public: { [Op.eq]: 1 } },
-      { tm_userid: { [Op.eq]: user_uuid } }
+      { tm_dept: { [Op.eq]: dId }, tm_public: { [Op.eq]: 1 } },
+      { tm_userid: { [Op.eq]: uId } }
     ]
   };
+
+  if (+(ttId) === 1) {
+    presTempQuery = {
+      ...presTempQuery, ...{
+        si_store_master_uuid: sMId,
+        si_is_active: emr_constants.IS_ACTIVE,
+        si_status: emr_constants.IS_ACTIVE,
+      }
+    };
+  }
+  return presTempQuery;
 }
 
 function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
@@ -1358,13 +1381,13 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name, displayOrder, userUUID) => {
+const nameExists = (temp_name, userUUID) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, display_order: displayOrder, user_uuid: userUUID }
+        where: { name: temp_name, user_uuid: userUUID }
       });
       if (value) {
         resolve(value);
@@ -1408,7 +1431,7 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
         resolve(value);
         return value;
       } else {
-        reject({ message:emr_constants.NAME_DISPLAY_NOTEXISTS });
+        reject({ message: emr_constants.NAME_DISPLAY_NOTEXISTS });
       }
     });
   }
@@ -1512,7 +1535,7 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
   }
 }
 
-function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id) {
+function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_id, sMId) {
   switch (temp_type_id) {
     case "1":
       return {
@@ -1522,7 +1545,8 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
             user_uuid,
             dept_id,
             temp_type_id,
-            temp_id
+            temp_id,
+            sMId
           ),
           attributes: { exclude: ["id", "createdAt", "updatedAt"] }
         }

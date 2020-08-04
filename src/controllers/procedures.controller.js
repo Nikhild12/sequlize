@@ -345,7 +345,6 @@ const proceduresController = () => {
 
   const updateproceduresId = async (req, res, next) => {
     const postData = req.body;
-    postData.status = postData.is_active;
     postData.modified_by = req.headers.user_uuid;
     postData.modified_date = new Date();
     await proceduresTbl
