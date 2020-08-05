@@ -74,6 +74,7 @@ module.exports = Object.freeze({
   TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
   NAME_DISPLAY_NOTEXISTS:"name or displayOrder does not existed",
   PATIENT_VITAILS_CREATED: "Vitals Saved Successfully",
+  COMMON_REF_CODE_NAME_EXISTS: "code and name already exists",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
