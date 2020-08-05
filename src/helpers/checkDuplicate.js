@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const _ = require("lodash");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-
+const constants =  require("../config/constants")
 
 Date.prototype.addHours = function (h) {
     this.setHours(this.getHours() + h);
@@ -244,7 +244,7 @@ module.exports = {
                 if ((data.code && checkduplicates.rows[0].dataValues.code.toLowerCase() == data.code.toLowerCase())&& (data.name && checkduplicates.rows[0].dataValues.name.toLowerCase() == data.name.toLowerCase())) {
                     return {
                         errorCode: "ERR1002",
-                        msg: "code and name already exists"
+                        msg: constants.COMMON_REF_CODE_NAME_EXISTS
                     };
                 }
                 else if (data.code && checkduplicates.rows[0].dataValues.code.toLowerCase() == data.code.toLowerCase()) {
