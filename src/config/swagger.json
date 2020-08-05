@@ -10672,6 +10672,7 @@
 				"allergy_source_uuid": {
 					"type": "integer"
 				},
+				"name":{"type": "string"},
 				"status": {
 					"type": "boolean"
 				}
