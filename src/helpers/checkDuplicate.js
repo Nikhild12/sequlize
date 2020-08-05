@@ -241,8 +241,13 @@ module.exports = {
                     "count": 0
                 };
             } else if (checkduplicates.count > 0) {
-
-                if (data.code && checkduplicates.rows[0].dataValues.code.toLowerCase() == data.code.toLowerCase()) {
+                if ((data.code && checkduplicates.rows[0].dataValues.code.toLowerCase() == data.code.toLowerCase())&& (data.name && checkduplicates.rows[0].dataValues.name.toLowerCase() == data.name.toLowerCase())) {
+                    return {
+                        errorCode: "ERR1002",
+                        msg: "code and name already exists"
+                    };
+                }
+                else if (data.code && checkduplicates.rows[0].dataValues.code.toLowerCase() == data.code.toLowerCase()) {
                     return {
                         errorCode: "ERR1001",
                         msg: "code already exists"
