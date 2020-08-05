@@ -23,6 +23,7 @@ const noteTemplatetypeTbl = db.note_template_type;
 const npotetemplateTbl = db.note_templates;
 const equipment = db.equipment;
 const speciality_sketches = db.speciality_sketches;
+const categoriesTbl = db.categories;
 // Constants Import
 const emr_constants = require("../config/constants");
 
@@ -387,6 +388,10 @@ const proceduresController = () => {
                 {
                   model: npotetemplateTbl,
                   attributes: ['uuid', 'name']
+                },
+                {
+                  model: categoriesTbl,
+                  attributes: ['uuid', 'name'],
                 }
               ]
             },
