@@ -106,7 +106,18 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
+  const _getALLVitalmaster = async (req, res) => {
+    let query = req.body;
+    try {
+      const result = await vitalmstrTbl.findAll(getdefaultVitalsQueryall(query), { returning: true });
+      if (result) {
+        return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
+      }
+    }
+    catch (ex) {
+      return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
   const _getAllVitalsFilter = async (req, res) => {
     const { user_uuid } = req.headers;
     const { searchValue } = req.body;
@@ -409,7 +420,8 @@ const vitalmstrController = () => {
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
     deletevitals: _deletevitals,
-    getVitalsByUUID: _getVitalsByUUID
+    getVitalsByUUID: _getVitalsByUUID,
+    getALLVitalmaster:_getALLVitalmaster
   };
 };
 
@@ -444,6 +456,16 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
+function getdefaultVitalsQueryall(query) {
+  let q = {
+    where: { is_active:1,status:1}
+  }
+    
+  if (query) {
+    q.where.is_default = query.is_default;
+  }
+  return q;
+}
 const nameExists = (name) => {
   if (name !== undefined) {
     return new Promise((resolve, reject) => {

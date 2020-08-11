@@ -20,5 +20,6 @@ vitalRoute.route('/updatevitals').post(vitalController.updatevitalsById);
 
 vitalRoute.route('/deletevitals').post(vitalController.deletevitals);
 vitalRoute.route('/getVitalsByUUID').post(vitalController.getVitalsByUUID);
+vitalRoute.route('/getallvitalmaster').post(vitalController.getALLVitalmaster);
 
 module.exports = vitalRoute;

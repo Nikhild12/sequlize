@@ -4885,6 +4885,40 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/vitalMaster/getallvitalmaster": {
+			"post": {
+				"description": "get vitals details by Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getvitals",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getaLLvitalmaster"
+						}
+					}
+				],
+				"tags": [
+					"vital_master"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Updated"
+					},
+					"400": {
+						"description": "Sorry! Something Went Wrong"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/template/updateTemplateDetailsByID": {
 			"put": {
 				"description": "update template details by Id",
@@ -9134,6 +9168,14 @@
 			"type": "object",
 			"properties": {
 				"Vital_id": {
+					"type": "integer"
+				}
+			}
+		},
+		"getallvitalmaster":{
+			"type": "object",
+			"properties": {
+				"is_default": {
 					"type": "integer"
 				}
 			}
