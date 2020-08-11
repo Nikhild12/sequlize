@@ -72,6 +72,15 @@ module.exports = (sequelize, DataTypes) => {
         values: ["0", "1"],
         defaultValue: "1",
       },
+      tsm_created_date: {
+        type: DataTypes.DATE
+      },
+      tsm_modified_date: {
+        type: DataTypes.DATE
+      },
+      tsm_description: {
+        type: DataTypes.STRING
+      },
       tsm_public: {
         type: DataTypes.ENUM,
         values: ["0", "1"],
@@ -222,6 +231,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       de_name: {
         type: DataTypes.STRING
+      },
+      si_store_master_uuid: {
+        type: DataTypes.INTEGER
+      },
+      si_uuid: {
+        type: DataTypes.INTEGER
+      },
+      si_is_active: {
+        type: DataTypes.BOOLEAN,
+      },
+      si_status: {
+        type: DataTypes.BOOLEAN,
       }
     }
   );

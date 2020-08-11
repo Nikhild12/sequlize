@@ -26,7 +26,6 @@ const specialitySketchesMasterController = () => {
             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
             let sortArr = ['s_created_date', 'DESC'];
 
-
             if (postData.pageNo) {
                 let temp = parseInt(postData.pageNo);
                 if (temp && (temp != NaN)) {
@@ -103,7 +102,8 @@ const specialitySketchesMasterController = () => {
 
             }
             if (postData.hasOwnProperty('status') && /\S/.test(postData.status)) {
-                findQuery.where = { s_is_active: postData.status };
+                
+                findQuery.where['s_is_active'] = postData.status;
             }
             await vwSpecialitySketchTbl.findAndCountAll(findQuery,
 
@@ -145,7 +145,7 @@ const specialitySketchesMasterController = () => {
 
             if (user_uuid) {
                 const attachmentData = req.body;
-                attachmentData.is_active = Boolean(attachmentData.is_active);
+                attachmentData.is_active = attachmentData.is_active === "true" ? true : false;
                 attachmentData.status = true;
                 attachmentData.created_by = user_uuid;
                 attachmentData.created_date = new Date();
@@ -181,7 +181,8 @@ const specialitySketchesMasterController = () => {
         const postData = req.body;
 
         await specialitySketchesMasterTbl.update({
-            is_active: 0
+            is_active: 0,
+            status: 0,
         }, {
             where: {
                 uuid: postData.Speciality_id

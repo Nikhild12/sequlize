@@ -50,7 +50,10 @@ const _getSpecialityFavouriteAtt = [
     "fa_uuid",
     "fa_name",
     "dp_uuid",
-    "dp_name"
+    "dp_name",
+    "fm_created_date",
+    "fm_modified_date",
+    "fm_description"
 ];
 
 
@@ -68,7 +71,14 @@ const _getSpecialitySketchFavouriteRes = (sketchFav) => {
             facility_name: f.fa_name,
             department_name: f.dp_name,
             favourite_active: f.fm_is_active,
-            favourite_display_order: f.fm_display_order
+            favourite_display_order: f.fm_display_order,
+            created_date: f.fm_created_date,
+            modified_date: f.fm_modified_date,
+            favourite_type_id: f.fm_favourite_type_uuid,
+            favourite_description: f.fm_description,
+            user_uuid: f.fm_user_uuid,
+            facility_id: f.fa_uuid,
+            department_id: f.dp_uuid
         };
 
     });

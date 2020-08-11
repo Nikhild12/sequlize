@@ -1,13 +1,16 @@
+// HttpStatus Import
 const httpStatus = require('http-status');
-const moment = require('moment');
-var Sequelize = require('sequelize');
-//Sequlize Import 
-const sequelizeDb = require('../config/sequelize');
-const config = require('../config/config');
-var Op = Sequelize.Op;
-const emr_utility = require('../services/utility.service');
 
-const rp = require('request-promise');
+// Moment Import
+const moment = require('moment');
+
+// Sequelize Import
+const Sequelize = require('sequelize');
+
+// Config Sequlize Import 
+const sequelizeDb = require('../config/sequelize');
+
+const Op = Sequelize.Op;
 
 //Intialize Tables
 //const dashboard_tbl = sequelizeDb.vw_emr_dashboard_details;
@@ -30,6 +33,7 @@ const EmrDashBoard = () => {
         const { user_uuid, facility_uuid } = req.headers;
         const { depertment_Id, from_date, to_date, gender, session } = req.query;
         const today = moment(new Date()).format('YYYY-MM-DD');
+        const hour = 'hour'; const date = 'date';
 
         if (!user_uuid) {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -43,9 +47,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
                     const presc = await getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                     const cons = await getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const lab = await getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
-                    const rad = await getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const inv = await getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
                     const consd = await getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
 
                     let obj = {};
@@ -90,9 +94,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
                     const presc = await getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                     const cons = await getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const lab = await getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
-                    const rad = await getradbydate(ris_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const inv = await getinvbydate(inv_dash, user_uuid, depertment_Id, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date);
                     const cons_graph = await getconsgraphbydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
@@ -104,9 +108,6 @@ const EmrDashBoard = () => {
                             "cieif_complaints": chiefc,
                             "prescription": presc,
                             "consulted": cons,
-                            // "lab": lab,
-                            // "rad": rad,
-                            // "inv": inv,
                             "orders": orders,
                             "cons_graph": cons_graph,
                             "orders_graph": orders_graph
@@ -121,9 +122,9 @@ const EmrDashBoard = () => {
                     const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
                     const cons = await getconstodayAll(cons_dash, user_uuid, depertment_Id, from_date, to_date, session, gender, facility_uuid);
 
-                    const lab = await getlabtodaybyAll(lab_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
-                    const rad = await getradtodaybyAll(ris_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
-                    const inv = await getinvtodaybyAll(inv_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender, session);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender, session);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender, session);
                     const consd = await getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
 
                     let obj = {};
@@ -169,9 +170,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
                     const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
                     const cons = await getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
-                    const lab = await getlabbyAll(lab_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
-                    const rad = await getradbyAll(ris_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
-                    const inv = await getinvbyAll(inv_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender, session);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender, session);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender, session);
                     const cons_graph = await getconsgraphbydateAll(cons_dash, user_uuid, depertment_Id, from_date, to_date, session, gender);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
@@ -197,9 +198,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
                     const cons = await getconssessiondatetoday(cons_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const lab = await getlabbysessionhr(lab_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
-                    const rad = await getradbysessionhr(ris_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const inv = await getinvbysessionhr(inv_dash, user_uuid, depertment_Id, session, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, 0, session);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, 0, session);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, 0, session);
                     const consd = await getconsbysessiondatetoday(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
 
                     let obj = {};
@@ -245,9 +246,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
                     const cons = await getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const lab = await getlabbysessiondate(lab_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
-                    const rad = await getradbysessiondate(ris_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const inv = await getinvbysessiondate(inv_dash, user_uuid, depertment_Id, session, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, 0, session);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, 0, session);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, 0, session);
                     const cons_graph = await getconsgraphbysessiondateAll(cons_dash, user_uuid, depertment_Id, from_date, to_date, session, gender);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
@@ -274,9 +275,9 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
                     const cons = await getconsbygendertoday(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const lab = await getlabbygenderhr(lab_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
-                    const rad = await getradbygenderhr(ris_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const inv = await getinvbygenderhr(inv_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender);
                     const consd = await getconsbygenderdatetoday(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
 
                     let obj = {};
@@ -323,13 +324,12 @@ const EmrDashBoard = () => {
                     const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
                     const cons = await getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const lab = await getlabbygenderdate(lab_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
-                    const rad = await getradbygenderdate(ris_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const inv = await getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, from_date, to_date);
+                    const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender);
+                    const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender);
+                    const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender);
                     const cons_graph = await getconsgraphbygenderdateAll(cons_dash, user_uuid, depertment_Id, from_date, to_date, session, gender);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
-                    //const orders = getorders(lab, rad, inv);
 
                     return res.status(200).send({
                         code: httpStatus.OK, message: 'Fetched Successfully',
@@ -355,9 +355,9 @@ const EmrDashBoard = () => {
                 const chiefc = await getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
                 const presc = await getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                 const cons = await getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
-                const lab = await getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
-                const rad = await getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date);
-                const inv = await getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date);
+                const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
+                const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
+                const inv = await getInvestigationCount(inv_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
                 const consd = await getconstoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
 
                 let obj = {};
@@ -862,7 +862,7 @@ async function getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender
     const diag = await cons_dash.findAll({
         //group: ['g_uuid',],
         attributes: [
-            //[Sequelize.fn('hour', Sequelize.col('ed_consultation_start_date')), 'hour'],
+            //[Sequelize.fn(hour, Sequelize.col('ed_consultation_start_date')), hour],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ed_patient_uuid` END')), 'M_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ed_patient_uuid` END')), 'F_Count'],
             [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ed_patient_uuid` END')), 'T_Count'],
@@ -993,571 +993,95 @@ async function getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, 
     }
 }
 
-// Changed Lab On 25.05.2020
-async function getlabbydate(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: [[Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), 'date'],
-        [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['date'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-// Changed Lab On 25.05
-async function getlabbyAll(lab_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['date'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+const getCountQuery = (uId, dId, fDate, tDate, fId, gBy, gen, ses, key, dateCol) => {
 
-// Changed Lab on 25.05
-async function getlabbysessiondate(lab_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['date'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
+    const group = gBy === 'date' ? ['date'] : ['hour'];
+    const attributes = [
+        dateCol,
+        [Sequelize.fn('date', Sequelize.col(dateCol)), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col(dateCol)), 'Count']
+    ];
+
+    if (gBy === 'hour') {
+        attributes[1] = [Sequelize.fn('hour', Sequelize.col(dateCol)), 'hour'];
+    }
+    const where = {
+        [`${key}_doctor_uuid`]: uId,
+        [`${key}_status`]: 1,
+        [`${key}_is_active`]: 1,
+        [`${key}_department_uuid`]: dId,
+        [`${key}_facility_uuid`]: fId,
+        [dateCol]: {
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col(dateCol)), '>=', moment(fDate).format('YYYY-MM-DD')),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col(dateCol)), '<=', moment(tDate).format('YYYY-MM-DD'))
+            ]
         }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+    };
 
-// Changed Lab On 25.05
-async function getlabbygenderdate(lab_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['date'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
+    if (gen) {
+        where.g_uuid = gen;
     }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
+    if (ses) {
+        where.s_uuid = ses;
     }
-}
 
-// Changed Lab On 25.05
-async function getlabbytoday(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('lpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_number')), 'Count'],
-        ],
-        group: ['hour'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
+    return { attributes, group, where };
+};
 
-        return diag;
-    } else {
-        return {};
-    }
-}
+/**
+ * Lab Start
+ * @param {*} view  View name "vw_emr_lab_dashboard"
+ * @param {*} uId   user Id
+ * @param {*} dId   department Id
+ * @param {*} fDate from Date
+ * @param {*} tDate to date
+ * @param {*} gBy   group by
+ * @param {*} gen   gender Id
+ * @param {*} ses   session Id
+ */
+async function getLabCount(view, uId, dId, fDate, tDate, fId, gBy, gen = 0, ses = 0) {
 
-// Change Lab On  25.05
-async function getlabtodaybyAll(lab_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('lpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['hour'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+    const diag = await view.findAll(
+        getCountQuery(uId, dId, fDate, tDate, fId, gBy, gen, ses, 'po', 'lpo_order_request_date'));
+    return diag && diag.length > 0 ? diag : {};
+} // Lab Ends
 
-// Changed Lab on 25.05
-async function getlabbysessionhr(lab_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('lpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['hour'],
+/**
+ * Investigation Start hour
+ * @param {*} view  View name "vw_emr_inv_dashboard"
+ * @param {*} uId   user Id
+ * @param {*} dId   department Id
+ * @param {*} fDate from Date
+ * @param {*} tDate to date
+ * @param {*} gBy   group by
+ * @param {*} gen   gender Id
+ * @param {*} ses   session Id
+ */
+async function getInvestigationCount(view, uId, dId, fDate, tDate, fId, gBy, gen = 0, ses = 0) {
+    const diag = await view.findAll(
+        getCountQuery(uId, dId, fDate, tDate, fId, gBy, gen, ses, 'ipo', 'ipo_order_request_date'));
+    return diag && diag.length > 0 ? diag : {};
 
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+} // Investigation Ends
 
-// Changed Lab On 25.05
-async function getlabbygenderhr(lab_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_id) {
-    const diag = await lab_dash.findAll({
-        attributes: ['lpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('lpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('lpo_order_request_date')), 'Count']
-        ],
-        group: ['hour'],
-        where: {
-            po_doctor_uuid: user_uuid,
-            po_status: 1,
-            po_is_active: 1,
-            po_department_uuid: depertment_Id,
-            po_facility_uuid: facility_id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('lpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getradbydate(ris_dash, user_uuid, depertment_Id, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['rpo_order_request_date'],
-        attributes: [[Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), 'date'],
-        [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        group: ['date'],
-        //limit: 10,
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getinvbydate(inv_dash, user_uuid, depertment_Id, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: [[Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), 'date'],
-        [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getradbyAll(ris_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getinvbyAll(inv_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getradbysessiondate(ris_dash, user_uuid, depertment_Id, session, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getinvbysessiondate(inv_dash, user_uuid, depertment_Id, session, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getradbygenderdate(ris_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getinvbygenderdate(inv_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), 'date'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['date'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getradbytoday(ris_dash, user_uuid, depertment_Id, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['rpo_order_request_date'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('rpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_number')), 'Count'],
-            //[Sequelize.fn('count', '*'), 'Count']
-        ],
-        group: ['hour'],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
-async function getinvbytoday(inv_dash, user_uuid, depertment_Id, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ipo_order_request_date'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('ipo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_number')), 'Count'],
-            //[Sequelize.fn('count', '*'), 'Count']
-        ],
-        group: ['hour'],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+/**
+ * Radiology Starts
+ * @param {*} view  View Name "vw_emr_ris_dashboard"
+ * @param {*} uId   userId i.e doctor id
+ * @param {*} dId   departmentId
+ * @param {*} fDate from Date
+ * @param {*} tDate to Date
+ * @param {*} fId   to facility Id
+ * @param {*} gBy   Group By
+ * @param {*} gen   Gender and it's optional
+ * @param {*} ses   Session Id and it's optional
+ */
+async function getRadiologyCount(view, uId, dId, fDate, tDate, fId, gBy, gen = 0, ses = 0) {
+    const diag = await view.findAll(
+        getCountQuery(uId, dId, fDate, tDate, fId, gBy, gen, ses, 'rpo', 'rpo_order_request_date'));
+    return diag && diag.length > 0 ? diag : {};
+} // Radiology Ends
 
 async function getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date) {
 
@@ -2183,72 +1707,6 @@ async function getchiefcbytodayAll(chiefc_dash, user_uuid, depertment_Id, sessio
     }
 }
 
-
-async function getradtodaybyAll(ris_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('rpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-async function getinvtodaybyAll(inv_dash, user_uuid, depertment_Id, session, gender, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('ipo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-
 async function getconsgraphbydateAll(cons_dash, user_uuid, depertment_Id, startDate, stopDate, session, gender) {
     let cons_graph = {};
     const diag = await cons_dash.findAll({
@@ -2311,6 +1769,7 @@ async function getconsgraphbydateAll(cons_dash, user_uuid, depertment_Id, startD
         return {};
     }
 }
+
 async function getconsgraphbysessiondateAll(cons_dash, user_uuid, depertment_Id, startDate, stopDate, session, gender) {
     let cons_graph = {};
     const diag = await cons_dash.findAll({
@@ -2443,69 +1902,6 @@ async function getconssessiondatetoday(cons_dash, user_uuid, depertment_Id, sess
     }
 }
 
-
-async function getradbysessionhr(ris_dash, user_uuid, depertment_Id, session, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('rpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-async function getinvbysessionhr(inv_dash, user_uuid, depertment_Id, session, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('ipo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            s_uuid: session,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
 async function getconsgraphbygenderdateAll(cons_dash, user_uuid, depertment_Id, startDate, stopDate, session, gender) {
     let cons_graph = {};
     const diag = await cons_dash.findAll({
@@ -2603,65 +1999,4 @@ async function getconsbygenderdatetoday(cons_dash, user_uuid, depertment_Id, ses
     }
 }
 
-async function getradbygenderhr(ris_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
-    const diag = await ris_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['rpo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('rpo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('rpo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('rpo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
-async function getinvbygenderhr(inv_dash, user_uuid, depertment_Id, gender, from_date, to_date) {
-    const diag = await inv_dash.findAll({
-        //group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['ipo_order_request_date',
-            [Sequelize.fn('hour', Sequelize.col('ipo_order_request_date')), 'hour'],
-            [Sequelize.fn('COUNT', Sequelize.col('ipo_order_request_date')), 'Count']
-        ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
-        //limit: 10,
-        group: ['hour'],
-        where: {
-            ed_doctor_uuid: user_uuid,
-            ed_status: 1,
-            ed_is_active: 1,
-            ed_department_uuid: depertment_Id,
-            g_uuid: gender,
-            lpo_order_request_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ipo_order_request_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return {};
-    }
-}
+

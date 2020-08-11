@@ -8,7 +8,11 @@ const conceptTbl = db.critical_care_concepts;
 const conceptdetailsTbl = db.critical_care_concept_values;
 const criticalcareTypeTbl = db.critical_care_types;
 const criticalCareUomsTbl = db.critical_care_uoms;
+const valueTypesTbl = db.value_types;
+
+const config = require('../config/config');
 const Q = require('q');
+const rp = require('request-promise');
 
 
 const cccMasterController = () => {
@@ -60,12 +64,12 @@ const cccMasterController = () => {
 
             // sortArr[0] = { model: 'db.' + sortArr[0], as: sortArr[0] };
             // sortArry = [sortArr[0], sortArr[1], sortArr[2]];
-            if(sortArr.length > 2){
-                sortArry = [sortArr[0], sortArr[1],sortArr[2]];
+            if (sortArr.length > 2) {
+                sortArry = [sortArr[0], sortArr[1], sortArr[2]];
             } else {
                 sortArry = [sortArr[0], sortArr[1]];
             }
-            
+
             let findQuery = {
                 // subQuery: false,
 
@@ -86,10 +90,16 @@ const cccMasterController = () => {
                     {
                         model: conceptTbl,
                         as: 'critical_care_concepts',
-                        attributes: ['uuid', 'cc_chart_uuid','concept_code','concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
+                        attributes: ['uuid', 'cc_chart_uuid', 'concept_code', 'concept_name', 'value_type_uuid', 'is_multiple', 'is_default', 'is_mandatory', 'display_order', 'is_active', 'status'],
                         where: { is_active: 1, status: 1 },
-                        subQuery: false,
+                        //  subQuery: false,
                         include: [
+                            {
+                                model: valueTypesTbl,
+                                as: 'value_types',
+                                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+                                where: { is_active: 1, status: 1 },
+                            },
                             {
                                 model: conceptdetailsTbl,
                                 as: 'critical_care_concept_values',
@@ -167,7 +177,7 @@ const cccMasterController = () => {
             if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
                 findQuery.where['is_active'] = getsearch.status;
             }
-            const data = await cccMasterTbl.findAndCountAll(findQuery)
+            const data = await cccMasterTbl.findAndCountAll(findQuery);
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -178,7 +188,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
-            console.log(err,"sdfsdf")
+            console.log('"sdfsdf"==', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -322,7 +332,7 @@ const cccMasterController = () => {
                 //     }
                 // ],
                 //}
-            )
+            );
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -346,6 +356,7 @@ const cccMasterController = () => {
     const postcccMaster = async (req, res, next) => {
         try {
             if (typeof req.body != "object" || Object.keys(req.body).length < 1) {
+                /* empty */
             }
             const { user_uuid, facility_uuid } = req.headers;
             let concept_detail_output;
@@ -363,7 +374,7 @@ const cccMasterController = () => {
                 const postDatabody2 = req.body.body2;
 
                 postDatabody.created_by = user_uuid;
-                postDatabody.modified_by = 0;
+                postDatabody.modified_by = user_uuid;
                 postData.created_by = req.headers.user_uuid;
                 postData.code = postData.fieldname;
                 postData.name = postData.fieldname;
@@ -436,7 +447,8 @@ const cccMasterController = () => {
         const postData = req.body;
 
         await cccMasterTbl.update({
-            is_active: 0
+            is_active: 0,
+            status: 0
         }, {
             where: {
                 uuid: postData.Ccc_id
@@ -549,12 +561,12 @@ const cccMasterController = () => {
             const page = postData.page ? postData.page : 1;
             const itemsPerPage = postData.limit ? postData.limit : 10;
             const offset = (page - 1) * itemsPerPage;
-            await cccMasterTbl.findAll({
+            let result = await cccMasterTbl.findAll({
                 attributes: ['uuid', 'critical_care_type_uuid', 'code', 'name', 'description', 'critical_care_uom_uuid'
                     , 'mnemonic_code_master_uuid', 'loinc_code_master_uuid', 'comments', 'is_active',
                     'status', 'created_by', 'modified_by', 'created_date', 'modified_date'],
                 where: {
-                    uuid: postData.Ccc_id, is_active: 1, status: 1
+                    uuid: postData.Ccc_id
                 },
                 include: [
                     {
@@ -565,6 +577,7 @@ const cccMasterController = () => {
                         where: { is_active: 1, status: 1 },
                         include: [
                             {
+                                require: false,
                                 model: conceptdetailsTbl,
                                 as: 'critical_care_concept_values',
                                 attributes: ['uuid', 'cc_concept_uuid', 'concept_value', 'value_from', 'value_to', 'display_order', 'is_default', 'is_active',
@@ -572,23 +585,56 @@ const cccMasterController = () => {
                                 where: { is_active: 1, status: 1 },
                             }
                         ]
+                    },
+                    {
+                        require: false,
+                        model: criticalcareTypeTbl,
+                        as: 'critical_care_types',
+                        where: { is_active: 1, status: 1 },
                     }
 
                 ],
                 offset: offset,
                 limit: itemsPerPage
-            })
-                .then((data) => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 200,
-                            req: '',
-                            responseContents: data
-                        });
-                });
+            });
+
+            if (result) {
+                let Emonic_Details = {};
+                let Lonic_Details = {};
+                let EmonicDetails = await getEmonicAndLonicDetails(req.headers.user_uuid, result[0].dataValues.mnemonic_code_master_uuid, 'mnemonic_code_master', req.headers.authorization);
+                let LonicDetails = await getEmonicAndLonicDetails(req.headers.user_uuid, result[0].dataValues.loinc_code_master_uuid, 'loinc_code_master', req.headers.authorization);
+                // console.log("result", EmonicDetails);
+
+                if (EmonicDetails.statusCode = 200 && EmonicDetails.responseContent == null || EmonicDetails.responseContent == undefined) {
+                    result[0].dataValues.Emonic_Details = {};
+                } else {
+                    result[0].dataValues.Emonic_Details = EmonicDetails.responseContent;
+                }
+                if (LonicDetails.statusCode = 200 && LonicDetails.responseContent == null || LonicDetails.responseContent == undefined) {
+                    result[0].dataValues.Lonic_Details = {};
+                } else {
+
+                    result[0].dataValues.Lonic_Details = LonicDetails.responseContent;
+                }
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        responseContents: result
+                    });
+            } else {
+                return res
+                    .status(httpStatus.OK)
+                    .json({
+                        statusCode: 200,
+                        req: '',
+                        msg: "No Data Found"
+                    });
+            }
 
         } catch (err) {
+            console.log('err===', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -598,6 +644,28 @@ const cccMasterController = () => {
                 });
         }
     };
+
+
+    async function getEmonicAndLonicDetails(user_uuid, Id, TableName, authorization) {
+
+        let options = {
+            uri: config.wso2LisUrl + 'commonReference/getReferenceById',
+            method: "POST",
+            headers: {
+                'Content-type': "application/json",
+                Authorization: authorization,
+                user_uuid: user_uuid
+            },
+            body: {
+                "table_name": TableName,
+                "Id": Id
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        return user_details;
+    }
 
     const getcccMasterByType = async (req, res, next) => {
         const postData = req.body;
@@ -643,7 +711,7 @@ const cccMasterController = () => {
                         }]
                 }]
 
-            }, { returning: true })
+            }, { returning: true });
 
             // return res.send({ results: result });
             return res

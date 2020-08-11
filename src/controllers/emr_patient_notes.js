@@ -132,8 +132,8 @@ const notesController = () => {
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
         getOPNotesDetailsById: _getOPNotesDetailsById,
         getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId
-    }
-}
+    };
+};
 
 module.exports = notesController();
 

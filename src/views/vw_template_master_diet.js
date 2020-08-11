@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tm_template_type_name: {
+                type: DataTypes.STRING(100),
+                allowNull: false,
+            },
             tm_status: {
                 type: DataTypes.ENUM,
                 allowNull: false,
@@ -160,6 +164,12 @@ module.exports = (sequelize, DataTypes) => {
             um_last_name: {
                 type: DataTypes.STRING,
                 allowNull: true,
+            },
+            dm_status: {
+                type: DataTypes.BOOLEAN
+            },
+            dm_is_active: {
+                type: DataTypes.BOOLEAN
             }
         },
         {

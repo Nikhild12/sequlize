@@ -28,7 +28,12 @@ module.exports = (sequelize, DataTypes) => {
       fm_public: {
         type: DataTypes.BOOLEAN
       },
-
+      fm_created_date: {
+        type: DataTypes.DATE
+      },
+      fm_modified_date: {
+        type: DataTypes.DATE
+      },
       fm_status: {
         type: DataTypes.BOOLEAN
       },
@@ -99,6 +104,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       dp_name: {
+        type: DataTypes.STRING
+      },
+      dm_status: {
+        type: DataTypes.BOOLEAN
+      },
+      dm_is_active: {
+        type: DataTypes.BOOLEAN
+      },
+      fm_description: {
         type: DataTypes.STRING
       }
     },

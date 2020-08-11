@@ -156,6 +156,14 @@ module.exports = (sequelize, DataTypes) => {
         //     foreignKey: "equipment_uuid",
         //     // targetKey:"uuid"
         // });
+        procedures.belongsTo(models.equipment, {
+            foreignKey: "equipment_uuid",
+            // targetKey:"uuid"
+        }); 
+          procedures.belongsTo(models.speciality_sketches, {
+            foreignKey: "speciality_uuid",
+            // targetKey:"uuid"
+        });
         procedures.belongsTo(models.body_site, {
             foreignKey: "body_site_uuid",
             // targetKey:"uuid"

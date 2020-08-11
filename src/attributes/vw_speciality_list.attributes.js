@@ -52,8 +52,8 @@ const _getSpecialityResponse = (record = []) => {
             revision: element.ss_revision,
             is_active: element.ss_is_active,
             created_by: element.ss_created_by,
-            modified_by: element.ss_created_date,
-            created_date: element.ss_modified_by,
+            modified_by: element.ss_modified_by,
+            created_date: element.ss_created_date,
             modified_date: element.ss_modified_date,
             department_name: element.d_name,
             speciality_sketch_details: record.map((r) => {

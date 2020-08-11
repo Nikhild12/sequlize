@@ -61,6 +61,19 @@ module.exports = Object.freeze({
   PATIENT_SPECIALITY_SKETCH_FETCHED: "Successfully Fetched Patient Speciality Sketch",
   NO_TREATMETN_KIT_FOUND: "Treatment Kit Id",
   TREATMENT_UPDATE: "Treatment Kit Updated Successfully",
+  FAVOURITE_TYPE: "Favourite Type Successfully Fetched",
+  DRUG_FREQUENCY: "Drug Frequency Successfully Fetched",
+  DIAGNOSIS_ALREADY_EXISTS: "Diagnosis already exists",
+  PRESCRIPTION_STORE_MASTER: "Please send Store master uuid to get Prescription Favorutie/Template",
+  TEMPLATE_REQUIRED_TYPES: "templete type id must be 1 or 2 or 3 or 4 or 7 or 9",
+  NO_REQUEST_FOUND: "No Request Body or Search key Found",
+  NO_REQUEST_HEADERS_FOUND: "No Request headers or Body Found",
+  PROPER_TEMPLATE_ID: "Please provide valid template id",
+  NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
+  TEMPLATE_INSERTED: "Template details Inserted Successfully",
+  TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
+  NAME_DISPLAY_NOTEXISTS:"name or displayOrder does not existed",
+  PATIENT_VITAILS_CREATED: "Vitals Saved Successfully",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -177,6 +190,8 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} note_template_type_uuid`;
       case "note_type_uuid":
         return `${returnProvideMsg} note_type_uuid`;
+        case "template_uuid":
+            return `${returnProvideMsg} template_id`;
       default:
         return `${returnProvideMsg} required Fields`;
     }

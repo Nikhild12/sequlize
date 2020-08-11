@@ -21,7 +21,8 @@ const anesthesia_type = db.anesthesia_type;
 const body_site = db.body_site;
 const noteTemplatetypeTbl = db.note_template_type;
 const npotetemplateTbl = db.note_templates;
-
+const equipment = db.equipment;
+const speciality_sketches = db.speciality_sketches;
 // Constants Import
 const emr_constants = require("../config/constants");
 
@@ -233,11 +234,11 @@ const proceduresController = () => {
           if (tblname_exits && tblname_exits.length > 0) {
             return res
               .status(400)
-              .send({ statusCode: 402, message: "code and name already exists" });
+              .send({ statusCode: 400, message: "code and name already exists" });
           }
           else if (code_exits && code_exits.length > 0) {
             return res
-              .status(401)
+              .status(400)
               .send({ statusCode: 400, message: "code already exists" });
 
           } else if (name_exits && name_exits.length > 0) {
@@ -320,7 +321,6 @@ const proceduresController = () => {
 
   const updateproceduresId = async (req, res, next) => {
     const postData = req.body;
-    postData.status = postData.is_active;
     postData.modified_by = req.headers.user_uuid;
     postData.modified_date = new Date();
     await proceduresTbl
@@ -404,7 +404,15 @@ const proceduresController = () => {
           {
             model: body_site,
             attributes: ['uuid', 'name']
-          }],
+          },
+        {
+          model: equipment,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: speciality_sketches,
+          attributes: ['uuid', 'name']
+        }],
           offset: offset,
           limit: itemsPerPage
         });
@@ -549,6 +557,8 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "operation_type": data.operation_type,
     "anesthesia_type": data.anesthesia_type,
     "body_site": data.body_site,
+    "equipment": data.equipment,
+    "speciality_sketch": data.speciality_sketch,
   };
   return newdata;
 }

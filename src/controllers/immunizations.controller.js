@@ -4,7 +4,7 @@ const _ = require("lodash");
 const emr_const = require('../config/constants');
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-const utility = require('../services/utility.service')
+const utility = require('../services/utility.service');
 const immunizationsTbl = db.immunizations;
 const immunizationsVwTbl = db.vw_emr_immunizations;
 const emr_constants = require('../config/constants');
@@ -347,11 +347,33 @@ const immunizationsController = () => {
           }
           }
    
-          if (getsearch.hasOwnProperty('i_is_active') && /\S/.test(getsearch.i_is_active)) {          
-            findQuery.where['i_is_active'] = (getsearch.i_is_active == true || getsearch.i_is_active == 'true' || getsearch.i_is_active == 1 ) ? 1 : 0;
-        //   findQuery.where['i_status'] = getsearch.status;
-
+          if (getsearch.i_is_active && (getsearch.i_is_active.toLowerCase() == "active" || getsearch.i_is_active.toLowerCase() == "inactive")) {
+            let is_active_input = 0;
+            if (getsearch.i_is_active.toLowerCase() == "active") {
+              is_active_input = 1;
+            } else {
+              is_active_input = 0;
+            }
+            findQuery.where = Object.assign(findQuery.where, {
+                i_is_active: {
+                [Op.eq]: is_active_input
+              }
+            });
+          } else {
+            findQuery.where = Object.assign(findQuery.where, {
+                i_is_active: {
+                [Op.eq]: 1
+              }
+            });
           }
+    
+
+        //   if (getsearch.hasOwnProperty('i_is_active') && /\S/.test(getsearch.i_is_active)) {          
+        //     findQuery.where['i_is_active'] = (getsearch.i_is_active == true || getsearch.i_is_active == 'true' || getsearch.i_is_active == 1 ) ? 1 : 0;
+        // //   findQuery.where['i_status'] = getsearch.status;
+
+        //   }
+
           if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
           //findQuery.where['i_is_active'] = getsearch.status;
            findQuery.where['i_status'] = getsearch.status;
@@ -528,7 +550,7 @@ const immunizationsController = () => {
 
     const updateimmunizationById = async (req, res, next) => {
         let postData = req.body;
-        postData.status=postData.is_active;
+       
         if (Object.keys(postData).length != 0) {
             if (postData.Id && req.headers.user_uuid) {
                 

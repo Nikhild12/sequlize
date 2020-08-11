@@ -1,0 +1,84 @@
+module.exports = (sequelize, DataTypes) => {
+    const vw_emr_investigation_results = sequelize.define(
+        "vw_emr_investigation_results", {
+        po_uuid: {
+            type: DataTypes.INTEGER,
+
+        },
+        po_patient_uuid: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        po_order_number: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        po_doctor_uuid: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        am_code: {
+            type: DataTypes.STRING,
+        },
+        am_name: {
+            type: DataTypes.STRING,
+        },
+        pwd_result_value: {
+            type: DataTypes.STRING,
+        },
+        trm_max_value: {
+            type: DataTypes.INTEGER,
+            // allowNull: true
+        },
+        trm_min_value: {
+            type: DataTypes.INTEGER,
+            // allowNull: true
+        },
+        um_code: {
+            type: DataTypes.STRING,
+
+        },
+        um_name: {
+            type: DataTypes.STRING,
+
+        },
+        lq_code: {
+            type: DataTypes.STRING,
+
+        },
+        lq_name: {
+            type: DataTypes.STRING,
+
+        },
+        tm_code: {
+            type: DataTypes.STRING,
+
+        },
+        tm_name: {
+            type: DataTypes.STRING,
+
+        },
+        woa_uuid: {
+            type: DataTypes.INTEGER,
+
+        },
+        attachment_name: {
+            type: DataTypes.STRING,
+
+        },
+        file_path: {
+            type: DataTypes.STRING,
+
+        },
+        comments: {
+            type: DataTypes.STRING,
+
+        }
+
+    }, {
+        tableName: "vw_emr_investigation_results",
+    }
+    );
+
+    return vw_emr_investigation_results;
+};

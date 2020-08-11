@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            encounter_uuid:{
+            encounter_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            consultation_uuid:{
+            consultation_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            attachment_type_uuid:{
+            attachment_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -62,14 +62,14 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            attached_date:{
+            attached_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
             attachment_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true
-            }, 
+            },
             file_path: {
                 type: DataTypes.STRING(2000),
                 allowNull: false,
@@ -78,19 +78,19 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(2000),
                 allowNull: true,
             },
-            is_active:{
+            is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: "1",
                 allowNull: false
             },
-            status:{
+            status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: "1",
                 allowNull: false
             },
-            revision:{
-                type : DataTypes.INTEGER,
-                allowNull : false,
+            revision: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
                 validate: {
                     notNull: {
                         msg: emr_constants.GetpleaseProvideMsg('revision')
@@ -108,8 +108,12 @@ module.exports = (sequelize, DataTypes) => {
             modified_by: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                
+
             },
+            patient_attached: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0
+            }
         },
         {
             tableName: "patient_attachments",
@@ -123,14 +127,14 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    patient_attachments.associate =  models => {
-        patient_attachments.belongsTo(models.attachment_type , {
-            foreignKey:"attachment_type_uuid",
-            as:'attachment_type'
+    patient_attachments.associate = models => {
+        patient_attachments.belongsTo(models.attachment_type, {
+            foreignKey: "attachment_type_uuid",
+            as: 'attachment_type'
         });
-        patient_attachments.belongsTo(models.encounter , {
-            foreignKey:"encounter_uuid",
-            as:'encounter'
+        patient_attachments.belongsTo(models.encounter, {
+            foreignKey: "encounter_uuid",
+            as: 'encounter'
         });
     };
 

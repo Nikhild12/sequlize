@@ -27,17 +27,22 @@ const patientSpecalitySketch = () => {
     */
     const _createPatientSpecalitySketch = async (req, res) => {
 
-        const { user_uuid } = req.headers;
+        const { user_uuid, facility_uuid } = req.headers;
         let sketch = req.body;
 
         if (user_uuid) {
-
-            sketch.is_active = sketch.status = true;
-            sketch.created_by = sketch.modified_by = user_uuid;
-            sketch.created_date = sketch.modified_date = new Date();
-            sketch.revision = 1;
-
             try {
+
+                sketch.is_active = sketch.status = true;
+                sketch.created_by = user_uuid;
+                sketch.created_date = new Date();
+                sketch.facility_uuid = facility_uuid;
+                sketch.revision = 1;
+
+                if (Array.isArray(req.files) && req.files[0].path) {
+                    sketch.sketch_path = req.files[0].path;
+                }
+
                 const sketchData = await patientSpecialitySketchesTbl.create(sketch, { returing: true });
                 return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: sketchData });
 

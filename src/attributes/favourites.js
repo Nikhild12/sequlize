@@ -48,7 +48,8 @@ const _getFavouritesAttributes = [
   "sm_store_code",
   "sm_store_name",
   "tsmd_strength",
-  "tsmd_treatment_kit_uuid"
+  "tsmd_treatment_kit_uuid",
+
 ];
 
 const _getAllFavouritesAttributes = () => {
@@ -150,6 +151,8 @@ const favouriteViewAttributes = [
   "fm_display_order",
   "fm_description",
   "fm_status",
+  "fm_created_date",
+  "fm_modified_date",
   "fmd_uuid",
   "fmd_display_order",
   "fmd_active",
@@ -247,7 +250,14 @@ const _favouriteLabVWQuery = (uId, dId, fId, labId = 0) => {
  * @param {*} dId department Id
  * @param {*} fId facility Id
  */
-const _favouriteRadVWQuery = (uId, dId, fId) => {
+const _favouriteRadVWQuery = (uId, dId, fId, labId = 0) => {
+
+  labId = +(labId);
+  const labValidation = labId && labId > 0;
+  const searchKey = labValidation ? 'fm_lab_uuid' : 'fm_department_uuid';
+  const searchValue = labValidation ? labId : dId;
+  console.log({ searchKey, labId });
+
   return {
     fm_is_active: emr_constants.IS_ACTIVE,
     fm_status: emr_constants.IS_ACTIVE,
@@ -255,7 +265,7 @@ const _favouriteRadVWQuery = (uId, dId, fId) => {
     fmd_status: emr_constants.IS_ACTIVE,
     fm_user_uuid: uId,
     fa_uuid: fId,
-    fm_department_uuid: dId,
+    [searchKey]: searchValue,
     [Op.or]: [
       {
         rtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
@@ -288,7 +298,13 @@ const _favouriteLabResponse = (records) => {
       created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
       modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
       facility_name: r.fa_name,
-      department_name: r.dp_name
+      department_name: r.dp_name,
+      created_date: r.fm_created_date,
+      modified_date: r.fm_modified_date,
+      favourite_description: r.fm_description,
+      user_uuid: r.fm_user_uuid,
+      facility_id: r.fa_uuid,
+      department_id: r.dp_uuid
     };
   });
 };
@@ -312,7 +328,13 @@ const _favouriteRadResponse = (records) => {
       created_user_name: `${r.uct_name ? `${r.uct_name} ` : ''}${r.uc_first_name}${r.uc_last_name ? `${r.uc_last_name} ` : ''}`,
       modified_user_name: `${r.umt_name ? `${r.umt_name} ` : ''}${r.um_first_name}${r.um_last_name ? `${r.um_last_name} ` : ''}`,
       facility_name: r.fa_name,
-      department_name: r.dp_name
+      department_name: r.dp_name,
+      created_date: r.fm_created_date,
+      modified_date: r.fm_modified_date,
+      favourite_description: r.fm_description,
+      user_uuid: r.fm_user_uuid,
+      facility_id: r.fa_uuid,
+      department_id: r.dp_uuid
     };
   });
 };

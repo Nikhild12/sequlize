@@ -7,7 +7,10 @@ const patientSketchesController = require('../controllers/patient_speciality_ske
 //Express Router Initialize
 const sketchRoute = Express.Router();
 
-sketchRoute.route('/create').post(patientSketchesController.createPatientSpecalitySketch);
+// Multer Middleware
+const middleware = require('../middleware/middleware');
+
+sketchRoute.route('/create').post(middleware.multerupload('/pssketch').array('file', 10), patientSketchesController.createPatientSpecalitySketch);
 sketchRoute.route('/get-prev-by-patient').get(patientSketchesController.getPrevPatientSpecialitySketch);
 
 

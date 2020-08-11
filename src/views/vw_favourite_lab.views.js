@@ -54,6 +54,12 @@ module.exports = (sequelize, DataTypes) => {
             fm_status: {
                 type: DataTypes.BOOLEAN
             },
+            fm_created_date: {
+                type: DataTypes.DATE
+            },
+            fm_modified_date: {
+                type: DataTypes.DATE
+            },
             fm_is_active: {
                 type: DataTypes.BOOLEAN
             },

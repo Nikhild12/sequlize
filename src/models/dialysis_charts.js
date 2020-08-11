@@ -109,7 +109,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             },
             observed_value:{
-                type: DataTypes.DECIMAL(16,2),
+                type: DataTypes.STRING(225),
                 allowNull: false,
             },
             comments: {

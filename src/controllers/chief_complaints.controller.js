@@ -5,6 +5,7 @@ const username = require("../config/config");
 const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const emr_constants = require("../config/constants");
 
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
 
@@ -166,7 +167,7 @@ const ChiefComplaints = () => {
       const chiefComplaintsData = req.body;
 
       if (user_uuid > 0 && chiefComplaintsData) {
-        
+
         try {
 
           const code_exits = await codeexists(req.body.code);
@@ -190,7 +191,8 @@ const ChiefComplaints = () => {
 
           } else {
 
-            chiefComplaintsData.status = chiefComplaintsData.is_active;
+            chiefComplaintsData.status = 1;
+            chiefComplaintsData.is_active = chiefComplaintsData.is_active;
             chiefComplaintsData.created_by = user_uuid;
             chiefComplaintsData.modified_by = user_uuid;
 
@@ -414,7 +416,9 @@ const ChiefComplaints = () => {
 
   // };
 
-  const _getChiefComplaints = async (req, res, next) => {
+
+
+  const _getChiefComplaints_old = async (req, res, next) => {
     let getsearch = req.body;
 
     Object.keys(getsearch).forEach((key) => (getsearch[key] == null || getsearch[key] == "") && delete getsearch[key]);
@@ -508,6 +512,78 @@ const ChiefComplaints = () => {
       return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
         message: "error"
       });
+    }
+  };
+
+  const _getChiefComplaints = async (req, res, next) => {
+    let getsearch = req.body;
+    const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize = 10, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+    Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
+
+    let postingData = {
+      offset: pageNo * paginationSize,
+      where: { is_active: 1, status: 1, },
+      limit: paginationSize,
+      order: [[sortField, sortOrder]],
+
+    };
+
+    if (search && /\S/.test(search)) {
+      postingData.where = Object.assign(postingData.where, {
+        [Op.and]: [{
+          [Op.or]: [{
+            code: {
+              [Op.like]: '%' + search.toLowerCase() + '%',
+            }
+          }, {
+            name: {
+              [Op.like]: '%' + search.toLowerCase() + '%',
+            }
+          },
+          {
+            description: {
+              [Op.like]: '%' + search.toLowerCase() + '%',
+            }
+          }]
+        }]
+      });
+    }
+    if (searchKeyWord && /\S/.test(searchKeyWord)) {
+      postingData.where = Object.assign(postingData.where, {
+        [Op.and]: [{
+          [Op.or]: [{
+            code: {
+              [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+            }
+          }, {
+            name: {
+              [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+            }
+          }]
+        }]
+      });
+    }
+
+    postingData.where.is_active = status;
+
+    try {
+      let data = await chief_complaints_tbl.findAndCountAll(postingData);
+      const code = data.rows.length === 0 ? 204 : 200;
+      const message = data.rows.length === 0 ? emr_constants.NO_RECORD_FOUND : emr_constants.DRUG_FREQUENCY;
+      return res
+        .status(httpStatus.OK)
+        .json({
+          message, code, responseContents: data.rows, totalRecords: data.count,
+        });
+
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          msg: errorMsg
+        });
     }
   };
 

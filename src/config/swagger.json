@@ -3031,6 +3031,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "createPatientDiagnosis",
 						"required": true,
@@ -3265,6 +3271,68 @@
 				}
 			}
 		},
+		"/api/favourite-type/get-type": {
+			"get": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/favourite-type/get-type-advance": {
+			"post": {
+				"description": "To get list of favourite type Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getFavouriteType",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getFavouriteType"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"favouriteType"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
@@ -3364,6 +3432,11 @@
 					{
 						"in": "query",
 						"name": "lab_id",
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "store_master_uuid",
 						"type": "integer"
 					},
 					{
@@ -3631,8 +3704,19 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "query",
 						"name": "dept_id",
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "store_master_uuid",
 						"type": "integer"
 					},
 					{
@@ -3706,6 +3790,11 @@
 					{
 						"in": "query",
 						"name": "createdUserId",
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "store_master_uuid",
 						"type": "integer"
 					}
 				],
@@ -3843,6 +3932,16 @@
 					},
 					{
 						"in": "query",
+						"name": "pageNo",
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "paginationSize",
+						"type": "number"
+					},
+					{
+						"in": "query",
 						"name": "searchBy",
 						"required": true,
 						"type": "string"
@@ -3852,7 +3951,7 @@
 						"name": "searchValue",
 						"required": true,
 						"type": "string"
-					}
+					}					
 				],
 				"produces": [
 					"application/json",
@@ -6558,12 +6657,6 @@
 						"name": "patient_uuid",
 						"required": true,
 						"type": "integer"
-					},
-					{
-						"in": "query",
-						"name": "department_uuid",
-						"required": true,
-						"type": "integer"
 					}
 				],
 				"produces": [
@@ -7688,12 +7781,62 @@
 						"type": "integer"
 					},
 					{
-						"in": "body",
-						"name": "sketch",
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
-						"schema": {
-							"$ref": "#/definitions/addSketch"
-						}
+						"type": "integer"
+					},
+					{
+						"in": "formData",
+						"name": "department_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "encounter_type_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "doctor_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "consultation_uuid",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "speciality_sketch_uuid",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "comments",
+						"type": "string"
+					},
+					{
+						"in": "formData",
+						"name": "file",
+						"required": true,
+						"type": "file"
 					}
 				],
 				"produces": [
@@ -8625,6 +8768,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -8759,7 +8908,134 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/investigation_result/getInvestigationResultById": {
+			"get": {
+				"description": "To get investigation By Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_order_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"InvestigationResult"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getInvestigationResult"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/drug-frequencyResult/getdrugfrequency": {
+			"get": {
+				"summary": "To get drugfrequency default  Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "paginationSize",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "pageNo",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"drug_frequency"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/certificates/printpreviouscertificates": {
+			"get": {
+				"summary": "To get List of patient Certificates",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "certificate_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientCertficates"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
+
 	},
 	"definitions": {
 		"updatevitals": {
@@ -11119,6 +11395,20 @@
 					"tat_end_time": {
 						"type": "string"
 					}
+				}
+			}
+		},
+		"getFavouriteType": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"pageNo": {
+					"type": "number"
+				},
+				"paginationSize": {
+					"type": "number"
 				}
 			}
 		},
@@ -15781,41 +16071,6 @@
 				}
 			}
 		},
-		"addSketch": {
-			"type": "object",
-			"properties": {
-				"facility_uuid": {
-					"type": "integer"
-				},
-				"department_uuid": {
-					"type": "integer"
-				},
-				"patient_uuid": {
-					"type": "integer"
-				},
-				"encounter_uuid": {
-					"type": "integer"
-				},
-				"encounter_type_uuid": {
-					"type": "integer"
-				},
-				"doctor_uuid": {
-					"type": "integer"
-				},
-				"consultation_uuid": {
-					"type": "integer"
-				},
-				"speciality_sketch_uuid": {
-					"type": "integer"
-				},
-				"sketch_path": {
-					"type": "string"
-				},
-				"comments": {
-					"type": "string"
-				}
-			}
-		},
 		"addCategory": {
 			"type": "object",
 			"properties": {
@@ -15832,6 +16087,9 @@
 					"type": "integer"
 				},
 				"category_group_uuid": {
+					"type": "integer"
+				},
+				"display_order": {
 					"type": "integer"
 				}
 			}
@@ -16017,6 +16275,9 @@
 									"section_uuid": {
 										"type": "integer"
 									},
+									"profile_uuid": {
+										"type": "integer"
+									},
 									"activity_uuid": {
 										"type": "integer"
 									},
@@ -16031,6 +16292,9 @@
 												"profile_section_categories_uuid": {
 													"type": "integer"
 												},
+												"profile_sections_uuid": {
+													"type": "integer"
+												},
 												"category_uuid": {
 													"type": "integer"
 												},
@@ -16043,6 +16307,9 @@
 														"type": "object",
 														"properties": {
 															"profile_section_category_concepts_uuid": {
+																"type": "integer"
+															},
+															"profile_section_categories_uuid": {
 																"type": "integer"
 															},
 															"code": {
@@ -16072,6 +16339,9 @@
 																	"type": "object",
 																	"properties": {
 																		"profile_section_category_concept_values_uuid": {
+																			"type": "integer"
+																		},
+																		"profile_section_category_concepts_uuid": {
 																			"type": "integer"
 																		},
 																		"value_code": {
@@ -16236,49 +16506,45 @@
 		"addProgressNotes": {
 			"type": "array",
 			"items": {
-				"anyOf": [
-					{
-						"type": "object",
-						"properties": {
-							"encounter_uuid": {
-								"type": "integer"
-							},
-							"encounter_type_uuid": {
-								"type": "integer"
-							},
-							"patient_uuid": {
-								"type": "integer"
-							},
-							"facility_uuid": {
-								"type": "integer"
-							},
-							"department_uuid": {
-								"type": "integer"
-							},
-							"progressnote_type_uuid": {
-								"type": "integer"
-							},
-							"captured_by": {
-								"type": "string"
-							},
-							"captured_on": {
-								"type": "string"
-							},
-							"daily_note": {
-								"type": "string"
-							},
-							"special_note": {
-								"type": "string"
-							},
-							"note_status_uuid": {
-								"type": "integer"
-							},
-							"is_phr": {
-								"type": "boolean"
-							}
-						}
+				"type": "object",
+				"properties": {
+					"encounter_uuid": {
+						"type": "integer"
+					},
+					"encounter_type_uuid": {
+						"type": "integer"
+					},
+					"patient_uuid": {
+						"type": "integer"
+					},
+					"facility_uuid": {
+						"type": "integer"
+					},
+					"department_uuid": {
+						"type": "integer"
+					},
+					"progressnote_type_uuid": {
+						"type": "integer"
+					},
+					"captured_by": {
+						"type": "string"
+					},
+					"captured_on": {
+						"type": "string"
+					},
+					"daily_note": {
+						"type": "string"
+					},
+					"special_note": {
+						"type": "string"
+					},
+					"note_status_uuid": {
+						"type": "integer"
+					},
+					"is_phr": {
+						"type": "boolean"
 					}
-				]
+				}
 			}
 		},
 		"updateProgressNotes": {
@@ -16340,6 +16606,14 @@
 					"type": "string"
 				},
 				"Id": {
+					"type": "integer"
+				}
+			}
+		},
+		"getInvestigationResult": {
+			"type": "object",
+			"properties": {
+				"user_uuid": {
 					"type": "integer"
 				}
 			}
