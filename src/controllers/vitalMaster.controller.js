@@ -85,19 +85,21 @@ const vitalmstrController = () => {
   };
   //function for getting all vitals
   const _getALLVitals = async (req, res) => {
-    let query = {
-      where: { is_active: 1, status: 1 },
-      // include:[{
-      //   model:vitalTypeTbl, 
-      //   as:'vital_type',    
-      //   where:{
-      //     is_active:1,
-      //     status:1
-      //   }
-      // }] 
-    };
+    // let query = {
+    //   where: { is_active: 1, status: 1 },
+    //   // include:[{
+    //   //   model:vitalTypeTbl, 
+    //   //   as:'vital_type',    
+    //   //   where:{
+    //   //     is_active:1,
+    //   //     status:1
+    //   //   }
+    //   // }] 
+    // };
+    let { is_default }= req.headers;
+    
     try {
-      const result = await vitalmstrTbl.findAll(query, { returning: true });
+      const result = await vitalmstrTbl.findAll(getdefaultVitalsQuerycheck(is_default), { returning: true });
       if (result) {
         return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
       }
@@ -106,7 +108,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
+ 
   const _getAllVitalsFilter = async (req, res) => {
     const { user_uuid } = req.headers;
     const { searchValue } = req.body;
@@ -444,6 +446,16 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
+function getdefaultVitalsQuerycheck(is_default){
+  let q = {
+    where: { is_active:1,status:1}
+  }
+    
+  if (is_default) {
+    q.where.is_default = is_default;
+  }
+  return q;
+}
 const nameExists = (name) => {
   if (name !== undefined) {
     return new Promise((resolve, reject) => {

@@ -3951,7 +3951,7 @@
 						"name": "searchValue",
 						"required": true,
 						"type": "string"
-					}					
+					}
 				],
 				"produces": [
 					"application/json",
@@ -4728,6 +4728,12 @@
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "is_default",
+						"required": false,
 						"type": "integer"
 					}
 				],
@@ -9035,7 +9041,6 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		}
-
 	},
 	"definitions": {
 		"updatevitals": {
@@ -10672,7 +10677,9 @@
 				"allergy_source_uuid": {
 					"type": "integer"
 				},
-				"name":{"type": "string"},
+				"name": {
+					"type": "string"
+				},
 				"status": {
 					"type": "boolean"
 				}
