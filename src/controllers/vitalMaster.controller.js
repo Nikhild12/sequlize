@@ -85,19 +85,21 @@ const vitalmstrController = () => {
   };
   //function for getting all vitals
   const _getALLVitals = async (req, res) => {
-    let query = {
-      where: { is_active: 1, status: 1 },
-      // include:[{
-      //   model:vitalTypeTbl, 
-      //   as:'vital_type',    
-      //   where:{
-      //     is_active:1,
-      //     status:1
-      //   }
-      // }] 
-    };
+    // let query = {
+    //   where: { is_active: 1, status: 1 },
+    //   // include:[{
+    //   //   model:vitalTypeTbl, 
+    //   //   as:'vital_type',    
+    //   //   where:{
+    //   //     is_active:1,
+    //   //     status:1
+    //   //   }
+    //   // }] 
+    // };
+    let { is_default }= req.headers;
+    
     try {
-      const result = await vitalmstrTbl.findAll(query, { returning: true });
+      const result = await vitalmstrTbl.findAll(getdefaultVitalsQuerycheck(is_default), { returning: true });
       if (result) {
         return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
       }
@@ -106,18 +108,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-  const _getALLVitalmaster = async (req, res) => {
-    let query = req.body;
-    try {
-      const result = await vitalmstrTbl.findAll(getdefaultVitalsQueryall(query), { returning: true });
-      if (result) {
-        return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
-      }
-    }
-    catch (ex) {
-      return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
-    }
-  };
+ 
   const _getAllVitalsFilter = async (req, res) => {
     const { user_uuid } = req.headers;
     const { searchValue } = req.body;
@@ -420,8 +411,7 @@ const vitalmstrController = () => {
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
     deletevitals: _deletevitals,
-    getVitalsByUUID: _getVitalsByUUID,
-    getALLVitalmaster:_getALLVitalmaster
+    getVitalsByUUID: _getVitalsByUUID
   };
 };
 
@@ -456,13 +446,13 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
-function getdefaultVitalsQueryall(query) {
+function getdefaultVitalsQuerycheck(is_default){
   let q = {
     where: { is_active:1,status:1}
   }
     
-  if (query) {
-    q.where.is_default = query.is_default;
+  if (is_default) {
+    q.where.is_default = is_default;
   }
   return q;
 }
