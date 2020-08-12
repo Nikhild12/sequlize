@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const db = require("../config/sequelize");
-
+const emr_constants = require("../config/constants");
 const clinical_const = require('../config/constants');
 const emr_utilities = require('../services/utility.service');
 
@@ -406,10 +406,16 @@ const vitalmstrController = () => {
   const _getdefultVitals = async (req, res) => {
     let { is_default }= req.query;
     try {
+     
       const result = await vitalmstrTbl.findAll(getdefaultVitals(is_default), { returning: true });
-      if (result) {
-        return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
-      }
+     
+      const returnMessage = result > 0 ? emr_constants.FETCHD_VITAL_MASTER_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+        return res.status(httpStatus.OK).send({
+          code: httpStatus.OK,
+          message: returnMessage,
+          responseContents: result
+        });
+      
     }
     catch (ex) {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
