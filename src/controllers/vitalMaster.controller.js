@@ -73,6 +73,7 @@ const vitalmstrController = () => {
 
   //function for getting default vitals
   const _getVitals = async (req, res) => {
+    
     try {
       const result = await vitalmstrTbl.findAll(getdefaultVitalsQuery(), { returning: true });
       if (result) {
@@ -85,21 +86,21 @@ const vitalmstrController = () => {
   };
   //function for getting all vitals
   const _getALLVitals = async (req, res) => {
-    // let query = {
-    //   where: { is_active: 1, status: 1 },
-    //   // include:[{
-    //   //   model:vitalTypeTbl, 
-    //   //   as:'vital_type',    
-    //   //   where:{
-    //   //     is_active:1,
-    //   //     status:1
-    //   //   }
-    //   // }] 
-    // };
-    let { is_default }= req.query;
+    let query = {
+      where: { is_active: 1, status: 1 },
+      // include:[{
+      //   model:vitalTypeTbl, 
+      //   as:'vital_type',    
+      //   where:{
+      //     is_active:1,
+      //     status:1
+      //   }
+      // }] 
+    };
+   
     
     try {
-      const result = await vitalmstrTbl.findAll(getdefaultVitalsQuerycheck(is_default), { returning: true });
+      const result = await vitalmstrTbl.findAll(query, { returning: true });
       if (result) {
         return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
       }
@@ -402,6 +403,18 @@ const vitalmstrController = () => {
     }
 
   };
+  const _getdefultVitals = async (req, res) => {
+    let { is_default }= req.query;
+    try {
+      const result = await vitalmstrTbl.findAll(getdefaultVitals(is_default), { returning: true });
+      if (result) {
+        return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
+      }
+    }
+    catch (ex) {
+      return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
   return {
     createVital: _createVital,
     getVitals: _getVitals,
@@ -411,7 +424,8 @@ const vitalmstrController = () => {
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
     deletevitals: _deletevitals,
-    getVitalsByUUID: _getVitalsByUUID
+    getVitalsByUUID: _getVitalsByUUID,
+    getdefultVitals:_getdefultVitals
   };
 };
 
@@ -419,7 +433,7 @@ module.exports = vitalmstrController();
 
 function getdefaultVitalsQuery(vital_uuid) {
   let q = {
-    where: { is_default: clinical_const.IS_ACTIVE, is_active: clinical_const.IS_ACTIVE, status: clinical_const.IS_ACTIVE },
+    where: { is_default: 1, is_active: clinical_const.IS_ACTIVE, status: clinical_const.IS_ACTIVE },
     include: [
       {
         model: vitalValueTypeTbl,
@@ -446,7 +460,7 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
-function getdefaultVitalsQuerycheck(is_default){
+function getdefaultVitals(is_default){
   let q = {
     where: { is_active:1,status:1}
   }
