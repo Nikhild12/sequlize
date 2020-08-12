@@ -3951,7 +3951,7 @@
 						"name": "searchValue",
 						"required": true,
 						"type": "string"
-					}					
+					}
 				],
 				"produces": [
 					"application/json",
@@ -4700,6 +4700,7 @@
 						"required": true,
 						"type": "integer"
 					}
+					
 				],
 				"produces": [
 					"application/json",
@@ -4879,6 +4880,43 @@
 					},
 					"400": {
 						"description": "Sorry! Something Went Wrong"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/vitalMaster/getdefultVitals": {
+			"get": {
+				"summary": "To get default vitals master List",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "is_default",
+						"required": false,
+						"type": "integer"
+					}
+					
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"vital_master"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getVitalsMaster"
+						}
 					}
 				},
 				"x-auth-type": "Application & Application User",
@@ -9035,7 +9073,6 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		}
-
 	},
 	"definitions": {
 		"updatevitals": {
@@ -10672,7 +10709,9 @@
 				"allergy_source_uuid": {
 					"type": "integer"
 				},
-				"name":{"type": "string"},
+				"name": {
+					"type": "string"
+				},
 				"status": {
 					"type": "boolean"
 				}

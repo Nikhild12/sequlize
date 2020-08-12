@@ -24,6 +24,7 @@ module.exports = Object.freeze({
   TREATMENT_SUCCESS: "Treatment Kit Successfully Inserted",
   FILTERBYTHREE: "filterbythree",
   FETCHD_TREATMENT_KIT_SUCCESSFULLY: "Fetched Treatment Kit Successfully",
+  FETCHD_VITAL_MASTER_SUCCESSFULLY: "Fetched Vital Master details Successfully",
   FETCHED_PREVIOUS_KIT_SUCCESSFULLY:
     "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
