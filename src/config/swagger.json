@@ -4731,7 +4731,7 @@
 						"type": "integer"
 					},
 					{
-						"in": "header",
+						"in": "query",
 						"name": "is_default",
 						"required": false,
 						"type": "integer"

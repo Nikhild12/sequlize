@@ -96,7 +96,7 @@ const vitalmstrController = () => {
     //   //   }
     //   // }] 
     // };
-    let { is_default }= req.headers;
+    let { is_default }= req.query;
     
     try {
       const result = await vitalmstrTbl.findAll(getdefaultVitalsQuerycheck(is_default), { returning: true });
