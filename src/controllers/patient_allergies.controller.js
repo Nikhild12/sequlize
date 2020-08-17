@@ -32,14 +32,19 @@ const Patient_Allergies = () => {
     let { patient_allergies } = req.body;
 
     if (user_uuid && patient_allergies) {
-      patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
-      patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
-      patient_allergies.performed_by = user_uuid;
-
       try {
+        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
+        patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
+        patient_allergies.performed_by = user_uuid;
+
+        if (patient_allergies.hasOwnProperty('no_known_allergy') && typeof patient_allergies.no_known_allergy === 'boolean') {
+          if (!patient_allergies.no_known_allergy && !patient_allergies.hasOwnProperty('allergy_master_uuid')) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.SEND_ALLERGY_MASTER_UUID });
+          }
+        }
 
         await patientAllergiesTbl.create(patient_allergies, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: patient_allergies });
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.INSERTED_PATIENT_ALLERGY_SUCCESS, responseContents: patient_allergies });
       } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
