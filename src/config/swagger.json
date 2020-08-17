@@ -13738,6 +13738,15 @@
 						},
 						"patient_allergy_status_uuid": {
 							"type": "integer"
+						},
+						"allergy_reaction_uuid": {
+							"type": "integer"
+						},
+						"remarks": {
+							"type": "string"
+						},
+						"no_known_allergy": {
+							"type": "boolean"
 						}
 					}
 				}
