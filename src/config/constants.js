@@ -73,9 +73,12 @@ module.exports = Object.freeze({
   NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
   TEMPLATE_INSERTED: "Template details Inserted Successfully",
   TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
-  NAME_DISPLAY_NOTEXISTS:"name or displayOrder does not existed",
+  NAME_DISPLAY_NOTEXISTS: "name or displayOrder does not existed",
   PATIENT_VITAILS_CREATED: "Vitals Saved Successfully",
   COMMON_REF_CODE_NAME_EXISTS: "code and name already exists",
+  ENCOUNTER_SUCCESS: "Inserted Encounter Successfully",
+  SEND_ALLERGY_MASTER_UUID: "Please send Allergy Master Id",
+  INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -192,8 +195,8 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} note_template_type_uuid`;
       case "note_type_uuid":
         return `${returnProvideMsg} note_type_uuid`;
-        case "template_uuid":
-            return `${returnProvideMsg} template_id`;
+      case "template_uuid":
+        return `${returnProvideMsg} template_id`;
       default:
         return `${returnProvideMsg} required Fields`;
     }
