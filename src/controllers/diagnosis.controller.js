@@ -113,7 +113,7 @@ const diagnosisController = () => {
                 if (diagnosisData && diagnosisData.length > 0) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData ? diagnosisData : []
                     });
                 } else {
@@ -158,7 +158,7 @@ const diagnosisController = () => {
                 if (diagnosisData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisData.rows,
                         totalRecords: diagnosisData.count,
                     });
@@ -232,7 +232,7 @@ const diagnosisController = () => {
                             diagnosisData.uuid = diagnosisCreatedData.uuid;
                             return res.status(200).send({
                                 code: 200,
-                                message: "Inserted Diagnosis Successfully",
+                                message: "Inserted Diagnosis Successfully",
                                 responseContents: diagnosisData
                             });
                         }
@@ -384,7 +384,7 @@ const diagnosisController = () => {
                 if (updateddiagnosissAsync) {
                     return res.status(200).send({
                         code: 200,
-                        message: "Deleted Successfully"
+                        message: "Deleted Successfully"
                     });
                 }
 
@@ -415,7 +415,7 @@ const diagnosisController = () => {
         ).then((data) => {
             res.send({
                 code: 200,
-                msg: "Updated Successfully",
+                msg: "Updated Successfully",
                 req: postData,
                 responseContents: data
             });
@@ -530,7 +530,7 @@ const diagnosisController = () => {
                 if (diagnosisAutoSearchData && diagnosisAutoSearchData.length > 0) {
                     return res.status(200).send({
                         code: httpStatus.OK,
-                        message: "Fetched Diagnosis Data Successfully",
+                        message: "Fetched Diagnosis Data Successfully",
                         responseContents: diagnosisAutoSearchData ? diagnosisAutoSearchData : []
                     });
                 } else {
