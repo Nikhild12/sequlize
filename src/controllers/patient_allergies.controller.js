@@ -18,6 +18,7 @@ const allergySevirityTbl = sequelizeDb.allergy_severity;
 const allergySourceTbl = sequelizeDb.allergy_source;
 const allergyMasterTbl = sequelizeDb.allergy_masters;
 const periodsTbl = sequelizeDb.periods;
+const allergyReactions = sequelizeDb.allergy_reactions;
 
 const Patient_Allergies = () => {
 
@@ -216,6 +217,12 @@ async function getPatientAllergyData(patient_uuid) {
 
           where: { is_active: 1 },
 
+        },
+        {
+          model: allergyReactions,
+          as: 'allergy_reactions',
+          attributes: ['uuid', 'name', 'code'],
+          where: { is_active: 1 },
         },
       ]
     },
