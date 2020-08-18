@@ -34,7 +34,7 @@ const Patient_Allergies = () => {
 
     if (user_uuid && patient_allergies) {
       try {
-        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
+        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);        
         patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
         patient_allergies.performed_by = user_uuid;
 
@@ -108,7 +108,7 @@ const Patient_Allergies = () => {
 
     if (uuid && user_uuid && patient_allergies) {
       try {
-        let allergy_data = await allergyData(patient_allergies);
+        let allergy_data = allergyData(patient_allergies);
         const [updated] = await patientAllergiesTbl.update(allergy_data, { where: { uuid: uuid } });
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContent: updated });
@@ -230,7 +230,7 @@ async function getPatientAllergyData(patient_uuid) {
   );
 }
 
-async function allergyData(patient_allergies) {
+function allergyData(patient_allergies) {
   let data = {
     patient_uuid: patient_allergies.patient_uuid,
     encounter_uuid: patient_allergies.encounter_uuid,
@@ -244,7 +244,10 @@ async function allergyData(patient_allergies) {
     allergy_severity_uuid: patient_allergies.allergy_severity_uuid,
     allergy_source_uuid: patient_allergies.allergy_source_uuid,
     duration: patient_allergies.duration,
-    period_uuid: patient_allergies.period_uuid
+    period_uuid: patient_allergies.period_uuid,
+    allergy_reaction_uuid: patient_allergies.allergy_reaction_uuid,
+    remarks: patient_allergies.remarks,
+    no_known_allergy: patient_allergies.no_known_allergy
   };
   return data;
 }
