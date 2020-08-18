@@ -253,6 +253,11 @@ module.exports = (sequelize, DataTypes) => {
             as: 'periods'
         });
 
+        patient_allergies.belongsTo(models.allergy_reactions, {
+            foreignKey: 'allergy_reaction_uuid',
+            as: 'allergy_reactions'
+        });
+
 
     };
 
