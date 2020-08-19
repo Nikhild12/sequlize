@@ -19,6 +19,21 @@ module.exports = (sequelize, DataTypes) => {
       pa_last_name: {
         type: DataTypes.STRING(255)
       },
+      p_period_uuid: {
+        type: DataTypes.INTEGER
+      },
+      p_is_dob_auto_calculate: {
+        type: DataTypes.BOOLEAN
+      },
+      p_dob: {
+        type: DataTypes.DATE
+      },
+      pe_code: {
+        type: DataTypes.STRING(255)
+      },
+      pe_name: {
+        type: DataTypes.STRING(255)
+      },
       pa_age: {
         type: DataTypes.STRING(255)
       },
