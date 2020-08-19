@@ -907,9 +907,11 @@ const TickSheetMasterController = () => {
       };
     }
 
-    if (req.body.faourite_type_uuid && /\S/.test(req.body.fm_favourite_type_uuid)) {
-      findQuery.where['fm_favourite_type_uuid'] = req.body.template_type_uuid;
-
+    if (req.body && req.body.hasOwnProperty('favourite_type_uuid')) {
+      req.body.favourite_type_uuid =+(req.body.favourite_type_uuid)
+      if(!isNaN(req.body.favourite_type_uuid)){
+        findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
+      }
     }
 
     try {
