@@ -10642,6 +10642,9 @@
 				},
 				"searchValue": {
 					"type": "string"
+				},
+				"favourite_type_uuid":{
+					"type": "integer"
 				}
 			}
 		},
