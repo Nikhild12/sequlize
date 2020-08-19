@@ -12579,8 +12579,8 @@
 						"patient_allergy_status_uuid": {
 							"type": "integer"
 						},
-						"allergy_reaction_uuid": {
-							"type": "integer"
+						"allergy_reactions": {
+							"type": "string"
 						},
 						"remarks": {
 							"type": "string"
@@ -12664,7 +12664,7 @@
 						"no_known_allergy": {
 							"type": "boolean"
 						},
-						"allergy_reaction_uuid": {
+						"allergy_reactions": {
 							"type": "integer"
 						},
 						"remarks": {

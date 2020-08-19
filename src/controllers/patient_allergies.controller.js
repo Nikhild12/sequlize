@@ -18,7 +18,6 @@ const allergySevirityTbl = sequelizeDb.allergy_severity;
 const allergySourceTbl = sequelizeDb.allergy_source;
 const allergyMasterTbl = sequelizeDb.allergy_masters;
 const periodsTbl = sequelizeDb.periods;
-const allergyReactions = sequelizeDb.allergy_reactions;
 
 const Patient_Allergies = () => {
 
@@ -34,7 +33,7 @@ const Patient_Allergies = () => {
 
     if (user_uuid && patient_allergies) {
       try {
-        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);        
+        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
         patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
         patient_allergies.performed_by = user_uuid;
 
@@ -217,13 +216,7 @@ async function getPatientAllergyData(patient_uuid) {
 
           where: { is_active: 1 },
 
-        },
-        {
-          model: allergyReactions,
-          as: 'allergy_reactions',
-          attributes: ['uuid', 'name', 'code'],
-          where: { is_active: 1 },
-        },
+        }
       ]
     },
     { returning: true }

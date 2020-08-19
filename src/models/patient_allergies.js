@@ -72,9 +72,8 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            allergy_reaction_uuid: {
-                type: DataTypes.INTEGER,
-                defaultValue: 0,
+            allergy_reactions: {
+                type: DataTypes.STRING(500),
                 allowNull: true
             },
             remarks: {
@@ -117,7 +116,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: true,
-                defaultValue:0
+                defaultValue: 0
 
             },
 
@@ -125,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: true,
-                defaultValue:0
+                defaultValue: 0
 
             },
             duration: {
@@ -139,7 +138,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: true,
-                defaultValue:0
+                defaultValue: 0
 
             },
             comments: {
@@ -168,7 +167,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
-            no_known_allergy:{
+            no_known_allergy: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 0,
                 allowNull: false
@@ -252,12 +251,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'period_uuid',
             as: 'periods'
         });
-
-        patient_allergies.belongsTo(models.allergy_reactions, {
-            foreignKey: 'allergy_reaction_uuid',
-            as: 'allergy_reactions'
-        });
-
 
     };
 
