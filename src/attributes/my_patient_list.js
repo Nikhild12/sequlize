@@ -12,7 +12,12 @@ const _myPatientListAttributes = [
   "ec_doctor_uuid",
   "ec_encounter_uuid",
   "ec_uuid",
-  "ec_performed_date"
+  "ec_performed_date",
+  "p_period_uuid",
+  "p_is_dob_auto_calculate",
+  "p_dob",
+  "pe_code",
+  "pe_name"
 ];
 
 module.exports = {
