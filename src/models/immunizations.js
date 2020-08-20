@@ -20,32 +20,32 @@ module.exports = (sequelize, DataTypes) => {
         },
         route_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
             
         },
         frequency_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
            
         },
         duration: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
             
         },
         period_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true
             
         },
         instruction: {
             type: DataTypes.STRING(250),
-            allowNull: false
+            allowNull: true
             
         },
         schedule_flag_uuid: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         status: {
             type: DataTypes.BOOLEAN,

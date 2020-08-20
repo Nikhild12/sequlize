@@ -131,7 +131,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
-                allowNull: false
+                allowNull: true
 
             },
             period_uuid: {
@@ -209,6 +209,15 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0
 
             },
+            resolved_date: {
+                type: DataTypes.DATE,
+                allowNull: true
+            },
+            resolved_by: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            }
         },
         {
             tableName: 'patient_allergies',
@@ -250,6 +259,10 @@ module.exports = (sequelize, DataTypes) => {
         patient_allergies.belongsTo(models.periods, {
             foreignKey: 'period_uuid',
             as: 'periods'
+        });
+        patient_allergies.belongsTo(models.patient_allergy_status, {
+            foreignKey: 'patient_allergy_status_uuid',
+            as: 'patient_allergy_status'
         });
 
     };

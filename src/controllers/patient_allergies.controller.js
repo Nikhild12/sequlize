@@ -18,6 +18,8 @@ const allergySevirityTbl = sequelizeDb.allergy_severity;
 const allergySourceTbl = sequelizeDb.allergy_source;
 const allergyMasterTbl = sequelizeDb.allergy_masters;
 const periodsTbl = sequelizeDb.periods;
+const patientAllergyStatus = sequelizeDb.patient_allergy_status;
+
 
 const Patient_Allergies = () => {
 
@@ -79,7 +81,6 @@ const Patient_Allergies = () => {
     }
   };
 
-
   const _getPatientAllergiesByUserId = async (req, res) => {
 
     const { uuid } = req.query;
@@ -98,7 +99,6 @@ const Patient_Allergies = () => {
 
     }
   };
-
 
   const _updatePatientAllergy = async (req, res) => {
     const { user_uuid } = req.headers;
@@ -150,13 +150,40 @@ const Patient_Allergies = () => {
     }
   };
 
+
+  /**
+   * 
+   * @param {*} _req req from API
+   * @param {*} res res to API
+   */
+  const _getPatientAllergyStatus = async (_req, res) => {
+
+    try {
+      const patientAllergyStatusData = await patientAllergyStatus
+        .findAll({ is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE });
+
+      const code = emr_utility.getResponseCodeForSuccessRequest(patientAllergyStatusData);
+      const message = emr_utility.getResponseMessageForSuccessRequest(code, 'pas');
+      return res.status(200).send({ code, message, responseContents: patientAllergyStatusData });
+
+    } catch (error) {
+      console.log("Exception happened", error);
+      return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+    }
+
+
+  };
+
+
+
   return {
 
     addNewAllergy: _addNewAllergy,
     getPatientAllergies: _getPatientAllergies,
     updatePatientAllergy: _updatePatientAllergy,
     deletePatientAllergy: _deletePatientAllergy,
-    getPatientAllergiesByUserId: _getPatientAllergiesByUserId
+    getPatientAllergiesByUserId: _getPatientAllergiesByUserId,
+    getPatientAllergyStatus: _getPatientAllergyStatus
   };
 
 };
@@ -215,6 +242,13 @@ async function getPatientAllergyData(patient_uuid) {
           attributes: ['uuid', 'name'],
 
           where: { is_active: 1 },
+
+        },
+        {
+          model: patientAllergyStatus,
+          as: 'patient_allergy_status',
+          attributes: ['uuid', 'name', 'code'],
+          where: { is_active: 1, status: 1 },
 
         }
       ]
