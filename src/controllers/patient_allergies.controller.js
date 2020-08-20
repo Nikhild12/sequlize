@@ -243,6 +243,13 @@ async function getPatientAllergyData(patient_uuid) {
 
           where: { is_active: 1 },
 
+        },
+        {
+          model: patientAllergyStatus,
+          as: 'patient_allergy_status',
+          attributes: ['uuid', 'name', 'code'],
+          where: { is_active: 1, status: 1 },
+
         }
       ]
     },

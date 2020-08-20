@@ -10665,7 +10665,7 @@
 				"searchValue": {
 					"type": "string"
 				},
-				"favourite_type_uuid":{
+				"favourite_type_uuid": {
 					"type": "integer"
 				}
 			}
@@ -12609,6 +12609,12 @@
 						},
 						"no_known_allergy": {
 							"type": "boolean"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
+							"type": "integer"
 						}
 					}
 				}
@@ -12691,6 +12697,12 @@
 						},
 						"remarks": {
 							"type": "string"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
+							"type": "integer"
 						}
 					}
 				}
