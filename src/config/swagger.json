@@ -4964,6 +4964,28 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient-allergy/patient-allergy-status": {
+			"get": {
+				"description": "To get Patient Allergy Status Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/referal-reasons/getReferralReasons": {
 			"get": {
 				"summary": "To get list of ReferalReasons",
