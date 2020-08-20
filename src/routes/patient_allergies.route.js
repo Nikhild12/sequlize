@@ -12,4 +12,6 @@ patientAllergiesRoute.route('/getPatientAllergies').get(patientAllergiesControll
 patientAllergiesRoute.route('/getPatientAllergiesById').get(patientAllergiesController.getPatientAllergiesByUserId);
 patientAllergiesRoute.route('/updatePatientAllergy').put(patientAllergiesController.updatePatientAllergy);
 patientAllergiesRoute.route('/delete').put(patientAllergiesController.deletePatientAllergy);
+patientAllergiesRoute.route('/patient-allergy-status').get(patientAllergiesController.getPatientAllergyStatus);
+
 module.exports = patientAllergiesRoute;
