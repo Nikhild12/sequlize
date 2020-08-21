@@ -517,7 +517,7 @@ const ChiefComplaints = () => {
 
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
-    const { search, searchKeyWord, status = 1, pageNo = 0,  sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+    const { search, searchKeyWord, status = 1, pageNo = 0,paginationSize,  sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
   
     Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
