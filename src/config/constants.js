@@ -80,6 +80,14 @@ module.exports = Object.freeze({
   SEND_ALLERGY_MASTER_UUID: "Please send Allergy Master Id",
   INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
   PATIENT_ALLERGY_STATUS_FETCH_SUCCESS: "Patient Allergy Status fetched successfully",
+  ALLERGY_SOURCE_SUCCESS: "Allergy Source fetched successfully",
+  BLOCK_CHAIN: {
+    BLOCK_CHAIN_URL: {
+      VITAL_CREATE: '/assetapi/Vitals/create'
+    },
+    TOKEN:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
+  },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {

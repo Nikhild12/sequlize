@@ -274,7 +274,8 @@ function allergyData(patient_allergies) {
     period_uuid: patient_allergies.period_uuid,
     allergy_reaction_uuid: patient_allergies.allergy_reaction_uuid,
     remarks: patient_allergies.remarks,
-    no_known_allergy: patient_allergies.no_known_allergy
+    no_known_allergy: patient_allergies.no_known_allergy,
+    patient_allergy_status_uuid: patient_allergies.patient_allergy_status_uuid
   };
   return data;
 }

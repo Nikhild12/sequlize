@@ -345,7 +345,7 @@ const profilesController = () => {
     const { user_uuid } = req.headers;
     const { profile_uuid } = req.query;
     let findQuery = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active'],
+      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active','created_by','modified_by','created_date','modified_date'],
       where: { uuid: profile_uuid, is_active: 1, status: 1 },
       include: [
         {
