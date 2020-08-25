@@ -80,6 +80,7 @@ module.exports = Object.freeze({
   SEND_ALLERGY_MASTER_UUID: "Please send Allergy Master Id",
   INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
   PATIENT_ALLERGY_STATUS_FETCH_SUCCESS: "Patient Allergy Status fetched successfully",
+  ALLERGY_SOURCE_SUCCESS: "Allergy Source fetched successfully",
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
