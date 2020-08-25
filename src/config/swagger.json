@@ -1926,6 +1926,34 @@
 				}
 			}
 		},
+		"/api/allergyMaster/get-allergy-source-auto": {
+			"post": {
+				"description": "To get Allergy Source",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getAllergySource",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllergySource"
+						}
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Allergy Source"
+					}
+				}
+			}
+		},
 		"/api/emr-workflow-settings/create": {
 			"post": {
 				"description": "To Create a EMR Workflow for the Master",
@@ -9624,6 +9652,20 @@
 			"properties": {
 				"Allergy_id": {
 					"type": "integer"
+				}
+			}
+		},
+		"getAllergySource": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"search": {
+					"type": "string"
 				}
 			}
 		},

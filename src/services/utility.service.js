@@ -182,7 +182,8 @@ const responseMessage = {
   p: emr_constants.PREVIOUS_PAT_CC_SUCCESS, // Previous Patient Chief Complaints,
   pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED, // Patient Speciality Sketch Fe,
   favty: emr_constants.FAVOURITE_TYPE, // Favourite Type,
-  pas: emr_constants.PATIENT_ALLERGY_STATUS_FETCH_SUCCESS // Patient Allergy Status Fetch Success
+  pas: emr_constants.PATIENT_ALLERGY_STATUS_FETCH_SUCCESS, // Patient Allergy Status Fetch Success,
+  als: emr_constants.ALLERGY_SOURCE_SUCCESS // Allergy Source Fetch Success
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {

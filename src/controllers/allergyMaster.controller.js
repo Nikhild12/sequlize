@@ -7,9 +7,11 @@ const Op = Sequelize.Op;
 const rp = require("request-promise");
 var config = require("../config/config");
 
+// EMR Constants Import
 const emr_constants = require('../config/constants');
 
-
+// EMR Utility Import
+const emr_utility = require('../services/utility.service');
 
 const allergyMastersTbl = db.allergy_masters;
 const allergySourceTbl = db.allergy_source;
@@ -89,7 +91,7 @@ const allergyMasterController = () => {
         findQuery.where[Op.and] = [{
           [Op.or]: [
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.name.toLowerCase() + '%'),
-        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.name.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.name.toLowerCase() + '%'),
           ]
         }];
       } else {
@@ -329,6 +331,7 @@ const allergyMasterController = () => {
 
     }
   };
+
   const updateAlleryMasterById = async (req, res, next) => {
     if (Object.keys(req.body).length != 0) {
       const postData = req.body;
@@ -360,7 +363,6 @@ const allergyMasterController = () => {
     }
 
   };
-
 
   const getAlleryMasterById = async (req, res, next) => {
     const postData = req.body;
@@ -424,6 +426,38 @@ const allergyMasterController = () => {
     }
   };
 
+  const _getAllergySourceAutoComplete = async (req, res) => {
+    const { pageNo = 0, paginationSize = 10, search } = req.body;
+    let findQuery = {
+      where: {
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE,
+      },
+      offset: pageNo * paginationSize,
+      limit: paginationSize,
+    };
+    try {
+
+      if (search) {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_source.code')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_source.name')), 'LIKE', '%' + search.toLowerCase() + '%')
+        ];
+      }
+
+      const allergySource = await allergySourceTbl.findAll(findQuery);
+      const code = emr_utility.getResponseCodeForSuccessRequest(allergySource);
+      const message = emr_utility.getResponseMessageForSuccessRequest(code, 'als'); // als -> Allergy Source
+      return res.status(200).send({ code, message, responseContents: allergySource });
+
+    } catch (error) {
+      console.log("Exception happened", error);
+      return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+    }
+
+
+  };
+
   // --------------------------------------------return----------------------------------
   return {
 
@@ -432,7 +466,8 @@ const allergyMasterController = () => {
     updateAlleryMasterById,
     deleteAlleryMaster,
 
-    getAlleryMasterById
+    getAlleryMasterById,
+    getAllergySourceAutoComplete: _getAllergySourceAutoComplete
 
   };
 };
