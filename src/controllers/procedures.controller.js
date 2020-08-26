@@ -23,6 +23,7 @@ const noteTemplatetypeTbl = db.note_template_type;
 const npotetemplateTbl = db.note_templates;
 const equipment = db.equipment;
 const speciality_sketches = db.speciality_sketches;
+const categoriesTbl = db.categories;
 // Constants Import
 const emr_constants = require("../config/constants");
 
@@ -42,9 +43,9 @@ const proceduresController = () => {
     let getsearch = req.body;
 
     let pageNo = 0;
-    const itemsPerPage = getsearch.paginationSize
-      ? getsearch.paginationSize
-      : 10;
+    const itemsPerPage = getsearch.paginationSize ?
+      getsearch.paginationSize :
+      10;
     let sortField = "modified_date";
     let sortOrder = "DESC";
 
@@ -71,59 +72,65 @@ const proceduresController = () => {
     let findQuery = {
       offset: offset,
       limit: itemsPerPage,
-      order: [[sortField, sortOrder]],
-      where: { is_active: 1, status: 1 },
+      order: [
+        [sortField, sortOrder]
+      ],
+      where: {
+        // is_active: 1,
+        status: 1
+      },
       include: [{
-        model: procedureNoteTbl,
-        // include: [
-        //   {
-        //     model: noteTemplatetypeTbl,
-        //     attributes: ['uuid', 'name'],
-        //   },
-        //   {
-        //     model: npotetemplateTbl,
-        //     attributes: ['uuid', 'name']
-        //   }]
-      },
-      {
-        model: procedure_schemeTbl,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_technique,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_version,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_region,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_category,
-        attributes: ['uuid', 'name']
-      }, {
-        model: procedure_sub_category,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: operation_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: anesthesia_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: body_site,
-        attributes: ['uuid', 'name']
-      }],
+          model: procedureNoteTbl,
+          // include: [
+          //   {
+          //     model: noteTemplatetypeTbl,
+          //     attributes: ['uuid', 'name'],
+          //   },
+          //   {
+          //     model: npotetemplateTbl,
+          //     attributes: ['uuid', 'name']
+          //   }]
+        },
+        {
+          model: procedure_schemeTbl,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: procedure_technique,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: procedure_version,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: procedure_region,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: procedure_type,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: procedure_category,
+          attributes: ['uuid', 'name']
+        }, {
+          model: procedure_sub_category,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: operation_type,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: anesthesia_type,
+          attributes: ['uuid', 'name']
+        },
+        {
+          model: body_site,
+          attributes: ['uuid', 'name']
+        }
+      ],
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -212,7 +219,9 @@ const proceduresController = () => {
 
     if (Object.keys(req.body).length != 0) {
 
-      const { user_uuid } = req.headers;
+      const {
+        user_uuid
+      } = req.headers;
       const postData = req.body;
       if (user_uuid > 0 && postData.code && postData.name) {
 
@@ -234,17 +243,25 @@ const proceduresController = () => {
           if (tblname_exits && tblname_exits.length > 0) {
             return res
               .status(400)
-              .send({ statusCode: 400, message: "code and name already exists" });
-          }
-          else if (code_exits && code_exits.length > 0) {
+              .send({
+                statusCode: 402,
+                message: "code and name already exists"
+              });
+          } else if (code_exits && code_exits.length > 0) {
             return res
-              .status(400)
-              .send({ statusCode: 400, message: "code already exists" });
+              .status(401)
+              .send({
+                statusCode: 400,
+                message: "code already exists"
+              });
 
           } else if (name_exits && name_exits.length > 0) {
             return res
               .status(400)
-              .send({ statusCode: 400, message: "name already exists" });
+              .send({
+                statusCode: 400,
+                message: "name already exists"
+              });
 
           } else {
 
@@ -258,8 +275,9 @@ const proceduresController = () => {
             postData.revision = 1;
 
             const proceduresCreatedData = await proceduresTbl.create(
-              postData,
-              { returning: true }
+              postData, {
+                returning: true
+              }
             );
 
             if (proceduresCreatedData) {
@@ -273,17 +291,26 @@ const proceduresController = () => {
           }
         } catch (ex) {
           console.log(ex.message);
-          return res.status(400).send({ statusCode: 400, message: ex.message });
+          return res.status(400).send({
+            statusCode: 400,
+            message: ex.message
+          });
         }
       } else {
         return res
           .status(400)
-          .send({ code: httpStatus[400], message: "No Request Body Found" });
+          .send({
+            code: httpStatus[400],
+            message: "No Request Body Found"
+          });
       }
     } else {
       return res
         .status(400)
-        .send({ code: httpStatus[400], message: "No Request Body Found" });
+        .send({
+          code: httpStatus[400],
+          message: "No Request Body Found"
+        });
     }
   };
 
@@ -292,16 +319,14 @@ const proceduresController = () => {
     const postData = req.body;
 
     await proceduresTbl
-      .update(
-        {
-          is_active: 0, status: 0
-        },
-        {
-          where: {
-            uuid: postData.Procedures_id
-          }
+      .update({
+        is_active: 0,
+        status: 0
+      }, {
+        where: {
+          uuid: postData.Procedures_id
         }
-      )
+      })
       .then(data => {
         res.send({
           statusCode: 200,
@@ -355,69 +380,77 @@ const proceduresController = () => {
           },
 
           include: [{
-            model: procedureNoteTbl,
-            include: [
-              {
-                model: noteTemplatetypeTbl,
-                attributes: ['uuid', 'name'],
-              },
-              {
-                model: npotetemplateTbl,
-                attributes: ['uuid', 'name']
-              }]
-          },
-          {
-            model: procedure_schemeTbl,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_technique,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_version,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_region,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_category,
-            attributes: ['uuid', 'name']
-          }, {
-            model: procedure_sub_category,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: operation_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: anesthesia_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: body_site,
-            attributes: ['uuid', 'name']
-          },
-        {
-          model: equipment,
-          attributes: ['uuid', 'name']
-        },
-        {
-          model: speciality_sketches,
-          attributes: ['uuid', 'name']
-        }],
+              model: procedureNoteTbl,
+              include: [{
+                  model: noteTemplatetypeTbl,
+                  attributes: ['uuid', 'name'],
+                },
+                {
+                  model: npotetemplateTbl,
+                  attributes: ['uuid', 'name']
+                },
+                {
+                  model: categoriesTbl,
+                  attributes: ['uuid', 'name'],
+                }
+              ]
+            },
+            {
+              model: procedure_schemeTbl,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: procedure_technique,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: procedure_version,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: procedure_region,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: procedure_type,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: procedure_category,
+              attributes: ['uuid', 'name']
+            }, {
+              model: procedure_sub_category,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: operation_type,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: anesthesia_type,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: body_site,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: equipment,
+              attributes: ['uuid', 'name']
+            },
+            {
+              model: speciality_sketches,
+              attributes: ['uuid', 'name']
+            }
+          ],
           offset: offset,
           limit: itemsPerPage
         });
       if (!data) {
-        return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this procedures Id' });
+        return res.status(httpStatus.OK).json({
+          statusCode: 200,
+          message: 'No Record Found with this procedures Id'
+        });
       } else {
         const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
         const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
@@ -440,9 +473,14 @@ const proceduresController = () => {
   };
 
   const _getProceduresByFilters = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const {
+      user_uuid
+    } = req.headers;
 
-    const { searchKey, searchValue } = req.query;
+    const {
+      searchKey,
+      searchValue
+    } = req.query;
 
     if (user_uuid && searchKey && searchValue) {
       try {
@@ -452,9 +490,9 @@ const proceduresController = () => {
         );
         const procedureSearchData = await proceduresTbl.findAll(pQuery);
         const responseMessage =
-          procedureSearchData && procedureSearchData.length > 0
-            ? emr_constants.PROCEDURE_FETCHED
-            : emr_constants.NO_RECORD_FOUND;
+          procedureSearchData && procedureSearchData.length > 0 ?
+          emr_constants.PROCEDURE_FETCHED :
+          emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
           code: httpStatus.OK,
           message: responseMessage,
@@ -471,7 +509,10 @@ const proceduresController = () => {
         console.log("Exception happened", error);
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: error });
+          .send({
+            code: httpStatus.BAD_REQUEST,
+            message: error
+          });
       }
     } else {
       return res.status(400).send({
@@ -505,7 +546,9 @@ async function getuserDetails(user_uuid, docid, authorization) {
       Authorization: authorization,
       user_uuid: user_uuid
     },
-    body: { "Id": docid },
+    body: {
+      "Id": docid
+    },
     //body: {},
     json: true
   };
@@ -536,15 +579,13 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "status": data.status,
     "revision": data.revision,
     "created_by_id": data.created_by,
-    "created_by":
-      getcuDetails.responseContents ?
-        getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name
-        : null,
+    "created_by": getcuDetails.responseContents ?
+      getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name :
+      null,
     "modified_by_id": data.modified_by,
-    "modified_by":
-      getmuDetails.responseContents ?
-        getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name
-        : null,
+    "modified_by": getmuDetails.responseContents ?
+      getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name :
+      null,
     "created_date": data.created_date,
     "modified_date": data.modified_date,
     "procedure_note_templates": data.procedure_note_templates,
@@ -569,13 +610,17 @@ const codeexists = (code, userUUID) => {
       let value = proceduresTbl.findAll({
         //order: [['created_date', 'DESC']],
         attributes: ["code"],
-        where: { code: code }
+        where: {
+          code: code
+        }
       });
       if (value) {
         resolve(value);
         return value;
       } else {
-        reject({ message: "code does not existed" });
+        reject({
+          message: "code does not existed"
+        });
       }
     });
   }
@@ -587,13 +632,17 @@ const nameexists = (name) => {
       let value = proceduresTbl.findAll({
         //order: [['created_date', 'DESC']],
         attributes: ["name"],
-        where: { name: name }
+        where: {
+          name: name
+        }
       });
       if (value) {
         resolve(value);
         return value;
       } else {
-        reject({ message: "code does not existed" });
+        reject({
+          message: "code does not existed"
+        });
       }
     });
   }
@@ -605,31 +654,42 @@ const codenameexists = (code, name) => {
       let value = proceduresTbl.findAll({
         //order: [['created_date', 'DESC']],
         attributes: ["code", "name"],
-        where: { code: code, name: name }
+        where: {
+          code: code,
+          name: name
+        }
       });
       if (value) {
         resolve(value);
         return value;
       } else {
-        reject({ message: "code does not existed" });
+        reject({
+          message: "code does not existed"
+        });
       }
     });
   }
 };
-async function findDuplicateProceduresByCodeAndName({ code, name }) {
+async function findDuplicateProceduresByCodeAndName({
+  code,
+  name
+}) {
   // checking for Duplicate 
   // before creating procedures 
   return await proceduresTbl.findAll({
     attributes: ['code', 'name', 'is_active'],
     where: {
-      [Op.or]: [
-        { code: code },
-        { name: name }
+      [Op.or]: [{
+          code: code
+        },
+        {
+          name: name
+        }
       ]
     }
   });
 }
+
 function getDuplicateMsg(record) {
   return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
 }
-

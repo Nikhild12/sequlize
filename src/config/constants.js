@@ -24,6 +24,7 @@ module.exports = Object.freeze({
   TREATMENT_SUCCESS: "Treatment Kit Successfully Inserted",
   FILTERBYTHREE: "filterbythree",
   FETCHD_TREATMENT_KIT_SUCCESSFULLY: "Fetched Treatment Kit Successfully",
+  FETCHD_VITAL_MASTER_SUCCESSFULLY: "Fetched Vital Master details Successfully",
   FETCHED_PREVIOUS_KIT_SUCCESSFULLY:
     "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
@@ -72,8 +73,21 @@ module.exports = Object.freeze({
   NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
   TEMPLATE_INSERTED: "Template details Inserted Successfully",
   TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
-  NAME_DISPLAY_NOTEXISTS:"name or displayOrder does not existed",
+  NAME_DISPLAY_NOTEXISTS: "name or displayOrder does not existed",
   PATIENT_VITAILS_CREATED: "Vitals Saved Successfully",
+  COMMON_REF_CODE_NAME_EXISTS: "code and name already exists",
+  ENCOUNTER_SUCCESS: "Inserted Encounter Successfully",
+  SEND_ALLERGY_MASTER_UUID: "Please send Allergy Master Id",
+  INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
+  PATIENT_ALLERGY_STATUS_FETCH_SUCCESS: "Patient Allergy Status fetched successfully",
+  ALLERGY_SOURCE_SUCCESS: "Allergy Source fetched successfully",
+  BLOCK_CHAIN: {
+    BLOCK_CHAIN_URL: {
+      VITAL_CREATE: '/assetapi/Vitals/create'
+    },
+    TOKEN:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
+  },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -190,8 +204,8 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} note_template_type_uuid`;
       case "note_type_uuid":
         return `${returnProvideMsg} note_type_uuid`;
-        case "template_uuid":
-            return `${returnProvideMsg} template_id`;
+      case "template_uuid":
+        return `${returnProvideMsg} template_id`;
       default:
         return `${returnProvideMsg} required Fields`;
     }

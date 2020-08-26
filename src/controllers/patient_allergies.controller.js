@@ -18,6 +18,8 @@ const allergySevirityTbl = sequelizeDb.allergy_severity;
 const allergySourceTbl = sequelizeDb.allergy_source;
 const allergyMasterTbl = sequelizeDb.allergy_masters;
 const periodsTbl = sequelizeDb.periods;
+const patientAllergyStatus = sequelizeDb.patient_allergy_status;
+
 
 const Patient_Allergies = () => {
 
@@ -32,14 +34,19 @@ const Patient_Allergies = () => {
     let { patient_allergies } = req.body;
 
     if (user_uuid && patient_allergies) {
-      patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
-      patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
-      patient_allergies.performed_by = user_uuid;
-
       try {
+        patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
+        patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
+        patient_allergies.performed_by = user_uuid;
+
+        if (patient_allergies.hasOwnProperty('no_known_allergy') && typeof patient_allergies.no_known_allergy === 'boolean') {
+          if (!patient_allergies.no_known_allergy && !patient_allergies.hasOwnProperty('allergy_master_uuid')) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.SEND_ALLERGY_MASTER_UUID });
+          }
+        }
 
         await patientAllergiesTbl.create(patient_allergies, { returing: true });
-        return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: patient_allergies });
+        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.INSERTED_PATIENT_ALLERGY_SUCCESS, responseContents: patient_allergies });
       } catch (ex) {
         console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
@@ -74,7 +81,6 @@ const Patient_Allergies = () => {
     }
   };
 
-
   const _getPatientAllergiesByUserId = async (req, res) => {
 
     const { uuid } = req.query;
@@ -94,7 +100,6 @@ const Patient_Allergies = () => {
     }
   };
 
-
   const _updatePatientAllergy = async (req, res) => {
     const { user_uuid } = req.headers;
     const { uuid } = req.query;
@@ -102,7 +107,7 @@ const Patient_Allergies = () => {
 
     if (uuid && user_uuid && patient_allergies) {
       try {
-        let allergy_data = await allergyData(patient_allergies);
+        let allergy_data = allergyData(patient_allergies);
         const [updated] = await patientAllergiesTbl.update(allergy_data, { where: { uuid: uuid } });
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContent: updated });
@@ -145,13 +150,40 @@ const Patient_Allergies = () => {
     }
   };
 
+
+  /**
+   * 
+   * @param {*} _req req from API
+   * @param {*} res res to API
+   */
+  const _getPatientAllergyStatus = async (_req, res) => {
+
+    try {
+      const patientAllergyStatusData = await patientAllergyStatus
+        .findAll({ is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE });
+
+      const code = emr_utility.getResponseCodeForSuccessRequest(patientAllergyStatusData);
+      const message = emr_utility.getResponseMessageForSuccessRequest(code, 'pas');
+      return res.status(200).send({ code, message, responseContents: patientAllergyStatusData });
+
+    } catch (error) {
+      console.log("Exception happened", error);
+      return res.status(500).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+    }
+
+
+  };
+
+
+
   return {
 
     addNewAllergy: _addNewAllergy,
     getPatientAllergies: _getPatientAllergies,
     updatePatientAllergy: _updatePatientAllergy,
     deletePatientAllergy: _deletePatientAllergy,
-    getPatientAllergiesByUserId: _getPatientAllergiesByUserId
+    getPatientAllergiesByUserId: _getPatientAllergiesByUserId,
+    getPatientAllergyStatus: _getPatientAllergyStatus
   };
 
 };
@@ -212,13 +244,20 @@ async function getPatientAllergyData(patient_uuid) {
           where: { is_active: 1 },
 
         },
+        {
+          model: patientAllergyStatus,
+          as: 'patient_allergy_status',
+          attributes: ['uuid', 'name', 'code'],
+          where: { is_active: 1, status: 1 },
+
+        }
       ]
     },
     { returning: true }
   );
 }
 
-async function allergyData(patient_allergies) {
+function allergyData(patient_allergies) {
   let data = {
     patient_uuid: patient_allergies.patient_uuid,
     encounter_uuid: patient_allergies.encounter_uuid,
@@ -232,7 +271,11 @@ async function allergyData(patient_allergies) {
     allergy_severity_uuid: patient_allergies.allergy_severity_uuid,
     allergy_source_uuid: patient_allergies.allergy_source_uuid,
     duration: patient_allergies.duration,
-    period_uuid: patient_allergies.period_uuid
+    period_uuid: patient_allergies.period_uuid,
+    allergy_reaction_uuid: patient_allergies.allergy_reaction_uuid,
+    remarks: patient_allergies.remarks,
+    no_known_allergy: patient_allergies.no_known_allergy,
+    patient_allergy_status_uuid: patient_allergies.patient_allergy_status_uuid
   };
   return data;
 }

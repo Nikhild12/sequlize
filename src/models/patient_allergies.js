@@ -61,19 +61,8 @@ module.exports = (sequelize, DataTypes) => {
             allergy_master_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_master_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_master_uuid')
-                    },
-                    min: {
-                        args: [0],
-                        msg: emr_constants.GetZeroValidationMessage('allergy_master_uuid')
-                    }
-                }
+                allowNull: true,
+                defaultValue: 0
             },
 
             allergy_type_uuid: {
@@ -82,6 +71,14 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false
 
+            },
+            allergy_reactions: {
+                type: DataTypes.STRING(500),
+                allowNull: true
+            },
+            remarks: {
+                type: DataTypes.STRING(500),
+                allowNull: true
             },
             symptom: {
 
@@ -118,63 +115,30 @@ module.exports = (sequelize, DataTypes) => {
             allergy_severity_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_severity_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_severity_uuid')
-                    },
-                    min: {
-                        args: [0],
-                        msg: emr_constants.GetZeroValidationMessage('allergy_severity_uuid')
-                    }
-                }
+                allowNull: true,
+                defaultValue: 0
 
             },
 
             allergy_source_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_source_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('allergy_source_uuid')
-                    },
-                    min: {
-                        args: [0],
-                        msg: emr_constants.GetZeroValidationMessage('allergy_source_uuid')
-                    }
-                }
+                allowNull: true,
+                defaultValue: 0
 
             },
             duration: {
 
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
-                allowNull: false
+                allowNull: true
 
             },
             period_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('period_uuid')
-                    },
-                    min: {
-                        args: [0],
-                        msg: emr_constants.GetZeroValidationMessage('period_uuid')
-                    }
-                }
+                allowNull: true,
+                defaultValue: 0
 
             },
             comments: {
@@ -202,6 +166,11 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false
 
+            },
+            no_known_allergy: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
+                allowNull: false
             },
             is_active: {
 
@@ -240,6 +209,15 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0
 
             },
+            resolved_date: {
+                type: DataTypes.DATE,
+                allowNull: true
+            },
+            resolved_by: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            }
         },
         {
             tableName: 'patient_allergies',
@@ -256,7 +234,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'encounter_uuid',
             as: 'encounter'
         });
-        
+
 
 
         patient_allergies.belongsTo(models.allergy_source, {
@@ -282,7 +260,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'period_uuid',
             as: 'periods'
         });
-
+        patient_allergies.belongsTo(models.patient_allergy_status, {
+            foreignKey: 'patient_allergy_status_uuid',
+            as: 'patient_allergy_status'
+        });
 
     };
 

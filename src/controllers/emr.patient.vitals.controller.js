@@ -8,6 +8,12 @@ const sequelizeDb = require("../config/sequelize");
 
 const emrConstants = require("../config/constants");
 
+// blockChain Import
+const blockChain = require('../blockChain/vital.master.blockchain');
+
+// Config Import
+const emr_config = require('../config/config');
+
 // Initialize EMR Workflow
 const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 
@@ -20,6 +26,8 @@ const validate = require("../config/validate");
 const utilityService = require("../services/utility.service");
 const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
+
+    let emr_patient_vitals_response;
     try {
       const emrPatientVitalReqData = req.body;
       const { user_uuid } = req.headers;
@@ -50,20 +58,11 @@ const EMRPatientVitals = () => {
               });
           }
         }
-        //checking for existing patient vitals
-        /* for (let exit of req.body) {
-          const exists = await PVexists(exit.patient_uuid, exit.vital_master_uuid);
-
-          if (exists && exists.length > 0) {
-            return res.status(400).send({ code: httpStatus[400], message: "vitals for the patient already exists" });
-          }
-        }*/
         if (
           user_uuid &&
           emrPatientVitalReqData &&
           emrPatientVitalReqData.length > 0
         ) {
-          //const exists = await PVexists(emrPatientVitalReqData.patient_uuid,emrPatientVitalReqData.vital_master_uuid);
 
           if (utilityService.checkTATIsPresent(emrPatientVitalReqData)) {
             if (!utilityService.checkTATIsValid(emrPatientVitalReqData)) {
@@ -86,7 +85,7 @@ const EMRPatientVitals = () => {
             eRD.created_date = eRD.modified_date = new Date();
             eRD.revision = 1;
           });
-          const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
+          emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
             emrPatientVitalReqData,
             { returning: true }
           );
@@ -95,6 +94,10 @@ const EMRPatientVitals = () => {
             ePV.uuid = emr_patient_vitals_response[index].uuid;
           });
 
+          if (emr_config.isBlockChain === 'ON') {
+            const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
+            console.log({ patientVitalBlockchain });
+          }
           if (emr_patient_vitals_response) {
             return res.status(200).send({
               code: httpStatus.OK,
@@ -110,6 +113,14 @@ const EMRPatientVitals = () => {
       }
     } catch (ex) {
       //console.log("-----", ex);
+
+      if (emr_patient_vitals_response) {
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: emrConstants.PATIENT_VITAILS_CREATED,
+          responseContents: emrPatientVitalReqData
+        });
+      } // if any block Chain issue will ignore it
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });

@@ -517,11 +517,13 @@ const ChiefComplaints = () => {
 
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
-    const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize = 10, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+    const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+  
     Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
     let postingData = {
-      offset: pageNo * paginationSize,
+      offset: pageNo * itemsPerPage,
       where: { is_active: 1, status: 1, },
       limit: paginationSize,
       order: [[sortField, sortOrder]],
