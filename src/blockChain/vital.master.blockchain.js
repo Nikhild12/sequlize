@@ -26,7 +26,7 @@ const VitalMasterBlockChain = () => {
                         DoctorName: vO.doctor_uuid,
                         FacilityName: vO.facility_uuid,
                         DepartmentName: vO.department_uuid,
-                        Metadata: "",
+                        Metadata: vO,
                         Patient_id: vO.patient_uuid
                     }
                 );

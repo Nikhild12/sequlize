@@ -11,6 +11,9 @@ const emrConstants = require("../config/constants");
 // blockChain Import
 const blockChain = require('../blockChain/vital.master.blockchain');
 
+// Config Import
+const emr_config = require('../config/config');
+
 // Initialize EMR Workflow
 const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 
@@ -23,6 +26,8 @@ const validate = require("../config/validate");
 const utilityService = require("../services/utility.service");
 const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
+
+    let emr_patient_vitals_response;
     try {
       const emrPatientVitalReqData = req.body;
       const { user_uuid } = req.headers;
@@ -80,7 +85,7 @@ const EMRPatientVitals = () => {
             eRD.created_date = eRD.modified_date = new Date();
             eRD.revision = 1;
           });
-          const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
+          emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
             emrPatientVitalReqData,
             { returning: true }
           );
@@ -89,8 +94,10 @@ const EMRPatientVitals = () => {
             ePV.uuid = emr_patient_vitals_response[index].uuid;
           });
 
-          const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
-          console.log({patientVitalBlockchain});
+          if (emr_config.isBlockChain === 'ON') {
+            const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
+            console.log({ patientVitalBlockchain });
+          }
           if (emr_patient_vitals_response) {
             return res.status(200).send({
               code: httpStatus.OK,
