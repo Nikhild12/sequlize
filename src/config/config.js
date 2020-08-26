@@ -62,7 +62,7 @@ const config = {
     password: envVars.PG_PASSWORD,
     dialect: "mysql"
   },
-  
+
   fileServerPath: envVars.FILE_SERVER_PATH,
   serverStoragePath: envVars.SERVER_STORAGE_PATH,
   addAllPrescriptionDetails:
@@ -87,6 +87,7 @@ const config = {
   wso2InvestUrl: envVars.wso2InvestUrl,
   wso2AppUrl: envVars.wso2AppUrl,
   serverName: envVars.SERVER_NAME,
-  blockChainURL: envVars.BLOCK_CHAIN_TROONDX_URL
+  blockChainURL: envVars.BLOCK_CHAIN_TROONDX_URL,
+  isBlockChain: envVars.BLOCK_CHAIN
 };
 module.exports = config;

@@ -11,6 +11,9 @@ const emrConstants = require("../config/constants");
 // blockChain Import
 const blockChain = require('../blockChain/vital.master.blockchain');
 
+// Config Import
+const emr_config = require('../config/config');
+
 // Initialize EMR Workflow
 const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 
@@ -89,8 +92,10 @@ const EMRPatientVitals = () => {
             ePV.uuid = emr_patient_vitals_response[index].uuid;
           });
 
-          const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
-          console.log({patientVitalBlockchain});
+          if (emr_config.isBlockChain) {
+            const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
+          }
+          console.log({ patientVitalBlockchain });
           if (emr_patient_vitals_response) {
             return res.status(200).send({
               code: httpStatus.OK,
