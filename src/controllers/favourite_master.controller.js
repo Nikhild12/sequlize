@@ -269,7 +269,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   };
 
   if (+(tsmd_test_id) === 1) {
-    
+
     favouriteQuery.si_store_master_uuid = sMId;
     favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
     favouriteQuery.si_status = emr_constants.IS_ACTIVE;
@@ -484,6 +484,10 @@ const TickSheetMasterController = () => {
         fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
           fmd, favouriteMasterCreatedData, user_uuid, "favourite_master_uuid"
         );
+
+        if (favourite_type_uuid !== 1) {
+          fmd.item_master_uuid = 0;
+        }
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
           fmd, { returning: true, }
         );
@@ -908,8 +912,8 @@ const TickSheetMasterController = () => {
     }
 
     if (req.body && req.body.hasOwnProperty('favourite_type_uuid')) {
-      req.body.favourite_type_uuid =+(req.body.favourite_type_uuid)
-      if(!isNaN(req.body.favourite_type_uuid)){
+      req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+      if (!isNaN(req.body.favourite_type_uuid)) {
         findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
       }
     }
@@ -927,7 +931,7 @@ const TickSheetMasterController = () => {
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: "No Request Body or Search key Found"
         });
       }
     } catch (ex) {
