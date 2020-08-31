@@ -27,81 +27,6 @@ const CCchartsController = () => {
     @returns {}
     */
 
-    const _createCCC_old = async (req, res) => {
-        console.log('Request Body===', req.body);
-        if (Object.keys(req.body).length != 0) {
-            try {
-
-                let { user_uuid, critical_care_type } = req.headers;
-                let data1 = req.body.headers;
-                let data2 = req.body.observed_data;
-                let createdData1, createdData2, createdData3, createdData4, createdData5, createdData6, createdData7;
-
-                const body_header_validation_result = validate.validate(data1, ['patient_uuid', 'encounter_uuid', 'facility_uuid', 'encounter_type_uuid']);
-                if (!body_header_validation_result.status) {
-                    return res.status(400).send({ code: httpStatus[400], message: body_header_validation_result.errors });
-                }
-
-                for (let detail of data2) {
-                    let body_details_validation_result = validate.validate(detail, ['cc_chart_uuid', 'cc_concept_uuid', 'cc_concept_value_uuid', 'from_date', 'observed_value']);
-                    if (!body_details_validation_result.status) {
-                        return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });
-                    }
-                }
-
-                if (user_uuid && data1 && data2 && critical_care_type) {
-
-                    switch (critical_care_type) {
-                        case "1":
-                            createdData1 = create_CC(ventilatorTbl, user_uuid, data1, data2);
-                            break;
-                        case "2":
-                            createdData2 = create_CC(abgTbl, user_uuid, data1, data2);
-                            break;
-                        case "3":
-                            createdData3 = create_CC(monitorTbl, user_uuid, data1, data2);
-                            break;
-                        case "4":
-                            createdData4 = create_CC(in_out_takeTbl, user_uuid, data1, data2);
-                            break;
-                        case "5":
-                            createdData5 = create_CC(bpTbl, user_uuid, data1, data2);
-                            break;
-                        case "6":
-                            createdData6 = create_CC(diabetesTbl, user_uuid, data1, data2);
-                            break;
-                        case "7":
-                            createdData7 = create_CC(dialysisTbl, user_uuid, data1, data2);
-                            break;
-                    }
-
-                    if (createdData1) {
-                        res.send({ "statusCode": 200, "Ventilator data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData2) {
-                        res.send({ "statusCode": 200, "abg_data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData3) {
-                        res.send({ "statusCode": 200, "monitor_data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData4) {
-                        res.send({ "statusCode": 200, "in_out_take_data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData5) {
-                        res.send({ "statusCode": 200, "bp_data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData6) {
-                        res.send({ "statusCode": 200, "diabetes_data": data2, "message": "Inserted Successfully " });
-                    } else if (createdData7) {
-                        res.send({ "statusCode": 200, "dialysis_data": data2, "message": "Inserted Successfully " });
-                    }
-
-                } else {
-                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-                }
-            } catch (ex) {
-                res.send({ "status": 400, "message": ex.message });
-            }
-        } else {
-            return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-        }
-
-    };
 
     const _createCCC = async (req, res) => {
 
@@ -175,6 +100,7 @@ const CCchartsController = () => {
         }
 
     };
+
     const _getCCCbypatientid = async (req, res) => {
 
         let { user_uuid } = req.headers;
@@ -336,31 +262,6 @@ const CCchartsController = () => {
         }
     };
 
-    const _deleteVentilatorDetails = async (req, res) => {
-
-        // plucking data req body
-        const { ventilator_uuid } = req.query;
-        const { user_uuid } = req.headers;
-
-        try {
-            if (ventilator_uuid && user_uuid) {
-                const updatedVenlitorData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
-
-                const updatedVenlator = await ventilatorTbl.update(updatedVenlitorData,
-                    { where: { uuid: ventilator_uuid } });
-
-                if (updatedVenlator) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
-                }
-
-            } else {
-                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-            }
-        } catch (ex) {
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-        }
-    };
-
     const _getCCCcomparedata = async (req, res) => {
         let { user_uuid } = req.headers;
         let { patient_uuid, critical_care_type, from_date, to_date } = req.query;
@@ -508,7 +409,6 @@ const CCchartsController = () => {
         createCCC: _createCCC,
         getCCCbypatientid: _getCCCbypatientid,
         updateCCCbypatientid: _updateCCCbypatientid,
-        //deleteVentilatorDetails: _deleteVentilatorDetails,
         getCCCcomparedata: _getCCCcomparedata,
         getcccdetails: _getcccdetails,
     };
@@ -609,6 +509,7 @@ function getvdList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -744,6 +645,7 @@ function getadList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -809,6 +711,7 @@ function getmdList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -871,6 +774,7 @@ function getioList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -921,7 +825,7 @@ function getdbList(fetchedData, p_id, from_date) {
         );
     });
     if (filteredData && filteredData.length > 0) {
-        db_list = filteredData.map(pV => {
+        db_list = filteredData.map(pV => {            
             return {
                 observed_date: pV.dataValues.from_date,
                 db_uuid: pV.dataValues.uuid,
@@ -932,6 +836,7 @@ function getdbList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -994,6 +899,7 @@ function getdlList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
@@ -1056,6 +962,7 @@ function getbpList(fetchedData, p_id, from_date) {
                 ccc_code: pV.critical_care_charts.code,
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
+                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
