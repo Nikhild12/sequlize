@@ -502,7 +502,6 @@ function getvdList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 ventilator_uuid: pV.dataValues.uuid,
-                //ventilator_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -634,11 +633,9 @@ function getadList(fetchedData, p_id, from_date) {
     });
     if (filteredData && filteredData.length > 0) {
         ad_list = filteredData.map(pV => {
-            //if (pV.critical_care_charts === !null && pV.critical_care_charts.critical_care_types === !null){
             return {
                 observed_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
-                // abg_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -651,7 +648,6 @@ function getadList(fetchedData, p_id, from_date) {
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
             };
-            //}
         });
     }
 
@@ -704,7 +700,6 @@ function getmdList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 monitor_uuid: pV.dataValues.uuid,
-                // monitor_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -767,7 +762,6 @@ function getioList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 iot_uuid: pV.dataValues.uuid,
-                // iot_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -829,7 +823,6 @@ function getdbList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 db_uuid: pV.dataValues.uuid,
-                // db_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -892,7 +885,6 @@ function getdlList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 dl_uuid: pV.dataValues.uuid,
-                // dl_observed_value: pV.dataValues.observed_value,
                 observed_value: pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
@@ -974,7 +966,6 @@ function getbpList(fetchedData, p_id, from_date) {
 }
 
 async function updateonCdate(tname, u_id) {
-    //console.log(tname, u_id);
     return tname.findOne({
         where: { uuid: u_id }
     }, { returning: true }
