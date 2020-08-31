@@ -485,7 +485,7 @@ const TickSheetMasterController = () => {
           fmd, favouriteMasterCreatedData, user_uuid, "favourite_master_uuid"
         );
 
-        if (favourite_type_id !== 1) {
+        if (favourite_type_uuid !== 1) {
           fmd.item_master_uuid = 0;
         }
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
