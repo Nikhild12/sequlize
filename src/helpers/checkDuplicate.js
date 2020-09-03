@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const _ = require("lodash");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
-const constants =  require("../config/constants")
+const constants =  require("../config/constants");
 
 Date.prototype.addHours = function (h) {
     this.setHours(this.getHours() + h);
