@@ -469,7 +469,7 @@ function getdefaultVitalsQuery(vital_uuid) {
 function getdefaultVitals(is_default){
   let q = {
     where: { is_active:1,status:1}
-  }
+  };
     
   if (is_default) {
     q.where.is_default = is_default;
