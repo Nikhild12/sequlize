@@ -251,6 +251,13 @@ const Encounter = () => {
         }
 
         if (!is_enc_avail) {
+
+          // closing all previous active encounters patient
+          const encounterUpdate = await encounter_tbl.update(
+            enc_att.getEncounterUpdateAttributes(user_uuid),
+            enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
+          );
+
           encounterPromise = [...encounterPromise, encounter_tbl.create(encounter, { returning: true, })];
         }
 
@@ -265,6 +272,9 @@ const Encounter = () => {
               createdEncounterData
             );
           }
+
+          // checking for Primary Doctor
+          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
             encounterDoctor, { returning: true }
