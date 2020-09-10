@@ -65,6 +65,7 @@ const notesController = () => {
     };
 
     const _getPreviousPatientOPNotes = async (req, res) => {
+        console.log('saaaaaaaaaaadsd');
         const {
             user_uuid
         } = req.headers;
@@ -90,6 +91,7 @@ const notesController = () => {
 
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
+                    console.log(user_uuid, Authorization, departmentIds);
                     const departmentsResponse = await getDepartments(user_uuid, Authorization, departmentIds);
                     if (departmentsResponse) {
                         let data = [];
@@ -288,6 +290,8 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
         },
         json: true
     };
+    console.log('????????????????',options);
+
     const departmentData = await rp(options);
     console.log('????????????????',options,departmentData);
     if (departmentData) {
