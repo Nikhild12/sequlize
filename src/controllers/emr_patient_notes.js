@@ -66,9 +66,9 @@ const notesController = () => {
 
     const _getPreviousPatientOPNotes = async (req, res) => {
         const {
-            user_uuid,
-            authorization: Authorization
+            user_uuid
         } = req.headers;
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
             patient_uuid
         } = req.query;
