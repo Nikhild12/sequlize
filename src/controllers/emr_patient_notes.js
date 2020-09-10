@@ -289,6 +289,7 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
         json: true
     };
     const departmentData = await rp(options);
+    console.log('????????????????',options,departmentData);
     if (departmentData) {
         return departmentData;
     }
@@ -311,6 +312,7 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
         json: true
     };
     const doctorData = await rp(options);
+    console.log('/////////////////',options,doctorData);
     if (doctorData) {
         return doctorData;
     }
