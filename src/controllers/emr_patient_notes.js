@@ -65,7 +65,6 @@ const notesController = () => {
     };
 
     const _getPreviousPatientOPNotes = async (req, res) => {
-        console.log('saaaaaaaaaaadsd');
         const {
             user_uuid
         } = req.headers;
@@ -91,7 +90,6 @@ const notesController = () => {
 
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
-                    console.log(user_uuid, Authorization, departmentIds);
                     const departmentsResponse = await getDepartments(user_uuid, Authorization, departmentIds);
                     if (departmentsResponse) {
                         let data = [];
@@ -240,11 +238,53 @@ const notesController = () => {
         }
     };
 
+    const _updatePreviousPatientOPNotes = async (req, res) => {
+        const {
+            user_uuid
+        } = req.headers;
+        let postData = req.body;
+        const updateData = postData.map(v => ({
+            ...v,
+            modified_by: user_uuid,
+            modified_date: new Date()
+        }));
+        try {
+            if (user_uuid && updateData) {
+                const data = await sectionCategoryEntriesTbl.bulkCreate(updateData, {
+                    updateOnDuplicate: ["patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
+                }, {
+                    returing: true
+                });
+                if (data) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Updated Successfully',
+                        requestContent: data
+                    });
+                }
+            } else {
+                return res.status(400).send({
+                    code: httpStatus.UNAUTHORIZED,
+                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM}  ${emr_constants.FOUND}`
+                });
+
+            }
+        } catch (ex) {
+            console.log('Exception happened', ex);
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: ex.message
+            });
+
+        }
+    };
+
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
         getOPNotesDetailsById: _getOPNotesDetailsById,
-        getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId
+        getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId,
+        updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes
     };
 };
 
@@ -252,7 +292,6 @@ module.exports = notesController();
 
 
 async function getPrevNotes(filterQuery, Sequelize) {
-    //console.log(filterQuery);
     let sortField = 'created_date';
     let sortOrder = 'DESC';
     let sortArr = [sortField, sortOrder];
@@ -290,10 +329,8 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
         },
         json: true
     };
-    console.log('????????????????',options);
 
     const departmentData = await rp(options);
-    console.log('????????????????',options,departmentData);
     if (departmentData) {
         return departmentData;
     }
@@ -316,7 +353,6 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
         json: true
     };
     const doctorData = await rp(options);
-    console.log('/////////////////',options,doctorData);
     if (doctorData) {
         return doctorData;
     }
@@ -329,20 +365,15 @@ async function getSpecificusers(data, req) {
             uuid: data
         };
         const res = await getResultsInObject(getUsersUrl, req, postData);
-        // console.log('???????????////', res);
         if (res.status) {
             let newData = [];
             const resData = res.data;
             resData.forEach(e => {
 
-                const salution = (e.salutation_uuid == e.title.uuid ? e.title.name : null);
-                // console.log('/////////////////////////////',salution);
                 let last_name = (e.last_name ? e.last_name : '');
 
                 newData[e.uuid] = e.first_name + '' + last_name;
-                // + ' (' + e.user_type.name +')'
             });
-            // console.log('>>>>>>newData>>>>>', newData);
             return {
                 status: true,
                 data: newData
@@ -363,7 +394,6 @@ async function getSpecificusers(data, req) {
 const getResultsInObject = async (url, req, data) => {
     try {
         const _url = config.wso2AppUrl + url;
-        console.log("_url::", _url);
         let options = {
             uri: _url,
             headers: {
@@ -383,9 +413,7 @@ const getResultsInObject = async (url, req, data) => {
             options.body = data;
         }
 
-        console.log("options:", options);
         const results = await rp(options);
-        console.log("getResultsInObject_ResultData:", results);
 
         if (results.responseContents) {
             if (results.responseContents.length <= 0) {
