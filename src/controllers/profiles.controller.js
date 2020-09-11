@@ -506,9 +506,9 @@ const profilesController = () => {
     };
     if (user_uuid && profile_uuid) {
       try {
-        const profileData = await profilesTbl.findOne(findQuery);
+        const profileData = await profilesTbl.findAll(findQuery);
         /**Get department name */
-        let departmentIds = [profileData.dataValues.department_uuid];
+        let departmentIds = [...new Set(profileData.map(e => e.department_uuid))];
         const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
         if (departmentsResponse) {
           let data = [];
@@ -517,11 +517,13 @@ const profilesController = () => {
             data[e.uuid] = e.name;
             data[e.name] = e.code;
           });
-          const department_uuid = profileData.dataValues.department_uuid;
-          profileData.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
+          profileData.forEach(e => {
+            const department_uuid = e.dataValues.department_uuid;
+            e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
+        });
         }
         /**Get user name */
-        let doctorIds = [profileData.dataValues.created_by];
+        let doctorIds = [...new Set(profileData.map(e => e.created_by))];
         const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
         if (doctorResponse && doctorResponse.responseContents) {
           let newData = [];
@@ -530,10 +532,12 @@ const profilesController = () => {
             let last_name = (e.last_name ? e.last_name : '');
             newData[e.uuid] = e.first_name + '' + last_name;
           });
-          const {
-            created_by,
-          } = profileData.dataValues;
-          profileData.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+          profileData.forEach(e => {
+            const {
+                created_by,
+            } = e.dataValues;
+            e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+        });
         }
         // if (profileData[0].profile_sections[0].activity_uuid > 0) {
         // if (profileData.length == 0) {

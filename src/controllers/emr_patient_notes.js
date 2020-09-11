@@ -277,12 +277,75 @@ const notesController = () => {
         }
     };
 
+    const _print_previous_opnotes = async (req, res) => {
+        try {
+            const { certificate_uuid } = req.query;
+            const { user_uuid } = req.headers;
+
+            let certificate_result = {};
+            if (certificate_uuid && user_uuid) {
+                const result = await patientCertificatesTbl.findOne({
+                    where: {
+                        uuid: certificate_uuid,
+                        status: 1,
+                    },
+                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template'],
+
+                });
+                if (result && result != null) {
+                    certificate_result = { ...result };
+                    if (certificate_result) {
+                        const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
+                            data_template: certificate_result.dataValues.data_template,
+                            // language: req.__('dischargeSummary')
+                        }), {
+                            "format": "A4",        // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                            // "orientation": "landscape",
+                            "width": "18in",
+                            "height": "15in",
+                            "header": {
+                                "height": "5mm"
+                            },
+                            "footer": {
+                                "height": "5mm"
+                            }
+                        });
+                        if (pdfBuffer) {
+                            res.writeHead(200, {
+                                'Content-Type': 'application/pdf',
+                                'Content-disposition': 'attachment;filename=previous_discharge_summary.pdf',
+                                'Content-Length': pdfBuffer.length
+                            });
+                            res.end(Buffer.from(pdfBuffer, 'binary'));
+                            return;
+                        } else {
+                            return res.status(400).send({ status: "failed", statusCode: httpStatus[500], message: ND_constats.WENT_WRONG });
+                        }
+                    }
+                    else {
+                        return res.status(400).send({ status: "failed", statusCode: httpStatus[400], message: ND_constats.WENT_WRONG });
+                    }
+                } else {
+                    return res.status(400).send({ status: "failed", statusCode: httpStatus.OK, message: "No Records Found" });
+                }
+            }
+            else {
+                return res.status(422).send({ status: "failed", statusCode: httpStatus[422], message: "you are missing certificate_uuid / user_uuid " });
+            }
+
+        }
+        catch (ex) {
+            return res.status(500).send({ status: "failed", statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
         getOPNotesDetailsById: _getOPNotesDetailsById,
         getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId,
-        updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes
+        updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes,
+        print_previous_opnotes: _print_previous_opnotes
     };
 };
 
