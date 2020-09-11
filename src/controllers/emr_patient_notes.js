@@ -6,15 +6,13 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 //EMR Constants Import
 const emr_constants = require('../config/constants');
-const config = require("../config/config");
 const emr_utility = require('../services/utility.service');
 
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
-const rp = require('request-promise');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const profilesTbl = db.profiles;
-
+const appMasterData = require("../controllers/appMasterData");
 const notesController = () => {
 
     /**
@@ -90,7 +88,7 @@ const notesController = () => {
 
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
-                    const departmentsResponse = await getDepartments(user_uuid, Authorization, departmentIds);
+                    const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
                     if (departmentsResponse) {
                         let data = [];
                         const resData = departmentsResponse.responseContent.rows;
@@ -106,7 +104,7 @@ const notesController = () => {
                     /**Get user name */
                     /**Fetching user details from app master API */
                     let doctorIds = [...new Set(getOPNotesByPId.map(e => e.created_by))];
-                    const doctorResponse = await getDoctorDetails(user_uuid, Authorization, doctorIds);
+                    const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
                     if (doctorResponse && doctorResponse.responseContents) {
                         let newData = [];
                         const resData = doctorResponse.responseContents;
@@ -311,141 +309,3 @@ async function getPrevNotes(filterQuery, Sequelize) {
     });
 
 }
-
-async function getDepartments(user_uuid, Authorization, departmentIds) {
-    //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
-    const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
-
-    let options = {
-        uri: url,
-        method: 'POST',
-        headers: {
-            Authorization: Authorization,
-            user_uuid: user_uuid,
-            'Content-Type': 'application/json'
-        },
-        body: {
-            "uuid": departmentIds
-        },
-        json: true
-    };
-
-    const departmentData = await rp(options);
-    if (departmentData) {
-        return departmentData;
-    }
-}
-
-async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
-    //const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/getSpecificUsersByIds';
-    const url = config.wso2AppUrl + 'userProfile/getSpecificUsersByIds';
-    let options = {
-        uri: url,
-        method: 'POST',
-        headers: {
-            Authorization: Authorization,
-            user_uuid: user_uuid,
-            'Content-Type': 'application/json'
-        },
-        body: {
-            "uuid": doctorIds
-        },
-        json: true
-    };
-    const doctorData = await rp(options);
-    if (doctorData) {
-        return doctorData;
-    }
-}
-
-async function getSpecificusers(data, req) {
-    try {
-        const getUsersUrl = 'userProfile/getSpecificUsersByIds';
-        const postData = {
-            uuid: data
-        };
-        const res = await getResultsInObject(getUsersUrl, req, postData);
-        if (res.status) {
-            let newData = [];
-            const resData = res.data;
-            resData.forEach(e => {
-
-                let last_name = (e.last_name ? e.last_name : '');
-
-                newData[e.uuid] = e.first_name + '' + last_name;
-            });
-            return {
-                status: true,
-                data: newData
-            };
-        } else {
-            return res;
-
-        }
-    } catch (err) {
-        const errorMsg = err.errors ? err.errors[0].message : err.message;
-        return {
-            status: false,
-            message: errorMsg
-        };
-    }
-}
-
-const getResultsInObject = async (url, req, data) => {
-    try {
-        const _url = config.wso2AppUrl + url;
-        let options = {
-            uri: _url,
-            headers: {
-                user_uuid: req.headers.user_uuid,
-                facility_uuid: req.headers.facility_uuid,
-                Authorization: req.headers.authorization
-            },
-            method: "POST",
-            json: true, // Automatically parses the JSON string in the response
-            // body : {
-            //     uuid : data
-            // }
-
-        };
-
-        if (data) {
-            options.body = data;
-        }
-
-        const results = await rp(options);
-
-        if (results.responseContents) {
-            if (results.responseContents.length <= 0) {
-                return {
-                    status: false,
-                    message: "No content"
-                };
-            } else {
-                return {
-                    status: true,
-                    data: results.responseContents
-                };
-            }
-        } else if (results.responseContent) {
-            if (results.responseContent.length <= 0) {
-                return {
-                    status: false,
-                    message: "No content"
-                };
-            } else {
-                return {
-                    status: true,
-                    data: results.responseContent
-                };
-            }
-        }
-
-    } catch (err) {
-        const errorMsg = err.errors ? err.errors[0].message : err.message;
-        return {
-            status: false,
-            message: errorMsg
-        };
-    }
-};
