@@ -70,6 +70,7 @@ function getChiefComplaintrUpdateData(user_uuid, ChiefComplaintsReqData) {
     user_uuid: user_uuid,
     name: ChiefComplaintsReqData.name,
     description: ChiefComplaintsReqData.description,
+    comments: ChiefComplaintsReqData.comments,
     chief_complaint_category_uuid:
       ChiefComplaintsReqData.chief_complaint_category_uuid,
     referrence_link: ChiefComplaintsReqData.referrence_link,
