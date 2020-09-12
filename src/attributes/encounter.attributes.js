@@ -1,6 +1,13 @@
 // Http Status Import
 const httpStatus = require("http-status");
 
+// Sequelizer Import
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
+// EMR Utilities
+const emr_utility = require("../services/utility.service");
+
 // Emr Constants
 const emr_constants = require("../config/constants");
 
@@ -9,6 +16,7 @@ const sequelizeDb = require("../config/sequelize");
 
 // Table Import
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
+
 const _getLatestEncounterAttributes = () => {
   return [
     "ed_patient_uuid",
@@ -41,8 +49,7 @@ const _getLatestEncounterResponse = (records) => {
   const isRecords = records.length > 0;
   const responseCode = isRecords ? httpStatus.OK : httpStatus.NO_CONTENT;
   const responseMessage = isRecords
-    ? emr_constants.LATEST_RECORD_FETECHED_SUCCESSFULLY
-    : emr_constants.NO_RECORD_FOUND;
+    ? emr_constants.LATEST_RECORD_FETECHED_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
 
   return { responseCode, responseMessage };
 };
@@ -78,30 +85,15 @@ const _isRequiredFieldIsPresent = (array = [], field) => {
 };
 
 const _checkingAllRequiredFields = (encArray, encDoctArray) => {
-  const isEncTypeId = _isRequiredFieldIsPresent(
-    encArray,
-    "encounter_type_uuid"
-  );
 
+  const isEncTypeId = _isRequiredFieldIsPresent(encArray, "encounter_type_uuid");
   const isEncPatId = _isRequiredFieldIsPresent(encArray, "patient_uuid");
   const isEncDeptId = _isRequiredFieldIsPresent(encArray, "department_uuid");
-
-  const isEncDocttId = _isRequiredFieldIsPresent(
-    encDoctArray,
-    "doctor_uuid"
-  );
-
-  const isEncDocDeptId = _isRequiredFieldIsPresent(
-    encDoctArray,
-    "department_uuid"
-  );
+  const isEncDocttId = _isRequiredFieldIsPresent(encDoctArray, "doctor_uuid");
+  const isEncDocDeptId = _isRequiredFieldIsPresent(encDoctArray, "department_uuid");
 
   return {
-    isEncTypeId,
-    isEncPatId,
-    isEncDeptId,
-    isEncDocttId,
-    isEncDocDeptId,
+    isEncTypeId, isEncPatId, isEncDeptId, isEncDocttId, isEncDocDeptId,
   };
 };
 
@@ -146,6 +138,54 @@ const _getEncounterByAdmissionQuery = (admissionId) => {
   };
 };
 
+const _getEncounterUpdateQuery = (pId, fId, eTId) => {
+
+  let where = {
+    patient_uuid: pId
+  };
+
+  if (eTId === 2) {
+    where["encounter_type_uuid"] = {
+      [Op.in]: [1, 2]
+    };
+  }
+
+  if (eTId === 1) {
+    where["encounter_type_uuid"] = eTId;
+  }
+  return { where };
+};
+
+const _getEncounterUpdateAttributes = (uId) => {
+  return {
+    is_active_encounter: emr_constants.IS_IN_ACTIVE,
+    modified_by: uId,
+    modified_date: new Date()
+  };
+};
+
+const _checkRequiredFieldsInEncounter = encounter => {
+  return encounter && encounter.encounter_type_uuid && encounter.patient_uuid && encounter.department_uuid;
+};
+
+const _checkRequiredFieldsInEncounterDoc = encounterDoctor => {
+  return encounterDoctor && encounterDoctor.doctor_uuid && encounterDoctor.department_uuid;
+};
+
+const _assignDefaultValuesToEncounter = (encounter, uId) => {
+  encounter = emr_utility.createIsActiveAndStatus(encounter, uId);
+  encounter.is_active_encounter = emr_constants.IS_ACTIVE;
+  encounter.encounter_date = new Date();
+  return encounter;
+};
+
+const _assignDefaultValuesToEncounterDoctor = (encounterDoctor, { patient_uuid }, uId) => {
+  encounterDoctor = emr_utility.createIsActiveAndStatus(encounterDoctor, uId);
+  encounterDoctor.patient_uuid = patient_uuid;
+  encounterDoctor.consultation_start_date = new Date();
+  return encounterDoctor;
+};
+
 module.exports = {
   getLatestEncounterAttributes: _getLatestEncounterAttributes,
   getLatestEncounterQuery: _getLatestEncounterQuery,
@@ -154,5 +194,11 @@ module.exports = {
   isRequiredFieldIsPresent: _isRequiredFieldIsPresent,
   checkingAllRequiredFields: _checkingAllRequiredFields,
   createEncounterBulk400Message: _createEncounterBulk400Message,
-  getEncounterByAdmissionQuery: _getEncounterByAdmissionQuery
+  getEncounterByAdmissionQuery: _getEncounterByAdmissionQuery,
+  getEncounterUpdateQuery: _getEncounterUpdateQuery,
+  getEncounterUpdateAttributes: _getEncounterUpdateAttributes,
+  checkRequiredFieldsInEncounter: _checkRequiredFieldsInEncounter,
+  checkRequiredFieldsInEncounterDoc: _checkRequiredFieldsInEncounterDoc,
+  assignDefaultValuesToEncounter: _assignDefaultValuesToEncounter,
+  assignDefaultValuesToEncounterDoctor: _assignDefaultValuesToEncounterDoctor
 };
