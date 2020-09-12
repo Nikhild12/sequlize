@@ -1387,7 +1387,7 @@ const nameExists = (temp_name, userUUID) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, user_uuid: userUUID }
+        where: { name: temp_name}
       });
       if (value) {
         resolve(value);
@@ -1403,7 +1403,7 @@ const displayOrderExists = (displayOrder, userUUID) => {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         attributes: ["display_order"],
-        where: { display_order: displayOrder, user_uuid: userUUID, status: 1 }
+        where: { display_order: displayOrder, user_uuid: userUUID, status: 1, is_active: 1 }
       });
       if (value) {
         resolve(value);
