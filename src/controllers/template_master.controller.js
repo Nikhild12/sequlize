@@ -241,7 +241,7 @@ const tmpmstrController = () => {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400],statusCode: httpStatus.BAD_REQUEST, message: emr_constants.NAME_DISPLAY_EXISTS });
+            .send({ code: httpStatus[400],statusCode: httpStatus.BAD_REQUEST, message: emr_constants.TEMPLATE_NAME_EXISTS });
         } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
