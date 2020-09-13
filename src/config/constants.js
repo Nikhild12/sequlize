@@ -70,7 +70,7 @@ module.exports = Object.freeze({
   NO_REQUEST_FOUND: "No Request Body or Search key Found",
   NO_REQUEST_HEADERS_FOUND: "No Request headers or Body Found",
   PROPER_TEMPLATE_ID: "Please provide valid template id",
-  NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
+  NAME_DISPLAY_EXISTS: "displayOrder exists",
   TEMPLATE_INSERTED: "Template details Inserted Successfully",
   TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
   NAME_DISPLAY_NOTEXISTS: "name or displayOrder does not existed",
