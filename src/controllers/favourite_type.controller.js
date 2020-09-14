@@ -22,7 +22,8 @@ const FavouriteType = () => {
         let query = {
             attributes: { exclude: ['modified_by', 'modified_date'] },
         };
-        if (req.method === "POST") {
+        const isPostMethod = req.method === "POST";
+        if (isPostMethod) {
             ({ name, pageNo = 0, paginationSize = 10 } = req.body);
             const offset = pageNo * paginationSize;
             query.where = emr_utility.getFilterByThreeQueryForCodeAndName(name);
@@ -35,13 +36,25 @@ const FavouriteType = () => {
             };
         }
         try {
-            const favouriteTypeList = await favourite_type.findAll(query);
-            const code = emr_utility.getResponseCodeForSuccessRequest(favouriteTypeList);
+
+            let favouriteTypeList;
+            if (isPostMethod) {
+                favouriteTypeList = await favourite_type.findAndCountAll(query);
+            } else {
+                favouriteTypeList = await favourite_type.findAll(query);
+            }
+
+            const records = isPostMethod ? favouriteTypeList.rows : favouriteTypeList;
+            const code = emr_utility.getResponseCodeForSuccessRequest(records);
             const message = emr_utility.getResponseMessageForSuccessRequest(code, 'favty');
 
             return res
                 .status(200)
-                .send({ statusCode: code, message: message, responseContent: favouriteTypeList });
+                .send({
+                    statusCode: code, message: message,
+                    responseContent: isPostMethod ? favouriteTypeList.rows : favouriteTypeList,
+                    totalRecords: isPostMethod ? favouriteTypeList.count : favouriteTypeList.length
+                });
 
         } catch (ex) {
             console.log(ex);
