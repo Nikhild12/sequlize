@@ -1,6 +1,10 @@
 // Http Status Import
 const httpStatus = require("http-status");
 
+// Sequelizer Import
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
 // Emr Constants
 const emr_constants = require("../config/constants");
 
@@ -146,6 +150,34 @@ const _getEncounterByAdmissionQuery = (admissionId) => {
   };
 };
 
+const _getEncounterUpdateQuery = (pId, fId, eTId) => {
+
+  let where = {
+    patient_uuid: pId
+  };
+
+  if (eTId === 2) {
+    where["encounter_type_uuid"] = {
+      [Op.in]: [1, 2]
+    };
+  }
+
+  if (eTId === 1) {
+    where["encounter_type_uuid"] = eTId;
+  }
+  return { where };
+};
+
+
+const _getEncounterUpdateAttributes = (uId) => {
+  return {
+    is_active_encounter: emr_constants.IS_IN_ACTIVE,
+    modified_by: uId,
+    modified_date: new Date()
+  };
+};
+
+
 module.exports = {
   getLatestEncounterAttributes: _getLatestEncounterAttributes,
   getLatestEncounterQuery: _getLatestEncounterQuery,
@@ -154,5 +186,7 @@ module.exports = {
   isRequiredFieldIsPresent: _isRequiredFieldIsPresent,
   checkingAllRequiredFields: _checkingAllRequiredFields,
   createEncounterBulk400Message: _createEncounterBulk400Message,
-  getEncounterByAdmissionQuery: _getEncounterByAdmissionQuery
+  getEncounterByAdmissionQuery: _getEncounterByAdmissionQuery,
+  getEncounterUpdateQuery: _getEncounterUpdateQuery,
+  getEncounterUpdateAttributes: _getEncounterUpdateAttributes
 };
