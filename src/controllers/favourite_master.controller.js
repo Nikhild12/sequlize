@@ -92,6 +92,7 @@ const getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_code",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
