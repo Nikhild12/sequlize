@@ -257,7 +257,6 @@ const DiagnosisTypeController = () => {
                 }
             });
         } else {
-            // console.log("resreresrersrsrsesresrsersesr",res)
             res.send({
                 status: 'failed',
                 msg: 'Please enter  diagnosis type details'

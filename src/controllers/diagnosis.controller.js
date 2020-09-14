@@ -325,7 +325,6 @@ const diagnosisController = () => {
 
 
         try {
-            console.log(findQuery);
             const data = await vw_uom_diagnosis.findAndCountAll(findQuery);
 
             if (data) {
@@ -454,7 +453,6 @@ const diagnosisController = () => {
 
 
     const _getDaignosisById = async (req, res, next) => {
-        // console.log('_getDaignosisById...........', req.body);
         const postData = req.body;
         try {
             if (postData.Diagnosis_id <= 0) {
@@ -619,91 +617,4 @@ const codenameexists = (code, name) => {
         });
     }
 };
-
-async function getuserDetails(user_uuid, docid, authorization) {
-    console.log(user_uuid, docid, authorization);
-    let options = {
-        uri: config.wso2AppUrl + 'users/getusersById',
-        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
-        //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
-        method: "POST",
-        headers: {
-            Authorization: authorization,
-            user_uuid: user_uuid
-        },
-        body: { "Id": docid },
-        //body: {},
-        json: true
-    };
-    const user_details = await rp(options);
-    return user_details;
-}
-
-async function getdepDetails(user_uuid, depid, authorization) {
-    console.log(depid);
-    let options = {
-        uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
-        //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',
-        //   uri:
-        //     "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getAllDepartments",
-        method: "POST",
-        headers: {
-            Authorization: authorization,
-            user_uuid: user_uuid
-        },
-        body: { "uuid": depid },
-        //body: { pageNo: 0, paginationSize: 100 },
-        json: true
-    };
-    const dep_details = await rp(options);
-    return dep_details;
-}
-
-function getfulldata(data, getcuDetails, getmuDetails, getdep) {
-    let newdata = {
-        "uuid": data.uuid,
-        "code": data.uuid,
-        "name": data.uuid,
-        "description": data.uuid,
-        "diagnosis_scheme_uuid": data.uuid,
-        "diagnosis_type_uuid": data.uuid,
-        "diagnosis_category_uuid": data.uuid,
-        "diagnosis_grade_uuid": data.uuid,
-        "diagnosis_region_uuid": data.uuid,
-        "diagnosis_version_uuid": data.uuid,
-        "speciality": data.uuid,
-        "synonym": data.uuid,
-        "referrence_link": data.uuid,
-        "length_Of_stay": data.uuid,
-        "body_site_uuid": data.uuid,
-        "side_uuid": data.uuid,
-        "position_id": data.uuid,
-        "in_house": data.uuid,
-        "is_notifibale": data.uuid,
-        "is_sensitive": data.uuid,
-        "is_billable": data.uuid,
-        "facility_uuid": data.uuid,
-        "department_uuid": data.uuid,
-        "department_name": getdep.responseContent.name,
-        "comments": data.uuid,
-        "is_active": data.uuid,
-        "status": data.uuid,
-        "revision": data.uuid,
-        "created_by_id": data.created_by,
-        "created_by": getcuDetails.responseContents.title.name + " " + getcuDetails.responseContents.first_name,
-        "modified_by_id": data.modified_by,
-        "modified_by": getmuDetails.responseContents.title.name + " " + getmuDetails.responseContents.first_name,
-        "diagnosis_version": data.diagnosis_version,
-        "diagnosis_grade": data.diagnosis_grade,
-        "body_side": data.body_side,
-        "body_site": data.body_site,
-        "diagnosis_region": data.diagnosis_region,
-        "position": data.position,
-        "diagnosis_category": data.diagnosis_category,
-        "diagnosis_scheme": data.diagnosis_scheme,
-        "diagnosis_type": data.diagnosis_type
-
-    };
-    return newdata;
-}
 

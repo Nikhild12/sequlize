@@ -92,6 +92,7 @@ const getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_code",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
@@ -677,8 +678,6 @@ const TickSheetMasterController = () => {
         return res
           .status(400)
           .send({ code: httpStatus[400], message: ex.message });
-      } finally {
-        console.log("Finally");
       }
     } else {
       return res.status(400).send({

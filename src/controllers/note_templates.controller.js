@@ -487,7 +487,6 @@ const noteTemplatesController = () => {
                         }
                     })
                         .then((data1) => {
-                            console.log('sf', data1);
                             return res
                                 .status(httpStatus.OK)
                                 .json({
@@ -528,7 +527,6 @@ const noteTemplatesController = () => {
 module.exports = noteTemplatesController();
 
 async function getuserDetails(user_uuid, docid, authorization) {
-    console.log(user_uuid, docid, authorization);
     let options = {
         uri: config.wso2AppUrl + 'users/getusersById',
         //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
@@ -547,7 +545,6 @@ async function getuserDetails(user_uuid, docid, authorization) {
 }
 
 async function getdepDetails(user_uuid, depid, authorization) {
-    console.log(depid);
     let options = {
         uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
         //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getDepartmentOnlyById',

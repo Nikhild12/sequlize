@@ -100,7 +100,6 @@ const EmrDashBoard = () => {
                     const cons_graph = await getconsgraphbydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
-                    console.log(orders_graph);
                     return res.status(200).send({
                         code: httpStatus.OK, message: 'Fetched Successfully',
                         responseContents: {
@@ -1119,7 +1118,6 @@ function getorders(lab, rad, inv) {
 }
 
 function gethours(data) {
-    //console.log (data);
     let lab_obj = {
         "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
         "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
@@ -1203,7 +1201,6 @@ function gethours(data) {
 }
 
 function gethourscons(data) {
-    console.log(data);
     let lab_obj = {
         "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
         "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,

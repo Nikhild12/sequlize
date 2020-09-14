@@ -154,13 +154,11 @@ const PatientDiagnsis = () => {
             to_date
           )
         );
-        //console.log("----------",patientDiagnosisData);
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Patient Diagnosis Successfully",
           responseContents: getPatientData(patientDiagnosisData)
         });
-        //console.log("----------",patientDiagnosisData);
         //return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: patientDiagnosisData });
       } else if (
         user_uuid &&

@@ -58,6 +58,12 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            profile_status: {
+
+                type: DataTypes.INTEGER,
+                allowNull: true
+
+            },
             profile_description: {
 
                 type: DataTypes.STRING,

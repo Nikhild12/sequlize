@@ -113,7 +113,6 @@ module.exports = snomedController();
 
 async function getSNOMED(searchkey) {
     let key = Object.values(searchkey);
-    console.log(key);
     let options = {
         uri: 'https://browser.ihtsdotools.org/snowstorm/snomed-ct/browser/MAIN/SNOMEDCT-US/2020-03-01/descriptions?&limit=100&term=' +key+ '&active=true',
         method: 'GET',
@@ -125,7 +124,6 @@ async function getSNOMED(searchkey) {
 
 async function getSNOMEDparent(searchkey) {
     let key = Object.values(searchkey);
-    console.log(key);
     let options = {
         uri: 'https://browser.ihtsdotools.org/snowstorm/snomed-ct/browser/MAIN/concepts/'+key+'/parents',
         method: 'GET',
@@ -137,7 +135,6 @@ async function getSNOMEDparent(searchkey) {
 
 async function getSNOMEDchildren(searchkey) {
     let key = Object.values(searchkey);
-    console.log(key);
     let options = {
         uri: 'https://browser.ihtsdotools.org/snowstorm/snomed-ct/browser/MAIN/concepts/'+key+'/children',
         method: 'GET',
