@@ -166,6 +166,9 @@ module.exports = (sequelize, DataTypes) => {
         template_master.hasMany(models.template_master_details, {
             foreignKey: "template_master_uuid"
         });
+        template_master.hasMany(models.vw_template_master_details, {
+            foreignKey: "tm_uuid"
+        });
     };
 
     return template_master;

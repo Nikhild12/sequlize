@@ -1314,21 +1314,21 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
     },
     include: [
       {
-        model: tempmstrdetailsTbl,
+        model: vw_template,
         where: {
-          status: 1,
-          is_active: 1
+          tmd_status: 1,
+          tmd_is_active: 1
         },
-        include: [
-          {
-            model: vitalMasterTbl,
-            require: false,
-            where: {
-              status: 1,
-              is_active: 1
-            }
-          }
-        ]
+        // include: [
+        //   {
+        //     model: vitalMasterTbl,
+        //     require: false,
+        //     where: {
+        //       status: 1,
+        //       is_active: 1
+        //     }
+        //   }
+        // ]
       }
     ]
   };
