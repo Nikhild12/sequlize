@@ -1303,6 +1303,7 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
 function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
   return {
     attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+    order: [["display_order", "ASC"]],
     where: {
       [Op.or]: [
         { department_uuid: { [Op.eq]: dept_id }, is_public: { [Op.eq]: 1 } },
