@@ -95,8 +95,7 @@ const EMRPatientVitals = () => {
           });
 
           if (emr_config.isBlockChain === 'ON') {
-            const patientVitalBlockchain = blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
-            console.log({ patientVitalBlockchain });
+            const patientVitalBlockchain = await blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
           }
           if (emr_patient_vitals_response) {
             return res.status(200).send({
@@ -112,8 +111,6 @@ const EMRPatientVitals = () => {
           .send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (ex) {
-      //console.log("-----", ex);
-
       if (emr_patient_vitals_response) {
         return res.status(200).send({
           code: httpStatus.OK,
@@ -240,8 +237,6 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid),
           { returning: true }
         );
-        console.log({ getPPV });
-
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -269,8 +264,6 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
-        console.log({ getPPV });
-
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -575,7 +568,6 @@ function getPVlist(fetchedData, p_id, created_date) {
 }
 
 const PVexists = (PID, vital_master_uuid) => {
-  //console.log ("pvexits callback----------",PVexists);
   if (PID != undefined) {
     return new Promise((resolve, reject) => {
       let value = emr_patientvitals_Tbl.findAll({
@@ -588,7 +580,6 @@ const PVexists = (PID, vital_master_uuid) => {
         where: { patient_uuid: PID, vital_master_uuid: vital_master_uuid }
       });
       if (value) {
-        //console.log("------value-----",value);
         resolve(value);
         return value;
       } else {

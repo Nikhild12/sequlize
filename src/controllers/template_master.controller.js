@@ -471,7 +471,6 @@ const tmpmstrController = () => {
 
     if (getsearch.sortField === "modified_date") {
       getsearch.sortField = "tm_modified_date";
-      console.log(getsearch.sortField);
     }
 
     pageNo = 0;
@@ -946,7 +945,6 @@ function getDietListForTemplate(fetchedData, template_id) {
 }
 
 function getLabListData(fetchedData) {
-  console.log(fetchedData[0]);
   let templateList = [],
     lab_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;

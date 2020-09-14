@@ -298,11 +298,7 @@ const profilesController = () => {
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
         findQuery.where['p_is_active'] = getsearch.status;
         findQuery.where['p_status'] = 1;
-
       }
-      console.log(">>>>>", JSON.stringify(findQuery));
-
-
       await profilesViewTbl.findAndCountAll(findQuery)
         .then((data) => {
           return res
@@ -964,7 +960,6 @@ const profilesController = () => {
         });
       }
     } catch (ex) {
-
       console.log(ex.message);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
@@ -999,7 +994,6 @@ const profilesController = () => {
         });
       }
     } catch (ex) {
-
       console.log(ex.message);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
@@ -1124,7 +1118,7 @@ const profilesController = () => {
       }
 
     } catch (ex) {
-      console.log('ex===', ex);
+      console.log('ex === ', ex);
       return res.status(500).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message

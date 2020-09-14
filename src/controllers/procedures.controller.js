@@ -536,7 +536,6 @@ const proceduresController = () => {
 module.exports = proceduresController();
 
 async function getuserDetails(user_uuid, docid, authorization) {
-  console.log(user_uuid, docid, authorization);
   let options = {
     uri: config.wso2AppUrl + 'users/getusersById',
     //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/users/getusersById',
