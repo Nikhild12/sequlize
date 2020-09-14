@@ -624,7 +624,6 @@ function getabgData(fetchedData) {
 
 function getadList(fetchedData, p_id, from_date) {
     let ad_list = [];
-    //console.log(fetchedData);
     const filteredData = fetchedData.filter(fD => {
         return (
             fD.dataValues.patient_uuid == p_id &&

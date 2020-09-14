@@ -105,7 +105,6 @@ const sectionsController = () => {
             };
             if (user_uuid && uuid) {
                 const data = await sectionsTbl.update(postdata, selector, { returning: true });
-                console.log('data==', data);
                 if (data) {
                     return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
 

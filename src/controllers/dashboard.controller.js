@@ -91,8 +91,6 @@ const EmrDashBoard = () => {
         return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "Top_Complaints": comp_gender, "Top_Diagnosis": diag_gender } });
 
       } else if (from_date && to_date) {
-
-        //console.log("date filter here-----------------");
         const allcomp = await getComplaintsbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize);
         const alldiag = await getDiagnosisbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize);
 
@@ -130,7 +128,6 @@ const EmrDashBoard = () => {
 
       }
       else {
-        //console.log("----------------");
         const topComplaints = await getComplaints(filterQuery, Sequelize);
         const topDiagnosis = await getDiagnosis(filterQuery, Sequelize);
         return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: { "Top_Complaints": gettopcomp(topComplaints), "Top_Diagnosis": gettopdiag(topDiagnosis) } });
@@ -149,7 +146,6 @@ const EmrDashBoard = () => {
 module.exports = EmrDashBoard();
 
 async function getallpatientdetials(user_uuid, authorization, PData) {
-  //console.log(authorization);
   let options = {
     //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
     uri: 'https://qahmisgateway.oasyshealth.co/DEVregistration/v1/api/patient/getById',
@@ -169,7 +165,6 @@ async function getallpatientdetials(user_uuid, authorization, PData) {
 }
 
 async function getComplaints(filterQuery, Sequelize) {
-  //console.log(filterQuery);
   return patient_chief_complaints_tbl.findAll({
     where: filterQuery,
     group: ['chief_complaint_uuid'],
@@ -206,7 +201,6 @@ async function getDiagnosis(filterQuery, Sequelize) {
 }
 
 async function getComplaintsbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize) {
-  console.log("complaints function --------------");
   return patient_chief_complaints_tbl.findAll({
     group: ['chief_complaint_uuid'],
     attributes: ['uuid', 'patient_uuid', 'encounter_doctor_uuid', 'chief_complaint_uuid', 'created_date',
@@ -236,7 +230,6 @@ async function getComplaintsbydate(user_uuid, depertment_Id, from_date, to_date,
 }
 
 async function getDiagnosisbydate(user_uuid, depertment_Id, from_date, to_date, Sequelize) {
-  console.log("diagnosis function --------------");
   return patient_diagnosis_tbl.findAll({
 
     group: ['diagnosis_uuid'],
@@ -289,15 +282,10 @@ function gettopcomp(responseData) {
 }
 
 function gettopdiagnosis_gender(allpatients, topDiagnosis, gender) {
-
-  //console.log ("gender --------",gender);
-
   let genderdata = [];
   for (let td of topDiagnosis) {
     for (let ap of allpatients) {
-      //console.log(td.patient_uuid, ap.uuid, ap.gender_details.uuid, gender);
       if (td.patient_uuid == ap.uuid && ap.gender_details.uuid == gender) {
-        //console.log(td.patient_uuid, ap.uuid, ap.gender_details.uuid, gender);
         genderdata = [...genderdata,
         {
           patient_gender: ap.gender_details.name,
@@ -317,14 +305,10 @@ function gettopdiagnosis_gender(allpatients, topDiagnosis, gender) {
 
 function gettopcomp_gender(allpatients, topcomp, gender) {
 
-  //console.log ("gender --------",gender);
-
   let genderdata = [];
   for (let td of topcomp) {
     for (let ap of allpatients) {
-      //console.log(td.patient_uuid, ap.uuid, ap.gender_details.uuid, gender);
       if (td.patient_uuid == ap.uuid && ap.gender_details.uuid == gender) {
-        //console.log(td.patient_uuid, ap.uuid, ap.gender_details.uuid, gender);
         genderdata = [...genderdata,
         {
           patient_gender: ap.gender_details.name,
@@ -342,14 +326,11 @@ function gettopcomp_gender(allpatients, topcomp, gender) {
 
 function gettopdiagnosis_session(allpatients, topDiagnosis, session) {
 
-  //console.log ("patient vists --------",allpatients[0].patient_visits.length);
-
   let genderdata = [];
   for (let td of topDiagnosis) {
     for (let ap of allpatients) {
       //for (let i=0; i< ap.patient_visits.length;i++){
       if (td.patient_uuid == ap.uuid && ap.patient_visits[0].session_uuid == session) {
-        console.log(td.patient_uuid, ap.uuid, ap.patient_visits[0].session_uuid, session);
         genderdata = [...genderdata,
         {
           session_uuid: ap.patient_visits[0].session_uuid,
@@ -370,15 +351,10 @@ function gettopdiagnosis_session(allpatients, topDiagnosis, session) {
 
 function gettopcomp_session(allpatients, topcomp, session) {
 
-  //console.log ("gender --------",gender);
-
   let genderdata = [];
   for (let td of topcomp) {
     for (let ap of allpatients) {
-      //for (let i=0; i< ap.patient_visits.length;i++){
-      //console.log(td.patient_uuid, ap.uuid, ap.gender_details.uuid, gender);
       if (td.patient_uuid == ap.uuid && ap.patient_visits[0].session_uuid == session) {
-        console.log(td.patient_uuid, ap.uuid, ap.patient_visits[0].session_uuid, session);
         genderdata = [...genderdata,
         {
           session_uuid: ap.patient_visits[0].session_uuid,

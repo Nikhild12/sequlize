@@ -399,21 +399,16 @@ const referenceGroupController = () => {
             findQuery.where['is_active'] = getsearch.status;
         }
 
-
-
         try {
-            console.log(findQuery);
             const data = await vw_ref.findAndCountAll(findQuery);
 
             if (data) {
                 return res
                     .status(httpStatus.OK)
                     .json({
-                        message: "success",
-                        statusCode: 200,
+                        message: "success", statusCode: 200,
                         responseContents: (data.rows ? data.rows : []),
                         totalRecords: (data.count ? data.count : 0),
-
                     });
             }
 

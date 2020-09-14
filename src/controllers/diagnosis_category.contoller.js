@@ -256,7 +256,6 @@ const DiagnosisCategoryController = () => {
                 }
             });
         } else {
-            // console.log("resreresrersrsrsesresrsersesr",res)
             res.send({
                 status: 'failed',
                 msg: 'Please enter  diagnosis category details'

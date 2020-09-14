@@ -100,9 +100,6 @@ const Encounter = () => {
         user_uuid && patientId && patientId > 0 &&
         doctorId && doctorId > 0 && departmentId && encounterType
       ) {
-
-
-        console.log('Encounter data type ', typeof encounterType);
         encounterType = +(encounterType);
         let encounterData = await encounter_tbl.findAll(
           getActiveEncounterQuery(
