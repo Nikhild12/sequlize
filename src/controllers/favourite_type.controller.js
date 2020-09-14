@@ -52,7 +52,7 @@ const FavouriteType = () => {
                 .status(200)
                 .send({
                     statusCode: code, message: message,
-                    responseContent: isPostMethod ? favouriteTypeList.rows : favouriteTypeList,
+                    [`${isPostMethod ? 'responseContents' : 'responseContent'}`]: isPostMethod ? favouriteTypeList.rows : favouriteTypeList,
                     totalRecords: isPostMethod ? favouriteTypeList.count : favouriteTypeList.length
                 });
 
