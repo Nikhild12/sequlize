@@ -250,10 +250,7 @@ const PatientTreatmentController = () => {
               });
             });
           }
-
-          console.log("Before getting Prescription");
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
-          console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -844,7 +841,6 @@ async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, autho
 
   try {
     const result = await rp(options);
-    console.log(result, 'result');
     if (result && result.statusCode === 200) {
       return result;
     }

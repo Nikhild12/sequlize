@@ -303,7 +303,6 @@ const commonReferenceGroupController = () => {
                     };
                 }
             }
-            console.log(postData.status != null, postData.status != "");
 
             if (postData.status != null) {
                 if (query1 != null) {
@@ -402,9 +401,7 @@ const commonReferenceGroupController = () => {
             });
 
             if (data != null) {
-                console.log("data", data.dataValues);
                 const getlanguageDetailsdata = await getlanguageDetails(req.headers.user_uuid, data.dataValues, req.headers.authorization);
-                console.log("data", getlanguageDetailsdata);
                 data.dataValues.language_details = getlanguageDetailsdata;
                 return res
                     .status(httpStatus.OK)

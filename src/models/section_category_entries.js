@@ -161,6 +161,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
 
             },
+            entry_status: {
+
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: true
+
+            },
             comments: {
 
                 type: DataTypes.STRING,

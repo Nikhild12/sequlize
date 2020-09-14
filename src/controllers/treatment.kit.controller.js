@@ -502,7 +502,6 @@ const TreatMent_Kit = () => {
         const deleteTreatmentKitPromise = await Promise.all(
           deleteTreatmentPromise
         );
-        console.log(deleteTreatmentKitPromise[0]);
 
         const responseCode = deleteTreatmentKitPromise[0][0] === 1 ? httpStatus.OK : httpStatus.NO_CONTENT;
         const responseMessage = deleteTreatmentKitPromise[0][0] === 1
