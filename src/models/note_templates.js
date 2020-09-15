@@ -84,6 +84,22 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
+        sub_department_uuid: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                notNull: {
+                    msg: emr_constants.GetpleaseProvideMsg('sub_department_uuid')
+                },
+                notEmpty: {
+                    msg: emr_constants.GetpleaseProvideMsg('sub_department_uuid')
+                },
+                min: {
+                    args: [1],
+                    msg: emr_constants.GetZeroValidationMessage('sub_department_uuid')
+                }
+            }
+        },
         data_template: {
             type: DataTypes.STRING(250),
             allowNull: true
