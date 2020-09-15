@@ -63,6 +63,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       p_old_pin: {
         type: DataTypes.INTEGER
+      },
+      t_uuid: {
+        type: DataTypes.STRING
+      },
+      t_name: {
+        type: DataTypes.INTEGER
+      },
+      t_code: {
+        type: DataTypes.INTEGER
       }
     },
     {
