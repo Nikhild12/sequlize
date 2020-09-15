@@ -234,6 +234,9 @@ const Encounter = () => {
           // checking for Primary Doctor
           encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
+          // checking for Primary Doctor
+          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
+
           const createdEncounterDoctorData = await encounter_doctors_tbl.create(
             encounterDoctor, { returning: true }
           );
