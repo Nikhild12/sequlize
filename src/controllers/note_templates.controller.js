@@ -430,8 +430,9 @@ const noteTemplatesController = () => {
                 const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
                 const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
                 const getdep = await getdepDetails(req.headers.user_uuid, data.department_uuid, req.headers.authorization);
+                const getsubdep = await getdepDetails(req.headers.user_uuid, data.sub_department_uuid, req.headers.authorization);
                 const getfacility = await getfacilityDetails(req.headers.user_uuid, data.facility_uuid, req.headers.authorization);
-                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep, getfacility);
+                const getdata = getfulldata(data, getcuDetails, getmuDetails, getdep,getsubdep, getfacility);
                 return res
                     .status(httpStatus.OK)
                     .json({
@@ -582,7 +583,7 @@ async function getfacilityDetails(user_uuid, fid, authorization) {
     return user_details;
 }
 
-function getfulldata(data, getcuDetails, getmuDetails, getdep, getfacility) {
+function getfulldata(data, getcuDetails, getmuDetails, getdep,getsubdep, getfacility) {
     let newdata = {
         "uuid": data.uuid,
         "code": data.code,
@@ -593,6 +594,8 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep, getfacility) {
         "facility_name": getfacility.responseContents ? getfacility.responseContents.name : null,
         "department_uuid": data.department_uuid,
         "department_name": getdep.responseContent ? getdep.responseContent.name : null,
+        "sub_department_uuid": data.department_uuid,
+        "sub_department_name": getsubdep.responseContent ? getsubdep.responseContent.name : null,
         "data_template": data.data_template,
         "is_default": data.is_default,
         "status": data.status,
