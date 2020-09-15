@@ -365,6 +365,7 @@ const Encounter = () => {
           .send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (ex) {
+      console.log(ex);
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });

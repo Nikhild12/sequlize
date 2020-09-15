@@ -17,7 +17,10 @@ const _myPatientListAttributes = [
   "p_is_dob_auto_calculate",
   "p_dob",
   "pe_code",
-  "pe_name"
+  "pe_name",
+  "t_uuid",
+  "t_name",
+  "t_code"
 ];
 
 module.exports = {
