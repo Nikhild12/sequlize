@@ -594,7 +594,7 @@ function getfulldata(data, getcuDetails, getmuDetails, getdep,getsubdep, getfaci
         "facility_name": getfacility.responseContents ? getfacility.responseContents.name : null,
         "department_uuid": data.department_uuid,
         "department_name": getdep.responseContent ? getdep.responseContent.name : null,
-        "sub_department_uuid": data.department_uuid,
+        "sub_department_uuid": data.sub_department_uuid,
         "sub_department_name": getsubdep.responseContent ? getsubdep.responseContent.name : null,
         "data_template": data.data_template,
         "is_default": data.is_default,
