@@ -346,7 +346,7 @@ const Encounter = () => {
       is_active_encounter: is_active_encounter
     };
     try {
-      if (user_uuid && updatedata) {
+      if (user_uuid && req.body) {
         const ec_updated = await encounter_tbl.update(ec_updateData, {
           where: {
             facility_uuid: facility_uuid,
