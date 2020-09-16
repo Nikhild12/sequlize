@@ -12,6 +12,14 @@ const emr_utility = require('../services/utility.service');
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const profilesTbl = db.profiles;
+const conceptsTbl = db.concepts;
+const profileSectionsTbl = db.profile_sections;
+const profileSectionCategoriesTbl = db.profile_section_categories;
+const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
+const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
+const sectionsTbl = db.sections;
+const categoriesTbl = db.categories;
+const profilesTypesTbl = db.profile_types;
 const appMasterData = require("../controllers/appMasterData");
 const notesController = () => {
 
@@ -35,8 +43,14 @@ const notesController = () => {
                 e.revision = 1;
             });
 
-
             try {
+                const updateData = await sectionCategoryEntriesTbl.update({
+                    is_latest: emr_constants.IS_IN_ACTIVE
+                }, {
+                    where: {
+                        is_latest: emr_constants.IS_ACTIVE
+                    }
+                });
                 const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
                 });
@@ -276,11 +290,90 @@ const notesController = () => {
 
         }
     };
-
+    const _getReviewNotes = async (req, res) => {
+        const {
+            patient_uuid
+        } = req.query;
+        const {
+            user_uuid
+        } = req.headers;
+        let findQuery = {
+            include: [{
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
+            ],
+            where: {
+                patient_uuid: patient_uuid,
+                is_latest: emr_constants.IS_ACTIVE
+            }
+        };
+        try {
+            if (user_uuid && patient_uuid) {
+                const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+                if (!patNotesData) {
+                    return res.status(404).send({
+                        code: 404,
+                        message: emr_constants.NO_RECORD_FOUND
+                    });
+                }
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    responseContent: patNotesData
+                });
+            } else {
+                return res.status(400).send({
+                    code: httpStatus.UNAUTHORIZED,
+                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+                });
+            }
+        } catch (ex) {
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: ex
+            });
+        }
+    };
     const _print_previous_opnotes = async (req, res) => {
         try {
-            const { certificate_uuid } = req.query;
-            const { user_uuid } = req.headers;
+            const {
+                certificate_uuid
+            } = req.query;
+            const {
+                user_uuid
+            } = req.headers;
 
             let certificate_result = {};
             if (certificate_uuid && user_uuid) {
@@ -293,13 +386,15 @@ const notesController = () => {
 
                 });
                 if (result && result != null) {
-                    certificate_result = { ...result };
+                    certificate_result = {
+                        ...result
+                    };
                     if (certificate_result) {
                         const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
                             data_template: certificate_result.dataValues.data_template,
                             // language: req.__('dischargeSummary')
                         }), {
-                            "format": "A4",        // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                            "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
                             // "orientation": "landscape",
                             "width": "18in",
                             "height": "15in",
@@ -319,23 +414,40 @@ const notesController = () => {
                             res.end(Buffer.from(pdfBuffer, 'binary'));
                             return;
                         } else {
-                            return res.status(400).send({ status: "failed", statusCode: httpStatus[500], message: ND_constats.WENT_WRONG });
+                            return res.status(400).send({
+                                status: "failed",
+                                statusCode: httpStatus[500],
+                                message: ND_constats.WENT_WRONG
+                            });
                         }
-                    }
-                    else {
-                        return res.status(400).send({ status: "failed", statusCode: httpStatus[400], message: ND_constats.WENT_WRONG });
+                    } else {
+                        return res.status(400).send({
+                            status: "failed",
+                            statusCode: httpStatus[400],
+                            message: ND_constats.WENT_WRONG
+                        });
                     }
                 } else {
-                    return res.status(400).send({ status: "failed", statusCode: httpStatus.OK, message: "No Records Found" });
+                    return res.status(400).send({
+                        status: "failed",
+                        statusCode: httpStatus.OK,
+                        message: "No Records Found"
+                    });
                 }
-            }
-            else {
-                return res.status(422).send({ status: "failed", statusCode: httpStatus[422], message: "you are missing certificate_uuid / user_uuid " });
+            } else {
+                return res.status(422).send({
+                    status: "failed",
+                    statusCode: httpStatus[422],
+                    message: "you are missing certificate_uuid / user_uuid "
+                });
             }
 
-        }
-        catch (ex) {
-            return res.status(500).send({ status: "failed", statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+        } catch (ex) {
+            return res.status(500).send({
+                status: "failed",
+                statusCode: httpStatus.BAD_REQUEST,
+                message: ex.message
+            });
         }
     };
 
@@ -345,6 +457,7 @@ const notesController = () => {
         getOPNotesDetailsById: _getOPNotesDetailsById,
         getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId,
         updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes,
+        getReviewNotes: _getReviewNotes,
         print_previous_opnotes: _print_previous_opnotes
     };
 };

@@ -336,22 +336,23 @@ const Encounter = () => {
 
   const _updateECdischarge = async (req, res) => {
     const { user_uuid } = req.headers;
-    const updatedata = req.body;
+    const { discharge_type_uuid, discharge_date, is_active_encounter = 0 } = req.body;
+    const { facility_uuid, patient_uuid, encounter_type_uuid, encounter_uuid } = req.body;
     const ec_updateData = {
-      discharge_type_uuid: req.body.discharge_type_uuid,
-      discharge_date: req.body.discharge_date,
+      discharge_type_uuid: discharge_type_uuid,
+      discharge_date: discharge_date,
       modified_by: user_uuid,
       modified_date: new Date(),
-      is_active_encounter: emr_constants.IS_IN_ACTIVE
+      is_active_encounter: is_active_encounter
     };
     try {
-      if (user_uuid && updatedata) {
+      if (user_uuid && req.body) {
         const ec_updated = await encounter_tbl.update(ec_updateData, {
           where: {
-            facility_uuid: updatedata.facility_uuid,
-            uuid: updatedata.encounter_uuid,
-            patient_uuid: updatedata.patient_uuid,
-            encounter_type_uuid: updatedata.encounter_type_uuid,
+            facility_uuid: facility_uuid,
+            uuid: encounter_uuid,
+            patient_uuid: patient_uuid,
+            encounter_type_uuid: encounter_type_uuid,
           },
         });
         if (ec_updated) {
