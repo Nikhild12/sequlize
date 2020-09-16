@@ -996,6 +996,7 @@ function getFavouritesInList(fetchedData) {
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
+        drug_code: tD.im_code,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
         store_master_uuid: tD.si_store_master_uuid || 0,
