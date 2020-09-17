@@ -82,6 +82,9 @@ module.exports = Object.freeze({
   INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
   PATIENT_ALLERGY_STATUS_FETCH_SUCCESS: "Patient Allergy Status fetched successfully",
   ALLERGY_SOURCE_SUCCESS: "Allergy Source fetched successfully",
+  LAB_RESULT_SUCCESS: "Lab Results Successfully Fetched",
+  PATIENT_TREATMENT_UPDATE: 'Updated success',
+  FAILED_TO_UPDATE: 'Failed to update',
   BLOCK_CHAIN: {
     BLOCK_CHAIN_URL: {
       VITAL_CREATE: '/assetapi/Vitals/create'
