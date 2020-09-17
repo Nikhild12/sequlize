@@ -208,10 +208,11 @@ const Encounter = () => {
         if (([1, 2, 3].includes(encounter_type_uuid)) && is_enc_avail && is_enc_doc_avail) {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER,
-            existingDetails: getExisitingEncounterDetails(),
+            existingDetails: getExisitingEncounterDetails(encounterData, encounterDoctorData),
           });
         }
 
+        let createdEncounter;
         if (!is_enc_avail) {
 
           // closing all previous active encounters patient
@@ -219,31 +220,23 @@ const Encounter = () => {
             enc_att.getEncounterUpdateAttributes(user_uuid),
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
-
-          // if (encounter_type_uuid === 1) {
-
-          // }
+          createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
 
         }
-        const createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
-        if (createdEncounter) {
 
-          const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
-          encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
+        const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
+        encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
 
-          // checking for Primary Doctor
-          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
+        // checking for Primary Doctor
+        encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-          // checking for Primary Doctor
-          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(
+          encounterDoctor, { returning: true }
+        );
+        encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+        return res.status(200)
+          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
 
-          const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-            encounterDoctor, { returning: true }
-          );
-          encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-          return res.status(200)
-            .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
-        }
       } catch (ex) {
         console.log(ex);
         return res

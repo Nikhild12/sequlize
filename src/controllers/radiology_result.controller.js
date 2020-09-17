@@ -1,41 +1,43 @@
+// Httpstatus Import
 const httpStatus = require("http-status");
-const db = require("../config/sequelize");
 
-const Sequelize = require("sequelize");
+// DB Import
+const db = require("../config/sequelize");
 
 // Constants Import
 const emr_constants = require("../config/constants");
 
+// Utility Import
+const emr_utility = require('../services/utility.service');
+
 const radiologyvw = db.vw_emr_radilogy_results;
 
 const RadiologyResutlsController = () => {
+
   /**
    * Returns Radilogy Results 
    * @param req
    * @param res
    */
-
-
   const _getRadiologyReusltsById = async (req, res) => {
+
     const { user_uuid } = req.headers;
     const { patient_order_uuid } = req.query;
+
     try {
       if (user_uuid > 0 && patient_order_uuid > 0) {
+
         const result = await radiologyvw.findAll({
           attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-          where: {
-            po_uuid: patient_order_uuid
-          }
+          where: { po_uuid: patient_order_uuid }
         });
-        if (result.length > 0) {
-          return res.status(httpStatus.OK).send({
-            statusCode: 200,
-            messsage: "Radilogy Result Fetched Successfully",
-            responseContents: result
-          });
-        } else {
-          return res.status(200).send({ statusCode: 200, message: `${emr_constants.NO_RECORD_FOUND}` });
-        }
+
+        const code = emr_utility.getResponseCodeForSuccessRequest(result);
+        const message = emr_utility.getResponseMessageForSuccessRequest(code, 'rRS'); // rRs -> Radiology Result Success
+        
+        return res.status(httpStatus.OK)
+          .send({ code, message, responseContents: result });
+
       } else {
         return res.status(400).send({
           code: httpStatus[400],
@@ -44,10 +46,8 @@ const RadiologyResutlsController = () => {
       }
     } catch (err) {
       console.log('Exception Happened', err);
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-        status: "error",
-        msg: err
-      });
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
+        .send({ status: "error", msg: err });
     }
   };
 
