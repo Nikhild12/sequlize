@@ -185,7 +185,8 @@ const responseMessage = {
   pas: emr_constants.PATIENT_ALLERGY_STATUS_FETCH_SUCCESS, // Patient Allergy Status Fetch Success,
   als: emr_constants.ALLERGY_SOURCE_SUCCESS, // Allergy Source Fetch Success,
   lRS: emr_constants.LAB_RESULT_SUCCESS,
-  rRs: emr_constants.RADIOLOGY_RESULT_SUCCESS
+  rRs: emr_constants.RADIOLOGY_RESULT_SUCCESS,
+  iRs: emr_constants.INVESTIGATION_RESULT_SUCCESS
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {
