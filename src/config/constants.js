@@ -86,6 +86,7 @@ module.exports = Object.freeze({
   PATIENT_TREATMENT_UPDATE: 'Updated success',
   FAILED_TO_UPDATE: 'Failed to update',
   RADIOLOGY_RESULT_SUCCESS: "Radiology Results Successfully Fetched",
+  INVESTIGATION_RESULT_SUCCESS: "Investigation Result Fetched Successfully",
   BLOCK_CHAIN: {
     BLOCK_CHAIN_URL: {
       VITAL_CREATE: '/assetapi/Vitals/create'
