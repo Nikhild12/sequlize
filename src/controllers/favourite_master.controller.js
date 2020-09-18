@@ -625,54 +625,68 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
   const _updateFavouriteById = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const favouriteMasterReqData = req.body;
 
-    const favouriteMasterUpdateData = getFavouriteMasterUpdateData(
-      user_uuid, favouriteMasterReqData
-    );
-    const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(
-      user_uuid, favouriteMasterReqData
-    );
+    const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
+    const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
 
-    if (
-      user_uuid && favouriteMasterReqData &&
-      favouriteMasterReqData.hasOwnProperty("favourite_id") && favouriteMasterReqData.hasOwnProperty("is_active")
+    if (user_uuid && favouriteMasterReqData &&
+      favouriteMasterReqData.hasOwnProperty("favourite_id") &&
+      favouriteMasterReqData.hasOwnProperty("is_active") &&
+      favouriteMasterReqData.hasOwnProperty("department_uuid") &&
+      favouriteMasterReqData.hasOwnProperty("favourite_display_order")
     ) {
       try {
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
-            uuid: favouriteMasterReqData.favourite_id,
-            status: emr_constants.IS_ACTIVE,
+            uuid: favouriteMasterReqData.favourite_id, status: emr_constants.IS_ACTIVE,
           },
         });
 
         if (updatingRecord && updatingRecord.length === 0) {
-          return res.status(400).send({
-            code: httpStatus.BAD_REQUEST,
-            message: emr_constants.NO_CONTENT_MESSAGE,
-          });
+          return res.status(400)
+            .send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
+        }
+
+        // Checking Duplicate Display Order
+        if (favouriteMasterReqData && favouriteMasterReqData.favourite_display_order) {
+
+          const existingDisplayOrder = +(favouriteMasterReqData.favourite_display_order);
+          if (existingDisplayOrder !== updatingRecord[0].display_order) {
+
+            const { department_uuid, favourite_display_order } = req.body;
+            const duplicateDisplay = await favouriteMasterTbl.findAll({
+              attributes: ["display_order"],
+              where: {
+                favourite_type_uuid: updatingRecord[0].favourite_type_uuid,
+                department_uuid: department_uuid,
+                facility_uuid,
+                display_order: favourite_display_order
+              }
+            });
+
+            if (duplicateDisplay && duplicateDisplay.length > 0) {
+              return res.status(400).send({
+                code: emr_constants.DUPLICATE_DISPLAY_ORDER,
+                message: `Already display Order '${favourite_display_order}' has been added to your Favorite list.`,
+              });
+            }
+          }
         }
 
         const updatedFavouriteData = await Promise.all([
           favouriteMasterTbl.update(favouriteMasterUpdateData, {
-            where: { uuid: favouriteMasterReqData.favourite_id },
+            where: { uuid: favouriteMasterReqData.favourite_id }
           }),
           favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, {
-            where: {
-              favourite_master_uuid: favouriteMasterReqData.favourite_id,
-            },
+            where: { favourite_master_uuid: favouriteMasterReqData.favourite_id }
           }),
         ]);
-        favouriteTransStatus = true;
 
-        if (updatedFavouriteData) {
-          return res.status(200).send({
-            code: httpStatus.OK,
-            message: "Updated Successfully",
-            requestContent: favouriteMasterReqData,
-          });
-        }
+        return res.status(200)
+          .send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: favouriteMasterReqData });
+
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
         return res
@@ -1444,4 +1458,3 @@ const getFavouriteQueryById = async (fTypeId, fId, is_master) => {
     });
   }
 };
-
