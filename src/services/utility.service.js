@@ -181,15 +181,16 @@ const responseMessage = {
   dis: emr_constants.DISEASES_SUCCESS,
   p: emr_constants.PREVIOUS_PAT_CC_SUCCESS, // Previous Patient Chief Complaints,
   pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED, // Patient Speciality Sketch Fe,
-  favty: emr_constants.FAVOURITE_TYPE // Favourite Type
+  favty: emr_constants.FAVOURITE_TYPE, // Favourite Type,
+  pas: emr_constants.PATIENT_ALLERGY_STATUS_FETCH_SUCCESS, // Patient Allergy Status Fetch Success,
+  als: emr_constants.ALLERGY_SOURCE_SUCCESS, // Allergy Source Fetch Success,
+  lRS: emr_constants.LAB_RESULT_SUCCESS,
+  rRS: emr_constants.RADIOLOGY_RESULT_SUCCESS,
+  iRS: emr_constants.INVESTIGATION_RESULT_SUCCESS
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {
-  if (code === 204) {
-    return emr_constants.NO_RECORD_FOUND;
-  } else {
-    return responseMessage[mName];
-  }
+  return code === 204 ? emr_constants.NO_RECORD_FOUND : responseMessage[mName];
 };
 
 const _indiaTz = (date) => {

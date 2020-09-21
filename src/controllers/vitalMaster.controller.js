@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const emr_const = require('../config/constants');
 const db = require("../config/sequelize");
-
+const emr_constants = require("../config/constants");
 const clinical_const = require('../config/constants');
 const emr_utilities = require('../services/utility.service');
 
@@ -73,6 +73,7 @@ const vitalmstrController = () => {
 
   //function for getting default vitals
   const _getVitals = async (req, res) => {
+    
     try {
       const result = await vitalmstrTbl.findAll(getdefaultVitalsQuery(), { returning: true });
       if (result) {
@@ -96,6 +97,8 @@ const vitalmstrController = () => {
       //   }
       // }] 
     };
+   
+    
     try {
       const result = await vitalmstrTbl.findAll(query, { returning: true });
       if (result) {
@@ -106,7 +109,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
-
+ 
   const _getAllVitalsFilter = async (req, res) => {
     const { user_uuid } = req.headers;
     const { searchValue } = req.body;
@@ -400,6 +403,24 @@ const vitalmstrController = () => {
     }
 
   };
+  const _getdefultVitals = async (req, res) => {
+    let { is_default }= req.query;
+    try {
+     
+      const result = await vitalmstrTbl.findAll(getdefaultVitals(is_default), { returning: true });
+     
+      const returnMessage = result > 0 ? emr_constants.FETCHD_VITAL_MASTER_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
+        return res.status(httpStatus.OK).send({
+          code: httpStatus.OK,
+          message: returnMessage,
+          responseContents: result
+        });
+      
+    }
+    catch (ex) {
+      return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
   return {
     createVital: _createVital,
     getVitals: _getVitals,
@@ -409,7 +430,8 @@ const vitalmstrController = () => {
     getALLVitalsmaster: _getALLVitalsmaster,
     updatevitalsById: _updatevitalsById,
     deletevitals: _deletevitals,
-    getVitalsByUUID: _getVitalsByUUID
+    getVitalsByUUID: _getVitalsByUUID,
+    getdefultVitals:_getdefultVitals
   };
 };
 
@@ -417,7 +439,7 @@ module.exports = vitalmstrController();
 
 function getdefaultVitalsQuery(vital_uuid) {
   let q = {
-    where: { is_default: clinical_const.IS_ACTIVE, is_active: clinical_const.IS_ACTIVE, status: clinical_const.IS_ACTIVE },
+    where: { is_default: 1, is_active: clinical_const.IS_ACTIVE, status: clinical_const.IS_ACTIVE },
     include: [
       {
         model: vitalValueTypeTbl,
@@ -444,6 +466,16 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
+function getdefaultVitals(is_default){
+  let q = {
+    where: { is_active:1,status:1}
+  };
+    
+  if (is_default) {
+    q.where.is_default = is_default;
+  }
+  return q;
+}
 const nameExists = (name) => {
   if (name !== undefined) {
     return new Promise((resolve, reject) => {

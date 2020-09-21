@@ -225,11 +225,6 @@ async function getPatientAllergies(patient_uuid, doctor_uuid, encounter_uuid) {
     let allergyInfo = getAllergyInfo(result);
     return allergyInfo;
   }
-  // }
-  // catch (ex) {
-  //     console.log('ex----', ex);
-  //     return [];
-  // }
 }
 
 function getAllergyInfo(result) {

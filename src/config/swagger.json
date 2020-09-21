@@ -11,30 +11,18 @@
 	},
 	"host": "localhost:7337",
 	"basePath": "/",
-	"tags": [
-		{
-			"name": "EMR API",
-			"description": "API for EMR Data"
-		}
-	],
-	"schemes": [
-		"http",
-		"https"
-	],
-	"consumes": [
-		"application/json",
-		"multipart/form-data"
-	],
-	"produces": [
-		"application/json",
-		"application/file"
-	],
+	"tags": [{
+		"name": "EMR API",
+		"description": "API for EMR Data"
+	}],
+	"schemes": ["http", "https"],
+	"consumes": ["application/json", "multipart/form-data"],
+	"produces": ["application/json", "application/file"],
 	"paths": {
 		"/api/proceduresNoteTemplate/deleteProcedures-note-template": {
 			"post": {
 				"description": "Deleted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -49,13 +37,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -71,8 +54,7 @@
 		"/api/proceduresNoteTemplate/getProcedures-note-templateById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -87,13 +69,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -109,8 +86,7 @@
 		"/api/proceduresNoteTemplate/updateProcedures-note-template": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -125,13 +101,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -147,8 +118,7 @@
 		"/api/ccc/getcccmasterbytype": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "type",
 						"required": true,
@@ -163,13 +133,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -185,8 +150,7 @@
 		"/api/notetemplate/getnotetemplatebytype": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "type",
 						"required": true,
@@ -207,13 +171,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -229,8 +188,7 @@
 		"/api/procedures/deleteProcedures": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -245,13 +203,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -267,8 +220,7 @@
 		"/api/procedures/getProceduresById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -283,13 +235,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -305,8 +252,7 @@
 		"/api/procedures/updateProceduresById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -321,13 +267,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -343,8 +284,7 @@
 		"/api/speciality/createSpeciality": {
 			"post": {
 				"summary": "To Create a Speciality Sketch",
-				"parameters": [
-					{
+				"parameters": [{
 						"name": "user_uuid",
 						"in": "header",
 						"required": true,
@@ -403,13 +343,8 @@
 						"type": "file"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Speciality Sketches"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Speciality Sketches"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation"
@@ -425,8 +360,7 @@
 		"/api/speciality/getSpecialityById": {
 			"post": {
 				"description": "To get a Speciality Sketches Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -441,13 +375,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Speciality Sketches"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Speciality Sketches"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -463,8 +392,7 @@
 		"/api/speciality/updateSpecialityById": {
 			"post": {
 				"description": "To Update Speciality Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"name": "user_uuid",
 						"in": "header",
 						"required": true,
@@ -506,13 +434,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Speciality Sketches"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Speciality Sketches"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -528,8 +451,7 @@
 		"/api/speciality/getAllSpeciality": {
 			"post": {
 				"description": "To get All Speciality",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -544,13 +466,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Speciality Sketches"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Speciality Sketches"],
 				"responses": {
 					"200": {
 						"description": "get All getAllSpeciality",
@@ -564,8 +481,7 @@
 		"/api/speciality/deleteSpeciality": {
 			"post": {
 				"description": "To Delete Speciality Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -580,13 +496,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Speciality Sketches"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Speciality Sketches"],
 				"responses": {
 					"200": {
 						"description": "deleted Successfully"
@@ -597,8 +508,7 @@
 		"/api/ccc/postcccMaster": {
 			"post": {
 				"description": "To Create a Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -613,13 +523,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -635,8 +540,7 @@
 		"/api/ccc/getCccMasterById": {
 			"post": {
 				"description": "To get a Ccc Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -651,13 +555,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -673,8 +572,7 @@
 		"/api/ccc/updateCccMasterById": {
 			"post": {
 				"description": "To Update Ccc Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -689,13 +587,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -711,8 +604,7 @@
 		"/api/ccc/getAllCccMaster": {
 			"post": {
 				"description": "To get All Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -727,13 +619,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "get All Ccc Master"
@@ -744,8 +631,7 @@
 		"/api/ccc/deleteCccMaster": {
 			"post": {
 				"description": "To Delete Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -760,13 +646,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Ccc Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Ccc Master"],
 				"responses": {
 					"200": {
 						"description": "deleted Successfully"
@@ -777,21 +658,14 @@
 		"/api/proceduresNoteTemplate/getprocedures-note-template": {
 			"post": {
 				"description": "get Successfully",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures Note Template"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -807,8 +681,7 @@
 		"/api/proceduresNoteTemplate/createprocdures-note-template": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -823,13 +696,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -845,8 +713,7 @@
 		"/api/procedures/createProcedures": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -861,13 +728,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -883,8 +745,7 @@
 		"/api/procedures/getProcedures": {
 			"post": {
 				"description": "get list Procedure",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "getlistProcedureMaster",
 						"required": true,
@@ -900,10 +761,7 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
+				"produces": ["application/json", "application/xml"],
 				"responses": {
 					"200": {
 						"description": "successful operation",
@@ -918,16 +776,13 @@
 						}
 					}
 				},
-				"tags": [
-					"Procedures"
-				]
+				"tags": ["Procedures"]
 			}
 		},
 		"/api/notetemplate/createNoteTemplate": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -942,13 +797,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -964,8 +814,7 @@
 		"/api/notetemplate/deleteNoteTemplate": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -980,13 +829,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1002,8 +846,7 @@
 		"/api/notetemplate/getNoteTemplate": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1018,13 +861,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1040,8 +878,7 @@
 		"/api/notetemplate/getNoteTemplateById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1056,13 +893,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1078,8 +910,7 @@
 		"/api/notetemplate/updateNoteTemplate": {
 			"post": {
 				"description": "update Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1094,13 +925,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Note Template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Note Template"],
 				"responses": {
 					"200": {
 						"description": "update Successfully",
@@ -1116,8 +942,7 @@
 		"/api/vitalLonic/addvitalslonic": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1132,13 +957,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Vitals Lonic"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Vitals Lonic"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1154,21 +974,14 @@
 		"/api/vitalLonic/getvitalslonic": {
 			"post": {
 				"description": "get Successfully",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Vitals Lonic"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Vitals Lonic"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1184,8 +997,7 @@
 		"/api/vitalMaster/updatevitals": {
 			"post": {
 				"description": "Updated Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1200,13 +1012,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -1222,8 +1029,7 @@
 		"/api/vitalLonic/updatevitalslonicById": {
 			"post": {
 				"description": "Updated Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1238,13 +1044,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Vitals Lonic"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Vitals Lonic"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -1260,8 +1061,7 @@
 		"/api/vitalLonic/deletevitalslonic": {
 			"post": {
 				"description": "Delete Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1276,13 +1076,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Vitals Lonic"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Vitals Lonic"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1298,8 +1093,7 @@
 		"/api/vitalLonic/getvitalslonicById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1314,13 +1108,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Vitals Lonic"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Vitals Lonic"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1336,8 +1125,7 @@
 		"/api/Reference/getreference": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1352,13 +1140,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Reference"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Reference"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1374,8 +1157,7 @@
 		"/api/Reference/addreference": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1390,13 +1172,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Reference"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Reference"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1412,8 +1189,7 @@
 		"/api/Reference/getAllreference": {
 			"post": {
 				"description": "To get all reference",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1428,13 +1204,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Reference"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Reference"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1450,8 +1221,7 @@
 		"/api/immunizations/addimmunization": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1466,13 +1236,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1488,8 +1253,7 @@
 		"/api/immunizations/searchimmuization": {
 			"post": {
 				"description": "Fetch Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1504,13 +1268,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1526,8 +1285,7 @@
 		"/api/immunizations/getimmunization": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1542,13 +1300,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1564,8 +1317,7 @@
 		"/api/immunizations/getimmunizationById": {
 			"post": {
 				"description": "To get by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1580,13 +1332,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1602,8 +1349,7 @@
 		"/api/immunizations/deleteimmunizationById": {
 			"post": {
 				"description": "To Delete",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1618,13 +1364,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "Delete Successfully",
@@ -1640,8 +1381,7 @@
 		"/api/immunizations/updateimmunizationById": {
 			"post": {
 				"description": "To update",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1656,13 +1396,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations"],
 				"responses": {
 					"200": {
 						"description": "update Successfully",
@@ -1678,8 +1413,7 @@
 		"/api/immunizationSchedule/addimmunizationSchedule": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1694,13 +1428,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations Schedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations Schedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1716,8 +1445,7 @@
 		"/api/immunizationSchedule/getimmunizationSchedule": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1732,13 +1460,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations Schedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations Schedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1754,8 +1477,7 @@
 		"/api/immunizationSchedule/getimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1770,13 +1492,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations Schedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations Schedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1792,8 +1509,7 @@
 		"/api/immunizationSchedule/deleteimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1808,13 +1524,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations Schedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations Schedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1830,8 +1541,7 @@
 		"/api/immunizationSchedule/updateimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1846,13 +1556,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Immunizations Schedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Immunizations Schedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1868,8 +1573,7 @@
 		"/api/commonReference/getReferenceById": {
 			"post": {
 				"description": "get Reference Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1884,13 +1588,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1906,8 +1605,7 @@
 		"/api/commonReference/addReference": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1922,13 +1620,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1944,8 +1637,7 @@
 		"/api/commonReference/updateReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1960,13 +1652,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -1982,8 +1669,7 @@
 		"/api/commonReference/deleteReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1998,13 +1684,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -2020,8 +1701,7 @@
 		"/api/commonReference/getReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2036,13 +1716,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -2058,8 +1733,7 @@
 		"/api/allergyMaster/addAllergyMaster": {
 			"post": {
 				"description": "To Create a Allergy for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2074,13 +1748,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Allergy Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted allergy"
@@ -2091,8 +1760,7 @@
 		"/api/allergyMaster/getAllergyMaster": {
 			"post": {
 				"description": "To get  Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2107,13 +1775,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Allergy Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
 				"responses": {
 					"200": {
 						"description": "get Allergy Master"
@@ -2124,8 +1787,7 @@
 		"/api/allergyMaster/updateAlleryMasterById": {
 			"post": {
 				"description": "To Update Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2140,13 +1802,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Allergy Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -2157,8 +1814,7 @@
 		"/api/allergyMaster/deleteAllergyMaster": {
 			"post": {
 				"description": "To Delete Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2173,13 +1829,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Allergy Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted EMR Workflow"
@@ -2190,8 +1841,7 @@
 		"/api/allergyMaster/getAlleryMasterById": {
 			"post": {
 				"description": "To get by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2206,13 +1856,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Allergy Master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted EMR Workflow"
@@ -2220,11 +1865,37 @@
 				}
 			}
 		},
+		"/api/allergyMaster/get-allergy-source-auto": {
+			"post": {
+				"description": "To get Allergy Source",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getAllergySource",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllergySource"
+						}
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Allergy Source"
+					}
+				}
+			}
+		},
 		"/api/emr-workflow-settings/create": {
 			"post": {
 				"description": "To Create a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2239,13 +1910,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRWorkflowSettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRWorkflowSettings"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted EMR Workflow"
@@ -2256,8 +1922,7 @@
 		"/api/emr-workflow-settings/delete": {
 			"put": {
 				"description": "To delete a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2272,13 +1937,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRWorkflowSettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRWorkflowSettings"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully"
@@ -2289,8 +1949,7 @@
 		"/api/emr-workflow-settings/update": {
 			"put": {
 				"description": "To Update a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2305,13 +1964,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRWorkflowSettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRWorkflowSettings"],
 				"responses": {
 					"200": {
 						"description": "Upadted Successfully"
@@ -2322,8 +1976,7 @@
 		"/api/emr-workflow-settings/getEMRWorkflowByUserId": {
 			"get": {
 				"description": "To get a EMR Workflow",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2335,13 +1988,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRWorkflowSettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRWorkflowSettings"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -2355,8 +2003,7 @@
 		"/api/emr-history-settings/create": {
 			"post": {
 				"description": "To Create a EMR History for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2371,13 +2018,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRHistorySettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRHistorySettings"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted EMR Workflow"
@@ -2388,21 +2030,14 @@
 		"/api/emr-history-settings/getById": {
 			"get": {
 				"description": "To get a EMR History Settings Workflow",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRHistorySettings"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRHistorySettings"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -2416,8 +2051,7 @@
 		"/api/emr-history-settings/update": {
 			"put": {
 				"description": "To Update a EMR History Settings for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2432,13 +2066,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRHistorySettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRHistorySettings"],
 				"responses": {
 					"200": {
 						"description": "Upadted Successfully"
@@ -2449,8 +2078,7 @@
 		"/api/emr-history-settings/delete": {
 			"put": {
 				"description": "To delete a EMR History Settingd for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2465,13 +2093,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRHistorySettings"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRHistorySettings"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully"
@@ -2482,8 +2105,7 @@
 		"/api/patient-chief-complaints/create": {
 			"post": {
 				"description": "To create Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2498,13 +2120,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientChiefComplaints"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientChiefComplaints"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -2515,21 +2132,14 @@
 		"/api/patient-chief-complaints/getMockJson": {
 			"get": {
 				"description": "To get Patient chief Complaints",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientChiefComplaints"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientChiefComplaints"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully"
@@ -2540,8 +2150,7 @@
 		"/api/patient-chief-complaints/get-prev-pat-cc-by-patientId": {
 			"get": {
 				"description": "To get Previosu Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2566,13 +2175,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientChiefComplaints"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientChiefComplaints"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully"
@@ -2583,8 +2187,7 @@
 		"/api/emr-patient-vitals/create": {
 			"post": {
 				"description": "To Create a EMR Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2599,13 +2202,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRPatientVitals"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRPatientVitals"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted EMR Patient Vitals"
@@ -2616,21 +2214,14 @@
 		"/api/emr-patient-vitals/getMockJson": {
 			"get": {
 				"description": "To get a EMR Patient Vitals",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRPatientVitals"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRPatientVitals"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched"
@@ -2641,8 +2232,7 @@
 		"/api/emr-patient-vitals/getHistoryPatientVitals": {
 			"get": {
 				"description": "To get a EMR History Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2678,13 +2268,8 @@
 						"format": "date"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRPatientVitals"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRPatientVitals"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -2698,8 +2283,7 @@
 		"/api/patient-chief-complaints/getByFilters": {
 			"get": {
 				"description": "To get Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2747,13 +2331,8 @@
 						"required": true
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientChiefComplaints"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientChiefComplaints"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -2767,8 +2346,7 @@
 		"/api/encounter/create": {
 			"post": {
 				"description": "To Create a Encounter For Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2783,13 +2361,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted Encounter"
@@ -2800,8 +2373,7 @@
 		"/api/encounter/bulk-create": {
 			"post": {
 				"description": "To Create List of Encounters For Patient Lisr",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2816,13 +2388,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted Encounter"
@@ -2833,8 +2400,7 @@
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
 				"description": "To get a Encounter for Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2883,13 +2449,8 @@
 						"required": true
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter"
@@ -2900,21 +2461,14 @@
 		"/api/encounter-type/getEncounterType": {
 			"get": {
 				"description": "To get list of Encounter Type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EncounterType"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EncounterType"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter Type"
@@ -2925,21 +2479,14 @@
 		"/api/encounter-type/getEncounterTypeByPost": {
 			"post": {
 				"description": "To get list of Encounter Type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EncounterType"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EncounterType"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter Type"
@@ -2950,8 +2497,7 @@
 		"/api/encounter/get-latest-enc-by-patient": {
 			"get": {
 				"description": "To get Latest Patient Record By Patient Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2970,13 +2516,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Latest Patient Record",
@@ -2990,8 +2531,7 @@
 		"/api/encounter/updateECdischarge": {
 			"put": {
 				"description": "To update a Encounter For Patient discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3006,13 +2546,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted Encounter"
@@ -3023,8 +2558,7 @@
 		"/api/patient-diagnosis/create": {
 			"post": {
 				"description": "To create Patient Diagnosis",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3045,13 +2579,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted Patient Diagnosis"
@@ -3062,21 +2591,14 @@
 		"/api/patient-diagnosis/getMockJson": {
 			"get": {
 				"description": "To get Patient Diagnosis",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Patient Diagnosis"
@@ -3087,8 +2609,7 @@
 		"/api/patient-diagnosis/getByFilters": {
 			"get": {
 				"description": "To get list of Patient Diagnosis By Filters",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3136,13 +2657,8 @@
 						"format": "date"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter Type"
@@ -3153,8 +2669,7 @@
 		"/api/patient-diagnosis/getPreviousDiagnosisByPatiendId": {
 			"get": {
 				"description": "To get list of Patient Diagnosis previous orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3173,13 +2688,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter Type"
@@ -3190,8 +2700,7 @@
 		"/api/patient-diagnosis/updateById": {
 			"put": {
 				"description": "To update Patient Diagnosis By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3206,13 +2715,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Deleted"
@@ -3223,8 +2727,7 @@
 		"/api/patient-diagnosis/updatePatientDiagnosis": {
 			"put": {
 				"description": "To create Patient Diagnosis",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3257,13 +2760,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientDiagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientDiagnosis"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated Patient Diagnosis"
@@ -3274,21 +2772,14 @@
 		"/api/favourite-type/get-type": {
 			"get": {
 				"description": "To get list of favourite type Master",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"favouriteType"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["favouriteType"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -3301,8 +2792,7 @@
 		"/api/favourite-type/get-type-advance": {
 			"post": {
 				"description": "To get list of favourite type Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3317,13 +2807,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"favouriteType"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["favouriteType"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -3336,8 +2821,7 @@
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3358,13 +2842,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"favourite"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -3377,8 +2856,7 @@
 		"/api/favourite/delete": {
 			"put": {
 				"description": "To delete a favourite Drug",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3393,9 +2871,7 @@
 						}
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful Delete",
@@ -3411,8 +2887,7 @@
 		"/api/favourite/getFavourite": {
 			"get": {
 				"description": "To get list of favourites for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3446,9 +2921,7 @@
 						"type": "integer"
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful",
@@ -3467,8 +2940,7 @@
 		"/api/favourite/getAllFavourites": {
 			"post": {
 				"description": "To get all list of favourites for the Clinical Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3482,9 +2954,7 @@
 						}
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful"
@@ -3500,8 +2970,7 @@
 		"/api/favourite/getTreatmentKitFavourite": {
 			"get": {
 				"description": "To get list of Treatment favourites",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3514,9 +2983,7 @@
 						"type": "integer"
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful",
@@ -3535,8 +3002,7 @@
 		"/api/favourite/getDietFavourite": {
 			"get": {
 				"description": "To get list of Diet favourites",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3555,9 +3021,7 @@
 						"type": "integer"
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful",
@@ -3576,8 +3040,7 @@
 		"/api/favourite/getTreatmentKitFavouriteById": {
 			"get": {
 				"description": "To get Treatment favourite by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3596,9 +3059,7 @@
 						"type": "integer"
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful",
@@ -3617,8 +3078,7 @@
 		"/api/favourite/getFavouriteById": {
 			"get": {
 				"description": "To get favourite by given id for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3641,9 +3101,7 @@
 						"type": "boolean"
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successful",
@@ -3662,8 +3120,7 @@
 		"/api/favourite/updateFavouriteById": {
 			"put": {
 				"description": "To update favourite by given id for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3678,9 +3135,7 @@
 						}
 					}
 				],
-				"tags": [
-					"favourite"
-				],
+				"tags": ["favourite"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -3696,8 +3151,7 @@
 		"/api/template/gettemplateByID": {
 			"get": {
 				"summary": "List of Templates by id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3731,13 +3185,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -3753,8 +3202,7 @@
 		"/api/template/gettempdetails": {
 			"get": {
 				"summary": "List drugs info of template",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3798,13 +3246,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -3820,8 +3263,7 @@
 		"/api/template/create": {
 			"post": {
 				"description": "To Create a template for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3836,13 +3278,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -3858,8 +3295,7 @@
 		"/api/template/deleteTemplateDetails": {
 			"put": {
 				"description": "To delete template for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3874,9 +3310,7 @@
 						}
 					}
 				],
-				"tags": [
-					"template"
-				],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "Successful Delete"
@@ -3889,8 +3323,7 @@
 		"/api/template/updatetemplateById": {
 			"put": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3905,9 +3338,7 @@
 						}
 					}
 				],
-				"tags": [
-					"template"
-				],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -3923,8 +3354,7 @@
 		"/api/diagnosis/getDFilter": {
 			"get": {
 				"description": "To get a Diagnosiseither by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3951,15 +3381,10 @@
 						"name": "searchValue",
 						"required": true,
 						"type": "string"
-					}					
+					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -3975,8 +3400,7 @@
 		"/api/diagnosis/search": {
 			"post": {
 				"description": "To get a Diagnosiseither by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3991,13 +3415,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -4013,8 +3432,7 @@
 		"/api/diagnosis/createDiagnosis": {
 			"post": {
 				"description": "Diagnosis Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4029,13 +3447,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully",
@@ -4051,8 +3464,7 @@
 		"/api/diagnosis/getDiagnosis": {
 			"post": {
 				"description": "To get a diagnosis  Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4067,13 +3479,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "get all datails Successfully",
@@ -4089,8 +3496,7 @@
 		"/api/diagnosis/getDiagnosisAutoSearch": {
 			"post": {
 				"description": "To get a diagnosis  Details By Name Search",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4105,13 +3511,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "get all datails Successfully",
@@ -4127,8 +3528,7 @@
 		"/api/diagnosis/deleteDiagnosis": {
 			"post": {
 				"description": "Deleted successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4143,13 +3543,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "delete Successfully",
@@ -4165,8 +3560,7 @@
 		"/api/diagnosis/updateDiagnosisById": {
 			"post": {
 				"description": "To Update diagnosis ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4181,13 +3575,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "updated Successfully",
@@ -4203,8 +3592,7 @@
 		"/api/diagnosis/getDaignosisById": {
 			"post": {
 				"description": "To get a diagnosis by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4219,13 +3607,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "fetch the details Successfully",
@@ -4241,8 +3624,7 @@
 		"/api/diagnosis/getDaignosisByUUId": {
 			"post": {
 				"description": "To get a diagnosis by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4257,13 +3639,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diagnosis"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diagnosis"],
 				"responses": {
 					"200": {
 						"description": "fetch the details Successfully",
@@ -4279,8 +3656,7 @@
 		"/api/chief-complaints-master/getByFilters": {
 			"get": {
 				"description": "To get a Chief Complaints either by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4299,13 +3675,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -4321,21 +3692,14 @@
 		"/api/chief-complaints-duration/get": {
 			"get": {
 				"description": "To get a chief Complaints Duration List",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsDuration"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsDuration"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -4351,8 +3715,7 @@
 		"/api/chief-complaints-duration/create": {
 			"post": {
 				"description": "To create a chief Complaints Duration Period",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4367,13 +3730,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsDuration"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsDuration"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully",
@@ -4389,8 +3747,7 @@
 		"/api/chief-complaints-master/create": {
 			"post": {
 				"description": "To create a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4405,13 +3762,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully",
@@ -4427,8 +3779,7 @@
 		"/api/chief-complaints-master/getAll": {
 			"post": {
 				"description": "To get a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4443,13 +3794,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -4465,8 +3811,7 @@
 		"/api/chief-complaints-master/getBySearch": {
 			"post": {
 				"description": "To get a chief Complaints Search Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4481,13 +3826,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully",
@@ -4503,8 +3843,7 @@
 		"/api/chief-complaints-master/getById": {
 			"post": {
 				"description": "To get a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4519,13 +3858,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -4541,8 +3875,7 @@
 		"/api/chief-complaints-master/delete": {
 			"post": {
 				"description": "Deleted chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4557,13 +3890,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -4579,8 +3907,7 @@
 		"/api/chief-complaints-master/update": {
 			"post": {
 				"description": "To Update Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4595,13 +3922,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ChiefComplaintsMaster"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ChiefComplaintsMaster"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -4617,8 +3939,7 @@
 		"/api/vitalMaster/create": {
 			"post": {
 				"description": "To Create a vitals for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4633,13 +3954,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -4655,8 +3971,7 @@
 		"/api/vitalMaster/deletevitals": {
 			"post": {
 				"description": "Delete Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4671,13 +3986,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "delete Successfully",
@@ -4693,21 +4003,14 @@
 		"/api/vitalMaster/getVitals": {
 			"get": {
 				"summary": "To get default vitals master List",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -4723,21 +4026,14 @@
 		"/api/vitalMaster/getAllVitals": {
 			"get": {
 				"summary": "To get all vitals master list",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully"
@@ -4750,8 +4046,7 @@
 		"/api/vitalMaster/getALLVitalsmaster": {
 			"post": {
 				"summary": "To get all vitals master list",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4766,13 +4061,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully"
@@ -4785,8 +4075,7 @@
 		"/api/vitalMaster/getALLVitalsFilter": {
 			"post": {
 				"summary": "To get all vitals by filter list",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4801,13 +4090,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"vital_master"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully"
@@ -4820,8 +4104,7 @@
 		"/api/vitalMaster/getVitalByID": {
 			"post": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4836,9 +4119,7 @@
 						}
 					}
 				],
-				"tags": [
-					"vital_master"
-				],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -4854,8 +4135,7 @@
 		"/api/vitalMaster/getVitalsByUUID": {
 			"post": {
 				"description": "get vitals details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4870,9 +4150,7 @@
 						}
 					}
 				],
-				"tags": [
-					"vital_master"
-				],
+				"tags": ["vital_master"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -4885,11 +4163,40 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/vitalMaster/getdefultVitals": {
+			"get": {
+				"summary": "To get default vitals master List",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "is_default",
+						"required": false,
+						"type": "integer"
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["vital_master"],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getVitalsMaster"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/template/updateTemplateDetailsByID": {
 			"put": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4904,9 +4211,7 @@
 						}
 					}
 				],
-				"tags": [
-					"template"
-				],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "Successfully Updated"
@@ -4922,21 +4227,14 @@
 		"/api/patientattachments/getattachmenttype": {
 			"get": {
 				"summary": "List attachment type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"attachment"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -4952,8 +4250,7 @@
 		"/api/patientattachments/getlistBytype": {
 			"get": {
 				"summary": "List attachments by type",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4966,13 +4263,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"attachment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -4988,8 +4280,7 @@
 		"/api/patientattachments/getAllAttachments": {
 			"get": {
 				"summary": "List all attachments",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5002,13 +4293,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"attachment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5024,8 +4310,7 @@
 		"/api/patientattachments/upload": {
 			"post": {
 				"summary": "upload the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5080,13 +4365,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"attachment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5102,8 +4382,7 @@
 		"/api/patientattachments/download": {
 			"get": {
 				"summary": "download the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5116,14 +4395,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml",
-					"application/file"
-				],
-				"tags": [
-					"attachment"
-				],
+				"produces": ["application/json", "application/xml", "application/file"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5139,8 +4412,7 @@
 		"/api/patientattachments/deleteAttachmentDetails": {
 			"put": {
 				"summary": "delete the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5153,13 +4425,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"attachment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["attachment"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5175,8 +4442,7 @@
 		"/api/treatment-kit/create": {
 			"post": {
 				"summary": "To create Treatment Kit",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5191,13 +4457,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -5210,8 +4471,7 @@
 		"/api/treatment-kit/getByFilters": {
 			"get": {
 				"summary": "To get list of Treatment Kits",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5236,13 +4496,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Fetched Treatment Kit Successfully",
@@ -5258,8 +4513,7 @@
 		"/api/treatment-kit/delete": {
 			"delete": {
 				"summary": "To delete the treatment kit By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5272,13 +4526,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Fetched Treatment Kit Successfully"
@@ -5297,8 +4546,7 @@
 		"/api/treatment-kit/get-by-id": {
 			"get": {
 				"summary": "To get the treatment kit Details By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5311,13 +4559,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Fetched Treatment Kit Successfully"
@@ -5336,8 +4579,7 @@
 		"/api/treatment-kit/update": {
 			"put": {
 				"summary": "To update the treatment kit Details By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5352,13 +4594,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Fetched Treatment Kit Successfully"
@@ -5377,8 +4614,7 @@
 		"/api/profiles/create": {
 			"post": {
 				"summary": "To create OPNotes profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5393,13 +4629,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -5412,8 +4643,7 @@
 		"/api/profiles/getAll": {
 			"post": {
 				"summary": "To get all the Profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5433,13 +4663,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "get All Profiles"
@@ -5450,8 +4675,7 @@
 		"/api/patient-allergy/create": {
 			"post": {
 				"description": "To create Patient Allergy",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5466,13 +4690,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientAllergyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -5485,8 +4704,7 @@
 		"/api/patient-allergy/getPatientAllergies": {
 			"get": {
 				"description": "To get all patient Allergy History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5499,13 +4717,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientAllergyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -5521,8 +4734,7 @@
 		"/api/patient-allergy/getPatientAllergiesById": {
 			"get": {
 				"description": "To get a patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5535,13 +4747,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientAllergyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -5557,8 +4764,7 @@
 		"/api/patient-allergy/delete": {
 			"put": {
 				"description": "Deleted Patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5571,13 +4777,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientAllergyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -5593,8 +4794,7 @@
 		"/api/patient-allergy/updatePatientAllergy": {
 			"put": {
 				"description": "To Update Patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5615,13 +4815,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientAllergyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -5634,24 +4829,37 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient-allergy/patient-allergy-status": {
+			"get": {
+				"description": "To get Patient Allergy Status Data",
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientAllergyHistory"],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/referal-reasons/getReferralReasons": {
 			"get": {
 				"summary": "To get list of ReferalReasons",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ReferralReasons"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ReferralReasons"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -5664,21 +4872,14 @@
 		"/api//transfer-reasons/getTransferReasons": {
 			"get": {
 				"summary": "To get list of TransferReasons",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TransferReasons"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TransferReasons"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -5691,8 +4892,7 @@
 		"/api/diseases/get-by-filters": {
 			"get": {
 				"description": "To get list of diseases based on filter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5711,13 +4911,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diseases"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diseases"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -5733,8 +4928,7 @@
 		"/api/diseases/get-by-filtersP": {
 			"post": {
 				"description": "To get list of diseases based on filter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5749,13 +4943,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diseases"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diseases"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -5771,8 +4960,7 @@
 		"/api/diseases/create": {
 			"post": {
 				"description": "To create Disease API",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5787,13 +4975,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Diseases"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Diseases"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -5806,8 +4989,7 @@
 		"/api/CC-charts/create": {
 			"post": {
 				"description": "To Create a critical care chart data for the patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5822,13 +5004,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"CriticalCare"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["CriticalCare"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -5844,8 +5021,7 @@
 		"/api/CC-charts/getCCCbypatientid": {
 			"get": {
 				"summary": "List patient critical care charts data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5864,13 +5040,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"CriticalCare"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["CriticalCare"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5886,8 +5057,7 @@
 		"/api/CC-charts/updateCCCbypatientid": {
 			"post": {
 				"description": "To update a critical care charts data for the patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5902,13 +5072,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"CriticalCare"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["CriticalCare"],
 				"responses": {
 					"200": {
 						"description": "successful operation"
@@ -5924,8 +5089,7 @@
 		"/api/CC-charts/getCCCcomparedata": {
 			"get": {
 				"summary": "List patient critical care data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5956,13 +5120,8 @@
 						"format": "date"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"CriticalCare"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["CriticalCare"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -5978,21 +5137,14 @@
 		"/api/CC-charts/getcccdetails": {
 			"get": {
 				"summary": "List critical care chart details",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"CriticalCare"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["CriticalCare"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -6008,8 +5160,7 @@
 		"/api/my-patient-list/getMyPatientList": {
 			"post": {
 				"summary": "Get List of my patient for the doctor",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6023,13 +5174,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"MyPatientList"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["MyPatientList"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation",
@@ -6045,8 +5191,7 @@
 		"/api/family-history/create": {
 			"post": {
 				"description": "To Create a family history",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6061,13 +5206,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"FamilyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["FamilyHistory"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -6083,8 +5223,7 @@
 		"/api/family-history/getFamilyHistory": {
 			"get": {
 				"description": "To get Family History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6097,13 +5236,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"FamilyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["FamilyHistory"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6119,8 +5253,7 @@
 		"/api/family-history/getFamilyHistoryById": {
 			"get": {
 				"description": "To get a Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6133,13 +5266,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"FamilyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["FamilyHistory"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -6155,8 +5283,7 @@
 		"/api/family-history/deleteFamilyHistory": {
 			"put": {
 				"description": "Deleted Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6169,13 +5296,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"FamilyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["FamilyHistory"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -6191,8 +5313,7 @@
 		"/api/family-history/updateFamilyHistory": {
 			"put": {
 				"description": "To Update Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6213,13 +5334,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"FamilyHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["FamilyHistory"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -6235,8 +5351,7 @@
 		"/api/lab-result/getLabResultById": {
 			"get": {
 				"description": "To get LabResult By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6249,13 +5364,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"LabResult"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["LabResult"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6271,8 +5381,7 @@
 		"/api/radiology_result/getRadiologyResultById": {
 			"get": {
 				"description": "To get RadiologyResult By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6285,13 +5394,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"RadiologyResult"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["RadiologyResult"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6307,8 +5411,7 @@
 		"/api/emr-notes/add": {
 			"post": {
 				"summary": "To create  profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6323,13 +5426,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Emr-notes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -6342,8 +5440,7 @@
 		"/api/profiles/getById": {
 			"get": {
 				"summary": "To get profile Details by Id ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6356,13 +5453,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6378,8 +5470,7 @@
 		"/api/profiles/delete": {
 			"put": {
 				"summary": "To delete  profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6394,13 +5485,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully"
@@ -6413,8 +5499,7 @@
 		"/api/surgery-history/create": {
 			"post": {
 				"description": "To Create a surgery history",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6429,13 +5514,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"SurgeryHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["SurgeryHistory"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -6451,8 +5531,7 @@
 		"/api/surgery-history/getSurgeryHistory": {
 			"get": {
 				"description": "To get Surgery History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6465,13 +5544,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"SurgeryHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["SurgeryHistory"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6487,8 +5561,7 @@
 		"/api/surgery-history/getSurgeryById": {
 			"get": {
 				"description": "To get a surgery History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6501,13 +5574,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"SurgeryHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["SurgeryHistory"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully",
@@ -6523,8 +5591,7 @@
 		"/api/surgery-history/updateSurgery": {
 			"put": {
 				"description": "To Update Surgery History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6545,13 +5612,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"SurgeryHistory"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["SurgeryHistory"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -6567,8 +5629,7 @@
 		"/api/encounter/get-visit-history": {
 			"get": {
 				"summary": "Patient History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6593,13 +5654,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation"
@@ -6612,8 +5668,7 @@
 		"/api/encounter/get-enc-by-admission-id": {
 			"get": {
 				"summary": "Encounter By Admission Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6626,13 +5681,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "sucessful operation"
@@ -6645,8 +5695,7 @@
 		"/api/emr-patient-vitals/getPreviousPatientVitals": {
 			"get": {
 				"description": "To get a EMR Previous Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6659,13 +5708,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"EMRPatientVitals"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["EMRPatientVitals"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -6679,8 +5723,7 @@
 		"/api/immunization/create": {
 			"post": {
 				"summary": "To create patient immunization schedule details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6695,13 +5738,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientImmunizationSchedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientImmunizationSchedule"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -6714,8 +5752,7 @@
 		"/api/immunization/getById": {
 			"get": {
 				"summary": "To get a patient immunization schedule Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6728,13 +5765,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientImmunizationSchedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientImmunizationSchedule"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6750,8 +5782,7 @@
 		"/api/immunization/delete": {
 			"put": {
 				"summary": "Deleted patient immunization schedules Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6764,13 +5795,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientImmunizationSchedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientImmunizationSchedule"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -6786,8 +5812,7 @@
 		"/api/immunization/update": {
 			"put": {
 				"summary": "To Update patient Immunization schedules Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6808,13 +5833,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientImmunizationSchedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientImmunizationSchedule"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -6830,8 +5850,7 @@
 		"/api/immunization/getAll": {
 			"get": {
 				"summary": "To get patient Immunization schedules",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6844,13 +5863,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientImmunizationSchedule"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientImmunizationSchedule"],
 				"responses": {
 					"200": {
 						"description": "get All PatientImmunization",
@@ -6866,8 +5880,7 @@
 		"/api/patient-referral/getReferralHistory": {
 			"get": {
 				"description": "To get Referral History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6880,13 +5893,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientReferral"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientReferral"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6902,8 +5910,7 @@
 		"/api/patient-referral/createPatientReferral": {
 			"post": {
 				"description": "To Create Patient Referral",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6918,13 +5925,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientReferral"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientReferral"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -6940,21 +5942,14 @@
 		"/api/body-side/get-list": {
 			"get": {
 				"description": "To get List of Body Side",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"BodySide"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["BodySide"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -6970,21 +5965,14 @@
 		"/api/surgery-position/get-list": {
 			"get": {
 				"description": "To get List of Surgery Position",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"SurgeryPosition"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["SurgeryPosition"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7000,8 +5988,7 @@
 		"/api/patient-transfer/create": {
 			"post": {
 				"description": "To Create Patient Transfer",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7016,13 +6003,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientTransfer"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientTransfer"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -7038,8 +6020,7 @@
 		"/api/procedures/getProceduresByFilter": {
 			"get": {
 				"description": "To get List of Procedures",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7058,13 +6039,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Procedures"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Procedures"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7080,21 +6056,14 @@
 		"/api/profiles/getAllValueTypes": {
 			"get": {
 				"summary": "To get List of valueTypes",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7110,8 +6079,7 @@
 		"/api/discharge-summary/getDischargeDetails": {
 			"get": {
 				"summary": "To get List of patient detials to discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7130,13 +6098,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Patient-discharge-summary"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Patient-discharge-summary"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7152,8 +6115,7 @@
 		"/api/discharge-summary/getPreviousDischargeDetails": {
 			"post": {
 				"summary": "To get previous discharge details of patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7168,13 +6130,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Patient-discharge-summary"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Patient-discharge-summary"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -7187,8 +6144,7 @@
 		"/api/encounter/delete-by-id": {
 			"put": {
 				"summary": "To get List of patient detials to discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7201,13 +6157,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully"
@@ -7220,8 +6171,7 @@
 		"/api/encounter/close-encounter": {
 			"put": {
 				"summary": "To Close an Encounter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7234,13 +6184,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Closed Successfully"
@@ -7253,8 +6198,7 @@
 		"/api/certificates/create": {
 			"post": {
 				"summary": "To Create Patient certficates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7269,13 +6213,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientCertficates"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientCertficates"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -7291,8 +6230,7 @@
 		"/api/certificates/GetAll": {
 			"get": {
 				"summary": "To get List of patient Certificates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7305,13 +6243,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientCertficates"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientCertficates"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -7324,8 +6257,7 @@
 		"/api/treatment-kit/getAll": {
 			"post": {
 				"description": "To get List of  patient treatmentkit details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7339,13 +6271,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -7358,8 +6285,7 @@
 		"/api/treatment-kit/autoSearch": {
 			"post": {
 				"description": "To get list of TreatmentKits based on search",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7374,13 +6300,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"TreatmentKit"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["TreatmentKit"],
 				"responses": {
 					"200": {
 						"description": "Fetched Successfully",
@@ -7396,8 +6317,7 @@
 		"/api/encounter/update-tat-time": {
 			"put": {
 				"summary": "To update ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7412,13 +6332,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully"
@@ -7431,21 +6346,14 @@
 		"/api/discharge-summary/getdischargetype": {
 			"get": {
 				"summary": "To get List of discharge types",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Patient-discharge-summary"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Patient-discharge-summary"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7461,21 +6369,14 @@
 		"/api/discharge-summary/getdeathtype": {
 			"get": {
 				"summary": "To get List of discharge types",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Patient-discharge-summary"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Patient-discharge-summary"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7491,8 +6392,7 @@
 		"/api/snomed/getsnomeddetails": {
 			"get": {
 				"summary": "To get List of snomed detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7505,13 +6405,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Snomed-Details"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Snomed-Details"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7527,8 +6422,7 @@
 		"/api/snomed/getsnomedparent": {
 			"get": {
 				"summary": "To get List of snomed parent detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7541,13 +6435,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Snomed-Details"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Snomed-Details"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7563,8 +6452,7 @@
 		"/api/snomed/getsnomedchildren": {
 			"get": {
 				"summary": "To get List of snomed children detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7577,13 +6465,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Snomed-Details"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Snomed-Details"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -7599,8 +6482,7 @@
 		"/api/patient-treatment/create": {
 			"post": {
 				"summary": "To create patient treatment Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7626,13 +6508,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientTreatment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientTreatment"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -7645,8 +6522,7 @@
 		"/api/patient-treatment/updatePreviousOrder": {
 			"put": {
 				"summary": "To update patient treatment Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7685,13 +6561,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientTreatment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientTreatment"],
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
@@ -7704,8 +6575,7 @@
 		"/api/template/getalltemplates": {
 			"post": {
 				"description": "To get all templates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7720,13 +6590,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"template"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["template"],
 				"responses": {
 					"200": {
 						"description": "get all datails Successfully",
@@ -7742,8 +6607,7 @@
 		"/api/encounter/getPatientDoc": {
 			"get": {
 				"description": "To get a Encounter for Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7756,13 +6620,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched Encounter"
@@ -7773,8 +6632,7 @@
 		"/api/patient-speciality-sketch/create": {
 			"post": {
 				"description": "To create patient specality sketch details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7839,13 +6697,8 @@
 						"type": "file"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"patient-specality-Sketch"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["patient-specality-Sketch"],
 				"responses": {
 					"200": {
 						"description": "Insterted patient sketch details Successfully"
@@ -7858,8 +6711,7 @@
 		"/api/patient-speciality-sketch/get-prev-by-patient": {
 			"get": {
 				"description": "To get patient specality sketch details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7872,13 +6724,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"patient-specality-Sketch"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["patient-specality-Sketch"],
 				"responses": {
 					"200": {
 						"description": "Insterted patient sketch details Successfully"
@@ -7891,8 +6738,7 @@
 		"/api/patient-treatment/prevKitOrdersById": {
 			"post": {
 				"description": "To get Previouskit Orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7917,13 +6763,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientTreatment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientTreatment"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched PreviousKit Orders"
@@ -7934,8 +6775,7 @@
 		"/api/patient-treatment/repeatOrderDetails": {
 			"post": {
 				"description": "To get Particular Previouskit Orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7956,13 +6796,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientTreatment"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientTreatment"],
 				"responses": {
 					"200": {
 						"description": "Successfully Fetched PreviousKit Orders"
@@ -7973,21 +6808,14 @@
 		"/api/sections/getAll": {
 			"get": {
 				"summary": "To get all the section Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Sections"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Sections"],
 				"responses": {
 					"200": {
 						"description": "get All Sections"
@@ -7998,21 +6826,14 @@
 		"/api/categories/getAll": {
 			"get": {
 				"summary": "To get all the categories Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Categories"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Categories"],
 				"responses": {
 					"200": {
 						"description": "get All categories"
@@ -8023,8 +6844,7 @@
 		"/api/categories/create": {
 			"post": {
 				"description": "To create category details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8039,13 +6859,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Categories"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Categories"],
 				"responses": {
 					"200": {
 						"description": "Insterted Categories details Successfully"
@@ -8058,8 +6873,7 @@
 		"/api/sections/create": {
 			"post": {
 				"description": "To create sections details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8074,13 +6888,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Sections"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Sections"],
 				"responses": {
 					"200": {
 						"description": "Insterted Sections details Successfully"
@@ -8093,8 +6902,7 @@
 		"/api/sections/getById": {
 			"post": {
 				"summary": "To get sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8109,13 +6917,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Sections"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Sections"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -8131,8 +6934,7 @@
 		"/api/sections/delete": {
 			"put": {
 				"summary": "Deleted sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8147,13 +6949,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Sections"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Sections"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -8169,8 +6966,7 @@
 		"/api/sections/update": {
 			"put": {
 				"summary": "To Update sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8185,13 +6981,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Sections"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Sections"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -8207,8 +6998,7 @@
 		"/api/categories/getById": {
 			"post": {
 				"summary": "To get categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8223,13 +7013,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Categories"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Categories"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -8245,8 +7030,7 @@
 		"/api/categories/delete": {
 			"put": {
 				"summary": "Deleted Categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8261,13 +7045,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Categories"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Categories"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully",
@@ -8283,8 +7062,7 @@
 		"/api/categories/update": {
 			"put": {
 				"summary": "To Update Categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8299,13 +7077,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Categories"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Categories"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -8321,8 +7094,7 @@
 		"/api/encounter/getAll": {
 			"get": {
 				"summary": "To get all the encounter Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8340,13 +7112,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Encounter"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Encounter"],
 				"responses": {
 					"200": {
 						"description": "get All Encounter Details"
@@ -8357,8 +7124,7 @@
 		"/api/dashboard/getDashBoarddata": {
 			"get": {
 				"summary": "To get DashBoad Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8399,13 +7165,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Dash Board"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Dash Board"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -8421,8 +7182,7 @@
 		"/api/profiles/update": {
 			"put": {
 				"summary": "To Update profiles Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8437,13 +7197,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully"
@@ -8456,8 +7211,7 @@
 		"/api/progress/create": {
 			"post": {
 				"summary": "To create progressNotes details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8472,13 +7226,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ProgressNotes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ProgressNotes"],
 				"responses": {
 					"200": {
 						"description": "Insterted ProgressNotes details Successfully"
@@ -8491,8 +7240,7 @@
 		"/api/progress/update": {
 			"put": {
 				"summary": "To Update progress Notes details Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8513,13 +7261,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ProgressNotes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ProgressNotes"],
 				"responses": {
 					"200": {
 						"description": "Updated Successfully",
@@ -8535,8 +7278,7 @@
 		"/api/progress/delete": {
 			"put": {
 				"summary": "Deleted progressNotes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8549,13 +7291,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ProgressNotes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ProgressNotes"],
 				"responses": {
 					"200": {
 						"description": "Deleted Successfully"
@@ -8568,8 +7305,7 @@
 		"/api/progress/getById": {
 			"get": {
 				"summary": "To get progressNotes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8582,13 +7318,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ProgressNotes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ProgressNotes"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -8601,8 +7332,7 @@
 		"/api/progress/getAll": {
 			"get": {
 				"summary": "To get all the progressnotes Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8615,13 +7345,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"ProgressNotes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["ProgressNotes"],
 				"responses": {
 					"200": {
 						"description": "get All progress notes details"
@@ -8632,21 +7357,14 @@
 		"/api/profiles/getAllProfileTypes": {
 			"get": {
 				"summary": "To get all the profiletype Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "get All profile type details"
@@ -8657,8 +7375,7 @@
 		"/api/emr-notes/get-prev-by-patient": {
 			"get": {
 				"summary": "To get patient notes details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8677,13 +7394,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Emr-notes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -8696,8 +7408,7 @@
 		"/api/emr-notes/get-patient-by-id": {
 			"get": {
 				"summary": "To get a emr patient op notes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8710,13 +7421,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Emr-notes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully"
@@ -8729,8 +7435,7 @@
 		"/api/emr-notes/get-patient-by-patientId": {
 			"get": {
 				"summary": "To get a emr patient op notes by patient Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8743,13 +7448,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Emr-notes"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully"
@@ -8759,11 +7459,69 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/getReviewNotes": {
+			"get": {
+				"summary": "To get a emr patient op notes by patient Data",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/emr-notes/update": {
+			"post": {
+				"description": "To Update Previous Patient OP Notes Data",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updatePreviousOPNotes",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePreviousOPNotes"
+						}
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
+				"responses": {
+					"200": {
+						"description": "Updated Successfully",
+						"schema": {
+							"$ref": "#/definitions/updatePreviousOPNotes"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/getProfilesDefault": {
 			"get": {
 				"summary": "To get profiles default  Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8776,13 +7534,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully"
@@ -8795,8 +7548,7 @@
 		"/api/profiles/setProfilesDefault": {
 			"post": {
 				"summary": "To create profile and profileType details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8811,13 +7563,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "Insterted ProgressNotes details Successfully"
@@ -8830,8 +7577,7 @@
 		"/api/profiles/get-notes-by-type": {
 			"get": {
 				"summary": "To get notes details by type",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8850,13 +7596,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Profiles"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Profiles"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -8869,8 +7610,7 @@
 		"/api/commonReference/getReferenceByIdForLanguage": {
 			"post": {
 				"description": "get Reference Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8890,13 +7630,8 @@
 						}
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"Common Reference Group"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Common Reference Group"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -8912,8 +7647,7 @@
 		"/api/investigation_result/getInvestigationResultById": {
 			"get": {
 				"description": "To get investigation By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8926,13 +7660,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"InvestigationResult"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["InvestigationResult"],
 				"responses": {
 					"200": {
 						"description": "get Successfully",
@@ -8948,8 +7677,7 @@
 		"/api/drug-frequencyResult/getdrugfrequency": {
 			"get": {
 				"summary": "To get drugfrequency default  Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8986,13 +7714,8 @@
 						"type": "string"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"drug_frequency"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["drug_frequency"],
 				"responses": {
 					"200": {
 						"description": "Fetch Successfully"
@@ -9005,8 +7728,7 @@
 		"/api/certificates/printpreviouscertificates": {
 			"get": {
 				"summary": "To get List of patient Certificates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9019,13 +7741,8 @@
 						"type": "integer"
 					}
 				],
-				"produces": [
-					"application/json",
-					"application/xml"
-				],
-				"tags": [
-					"PatientCertficates"
-				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["PatientCertficates"],
 				"responses": {
 					"200": {
 						"description": "get Successfully"
@@ -9035,7 +7752,6 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		}
-
 	},
 	"definitions": {
 		"updatevitals": {
@@ -10672,6 +9388,9 @@
 				"allergy_source_uuid": {
 					"type": "integer"
 				},
+				"name": {
+					"type": "string"
+				},
 				"status": {
 					"type": "boolean"
 				}
@@ -10725,6 +9444,20 @@
 			"properties": {
 				"Allergy_id": {
 					"type": "integer"
+				}
+			}
+		},
+		"getAllergySource": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"search": {
+					"type": "string"
 				}
 			}
 		},
@@ -11765,6 +10498,9 @@
 				},
 				"searchValue": {
 					"type": "string"
+				},
+				"favourite_type_uuid": {
+					"type": "integer"
 				}
 			}
 		},
@@ -13698,6 +12434,21 @@
 						},
 						"patient_allergy_status_uuid": {
 							"type": "integer"
+						},
+						"allergy_reactions": {
+							"type": "string"
+						},
+						"remarks": {
+							"type": "string"
+						},
+						"no_known_allergy": {
+							"type": "boolean"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
+							"type": "integer"
 						}
 					}
 				}
@@ -13770,6 +12521,21 @@
 							"type": "string"
 						},
 						"patient_allergy_status_uuid": {
+							"type": "integer"
+						},
+						"no_known_allergy": {
+							"type": "boolean"
+						},
+						"allergy_reactions": {
+							"type": "integer"
+						},
+						"remarks": {
+							"type": "string"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
 							"type": "integer"
 						}
 					}
@@ -14362,6 +13128,95 @@
 				"comments": {
 					"type": "string",
 					"example": "enter some thing"
+				}
+			}
+		},
+		"updatePreviousOPNotes": {
+			"type": "object",
+			"properties": {
+				"facility_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"patient_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_doctor_uuid": {
+					"type": "integer"
+				},
+				"consultation_uuid": {
+					"type": "integer"
+				},
+				"profile_type_uuid": {
+					"type": "integer"
+				},
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"section_uuid": {
+					"type": "integer"
+				},
+				"section_key": {
+					"type": "string"
+				},
+				"activity_uuid": {
+					"type": "integer"
+				},
+				"profile_section_uuid": {
+					"type": "integer"
+				},
+				"category_uuid": {
+					"type": "integer"
+				},
+				"category_key": {
+					"type": "string"
+				},
+				"profile_section_category_uuid": {
+					"type": "integer"
+				},
+				"concept_uuid": {
+					"type": "integer"
+				},
+				"concept_key": {
+					"type": "string"
+				},
+				"profile_section_category_concept_uuid": {
+					"type": "integer"
+				},
+				"term_key": {
+					"type": "string"
+				},
+				"profile_section_category_concept_value_uuid": {
+					"type": "integer"
+				},
+				"result_value": {
+					"type": "integer"
+				},
+				"result_value_rich_text": {
+					"type": "string"
+				},
+				"result_value_json": {
+					"type": "string"
+				},
+				"result_binary": {
+					"type": "string"
+				},
+				"result_path": {
+					"type": "string"
+				},
+				"entry_date": {
+					"type": "string"
+				},
+				"comments": {
+					"type": "string"
+				},
+				"entry_status": {
+					"type": "integer"
 				}
 			}
 		},

@@ -161,6 +161,18 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true
 
             },
+            entry_status: {
+
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                allowNull: true
+
+            },
+            is_latest: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: true
+            },
             comments: {
 
                 type: DataTypes.STRING,
@@ -227,6 +239,36 @@ module.exports = (sequelize, DataTypes) => {
     section_category_entries.associate = model => {
         section_category_entries.belongsTo(model.profiles, {
             foreignKey: "profile_uuid"
+        });
+        section_category_entries.belongsTo(model.encounter, {
+            foreignKey: "encounter_uuid"
+        });
+        section_category_entries.belongsTo(model.encounter_doctors, {
+            foreignKey: "encounter_doctor_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_types, {
+            foreignKey: "profile_type_uuid"
+        });
+        section_category_entries.belongsTo(model.sections, {
+            foreignKey: "section_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_sections, {
+            foreignKey: "profile_section_uuid"
+        });
+        section_category_entries.belongsTo(model.categories, {
+            foreignKey: "category_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_section_categories, {
+            foreignKey: "profile_section_category_uuid"
+        });
+        section_category_entries.belongsTo(model.concepts, {
+            foreignKey: "concept_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_section_category_concepts, {
+            foreignKey: "profile_section_category_concept_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_section_category_concept_values, {
+            foreignKey: "profile_section_category_concept_value_uuid"
         });
     };
     return section_category_entries;

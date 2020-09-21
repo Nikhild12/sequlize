@@ -435,10 +435,11 @@ const TreatMent_Kit = () => {
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
         findQuery.where['tk_is_active'] = getsearch.status;
       }
-
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
         .then((data) => {
+      console.log('////////////',data.count);
+
           return res
             .status(httpStatus.OK)
             .json({
@@ -446,7 +447,7 @@ const TreatMent_Kit = () => {
               message: "Get Details Fetched successfully",
               req: '',
               responseContents: data.rows,
-              totalRecords: data.count.length ? data.count.length : data.count
+              totalRecords: data.count.length ? data.count.length : 0
             });
         })
         .catch(err => {
@@ -502,7 +503,6 @@ const TreatMent_Kit = () => {
         const deleteTreatmentKitPromise = await Promise.all(
           deleteTreatmentPromise
         );
-        console.log(deleteTreatmentKitPromise[0]);
 
         const responseCode = deleteTreatmentKitPromise[0][0] === 1 ? httpStatus.OK : httpStatus.NO_CONTENT;
         const responseMessage = deleteTreatmentKitPromise[0][0] === 1

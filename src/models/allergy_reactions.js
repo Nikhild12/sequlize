@@ -1,51 +1,39 @@
 
-const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const immunizations = sequelize.define(
-        "immunizations", {
+    const ALLERGY_REACTIONS = sequelize.define(
+        "allergy_reactions", {
         uuid: {
             type: DataTypes.INTEGER,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
+        // 1 to 21 columns
+        code: {
+            type: DataTypes.STRING(250),
+            allowNull: true
+        },
         name: {
             type: DataTypes.STRING(250),
             allowNull: true
         },
-        description: {
+        language: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        color: {
             type: DataTypes.STRING(250),
             allowNull: true
         },
-        route_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-            
-        },
-        frequency_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-           
-        },
-        duration: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-            
-        },
-        period_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-            
-        },
-        instruction: {
+        display_order: {
             type: DataTypes.STRING(250),
             allowNull: true
-            
         },
-        schedule_flag_uuid: {
-            type: DataTypes.INTEGER,
-            allowNull: true
+        Is_default: {
+            type: DataTypes.STRING(250),
+            allowNull: true,
+            defaultValue: 0
         },
         status: {
             type: DataTypes.BOOLEAN,
@@ -70,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
     }, {
-        tableName: "immunizations",
+        tableName: "allergy_reactions",
         createdAt: 'created_date',
         updatedAt: 'modified_date',
         indexes: [{
@@ -79,5 +67,6 @@ module.exports = (sequelize, DataTypes) => {
     }
     );
 
-    return immunizations;
+
+    return ALLERGY_REACTIONS;
 };

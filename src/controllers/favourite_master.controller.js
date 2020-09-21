@@ -92,6 +92,7 @@ const getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_code",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
@@ -269,7 +270,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   };
 
   if (+(tsmd_test_id) === 1) {
-    
+
     favouriteQuery.si_store_master_uuid = sMId;
     favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
     favouriteQuery.si_status = emr_constants.IS_ACTIVE;
@@ -484,6 +485,10 @@ const TickSheetMasterController = () => {
         fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
           fmd, favouriteMasterCreatedData, user_uuid, "favourite_master_uuid"
         );
+
+        if (favourite_type_uuid !== 1) {
+          fmd.item_master_uuid = 0;
+        }
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
           fmd, { returning: true, }
         );
@@ -673,8 +678,6 @@ const TickSheetMasterController = () => {
         return res
           .status(400)
           .send({ code: httpStatus[400], message: ex.message });
-      } finally {
-        console.log("Finally");
       }
     } else {
       return res.status(400).send({
@@ -907,9 +910,11 @@ const TickSheetMasterController = () => {
       };
     }
 
-    if (req.body.faourite_type_uuid && /\S/.test(req.body.fm_favourite_type_uuid)) {
-      findQuery.where['fm_favourite_type_uuid'] = req.body.template_type_uuid;
-
+    if (req.body && req.body.hasOwnProperty('favourite_type_uuid')) {
+      req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+      if (!isNaN(req.body.favourite_type_uuid)) {
+        findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
+      }
     }
 
     try {
@@ -925,7 +930,7 @@ const TickSheetMasterController = () => {
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: "No Request Body or Search key Found"
         });
       }
     } catch (ex) {
@@ -991,6 +996,7 @@ function getFavouritesInList(fetchedData) {
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
+        drug_code: tD.im_code,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
         store_master_uuid: tD.si_store_master_uuid || 0,

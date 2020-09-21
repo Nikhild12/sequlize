@@ -250,10 +250,7 @@ const PatientTreatmentController = () => {
               });
             });
           }
-
-          console.log("Before getting Prescription");
           const repeatOrderPrescData = await getPrevOrderPrescription(user_uuid, Authorization, facility_uuid, orderIds, patient_uuid);
-          console.log("After getting Prescription");
           if (repeatOrderPrescData && repeatOrderPrescData.length > 0) {
             response.forEach((p) => {
               p.drugDetails = repeatOrderPrescData.filter((rP) => {
@@ -342,12 +339,10 @@ const PatientTreatmentController = () => {
           investigationUpdated = updateInvestigationDetails ? await updateInvestigation(updateInvestigationDetails, user_uuid, facility_uuid, authorization) : '';
         }
         if (diagnosisUpdated || prescriptionUpdated || labUpdated || radilogyUpadated || investigationUpdated) {
-          return res.status(200).send({
-            code: httpStatus.OK, message: 'Updated success',
-
-          });
+          return res.status(200)
+            .send({ code: httpStatus.OK, message: emr_constants.PATIENT_TREATMENT_UPDATE });
         } else {
-          return res.status(400).send({ code: 400, message: 'Failed to update' });
+          return res.status(400).send({ code: 400, message: emr_constants.FAILED_TO_UPDATE });
         }
       } else {
         return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -583,7 +578,7 @@ async function getPrescriptionRseponse(prescriptions) {
             "uuid": e.uuid,
             "prescription_uuid": e.prescription_uuid,
             "comments": e.comments,
-            "prescribed_quantity":e.prescribed_quantity,
+            "prescribed_quantity": e.prescribed_quantity,
             //Drug Status
             "prescription_status_uuid": pd.prescription_status != null ? pd.prescription_status.uuid : null,
             "prescription_status_name": pd.prescription_status != null ? pd.prescription_status.name : null,
@@ -763,14 +758,7 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
         rD.status = 0;
         rD.is_active = 0;
         diagnosisPromise = [...diagnosisPromise,
-        patientDiagnosisTbl.update(rD,
-          {
-            where: {
-              uuid: rD.uuid
-            }
-          },
-          { returning: true }
-        )
+        patientDiagnosisTbl.update(rD, { where: { uuid: rD.uuid } }, { returning: true })
         ];
       });
     }
@@ -824,7 +812,6 @@ async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, a
   return _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
 }
 async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
-  //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientorders/updatePatientOrder'
   const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder';
 
   return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
@@ -844,7 +831,6 @@ async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, autho
 
   try {
     const result = await rp(options);
-    console.log(result, 'result');
     if (result && result.statusCode === 200) {
       return result;
     }
