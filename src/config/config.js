@@ -87,7 +87,7 @@ const config = {
   wso2InvestUrl: envVars.wso2InvestUrl,
   wso2AppUrl: envVars.wso2AppUrl,
   serverName: envVars.SERVER_NAME,
-  blockChainURL: envVars.BLOCK_CHAIN_TROONDX_URL,
-  isBlockChain: envVars.BLOCK_CHAIN
+  isBlockChain: envVars.BLOCK_CHAIN,
+  blockChainURL: envVars.BLOCK_CHAIN_URL
 };
 module.exports = config;

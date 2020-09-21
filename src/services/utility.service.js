@@ -4,6 +4,7 @@ const moment = require("moment");
 const momentTimezone = require('moment-timezone');
 const request = require("request");
 const rp = require("request-promise");
+const config = require("../config/config");
 const Op = Sequelize.Op;
 
 const httpStatus = require("http-status");
@@ -212,6 +213,15 @@ const _checkDateValid = dateVar => {
   return (isNaN(dateVar) && !isNaN(parsedDate));
 };
 
+const _deployedBlockChainUrl = () => {
+  if (config.isBlockChain == 'ON') {
+      const urlobj = {
+          TN: 'http://3.6.97.35:8080/api/troondx/v1',
+          PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
+      };
+      return urlobj[config.blockChainURL];
+  }
+};
 
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
@@ -230,5 +240,6 @@ module.exports = {
   isEmpty: isEmpty,
   indiaTz: _indiaTz,
   comparingDateAndTime: _comparingDateAndTime,
-  checkDateValid: _checkDateValid
+  checkDateValid: _checkDateValid,
+  deployedBlockChainUrl : _deployedBlockChainUrl
 };
