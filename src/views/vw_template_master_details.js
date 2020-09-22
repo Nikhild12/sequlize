@@ -221,6 +221,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       si_status: {
         type: DataTypes.BOOLEAN,
+      },
+      vm_uuid: {
+        type: DataTypes.INTEGER
+      },
+      vm_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      vm_is_active: {
+        type: DataTypes.BOOLEAN,
+      },
+      vm_status: {
+        type: DataTypes.BOOLEAN,
       }
     },
     {
