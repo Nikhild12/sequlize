@@ -113,7 +113,8 @@ const _postRequest = async (api, headers, data) => {
 
         if (error) {
           reject(error);
-        } else if (body && !body.status && !body.status === "error") {
+        }
+        else if (body && !body.status && !body.status === "error") {
           if (
             body.responseContent ||
             body.responseContents ||
@@ -127,9 +128,11 @@ const _postRequest = async (api, headers, data) => {
               body.req
             );
           }
-        } else if (body && body.status == "error") {
+        }
+        else if (body && body.status == "error") {
           reject(body);
-        } else {
+        }
+        else {
           if (
             body.statusCode &&
             (body.statusCode === 200 || body.statusCode === 201)
@@ -140,7 +143,11 @@ const _postRequest = async (api, headers, data) => {
               body.benefMembers ||
               body.req
             );
-          } else {
+          }
+          else if (body && body.status == true) {
+            resolve(body);
+          }
+          else {
             reject(body);
           }
         }
@@ -215,11 +222,11 @@ const _checkDateValid = dateVar => {
 
 const _deployedBlockChainUrl = () => {
   if (config.isBlockChain == 'ON') {
-      const urlobj = {
-          TN: 'http://3.6.97.35:8080/api/troondx/v1',
-          PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
-      };
-      return urlobj[config.blockChainURL];
+    const urlobj = {
+      TN: 'http://3.6.97.35:8080/api/troondx/v1',
+      PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
+    };
+    return urlobj[config.blockChainURL];
   }
 };
 
@@ -241,5 +248,5 @@ module.exports = {
   indiaTz: _indiaTz,
   comparingDateAndTime: _comparingDateAndTime,
   checkDateValid: _checkDateValid,
-  deployedBlockChainUrl : _deployedBlockChainUrl
+  deployedBlockChainUrl: _deployedBlockChainUrl
 };

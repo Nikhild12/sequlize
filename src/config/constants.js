@@ -91,12 +91,13 @@ module.exports = Object.freeze({
     BLOCK_CHAIN_URL: {
       VITAL_CREATE: '/transactionapi/vitals/create',
       ENCOUNTER_CREATE: '/assetapi/encounter/create',
-      ENCOUNTER_GET_ID: 'assetapi/encounter/get',
-      ENCOUNTER_UPDATE: 'assetapi/encounter/update',
-      CHIEF_COMPLIANT_CREATE: 'transactionapi/chiefcomplaint/create',
-      CHIEF_COMPLIANT_GET_ID: 'transactionapi/chiefcomplaint/get',
-      CHIEF_COMPLIANT_UPDATE: 'transactionapi/chiefcomplaint/update',
-      DIAGNOSIS_CREATE: 'transactionapi/Diagnosis/create',
+      ENCOUNTER_GET_ID: '/assetapi/encounter/get',
+      ENCOUNTER_UPDATE: '/assetapi/encounter/update',
+      CHIEF_COMPLIANT_CREATE: '/transactionapi/chiefcomplaint/create',
+      CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
+      CHIEF_COMPLIANT_UPDATE: '/transactionapi/chiefcomplaint/update',
+      DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
+      FAMILY_HISTORY_CREATE :'/transactionapi/familyhistory/create'
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"

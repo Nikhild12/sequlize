@@ -13,26 +13,27 @@ const { BLOCK_CHAIN_URL, TOKEN } = emr_constants.BLOCK_CHAIN;
 const diagnosisMasterBlockChain = () => {
     const _createDiagnosisMasterBlockChain = async (diagnosisObject) => {
         const diagnosisCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.DIAGNOSIS_CREATE}`;
-        const diagnosisCreateObjects = emr_utility
-            .postRequest(diagnosisCreateUrl, { Authorization: TOKEN },
-                {
-                    Id: diagnosisObject,
-                    CreatedOn: diagnosisObject,
-                    CreatedBy: diagnosisObject,
-                    IsDelete: false,
-                    Patient_id: diagnosisObject,
-                    Encounter_id: diagnosisObject,
-                    Diagnosis_type: diagnosisObject,
-                    Diagnosis_uuid: diagnosisObject,
-                    Diagnosis_code: diagnosisObject,
-                    Diagnosis_name: diagnosisObject,
-                    Is_chronic: diagnosisObject,
-                    Diagnosis_date: diagnosisObject,
-                    Other_diagnosis_details: diagnosisObject,
-                    Bodysite: diagnosisObject
-                }
-            );
-        return diagnosisCreateObjects;
+        const diagnosisCreateObjects = diagnosisObject.map((dO) => {
+            return emr_utility
+                .postRequest(diagnosisCreateUrl, { Authorization: TOKEN },
+                    {
+                        Id: dO.uuid,
+                        CreatedOn: dO.created_date,
+                        CreatedBy: dO.created_by,
+                        IsDelete: false,
+                        Patient_id: dO.patient_uuid,
+                        Encounter_id: dO.encounter_uuid,
+                        Diagnosis_type: "dO",
+                        Diagnosis_uuid: dO.diagnosis_uuid,
+                        Diagnosis_code: "dO",
+                        Diagnosis_name: "dO",
+                        Is_chronic: dO.is_snomed,
+                        Diagnosis_date: dO.created_date,
+                        Other_diagnosis_details: dO,
+                        Bodysite: dO.body_site_uuid
+                    });
+        });
+        return await Promise.all(diagnosisCreateObjects);
     };
     return {
         createDiagnosisMasterBlockChain: _createDiagnosisMasterBlockChain

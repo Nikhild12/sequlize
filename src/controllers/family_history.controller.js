@@ -14,6 +14,9 @@ const familyHistoryTbl = sequelizeDb.family_history;
 const periodsTbl = sequelizeDb.periods;
 const familyRealationTbl = sequelizeDb.family_relation_type;
 
+// Config Import
+const emr_config = require('../config/config');
+const familyHistoryBlockChain = require('../blockChain/family.history.blockchain');
 
 const Family_History = () => {
 
@@ -30,7 +33,12 @@ const Family_History = () => {
     if (user_uuid && familyHistory) {
       await assignDefault(familyHistory, user_uuid);
       try {
-        await familyHistoryTbl.create(familyHistory, { returing: true });
+        let familyHistoryOutput = await familyHistoryTbl.create(familyHistory, { returing: true });
+        let blockChainResult;
+        if (emr_config.isBlockChain === 'ON') {
+          blockChainResult = await familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
+          familyHistory.blockChainResult = blockChainResult;
+        }
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: familyHistory });
       } catch (ex) {
         console.log('Exception happened', ex);
