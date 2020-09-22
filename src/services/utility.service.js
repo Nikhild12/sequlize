@@ -4,6 +4,7 @@ const moment = require("moment");
 const momentTimezone = require('moment-timezone');
 const request = require("request");
 const rp = require("request-promise");
+const config = require("../config/config");
 const Op = Sequelize.Op;
 
 const httpStatus = require("http-status");
@@ -112,7 +113,8 @@ const _postRequest = async (api, headers, data) => {
 
         if (error) {
           reject(error);
-        } else if (body && !body.status && !body.status === "error") {
+        }
+        else if (body && !body.status && !body.status === "error") {
           if (
             body.responseContent ||
             body.responseContents ||
@@ -126,9 +128,11 @@ const _postRequest = async (api, headers, data) => {
               body.req
             );
           }
-        } else if (body && body.status == "error") {
+        }
+        else if (body && body.status == "error") {
           reject(body);
-        } else {
+        }
+        else {
           if (
             body.statusCode &&
             (body.statusCode === 200 || body.statusCode === 201)
@@ -139,7 +143,11 @@ const _postRequest = async (api, headers, data) => {
               body.benefMembers ||
               body.req
             );
-          } else {
+          }
+          else if (body && body.status == true) {
+            resolve(body);
+          }
+          else {
             reject(body);
           }
         }
@@ -183,15 +191,14 @@ const responseMessage = {
   pssf: emr_constants.PATIENT_SPECIALITY_SKETCH_FETCHED, // Patient Speciality Sketch Fe,
   favty: emr_constants.FAVOURITE_TYPE, // Favourite Type,
   pas: emr_constants.PATIENT_ALLERGY_STATUS_FETCH_SUCCESS, // Patient Allergy Status Fetch Success,
-  als: emr_constants.ALLERGY_SOURCE_SUCCESS // Allergy Source Fetch Success
+  als: emr_constants.ALLERGY_SOURCE_SUCCESS, // Allergy Source Fetch Success,
+  lRS: emr_constants.LAB_RESULT_SUCCESS,
+  rRS: emr_constants.RADIOLOGY_RESULT_SUCCESS,
+  iRS: emr_constants.INVESTIGATION_RESULT_SUCCESS
 };
 
 const _getResponseMessageForSuccessRequest = (code, mName) => {
-  if (code === 204) {
-    return emr_constants.NO_RECORD_FOUND;
-  } else {
-    return responseMessage[mName];
-  }
+  return code === 204 ? emr_constants.NO_RECORD_FOUND : responseMessage[mName];
 };
 
 const _indiaTz = (date) => {
@@ -213,6 +220,15 @@ const _checkDateValid = dateVar => {
   return (isNaN(dateVar) && !isNaN(parsedDate));
 };
 
+const _deployedBlockChainUrl = () => {
+  if (config.isBlockChain == 'ON') {
+    const urlobj = {
+      TN: 'http://3.6.97.35:8080/api/troondx/v1',
+      PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
+    };
+    return urlobj[config.blockChainURL];
+  }
+};
 
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
@@ -231,5 +247,6 @@ module.exports = {
   isEmpty: isEmpty,
   indiaTz: _indiaTz,
   comparingDateAndTime: _comparingDateAndTime,
-  checkDateValid: _checkDateValid
+  checkDateValid: _checkDateValid,
+  deployedBlockChainUrl: _deployedBlockChainUrl
 };

@@ -3,10 +3,13 @@ const httpStatus = require("http-status");
 const moment = require("moment");
 
 const rp = require("request-promise");
-const config = require("../config/config");
 
 // Sequelizer Import
 const Sequelize = require("sequelize");
+
+// Config Import
+const emr_config = require('../config/config');
+
 const Op = Sequelize.Op;
 
 // Sequelizer Import
@@ -30,6 +33,7 @@ const emr_constants = require("../config/constants");
 const emr_mock_json = require("../config/emr_mock_json");
 const utilityService = require("../services/utility.service");
 
+const encounterBlockChain = require('../blockChain/encounter.blockchain');
 
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
@@ -208,10 +212,11 @@ const Encounter = () => {
         if (([1, 2, 3].includes(encounter_type_uuid)) && is_enc_avail && is_enc_doc_avail) {
           return res.status(400).send({
             code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER,
-            existingDetails: getExisitingEncounterDetails(),
+            existingDetails: getExisitingEncounterDetails(encounterData, encounterDoctorData),
           });
         }
 
+        let createdEncounter;
         if (!is_enc_avail) {
 
           // closing all previous active encounters patient
@@ -219,31 +224,25 @@ const Encounter = () => {
             enc_att.getEncounterUpdateAttributes(user_uuid),
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
-
-          // if (encounter_type_uuid === 1) {
-
-          // }
-
+          createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
         }
-        const createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
-        if (createdEncounter) {
 
-          const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
-          encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
+        const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
+        encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
+        // checking for Primary Doctor
+        encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-          // checking for Primary Doctor
-          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
-
-          // checking for Primary Doctor
-          encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
-
-          const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-            encounterDoctor, { returning: true }
-          );
-          encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-          return res.status(200)
-            .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(
+          encounterDoctor, { returning: true }
+        );
+        encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+        let blockChainResult;
+        if (emr_config.isBlockChain === 'ON') {
+          blockChainResult = await encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
         }
+        return res.status(200)
+          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor, blockChainResult } });
+
       } catch (ex) {
         console.log(ex);
         return res
@@ -336,22 +335,23 @@ const Encounter = () => {
 
   const _updateECdischarge = async (req, res) => {
     const { user_uuid } = req.headers;
-    const updatedata = req.body;
+    const { discharge_type_uuid, discharge_date, is_active_encounter = 0 } = req.body;
+    const { facility_uuid, patient_uuid, encounter_type_uuid, encounter_uuid } = req.body;
     const ec_updateData = {
-      discharge_type_uuid: req.body.discharge_type_uuid,
-      discharge_date: req.body.discharge_date,
+      discharge_type_uuid: discharge_type_uuid,
+      discharge_date: discharge_date,
       modified_by: user_uuid,
       modified_date: new Date(),
-      is_active_encounter: emr_constants.IS_IN_ACTIVE
+      is_active_encounter: is_active_encounter
     };
     try {
-      if (user_uuid && updatedata) {
+      if (user_uuid && req.body) {
         const ec_updated = await encounter_tbl.update(ec_updateData, {
           where: {
-            facility_uuid: updatedata.facility_uuid,
-            uuid: updatedata.encounter_uuid,
-            patient_uuid: updatedata.patient_uuid,
-            encounter_type_uuid: updatedata.encounter_type_uuid,
+            facility_uuid: facility_uuid,
+            uuid: encounter_uuid,
+            patient_uuid: patient_uuid,
+            encounter_type_uuid: encounter_type_uuid,
           },
         });
         if (ec_updated) {
