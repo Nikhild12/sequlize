@@ -6,6 +6,8 @@ const moment = require("moment");
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
+// Config Import
+const emr_config = require('../config/config');
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
 
@@ -17,6 +19,7 @@ const encounter_type_tbl = sequelizeDb.encounter_type;
 
 const emr_constants = require("../config/constants");
 const utilityService = require("../services/utility.service");
+const diagnosisBlockChain = require('../blockChain/diagnosis.blockchain');
 const getActiveAndStatusObject = is_active => {
   return {
     is_active: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE,
@@ -98,13 +101,18 @@ const PatientDiagnsis = () => {
           patientsDiagnosisData,
           user_uuid
         );
+        let blockChainResult;
+        if (emr_config.isBlockChain === 'ON') {
+          blockChainResult = await diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
+        }
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Inserted Patient Diagnosis Complaints Successfully",
           responseContents: appendUUIDToReqData(
             patientsDiagnosisData,
             patientDiagnosisCreatedData
-          )
+          ),
+          blockChainResult
         });
       } catch (ex) {
         return res
@@ -326,7 +334,7 @@ const PatientDiagnsis = () => {
           where: query,
           order: [["uuid", "desc"]],
           limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed','created_date'],
+          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed', 'created_date'],
           include: [{
             model: diagnosis_tbl,
             attributes: ['uuid', 'code', 'name', 'description']

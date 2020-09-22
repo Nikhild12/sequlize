@@ -11,33 +11,33 @@ const emr_utility = require('../services/utility.service');
 const { BLOCK_CHAIN_URL, TOKEN } = emr_constants.BLOCK_CHAIN;
 
 const encounterMasterBlockChain = () => {
-    const _createEncounterMasterBlockChain = async (encounterObject) => {
+    const _createEncounterBlockChain = async (encounterObject, encounterDoctorObject) => {
         const encounterCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ENCOUNTER_CREATE}`;
         const encounterCreateObjects = emr_utility
             .postRequest(encounterCreateUrl, { Authorization: TOKEN },
                 {
-                    Id: encounterObject,
-                    CreatedOn: encounterObject,
-                    CreatedBy: encounterObject,
+                    Id: encounterObject.uuid,
+                    CreatedOn: encounterObject.created_date,
+                    CreatedBy: encounterObject.created_by,
                     IsDelete: false,
-                    Patient_id: encounterObject,
-                    Encounter_type: encounterObject,
-                    Encounter_identifier: encounterObject,
-                    Facility_uuid: encounterObject,
-                    Department_uuid: encounterObject,
-                    Encounter_date: encounterObject,
-                    Doctor_uuid: encounterObject,
-                    Admission_uuid: encounterObject,
-                    Discharge_type_uuid: encounterObject,
-                    Discharge_date: encounterObject,
-                    Death_type_uuid: encounterObject,
-                    Death_date: encounterObject
+                    Patient_id: encounterObject.patient_uuid,
+                    Encounter_type: encounterObject.encounter_type_uuid,
+                    Encounter_identifier: encounterObject.encounter_identifier,
+                    Facility_uuid: encounterObject.facility_uuid,
+                    Department_uuid: encounterObject.department_uuid,
+                    Encounter_date: encounterObject.encounter_date,
+                    Doctor_uuid: encounterDoctorObject.doctor_uuid,
+                    Admission_uuid: encounterObject.admission_uuid,
+                    Discharge_type_uuid: encounterObject.discharge_type_uuid,
+                    Discharge_date: encounterObject.created_date,
+                    Death_type_uuid: "encounterObject",
+                    Death_date: encounterObject.created_date
                 }
             );
         return encounterCreateObjects;
     };
     return {
-        createEncounterMasterBlockChain: _createEncounterMasterBlockChain
+        createEncounterBlockChain: _createEncounterBlockChain
     };
 };
 
