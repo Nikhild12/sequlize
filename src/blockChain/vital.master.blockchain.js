@@ -10,7 +10,7 @@ const emr_utility = require('../services/utility.service');
 // Blockchain initialize
 const { BLOCK_CHAIN_URL, TOKEN } = emr_constants.BLOCK_CHAIN;
 
-const VitalMasterBlockChain = () => {
+const vitalMasterBlockChain = () => {
     const _createVitalMasterBlockChain = async (vitalObject) => {
         const vitalCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.VITAL_CREATE}`;
         const vitalCreateObjects = vitalObject.map((vO) => {
@@ -44,4 +44,4 @@ const VitalMasterBlockChain = () => {
 };
 
 
-module.exports = VitalMasterBlockChain();
+module.exports = vitalMasterBlockChain();
