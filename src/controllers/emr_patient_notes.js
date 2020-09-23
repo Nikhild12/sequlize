@@ -369,7 +369,9 @@ const notesController = () => {
                             data = await getWidgetData(actCode, e);
                             finalData.push(data);
                             console.log(finalData);
-                        }
+                        } 
+                    } else {
+                        finalData.push(e);
                     }
                 }
                 return res.status(200).send({
@@ -458,10 +460,10 @@ const notesController = () => {
             json: true
         };
         console.log(options);
-        const user_details = await rp(options);
+        const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
-            result.dataValues.details = user_details.responseContents;
+        if (user_details && user_details){
+            result.dataValues.details = user_details;
             return result;
         }            
         else
