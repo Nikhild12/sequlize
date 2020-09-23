@@ -101,7 +101,7 @@ const PatientDiagnsis = () => {
           patientsDiagnosisData,
           user_uuid
         );
-        if (emr_config.isBlockChain === 'ON') {
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
         }
         return res.status(200).send({

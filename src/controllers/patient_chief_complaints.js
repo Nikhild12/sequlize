@@ -149,7 +149,7 @@ const PatientChiefComplaints = () => {
         //     .send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
         // }
         if (chiefComplaintsCreatedData) {
-          if (emr_config.isBlockChain === 'ON') {
+          if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
             chiefComplaintBlockChain.createChiefComplaintMasterBlockChain(chiefComplaintsCreatedData);
           }
           return res.status(200).send({

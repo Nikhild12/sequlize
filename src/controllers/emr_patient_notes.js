@@ -25,6 +25,7 @@ const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
 const appMasterData = require("../controllers/appMasterData");
+const { object } = require("joi");
 const notesController = () => {
 
     /**
@@ -86,9 +87,7 @@ const notesController = () => {
         } = req.headers;
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
-            patient_uuid
-        } = req.query;
-        const {
+            patient_uuid,
             profile_type_uuid
         } = req.query;
 
@@ -96,6 +95,7 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
+            entry_status: emr_constants.ENTRY_STATUS,
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
@@ -369,7 +369,9 @@ const notesController = () => {
                             data = await getWidgetData(actCode, e);
                             finalData.push(data);
                             console.log(finalData);
-                        }
+                        } 
+                    } else {
+                        finalData.push(e);
                     }
                 }
                 return res.status(200).send({
@@ -458,10 +460,10 @@ const notesController = () => {
             json: true
         };
         console.log(options);
-        const user_details = await rp(options);
+        const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
-            result.dataValues.details = user_details.responseContents;
+        if (user_details && user_details){
+            result.dataValues.details = user_details;
             return result;
         }            
         else
@@ -526,10 +528,13 @@ const notesController = () => {
 
     const getVitalsResult = async (result) => {
         const user_details = await vw_patientVitalsTbl.findAll({
-            where:{
+            where: {
                 pv_patient_uuid: result.patient_uuid,
                 pv_encounter_uuid: result.encounter_uuid
-            }
+            },
+            limit: 10,
+            order:[['pv_created_date','DESC']],
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         });
         if (user_details){
             result.dataValues.details = user_details;
@@ -541,10 +546,13 @@ const notesController = () => {
 
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
+            limit: 10,
+            order:[['pcc_created_date','DESC']],
             where:{
                 pcc_patient_uuid: result.patient_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
-            }
+            },
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         });
         if (user_details){
             result.dataValues.details = user_details;
@@ -590,7 +598,7 @@ const notesController = () => {
             //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
-                Authorization: result.Authorization,
+                // Authorization: result.Authorization,
                 user_uuid: result.user_uuid,
                 facility_uuid: result.facility_uuid
             },

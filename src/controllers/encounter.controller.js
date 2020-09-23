@@ -233,7 +233,7 @@ const Encounter = () => {
 
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-        if (emr_config.isBlockChain === 'ON') {
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
         }
         return res.status(200)
@@ -316,7 +316,7 @@ const Encounter = () => {
         const isAllDeleted = deleteEnPromise.every(d => d === 1);
 
         const responseMessage = isAllDeleted ? emr_constants.UPDATED_ENC_SUCCESS : emr_constants.NO_RECORD_FOUND;
-        if (emr_config.isBlockChain === 'ON') {
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           encounterBlockChain.deleteEncounterBlockChain(+(encounterId));
         }
 
