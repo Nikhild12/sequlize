@@ -54,7 +54,8 @@ const tmpmstrController = () => {
           lab_id,
           store_master_uuid
         );
-        const templateList = await table_name.findAll(query);
+        const templateList = await table_name.findOne(query);
+        
         if (templateList != null && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,
@@ -1302,6 +1303,7 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
   return {
     attributes: { exclude: ["id", "createdAt", "updatedAt"] },
     order: [["display_order", "ASC"]],
+    distinct:true,
     where: {
       [Op.or]: [
         { department_uuid: { [Op.eq]: dept_id }, is_public: { [Op.eq]: 1 } },
@@ -1312,13 +1314,14 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
       is_active: 1,
       facility_uuid: fId
     },
+    required: false,
     include: [
       {
         model: vw_template,
         where: {
           tmd_status: 1,
           tmd_is_active: 1
-        },
+        }
         // include: [
         //   {
         //     model: vitalMasterTbl,
