@@ -25,6 +25,7 @@ const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
 const appMasterData = require("../controllers/appMasterData");
+const { object } = require("joi");
 const notesController = () => {
 
     /**
@@ -86,9 +87,7 @@ const notesController = () => {
         } = req.headers;
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
-            patient_uuid
-        } = req.query;
-        const {
+            patient_uuid,
             profile_type_uuid
         } = req.query;
 
@@ -96,6 +95,7 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
+            entry_status: emr_constants.ENTRY_STATUS,
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
