@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+</head>
+
+<body style="margin: 0 auto; font-family: poppins; font-size: 12px; width: 100%; height: 100%;">
+    <div style="float:left; width:calc(100% - 30px); padding: 0 15px;">
+        <div class="row" id="pageHeader" style="font-weight: bold; border-bottom: 1px solid #bbb;">
+            {{> facility_header this}}
+        </div>
+
+        <h2 style="text-align:center; margin-top:20px; float:left; width:100%;"> Op Notes</h2>
+        <div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Blood Requests</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Blood HB</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Blood Request Status</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0; border-right: 0;">Blood Request Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">A-</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">33</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Requested</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0; border-right: 0;">White Human Blood</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- {{json headerObj}} -->
+       
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <!-- {{json headerObj.sectionName}} -->
+                    {{#if headerObj.sectionName}}
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">{{headerObj.sectionName}}</th>
+                    </tr>
+                     {{/if}}
+                    {{#if headerObj.categoryNam}}
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">{{headerObj.categoryName}}</th>
+                    </tr>
+                    {{/if}}
+                </thead>
+                 
+				<tbody>
+                    
+					<tr>
+						<td>
+							<div style="width: calc(400px - 20px); float:left; padding: 0 10px;">
+								<table>
+									<tbody>
+                                        {{#each headerObj.details}}
+										<tr>
+											<td style="padding: 5px;">{{profile_section_category_concept.dataValues.name}}</td>
+											<td style="padding: 5px;">:</td>
+											<td style="padding: 5px;">{{dataValues.term_key}}</td>
+                                        </tr>
+		                                 {{/each}}
+                                        
+									</tbody>
+								</table>
+							</div>
+						</td>
+                    </tr>
+                    
+				</tbody>
+				
+            </table>
+        </div>
+        
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Vitals</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Vital Value</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">UOM Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Mani222</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">sd</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">centim</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Prescriptions</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Duration</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Route</th>
+						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Drug Frequency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">ASPIRIN TAB IP 150 MG</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">2 Days</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Subcutaneous</td>
+						<td style="border-bottom: 0;border-left: 0; border-left: 0;">2-1-1-1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Chief Complaints</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Heart Failure</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">3 Days</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Lab</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Code</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Test Name</th>
+						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Type</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Order To Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">TEST077</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Complete Blood Count</td>
+						<td style="border-bottom: 0;border-left: 0; border-left: 0;">Normal</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">KTY</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Radiology</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Code</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Test Name</th>
+						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Type</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Order To Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">TEST078</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Complete Haemogram with Peripheral Smear</td>
+						<td style="border-bottom: 0;border-left: 0; border-left: 0;">Urgent</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Danietesti</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+		<div style="width: 100%; float: left; padding: 10px 0;">
+            <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='10' cellspacing='0' style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 14px;">
+                        <th colspan="5">Investigation</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Code</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Test Name</th>
+						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Type</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Order To Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">1</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">TEST027</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">Acetone</td>
+						<td style="border-bottom: 0;border-left: 0; border-left: 0;">Urgent</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">YBT</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+		
+        <div style="float:left; padding: 15px; width: calc(100% - 30px);">
+            <div style="width: 50%; float: left;"><p>Printed On: 24-Sep-2020</p></div>
+            <div style="width: 50%; float: right; text-align: right;"><p>BALAGANESHAN</p><p>Approved by</p></div>
+            <div style="width:100%; float:left; text-align: center;">
+                <p style="margin:10px 0;">*****End of Lab Result*****</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
