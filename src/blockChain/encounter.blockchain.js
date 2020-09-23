@@ -39,7 +39,7 @@ const encounterMasterBlockChain = () => {
 
     const _deleteEncounterBlockChain = async (Id) => {
         const encounterDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ENCOUNTER_DELETE}`;
-        return await emr_utility.deleteRequest(encounterDeleteURL, { Authorization: TOKEN }, { Id });
+        return await emr_utility.deleteRequest(encounterDeleteURL, TOKEN, { Id });
     };
     return {
         createEncounterBlockChain: _createEncounterBlockChain,
