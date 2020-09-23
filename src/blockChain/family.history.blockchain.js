@@ -40,7 +40,6 @@ const familyHistoryBlockChain = () => {
 
     const _getFamilyHistoryBlockChain = async (Id) => {
         const historyGetURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.FAMILY_GET}/${Id}`;
-        console.log(historyGetURL);
         return await emr_utility.getBlockChainRequest(historyGetURL, TOKEN);
     };
     return {

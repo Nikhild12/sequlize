@@ -89,8 +89,7 @@ const Family_History = () => {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
         if (emr_config.isBlockChain === 'ON') {
-          const getfamily = await familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
-          console.log({ getfamily });
+          familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
         }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
