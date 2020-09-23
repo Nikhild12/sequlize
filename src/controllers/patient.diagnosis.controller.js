@@ -101,9 +101,8 @@ const PatientDiagnsis = () => {
           patientsDiagnosisData,
           user_uuid
         );
-        let blockChainResult;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
-          blockChainResult = await diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
+          diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
         }
         return res.status(200).send({
           code: httpStatus.OK,
@@ -304,11 +303,12 @@ const PatientDiagnsis = () => {
       if (updateData && !updateData[0]) {
         deleteResponseMessage = emr_constants.NO_CONTENT_MESSAGE;
       }
-      return res.status(200).send({
-        code: httpStatus.OK,
-        message: deleteResponseMessage,
-        responseContent: updateData
-      });
+
+      if (emr_config.isBlockChain === 'ON') {
+        diagnosisBlockChain.deleteDiagnosisBlockChain(diagnosisId);
+      }
+      return res.status(200)
+        .send({ code: httpStatus.OK, message: deleteResponseMessage, responseContent: updateData });
     } else {
       return res.status(422).send({
         code: httpStatus[400],
