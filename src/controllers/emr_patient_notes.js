@@ -598,7 +598,7 @@ const notesController = () => {
             //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
-                Authorization: result.Authorization,
+                // Authorization: result.Authorization,
                 user_uuid: result.user_uuid,
                 facility_uuid: result.facility_uuid
             },
