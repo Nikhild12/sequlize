@@ -150,7 +150,7 @@ const PatientChiefComplaints = () => {
         // }
         if (chiefComplaintsCreatedData) {
           let blockChainResult;
-          if (emr_config.isBlockChain === 'ON') {
+          if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
             blockChainResult = await chiefComplaintBlockChain.createChiefComplaintMasterBlockChain(chiefComplaintsCreatedData);
           }
           return res.status(200).send({

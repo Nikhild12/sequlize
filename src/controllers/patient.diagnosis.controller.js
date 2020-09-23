@@ -102,7 +102,7 @@ const PatientDiagnsis = () => {
           user_uuid
         );
         let blockChainResult;
-        if (emr_config.isBlockChain === 'ON') {
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           blockChainResult = await diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
         }
         return res.status(200).send({

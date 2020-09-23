@@ -94,7 +94,7 @@ const EMRPatientVitals = () => {
             ePV.uuid = emr_patient_vitals_response[index].uuid;
           });
 
-          if (emr_config.isBlockChain === 'ON') {
+          if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
             const patientVitalBlockchain = await blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
           }
           if (emr_patient_vitals_response) {
