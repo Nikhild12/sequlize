@@ -528,10 +528,12 @@ const notesController = () => {
 
     const getVitalsResult = async (result) => {
         const user_details = await vw_patientVitalsTbl.findAll({
-            where:{
+            where: {
                 pv_patient_uuid: result.patient_uuid,
                 pv_encounter_uuid: result.encounter_uuid
             },
+            limit: 10,
+            order:[['pv_created_date','DESC']],
             attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         });
         if (user_details){
@@ -544,6 +546,8 @@ const notesController = () => {
 
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
+            limit: 10,
+            order:[['pcc_created_date','DESC']],
             where:{
                 pcc_patient_uuid: result.patient_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
@@ -594,7 +598,7 @@ const notesController = () => {
             //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
-                // Authorization: result.Authorization,
+                Authorization: result.Authorization,
                 user_uuid: result.user_uuid,
                 facility_uuid: result.facility_uuid
             },
