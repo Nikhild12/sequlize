@@ -5,6 +5,7 @@ const db = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 //EMR Constants Import
+const printService = require('../services/print.service');
 const emr_constants = require('../config/constants');
 const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
@@ -25,7 +26,9 @@ const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
 const appMasterData = require("../controllers/appMasterData");
-const { object } = require("joi");
+const {
+    object
+} = require("joi");
 const notesController = () => {
 
     /**
@@ -357,7 +360,7 @@ const notesController = () => {
                     });
                 }
                 let finalData = [];
-                for(let e of patNotesData){
+                for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
                         const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
@@ -369,7 +372,7 @@ const notesController = () => {
                             data = await getWidgetData(actCode, e);
                             finalData.push(data);
                             console.log(finalData);
-                        } 
+                        }
                     } else {
                         finalData.push(e);
                     }
@@ -389,6 +392,163 @@ const notesController = () => {
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
                 message: ex
+            });
+        }
+    };
+
+    const _print_previous_opnotes = async (req, res) => {
+        try {
+            const {
+                patient_uuid
+            } = req.query;
+            const {
+                user_uuid,
+                facility_uuid
+            } = req.headers;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            let findQuery = {
+                include: [{
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    }
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    is_latest: emr_constants.IS_ACTIVE
+                }
+            };
+            if (user_uuid && patient_uuid) {
+                let printObj = {};
+                const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+                // return res.send(patNotesData)
+                if (!patNotesData) {
+                    return res.status(404).send({
+                        code: 404,
+                        message: emr_constants.NO_RECORD_FOUND
+                    });
+                }
+                let finalData = [];
+                for (let e of patNotesData) {
+                    let data;
+                    if (e.activity_uuid) {
+                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                        if (actCode) {
+                            e.temp = [];
+                            e.user_uuid = user_uuid;
+                            e.Authorization = Authorization;
+                            e.facility_uuid = facility_uuid;
+                            data = await getWidgetData(actCode, e);
+                            finalData.push(data);
+                            console.log(finalData);
+                        }
+                    } else {
+                        finalData.push(e);
+                    }
+                }
+                printObj.details = finalData;
+                printObj.sectionName = finalData[0].section.name;
+                printObj.categoryName = finalData[0].category.name;
+                const facility_result = await getFacilityDetails(req);
+                // console.log("facility_result::",facility_result);
+                if (facility_result.status) {
+                    let {
+                        status: data_facility_status,
+                        facility_uuid: data_facility_uuid,
+                        facility
+                    } = facility_result.data;
+
+                    let {
+                        facility_printer_setting: facPrSet
+                    } = facility;
+                    // console.log("facilityPrinterSetting::",facPrSet);
+
+                    let isFaciltySame = (facility_uuid == data_facility_uuid);
+                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header1 : facPrSet.printer_header1) : '');
+                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header2 : facPrSet.printer_header2) : '');
+                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer1 : facPrSet.printer_footer1) : '');
+                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer2 : facPrSet.printer_footer2) : '');
+                }
+
+               
+                // return res.status(200).send({
+                //     code: httpStatus.OK,
+                //     responseContent: printObj
+                // });
+                const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
+                    headerObj: printObj
+                    // language: req.__('dischargeSummary')
+                }), {
+                    format: 'A4',
+                    header: {
+                        height: '45mm'
+                    },
+                    footer: {
+                        height: '20mm',
+                        contents: {
+                            default: '<div style="color: #444;text-align: right;font-size: 10px;padding-right:0.5in;">Page Number: <span>{{page}}</span>/<span>{{pages}}</span></div>'
+                        }
+                    },
+                });
+                if (pdfBuffer) {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/pdf',
+                        'Content-disposition': 'attachment;filename=previous_discharge_summary.pdf',
+                        'Content-Length': pdfBuffer.length
+                    });
+                    res.end(Buffer.from(pdfBuffer, 'binary'));
+                    return;
+                } else {
+                    return res.status(400).send({
+                        status: "failed",
+                        statusCode: httpStatus[500],
+                        message: ND_constats.WENT_WRONG
+                    });
+                }
+            } else {
+                return res.status(422).send({
+                    status: "failed",
+                    statusCode: httpStatus[422],
+                    message: "you are missing patient_uuid / user_uuid "
+                });
+            }
+
+        } catch (ex) {
+            return res.status(500).send({
+                status: "failed",
+                statusCode: httpStatus.BAD_REQUEST,
+                message: ex.message
             });
         }
     };
@@ -440,7 +600,7 @@ const notesController = () => {
         else
             return false;
     };
-
+    
     const getLabResult = async (result) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -462,11 +622,10 @@ const notesController = () => {
         console.log(options);
         const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
-        if (user_details && user_details){
+        if (user_details && user_details) {
             result.dataValues.details = user_details;
             return result;
-        }            
-        else
+        } else
             return false;
     };
 
@@ -490,11 +649,10 @@ const notesController = () => {
         };
         const user_details = await rp(options);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
+        if (user_details && user_details.responseContents) {
             result.dataValues.details = user_details.responseContents;
             return result;
-        }            
-        else
+        } else
             return false;
     };
 
@@ -518,11 +676,10 @@ const notesController = () => {
         };
         const user_details = await rp(options);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
+        if (user_details && user_details.responseContents) {
             result.dataValues.details = user_details.responseContents;
             return result;
-        }            
-        else
+        } else
             return false;
     };
 
@@ -533,32 +690,38 @@ const notesController = () => {
                 pv_encounter_uuid: result.encounter_uuid
             },
             limit: 10,
-            order:[['pv_created_date','DESC']],
-            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+            order: [
+                ['pv_created_date', 'DESC']
+            ],
+            attributes: {
+                "exclude": ['id', 'createdAt', 'updatedAt']
+            },
         });
-        if (user_details){
+        if (user_details) {
             result.dataValues.details = user_details;
             return result;
-        }            
-        else
+        } else
             return false;
     };
 
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
-            order:[['pcc_created_date','DESC']],
-            where:{
+            order: [
+                ['pcc_created_date', 'DESC']
+            ],
+            where: {
                 pcc_patient_uuid: result.patient_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
             },
-            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+            attributes: {
+                "exclude": ['id', 'createdAt', 'updatedAt']
+            },
         });
-        if (user_details){
+        if (user_details) {
             result.dataValues.details = user_details;
             return result;
-        }            
-        else
+        } else
             return false;
     };
 
@@ -584,11 +747,10 @@ const notesController = () => {
         console.log(options)
         const user_details = await rp(options);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
+        if (user_details && user_details.responseContents) {
             result.dataValues.details = user_details.responseContents;
             return result;
-        }            
-        else
+        } else
             return false;
     };
     const getBloodRequestResult = async (result) => {
@@ -611,99 +773,100 @@ const notesController = () => {
         };
         const user_details = await rp(options);
         console.log(user_details);
-        if (user_details && user_details.responseContents){
+        if (user_details && user_details.responseContents) {
             result.dataValues.details = user_details.responseContents;
             return result;
-        }            
-        else
+        } else
             return false;
     };
-
-
-    const _print_previous_opnotes = async (req, res) => {
+    const getFacilityDetails = async (req) => {
         try {
-            const {
-                certificate_uuid
-            } = req.query;
-            const {
-                user_uuid
-            } = req.headers;
+            const getFacilityUrl = 'facility/getFacilityById';
+            const postData = {
+                Id: req.headers.facility_uuid
+            };
 
-            let certificate_result = {};
-            if (certificate_uuid && user_uuid) {
-                const result = await patientCertificatesTbl.findOne({
-                    where: {
-                        uuid: certificate_uuid,
-                        status: 1,
-                    },
-                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template'],
-
-                });
-                if (result && result != null) {
-                    certificate_result = {
-                        ...result
-                    };
-                    if (certificate_result) {
-                        const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
-                            data_template: certificate_result.dataValues.data_template,
-                            // language: req.__('dischargeSummary')
-                        }), {
-                            "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                            // "orientation": "landscape",
-                            "width": "18in",
-                            "height": "15in",
-                            "header": {
-                                "height": "5mm"
-                            },
-                            "footer": {
-                                "height": "5mm"
-                            }
-                        });
-                        if (pdfBuffer) {
-                            res.writeHead(200, {
-                                'Content-Type': 'application/pdf',
-                                'Content-disposition': 'attachment;filename=previous_discharge_summary.pdf',
-                                'Content-Length': pdfBuffer.length
-                            });
-                            res.end(Buffer.from(pdfBuffer, 'binary'));
-                            return;
-                        } else {
-                            return res.status(400).send({
-                                status: "failed",
-                                statusCode: httpStatus[500],
-                                message: ND_constats.WENT_WRONG
-                            });
-                        }
-                    } else {
-                        return res.status(400).send({
-                            status: "failed",
-                            statusCode: httpStatus[400],
-                            message: ND_constats.WENT_WRONG
-                        });
-                    }
-                } else {
-                    return res.status(400).send({
-                        status: "failed",
-                        statusCode: httpStatus.OK,
-                        message: "No Records Found"
-                    });
-                }
+            const res = await getResultsInObject(getFacilityUrl, req, postData);
+            console.log('>>>>>>>>>>>>>>>facility_res', res);
+            if (res.status && res.data.length > 0) {
+                const resData = res.data;
+                return {
+                    status: true,
+                    data: resData
+                };
             } else {
-                return res.status(422).send({
-                    status: "failed",
-                    statusCode: httpStatus[422],
-                    message: "you are missing certificate_uuid / user_uuid "
-                });
+                return res;
             }
-
-        } catch (ex) {
-            return res.status(500).send({
-                status: "failed",
-                statusCode: httpStatus.BAD_REQUEST,
-                message: ex.message
-            });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return {
+                status: false,
+                message: errorMsg
+            };
         }
     };
+    const getResultsInObject = async (url, req, data) => {
+        try {
+            const _url = config.wso2AppUrl + url;
+            console.log("_url::", _url);
+            let options = {
+                uri: _url,
+                headers: {
+                    user_uuid: req.headers.user_uuid,
+                    facility_uuid: req.headers.facility_uuid,
+                    Authorization: req.headers.authorization
+                },
+                method: "POST",
+                json: true, // Automatically parses the JSON string in the response
+                // body : {
+                //     uuid : data
+                // }
+
+            };
+
+            if (data) {
+                options.body = data;
+            }
+
+            console.log("options:", options);
+            const results = await rp(options);
+            console.log("getResultsInObject_ResultData:", results);
+
+            if (results.responseContents) {
+                if (results.responseContents.length <= 0) {
+                    return {
+                        status: false,
+                        message: "No content"
+                    };
+                } else {
+                    return {
+                        status: true,
+                        data: results.responseContents
+                    };
+                }
+            } else if (results.responseContent) {
+                if (results.responseContent.length <= 0) {
+                    return {
+                        status: false,
+                        message: "No content"
+                    };
+                } else {
+                    return {
+                        status: true,
+                        data: results.responseContent
+                    };
+                }
+            }
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return {
+                status: false,
+                message: errorMsg
+            };
+        }
+    };
+
 
     return {
         addProfiles: _addProfiles,
@@ -718,7 +881,9 @@ const notesController = () => {
 
 module.exports = notesController();
 
-
+function getHTML(){
+                    
+}
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
