@@ -100,7 +100,8 @@ module.exports = Object.freeze({
       DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
       FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
       ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
-      DIAGNOSIS_DELETE: ''
+      DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      FAMILY_DELETE: '/transactionapi/familyhistory/delete'
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"

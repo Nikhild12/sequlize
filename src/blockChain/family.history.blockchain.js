@@ -32,8 +32,14 @@ const familyHistoryBlockChain = () => {
                 });
         return familyHistoryCreateObjects;
     };
+
+    const _deleteFamilyHistoryBlockChain = async (Id) => {
+        const historyDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.FAMILY_DELETE}`;
+        return await emr_utility.deleteRequest(historyDeleteURL, TOKEN, { Id });
+    };
     return {
-        createFamilyHistoryBlockChain: _createFamilyHistoryBlockChain
+        createFamilyHistoryBlockChain: _createFamilyHistoryBlockChain,
+        deleteFamilyHistoryBlockChain: _deleteFamilyHistoryBlockChain
     };
 };
 

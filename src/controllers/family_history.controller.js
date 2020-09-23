@@ -34,10 +34,8 @@ const Family_History = () => {
       await assignDefault(familyHistory, user_uuid);
       try {
         let familyHistoryOutput = await familyHistoryTbl.create(familyHistory, { returing: true });
-        let blockChainResult;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
-          blockChainResult = await familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
-          familyHistory.blockChainResult = blockChainResult;
+          familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
         }
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: familyHistory });
       } catch (ex) {
@@ -109,12 +107,17 @@ const Family_History = () => {
       const updatedFamilyData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
       try {
         const data = await familyHistoryTbl.update(updatedFamilyData, { where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          const deleteD = await familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
+          console.log({deleteD});
+        }
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
         } else {
           return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
-
         }
+
 
       }
       catch (ex) {

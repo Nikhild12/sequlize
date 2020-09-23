@@ -305,7 +305,7 @@ const PatientDiagnsis = () => {
       }
 
       if (emr_config.isBlockChain === 'ON') {
-        diagnosisBlockChain.deleteDiagnosisBlockChain(diagnosisId);
+        diagnosisBlockChain.deleteDiagnosisBlockChain(+(diagnosisId));
       }
       return res.status(200)
         .send({ code: httpStatus.OK, message: deleteResponseMessage, responseContent: updateData });
