@@ -399,13 +399,13 @@ const notesController = () => {
                 return getRadiologyResult(result);
             case "Prescriptions":
                 return getPrescriptionsResult(result);
-            case "Invenstigation":
+            case "Investigation":
                 return getInvestResult(result);
             case "Vitals":
                 return getVitalsResult(result);
             case "Chief Complaints":
                 return getChiefComplaintsResult(result);
-            case "Blood Request":
+            case "Blood Requests":
                 return getBloodRequestResult(result);
             default:
                 let templateDetails = result;
@@ -554,6 +554,7 @@ const notesController = () => {
     };
 
     const getPrescriptionsResult = async (result) => {
+        console.log('prescription')
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -566,11 +567,12 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
-                "encounter_uuid": result.encounter_uuid
+                // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
             json: true
         };
+        console.log(options)
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents){
@@ -582,7 +584,7 @@ const notesController = () => {
     };
     const getBloodRequestResult = async (result) => {
         let options = {
-            uri: config.wso2InvUrl + 'bloodRequest/getpreviousbloodRequestbyID',
+            uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
             //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
@@ -593,7 +595,7 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
-                "encounter_uuid": result.encounter_uuid
+                // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
             json: true
