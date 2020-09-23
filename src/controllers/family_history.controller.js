@@ -35,7 +35,7 @@ const Family_History = () => {
       try {
         let familyHistoryOutput = await familyHistoryTbl.create(familyHistory, { returing: true });
         let blockChainResult;
-        if (emr_config.isBlockChain === 'ON') {
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           blockChainResult = await familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
           familyHistory.blockChainResult = blockChainResult;
         }
