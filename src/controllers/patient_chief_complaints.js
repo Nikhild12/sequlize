@@ -149,9 +149,8 @@ const PatientChiefComplaints = () => {
         //     .send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
         // }
         if (chiefComplaintsCreatedData) {
-          let blockChainResult;
           if (emr_config.isBlockChain === 'ON') {
-            blockChainResult = await chiefComplaintBlockChain.createChiefComplaintMasterBlockChain(chiefComplaintsCreatedData);
+            chiefComplaintBlockChain.createChiefComplaintMasterBlockChain(chiefComplaintsCreatedData);
           }
           return res.status(200).send({
             code: httpStatus.OK,
@@ -159,8 +158,7 @@ const PatientChiefComplaints = () => {
             responseContents: attachUUIDTOCreatedData(
               chiefComplaintsData,
               chiefComplaintsCreatedData
-            ),
-            blockChainResult
+            )
           });
         }
       } catch (ex) {
