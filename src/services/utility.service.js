@@ -221,13 +221,11 @@ const _checkDateValid = dateVar => {
 };
 
 const _deployedBlockChainUrl = () => {
-  if (config.isBlockChain == 'ON') {
-    const urlobj = {
-      TN: 'http://3.6.97.35:8080/api/troondx/v1',
-      PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
-    };
-    return urlobj[config.blockChainURL];
-  }
+  const urlobj = {
+    TN: 'http://3.6.97.35:8080/api/troondx/v1',
+    PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
+  };
+  return urlobj[config.blockChainURL];
 };
 
 module.exports = {

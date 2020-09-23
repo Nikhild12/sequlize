@@ -194,7 +194,6 @@ const Encounter = () => {
         return res.status(400)
           .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
       }
-
       try {
 
         // Assigning
@@ -232,16 +231,13 @@ const Encounter = () => {
         // checking for Primary Doctor
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-        const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-          encounterDoctor, { returning: true }
-        );
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-        let blockChainResult;
         if (emr_config.isBlockChain === 'ON') {
-          blockChainResult = await encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
+          encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
         }
         return res.status(200)
-          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor, blockChainResult } });
+          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
 
       } catch (ex) {
         console.log(ex);
