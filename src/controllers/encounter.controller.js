@@ -295,6 +295,7 @@ const Encounter = () => {
     const { encounterId } = req.query;
 
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
+
       let encounterPromise = [];
       try {
         // enDelTransaction = await sequelizeDb.sequelize.transaction();
@@ -312,8 +313,13 @@ const Encounter = () => {
 
         let deleteEnPromise = await Promise.all(encounterPromise);
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
+        const isAllDeleted = deleteEnPromise.every(d => d === 1);
 
         const responseMessage = isAllDeleted ? emr_constants.UPDATED_ENC_SUCCESS : emr_constants.NO_RECORD_FOUND;
+        if (emr_config.isBlockChain === 'ON') {
+          encounterBlockChain.deleteEncounterBlockChain(+(encounterId));
+        }
+
         return res.status(200)
           .send({ code: httpStatus.OK, message: responseMessage });
       } catch (ex) {
