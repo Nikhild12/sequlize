@@ -88,6 +88,9 @@ const Family_History = () => {
         if (!familyData) {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
+        if (emr_config.isBlockChain === 'ON') {
+          familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
+        }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -110,7 +113,7 @@ const Family_History = () => {
 
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           const deleteD = await familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
-          console.log({deleteD});
+          console.log({ deleteD });
         }
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
