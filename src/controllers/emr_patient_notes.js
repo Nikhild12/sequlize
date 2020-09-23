@@ -531,7 +531,8 @@ const notesController = () => {
             where:{
                 pv_patient_uuid: result.patient_uuid,
                 pv_encounter_uuid: result.encounter_uuid
-            }
+            },
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         });
         if (user_details){
             result.dataValues.details = user_details;
@@ -546,7 +547,8 @@ const notesController = () => {
             where:{
                 pcc_patient_uuid: result.patient_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
-            }
+            },
+            attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
         });
         if (user_details){
             result.dataValues.details = user_details;
