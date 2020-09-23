@@ -35,8 +35,14 @@ const diagnosisMasterBlockChain = () => {
         });
         return await Promise.all(diagnosisCreateObjects);
     };
+
+    const _deleteDiagnosisBlockChain = async (Id) => {
+        const diagnosisDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.DIAGNOSIS_DELETE}`;
+        return await emr_utility.deleteRequest(diagnosisDeleteURL, { Authorization: TOKEN }, { Id });
+    };
     return {
-        createDiagnosisMasterBlockChain: _createDiagnosisMasterBlockChain
+        createDiagnosisMasterBlockChain: _createDiagnosisMasterBlockChain,
+        deleteDiagnosisBlockChain: _deleteDiagnosisBlockChain
     };
 };
 

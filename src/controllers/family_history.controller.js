@@ -34,10 +34,8 @@ const Family_History = () => {
       await assignDefault(familyHistory, user_uuid);
       try {
         let familyHistoryOutput = await familyHistoryTbl.create(familyHistory, { returing: true });
-        let blockChainResult;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
-          blockChainResult = await familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
-          familyHistory.blockChainResult = blockChainResult;
+          familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
         }
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: familyHistory });
       } catch (ex) {
@@ -90,6 +88,9 @@ const Family_History = () => {
         if (!familyData) {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
+        if (emr_config.isBlockChain === 'ON') {
+          familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
+        }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -109,12 +110,17 @@ const Family_History = () => {
       const updatedFamilyData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
       try {
         const data = await familyHistoryTbl.update(updatedFamilyData, { where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          const deleteD = await familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
+          console.log({ deleteD });
+        }
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
         } else {
           return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
-
         }
+
 
       }
       catch (ex) {

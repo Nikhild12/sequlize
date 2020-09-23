@@ -153,6 +153,23 @@ const _deleteRequest = async (url, req, data) => {
   }
 };
 
+const _getBlockChainRequest = async (url, req, data) => {
+  try {
+    let options = {
+      uri: url,
+      headers: { Authorization: req },
+      method: "GET",
+      json: true, // Automatically parses the JSON string in the response
+    };
+    const results = await rp(options);
+    return { block_chain_response: results };
+
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return { status: false, message: errorMsg };
+  }
+};
+
 const _isNumberValid = value => {
   value = Number(value);
   return !isNaN(value);
@@ -244,5 +261,6 @@ module.exports = {
   comparingDateAndTime: _comparingDateAndTime,
   checkDateValid: _checkDateValid,
   deployedBlockChainUrl: _deployedBlockChainUrl,
-  deleteRequest: _deleteRequest
+  deleteRequest: _deleteRequest,
+  getBlockChainRequest: _getBlockChainRequest
 };
