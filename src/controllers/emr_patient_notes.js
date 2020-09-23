@@ -457,6 +457,7 @@ const notesController = () => {
             //body: {},
             json: true
         };
+        console.log(options);
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents){
