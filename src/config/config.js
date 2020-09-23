@@ -86,6 +86,7 @@ const config = {
   wso2RmisUrl: envVars.wso2RmisUrl,
   wso2InvestUrl: envVars.wso2InvestUrl,
   wso2AppUrl: envVars.wso2AppUrl,
+  wso2BloodBankUrl: envVars.wso2BloodBankUrl,
   serverName: envVars.SERVER_NAME,
   isBlockChain: envVars.BLOCK_CHAIN,
   blockChainURL: envVars.BLOCK_CHAIN_URL
