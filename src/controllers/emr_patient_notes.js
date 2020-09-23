@@ -3,6 +3,8 @@ const httpStatus = require("http-status");
 //Sequelizer Import
 const db = require('../config/sequelize');
 const Sequelize = require('sequelize');
+const moment = require("moment");
+
 const Op = Sequelize.Op;
 //EMR Constants Import
 const printService = require('../services/print.service');
@@ -29,6 +31,9 @@ const appMasterData = require("../controllers/appMasterData");
 const {
     object
 } = require("joi");
+const {
+    includes
+} = require("lodash");
 const notesController = () => {
 
     /**
@@ -465,6 +470,7 @@ const notesController = () => {
                     if (e.activity_uuid) {
                         const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
                         if (actCode) {
+                            printObj[actCode.replace(/\s/g, '')] = true;
                             e.temp = [];
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
@@ -477,9 +483,97 @@ const notesController = () => {
                         finalData.push(e);
                     }
                 }
+
+                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = [];
+
+                let activity_uuids = finalData.map(item => {
+                    return item.activity_uuid;
+                });
+
+
+                if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 42) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+
+                                labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+
+                            }
+                        }
+                        if (e.activity_uuid == 43) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                            }
+                        }
+                        if (e.activity_uuid == 58) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                            }
+                        }
+                    });
+                }
+                if (printObj.Vitals) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 57) {
+                            vitArr = [...vitArr, ...e.dataValues.details];
+                            // vitArr.push(e.dataValues.details);
+                        }
+                    });
+                }
+                if (printObj.ChiefComplaints) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 49) {
+                            console.log('.......................', e);
+                            cheifArr = [...cheifArr, ...e.dataValues.details];
+                            // vitArr.push(e.dataValues.details);
+                        }
+                    });
+                }
+                if (printObj.Prescriptions) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 44) {
+                            e.dataValues.details.forEach(item => {
+
+                            })
+                            if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
+                            }
+                        }
+                    });
+                }
+                if (printObj.BloodRequests) {
+                    finalData.forEach(e => {
+                        if (e.dataValues.activity_uuid == 252) {
+                            if (e.dataValues.details) {
+                                let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
+                                    return {
+                                        blood_request_status: e.dataValues.details[0].blood_request_status.name,
+                                        blood_group: e.dataValues.details[0].blood_group.name,
+                                        blood_hb: e.dataValues.details[0].blood_hb,
+                                        a: i.blood_component.name
+                                    };
+                                });
+                                // e.dataValues.component_name = e.dataValues.details[0].blood_component.name;
+                                bbArr = [...bbArr, ...detailsArr];
+                            }
+                        }
+                    });
+                }
+
+                printObj.labResult = labArr;
+                printObj.radResult = radArr;
+                printObj.invResult = invArr;
+                printObj.vitResult = vitArr;
+                printObj.cheifResult = cheifArr;
+                printObj.presResult = presArr;
+                printObj.bbResult = bbArr;
+
                 printObj.details = finalData;
-                printObj.sectionName = finalData[0].section.name;
-                printObj.categoryName = finalData[0].category.name;
+                if (finalData && finalData.length > 0) {
+                    printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
+                    printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
+                }
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm');
                 const facility_result = await getFacilityDetails(req);
                 // console.log("facility_result::",facility_result);
                 if (facility_result.status) {
@@ -501,7 +595,7 @@ const notesController = () => {
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer2 : facPrSet.printer_footer2) : '');
                 }
 
-               
+
                 // return res.status(200).send({
                 //     code: httpStatus.OK,
                 //     responseContent: printObj
@@ -524,7 +618,7 @@ const notesController = () => {
                 if (pdfBuffer) {
                     res.writeHead(200, {
                         'Content-Type': 'application/pdf',
-                        'Content-disposition': 'attachment;filename=previous_discharge_summary.pdf',
+                        'Content-disposition': 'attachment;filename=op_notes.pdf',
                         'Content-Length': pdfBuffer.length
                     });
                     res.end(Buffer.from(pdfBuffer, 'binary'));
@@ -545,6 +639,7 @@ const notesController = () => {
             }
 
         } catch (ex) {
+            console.log(ex);
             return res.status(500).send({
                 status: "failed",
                 statusCode: httpStatus.BAD_REQUEST,
@@ -600,7 +695,7 @@ const notesController = () => {
         else
             return false;
     };
-    
+
     const getLabResult = async (result) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -756,8 +851,6 @@ const notesController = () => {
     const getBloodRequestResult = async (result) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
-            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
-            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
                 // Authorization: result.Authorization,
@@ -881,8 +974,8 @@ const notesController = () => {
 
 module.exports = notesController();
 
-function getHTML(){
-                    
+function getHTML() {
+
 }
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
