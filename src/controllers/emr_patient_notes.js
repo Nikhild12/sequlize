@@ -6,7 +6,10 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 //EMR Constants Import
 const emr_constants = require('../config/constants');
+const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
+const rp = require("request-promise");
+const serviceRequest = require('../services/utility.service');
 
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
@@ -295,8 +298,10 @@ const notesController = () => {
             patient_uuid
         } = req.query;
         const {
-            user_uuid
+            user_uuid,
+            facility_uuid
         } = req.headers;
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
                     model: profilesTbl,
@@ -349,9 +354,24 @@ const notesController = () => {
                         message: emr_constants.NO_RECORD_FOUND
                     });
                 }
+                let finalResult = [];
+                let finalData;
+                for(let e of patNotesData){
+                    if (e.activity_uuid) {
+                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                        if (actCode) {
+                            e.temp = [];
+                            e.user_uuid = user_uuid;
+                            e.Authorization = Authorization;
+                            e.facility_uuid = facility_uuid;
+                            finalData = await getWidgetData(actCode, e);
+                            console.log(finalData)
+                        }
+                    }
+                }
                 return res.status(200).send({
                     code: httpStatus.OK,
-                    responseContent: patNotesData
+                    responseContent: finalData
                 });
             } else {
                 return res.status(400).send({
@@ -360,12 +380,144 @@ const notesController = () => {
                 });
             }
         } catch (ex) {
+            console.log(ex);
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
                 message: ex
             });
         }
     };
+
+    function getWidgetData(actCode, result) {
+        switch (actCode) {
+            case "Lab":
+                return getLabResult(result);
+            case "Radiology":
+                return getRadiologyResult(result);
+            case "Prescriptions":
+                return getPrescriptionsResult(result);
+            case "Invenstigation":
+                return getInvestResult(result);
+            case "Vitals":
+                return getVitalsResult(result);
+            case "Chief Complaints":
+                return getChiefComplaintsResult(result);
+            default:
+                let templateDetails = result;
+                return {
+                    templateDetails
+                };
+        }
+    }
+    const getActivityCode = async (Id, user_uuid, auth) => {
+        console.log('////////////////');
+        let options = {
+            uri: config.wso2AppUrl + 'activity/getActivityById',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: auth,
+                user_uuid: user_uuid
+            },
+            body: {
+                "Id": Id
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents)
+            return user_details.responseContents.name;
+        else
+            return false;
+    };
+
+    const getLabResult = async (result) => {
+        let options = {
+            uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents){
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        }            
+        else
+            return false;
+    };
+
+    const getRadiologyResult = async (result) => {
+        let options = {
+            uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents){
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        }            
+        else
+            return false;
+    };
+
+    const getInvestResult = async (result) => {
+        let options = {
+            uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents){
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        }            
+        else
+            return false;
+    };
+
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
