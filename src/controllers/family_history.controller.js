@@ -112,8 +112,7 @@ const Family_History = () => {
         const data = await familyHistoryTbl.update(updatedFamilyData, { where: { uuid: uuid } }, { returning: true });
 
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
-          const deleteD = await familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
-          console.log({ deleteD });
+          familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
         }
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
@@ -145,6 +144,10 @@ const Family_History = () => {
       };
       if (user_uuid && uuid && postdata) {
         const [updated] = await familyHistoryTbl.update(postdata, selector, { returning: true });
+        if (emr_config.isBlockChain === 'ON') {
+          familyHistoryBlockChain.updateFamilyHistoryBlockChain(postdata, +(uuid));
+        }
+
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
         } else {
