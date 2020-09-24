@@ -101,6 +101,7 @@ module.exports = Object.freeze({
       FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
       ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
       DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      DIAGNOSIS_GET: '/transactionapi/Diagnosis/get',
       FAMILY_DELETE: '/transactionapi/familyhistory/delete',
       FAMILY_GET: '/transactionapi/familyhistory/get',
       FAMILY_UPDATE: '/transactionapi/familyhistory/update'
