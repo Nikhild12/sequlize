@@ -2,12 +2,16 @@
 const httpStatus = require('http-status');
 
 // Sequelizer Import
-const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
-const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
+
+// Config Import
+const emr_config = require('../config/config');
+
+// BlockChain Import
+const immunization_blockchain = require('../blockChain/immunization.blockchain');
 
 const emr_utility = require('../services/utility.service');
 
@@ -36,8 +40,13 @@ const patient_immunization_Schedules = () => {
             Immunization.revision = 1;
 
             try {
-                await patientImmunizationSchedulesTbl.create(Immunization, { returing: true });
-                return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: Immunization });
+                const createdImmunization = await patientImmunizationSchedulesTbl.create(Immunization, { returing: true });
+                Immunization.uuid = createdImmunization.uuid;
+
+                if (emr_config.isBlockChain === 'ON') {
+                    immunization_blockchain.createImmunizationBlockchain(Immunization);
+                }
+                return res.status(200).send({ code: httpStatus.OK, message: 'Inserted successfully', responseContents: Immunization });
 
             }
             catch (ex) {
@@ -59,6 +68,10 @@ const patient_immunization_Schedules = () => {
             try {
                 const data = await patientImmunizationSchedulesTbl.update(updatedImmunizationData, { where: { uuid: uuid } }, { returning: true });
                 if (data) {
+
+                    if (emr_config.isBlockChain === 'ON') {
+                        immunization_blockchain.deleteImmunizationBlockChain(+(uuid));
+                    }
                     return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
                 } else {
                     return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
@@ -115,6 +128,9 @@ const patient_immunization_Schedules = () => {
 
             if (user_uuid && uuid) {
                 const immunizationData = await patientImmunizationSchedulesTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
+                if (emr_config.isBlockChain === 'ON') {
+                    immunization_blockchain.getImmunizationBlockChain(+(uuid));
+                }
                 return res.status(200).send({ code: httpStatus.OK, responseContent: immunizationData });
             } else {
                 return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
