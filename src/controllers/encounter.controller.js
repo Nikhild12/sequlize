@@ -3,10 +3,13 @@ const httpStatus = require("http-status");
 const moment = require("moment");
 
 const rp = require("request-promise");
-const config = require("../config/config");
 
 // Sequelizer Import
 const Sequelize = require("sequelize");
+
+// Config Import
+const emr_config = require('../config/config');
+
 const Op = Sequelize.Op;
 
 // Sequelizer Import
@@ -30,6 +33,7 @@ const emr_constants = require("../config/constants");
 const emr_mock_json = require("../config/emr_mock_json");
 const utilityService = require("../services/utility.service");
 
+const encounterBlockChain = require('../blockChain/encounter.blockchain');
 
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
@@ -190,7 +194,6 @@ const Encounter = () => {
         return res.status(400)
           .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
       }
-
       try {
 
         // Assigning
@@ -221,19 +224,18 @@ const Encounter = () => {
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
-
         }
 
         const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
         encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
-
         // checking for Primary Doctor
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-        const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-          encounterDoctor, { returning: true }
-        );
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
+        }
         return res.status(200)
           .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
 
@@ -293,6 +295,7 @@ const Encounter = () => {
     const { encounterId } = req.query;
 
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
+
       let encounterPromise = [];
       try {
         // enDelTransaction = await sequelizeDb.sequelize.transaction();
@@ -310,8 +313,13 @@ const Encounter = () => {
 
         let deleteEnPromise = await Promise.all(encounterPromise);
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
+        const isAllDeleted = deleteEnPromise.every(d => d === 1);
 
         const responseMessage = isAllDeleted ? emr_constants.UPDATED_ENC_SUCCESS : emr_constants.NO_RECORD_FOUND;
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          encounterBlockChain.deleteEncounterBlockChain(+(encounterId));
+        }
+
         return res.status(200)
           .send({ code: httpStatus.OK, message: responseMessage });
       } catch (ex) {

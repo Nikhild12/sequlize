@@ -1,6 +1,7 @@
 module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
+  ENTRY_STATUS: 2,
   NO: "No",
   OR: "or",
   FOUND: "Found",
@@ -89,7 +90,19 @@ module.exports = Object.freeze({
   INVESTIGATION_RESULT_SUCCESS: "Investigation Result Fetched Successfully",
   BLOCK_CHAIN: {
     BLOCK_CHAIN_URL: {
-      VITAL_CREATE: '/assetapi/Vitals/create'
+      VITAL_CREATE: '/transactionapi/vitals/create',
+      ENCOUNTER_CREATE: '/assetapi/encounter/create',
+      ENCOUNTER_GET_ID: '/assetapi/encounter/get',
+      ENCOUNTER_UPDATE: '/assetapi/encounter/update',
+      CHIEF_COMPLIANT_CREATE: '/transactionapi/chiefcomplaint/create',
+      CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
+      CHIEF_COMPLIANT_UPDATE: '/transactionapi/chiefcomplaint/update',
+      DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
+      FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
+      ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
+      DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      FAMILY_DELETE: '/transactionapi/familyhistory/delete',
+      FAMILY_GET: '​/transactionapi​/familyhistory​/get​'
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
@@ -203,7 +216,6 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} immunization_route_uuid`;
       case "immunization_dosage_uuid":
         return `${returnProvideMsg} immunization_dosage_uuid`;
-
       case "immunization_name":
         return `${returnProvideMsg} immunization_name`;
       case "note_template_type_uuid":
