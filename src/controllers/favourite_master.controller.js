@@ -92,6 +92,7 @@ const getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_code",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
@@ -269,7 +270,7 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   };
 
   if (+(tsmd_test_id) === 1) {
-    
+
     favouriteQuery.si_store_master_uuid = sMId;
     favouriteQuery.si_is_active = emr_constants.IS_ACTIVE;
     favouriteQuery.si_status = emr_constants.IS_ACTIVE;
@@ -484,6 +485,10 @@ const TickSheetMasterController = () => {
         fmd = emr_utility.assignDefaultValuesAndUUIdToObject(
           fmd, favouriteMasterCreatedData, user_uuid, "favourite_master_uuid"
         );
+
+        if (favourite_type_uuid !== 1) {
+          fmd.item_master_uuid = 0;
+        }
         const favouriteMasterDetailsCreatedData = await favouritMasterDetailsTbl.create(
           fmd, { returning: true, }
         );
@@ -620,61 +625,73 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
   const _updateFavouriteById = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const favouriteMasterReqData = req.body;
 
-    const favouriteMasterUpdateData = getFavouriteMasterUpdateData(
-      user_uuid, favouriteMasterReqData
-    );
-    const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(
-      user_uuid, favouriteMasterReqData
-    );
+    const favouriteMasterUpdateData = getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData);
+    const favouriteMasterDetailsUpdateData = getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData);
 
-    if (
-      user_uuid && favouriteMasterReqData &&
-      favouriteMasterReqData.hasOwnProperty("favourite_id") && favouriteMasterReqData.hasOwnProperty("is_active")
+    if (user_uuid && favouriteMasterReqData &&
+      favouriteMasterReqData.hasOwnProperty("favourite_id") &&
+      favouriteMasterReqData.hasOwnProperty("is_active") &&
+      favouriteMasterReqData.hasOwnProperty("department_uuid") &&
+      favouriteMasterReqData.hasOwnProperty("favourite_display_order")
     ) {
       try {
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
-            uuid: favouriteMasterReqData.favourite_id,
-            status: emr_constants.IS_ACTIVE,
+            uuid: favouriteMasterReqData.favourite_id, status: emr_constants.IS_ACTIVE,
           },
         });
 
         if (updatingRecord && updatingRecord.length === 0) {
-          return res.status(400).send({
-            code: httpStatus.BAD_REQUEST,
-            message: emr_constants.NO_CONTENT_MESSAGE,
-          });
+          return res.status(400)
+            .send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
+        }
+
+        // Checking Duplicate Display Order
+        if (favouriteMasterReqData && favouriteMasterReqData.favourite_display_order) {
+
+          const existingDisplayOrder = +(favouriteMasterReqData.favourite_display_order);
+          if (existingDisplayOrder !== updatingRecord[0].display_order) {
+
+            const { department_uuid, favourite_display_order } = req.body;
+            const duplicateDisplay = await favouriteMasterTbl.findAll({
+              attributes: ["display_order"],
+              where: {
+                favourite_type_uuid: updatingRecord[0].favourite_type_uuid,
+                department_uuid: department_uuid,
+                facility_uuid,
+                display_order: favourite_display_order
+              }
+            });
+
+            if (duplicateDisplay && duplicateDisplay.length > 0) {
+              return res.status(400).send({
+                code: emr_constants.DUPLICATE_DISPLAY_ORDER,
+                message: `Already display Order '${favourite_display_order}' has been added to your Favorite list.`,
+              });
+            }
+          }
         }
 
         const updatedFavouriteData = await Promise.all([
           favouriteMasterTbl.update(favouriteMasterUpdateData, {
-            where: { uuid: favouriteMasterReqData.favourite_id },
+            where: { uuid: favouriteMasterReqData.favourite_id }
           }),
           favouritMasterDetailsTbl.update(favouriteMasterDetailsUpdateData, {
-            where: {
-              favourite_master_uuid: favouriteMasterReqData.favourite_id,
-            },
+            where: { favourite_master_uuid: favouriteMasterReqData.favourite_id }
           }),
         ]);
-        favouriteTransStatus = true;
 
-        if (updatedFavouriteData) {
-          return res.status(200).send({
-            code: httpStatus.OK,
-            message: "Updated Successfully",
-            requestContent: favouriteMasterReqData,
-          });
-        }
+        return res.status(200)
+          .send({ code: httpStatus.OK, message: "Updated Successfully", requestContent: favouriteMasterReqData });
+
       } catch (ex) {
         console.log(`Exception Happened ${ex}`);
         return res
           .status(400)
           .send({ code: httpStatus[400], message: ex.message });
-      } finally {
-        console.log("Finally");
       }
     } else {
       return res.status(400).send({
@@ -908,8 +925,8 @@ const TickSheetMasterController = () => {
     }
 
     if (req.body && req.body.hasOwnProperty('favourite_type_uuid')) {
-      req.body.favourite_type_uuid =+(req.body.favourite_type_uuid)
-      if(!isNaN(req.body.favourite_type_uuid)){
+      req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+      if (!isNaN(req.body.favourite_type_uuid)) {
         findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
       }
     }
@@ -927,7 +944,7 @@ const TickSheetMasterController = () => {
       } else {
         return res.status(400).send({
           code: httpStatus[400],
-          message: "No Request Body or Search key Found "
+          message: "No Request Body or Search key Found"
         });
       }
     } catch (ex) {
@@ -993,6 +1010,7 @@ function getFavouritesInList(fetchedData) {
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
+        drug_code: tD.im_code,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
         store_master_uuid: tD.si_store_master_uuid || 0,
@@ -1440,4 +1458,3 @@ const getFavouriteQueryById = async (fTypeId, fId, is_master) => {
     });
   }
 };
-

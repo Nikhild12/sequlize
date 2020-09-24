@@ -2,12 +2,16 @@
 const httpStatus = require('http-status');
 
 // Sequelizer Import
-const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
-const Op = Sequelize.Op;
+
+// Config Import
+const emr_config = require('../config/config');
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
+
+// BlockChain Import
+const allergy_blockchain = require('../blockChain/patient.allergy.blockchain');
 
 const emr_utility = require('../services/utility.service');
 
@@ -45,7 +49,11 @@ const Patient_Allergies = () => {
           }
         }
 
-        await patientAllergiesTbl.create(patient_allergies, { returing: true });
+        const createdAllergy = await patientAllergiesTbl.create(patient_allergies, { returing: true });
+        patient_allergies.uuid = createdAllergy.uuid;
+        if (emr_config.isBlockChain === 'ON') {
+          allergy_blockchain.createPatientAllergyBlockchain(patient_allergies);
+        }
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.INSERTED_PATIENT_ALLERGY_SUCCESS, responseContents: patient_allergies });
       } catch (ex) {
         console.log('Exception happened', ex);
@@ -89,6 +97,10 @@ const Patient_Allergies = () => {
     try {
       if (user_uuid && uuid) {
         const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON') {
+          allergy_blockchain.getPatientAllergyBlockChain(+(uuid));
+        }
         return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND}` });
@@ -132,7 +144,11 @@ const Patient_Allergies = () => {
       const updatedAllergyData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
       try {
         const data = await patientAllergiesTbl.update(updatedAllergyData, { where: { uuid: uuid } }, { returning: true });
+
         if (data) {
+          if (emr_config.isBlockChain === 'ON') {
+            allergy_blockchain.deletePatientAllergyBlockChain(+(uuid));
+          }
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
         } else {
           return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
@@ -149,7 +165,6 @@ const Patient_Allergies = () => {
 
     }
   };
-
 
   /**
    * 
@@ -243,6 +258,13 @@ async function getPatientAllergyData(patient_uuid) {
 
           where: { is_active: 1 },
 
+        },
+        {
+          model: patientAllergyStatus,
+          as: 'patient_allergy_status',
+          attributes: ['uuid', 'name', 'code'],
+          where: { is_active: 1, status: 1 },
+
         }
       ]
     },
@@ -267,7 +289,8 @@ function allergyData(patient_allergies) {
     period_uuid: patient_allergies.period_uuid,
     allergy_reaction_uuid: patient_allergies.allergy_reaction_uuid,
     remarks: patient_allergies.remarks,
-    no_known_allergy: patient_allergies.no_known_allergy
+    no_known_allergy: patient_allergies.no_known_allergy,
+    patient_allergy_status_uuid: patient_allergies.patient_allergy_status_uuid
   };
   return data;
 }

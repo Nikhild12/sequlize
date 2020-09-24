@@ -11,5 +11,8 @@ router.route("/deleteAllergyMaster").post(allergymasterCtrl.deleteAlleryMaster);
 
 router.route("/getAlleryMasterById").post(allergymasterCtrl.getAlleryMasterById);
 
+router.route("/get-allergy-source-auto").post(allergymasterCtrl.getAllergySourceAutoComplete);
+
+
 
 module.exports = router;

@@ -6,6 +6,8 @@ const moment = require("moment");
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
+// Config Import
+const emr_config = require('../config/config');
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
 
@@ -17,6 +19,7 @@ const encounter_type_tbl = sequelizeDb.encounter_type;
 
 const emr_constants = require("../config/constants");
 const utilityService = require("../services/utility.service");
+const diagnosisBlockChain = require('../blockChain/diagnosis.blockchain');
 const getActiveAndStatusObject = is_active => {
   return {
     is_active: is_active ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE,
@@ -98,6 +101,9 @@ const PatientDiagnsis = () => {
           patientsDiagnosisData,
           user_uuid
         );
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          diagnosisBlockChain.createDiagnosisMasterBlockChain(patientDiagnosisCreatedData);
+        }
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Inserted Patient Diagnosis Complaints Successfully",
@@ -154,13 +160,11 @@ const PatientDiagnsis = () => {
             to_date
           )
         );
-        //console.log("----------",patientDiagnosisData);
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched Patient Diagnosis Successfully",
           responseContents: getPatientData(patientDiagnosisData)
         });
-        //console.log("----------",patientDiagnosisData);
         //return res.status(200).send({ code: httpStatus.OK, message: "Fetched Patient Diagnosis Successfully", responseContents: patientDiagnosisData });
       } else if (
         user_uuid &&
@@ -201,18 +205,17 @@ const PatientDiagnsis = () => {
     const { uuid } = req.query;
     try {
       if (user_uuid) {
-        const patientDiagnosisData = await patient_diagnosis_tbl.findOne(
-          { where: { uuid: uuid } },
-          { returning: true }
-        );
-        return res
-          .status(200)
+        const patientDiagnosisData = await patient_diagnosis_tbl
+          .findOne({ where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON') {
+          diagnosisBlockChain.getDiagnosisBlockChain(+(uuid));
+        }
+        return res.status(200)
           .send({ code: httpStatus.OK, responseContent: patientDiagnosisData });
       } else {
-        return res.status(400).send({
-          code: httpStatus.UNAUTHORIZED,
-          message: emr_constants.NO_USER_ID
-        });
+        return res.status(400)
+          .send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
       }
     } catch (err) {
       console.log("Exception happened", ex);
@@ -298,11 +301,12 @@ const PatientDiagnsis = () => {
       if (updateData && !updateData[0]) {
         deleteResponseMessage = emr_constants.NO_CONTENT_MESSAGE;
       }
-      return res.status(200).send({
-        code: httpStatus.OK,
-        message: deleteResponseMessage,
-        responseContent: updateData
-      });
+
+      if (emr_config.isBlockChain === 'ON') {
+        diagnosisBlockChain.deleteDiagnosisBlockChain(+(diagnosisId));
+      }
+      return res.status(200)
+        .send({ code: httpStatus.OK, message: deleteResponseMessage, responseContent: updateData });
     } else {
       return res.status(422).send({
         code: httpStatus[400],
@@ -328,7 +332,7 @@ const PatientDiagnsis = () => {
           where: query,
           order: [["uuid", "desc"]],
           limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed','created_date'],
+          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed', 'created_date'],
           include: [{
             model: diagnosis_tbl,
             attributes: ['uuid', 'code', 'name', 'description']

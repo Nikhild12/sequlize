@@ -45,7 +45,7 @@ const EmrDashBoard = () => {
                 if (from_date === today && to_date === today) {
                     const diag = await getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_date, to_date);
                     const chiefc = await getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const presc = await getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                     const cons = await getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
@@ -92,7 +92,7 @@ const EmrDashBoard = () => {
                 else {
                     const diag = await getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date, to_date);
                     const chiefc = await getchiefcbydate(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
-                    const presc = await getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                     const cons = await getconsbybydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date);
@@ -100,7 +100,6 @@ const EmrDashBoard = () => {
                     const cons_graph = await getconsgraphbydate(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                     const orders_graph = getordergraphbydate(lab, rad, inv, from_date, to_date);
                     const orders = getorders(lab, rad, inv);
-                    console.log(orders_graph);
                     return res.status(200).send({
                         code: httpStatus.OK, message: 'Fetched Successfully',
                         responseContents: {
@@ -119,7 +118,7 @@ const EmrDashBoard = () => {
                 if (from_date === today && to_date === today) {
                     const diag = await getDiagnosisbytodayAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
                     const chiefc = await getchiefcbytodayAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
-                    const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, gender, session);
                     const cons = await getconstodayAll(cons_dash, user_uuid, depertment_Id, from_date, to_date, session, gender, facility_uuid);
 
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender, session);
@@ -168,7 +167,7 @@ const EmrDashBoard = () => {
                 } else {
                     const diag = await getdiagbyAll(diag_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
                     const chiefc = await getchiefbyAll(chiefc_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
-                    const presc = await getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, gender, session);
                     const cons = await getconsbyAll(cons_dash, user_uuid, depertment_Id, session, gender, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender, session);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender, session);
@@ -196,7 +195,7 @@ const EmrDashBoard = () => {
                 if (from_date === today && to_date === today) {
                     const diag = await getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, 0, session);
                     const cons = await getconssessiondatetoday(cons_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, 0, session);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, 0, session);
@@ -244,7 +243,7 @@ const EmrDashBoard = () => {
                 } else {
                     const diag = await getdiagbysessiondate(diag_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const chiefc = await getchiefbysessiondate(chiefc_dash, user_uuid, depertment_Id, session, from_date, to_date);
-                    const presc = await getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, 0, session);
                     const cons = await getconsbysessiondate(cons_dash, user_uuid, depertment_Id, session, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, 0, session);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, 0, session);
@@ -273,7 +272,7 @@ const EmrDashBoard = () => {
                 if (from_date === today && to_date === today) {
                     const diag = await getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, gender);
                     const cons = await getconsbygendertoday(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour, gender);
@@ -322,7 +321,7 @@ const EmrDashBoard = () => {
                 } else {
                     const diag = await getdiagbygenderdate(diag_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const chiefc = await getchiefbygenderdate(chiefc_dash, user_uuid, depertment_Id, gender, from_date, to_date);
-                    const presc = await getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_uuid);
+                    const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, gender);
                     const cons = await getconsbygenderdate(cons_dash, user_uuid, depertment_Id, gender, from_date, to_date);
                     const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender);
                     const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, date, gender);
@@ -353,7 +352,7 @@ const EmrDashBoard = () => {
                 let to_date = today;
                 const diag = await getDiagnosisbytoday(diag_dash, user_uuid, depertment_Id, from_date, to_date);
                 const chiefc = await getchiefcbytoday(chiefc_dash, user_uuid, depertment_Id, from_date, to_date);
-                const presc = await getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
+                const presc = await getPrescriptionCount(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid);
                 const cons = await getconsbytoday(cons_dash, user_uuid, depertment_Id, from_date, to_date);
                 const lab = await getLabCount(lab_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
                 const rad = await getRadiologyCount(ris_dash, user_uuid, depertment_Id, from_date, to_date, facility_uuid, hour);
@@ -410,173 +409,49 @@ const EmrDashBoard = () => {
 };
 
 module.exports = EmrDashBoard();
-
 /**
- * Prescription Query Starts
+ * 
+ * @param {*} view  View name is "vw_emr_prescription_dashboard"
+ * @param {*} uId   User id
+ * @param {*} dId   department Id
+ * @param {*} fDate from Date
+ * @param {*} tDate to Date
+ * @param {*} fId   facility Id
+ * @param {*} gen   Gender
+ * @param {*} ses   Session
  */
-async function getprescbybydate(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_id) {
+async function getPrescriptionCount(view, uId, dId, fDate, tDate, fId, gen = 0, ses = 0) {
 
-    const diag = await pres_dash.findAll({
-        attributes: [
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
-            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
-        ],
-        where: {
-            ps_doctor_uuid: user_uuid,
-            ps_status: 1,
-            ps_is_active: 1,
-            ps_department_uuid: depertment_Id,
-            ps_facility_uuid: facility_id,
-            ps_prescription_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
+    const attributes = [
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
+        [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
+        [Sequelize.fn('COUNT', '*'), 'Tot_Count']
+    ];
+
+    const where = {
+        ps_doctor_uuid: uId,
+        ps_status: 1,
+        ps_is_active: 1,
+        ps_department_uuid: dId,
+        ps_facility_uuid: fId,
+        ps_prescription_date: {
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(fDate).format('YYYY-MM-DD')),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(tDate).format('YYYY-MM-DD'))
+            ]
         }
+    };
+
+    if (gen) {
+        where.g_uuid = gen;
     }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return [];
+    if (ses) {
+        where.s_uuid = ses;
     }
-} // Changed Presc on 25.05
-
-
-async function getprescbytoday(pres_dash, user_uuid, depertment_Id, from_date, to_date, facility_id) {
-
-    const diag = await pres_dash.findAll({
-        attributes: [
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
-            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
-        ],
-        where: {
-            ps_doctor_uuid: user_uuid,
-            ps_status: 1,
-            ps_is_active: 1,
-            ps_department_uuid: depertment_Id,
-            ps_facility_uuid: facility_id,
-            ps_prescription_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return [];
-    }
-} // Changed Presc on 25.05
-
-async function getprescbyAll(pres_dash, user_uuid, depertment_Id, session, gender, from_date, to_date, facility_id) {
-
-    const diag = await pres_dash.findAll({
-        attributes: [
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
-            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
-        ],
-        where: {
-            ps_doctor_uuid: user_uuid,
-            ps_status: 1,
-            ps_is_active: 1,
-            ps_department_uuid: depertment_Id,
-            ps_facility_uuid: facility_id,
-            s_uuid: session,
-            g_uuid: gender,
-            ps_prescription_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return [];
-    }
-} // Changed Presc on 25.05
-
-async function getprescbysessiondate(pres_dash, user_uuid, depertment_Id, session, from_date, to_date, facility_id) {
-
-    const diag = await pres_dash.findAll({
-        attributes: [
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
-            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
-        ],
-        where: {
-            ps_doctor_uuid: user_uuid,
-            ps_status: 1,
-            ps_is_active: 1,
-            ps_department_uuid: depertment_Id,
-            ps_facility_uuid: facility_id,
-            s_uuid: session,
-            ps_prescription_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return [];
-    }
-} // Changed Presc on 25.05
-
-async function getprescbygenderdate(pres_dash, user_uuid, depertment_Id, gender, from_date, to_date, facility_id) {
-
-    const diag = await pres_dash.findAll({
-        //group: ['g_uuid',],
-        attributes: [
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 1 THEN `ps_patient_uuid` END')), 'M_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 2 THEN `ps_patient_uuid` END')), 'F_Count'],
-            [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN `g_uuid` = 3 THEN `ps_patient_uuid` END')), 'T_Count'],
-            [Sequelize.fn('COUNT', '*'), 'Tot_Count']
-        ],
-
-        where: {
-            ps_doctor_uuid: user_uuid,
-            ps_status: 1,
-            ps_is_active: 1,
-            ps_department_uuid: depertment_Id,
-            ps_facility_uuid: facility_id,
-            g_uuid: gender,
-            ps_prescription_date: {
-                [Op.and]: [
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
-                    Sequelize.where(Sequelize.fn('date', Sequelize.col('ps_prescription_date')), '<=', moment(to_date).format('YYYY-MM-DD'))
-                ]
-            }
-        }
-    }
-    );
-    if (diag && diag.length > 0) {
-        return diag;
-    } else {
-        return [];
-    }
-} // Changed Presc on 25.05
-
-// Prescription Query Ends
+    const diag = await view.findAll({ attributes, where });
+    return diag && diag.length > 0 ? diag : [];
+} // Prescription Ends
 
 async function getDiagnosisbydate(diag_dash, user_uuid, depertment_Id, from_date, to_date) {
     const diag = await diag_dash.findAll({
@@ -1243,7 +1118,6 @@ function getorders(lab, rad, inv) {
 }
 
 function gethours(data) {
-    //console.log (data);
     let lab_obj = {
         "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
         "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,
@@ -1327,7 +1201,6 @@ function gethours(data) {
 }
 
 function gethourscons(data) {
-    console.log(data);
     let lab_obj = {
         "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,
         "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0,

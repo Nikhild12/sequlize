@@ -2,8 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const vw_emr_radilogy_results = sequelize.define(
     "vw_emr_radilogy_results", {
     po_uuid: {
-      type: DataTypes.INTEGER,
-
+      type: DataTypes.INTEGER
     },
     po_patient_uuid: {
       type: DataTypes.INTEGER,
@@ -27,52 +26,46 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     trm_max_value: {
-      type: DataTypes.INTEGER,
-      // allowNull: true
+      type: DataTypes.INTEGER
     },
     trm_min_value: {
-      type: DataTypes.INTEGER,
-      // allowNull: true
+      type: DataTypes.INTEGER
     },
     um_code: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     um_name: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     lq_code: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     lq_name: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     tm_code: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     tm_name: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     woa_uuid: {
-      type: DataTypes.INTEGER,
-
+      type: DataTypes.INTEGER
     },
     attachment_name: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     file_path: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
     },
     comments: {
-      type: DataTypes.STRING,
-
+      type: DataTypes.STRING
+    },
+    wos_code: {
+      type: DataTypes.STRING
+    },
+    wos_name: {
+      type: DataTypes.STRING
     }
 
   }, {

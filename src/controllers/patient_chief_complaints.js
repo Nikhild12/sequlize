@@ -5,6 +5,9 @@ const moment = require("moment");
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
+// Config Import
+const emr_config = require('../config/config');
+
 var Sequelize = require("sequelize");
 var Op = Sequelize.Op;
 
@@ -14,6 +17,7 @@ const emr_mock_json = require("../config/emr_mock_json");
 
 const patientAttributes = require("../attributes/patient_chief_complaints.attribute");
 
+const chiefComplaintBlockChain = require('../blockChain/chief.complaint.master.blockchain');
 // Initialize EMR Workflow
 const patient_chief_complaints_tbl = sequelizeDb.patient_chief_complaints;
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
@@ -145,6 +149,9 @@ const PatientChiefComplaints = () => {
         //     .send({ code: "DUPLICATE_RECORD", message: duplicate_msg });
         // }
         if (chiefComplaintsCreatedData) {
+          if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+            chiefComplaintBlockChain.createChiefComplaintMasterBlockChain(chiefComplaintsCreatedData);
+          }
           return res.status(200).send({
             code: httpStatus.OK,
             message: "Inserted Patient Chief Complaints Successfully",

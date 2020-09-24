@@ -188,7 +188,7 @@ const cccMasterController = () => {
                     responseContents: data.rows
                 });
         } catch (err) {
-            console.log('"sdfsdf"==', err);
+            console.log('Error = ', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -603,8 +603,6 @@ const cccMasterController = () => {
                 let Lonic_Details = {};
                 let EmonicDetails = await getEmonicAndLonicDetails(req.headers.user_uuid, result[0].dataValues.mnemonic_code_master_uuid, 'mnemonic_code_master', req.headers.authorization);
                 let LonicDetails = await getEmonicAndLonicDetails(req.headers.user_uuid, result[0].dataValues.loinc_code_master_uuid, 'loinc_code_master', req.headers.authorization);
-                // console.log("result", EmonicDetails);
-
                 if (EmonicDetails.statusCode = 200 && EmonicDetails.responseContent == null || EmonicDetails.responseContent == undefined) {
                     result[0].dataValues.Emonic_Details = {};
                 } else {
@@ -634,7 +632,7 @@ const cccMasterController = () => {
             }
 
         } catch (err) {
-            console.log('err===', err);
+            console.log('Error === ', err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.INTERNAL_SERVER_ERROR)

@@ -8,6 +8,12 @@ const sequelizeDb = require("../config/sequelize");
 
 const emrConstants = require("../config/constants");
 
+// blockChain Import
+const blockChain = require('../blockChain/vital.master.blockchain');
+
+// Config Import
+const emr_config = require('../config/config');
+
 // Initialize EMR Workflow
 const emr_patientvitals_Tbl = sequelizeDb.patient_vitals;
 
@@ -20,6 +26,8 @@ const validate = require("../config/validate");
 const utilityService = require("../services/utility.service");
 const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
+
+    let emr_patient_vitals_response;
     try {
       const emrPatientVitalReqData = req.body;
       const { user_uuid } = req.headers;
@@ -50,20 +58,11 @@ const EMRPatientVitals = () => {
               });
           }
         }
-        //checking for existing patient vitals
-        /* for (let exit of req.body) {
-          const exists = await PVexists(exit.patient_uuid, exit.vital_master_uuid);
-
-          if (exists && exists.length > 0) {
-            return res.status(400).send({ code: httpStatus[400], message: "vitals for the patient already exists" });
-          }
-        }*/
         if (
           user_uuid &&
           emrPatientVitalReqData &&
           emrPatientVitalReqData.length > 0
         ) {
-          //const exists = await PVexists(emrPatientVitalReqData.patient_uuid,emrPatientVitalReqData.vital_master_uuid);
 
           if (utilityService.checkTATIsPresent(emrPatientVitalReqData)) {
             if (!utilityService.checkTATIsValid(emrPatientVitalReqData)) {
@@ -86,7 +85,7 @@ const EMRPatientVitals = () => {
             eRD.created_date = eRD.modified_date = new Date();
             eRD.revision = 1;
           });
-          const emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
+          emr_patient_vitals_response = await emr_patientvitals_Tbl.bulkCreate(
             emrPatientVitalReqData,
             { returning: true }
           );
@@ -95,6 +94,9 @@ const EMRPatientVitals = () => {
             ePV.uuid = emr_patient_vitals_response[index].uuid;
           });
 
+          if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+            const patientVitalBlockchain = await blockChain.createVitalMasterBlockChain(emr_patient_vitals_response);
+          }
           if (emr_patient_vitals_response) {
             return res.status(200).send({
               code: httpStatus.OK,
@@ -109,7 +111,13 @@ const EMRPatientVitals = () => {
           .send({ code: httpStatus[400], message: "No Request Body Found" });
       }
     } catch (ex) {
-      //console.log("-----", ex);
+      if (emr_patient_vitals_response) {
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: emrConstants.PATIENT_VITAILS_CREATED,
+          responseContents: emrPatientVitalReqData
+        });
+      } // if any block Chain issue will ignore it
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -229,8 +237,6 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid),
           { returning: true }
         );
-        console.log({ getPPV });
-
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -258,8 +264,6 @@ const EMRPatientVitals = () => {
           getPPVQuery(user_uuid, patient_uuid, department_uuid),
           { returning: true }
         );
-        console.log({ getPPV });
-
         return res.status(200).send({
           code: httpStatus.OK,
           message: "Fetched EMR Previous Patient Vital Details  Successfully",
@@ -564,7 +568,6 @@ function getPVlist(fetchedData, p_id, created_date) {
 }
 
 const PVexists = (PID, vital_master_uuid) => {
-  //console.log ("pvexits callback----------",PVexists);
   if (PID != undefined) {
     return new Promise((resolve, reject) => {
       let value = emr_patientvitals_Tbl.findAll({
@@ -577,7 +580,6 @@ const PVexists = (PID, vital_master_uuid) => {
         where: { patient_uuid: PID, vital_master_uuid: vital_master_uuid }
       });
       if (value) {
-        //console.log("------value-----",value);
         resolve(value);
         return value;
       } else {

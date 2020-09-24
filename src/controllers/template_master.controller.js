@@ -54,7 +54,8 @@ const tmpmstrController = () => {
           lab_id,
           store_master_uuid
         );
-        const templateList = await table_name.findAll(query);
+        const templateList = await table_name.findOne(query);
+        
         if (templateList != null && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,
@@ -234,14 +235,14 @@ const tmpmstrController = () => {
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: emr_constants.NAME_DISPLAY_EXISTS });
+            .send({ code: httpStatus[400], statusCode: httpStatus.BAD_REQUEST, message: emr_constants.NAME_DISPLAY_EXISTS });
         }
 
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
             .status(400)
-            .send({ code: httpStatus[400], message: emr_constants.NAME_DISPLAY_EXISTS });
+            .send({ code: httpStatus[400],statusCode: httpStatus.BAD_REQUEST, message: emr_constants.TEMPLATE_NAME_EXISTS });
         } else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
@@ -471,7 +472,6 @@ const tmpmstrController = () => {
 
     if (getsearch.sortField === "modified_date") {
       getsearch.sortField = "tm_modified_date";
-      console.log(getsearch.sortField);
     }
 
     pageNo = 0;
@@ -946,7 +946,6 @@ function getDietListForTemplate(fetchedData, template_id) {
 }
 
 function getLabListData(fetchedData) {
-  console.log(fetchedData[0]);
   let templateList = [],
     lab_details = [];
   const createdby = fetchedData[0].dataValues.uct_name + " " + fetchedData[0].dataValues.uc_first_name;
@@ -1303,6 +1302,8 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
 function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
   return {
     attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+    order: [["display_order", "ASC"]],
+    distinct:true,
     where: {
       [Op.or]: [
         { department_uuid: { [Op.eq]: dept_id }, is_public: { [Op.eq]: 1 } },
@@ -1313,23 +1314,24 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
       is_active: 1,
       facility_uuid: fId
     },
+    required: false,
     include: [
       {
-        model: tempmstrdetailsTbl,
+        model: vw_template,
         where: {
-          status: 1,
-          is_active: 1
-        },
-        include: [
-          {
-            model: vitalMasterTbl,
-            require: false,
-            where: {
-              status: 1,
-              is_active: 1
-            }
-          }
-        ]
+          tmd_status: 1,
+          tmd_is_active: 1
+        }
+        // include: [
+        //   {
+        //     model: vitalMasterTbl,
+        //     require: false,
+        //     where: {
+        //       status: 1,
+        //       is_active: 1
+        //     }
+        //   }
+        // ]
       }
     ]
   };
@@ -1387,7 +1389,7 @@ const nameExists = (temp_name, userUUID) => {
       let value = tempmstrTbl.findAll({
         order: [['created_date', 'DESC']],
         attributes: ["name", "is_active", "status"],
-        where: { name: temp_name, user_uuid: userUUID }
+        where: { name: temp_name}
       });
       if (value) {
         resolve(value);
@@ -1403,7 +1405,7 @@ const displayOrderExists = (displayOrder, userUUID) => {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         attributes: ["display_order"],
-        where: { display_order: displayOrder, user_uuid: userUUID, status: 1 }
+        where: { display_order: displayOrder, user_uuid: userUUID, status: 1, is_active: 1 }
       });
       if (value) {
         resolve(value);

@@ -1,6 +1,7 @@
 module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
+  ENTRY_STATUS: 2,
   NO: "No",
   OR: "or",
   FOUND: "Found",
@@ -70,7 +71,8 @@ module.exports = Object.freeze({
   NO_REQUEST_FOUND: "No Request Body or Search key Found",
   NO_REQUEST_HEADERS_FOUND: "No Request headers or Body Found",
   PROPER_TEMPLATE_ID: "Please provide valid template id",
-  NAME_DISPLAY_EXISTS: "displayOrder exists or Template name  exists",
+  NAME_DISPLAY_EXISTS: "displayOrder exists",
+  TEMPLATE_NAME_EXISTS: "template name exists",
   TEMPLATE_INSERTED: "Template details Inserted Successfully",
   TEMPLATE_UPDATE_SUCCESS: "Template Updated Successfully",
   NAME_DISPLAY_NOTEXISTS: "name or displayOrder does not existed",
@@ -80,6 +82,41 @@ module.exports = Object.freeze({
   SEND_ALLERGY_MASTER_UUID: "Please send Allergy Master Id",
   INSERTED_PATIENT_ALLERGY_SUCCESS: "Patient Allergy Inserted Successfully",
   PATIENT_ALLERGY_STATUS_FETCH_SUCCESS: "Patient Allergy Status fetched successfully",
+  ALLERGY_SOURCE_SUCCESS: "Allergy Source fetched successfully",
+  LAB_RESULT_SUCCESS: "Lab Results Successfully Fetched",
+  PATIENT_TREATMENT_UPDATE: 'Updated success',
+  FAILED_TO_UPDATE: 'Failed to update',
+  RADIOLOGY_RESULT_SUCCESS: "Radiology Results Successfully Fetched",
+  INVESTIGATION_RESULT_SUCCESS: "Investigation Result Fetched Successfully",
+  BLOCK_CHAIN: {
+    BLOCK_CHAIN_URL: {
+      VITAL_CREATE: '/transactionapi/vitals/create',
+      ENCOUNTER_CREATE: '/assetapi/encounter/create',
+      ENCOUNTER_GET_ID: '/assetapi/encounter/get',
+      ENCOUNTER_UPDATE: '/assetapi/encounter/update',
+      CHIEF_COMPLIANT_CREATE: '/transactionapi/chiefcomplaint/create',
+      CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
+      CHIEF_COMPLIANT_UPDATE: '/transactionapi/chiefcomplaint/update',
+      DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
+      FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
+      ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
+      DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      DIAGNOSIS_GET: '/transactionapi/Diagnosis/get',
+      FAMILY_DELETE: '/transactionapi/familyhistory/delete',
+      FAMILY_GET: '/transactionapi/familyhistory/get',
+      FAMILY_UPDATE: '/transactionapi/familyhistory/update',
+      ALLERGY_CREATE: '/transactionapi/allergies/create',
+      ALLERGY_GET: '/transactionapi/allergies/get',
+      ALLERGY_UPDATE: '/transactionapi/allergies/update',
+      ALLERGY_DELETE: '/transactionapi/allergies/delete',
+      IMMNUIZATION_CREATE: '/transactionapi/immunization/create',
+      IMMUNIZATION_GET: '/transactionapi/immunization/get',
+      IMMUNIZATION_DELETE: '/transactionapi/immunization/delete',
+      IMMUNIZATION_UPADTE: '/transactionapi/immunization/update'
+    },
+    TOKEN:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
+  },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
     switch (columnname) {
@@ -189,7 +226,6 @@ module.exports = Object.freeze({
         return `${returnProvideMsg} immunization_route_uuid`;
       case "immunization_dosage_uuid":
         return `${returnProvideMsg} immunization_dosage_uuid`;
-
       case "immunization_name":
         return `${returnProvideMsg} immunization_name`;
       case "note_template_type_uuid":

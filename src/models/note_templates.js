@@ -84,6 +84,10 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
+        sub_department_uuid: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         data_template: {
             type: DataTypes.STRING(250),
             allowNull: true

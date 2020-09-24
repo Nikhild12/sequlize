@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
         "vw_emr_lab_results", {
         po_uuid: {
             type: DataTypes.INTEGER,
-            
         },
         po_patient_uuid: {
             type: DataTypes.INTEGER,
@@ -27,12 +26,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
         },
         trm_max_value: {
-            type: DataTypes.INTEGER,
-            // allowNull: true
+            type: DataTypes.INTEGER
         },
         trm_min_value: {
-            type: DataTypes.INTEGER,
-            // allowNull: true
+            type: DataTypes.INTEGER
         },
         tm_code: {
             type: DataTypes.STRING,
@@ -42,21 +39,23 @@ module.exports = (sequelize, DataTypes) => {
         },
         um_code: {
             type: DataTypes.STRING,
-
         },
         um_name: {
             type: DataTypes.STRING,
-           
         },
         lq_code: {
             type: DataTypes.STRING,
-            
         },
         lq_name: {
             type: DataTypes.STRING,
-            
+        },
+        wos_code: {
+            type: DataTypes.STRING
+        },
+        wos_name: {
+            type: DataTypes.STRING
         }
-        
+
     }, {
         tableName: "vw_emr_lab_results",
     }

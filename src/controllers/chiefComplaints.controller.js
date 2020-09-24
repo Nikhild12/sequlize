@@ -122,7 +122,6 @@ const chiefComplaintsController = () => {
         if (postData) {
             chiefComplaintTbl.findAll({}).then(data => {
                 data.forEach(element => {
-                    console.log(element);
 
                     if (element.code == postData.code && element.name == postData.name ) {
                         return res

@@ -1926,6 +1926,34 @@
 				}
 			}
 		},
+		"/api/allergyMaster/get-allergy-source-auto": {
+			"post": {
+				"description": "To get Allergy Source",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getAllergySource",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllergySource"
+						}
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Allergy Master"],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Allergy Source"
+					}
+				}
+			}
+		},
 		"/api/emr-workflow-settings/create": {
 			"post": {
 				"description": "To Create a EMR Workflow for the Master",
@@ -3203,6 +3231,12 @@
 					{
 						"in": "header",
 						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -7691,6 +7725,95 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/getReviewNotes": {
+			"get": {
+				"summary": "To get a emr patient op notes by patient Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/emr-notes/print": {
+			"get": {
+				"summary": "To get a emr patient op notes by patient Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/emr-notes/update": {
+			"post": {
+				"description": "To Update Previous Patient OP Notes Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updatePreviousOPNotes",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePreviousOPNotes"
+						}
+					}
+				],
+				"produces": ["application/json", "application/xml"],
+				"tags": ["Emr-notes"],
+				"responses": {
+					"200": {
+						"description": "Updated Successfully",
+						"schema": {
+							"$ref": "#/definitions/updatePreviousOPNotes"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/getProfilesDefault": {
 			"get": {
 				"summary": "To get profiles default  Data",
@@ -9627,6 +9750,20 @@
 				}
 			}
 		},
+		"getAllergySource": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"search": {
+					"type": "string"
+				}
+			}
+		},
 		"getReferenceIdName": {
 			"type": "object",
 			"properties": {
@@ -10665,7 +10802,7 @@
 				"searchValue": {
 					"type": "string"
 				},
-				"favourite_type_uuid":{
+				"favourite_type_uuid": {
 					"type": "integer"
 				}
 			}
@@ -12609,6 +12746,12 @@
 						},
 						"no_known_allergy": {
 							"type": "boolean"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
+							"type": "integer"
 						}
 					}
 				}
@@ -12691,6 +12834,12 @@
 						},
 						"remarks": {
 							"type": "string"
+						},
+						"resolved_date": {
+							"type": "string"
+						},
+						"resolved_by": {
+							"type": "integer"
 						}
 					}
 				}
@@ -13282,6 +13431,95 @@
 				"comments": {
 					"type": "string",
 					"example": "enter some thing"
+				}
+			}
+		},
+		"updatePreviousOPNotes": {
+			"type": "object",
+			"properties": {
+				"facility_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"patient_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_doctor_uuid": {
+					"type": "integer"
+				},
+				"consultation_uuid": {
+					"type": "integer"
+				},
+				"profile_type_uuid": {
+					"type": "integer"
+				},
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"section_uuid": {
+					"type": "integer"
+				},
+				"section_key": {
+					"type": "string"
+				},
+				"activity_uuid": {
+					"type": "integer"
+				},
+				"profile_section_uuid": {
+					"type": "integer"
+				},
+				"category_uuid": {
+					"type": "integer"
+				},
+				"category_key": {
+					"type": "string"
+				},
+				"profile_section_category_uuid": {
+					"type": "integer"
+				},
+				"concept_uuid": {
+					"type": "integer"
+				},
+				"concept_key": {
+					"type": "string"
+				},
+				"profile_section_category_concept_uuid": {
+					"type": "integer"
+				},
+				"term_key": {
+					"type": "string"
+				},
+				"profile_section_category_concept_value_uuid": {
+					"type": "integer"
+				},
+				"result_value": {
+					"type": "integer"
+				},
+				"result_value_rich_text": {
+					"type": "string"
+				},
+				"result_value_json": {
+					"type": "string"
+				},
+				"result_binary": {
+					"type": "string"
+				},
+				"result_path": {
+					"type": "string"
+				},
+				"entry_date": {
+					"type": "string"
+				},
+				"comments": {
+					"type": "string"
+				},
+				"entry_status": {
+					"type": "integer"
 				}
 			}
 		},
