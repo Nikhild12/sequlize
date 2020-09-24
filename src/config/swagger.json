@@ -7736,6 +7736,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "query",
 						"name": "patient_uuid",
 						"required": true,
@@ -7760,6 +7766,12 @@
 					{
 						"in": "header",
 						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
