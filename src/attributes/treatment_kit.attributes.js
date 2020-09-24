@@ -399,7 +399,6 @@ function getLabDetailsFromTreatment(lab) {
 
 // Returns Treatment Kit Details
 function getTreatmentDetails(treatFav) {
-
     // treatment Details
     return {
         treatment_name: treatFav[0].tk_name,
@@ -411,8 +410,8 @@ function getTreatmentDetails(treatFav) {
         treatment_is_public: treatFav[0].tk_is_public,
         department_name: treatFav[0].d_name,
         department_code: treatFav[0].d_code,
-        created_by: treatFav[0].uc_first_name,
-        modified_by: treatFav[0].um_first_name,
+        created_by: treatFav[0].u_uuid,
+        modified_by: treatFav[0].um_uuid,
         activefrom: treatFav[0].activefrom,
         activeto: treatFav[0].activeactiveto,
         description: treatFav[0].description,
