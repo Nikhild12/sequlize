@@ -12,7 +12,7 @@ const { BLOCK_CHAIN_URL, TOKEN } = emr_constants.BLOCK_CHAIN;
 
 const encounterMasterBlockChain = () => {
     const _createEncounterBlockChain = async (encounterObject, encounterDoctorObject) => {
-        const encounterCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ENCOUNTER_CREATE}`;
+        const encounterCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ENCOUNTER_CREATE}`;
         const encounterCreateObjects = emr_utility
             .postRequest(encounterCreateUrl, { Authorization: TOKEN },
                 {
@@ -36,8 +36,14 @@ const encounterMasterBlockChain = () => {
             );
         return encounterCreateObjects;
     };
+
+    const _deleteEncounterBlockChain = async (Id) => {
+        const encounterDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ENCOUNTER_DELETE}`;
+        return await emr_utility.deleteRequest(encounterDeleteURL, TOKEN, { Id });
+    };
     return {
-        createEncounterBlockChain: _createEncounterBlockChain
+        createEncounterBlockChain: _createEncounterBlockChain,
+        deleteEncounterBlockChain: _deleteEncounterBlockChain
     };
 };
 

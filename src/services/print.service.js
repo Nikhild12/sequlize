@@ -15,7 +15,7 @@ const printService = () => {
         }
         return handlebars.compile(template)(data);
     };
-
+   
     const register = (key, fn, inverse = false) => {
         return handlebars.registerHelper(key, fn, inverse);
     };
@@ -59,7 +59,13 @@ const printService = () => {
         getFile
     };
 };
-
+printService().register('convertDate', (date) => {
+    let retdate = '';
+    if (date !== null) {
+        retdate = moment(date).format("DD-MMM-YYYY HH:mm");
+    }
+    return retdate;
+});
 printService().register('strtodate', (date) => {
     let retdate = '';
     if (date !== null) {
@@ -81,7 +87,9 @@ printService().register('dateformat', (date) => {
     }
     return retdate;
 });
-
+printService().register('json', (context) => {
+    return JSON.stringify(context);
+});
 printService().register('expdateformat', (date) => {
     let retdate = '';
     if (date !== null) {

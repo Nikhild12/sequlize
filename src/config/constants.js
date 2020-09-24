@@ -1,6 +1,7 @@
 module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
+  ENTRY_STATUS: 2,
   NO: "No",
   OR: "or",
   FOUND: "Found",
@@ -97,7 +98,11 @@ module.exports = Object.freeze({
       CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
       CHIEF_COMPLIANT_UPDATE: '/transactionapi/chiefcomplaint/update',
       DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
-      FAMILY_HISTORY_CREATE :'/transactionapi/familyhistory/create'
+      FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
+      ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
+      DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      FAMILY_DELETE: '/transactionapi/familyhistory/delete',
+      FAMILY_GET: '​/transactionapi​/familyhistory​/get​'
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"

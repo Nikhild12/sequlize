@@ -102,12 +102,7 @@ const _checkTATIsValid = array => {
 const _postRequest = async (api, headers, data) => {
 
   return new Promise((resolve, reject) => {
-    request.post(
-      {
-        uri: api,
-        headers: headers,
-        json: data
-      },
+    request.post({ uri: api, headers: headers, json: data },
       function (error, response, body) {
         console.log("\n body...", body);
 
@@ -115,34 +110,16 @@ const _postRequest = async (api, headers, data) => {
           reject(error);
         }
         else if (body && !body.status && !body.status === "error") {
-          if (
-            body.responseContent ||
-            body.responseContents ||
-            body.benefMembers ||
-            body.req
-          ) {
-            resolve(
-              body.responseContent ||
-              body.responseContents ||
-              body.benefMembers ||
-              body.req
-            );
+          if (body.responseContent || body.responseContents || body.benefMembers || body.req) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
           }
         }
         else if (body && body.status == "error") {
           reject(body);
         }
         else {
-          if (
-            body.statusCode &&
-            (body.statusCode === 200 || body.statusCode === 201)
-          ) {
-            resolve(
-              body.responseContent ||
-              body.responseContents ||
-              body.benefMembers ||
-              body.req
-            );
+          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
           }
           else if (body && body.status == true) {
             resolve(body);
@@ -154,6 +131,43 @@ const _postRequest = async (api, headers, data) => {
       }
     );
   });
+};
+
+const _deleteRequest = async (url, req, data) => {
+  try {
+    let options = {
+      uri: url,
+      headers: { Authorization: req },
+      method: "DELETE",
+      json: true, // Automatically parses the JSON string in the response
+    };
+    if (data) {
+      options.body = { "id": JSON.stringify(data.Id) };
+    }
+    const results = await rp(options);
+    return { block_chain_response: results };
+
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return { status: false, message: errorMsg };
+  }
+};
+
+const _getBlockChainRequest = async (url, req, data) => {
+  try {
+    let options = {
+      uri: url,
+      headers: { Authorization: req },
+      method: "GET",
+      json: true, // Automatically parses the JSON string in the response
+    };
+    const results = await rp(options);
+    return { block_chain_response: results };
+
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return { status: false, message: errorMsg };
+  }
 };
 
 const _isNumberValid = value => {
@@ -221,13 +235,11 @@ const _checkDateValid = dateVar => {
 };
 
 const _deployedBlockChainUrl = () => {
-  if (config.isBlockChain == 'ON') {
-    const urlobj = {
-      TN: 'http://3.6.97.35:8080/api/troondx/v1',
-      PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
-    };
-    return urlobj[config.blockChainURL];
-  }
+  const urlobj = {
+    TN: 'http://3.6.97.35:8080/api/troondx/v1',
+    PUNE: 'http://3.6.97.35:8080/api/troondx/v2'
+  };
+  return urlobj[config.blockChainURL];
 };
 
 module.exports = {
@@ -248,5 +260,7 @@ module.exports = {
   indiaTz: _indiaTz,
   comparingDateAndTime: _comparingDateAndTime,
   checkDateValid: _checkDateValid,
-  deployedBlockChainUrl: _deployedBlockChainUrl
+  deployedBlockChainUrl: _deployedBlockChainUrl,
+  deleteRequest: _deleteRequest,
+  getBlockChainRequest: _getBlockChainRequest
 };

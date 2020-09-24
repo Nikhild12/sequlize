@@ -3,11 +3,18 @@ const httpStatus = require("http-status");
 //Sequelizer Import
 const db = require('../config/sequelize');
 const Sequelize = require('sequelize');
+const moment = require("moment");
+
 const Op = Sequelize.Op;
 //EMR Constants Import
+const printService = require('../services/print.service');
 const emr_constants = require('../config/constants');
+const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
-
+const rp = require("request-promise");
+const serviceRequest = require('../services/utility.service');
+const vw_patientVitalsTbl = db.vw_patient_vitals;
+const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
@@ -21,6 +28,12 @@ const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
 const appMasterData = require("../controllers/appMasterData");
+const {
+    object
+} = require("joi");
+const {
+    includes
+} = require("lodash");
 const notesController = () => {
 
     /**
@@ -82,9 +95,7 @@ const notesController = () => {
         } = req.headers;
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
-            patient_uuid
-        } = req.query;
-        const {
+            patient_uuid,
             profile_type_uuid
         } = req.query;
 
@@ -92,6 +103,7 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
+            entry_status: emr_constants.ENTRY_STATUS,
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
@@ -295,8 +307,10 @@ const notesController = () => {
             patient_uuid
         } = req.query;
         const {
-            user_uuid
+            user_uuid,
+            facility_uuid
         } = req.headers;
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
                     model: profilesTbl,
@@ -343,15 +357,34 @@ const notesController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
                         message: emr_constants.NO_RECORD_FOUND
                     });
                 }
+                let finalData = [];
+                for (let e of patNotesData) {
+                    let data;
+                    if (e.activity_uuid) {
+                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                        if (actCode) {
+                            e.temp = [];
+                            e.user_uuid = user_uuid;
+                            e.Authorization = Authorization;
+                            e.facility_uuid = facility_uuid;
+                            data = await getWidgetData(actCode, e);
+                            finalData.push(data);
+                            console.log(finalData);
+                        }
+                    } else {
+                        finalData.push(e);
+                    }
+                }
                 return res.status(200).send({
                     code: httpStatus.OK,
-                    responseContent: patNotesData
+                    responseContent: finalData
                 });
             } else {
                 return res.status(400).send({
@@ -360,89 +393,253 @@ const notesController = () => {
                 });
             }
         } catch (ex) {
+            console.log(ex);
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
                 message: ex
             });
         }
     };
+
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
-                certificate_uuid
+                patient_uuid
             } = req.query;
             const {
-                user_uuid
+                user_uuid,
+                facility_uuid
             } = req.headers;
-
-            let certificate_result = {};
-            if (certificate_uuid && user_uuid) {
-                const result = await patientCertificatesTbl.findOne({
-                    where: {
-                        uuid: certificate_uuid,
-                        status: 1,
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            let findQuery = {
+                include: [{
+                        model: profilesTbl,
+                        required: false
                     },
-                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template'],
-
-                });
-                if (result && result != null) {
-                    certificate_result = {
-                        ...result
-                    };
-                    if (certificate_result) {
-                        const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
-                            data_template: certificate_result.dataValues.data_template,
-                            // language: req.__('dischargeSummary')
-                        }), {
-                            "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                            // "orientation": "landscape",
-                            "width": "18in",
-                            "height": "15in",
-                            "header": {
-                                "height": "5mm"
-                            },
-                            "footer": {
-                                "height": "5mm"
-                            }
-                        });
-                        if (pdfBuffer) {
-                            res.writeHead(200, {
-                                'Content-Type': 'application/pdf',
-                                'Content-disposition': 'attachment;filename=previous_discharge_summary.pdf',
-                                'Content-Length': pdfBuffer.length
-                            });
-                            res.end(Buffer.from(pdfBuffer, 'binary'));
-                            return;
-                        } else {
-                            return res.status(400).send({
-                                status: "failed",
-                                statusCode: httpStatus[500],
-                                message: ND_constats.WENT_WRONG
-                            });
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    }
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    is_latest: emr_constants.IS_ACTIVE
+                }
+            };
+            if (user_uuid && patient_uuid) {
+                let printObj = {};
+                const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+                // return res.send(patNotesData)
+                if (!patNotesData) {
+                    return res.status(404).send({
+                        code: 404,
+                        message: emr_constants.NO_RECORD_FOUND
+                    });
+                }
+                let finalData = [];
+                for (let e of patNotesData) {
+                    let data;
+                    if (e.activity_uuid) {
+                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                        if (actCode) {
+                            printObj[actCode.replace(/\s/g, '')] = true;
+                            e.temp = [];
+                            e.user_uuid = user_uuid;
+                            e.Authorization = Authorization;
+                            e.facility_uuid = facility_uuid;
+                            data = await getWidgetData(actCode, e);
+                            finalData.push(data);
+                            console.log(finalData);
                         }
                     } else {
-                        return res.status(400).send({
-                            status: "failed",
-                            statusCode: httpStatus[400],
-                            message: ND_constats.WENT_WRONG
-                        });
+                        finalData.push(e);
                     }
+                }
+
+                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = [];
+
+                let activity_uuids = finalData.map(item => {
+                    return item.activity_uuid;
+                });
+
+
+                if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 42) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+
+                                labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+
+                            }
+                        }
+                        if (e.activity_uuid == 43) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                            }
+                        }
+                        if (e.activity_uuid == 58) {
+                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                            }
+                        }
+                    });
+                }
+                if (printObj.Vitals) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 57) {
+                            vitArr = [...vitArr, ...e.dataValues.details];
+                            // vitArr.push(e.dataValues.details);
+                        }
+                    });
+                }
+                if (printObj.ChiefComplaints) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 49) {
+                            console.log('.......................', e);
+                            cheifArr = [...cheifArr, ...e.dataValues.details];
+                            // vitArr.push(e.dataValues.details);
+                        }
+                    });
+                }
+                if (printObj.Prescriptions) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 44) {
+                            e.dataValues.details.forEach(item => {
+
+                            })
+                            if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
+                            }
+                        }
+                    });
+                }
+                if (printObj.BloodRequests) {
+                    finalData.forEach(e => {
+                        if (e.dataValues.activity_uuid == 252) {
+                            if (e.dataValues.details) {
+                                let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
+                                    return {
+                                        blood_request_status: e.dataValues.details[0].blood_request_status.name,
+                                        blood_group: e.dataValues.details[0].blood_group.name,
+                                        blood_hb: e.dataValues.details[0].blood_hb,
+                                        a: i.blood_component.name
+                                    };
+                                });
+                                // e.dataValues.component_name = e.dataValues.details[0].blood_component.name;
+                                bbArr = [...bbArr, ...detailsArr];
+                            }
+                        }
+                    });
+                }
+
+                printObj.labResult = labArr;
+                printObj.radResult = radArr;
+                printObj.invResult = invArr;
+                printObj.vitResult = vitArr;
+                printObj.cheifResult = cheifArr;
+                printObj.presResult = presArr;
+                printObj.bbResult = bbArr;
+
+                printObj.details = finalData;
+                if (finalData && finalData.length > 0) {
+                    printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
+                    printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
+                }
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm');
+                const facility_result = await getFacilityDetails(req);
+                // console.log("facility_result::",facility_result);
+                if (facility_result.status) {
+                    let {
+                        status: data_facility_status,
+                        facility_uuid: data_facility_uuid,
+                        facility
+                    } = facility_result.data;
+
+                    let {
+                        facility_printer_setting: facPrSet
+                    } = facility;
+                    // console.log("facilityPrinterSetting::",facPrSet);
+
+                    let isFaciltySame = (facility_uuid == data_facility_uuid);
+                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header1 : facPrSet.printer_header1) : '');
+                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header2 : facPrSet.printer_header2) : '');
+                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer1 : facPrSet.printer_footer1) : '');
+                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer2 : facPrSet.printer_footer2) : '');
+                }
+
+
+                // return res.status(200).send({
+                //     code: httpStatus.OK,
+                //     responseContent: printObj
+                // });
+                const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
+                    headerObj: printObj
+                    // language: req.__('dischargeSummary')
+                }), {
+                    format: 'A4',
+                    header: {
+                        height: '45mm'
+                    },
+                    footer: {
+                        height: '20mm',
+                        contents: {
+                            default: '<div style="color: #444;text-align: right;font-size: 10px;padding-right:0.5in;">Page Number: <span>{{page}}</span>/<span>{{pages}}</span></div>'
+                        }
+                    },
+                });
+                if (pdfBuffer) {
+                    res.writeHead(200, {
+                        'Content-Type': 'application/pdf',
+                        'Content-disposition': 'attachment;filename=op_notes.pdf',
+                        'Content-Length': pdfBuffer.length
+                    });
+                    res.end(Buffer.from(pdfBuffer, 'binary'));
+                    return;
                 } else {
                     return res.status(400).send({
                         status: "failed",
-                        statusCode: httpStatus.OK,
-                        message: "No Records Found"
+                        statusCode: httpStatus[500],
+                        message: ND_constats.WENT_WRONG
                     });
                 }
             } else {
                 return res.status(422).send({
                     status: "failed",
                     statusCode: httpStatus[422],
-                    message: "you are missing certificate_uuid / user_uuid "
+                    message: "you are missing patient_uuid / user_uuid "
                 });
             }
 
         } catch (ex) {
+            console.log(ex);
             return res.status(500).send({
                 status: "failed",
                 statusCode: httpStatus.BAD_REQUEST,
@@ -450,6 +647,319 @@ const notesController = () => {
             });
         }
     };
+
+    function getWidgetData(actCode, result) {
+        switch (actCode) {
+            case "Lab":
+                return getLabResult(result);
+            case "Radiology":
+                return getRadiologyResult(result);
+            case "Prescriptions":
+                return getPrescriptionsResult(result);
+            case "Investigation":
+                return getInvestResult(result);
+            case "Vitals":
+                return getVitalsResult(result);
+            case "Chief Complaints":
+                return getChiefComplaintsResult(result);
+            case "Blood Requests":
+                return getBloodRequestResult(result);
+            default:
+                let templateDetails = result;
+                return {
+                    templateDetails
+                };
+        }
+    }
+    const getActivityCode = async (Id, user_uuid, auth) => {
+        console.log('////////////////');
+        let options = {
+            uri: config.wso2AppUrl + 'activity/getActivityById',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: auth,
+                user_uuid: user_uuid
+            },
+            body: {
+                "Id": Id
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents)
+            return user_details.responseContents.name;
+        else
+            return false;
+    };
+
+    const getLabResult = async (result) => {
+        let options = {
+            uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        console.log(options);
+        const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
+        console.log(user_details);
+        if (user_details && user_details) {
+            result.dataValues.details = user_details;
+            return result;
+        } else
+            return false;
+    };
+
+    const getRadiologyResult = async (result) => {
+        let options = {
+            uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents) {
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        } else
+            return false;
+    };
+
+    const getInvestResult = async (result) => {
+        let options = {
+            uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_id": result.patient_uuid,
+                "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents) {
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        } else
+            return false;
+    };
+
+    const getVitalsResult = async (result) => {
+        const user_details = await vw_patientVitalsTbl.findAll({
+            where: {
+                pv_patient_uuid: result.patient_uuid,
+                pv_encounter_uuid: result.encounter_uuid
+            },
+            limit: 10,
+            order: [
+                ['pv_created_date', 'DESC']
+            ],
+            attributes: {
+                "exclude": ['id', 'createdAt', 'updatedAt']
+            },
+        });
+        if (user_details) {
+            result.dataValues.details = user_details;
+            return result;
+        } else
+            return false;
+    };
+
+    const getChiefComplaintsResult = async (result) => {
+        const user_details = await vw_patientCheifTbl.findAll({
+            limit: 10,
+            order: [
+                ['pcc_created_date', 'DESC']
+            ],
+            where: {
+                pcc_patient_uuid: result.patient_uuid,
+                pcc_encounter_uuid: result.encounter_uuid
+            },
+            attributes: {
+                "exclude": ['id', 'createdAt', 'updatedAt']
+            },
+        });
+        if (user_details) {
+            result.dataValues.details = user_details;
+            return result;
+        } else
+            return false;
+    };
+
+    const getPrescriptionsResult = async (result) => {
+        console.log('prescription')
+        let options = {
+            uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
+            //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
+            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            method: "POST",
+            headers: {
+                Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_uuid": result.patient_uuid,
+                // "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        console.log(options)
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents) {
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        } else
+            return false;
+    };
+    const getBloodRequestResult = async (result) => {
+        let options = {
+            uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
+            method: "POST",
+            headers: {
+                // Authorization: result.Authorization,
+                user_uuid: result.user_uuid,
+                facility_uuid: result.facility_uuid
+            },
+            body: {
+                "patient_uuid": result.patient_uuid,
+                // "encounter_uuid": result.encounter_uuid
+            },
+            //body: {},
+            json: true
+        };
+        const user_details = await rp(options);
+        console.log(user_details);
+        if (user_details && user_details.responseContents) {
+            result.dataValues.details = user_details.responseContents;
+            return result;
+        } else
+            return false;
+    };
+    const getFacilityDetails = async (req) => {
+        try {
+            const getFacilityUrl = 'facility/getFacilityById';
+            const postData = {
+                Id: req.headers.facility_uuid
+            };
+
+            const res = await getResultsInObject(getFacilityUrl, req, postData);
+            console.log('>>>>>>>>>>>>>>>facility_res', res);
+            if (res.status && res.data.length > 0) {
+                const resData = res.data;
+                return {
+                    status: true,
+                    data: resData
+                };
+            } else {
+                return res;
+            }
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return {
+                status: false,
+                message: errorMsg
+            };
+        }
+    };
+    const getResultsInObject = async (url, req, data) => {
+        try {
+            const _url = config.wso2AppUrl + url;
+            console.log("_url::", _url);
+            let options = {
+                uri: _url,
+                headers: {
+                    user_uuid: req.headers.user_uuid,
+                    facility_uuid: req.headers.facility_uuid,
+                    Authorization: req.headers.authorization
+                },
+                method: "POST",
+                json: true, // Automatically parses the JSON string in the response
+                // body : {
+                //     uuid : data
+                // }
+
+            };
+
+            if (data) {
+                options.body = data;
+            }
+
+            console.log("options:", options);
+            const results = await rp(options);
+            console.log("getResultsInObject_ResultData:", results);
+
+            if (results.responseContents) {
+                if (results.responseContents.length <= 0) {
+                    return {
+                        status: false,
+                        message: "No content"
+                    };
+                } else {
+                    return {
+                        status: true,
+                        data: results.responseContents
+                    };
+                }
+            } else if (results.responseContent) {
+                if (results.responseContent.length <= 0) {
+                    return {
+                        status: false,
+                        message: "No content"
+                    };
+                } else {
+                    return {
+                        status: true,
+                        data: results.responseContent
+                    };
+                }
+            }
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return {
+                status: false,
+                message: errorMsg
+            };
+        }
+    };
+
 
     return {
         addProfiles: _addProfiles,
@@ -464,7 +974,9 @@ const notesController = () => {
 
 module.exports = notesController();
 
+function getHTML() {
 
+}
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';

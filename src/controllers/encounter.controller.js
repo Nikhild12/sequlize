@@ -194,7 +194,6 @@ const Encounter = () => {
         return res.status(400)
           .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
       }
-
       try {
 
         // Assigning
@@ -232,16 +231,13 @@ const Encounter = () => {
         // checking for Primary Doctor
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-        const createdEncounterDoctorData = await encounter_doctors_tbl.create(
-          encounterDoctor, { returning: true }
-        );
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
-        let blockChainResult;
-        if (emr_config.isBlockChain === 'ON') {
-          blockChainResult = await encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
         }
         return res.status(200)
-          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor, blockChainResult } });
+          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
 
       } catch (ex) {
         console.log(ex);
@@ -299,6 +295,7 @@ const Encounter = () => {
     const { encounterId } = req.query;
 
     if (user_uuid && encounterId && !isNaN(+encounterId)) {
+
       let encounterPromise = [];
       try {
         // enDelTransaction = await sequelizeDb.sequelize.transaction();
@@ -316,8 +313,13 @@ const Encounter = () => {
 
         let deleteEnPromise = await Promise.all(encounterPromise);
         deleteEnPromise = [].concat.apply([], deleteEnPromise);
+        const isAllDeleted = deleteEnPromise.every(d => d === 1);
 
         const responseMessage = isAllDeleted ? emr_constants.UPDATED_ENC_SUCCESS : emr_constants.NO_RECORD_FOUND;
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          encounterBlockChain.deleteEncounterBlockChain(+(encounterId));
+        }
+
         return res.status(200)
           .send({ code: httpStatus.OK, message: responseMessage });
       } catch (ex) {

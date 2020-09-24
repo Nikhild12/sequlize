@@ -27,7 +27,7 @@ const vitalMasterBlockChain = () => {
                         Vital_type: vO.vital_type_uuid ? vO.vital_type_uuid : '',
                         Vital_name: vO.name ? vO.name : '',
                         Vital_description: vO.comments ? vO.comments : '',
-                        Reference_range_from: vO.reference_range_from ? vO.reference_range_from : '',
+                        Reference_range_from: vO.created_date,
                         Reference_range_to: vO.reference_range_to ? vO.reference_range_to : '',
                         Result_value: "",
                         Uom: vO.vital_uom_uuid ? vO.vital_uom_uuid : '',
