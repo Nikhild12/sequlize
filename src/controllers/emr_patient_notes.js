@@ -13,11 +13,13 @@ const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
 const serviceRequest = require('../services/utility.service');
-const vw_patientVitalsTbl = db.vw_patient_vitals;
-const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
+const vw_patientVitalsTbl = db.vw_patient_vitals;
+const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
+const patient_diagnosisTbl = db.patient_diagnosis;
+const diagnosisTbl = db.diagnosis;
 const profilesTbl = db.profiles;
 const conceptsTbl = db.concepts;
 const profileSectionsTbl = db.profile_sections;
@@ -465,6 +467,8 @@ const notesController = () => {
                     });
                 }
                 let finalData = [];
+                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
+
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -483,13 +487,6 @@ const notesController = () => {
                         finalData.push(e);
                     }
                 }
-
-                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = [];
-
-                let activity_uuids = finalData.map(item => {
-                    return item.activity_uuid;
-                });
-
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
@@ -523,18 +520,20 @@ const notesController = () => {
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 49) {
-                            console.log('.......................', e);
                             cheifArr = [...cheifArr, ...e.dataValues.details];
-                            // vitArr.push(e.dataValues.details);
+                        }
+                    });
+                }
+                if (printObj.Diagnosis) {
+                    finalData.forEach(e => {
+                        if (e.activity_uuid == 59) {
+                            diaArr = [...diaArr, ...e.dataValues.details];
                         }
                     });
                 }
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 44) {
-                            e.dataValues.details.forEach(item => {
-
-                            })
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
                             }
@@ -553,7 +552,6 @@ const notesController = () => {
                                         a: i.blood_component.name
                                     };
                                 });
-                                // e.dataValues.component_name = e.dataValues.details[0].blood_component.name;
                                 bbArr = [...bbArr, ...detailsArr];
                             }
                         }
@@ -567,8 +565,10 @@ const notesController = () => {
                 printObj.cheifResult = cheifArr;
                 printObj.presResult = presArr;
                 printObj.bbResult = bbArr;
+                printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
+                
                 if (finalData && finalData.length > 0) {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
                     printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
@@ -664,6 +664,8 @@ const notesController = () => {
                 return getChiefComplaintsResult(result);
             case "Blood Requests":
                 return getBloodRequestResult(result);
+            case "Diagnosis":
+                return getDiagnosisResult(result);
             default:
                 let templateDetails = result;
                 return {
@@ -820,6 +822,25 @@ const notesController = () => {
             return false;
     };
 
+    const getDiagnosisResult = async (result) => {
+        const user_details = await patient_diagnosisTbl.findAll({
+            where: {
+                patient_uuid: result.patient_uuid,
+                encounter_uuid: result.encounter_uuid
+            },
+            include:[
+                {
+                    model: diagnosisTbl
+                }
+            ]
+        });
+        if (user_details) {
+            result.dataValues.details = user_details;
+            return result;
+        } else
+            return false;
+    };
+
     const getPrescriptionsResult = async (result) => {
         console.log('prescription')
         let options = {
@@ -848,6 +869,7 @@ const notesController = () => {
         } else
             return false;
     };
+
     const getBloodRequestResult = async (result) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
@@ -872,6 +894,7 @@ const notesController = () => {
         } else
             return false;
     };
+
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -898,6 +921,7 @@ const notesController = () => {
             };
         }
     };
+
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
