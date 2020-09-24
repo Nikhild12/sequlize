@@ -104,7 +104,11 @@ module.exports = Object.freeze({
       DIAGNOSIS_GET: '/transactionapi/Diagnosis/get',
       FAMILY_DELETE: '/transactionapi/familyhistory/delete',
       FAMILY_GET: '/transactionapi/familyhistory/get',
-      FAMILY_UPDATE: '/transactionapi/familyhistory/update'
+      FAMILY_UPDATE: '/transactionapi/familyhistory/update',
+      ALLERGY_CREATE: '/transactionapi/allergies/create',
+      ALLERGY_GET: '/transactionapi/allergies/get',
+      ALLERGY_UPDATE:'/transactionapi/allergies/update',
+      ALLERGY_DELETE:'/transactionapi/allergies/delete'
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
