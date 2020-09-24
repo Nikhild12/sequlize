@@ -102,11 +102,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       identified_date: {
         type: DataTypes.DATE,
-        allowNull: true,
-        validate: {
-          isDate: true
-        }
-
+        allowNull: true
       },
 
       duration: {
