@@ -110,8 +110,7 @@ const PatientDiagnsis = () => {
           responseContents: appendUUIDToReqData(
             patientsDiagnosisData,
             patientDiagnosisCreatedData
-          ),
-          blockChainResult
+          )
         });
       } catch (ex) {
         return res
@@ -206,18 +205,17 @@ const PatientDiagnsis = () => {
     const { uuid } = req.query;
     try {
       if (user_uuid) {
-        const patientDiagnosisData = await patient_diagnosis_tbl.findOne(
-          { where: { uuid: uuid } },
-          { returning: true }
-        );
-        return res
-          .status(200)
+        const patientDiagnosisData = await patient_diagnosis_tbl
+          .findOne({ where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON') {
+          diagnosisBlockChain.getDiagnosisBlockChain(+(uuid));
+        }
+        return res.status(200)
           .send({ code: httpStatus.OK, responseContent: patientDiagnosisData });
       } else {
-        return res.status(400).send({
-          code: httpStatus.UNAUTHORIZED,
-          message: emr_constants.NO_USER_ID
-        });
+        return res.status(400)
+          .send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
       }
     } catch (err) {
       console.log("Exception happened", ex);
