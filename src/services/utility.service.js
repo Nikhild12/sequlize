@@ -170,6 +170,27 @@ const _getBlockChainRequest = async (url, req, data) => {
   }
 };
 
+const _putBlockChainRequest = async (url, req, data) => {
+  try {
+    let options = {
+      uri: url,
+      headers: { Authorization: req },
+      method: "PUT",
+      json: true, // Automatically parses the JSON string in the response
+    };
+
+    if (data) {
+      options.body = data;
+    }
+    const results = await rp(options);
+    return { block_chain_response: results };
+
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return { status: false, message: errorMsg };
+  }
+};
+
 const _isNumberValid = value => {
   value = Number(value);
   return !isNaN(value);
@@ -262,5 +283,6 @@ module.exports = {
   checkDateValid: _checkDateValid,
   deployedBlockChainUrl: _deployedBlockChainUrl,
   deleteRequest: _deleteRequest,
-  getBlockChainRequest: _getBlockChainRequest
+  getBlockChainRequest: _getBlockChainRequest,
+  putBlockChainRequest: _putBlockChainRequest
 };
