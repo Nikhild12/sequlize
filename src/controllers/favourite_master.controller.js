@@ -906,10 +906,11 @@ const TickSheetMasterController = () => {
       limit: +(paginationSize),
       order: [[sortField, sortOrder]],
       attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-      where: { is_active: 1, fm_status: 1 },
+      where: { fm_status: 1 },
     };
 
     findQuery.where['is_active'] = +(status);
+    console.log(findQuery.where['is_active']);
 
     if (req.body.search && /\S/.test(req.body.search)) {
       findQuery.where = {
@@ -924,7 +925,7 @@ const TickSheetMasterController = () => {
       };
     }
 
-    if (req.body && req.body.hasOwnProperty('favourite_type_uuid')) {
+    if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
       req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
       if (!isNaN(req.body.favourite_type_uuid)) {
         findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
