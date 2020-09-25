@@ -62,9 +62,9 @@ const familyHistoryBlockChain = () => {
             Disease_name: familyHistoryObject.disease_name,
             Disease_description: familyHistoryObject.disease_description,
             Duration: familyHistoryObject.duration,
-            CreatedOn: "",
-            CreatedBy: "",
-            Identified_date: ""
+            CreatedOn: new Date().toISOString(),
+            CreatedBy: new Date().toISOString(),
+            Identified_date: new Date().toISOString()
         };
         return await emr_utility.putBlockChainRequest(historyUpdateURL, TOKEN, updateFamilyObject);
     };
