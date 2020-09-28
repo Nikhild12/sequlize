@@ -31,7 +31,7 @@ const healthHistoryController = () => {
             if (patient_query_string_output.data.length == 0) {
                 throw {
                     error_type: "validationError",
-                    errors: "invalid object",
+                    errors: "no patient found with given data"
                 };
             }
             encounter_query_string_output = await encounterBlockChain.queryStringEncounterBlockChain({ "Patient_id": patient_query_string_output.data[0].Id });
