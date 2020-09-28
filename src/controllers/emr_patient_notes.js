@@ -467,7 +467,7 @@ const notesController = () => {
                     });
                 }
                 let finalData = [];
-                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
+                let basicDtlArr = labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
 
                 for (let e of patNotesData) {
                     let data;
@@ -487,7 +487,9 @@ const notesController = () => {
                         finalData.push(e);
                     }
                 }
+                // finalData.forEach(e=>{
 
+                // });
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 42) {
@@ -535,6 +537,10 @@ const notesController = () => {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 44) {
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                e.dataValues.details[0].prescription_details.forEach(i=>{
+                                    i.store_master = e.dataValues.details[0].store_master;
+                                    i.has_e_mar = e.dataValues.details[0].has_e_mar;
+                                });
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
                             }
                         }
@@ -573,7 +579,7 @@ const notesController = () => {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
                     printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
                 }
-                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm');
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
                 // console.log("facility_result::",facility_result);
                 if (facility_result.status) {
@@ -602,7 +608,6 @@ const notesController = () => {
                 // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
-                    // language: req.__('dischargeSummary')
                 }), {
                     format: 'A4',
                     header: {
@@ -842,7 +847,6 @@ const notesController = () => {
     };
 
     const getPrescriptionsResult = async (result) => {
-        console.log('prescription')
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
