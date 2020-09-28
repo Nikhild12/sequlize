@@ -88,8 +88,8 @@ const Family_History = () => {
         if (!familyData) {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
-        if (emr_config.isBlockChain === 'ON') {
-          familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          await familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
         }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
@@ -144,10 +144,9 @@ const Family_History = () => {
       };
       if (user_uuid && uuid && postdata) {
         const [updated] = await familyHistoryTbl.update(postdata, selector, { returning: true });
-        if (emr_config.isBlockChain === 'ON') {
-          familyHistoryBlockChain.updateFamilyHistoryBlockChain(postdata, +(uuid));
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          await familyHistoryBlockChain.updateFamilyHistoryBlockChain(postdata, +(uuid));
         }
-
         if (updated) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully' });
         } else {
