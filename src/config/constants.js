@@ -93,7 +93,7 @@ module.exports = Object.freeze({
       VITAL_CREATE: '/transactionapi/vitals/create',
       ENCOUNTER_CREATE: '/assetapi/encounter/create',
       ENCOUNTER_GET_ID: '/assetapi/encounter/get',
-      ENOCUNTER_QUERY_STRING : '/assetapi/encounter/querystring',
+      ENOCUNTER_QUERY_STRING: '/assetapi/encounter/querystring',
       ENCOUNTER_UPDATE: '/assetapi/encounter/update',
       CHIEF_COMPLIANT_CREATE: '/transactionapi/chiefcomplaint/create',
       CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
@@ -118,6 +118,11 @@ module.exports = Object.freeze({
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
+  },
+  DEPENDENCY_URLS: {
+    APPMASTER_GET_SPECIFIC_USERS: 'userProfile/getSpecificUsersByIds',
+    APPMASTER_GET_SPECIFIC_DEPARTMENT: 'department/getSpecificDepartmentsByIds',
+    APPMASTER_GET_SPECIFIC_FACILITY: 'facility/getSpecificFacilitiesByIds'
   },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
