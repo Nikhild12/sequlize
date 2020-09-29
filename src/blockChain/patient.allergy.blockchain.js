@@ -48,10 +48,16 @@ const PatientAllergyBlockChain = () => {
         return await emr_utility.getBlockChainRequest(allergyGetURL, TOKEN);
     };
 
+    const _queryStringPatientAllergyBlockChain = async (queryStringObject) => {
+        let patientAllergyCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.ALLERGY_QUERY_STRING}`;
+        return await emr_utility.postRequest(patientAllergyCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
+    };
+
     return {
         createPatientAllergyBlockchain: _createPatientAllergyBlockchain,
         getPatientAllergyBlockChain: _getPatientAllergyBlockChain,
-        deletePatientAllergyBlockChain: _deletePatientAllergyBlockChain
+        deletePatientAllergyBlockChain: _deletePatientAllergyBlockChain,
+        queryStringPatientAllergyBlockChain: _queryStringPatientAllergyBlockChain
     };
 };
 

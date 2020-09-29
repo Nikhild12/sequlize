@@ -33,21 +33,24 @@ const ImmunizationAllergyBlockChain = () => {
         return emr_utility
             .postRequest(immunizationCreateURL, { Authorization: TOKEN }, create);
     };
-
     const _deleteImmunizationBlockChain = async (Id) => {
         const immunizationDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.IMMUNIZATION_DELETE}`;
         return await emr_utility.deleteRequest(immunizationDeleteURL, TOKEN, { Id });
     };
-
     const _getImmunizationBlockChain = async (Id) => {
         const immunizationGetURL = `${emr_utility.deployedBlockChainUrl()}${BLOCK_CHAIN_URL.IMMUNIZATION_GET}/${Id}`;
         return await emr_utility.getBlockChainRequest(immunizationGetURL, TOKEN);
+    };
+    const _queryStringImmunizationBlockChain = async (queryStringObject) => {
+        let immunizationCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.IMMUNIZATION_QUERY_STRING}`;
+        return await emr_utility.postRequest(immunizationCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
     };
 
     return {
         createImmunizationBlockchain: _createImmunizationBlockchain,
         getImmunizationBlockChain: _getImmunizationBlockChain,
-        deleteImmunizationBlockChain: _deleteImmunizationBlockChain
+        deleteImmunizationBlockChain: _deleteImmunizationBlockChain,
+        queryStringImmunizationBlockChain : _queryStringImmunizationBlockChain
     };
 };
 

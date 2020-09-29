@@ -12,7 +12,7 @@ const { BLOCK_CHAIN_URL, TOKEN } = emr_constants.BLOCK_CHAIN;
 
 const chiefComplaintMasterBlockChain = () => {
     const _createChiefComplaintMasterBlockChain = async (chiefComplaintObject) => {
-        const chiefComplaintCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.CHIEF_COMPLIANT_CREATE}`;
+        let chiefComplaintCreateUrl = await emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.CHIEF_COMPLIANT_CREATE}`;
         const chiefComplaintCreateObjects = chiefComplaintObject.map((cO) => {
             return emr_utility
                 .postRequest(chiefComplaintCreateUrl, { Authorization: TOKEN },
@@ -34,8 +34,13 @@ const chiefComplaintMasterBlockChain = () => {
         });
         return await Promise.all(chiefComplaintCreateObjects);
     };
+    const _queryStringChiefComplaintBlockChain = async (queryStringObject) => {
+        let chiefComplaintCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.CHIEF_COMPLIANT_QUERY_STRING}`;
+        return await emr_utility.postRequest(chiefComplaintCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
+    };
     return {
-        createChiefComplaintMasterBlockChain: _createChiefComplaintMasterBlockChain
+        createChiefComplaintMasterBlockChain: _createChiefComplaintMasterBlockChain,
+        queryStringChiefComplaintBlockChain: _queryStringChiefComplaintBlockChain
     };
 };
 

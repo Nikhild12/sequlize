@@ -9256,14 +9256,59 @@
 		"/api/health_history/get": {
 			"post": {
 				"description": "fetch Information",
-				"operationId": "health_history",
+				"operationId": "get_health_history",
 				"parameters": [
 					{
 						"in": "body",
-						"name": "health_history",
+						"name": "get_health_history",
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/getHealthHistory"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "fetch Information.",
+				"tags": [
+					"Health History"
+				]
+			}
+		},
+		"/api/health_history/view": {
+			"post": {
+				"description": "fetch Information",
+				"operationId": "view_health_history",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "view_health_history",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/viewHealthHistory"
 						}
 					},
 					{
@@ -9307,6 +9352,14 @@
 					"type": "string"
 				},
 				"Mobile": {
+					"type": "string"
+				}
+			}
+		},
+		"viewHealthHistory": {
+			"type": "object",
+			"properties": {
+				"Encounter_id": {
 					"type": "string"
 				}
 			}
