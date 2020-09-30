@@ -68,12 +68,17 @@ const familyHistoryBlockChain = () => {
         };
         return await emr_utility.putBlockChainRequest(historyUpdateURL, TOKEN, updateFamilyObject);
     };
+    const _queryStringFamilyHistoryBlockChain = async (queryStringObject) => {
+        let familyHistoryCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.FAMILY_HISTORY_QUERY_STRING}`;
+        return await emr_utility.postRequest(familyHistoryCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
+    };
 
     return {
         createFamilyHistoryBlockChain: _createFamilyHistoryBlockChain,
         deleteFamilyHistoryBlockChain: _deleteFamilyHistoryBlockChain,
         getFamilyHistoryBlockChain: _getFamilyHistoryBlockChain,
-        updateFamilyHistoryBlockChain: _updateFamilyHistoryBlockChain
+        updateFamilyHistoryBlockChain: _updateFamilyHistoryBlockChain,
+        queryStringFamilyHistoryBlockChain: _queryStringFamilyHistoryBlockChain
     };
 };
 

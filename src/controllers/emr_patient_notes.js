@@ -20,6 +20,7 @@ const vw_patientVitalsTbl = db.vw_patient_vitals;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
+const consultationsTbl = db.consultations;
 const profilesTbl = db.profiles;
 const conceptsTbl = db.concepts;
 const profileSectionsTbl = db.profile_sections;
@@ -36,6 +37,7 @@ const {
 const {
     includes
 } = require("lodash");
+const consultations = require("../models/consultations");
 const notesController = () => {
 
     /**
@@ -468,7 +470,7 @@ const notesController = () => {
                 }
                 let finalData = [];
                 let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
-
+                let sample = [];
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -535,6 +537,10 @@ const notesController = () => {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 44) {
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                e.dataValues.details[0].prescription_details.forEach(i => {
+                                    i.store_master = e.dataValues.details[0].store_master;
+                                    i.has_e_mar = e.dataValues.details[0].has_e_mar;
+                                });
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
                             }
                         }
@@ -557,7 +563,8 @@ const notesController = () => {
                         }
                     });
                 }
-
+                
+                // let uniqueChars = [...new Set(sample)];
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -568,12 +575,35 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                
+
+                for(let e of finalData){
+                    let sampleObj = {
+                        [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                    };
+                    if (sample.length == 0) {
+                        sample.push(sampleObj);
+                    } else {
+                        let check = sample.find(item => {
+                            console.log(item);
+                            return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                        });
+                        if (check) {
+                            var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                            check[e.profile_section_category_concept.name] = value;
+                            sample.push(check);
+                        } else {
+                            sample.push(sampleObj);
+                        }
+                    }
+                }
+
+                printObj.sectionResult = [...new Set(sample)];
+
                 if (finalData && finalData.length > 0) {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
                     printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
                 }
-                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm');
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
                 // console.log("facility_result::",facility_result);
                 if (facility_result.status) {
@@ -602,7 +632,6 @@ const notesController = () => {
                 // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
-                    // language: req.__('dischargeSummary')
                 }), {
                     format: 'A4',
                     header: {
@@ -647,6 +676,109 @@ const notesController = () => {
             });
         }
     };
+
+    const _addConsultations = async (req, res) => {
+
+        const {
+            user_uuid
+        } = req.headers;
+        let postData = req.body;
+
+        if (user_uuid) {
+            postData.is_active = postData.status = true;
+            postData.created_by = postData.modified_by = user_uuid;
+            postData.created_date = postData.modified_date = new Date();
+            postData.revision = 1;
+
+            try {
+
+                const consultationsData = await consultationsTbl.create(postData, {
+                    returing: true
+                });
+                if (consultationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Inserted successfully',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                } else {
+                    return res.status(400).send({
+                        code: httpStatus.OK,
+                        message: 'Failed to insert',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                }
+
+
+            } catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.UNAUTHORIZED,
+                message: emr_constants.NO_USER_ID
+            });
+        }
+
+    };
+
+    const _updateConsultations = async (req, res) => {
+
+        const {
+            user_uuid
+        } = req.headers;
+        let postData = req.body;
+
+        if (user_uuid) {
+            postData.is_active = postData.status = true;
+            postData.created_by = postData.modified_by = user_uuid;
+            postData.created_date = postData.modified_date = new Date();
+            postData.revision = 1;
+
+            try {
+
+                const consultationsData = await consultationsTbl.update(postData, {
+                    returing: true
+                });
+                if (consultationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Update successfully',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                } else {
+                    return res.status(400).send({
+                        code: httpStatus.OK,
+                        message: 'Failed to update',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                }
+
+
+            } catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.UNAUTHORIZED,
+                message: emr_constants.NO_USER_ID
+            });
+        }
+
+    };
+
 
     function getWidgetData(actCode, result) {
         switch (actCode) {
@@ -828,11 +960,9 @@ const notesController = () => {
                 patient_uuid: result.patient_uuid,
                 encounter_uuid: result.encounter_uuid
             },
-            include:[
-                {
-                    model: diagnosisTbl
-                }
-            ]
+            include: [{
+                model: diagnosisTbl
+            }]
         });
         if (user_details) {
             result.dataValues.details = user_details;
@@ -842,7 +972,6 @@ const notesController = () => {
     };
 
     const getPrescriptionsResult = async (result) => {
-        console.log('prescription')
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -984,7 +1113,6 @@ const notesController = () => {
         }
     };
 
-
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -992,7 +1120,9 @@ const notesController = () => {
         getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId,
         updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes,
         getReviewNotes: _getReviewNotes,
-        print_previous_opnotes: _print_previous_opnotes
+        print_previous_opnotes: _print_previous_opnotes,
+        addConsultations: _addConsultations,
+        updateConsultations: _updateConsultations
     };
 };
 

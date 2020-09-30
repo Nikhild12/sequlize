@@ -12,10 +12,10 @@
             {{> facility_header this}}
         </div>
 
-        <h2 style="text-align:center; margin-top:20px; float:left; width:100%;"> Op Notes</h2>
+        <h2 style="text-align:center; margin-top:20px; float:left; width:100%;"> OP Notes</h2>
 
         
-        <!-- {{json headerObj}} -->
+        {{json headerObj}}
         {{#if headerObj.sectionName}}
 		<div style="width: 100%; float: left; padding: 10px 0;">
             <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0' style="width:100%; float:left; text-align: left;">
@@ -26,7 +26,7 @@
                         <th colspan="5">{{headerObj.sectionName}}</th>
                     </tr>
                      {{/if}}
-                    {{#if headerObj.categoryNam}}
+                    {{#if headerObj.categoryName}}
                     <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
                         <th colspan="5">{{headerObj.categoryName}}</th>
                     </tr>
@@ -40,14 +40,15 @@
 							<div style="width: calc(400px - 20px); float:left; padding: 0 10px;">
 								<table>
 									<tbody>
-                                        {{#each headerObj.details}}
+                                        {{#each headerObj.sectionResult}}
+                                        {{json dataValues}}
 										<tr>
-											<td style="padding: 5px;">{{profile_section_category_concept.dataValues.name}}</td>
+											<td style="padding: 5px;">{{getKey this}}</td>
 											<td style="padding: 5px;">:</td>
-											<td style="padding: 5px;">{{dataValues.term_key}}</td>
+											<td style="padding: 5px;">{{getValue this}}</td>
                                         </tr>
-		                                 {{/each}}
                                         
+		                                 {{/each}}
 									</tbody>
 								</table>
 							</div>
@@ -93,14 +94,16 @@
             <table  borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0' style="width:100%; float:left; text-align: left;">
                 <thead>
                     <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
-                        <th colspan="5">Prescriptions</th>
+                        <th colspan="7">Prescriptions</th>
                     </tr>
                     <tr style="background-color: #f2f2f2;">
                         <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
-                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Drug Name</th>
                         <th style="border-bottom: 0;border-left: 0; border-left: 0;">Duration</th>
                         <th style="border-bottom: 0;border-left: 0; border-left: 0;">Route</th>
-						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Drug Frequency</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Frequency</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Qty</th>
+						<th style="border-bottom: 0;border-left: 0; border-left: 0;">Drug Inst. / Inj. Room</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,7 +114,13 @@
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{item_master.name}}</td>
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{duration}} {{duration_period.name}}</td>
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{drug_route.name}}</td>
-						<td style="border-bottom: 0;border-left: 0; border-left: 0;">{{drug_frequency.name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{drug_frequency.name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{prescribed_quantity}}</td>
+                        {{#if has_e_mar}}
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{store_master.store_name}}</td>
+                        {{else}}
+						<td style="border-bottom: 0;border-left: 0; border-left: 0;">{{drug_instruction.name}}</td>
+                        {{/if}}
                     </tr>
                     {{/each}}
 
