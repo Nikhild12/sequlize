@@ -165,6 +165,18 @@ printService().register('now', () => {
     return retdatetime;
 });
 
+printService().register('getKey', (obj) => {
+    console.log('............',obj);
+    let key = '';
+    key = obj?Object.keys(obj)[0]:'';
+    return key;
+});
+printService().register('getValue', (obj) => {
+    console.log('............',obj);
+    let values = '';
+    values = obj?Object.values(obj)[0]:'';
+    return values;
+});
 printService().register('include', (...param) => {
     let path = param[0];
     let fullPath = resolve(__dirname, '..' + path);
