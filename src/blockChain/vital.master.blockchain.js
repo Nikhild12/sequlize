@@ -38,8 +38,13 @@ const vitalMasterBlockChain = () => {
         });
         return await Promise.all(vitalCreateObjects);
     };
+    const _queryStringVitalMasterBlockChain = async (queryStringObject) => {
+        let vitalMasterCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.VITAL_QUERY_STRING}`;
+        return await emr_utility.postRequest(vitalMasterCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
+    };
     return {
-        createVitalMasterBlockChain: _createVitalMasterBlockChain
+        createVitalMasterBlockChain: _createVitalMasterBlockChain,
+        queryStringVitalMasterBlockChain: _queryStringVitalMasterBlockChain
     };
 };
 
