@@ -11,12 +11,10 @@
 	},
 	"host": "localhost:7337",
 	"basePath": "/",
-	"tags": [
-		{
-			"name": "EMR API",
-			"description": "API for EMR Data"
-		}
-	],
+	"tags": [{
+		"name": "EMR API",
+		"description": "API for EMR Data"
+	}],
 	"schemes": [
 		"http",
 		"https"
@@ -33,8 +31,7 @@
 		"/api/proceduresNoteTemplate/deleteProcedures-note-template": {
 			"post": {
 				"description": "Deleted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -71,8 +68,7 @@
 		"/api/proceduresNoteTemplate/getProcedures-note-templateById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -109,8 +105,7 @@
 		"/api/proceduresNoteTemplate/updateProcedures-note-template": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -147,8 +142,7 @@
 		"/api/ccc/getcccmasterbytype": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "type",
 						"required": true,
@@ -185,8 +179,7 @@
 		"/api/notetemplate/getnotetemplatebytype": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "type",
 						"required": true,
@@ -229,8 +222,7 @@
 		"/api/procedures/deleteProcedures": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -267,8 +259,7 @@
 		"/api/procedures/getProceduresById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -305,8 +296,7 @@
 		"/api/procedures/updateProceduresById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -343,8 +333,7 @@
 		"/api/speciality/createSpeciality": {
 			"post": {
 				"summary": "To Create a Speciality Sketch",
-				"parameters": [
-					{
+				"parameters": [{
 						"name": "user_uuid",
 						"in": "header",
 						"required": true,
@@ -425,8 +414,7 @@
 		"/api/speciality/getSpecialityById": {
 			"post": {
 				"description": "To get a Speciality Sketches Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -463,8 +451,7 @@
 		"/api/speciality/updateSpecialityById": {
 			"post": {
 				"description": "To Update Speciality Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"name": "user_uuid",
 						"in": "header",
 						"required": true,
@@ -528,8 +515,7 @@
 		"/api/speciality/getAllSpeciality": {
 			"post": {
 				"description": "To get All Speciality",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -564,8 +550,7 @@
 		"/api/speciality/deleteSpeciality": {
 			"post": {
 				"description": "To Delete Speciality Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -597,8 +582,7 @@
 		"/api/ccc/postcccMaster": {
 			"post": {
 				"description": "To Create a Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -635,8 +619,7 @@
 		"/api/ccc/getCccMasterById": {
 			"post": {
 				"description": "To get a Ccc Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -673,8 +656,7 @@
 		"/api/ccc/updateCccMasterById": {
 			"post": {
 				"description": "To Update Ccc Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -711,8 +693,7 @@
 		"/api/ccc/getAllCccMaster": {
 			"post": {
 				"description": "To get All Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -744,8 +725,7 @@
 		"/api/ccc/deleteCccMaster": {
 			"post": {
 				"description": "To Delete Ccc Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -777,14 +757,12 @@
 		"/api/proceduresNoteTemplate/getprocedures-note-template": {
 			"post": {
 				"description": "get Successfully",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -807,8 +785,7 @@
 		"/api/proceduresNoteTemplate/createprocdures-note-template": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -845,8 +822,7 @@
 		"/api/procedures/createProcedures": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -883,8 +859,7 @@
 		"/api/procedures/getProcedures": {
 			"post": {
 				"description": "get list Procedure",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "body",
 						"name": "getlistProcedureMaster",
 						"required": true,
@@ -926,8 +901,7 @@
 		"/api/notetemplate/createNoteTemplate": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -964,8 +938,7 @@
 		"/api/notetemplate/deleteNoteTemplate": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1002,8 +975,7 @@
 		"/api/notetemplate/getNoteTemplate": {
 			"post": {
 				"description": "Get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1040,8 +1012,7 @@
 		"/api/notetemplate/getNoteTemplateById": {
 			"post": {
 				"description": "Get By Id Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1078,8 +1049,7 @@
 		"/api/notetemplate/updateNoteTemplate": {
 			"post": {
 				"description": "update Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1116,8 +1086,7 @@
 		"/api/vitalLonic/addvitalslonic": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1154,14 +1123,12 @@
 		"/api/vitalLonic/getvitalslonic": {
 			"post": {
 				"description": "get Successfully",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -1184,8 +1151,7 @@
 		"/api/vitalMaster/updatevitals": {
 			"post": {
 				"description": "Updated Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1222,8 +1188,7 @@
 		"/api/vitalLonic/updatevitalslonicById": {
 			"post": {
 				"description": "Updated Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1260,8 +1225,7 @@
 		"/api/vitalLonic/deletevitalslonic": {
 			"post": {
 				"description": "Delete Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1298,8 +1262,7 @@
 		"/api/vitalLonic/getvitalslonicById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1336,8 +1299,7 @@
 		"/api/Reference/getreference": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1374,8 +1336,7 @@
 		"/api/Reference/addreference": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1412,8 +1373,7 @@
 		"/api/Reference/getAllreference": {
 			"post": {
 				"description": "To get all reference",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1450,8 +1410,7 @@
 		"/api/immunizations/addimmunization": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1488,8 +1447,7 @@
 		"/api/immunizations/searchimmuization": {
 			"post": {
 				"description": "Fetch Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1526,8 +1484,7 @@
 		"/api/immunizations/getimmunization": {
 			"post": {
 				"description": "To get Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1564,8 +1521,7 @@
 		"/api/immunizations/getimmunizationById": {
 			"post": {
 				"description": "To get by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1602,8 +1558,7 @@
 		"/api/immunizations/deleteimmunizationById": {
 			"post": {
 				"description": "To Delete",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1640,8 +1595,7 @@
 		"/api/immunizations/updateimmunizationById": {
 			"post": {
 				"description": "To update",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1678,8 +1632,7 @@
 		"/api/immunizationSchedule/addimmunizationSchedule": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1716,8 +1669,7 @@
 		"/api/immunizationSchedule/getimmunizationSchedule": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1754,8 +1706,7 @@
 		"/api/immunizationSchedule/getimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1792,8 +1743,7 @@
 		"/api/immunizationSchedule/deleteimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1830,8 +1780,7 @@
 		"/api/immunizationSchedule/updateimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1868,8 +1817,7 @@
 		"/api/commonReference/getReferenceById": {
 			"post": {
 				"description": "get Reference Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1906,8 +1854,7 @@
 		"/api/commonReference/addReference": {
 			"post": {
 				"description": "Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1944,8 +1891,7 @@
 		"/api/commonReference/updateReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -1982,8 +1928,7 @@
 		"/api/commonReference/deleteReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2020,8 +1965,7 @@
 		"/api/commonReference/getReference": {
 			"post": {
 				"description": "Reference Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2058,8 +2002,7 @@
 		"/api/allergyMaster/addAllergyMaster": {
 			"post": {
 				"description": "To Create a Allergy for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2091,8 +2034,7 @@
 		"/api/allergyMaster/getAllergyMaster": {
 			"post": {
 				"description": "To get  Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2124,8 +2066,7 @@
 		"/api/allergyMaster/updateAlleryMasterById": {
 			"post": {
 				"description": "To Update Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2157,8 +2098,7 @@
 		"/api/allergyMaster/deleteAllergyMaster": {
 			"post": {
 				"description": "To Delete Allergy Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2190,8 +2130,7 @@
 		"/api/allergyMaster/getAlleryMasterById": {
 			"post": {
 				"description": "To get by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2223,8 +2162,7 @@
 		"/api/allergyMaster/get-allergy-source-auto": {
 			"post": {
 				"description": "To get Allergy Source",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2256,8 +2194,7 @@
 		"/api/emr-workflow-settings/create": {
 			"post": {
 				"description": "To Create a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2289,8 +2226,7 @@
 		"/api/emr-workflow-settings/delete": {
 			"put": {
 				"description": "To delete a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2322,8 +2258,7 @@
 		"/api/emr-workflow-settings/update": {
 			"put": {
 				"description": "To Update a EMR Workflow for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2355,8 +2290,7 @@
 		"/api/emr-workflow-settings/getEMRWorkflowByUserId": {
 			"get": {
 				"description": "To get a EMR Workflow",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2388,8 +2322,7 @@
 		"/api/emr-history-settings/create": {
 			"post": {
 				"description": "To Create a EMR History for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2421,14 +2354,12 @@
 		"/api/emr-history-settings/getById": {
 			"get": {
 				"description": "To get a EMR History Settings Workflow",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -2449,8 +2380,7 @@
 		"/api/emr-history-settings/update": {
 			"put": {
 				"description": "To Update a EMR History Settings for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2482,8 +2412,7 @@
 		"/api/emr-history-settings/delete": {
 			"put": {
 				"description": "To delete a EMR History Settingd for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2515,8 +2444,7 @@
 		"/api/patient-chief-complaints/create": {
 			"post": {
 				"description": "To create Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2548,14 +2476,12 @@
 		"/api/patient-chief-complaints/getMockJson": {
 			"get": {
 				"description": "To get Patient chief Complaints",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -2573,8 +2499,7 @@
 		"/api/patient-chief-complaints/get-prev-pat-cc-by-patientId": {
 			"get": {
 				"description": "To get Previosu Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2616,8 +2541,7 @@
 		"/api/emr-patient-vitals/create": {
 			"post": {
 				"description": "To Create a EMR Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2649,14 +2573,12 @@
 		"/api/emr-patient-vitals/getMockJson": {
 			"get": {
 				"description": "To get a EMR Patient Vitals",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -2674,8 +2596,7 @@
 		"/api/emr-patient-vitals/getHistoryPatientVitals": {
 			"get": {
 				"description": "To get a EMR History Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2731,8 +2652,7 @@
 		"/api/patient-chief-complaints/getByFilters": {
 			"get": {
 				"description": "To get Patient chief Complaints",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2800,8 +2720,7 @@
 		"/api/encounter/create": {
 			"post": {
 				"description": "To Create a Encounter For Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2833,8 +2752,7 @@
 		"/api/encounter/bulk-create": {
 			"post": {
 				"description": "To Create List of Encounters For Patient Lisr",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2866,8 +2784,7 @@
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
 				"description": "To get a Encounter for Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -2933,14 +2850,12 @@
 		"/api/encounter-type/getEncounterType": {
 			"get": {
 				"description": "To get list of Encounter Type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -2958,14 +2873,12 @@
 		"/api/encounter-type/getEncounterTypeByPost": {
 			"post": {
 				"description": "To get list of Encounter Type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -2983,8 +2896,7 @@
 		"/api/encounter/get-latest-enc-by-patient": {
 			"get": {
 				"description": "To get Latest Patient Record By Patient Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3023,8 +2935,7 @@
 		"/api/encounter/updateECdischarge": {
 			"put": {
 				"description": "To update a Encounter For Patient discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3056,8 +2967,7 @@
 		"/api/patient-diagnosis/create": {
 			"post": {
 				"description": "To create Patient Diagnosis",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3095,14 +3005,12 @@
 		"/api/patient-diagnosis/getMockJson": {
 			"get": {
 				"description": "To get Patient Diagnosis",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -3120,8 +3028,7 @@
 		"/api/patient-diagnosis/getByFilters": {
 			"get": {
 				"description": "To get list of Patient Diagnosis By Filters",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3186,8 +3093,7 @@
 		"/api/patient-diagnosis/getPreviousDiagnosisByPatiendId": {
 			"get": {
 				"description": "To get list of Patient Diagnosis previous orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3223,8 +3129,7 @@
 		"/api/patient-diagnosis/updateById": {
 			"put": {
 				"description": "To update Patient Diagnosis By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3256,8 +3161,7 @@
 		"/api/patient-diagnosis/updatePatientDiagnosis": {
 			"put": {
 				"description": "To create Patient Diagnosis",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3307,14 +3211,12 @@
 		"/api/favourite-type/get-type": {
 			"get": {
 				"description": "To get list of favourite type Master",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -3334,8 +3236,7 @@
 		"/api/favourite-type/get-type-advance": {
 			"post": {
 				"description": "To get list of favourite type Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3369,8 +3270,7 @@
 		"/api/favourite/create": {
 			"post": {
 				"description": "To Create a favourite Drug for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3410,8 +3310,7 @@
 		"/api/favourite/delete": {
 			"put": {
 				"description": "To delete a favourite Drug",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3444,8 +3343,7 @@
 		"/api/favourite/getFavourite": {
 			"get": {
 				"description": "To get list of favourites for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3500,8 +3398,7 @@
 		"/api/favourite/getAllFavourites": {
 			"post": {
 				"description": "To get all list of favourites for the Clinical Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3533,8 +3430,7 @@
 		"/api/favourite/getTreatmentKitFavourite": {
 			"get": {
 				"description": "To get list of Treatment favourites",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3568,8 +3464,7 @@
 		"/api/favourite/getDietFavourite": {
 			"get": {
 				"description": "To get list of Diet favourites",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3609,8 +3504,7 @@
 		"/api/favourite/getTreatmentKitFavouriteById": {
 			"get": {
 				"description": "To get Treatment favourite by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3650,8 +3544,7 @@
 		"/api/favourite/getFavouriteById": {
 			"get": {
 				"description": "To get favourite by given id for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3695,8 +3588,7 @@
 		"/api/favourite/updateFavouriteById": {
 			"put": {
 				"description": "To update favourite by given id for the Doctor login",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3735,8 +3627,7 @@
 		"/api/template/gettemplateByID": {
 			"get": {
 				"summary": "List of Templates by id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3792,8 +3683,7 @@
 		"/api/template/gettempdetails": {
 			"get": {
 				"summary": "List drugs info of template",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3859,8 +3749,7 @@
 		"/api/template/create": {
 			"post": {
 				"description": "To Create a template for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3897,8 +3786,7 @@
 		"/api/template/deleteTemplateDetails": {
 			"put": {
 				"description": "To delete template for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3928,8 +3816,7 @@
 		"/api/template/updatetemplateById": {
 			"put": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -3962,8 +3849,7 @@
 		"/api/diagnosis/getDFilter": {
 			"get": {
 				"description": "To get a Diagnosiseither by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4014,8 +3900,7 @@
 		"/api/diagnosis/search": {
 			"post": {
 				"description": "To get a Diagnosiseither by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4052,8 +3937,7 @@
 		"/api/diagnosis/createDiagnosis": {
 			"post": {
 				"description": "Diagnosis Details Inserted Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4090,8 +3974,7 @@
 		"/api/diagnosis/getDiagnosis": {
 			"post": {
 				"description": "To get a diagnosis  Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4128,8 +4011,7 @@
 		"/api/diagnosis/getDiagnosisAutoSearch": {
 			"post": {
 				"description": "To get a diagnosis  Details By Name Search",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4166,8 +4048,7 @@
 		"/api/diagnosis/deleteDiagnosis": {
 			"post": {
 				"description": "Deleted successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4204,8 +4085,7 @@
 		"/api/diagnosis/updateDiagnosisById": {
 			"post": {
 				"description": "To Update diagnosis ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4242,8 +4122,7 @@
 		"/api/diagnosis/getDaignosisById": {
 			"post": {
 				"description": "To get a diagnosis by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4280,8 +4159,7 @@
 		"/api/diagnosis/getDaignosisByUUId": {
 			"post": {
 				"description": "To get a diagnosis by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4318,8 +4196,7 @@
 		"/api/chief-complaints-master/getByFilters": {
 			"get": {
 				"description": "To get a Chief Complaints either by filters or By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4360,14 +4237,12 @@
 		"/api/chief-complaints-duration/get": {
 			"get": {
 				"description": "To get a chief Complaints Duration List",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -4390,8 +4265,7 @@
 		"/api/chief-complaints-duration/create": {
 			"post": {
 				"description": "To create a chief Complaints Duration Period",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4428,8 +4302,7 @@
 		"/api/chief-complaints-master/create": {
 			"post": {
 				"description": "To create a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4466,8 +4339,7 @@
 		"/api/chief-complaints-master/getAll": {
 			"post": {
 				"description": "To get a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4504,8 +4376,7 @@
 		"/api/chief-complaints-master/getBySearch": {
 			"post": {
 				"description": "To get a chief Complaints Search Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4542,8 +4413,7 @@
 		"/api/chief-complaints-master/getById": {
 			"post": {
 				"description": "To get a chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4580,8 +4450,7 @@
 		"/api/chief-complaints-master/delete": {
 			"post": {
 				"description": "Deleted chief Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4618,8 +4487,7 @@
 		"/api/chief-complaints-master/update": {
 			"post": {
 				"description": "To Update Complaints Master Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4656,8 +4524,7 @@
 		"/api/vitalMaster/create": {
 			"post": {
 				"description": "To Create a vitals for the Master",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4694,8 +4561,7 @@
 		"/api/vitalMaster/deletevitals": {
 			"post": {
 				"description": "Delete Successfully",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4732,14 +4598,12 @@
 		"/api/vitalMaster/getVitals": {
 			"get": {
 				"summary": "To get default vitals master List",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -4762,14 +4626,12 @@
 		"/api/vitalMaster/getAllVitals": {
 			"get": {
 				"summary": "To get all vitals master list",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -4789,8 +4651,7 @@
 		"/api/vitalMaster/getALLVitalsmaster": {
 			"post": {
 				"summary": "To get all vitals master list",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4824,8 +4685,7 @@
 		"/api/vitalMaster/getALLVitalsFilter": {
 			"post": {
 				"summary": "To get all vitals by filter list",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4859,8 +4719,7 @@
 		"/api/vitalMaster/getVitalByID": {
 			"post": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4893,8 +4752,7 @@
 		"/api/vitalMaster/getVitalsByUUID": {
 			"post": {
 				"description": "get vitals details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4927,8 +4785,7 @@
 		"/api/vitalMaster/getdefultVitals": {
 			"get": {
 				"summary": "To get default vitals master List",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4963,8 +4820,7 @@
 		"/api/template/updateTemplateDetailsByID": {
 			"put": {
 				"description": "update template details by Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -4997,14 +4853,12 @@
 		"/api/patientattachments/getattachmenttype": {
 			"get": {
 				"summary": "List attachment type",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -5027,8 +4881,7 @@
 		"/api/patientattachments/getlistBytype": {
 			"get": {
 				"summary": "List attachments by type",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5063,8 +4916,7 @@
 		"/api/patientattachments/getAllAttachments": {
 			"get": {
 				"summary": "List all attachments",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5099,8 +4951,7 @@
 		"/api/patientattachments/upload": {
 			"post": {
 				"summary": "upload the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5177,8 +5028,7 @@
 		"/api/patientattachments/download": {
 			"get": {
 				"summary": "download the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5214,8 +5064,7 @@
 		"/api/patientattachments/deleteAttachmentDetails": {
 			"put": {
 				"summary": "delete the documents",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5250,8 +5099,7 @@
 		"/api/treatment-kit/create": {
 			"post": {
 				"summary": "To create Treatment Kit",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5285,8 +5133,7 @@
 		"/api/treatment-kit/getByFilters": {
 			"get": {
 				"summary": "To get list of Treatment Kits",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5333,8 +5180,7 @@
 		"/api/treatment-kit/delete": {
 			"delete": {
 				"summary": "To delete the treatment kit By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5372,8 +5218,7 @@
 		"/api/treatment-kit/get-by-id": {
 			"get": {
 				"summary": "To get the treatment kit Details By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5411,8 +5256,7 @@
 		"/api/treatment-kit/update": {
 			"put": {
 				"summary": "To update the treatment kit Details By Given Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5452,8 +5296,7 @@
 		"/api/profiles/create": {
 			"post": {
 				"summary": "To create OPNotes profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5487,8 +5330,7 @@
 		"/api/profiles/getAll": {
 			"post": {
 				"summary": "To get all the Profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5525,8 +5367,7 @@
 		"/api/patient-allergy/create": {
 			"post": {
 				"description": "To create Patient Allergy",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5560,8 +5401,7 @@
 		"/api/patient-allergy/getPatientAllergies": {
 			"get": {
 				"description": "To get all patient Allergy History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5596,8 +5436,7 @@
 		"/api/patient-allergy/getPatientAllergiesById": {
 			"get": {
 				"description": "To get a patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5632,8 +5471,7 @@
 		"/api/patient-allergy/delete": {
 			"put": {
 				"description": "Deleted Patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5668,8 +5506,7 @@
 		"/api/patient-allergy/updatePatientAllergy": {
 			"put": {
 				"description": "To Update Patient Allergy Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5712,14 +5549,12 @@
 		"/api/patient-allergy/patient-allergy-status": {
 			"get": {
 				"description": "To get Patient Allergy Status Data",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -5739,14 +5574,12 @@
 		"/api/referal-reasons/getReferralReasons": {
 			"get": {
 				"summary": "To get list of ReferalReasons",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -5766,14 +5599,12 @@
 		"/api//transfer-reasons/getTransferReasons": {
 			"get": {
 				"summary": "To get list of TransferReasons",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -5793,8 +5624,7 @@
 		"/api/diseases/get-by-filters": {
 			"get": {
 				"description": "To get list of diseases based on filter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5835,8 +5665,7 @@
 		"/api/diseases/get-by-filtersP": {
 			"post": {
 				"description": "To get list of diseases based on filter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5873,8 +5702,7 @@
 		"/api/diseases/create": {
 			"post": {
 				"description": "To create Disease API",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5908,8 +5736,7 @@
 		"/api/CC-charts/create": {
 			"post": {
 				"description": "To Create a critical care chart data for the patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5946,8 +5773,7 @@
 		"/api/CC-charts/getCCCbypatientid": {
 			"get": {
 				"summary": "List patient critical care charts data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -5988,8 +5814,7 @@
 		"/api/CC-charts/updateCCCbypatientid": {
 			"post": {
 				"description": "To update a critical care charts data for the patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6026,8 +5851,7 @@
 		"/api/CC-charts/getCCCcomparedata": {
 			"get": {
 				"summary": "List patient critical care data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6080,14 +5904,12 @@
 		"/api/CC-charts/getcccdetails": {
 			"get": {
 				"summary": "List critical care chart details",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -6110,8 +5932,7 @@
 		"/api/my-patient-list/getMyPatientList": {
 			"post": {
 				"summary": "Get List of my patient for the doctor",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6147,8 +5968,7 @@
 		"/api/family-history/create": {
 			"post": {
 				"description": "To Create a family history",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6185,8 +6005,7 @@
 		"/api/family-history/getFamilyHistory": {
 			"get": {
 				"description": "To get Family History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6221,8 +6040,7 @@
 		"/api/family-history/getFamilyHistoryById": {
 			"get": {
 				"description": "To get a Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6257,8 +6075,7 @@
 		"/api/family-history/deleteFamilyHistory": {
 			"put": {
 				"description": "Deleted Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6293,8 +6110,7 @@
 		"/api/family-history/updateFamilyHistory": {
 			"put": {
 				"description": "To Update Family History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6337,8 +6153,7 @@
 		"/api/lab-result/getLabResultById": {
 			"get": {
 				"description": "To get LabResult By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6373,8 +6188,7 @@
 		"/api/radiology_result/getRadiologyResultById": {
 			"get": {
 				"description": "To get RadiologyResult By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6409,8 +6223,7 @@
 		"/api/emr-notes/add": {
 			"post": {
 				"summary": "To create  profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6441,11 +6254,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/addConsultations": {
+			"post": {
+				"summary": "To create  consultation Details ",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Profiles",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/consultationAdd"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/getById": {
 			"get": {
 				"summary": "To get profile Details by Id ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6480,8 +6326,7 @@
 		"/api/profiles/delete": {
 			"put": {
 				"summary": "To delete  profile Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6515,8 +6360,7 @@
 		"/api/surgery-history/create": {
 			"post": {
 				"description": "To Create a surgery history",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6553,8 +6397,7 @@
 		"/api/surgery-history/getSurgeryHistory": {
 			"get": {
 				"description": "To get Surgery History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6589,8 +6432,7 @@
 		"/api/surgery-history/getSurgeryById": {
 			"get": {
 				"description": "To get a surgery History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6625,8 +6467,7 @@
 		"/api/surgery-history/updateSurgery": {
 			"put": {
 				"description": "To Update Surgery History Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6669,8 +6510,7 @@
 		"/api/encounter/get-visit-history": {
 			"get": {
 				"summary": "Patient History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6714,8 +6554,7 @@
 		"/api/encounter/get-enc-by-admission-id": {
 			"get": {
 				"summary": "Encounter By Admission Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6747,8 +6586,7 @@
 		"/api/emr-patient-vitals/getPreviousPatientVitals": {
 			"get": {
 				"description": "To get a EMR Previous Patient Vitals",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6781,8 +6619,7 @@
 		"/api/immunization/create": {
 			"post": {
 				"summary": "To create patient immunization schedule details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6816,8 +6653,7 @@
 		"/api/immunization/getById": {
 			"get": {
 				"summary": "To get a patient immunization schedule Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6852,8 +6688,7 @@
 		"/api/immunization/delete": {
 			"put": {
 				"summary": "Deleted patient immunization schedules Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6888,8 +6723,7 @@
 		"/api/immunization/update": {
 			"put": {
 				"summary": "To Update patient Immunization schedules Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6932,8 +6766,7 @@
 		"/api/immunization/getAll": {
 			"get": {
 				"summary": "To get patient Immunization schedules",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -6968,8 +6801,7 @@
 		"/api/patient-referral/getReferralHistory": {
 			"get": {
 				"description": "To get Referral History",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7004,8 +6836,7 @@
 		"/api/patient-referral/createPatientReferral": {
 			"post": {
 				"description": "To Create Patient Referral",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7042,14 +6873,12 @@
 		"/api/body-side/get-list": {
 			"get": {
 				"description": "To get List of Body Side",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -7072,14 +6901,12 @@
 		"/api/surgery-position/get-list": {
 			"get": {
 				"description": "To get List of Surgery Position",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -7102,8 +6929,7 @@
 		"/api/patient-transfer/create": {
 			"post": {
 				"description": "To Create Patient Transfer",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7140,8 +6966,7 @@
 		"/api/procedures/getProceduresByFilter": {
 			"get": {
 				"description": "To get List of Procedures",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7182,14 +7007,12 @@
 		"/api/profiles/getAllValueTypes": {
 			"get": {
 				"summary": "To get List of valueTypes",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -7212,8 +7035,7 @@
 		"/api/discharge-summary/getDischargeDetails": {
 			"get": {
 				"summary": "To get List of patient detials to discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7254,8 +7076,7 @@
 		"/api/discharge-summary/getPreviousDischargeDetails": {
 			"post": {
 				"summary": "To get previous discharge details of patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7289,8 +7110,7 @@
 		"/api/encounter/delete-by-id": {
 			"put": {
 				"summary": "To get List of patient detials to discharge",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7322,8 +7142,7 @@
 		"/api/encounter/close-encounter": {
 			"put": {
 				"summary": "To Close an Encounter",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7355,8 +7174,7 @@
 		"/api/certificates/create": {
 			"post": {
 				"summary": "To Create Patient certficates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7393,8 +7211,7 @@
 		"/api/certificates/GetAll": {
 			"get": {
 				"summary": "To get List of patient Certificates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7426,8 +7243,7 @@
 		"/api/treatment-kit/getAll": {
 			"post": {
 				"description": "To get List of  patient treatmentkit details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7460,8 +7276,7 @@
 		"/api/treatment-kit/autoSearch": {
 			"post": {
 				"description": "To get list of TreatmentKits based on search",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7498,8 +7313,7 @@
 		"/api/encounter/update-tat-time": {
 			"put": {
 				"summary": "To update ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7533,14 +7347,12 @@
 		"/api/discharge-summary/getdischargetype": {
 			"get": {
 				"summary": "To get List of discharge types",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -7563,14 +7375,12 @@
 		"/api/discharge-summary/getdeathtype": {
 			"get": {
 				"summary": "To get List of discharge types",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -7593,8 +7403,7 @@
 		"/api/snomed/getsnomeddetails": {
 			"get": {
 				"summary": "To get List of snomed detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7629,8 +7438,7 @@
 		"/api/snomed/getsnomedparent": {
 			"get": {
 				"summary": "To get List of snomed parent detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7665,8 +7473,7 @@
 		"/api/snomed/getsnomedchildren": {
 			"get": {
 				"summary": "To get List of snomed children detials",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7701,8 +7508,7 @@
 		"/api/patient-treatment/create": {
 			"post": {
 				"summary": "To create patient treatment Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7747,8 +7553,7 @@
 		"/api/patient-treatment/updatePreviousOrder": {
 			"put": {
 				"summary": "To update patient treatment Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7806,8 +7611,7 @@
 		"/api/template/getalltemplates": {
 			"post": {
 				"description": "To get all templates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7844,8 +7648,7 @@
 		"/api/encounter/getPatientDoc": {
 			"get": {
 				"description": "To get a Encounter for Patient",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7875,8 +7678,7 @@
 		"/api/patient-speciality-sketch/create": {
 			"post": {
 				"description": "To create patient specality sketch details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7960,8 +7762,7 @@
 		"/api/patient-speciality-sketch/get-prev-by-patient": {
 			"get": {
 				"description": "To get patient specality sketch details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -7993,8 +7794,7 @@
 		"/api/patient-treatment/prevKitOrdersById": {
 			"post": {
 				"description": "To get Previouskit Orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8036,8 +7836,7 @@
 		"/api/patient-treatment/repeatOrderDetails": {
 			"post": {
 				"description": "To get Particular Previouskit Orders",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8075,14 +7874,12 @@
 		"/api/sections/getAll": {
 			"get": {
 				"summary": "To get all the section Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -8100,14 +7897,12 @@
 		"/api/categories/getAll": {
 			"get": {
 				"summary": "To get all the categories Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -8125,8 +7920,7 @@
 		"/api/categories/create": {
 			"post": {
 				"description": "To create category details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8160,8 +7954,7 @@
 		"/api/sections/create": {
 			"post": {
 				"description": "To create sections details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8195,8 +7988,7 @@
 		"/api/sections/getById": {
 			"post": {
 				"summary": "To get sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8233,8 +8025,7 @@
 		"/api/sections/delete": {
 			"put": {
 				"summary": "Deleted sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8271,8 +8062,7 @@
 		"/api/sections/update": {
 			"put": {
 				"summary": "To Update sections Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8309,8 +8099,7 @@
 		"/api/categories/getById": {
 			"post": {
 				"summary": "To get categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8347,8 +8136,7 @@
 		"/api/categories/delete": {
 			"put": {
 				"summary": "Deleted Categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8385,8 +8173,7 @@
 		"/api/categories/update": {
 			"put": {
 				"summary": "To Update Categories Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8423,8 +8210,7 @@
 		"/api/encounter/getAll": {
 			"get": {
 				"summary": "To get all the encounter Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8459,8 +8245,7 @@
 		"/api/dashboard/getDashBoarddata": {
 			"get": {
 				"summary": "To get DashBoad Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8523,8 +8308,7 @@
 		"/api/profiles/update": {
 			"put": {
 				"summary": "To Update profiles Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8558,8 +8342,7 @@
 		"/api/progress/create": {
 			"post": {
 				"summary": "To create progressNotes details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8593,8 +8376,7 @@
 		"/api/progress/update": {
 			"put": {
 				"summary": "To Update progress Notes details Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8637,8 +8419,7 @@
 		"/api/progress/delete": {
 			"put": {
 				"summary": "Deleted progressNotes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8670,8 +8451,7 @@
 		"/api/progress/getById": {
 			"get": {
 				"summary": "To get progressNotes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8703,8 +8483,7 @@
 		"/api/progress/getAll": {
 			"get": {
 				"summary": "To get all the progressnotes Details ",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8734,14 +8513,12 @@
 		"/api/profiles/getAllProfileTypes": {
 			"get": {
 				"summary": "To get all the profiletype Details ",
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				],
+				"parameters": [{
+					"in": "header",
+					"name": "user_uuid",
+					"required": true,
+					"type": "integer"
+				}],
 				"produces": [
 					"application/json",
 					"application/xml"
@@ -8759,8 +8536,7 @@
 		"/api/emr-notes/get-prev-by-patient": {
 			"get": {
 				"summary": "To get patient notes details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8798,8 +8574,7 @@
 		"/api/emr-notes/get-patient-by-id": {
 			"get": {
 				"summary": "To get a emr patient op notes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8831,8 +8606,7 @@
 		"/api/emr-notes/get-patient-by-patientId": {
 			"get": {
 				"summary": "To get a emr patient op notes by patient Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8864,8 +8638,7 @@
 		"/api/emr-notes/getReviewNotes": {
 			"get": {
 				"summary": "To get a emr patient op notes by patient Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8903,8 +8676,7 @@
 		"/api/emr-notes/print": {
 			"get": {
 				"summary": "To get a emr patient op notes by patient Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8942,8 +8714,7 @@
 		"/api/emr-notes/update": {
 			"post": {
 				"description": "To Update Previous Patient OP Notes Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -8980,8 +8751,7 @@
 		"/api/profiles/getProfilesDefault": {
 			"get": {
 				"summary": "To get profiles default  Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9013,8 +8783,7 @@
 		"/api/profiles/setProfilesDefault": {
 			"post": {
 				"summary": "To create profile and profileType details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9048,8 +8817,7 @@
 		"/api/profiles/get-notes-by-type": {
 			"get": {
 				"summary": "To get notes details by type",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9087,8 +8855,7 @@
 		"/api/commonReference/getReferenceByIdForLanguage": {
 			"post": {
 				"description": "get Reference Details",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9130,8 +8897,7 @@
 		"/api/investigation_result/getInvestigationResultById": {
 			"get": {
 				"description": "To get investigation By Id",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9166,8 +8932,7 @@
 		"/api/drug-frequencyResult/getdrugfrequency": {
 			"get": {
 				"summary": "To get drugfrequency default  Data",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -9223,8 +8988,7 @@
 		"/api/certificates/printpreviouscertificates": {
 			"get": {
 				"summary": "To get List of patient Certificates",
-				"parameters": [
-					{
+				"parameters": [{
 						"in": "header",
 						"name": "user_uuid",
 						"required": true,
@@ -14630,6 +14394,60 @@
 					}
 				}
 			}
+		},
+		"consultationAdd": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "integer"
+				},
+				"encounter_uuid": {
+					"type": "integer"
+				},
+				"encounter_doctor_uuid": {
+					"type": "integer"
+				},
+				"doctor_uuid": {
+					"type": "integer"
+				},
+				"note_type_uuid": {
+					"type": "integer"
+				},
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"visible_user_uuid": {
+					"type": "integer"
+				},
+				"restrict_reason": {
+					"type": "string"
+				},
+				"visible_dept_uuid": {
+					"type": "integer"
+				},
+				"claim_process_uuid": {
+					"type": "integer"
+				},
+				"ot_register_uuid": {
+					"type": "integer"
+				},
+				"visittype_uuid": {
+					"type": "integer"
+				},
+				"approved_by": {
+					"type": "integer"
+				},
+				"claim_number": {
+					"type": "string"
+				},
+				"last_consult_by": {
+					"type": "integer"
+				},
+				"last_consult_date": {
+					"type": "string"
+				}
+			}
+
 		},
 		"getProfileById": {
 			"type": "object",
