@@ -14,6 +14,9 @@ const familyHistoryTbl = sequelizeDb.family_history;
 const periodsTbl = sequelizeDb.periods;
 const familyRealationTbl = sequelizeDb.family_relation_type;
 
+// Config Import
+const emr_config = require('../config/config');
+const familyHistoryBlockChain = require('../blockChain/family.history.blockchain');
 
 const Family_History = () => {
 
@@ -30,7 +33,10 @@ const Family_History = () => {
     if (user_uuid && familyHistory) {
       await assignDefault(familyHistory, user_uuid);
       try {
-        await familyHistoryTbl.create(familyHistory, { returing: true });
+        let familyHistoryOutput = await familyHistoryTbl.create(familyHistory, { returing: true });
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          familyHistoryBlockChain.createFamilyHistoryBlockChain(familyHistoryOutput);
+        }
         return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: familyHistory });
       } catch (ex) {
         console.log('Exception happened', ex);
@@ -82,6 +88,9 @@ const Family_History = () => {
         if (!familyData) {
           return res.status(404).send({ code: 404, message: emr_constants.NO_RECORD_FOUND });
         }
+        if (emr_config.isBlockChain === 'ON') {
+          familyHistoryBlockChain.getFamilyHistoryBlockChain(+(uuid));
+        }
         return res.status(200).send({ code: httpStatus.OK, responseContent: familyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
@@ -101,12 +110,17 @@ const Family_History = () => {
       const updatedFamilyData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
       try {
         const data = await familyHistoryTbl.update(updatedFamilyData, { where: { uuid: uuid } }, { returning: true });
+
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          const deleteD = await familyHistoryBlockChain.deleteFamilyHistoryBlockChain(+(uuid));
+          console.log({ deleteD });
+        }
         if (data) {
           return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
         } else {
           return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
-
         }
+
 
       }
       catch (ex) {
