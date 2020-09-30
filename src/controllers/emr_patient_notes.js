@@ -469,8 +469,8 @@ const notesController = () => {
                     });
                 }
                 let finalData = [];
-                let basicDtlArr = labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
-
+                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
+                let sample = [];
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -489,9 +489,7 @@ const notesController = () => {
                         finalData.push(e);
                     }
                 }
-                // finalData.forEach(e=>{
 
-                // });
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 42) {
@@ -565,7 +563,8 @@ const notesController = () => {
                         }
                     });
                 }
-
+                
+                // let uniqueChars = [...new Set(sample)];
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -576,6 +575,29 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
+
+                for(let e of finalData){
+                    let sampleObj = {
+                        [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                    };
+                    if (sample.length == 0) {
+                        sample.push(sampleObj);
+                    } else {
+                        let check = sample.find(item => {
+                            console.log(item);
+                            return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                        });
+                        if (check) {
+                            var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                            check[e.profile_section_category_concept.name] = value;
+                            sample.push(check);
+                        } else {
+                            sample.push(sampleObj);
+                        }
+                    }
+                }
+
+                printObj.sectionResult = [...new Set(sample)];
 
                 if (finalData && finalData.length > 0) {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
@@ -705,6 +727,58 @@ const notesController = () => {
         }
 
     };
+
+    const _updateConsultations = async (req, res) => {
+
+        const {
+            user_uuid
+        } = req.headers;
+        let postData = req.body;
+
+        if (user_uuid) {
+            postData.is_active = postData.status = true;
+            postData.created_by = postData.modified_by = user_uuid;
+            postData.created_date = postData.modified_date = new Date();
+            postData.revision = 1;
+
+            try {
+
+                const consultationsData = await consultationsTbl.update(postData, {
+                    returing: true
+                });
+                if (consultationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Update successfully',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                } else {
+                    return res.status(400).send({
+                        code: httpStatus.OK,
+                        message: 'Failed to update',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                }
+
+
+            } catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.UNAUTHORIZED,
+                message: emr_constants.NO_USER_ID
+            });
+        }
+
+    };
+
 
     function getWidgetData(actCode, result) {
         switch (actCode) {
@@ -1039,7 +1113,6 @@ const notesController = () => {
         }
     };
 
-
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -1048,7 +1121,8 @@ const notesController = () => {
         updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes,
         getReviewNotes: _getReviewNotes,
         print_previous_opnotes: _print_previous_opnotes,
-        addConsultations: _addConsultations
+        addConsultations: _addConsultations,
+        updateConsultations: _updateConsultations
     };
 };
 
