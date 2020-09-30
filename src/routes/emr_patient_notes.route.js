@@ -13,5 +13,6 @@ notesRoute.route('/get-patient-by-patientId').get(notesController.getOPNotesDeta
 notesRoute.route('/getReviewNotes').get(notesController.getReviewNotes);
 notesRoute.route('/update').post(notesController.updatePreviousPatientOPNotes);
 notesRoute.route('/print').get(notesController.print_previous_opnotes);
+notesRoute.route('/addConsultations').post(notesController.addConsultations);
 
 module.exports = notesRoute;
