@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
-            profile_type_uuid: {
+            note_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            approved_date:{
+            approved_date: {
                 type: DataTypes.DATE,
                 allowNull: true
             },
