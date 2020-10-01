@@ -48,42 +48,51 @@ const notesController = () => {
      * @param {*} res 
      */
     const _addProfiles = async (req, res) => {
-
         const {
             user_uuid
         } = req.headers;
-        let profiles = req.body;
-
+        let consultation_header = req.body.header;
+        let profiles = req.body.details;
+        let currentDate = new Date();
         if (user_uuid) {
-            profiles.forEach(e => {
-                e.is_active = e.status = true;
-                e.created_by = e.modified_by = user_uuid;
-                e.created_date = e.modified_date = new Date();
-                e.revision = 1;
-            });
-
             try {
-                const updateData = await sectionCategoryEntriesTbl.update({
+                const consultationOutput = await consultationsTbl.create(consultation_header);
+                if (!consultationOutput) {
+                    throw {
+                        error_type: 'validation',
+                        errors: "consultation data not inserted"
+                    };
+                }
+                await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
                 }, {
                     where: {
                         is_latest: emr_constants.IS_ACTIVE
                     }
                 });
-                const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, {
+                profiles.forEach(e => {
+                    e.is_active = e.status = true;
+                    e.created_by = e.modified_by = user_uuid;
+                    e.created_date = e.modified_date = e.entry_date = currentDate;
+                    e.revision = emr_constants.IS_ACTIVE;
+                    e.consultation_uuid = consultationOutput.dataValues.uuid;
+                });
+                await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
                 });
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
-                    reqContents: req.body
+                    reqContents: req.body,
+                    responseContents : consultationOutput
                 });
-
-            } catch (ex) {
-                console.log('Exception happened', ex);
+            } catch (err) {
+                if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                    return res.status(400).json({ Error: err.errors, msg: "Validation error" });
+                }
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
-                    message: ex
+                    message: err
                 });
             }
         } else {
@@ -94,7 +103,6 @@ const notesController = () => {
         }
 
     };
-
     const _getPreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -109,15 +117,16 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            entry_status: emr_constants.ENTRY_STATUS,
+            // entry_status: emr_constants.ENTRY_STATUS,
+            entry_status: {
+                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            },
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
-
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
-
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
                     const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
@@ -182,7 +191,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsById = async (req, res) => {
 
         const {
@@ -225,7 +233,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
@@ -267,7 +274,6 @@ const notesController = () => {
             });
         }
     };
-
     const _updatePreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -319,41 +325,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -363,7 +369,6 @@ const notesController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
@@ -406,7 +411,6 @@ const notesController = () => {
             });
         }
     };
-
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
@@ -489,7 +493,6 @@ const notesController = () => {
             if (user_uuid && patient_uuid) {
                 let printObj = {};
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
@@ -722,7 +725,6 @@ const notesController = () => {
             });
         }
     };
-
     const _addConsultations = async (req, res) => {
 
         const {
@@ -773,22 +775,17 @@ const notesController = () => {
         }
 
     };
-
     const _updateConsultations = async (req, res) => {
-
         const {
             user_uuid
         } = req.headers;
         let postData = req.body;
-
         if (user_uuid) {
             postData.is_active = postData.status = true;
-            postData.created_by = postData.modified_by = user_uuid;
-            postData.created_date = postData.modified_date = new Date();
-            postData.revision = 1;
-
+            postData.modified_by = user_uuid;
+            postData.modified_date = new Date();
+            postData.revision = emr_constants.IS_ACTIVE;
             try {
-
                 const consultationsData = await consultationsTbl.update(postData, {
                     returing: true
                 });
@@ -807,8 +804,6 @@ const notesController = () => {
                         responseContents: consultationsData
                     });
                 }
-
-
             } catch (ex) {
                 console.log('Exception happened', ex);
                 return res.status(400).send({
@@ -824,8 +819,6 @@ const notesController = () => {
         }
 
     };
-
-
     function getWidgetData(actCode, result) {
         switch (actCode) {
             case "Lab":
@@ -875,7 +868,6 @@ const notesController = () => {
         else
             return false;
     };
-
     const getLabResult = async (result) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -903,7 +895,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getRadiologyResult = async (result) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
@@ -930,7 +921,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getInvestResult = async (result) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
@@ -957,7 +947,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getVitalsResult = async (result) => {
         const user_details = await vw_patientVitalsTbl.findAll({
             where: {
@@ -978,7 +967,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
@@ -999,7 +987,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getDiagnosisResult = async (result) => {
         const user_details = await patient_diagnosisTbl.findAll({
             where: {
@@ -1016,7 +1003,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getPrescriptionsResult = async (result) => {
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
@@ -1044,7 +1030,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getBloodRequestResult = async (result) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
@@ -1069,7 +1054,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -1096,7 +1080,6 @@ const notesController = () => {
             };
         }
     };
-
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
@@ -1158,7 +1141,6 @@ const notesController = () => {
             };
         }
     };
-
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -1173,10 +1155,6 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-
-function getHTML() {
-
-}
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
