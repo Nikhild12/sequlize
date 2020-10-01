@@ -56,10 +56,9 @@ const notesController = () => {
             profiles.forEach(e => {
                 e.is_active = e.status = true;
                 e.created_by = e.modified_by = user_uuid;
-                e.created_date = e.modified_date = new Date();
+                e.created_date = e.modified_date = e.entry_date = new Date();
                 e.revision = 1;
             });
-
             try {
                 const updateData = await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
@@ -107,15 +106,16 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            entry_status: emr_constants.ENTRY_STATUS,
+            // entry_status: emr_constants.ENTRY_STATUS,
+            entry_status: {
+                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            },
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
-
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
-
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
                     const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
@@ -317,41 +317,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -361,7 +361,6 @@ const notesController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
@@ -417,41 +416,41 @@ const notesController = () => {
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    }
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -461,7 +460,6 @@ const notesController = () => {
             if (user_uuid && patient_uuid) {
                 let printObj = {};
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
