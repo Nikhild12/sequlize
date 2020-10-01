@@ -17,6 +17,8 @@ const serviceRequest = require('../services/utility.service');
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const vw_patientVitalsTbl = db.vw_patient_vitals;
+const vw_my_patient_listTbl = db.vw_my_patient_list;
+const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
@@ -416,7 +418,33 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
+                        model: consultationsTbl,
+                        required: false,
+                        include:[
+                            {
+                                model: vw_my_patient_listTbl,
+                                required: false,
+                                attributes: {
+                                    "exclude": ['id', 'createdAt', 'updatedAt']
+                                }
+                            },
+                            {
+                                model: vw_patient_doctor_detailsTbl,
+                                required: false,
+                                attributes: {
+                                    "exclude": ['id', 'createdAt', 'updatedAt']
+                                },
+                                where: {
+                                    department_uuid: {
+                                        [Op.col]: 'consultations.department_uuid'
+                                    }
+                                },
+                            },
+                        ]
+                    },
+                    {
                         model: profilesTbl,
                         required: false
                     },
@@ -471,6 +499,7 @@ const notesController = () => {
                 let finalData = [];
                 let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
                 let sample = [];
+
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -563,8 +592,23 @@ const notesController = () => {
                         }
                     });
                 }
-                
+                let patientObj = {
+                    patient_name : finalData[0].consultations.vw_my_patient_list.pa_first_name,
+                    age: finalData[0].consultations.vw_my_patient_list.pa_age,
+                    title: finalData[0].consultations.vw_my_patient_list.t_name,
+                    mobile: finalData[0].consultations.vw_my_patient_list.pd_mobile,
+                    pin: finalData[0].consultations.vw_my_patient_list.pa_pin
+                };
+                let doctorObj = {
+                    doctor_name : finalData[0].consultations.vw_patient_doctor_details.u_first_name,
+                    dept_name: finalData[0].consultations.vw_patient_doctor_details.d_name,
+                    title: finalData[0].consultations.vw_patient_doctor_details.t_name,
+                    date: finalData[0].consultations.created_date,
+                    notes_name: finalData[0].profiles.name
+                };
                 // let uniqueChars = [...new Set(sample)];
+                printObj.patientDetails = patientObj;
+                printObj.doctorDetails = doctorObj;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -575,8 +619,10 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-
-                for(let e of finalData){
+                
+                console.log(patObj);
+                // printObj.basicDetails = 
+                for (let e of finalData) {
                     let sampleObj = {
                         [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
                     };
@@ -626,10 +672,10 @@ const notesController = () => {
                 }
 
 
-                // return res.status(200).send({
-                //     code: httpStatus.OK,
-                //     responseContent: printObj
-                // });
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    responseContent: printObj
+                });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
