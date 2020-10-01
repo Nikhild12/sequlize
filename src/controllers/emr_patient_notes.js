@@ -51,18 +51,10 @@ const notesController = () => {
         const {
             user_uuid
         } = req.headers;
-        let consultation_header = req.body.header;
-        let profiles = req.body.details;
+        let profiles = req.body;
         let currentDate = new Date();
         if (user_uuid) {
             try {
-                const consultationOutput = await consultationsTbl.create(consultation_header);
-                if (!consultationOutput) {
-                    throw {
-                        error_type: 'validation',
-                        errors: "consultation data not inserted"
-                    };
-                }
                 await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
                 }, {
@@ -75,7 +67,6 @@ const notesController = () => {
                     e.created_by = e.modified_by = user_uuid;
                     e.created_date = e.modified_date = e.entry_date = currentDate;
                     e.revision = emr_constants.IS_ACTIVE;
-                    e.consultation_uuid = consultationOutput.dataValues.uuid;
                 });
                 await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
@@ -83,8 +74,7 @@ const notesController = () => {
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
-                    reqContents: req.body,
-                    responseContents: consultationOutput
+                    reqContents: req.body
                 });
             } catch (err) {
                 if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
@@ -422,7 +412,7 @@ const notesController = () => {
                     {
                         model: consultationsTbl,
                         required: false,
-                        include:[
+                        include: [
                             {
                                 model: vw_my_patient_listTbl,
                                 required: false,
@@ -592,14 +582,14 @@ const notesController = () => {
                     });
                 }
                 let patientObj = {
-                    patient_name : finalData[0].consultations.vw_my_patient_list.pa_first_name,
+                    patient_name: finalData[0].consultations.vw_my_patient_list.pa_first_name,
                     age: finalData[0].consultations.vw_my_patient_list.pa_age,
                     title: finalData[0].consultations.vw_my_patient_list.t_name,
                     mobile: finalData[0].consultations.vw_my_patient_list.pd_mobile,
                     pin: finalData[0].consultations.vw_my_patient_list.pa_pin
                 };
                 let doctorObj = {
-                    doctor_name : finalData[0].consultations.vw_patient_doctor_details.u_first_name,
+                    doctor_name: finalData[0].consultations.vw_patient_doctor_details.u_first_name,
                     dept_name: finalData[0].consultations.vw_patient_doctor_details.d_name,
                     title: finalData[0].consultations.vw_patient_doctor_details.t_name,
                     date: finalData[0].consultations.created_date,
@@ -618,7 +608,7 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                
+
                 console.log(patObj);
                 // printObj.basicDetails = 
                 for (let e of finalData) {
@@ -1168,7 +1158,7 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
         attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
-        group: ['profile_uuid'],
+        // group: ['profile_uuid'],
         order: [sortArr],
         limit: 10,
         include: [
@@ -1184,7 +1174,7 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
                         [Op.in]: [accepted, approved]
                     }
                 },
-                attributes:['uuid', 'entry_status']
+                attributes: ['uuid', 'entry_status']
             }
         ]
     });
