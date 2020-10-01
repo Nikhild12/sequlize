@@ -46,28 +46,36 @@ const notesController = () => {
      * @param {*} res 
      */
     const _addProfiles = async (req, res) => {
-
         const {
             user_uuid
         } = req.headers;
-        let profiles = req.body;
-
+        let consultation_header = req.body.header;
+        let profiles = req.body.details;
+        let currentDate = new Date();
         if (user_uuid) {
-            profiles.forEach(e => {
-                e.is_active = e.status = true;
-                e.created_by = e.modified_by = user_uuid;
-                e.created_date = e.modified_date = e.entry_date = new Date();
-                e.revision = 1;
-            });
             try {
-                const updateData = await sectionCategoryEntriesTbl.update({
+                const consultationOutput = await consultationsTbl.create(consultation_header);
+                if (!consultationOutput) {
+                    throw {
+                        error_type: 'validation',
+                        errors: "consultation data not inserted"
+                    };
+                }
+                await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
                 }, {
                     where: {
                         is_latest: emr_constants.IS_ACTIVE
                     }
                 });
-                const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, {
+                profiles.forEach(e => {
+                    e.is_active = e.status = true;
+                    e.created_by = e.modified_by = user_uuid;
+                    e.created_date = e.modified_date = e.entry_date = currentDate;
+                    e.revision = emr_constants.IS_ACTIVE;
+                    e.consultation_uuid = consultationOutput.dataValues.uuid;
+                });
+                await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
                 });
                 return res.status(200).send({
@@ -76,11 +84,13 @@ const notesController = () => {
                     reqContents: req.body
                 });
 
-            } catch (ex) {
-                console.log('Exception happened', ex);
+            } catch (err) {
+                if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                    return res.status(400).json({ Error: err.errors, msg: "Validation error" });
+                }
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
-                    message: ex
+                    message: err
                 });
             }
         } else {
@@ -561,7 +571,7 @@ const notesController = () => {
                         }
                     });
                 }
-                
+
                 // let uniqueChars = [...new Set(sample)];
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
@@ -574,7 +584,7 @@ const notesController = () => {
 
                 printObj.details = finalData;
 
-                for(let e of finalData){
+                for (let e of finalData) {
                     let sampleObj = {
                         [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
                     };
