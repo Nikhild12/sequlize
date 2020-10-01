@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
+            department_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             profile_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -71,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            approved_date:{
+            approved_date: {
                 type: DataTypes.DATE,
                 allowNull: true
             },
@@ -132,6 +136,13 @@ module.exports = (sequelize, DataTypes) => {
     consultations.associate = models => {
         consultations.hasMany(models.section_category_entries, {
             foreignKey: 'consultation_uuid'
+        });
+        consultations.hasOne(models.vw_my_patient_list, {
+            foreignKey: 'patient_uuid'
+        });
+        consultations.hasOne(models.vw_patient_doctor_details, {
+            foreignKey: 'ed_doctor_uuid',
+            targetKey: 'doctor_uuid'
         });
     };
 
