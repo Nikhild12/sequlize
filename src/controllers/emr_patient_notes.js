@@ -81,9 +81,9 @@ const notesController = () => {
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
-                    reqContents: req.body
+                    reqContents: req.body,
+                    responseContents : consultationOutput
                 });
-
             } catch (err) {
                 if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
                     return res.status(400).json({ Error: err.errors, msg: "Validation error" });
@@ -101,7 +101,6 @@ const notesController = () => {
         }
 
     };
-
     const _getPreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -190,7 +189,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsById = async (req, res) => {
 
         const {
@@ -233,7 +231,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
@@ -275,7 +272,6 @@ const notesController = () => {
             });
         }
     };
-
     const _updatePreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -413,7 +409,6 @@ const notesController = () => {
             });
         }
     };
-
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
@@ -684,7 +679,6 @@ const notesController = () => {
             });
         }
     };
-
     const _addConsultations = async (req, res) => {
 
         const {
@@ -735,22 +729,17 @@ const notesController = () => {
         }
 
     };
-
     const _updateConsultations = async (req, res) => {
-
         const {
             user_uuid
         } = req.headers;
         let postData = req.body;
-
         if (user_uuid) {
             postData.is_active = postData.status = true;
-            postData.created_by = postData.modified_by = user_uuid;
-            postData.created_date = postData.modified_date = new Date();
-            postData.revision = 1;
-
+            postData.modified_by = user_uuid;
+            postData.modified_date = new Date();
+            postData.revision = emr_constants.IS_ACTIVE;
             try {
-
                 const consultationsData = await consultationsTbl.update(postData, {
                     returing: true
                 });
@@ -769,8 +758,6 @@ const notesController = () => {
                         responseContents: consultationsData
                     });
                 }
-
-
             } catch (ex) {
                 console.log('Exception happened', ex);
                 return res.status(400).send({
@@ -786,8 +773,6 @@ const notesController = () => {
         }
 
     };
-
-
     function getWidgetData(actCode, result) {
         switch (actCode) {
             case "Lab":
@@ -837,7 +822,6 @@ const notesController = () => {
         else
             return false;
     };
-
     const getLabResult = async (result) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -865,7 +849,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getRadiologyResult = async (result) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
@@ -892,7 +875,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getInvestResult = async (result) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
@@ -919,7 +901,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getVitalsResult = async (result) => {
         const user_details = await vw_patientVitalsTbl.findAll({
             where: {
@@ -940,7 +921,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
@@ -961,7 +941,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getDiagnosisResult = async (result) => {
         const user_details = await patient_diagnosisTbl.findAll({
             where: {
@@ -978,7 +957,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getPrescriptionsResult = async (result) => {
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
@@ -1006,7 +984,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getBloodRequestResult = async (result) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
@@ -1031,7 +1008,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -1058,7 +1034,6 @@ const notesController = () => {
             };
         }
     };
-
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
@@ -1120,7 +1095,6 @@ const notesController = () => {
             };
         }
     };
-
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -1135,10 +1109,6 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-
-function getHTML() {
-
-}
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
