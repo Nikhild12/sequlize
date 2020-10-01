@@ -14645,7 +14645,7 @@
 						"profile_uuid": {
 							"type": "integer"
 						},
-						"note_type_uuid": {
+						"profile_type_uuid": {
 							"type": "integer"
 						},
 						"restrict_reason": {
@@ -14792,7 +14792,7 @@
 				"doctor_uuid": {
 					"type": "integer"
 				},
-				"note_type_uuid": {
+				"profile_type_uuid": {
 					"type": "integer"
 				},
 				"profile_uuid": {
@@ -14860,7 +14860,7 @@
 				"profile_uuid": {
 					"type": "integer"
 				},
-				"note_type_uuid": {
+				"profile_type_uuid": {
 					"type": "integer"
 				},
 				"restrict_reason": {
