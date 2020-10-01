@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
-            note_type_uuid: {
+            profile_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
@@ -138,11 +138,12 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'consultation_uuid'
         });
         consultations.hasOne(models.vw_my_patient_list, {
-            foreignKey: 'patient_uuid'
+            foreignKey: 'patient_uuid',
+            targetKey: "patient_uuid"
         });
         consultations.hasOne(models.vw_patient_doctor_details, {
-            foreignKey: 'ed_doctor_uuid',
-            targetKey: 'doctor_uuid'
+            foreignKey: 'doctor_uuid',
+            targetKey: 'ed_doctor_uuid'
         });
     };
 

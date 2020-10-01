@@ -1166,7 +1166,7 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
     return sectionCategoryEntriesTbl.findAll({
         where: filterQuery,
         attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
-            [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
+            // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         group: ['profile_uuid'],
         order: [sortArr],
@@ -1176,15 +1176,16 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
                 model: profilesTbl,
                 attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
             },
-            // {
-            //     model: consultationsTbl,
-            //     required: true,
-            //     where: {
-            //         entry_status: {
-            //             [Op.in]: [accepted, approved]
-            //         }
-            //     }
-            // }
+            {
+                model: consultationsTbl,
+                required: true,
+                where: {
+                    entry_status: {
+                        [Op.in]: [accepted, approved]
+                    }
+                },
+                attributes:['uuid', 'entry_status']
+            }
         ]
     });
 
