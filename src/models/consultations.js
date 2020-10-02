@@ -141,8 +141,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'patient_uuid'
         });
         consultations.hasOne(models.vw_patient_doctor_details, {
-            foreignKey: 'ed_doctor_uuid',
-            targetKey: 'doctor_uuid'
+            foreignKey: 'doctor_uuid',
+            targetKey: 'ed_doctor_uuid'
         });
     };
 

@@ -171,6 +171,9 @@ module.exports = (sequelize, DataTypes) => {
         section_category_entries.belongsTo(model.consultations, {
             foreignKey: "consultation_uuid"
         });
+        section_category_entries.belongsTo(model.vw_consultation_details, {
+            foreignKey: "consultation_uuid"
+        });
         section_category_entries.belongsTo(model.profiles, {
             foreignKey: "profile_uuid"
         });
