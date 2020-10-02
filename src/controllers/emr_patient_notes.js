@@ -51,18 +51,10 @@ const notesController = () => {
         const {
             user_uuid
         } = req.headers;
-        let consultation_header = req.body.header;
-        let profiles = req.body.details;
+        let profiles = req.body;
         let currentDate = new Date();
         if (user_uuid) {
             try {
-                const consultationOutput = await consultationsTbl.create(consultation_header);
-                if (!consultationOutput) {
-                    throw {
-                        error_type: 'validation',
-                        errors: "consultation data not inserted"
-                    };
-                }
                 await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
                 }, {
@@ -75,7 +67,6 @@ const notesController = () => {
                     e.created_by = e.modified_by = user_uuid;
                     e.created_date = e.modified_date = e.entry_date = currentDate;
                     e.revision = emr_constants.IS_ACTIVE;
-                    e.consultation_uuid = consultationOutput.dataValues.uuid;
                 });
                 await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
@@ -83,8 +74,7 @@ const notesController = () => {
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
-                    reqContents: req.body,
-                    responseContents : consultationOutput
+                    reqContents: req.body
                 });
             } catch (err) {
                 if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
@@ -117,15 +107,11 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            // entry_status: emr_constants.ENTRY_STATUS,
-            entry_status: {
-                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
-            },
             is_active: emr_constants.IS_ACTIVE
         };
         if (user_uuid && patient_uuid > 0) {
             try {
-                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
+                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize, emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
@@ -756,14 +742,22 @@ const notesController = () => {
             user_uuid
         } = req.headers;
         let postData = req.body;
+        let currentDate = new Date();
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
-            postData.modified_date = new Date();
+            postData.modified_date = currentDate
             postData.revision = emr_constants.IS_ACTIVE;
+            if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                postData.approved_by = user_uuid;
+                postData.approved_date = currentDate;
+                postData.reference_no = Math.floor(Math.random() * 9000000000) + 1000000000;
+            }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
-                    returing: true
+                    where: {
+                        uuid: postData.Id
+                    }
                 });
                 if (consultationsData) {
                     return res.status(200).send({
@@ -1131,23 +1125,34 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-async function getPrevNotes(filterQuery, Sequelize) {
+async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
     let sortArr = [sortField, sortOrder];
     return sectionCategoryEntriesTbl.findAll({
         where: filterQuery,
-        group: ['profile_uuid'],
         attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
-            [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
+            // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        // group: ['profile_uuid'],
         order: [sortArr],
         limit: 10,
-        include: [{
-            model: profilesTbl,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-        }],
+        include: [
+            {
+                model: profilesTbl,
+                attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+            },
+            {
+                model: consultationsTbl,
+                required: true,
+                where: {
+                    entry_status: {
+                        [Op.in]: [accepted, approved]
+                    }
+                },
+                attributes: ['uuid', 'entry_status']
+            }
+        ]
     });
 
 }

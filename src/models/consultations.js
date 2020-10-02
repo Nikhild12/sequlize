@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-            approved_date:{
+            approved_date: {
                 type: DataTypes.DATE,
                 allowNull: true
             },
@@ -138,7 +138,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'consultation_uuid'
         });
         consultations.hasOne(models.vw_my_patient_list, {
-            foreignKey: 'patient_uuid'
+            foreignKey: 'patient_uuid',
+            targetKey: "patient_uuid"
         });
         consultations.hasOne(models.vw_patient_doctor_details, {
             foreignKey: 'doctor_uuid',

@@ -6476,6 +6476,41 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/updateconsultations": {
+			"post": {
+				"summary": "To update consultation Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Profiles",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/consultationUpdate"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Updated Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/getById": {
 			"get": {
 				"summary": "To get profile Details by Id ",
@@ -14581,163 +14616,87 @@
 			}
 		},
 		"profilesAdd": {
-			"type": "object",
-			"properties": {
-				"header": {
-					"type": "object",
-					"properties": {
-						"facility_uuid": {
-							"type": "integer"
-						},
-						"patient_uuid": {
-							"type": "integer"
-						},
-						"encounter_uuid": {
-							"type": "integer"
-						},
-						"encounter_type_uuid": {
-							"type": "integer"
-						},
-						"entry_status": {
-							"type": "integer"
-						},
-						"encounter_doctor_uuid": {
-							"type": "integer"
-						},
-						"doctor_uuid": {
-							"type": "integer"
-						},
-						"profile_uuid": {
-							"type": "integer"
-						},
-						"note_type_uuid": {
-							"type": "integer"
-						},
-						"restrict_reason": {
-							"type": "string"
-						},
-						"visible_user_uuid": {
-							"type": "integer"
-						},
-						"visible_dept_uuid": {
-							"type": "integer"
-						},
-						"visittype_uuid": {
-							"type": "integer"
-						},
-						"reference_no": {
-							"type": "string"
-						},
-						"approved_by": {
-							"type": "integer"
-						},
-						"approved_date": {
-							"type": "integer"
-						},
-						"claim_process_uuid": {
-							"type": "integer"
-						},
-						"claim_number": {
-							"type": "string"
-						},
-						"last_consult_date": {
-							"type": "integer"
-						},
-						"last_consult_by": {
-							"type": "integer"
-						},
-						"ot_register_uuid": {
-							"type": "integer"
-						},
-						"is_active": {
-							"type": "integer"
-						}
-					}
-				},
-				"details": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"patient_uuid": {
-								"type": "integer"
-							},
-							"encounter_type_uuid": {
-								"type": "integer"
-							},
-							"encounter_uuid": {
-								"type": "integer"
-							},
-							"encounter_doctor_uuid": {
-								"type": "integer"
-							},
-							"doctor_uuid": {
-								"type": "integer"
-							},
-							"profile_type_uuid": {
-								"type": "integer"
-							},
-							"profile_uuid": {
-								"type": "integer"
-							},
-							"section_uuid": {
-								"type": "integer"
-							},
-							"section_key": {
-								"type": "string"
-							},
-							"activity_uuid": {
-								"type": "integer"
-							},
-							"profile_section_uuid": {
-								"type": "integer"
-							},
-							"category_uuid": {
-								"type": "integer"
-							},
-							"category_key": {
-								"type": "string"
-							},
-							"profile_section_category_uuid": {
-								"type": "integer"
-							},
-							"concept_uuid": {
-								"type": "integer"
-							},
-							"concept_key": {
-								"type": "string"
-							},
-							"profile_section_category_concept_uuid": {
-								"type": "integer"
-							},
-							"term_key": {
-								"type": "string"
-							},
-							"profile_section_category_concept_value_uuid": {
-								"type": "integer"
-							},
-							"result_value": {
-								"type": "integer"
-							},
-							"result_value_rich_text": {
-								"type": "string"
-							},
-							"result_value_json": {
-								"type": "string"
-							},
-							"result_binary": {
-								"type": "string"
-							},
-							"result_path": {
-								"type": "string"
-							},
-							"entry_date": {
-								"type": "string"
-							},
-							"comments": {
-								"type": "string"
-							}
-						}
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"patient_uuid": {
+						"type": "integer"
+					},
+					"encounter_type_uuid": {
+						"type": "integer"
+					},
+					"encounter_uuid": {
+						"type": "integer"
+					},
+					"encounter_doctor_uuid": {
+						"type": "integer"
+					},
+					"consultation_uuid": {
+						"type": "integer"
+					},
+					"profile_type_uuid": {
+						"type": "integer"
+					},
+					"profile_uuid": {
+						"type": "integer"
+					},
+					"section_uuid": {
+						"type": "integer"
+					},
+					"section_key": {
+						"type": "string"
+					},
+					"activity_uuid": {
+						"type": "integer"
+					},
+					"profile_section_uuid": {
+						"type": "integer"
+					},
+					"category_uuid": {
+						"type": "integer"
+					},
+					"category_key": {
+						"type": "string"
+					},
+					"profile_section_category_uuid": {
+						"type": "integer"
+					},
+					"concept_uuid": {
+						"type": "integer"
+					},
+					"concept_key": {
+						"type": "string"
+					},
+					"profile_section_category_concept_uuid": {
+						"type": "integer"
+					},
+					"term_key": {
+						"type": "string"
+					},
+					"profile_section_category_concept_value_uuid": {
+						"type": "integer"
+					},
+					"result_value": {
+						"type": "integer"
+					},
+					"result_value_rich_text": {
+						"type": "string"
+					},
+					"result_value_json": {
+						"type": "string"
+					},
+					"result_binary": {
+						"type": "string"
+					},
+					"result_path": {
+						"type": "string"
+					},
+					"entry_date": {
+						"type": "string"
+					},
+					"comments": {
+						"type": "string"
 					}
 				}
 			}
@@ -14757,7 +14716,7 @@
 				"doctor_uuid": {
 					"type": "integer"
 				},
-				"note_type_uuid": {
+				"profile_type_uuid": {
 					"type": "integer"
 				},
 				"profile_uuid": {
@@ -14792,6 +14751,77 @@
 				},
 				"last_consult_date": {
 					"type": "string"
+				}
+			}
+		},
+		"consultationUpdate": {
+			"type": "object",
+			"properties": {
+				"Id": {
+					"type": "integer"
+				},
+				"facility_uuid": {
+					"type": "integer"
+				},
+				"patient_uuid": {
+					"type": "integer"
+				},
+				"encounter_uuid": {
+					"type": "integer"
+				},
+				"encounter_type_uuid": {
+					"type": "integer"
+				},
+				"entry_status": {
+					"type": "integer"
+				},
+				"encounter_doctor_uuid": {
+					"type": "integer"
+				},
+				"doctor_uuid": {
+					"type": "integer"
+				},
+				"profile_uuid": {
+					"type": "integer"
+				},
+				"profile_type_uuid": {
+					"type": "integer"
+				},
+				"restrict_reason": {
+					"type": "string"
+				},
+				"visible_user_uuid": {
+					"type": "integer"
+				},
+				"visible_dept_uuid": {
+					"type": "integer"
+				},
+				"visittype_uuid": {
+					"type": "integer"
+				},
+				"approved_by": {
+					"type": "integer"
+				},
+				"approved_date": {
+					"type": "integer"
+				},
+				"claim_process_uuid": {
+					"type": "integer"
+				},
+				"claim_number": {
+					"type": "string"
+				},
+				"last_consult_date": {
+					"type": "integer"
+				},
+				"last_consult_by": {
+					"type": "integer"
+				},
+				"ot_register_uuid": {
+					"type": "integer"
+				},
+				"is_active": {
+					"type": "integer"
 				}
 			}
 		},
