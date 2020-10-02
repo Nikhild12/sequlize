@@ -17,7 +17,7 @@ const serviceRequest = require('../services/utility.service');
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const vw_patientVitalsTbl = db.vw_patient_vitals;
-const vw_my_patient_listTbl = db.vw_my_patient_list;
+const vw_consultation_detailsTbl = db.vw_consultation_details;
 const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const patient_diagnosisTbl = db.patient_diagnosis;
@@ -410,29 +410,9 @@ const notesController = () => {
             let findQuery = {
                 include: [
                     {
-                        model: consultationsTbl,
+                        model: vw_consultation_detailsTbl,
                         required: false,
-                        include: [
-                            {
-                                model: vw_my_patient_listTbl,
-                                required: false,
-                                attributes: {
-                                    "exclude": ['id', 'createdAt', 'updatedAt']
-                                }
-                            },
-                            {
-                                model: vw_patient_doctor_detailsTbl,
-                                required: false,
-                                attributes: {
-                                    "exclude": ['id', 'createdAt', 'updatedAt']
-                                },
-                                where: {
-                                    department_uuid: {
-                                        [Op.col]: 'consultations.department_uuid'
-                                    }
-                                },
-                            },
-                        ]
+                        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
                     },
                     {
                         model: profilesTbl,
@@ -581,26 +561,25 @@ const notesController = () => {
                         }
                     });
                 }
+
                 let patientObj = {
-                    patient_name: finalData[0].consultations.vw_my_patient_list.pa_first_name,
-                    age: finalData[0].consultations.vw_my_patient_list.pa_age,
-                    title: finalData[0].consultations.vw_my_patient_list.t_name,
-                    mobile: finalData[0].consultations.vw_my_patient_list.pd_mobile,
-                    pin: finalData[0].consultations.vw_my_patient_list.pa_pin
+                    patient_name : finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
+                    age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
+                    gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
+                    pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
+                    mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
+                    pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
+                    doctor_name : finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
+                    dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
+                    title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
+                    date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
+                    notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                 };
-                let doctorObj = {
-                    doctor_name: finalData[0].consultations.vw_patient_doctor_details.u_first_name,
-                    dept_name: finalData[0].consultations.vw_patient_doctor_details.d_name,
-                    title: finalData[0].consultations.vw_patient_doctor_details.t_name,
-                    date: finalData[0].consultations.created_date,
-                    notes_name: finalData[0].profiles.name
-                };
-                // let uniqueChars = [...new Set(sample)];
-                printObj.patientDetails = patientObj;
-                printObj.doctorDetails = doctorObj;
+                
+                printObj.patientDetails = finalData ? patientObj : false;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
-                printObj.invResult = invArr;
+                printObj.invResult = invArr;    
                 printObj.vitResult = vitArr;
                 printObj.cheifResult = cheifArr;
                 printObj.presResult = presArr;
@@ -608,9 +587,7 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-
-                console.log(patObj);
-                // printObj.basicDetails = 
+                
                 for (let e of finalData) {
                     let sampleObj = {
                         [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
@@ -640,7 +617,7 @@ const notesController = () => {
                 }
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
-                // console.log("facility_result::",facility_result);
+                console.log("facility_result::",facility_result);
                 if (facility_result.status) {
                     let {
                         status: data_facility_status,
@@ -651,20 +628,19 @@ const notesController = () => {
                     let {
                         facility_printer_setting: facPrSet
                     } = facility;
-                    // console.log("facilityPrinterSetting::",facPrSet);
 
                     let isFaciltySame = (facility_uuid == data_facility_uuid);
-                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header1 : facPrSet.printer_header1) : '');
-                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header2 : facPrSet.printer_header2) : '');
-                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer1 : facPrSet.printer_footer1) : '');
-                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer2 : facPrSet.printer_footer2) : '');
+                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header1 : facPrSet.pharmacy_print_header1) : '');
+                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header2 : facPrSet.pharmacy_print_header2) : '');
+                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
+                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
 
 
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    responseContent: printObj
-                });
+                // return res.status(200).send({
+                //     code: httpStatus.OK,
+                //     responseContent: printObj
+                // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
