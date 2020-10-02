@@ -1137,6 +1137,10 @@ async function getPrevNotes(filterQuery, Sequelize) {
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
+
+
+
+        
         order: [sortArr],
         limit: 10,
         include: [
