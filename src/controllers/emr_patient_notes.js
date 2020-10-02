@@ -107,11 +107,14 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            is_active: emr_constants.IS_ACTIVE
+            is_active: emr_constants.IS_ACTIVE,
+            entry_status: {
+                [Op.in]: [ emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            }
         };
         if (user_uuid && patient_uuid > 0) {
             try {
-                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize, emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS);
+                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
@@ -1124,13 +1127,13 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
+async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
     let sortArr = [sortField, sortOrder];
-    return sectionCategoryEntriesTbl.findAll({
+    return consultationsTbl.findAll({
         where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
@@ -1141,16 +1144,6 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
                 model: profilesTbl,
                 required: false,
                 attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-            },
-            {
-                model: consultationsTbl,
-                required: false,
-                where: {
-                    entry_status: {
-                        [Op.in]: [accepted, approved]
-                    }
-                },
-                attributes: ['uuid', 'entry_status']
             }
         ]
     });
