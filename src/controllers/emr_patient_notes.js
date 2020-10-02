@@ -563,23 +563,23 @@ const notesController = () => {
                 }
 
                 let patientObj = {
-                    patient_name : finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
+                    patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                     age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
                     gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
                     pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
                     mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
                     pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
-                    doctor_name : finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
+                    doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                     dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                     title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
                     date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
                     notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                 };
-                
+
                 printObj.patientDetails = finalData ? patientObj : false;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
-                printObj.invResult = invArr;    
+                printObj.invResult = invArr;
                 printObj.vitResult = vitArr;
                 printObj.cheifResult = cheifArr;
                 printObj.presResult = presArr;
@@ -587,7 +587,7 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                
+
                 for (let e of finalData) {
                     let sampleObj = {
                         [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
@@ -617,7 +617,6 @@ const notesController = () => {
                 }
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
-                console.log("facility_result::",facility_result);
                 if (facility_result.status) {
                     let {
                         status: data_facility_status,
@@ -690,7 +689,7 @@ const notesController = () => {
     const _addConsultations = async (req, res) => {
 
         const {
-            user_uuid
+            user_uuid, facility_uuid
         } = req.headers;
         let postData = req.body;
 
@@ -699,7 +698,7 @@ const notesController = () => {
             postData.created_by = postData.modified_by = user_uuid;
             postData.created_date = postData.modified_date = new Date();
             postData.revision = 1;
-
+            postData.facility_uuid = facility_uuid;
             try {
 
                 const consultationsData = await consultationsTbl.create(postData, {
@@ -1140,11 +1139,12 @@ async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
         include: [
             {
                 model: profilesTbl,
+                required: false,
                 attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
             },
             {
                 model: consultationsTbl,
-                required: true,
+                required: false,
                 where: {
                     entry_status: {
                         [Op.in]: [accepted, approved]
