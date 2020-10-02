@@ -145,6 +145,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'doctor_uuid',
             targetKey: 'ed_doctor_uuid'
         });
+        consultations.belongsTo(models.profiles, {
+            foreignKey: "profile_uuid"
+        });
     };
 
     return consultations;
