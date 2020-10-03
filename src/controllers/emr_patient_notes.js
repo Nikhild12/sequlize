@@ -17,9 +17,12 @@ const serviceRequest = require('../services/utility.service');
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const vw_patientVitalsTbl = db.vw_patient_vitals;
+const vw_consultation_detailsTbl = db.vw_consultation_details;
+const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
+const consultationsTbl = db.consultations;
 const profilesTbl = db.profiles;
 const conceptsTbl = db.concepts;
 const profileSectionsTbl = db.profile_sections;
@@ -36,6 +39,7 @@ const {
 const {
     includes
 } = require("lodash");
+const consultations = require("../models/consultations");
 const notesController = () => {
 
     /**
@@ -44,29 +48,27 @@ const notesController = () => {
      * @param {*} res 
      */
     const _addProfiles = async (req, res) => {
-
         const {
             user_uuid
         } = req.headers;
         let profiles = req.body;
-
+        let currentDate = new Date();
         if (user_uuid) {
-            profiles.forEach(e => {
-                e.is_active = e.status = true;
-                e.created_by = e.modified_by = user_uuid;
-                e.created_date = e.modified_date = new Date();
-                e.revision = 1;
-            });
-
             try {
-                const updateData = await sectionCategoryEntriesTbl.update({
+                await sectionCategoryEntriesTbl.update({
                     is_latest: emr_constants.IS_IN_ACTIVE
                 }, {
                     where: {
                         is_latest: emr_constants.IS_ACTIVE
                     }
                 });
-                const profileData = await sectionCategoryEntriesTbl.bulkCreate(profiles, {
+                profiles.forEach(e => {
+                    e.is_active = e.status = true;
+                    e.created_by = e.modified_by = user_uuid;
+                    e.created_date = e.modified_date = e.entry_date = currentDate;
+                    e.revision = emr_constants.IS_ACTIVE;
+                });
+                await sectionCategoryEntriesTbl.bulkCreate(profiles, {
                     returing: true
                 });
                 return res.status(200).send({
@@ -74,12 +76,13 @@ const notesController = () => {
                     message: 'inserted successfully',
                     reqContents: req.body
                 });
-
-            } catch (ex) {
-                console.log('Exception happened', ex);
+            } catch (err) {
+                if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                    return res.status(400).json({ Error: err.errors, msg: "Validation error" });
+                }
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
-                    message: ex
+                    message: err
                 });
             }
         } else {
@@ -90,7 +93,6 @@ const notesController = () => {
         }
 
     };
-
     const _getPreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -105,15 +107,15 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            entry_status: emr_constants.ENTRY_STATUS,
-            is_active: emr_constants.IS_ACTIVE
+            is_active: emr_constants.IS_ACTIVE,
+            entry_status: {
+                [Op.in]: [ emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            }
         };
         if (user_uuid && patient_uuid > 0) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
-
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
-
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
                     const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
@@ -178,7 +180,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsById = async (req, res) => {
 
         const {
@@ -221,7 +222,6 @@ const notesController = () => {
             });
         }
     };
-
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
@@ -263,7 +263,6 @@ const notesController = () => {
             });
         }
     };
-
     const _updatePreviousPatientOPNotes = async (req, res) => {
         const {
             user_uuid
@@ -315,41 +314,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -359,7 +358,6 @@ const notesController = () => {
         try {
             if (user_uuid && patient_uuid) {
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
@@ -402,7 +400,6 @@ const notesController = () => {
             });
         }
     };
-
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
@@ -414,7 +411,13 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
+                        model: vw_consultation_detailsTbl,
+                        required: false,
+                        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                    },
+                    {
                         model: profilesTbl,
                         required: false
                     },
@@ -459,7 +462,6 @@ const notesController = () => {
             if (user_uuid && patient_uuid) {
                 let printObj = {};
                 const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                // return res.send(patNotesData)
                 if (!patNotesData) {
                     return res.status(404).send({
                         code: 404,
@@ -468,6 +470,7 @@ const notesController = () => {
                 }
                 let finalData = [];
                 let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
+                let sample = [];
 
                 for (let e of patNotesData) {
                     let data;
@@ -535,6 +538,10 @@ const notesController = () => {
                     finalData.forEach(e => {
                         if (e.activity_uuid == 44) {
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                e.dataValues.details[0].prescription_details.forEach(i => {
+                                    i.store_master = e.dataValues.details[0].store_master;
+                                    i.has_e_mar = e.dataValues.details[0].has_e_mar;
+                                });
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
                             }
                         }
@@ -558,6 +565,21 @@ const notesController = () => {
                     });
                 }
 
+                let patientObj = {
+                    patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
+                    age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
+                    gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
+                    pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
+                    mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
+                    pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
+                    doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
+                    dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
+                    title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
+                    date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
+                    notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
+                };
+
+                printObj.patientDetails = finalData ? patientObj : false;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -568,14 +590,36 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                
+
+                for (let e of finalData) {
+                    let sampleObj = {
+                        [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                    };
+                    if (sample.length == 0) {
+                        sample.push(sampleObj);
+                    } else {
+                        let check = sample.find(item => {
+                            console.log(item);
+                            return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                        });
+                        if (check) {
+                            var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                            check[e.profile_section_category_concept.name] = value;
+                            sample.push(check);
+                        } else {
+                            sample.push(sampleObj);
+                        }
+                    }
+                }
+
+                printObj.sectionResult = [...new Set(sample)];
+
                 if (finalData && finalData.length > 0) {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
                     printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
                 }
-                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm');
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
-                // console.log("facility_result::",facility_result);
                 if (facility_result.status) {
                     let {
                         status: data_facility_status,
@@ -586,13 +630,12 @@ const notesController = () => {
                     let {
                         facility_printer_setting: facPrSet
                     } = facility;
-                    // console.log("facilityPrinterSetting::",facPrSet);
 
                     let isFaciltySame = (facility_uuid == data_facility_uuid);
-                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header1 : facPrSet.printer_header1) : '');
-                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_header2 : facPrSet.printer_header2) : '');
-                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer1 : facPrSet.printer_footer1) : '');
-                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.pharmacy_print_footer2 : facPrSet.printer_footer2) : '');
+                    printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header1 : facPrSet.pharmacy_print_header1) : '');
+                    printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header2 : facPrSet.pharmacy_print_header2) : '');
+                    printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
+                    printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
 
 
@@ -602,7 +645,6 @@ const notesController = () => {
                 // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
-                    // language: req.__('dischargeSummary')
                 }), {
                     format: 'A4',
                     header: {
@@ -647,7 +689,108 @@ const notesController = () => {
             });
         }
     };
+    const _addConsultations = async (req, res) => {
 
+        const {
+            user_uuid, facility_uuid
+        } = req.headers;
+        let postData = req.body;
+
+        if (user_uuid) {
+            postData.is_active = postData.status = true;
+            postData.created_by = postData.modified_by = user_uuid;
+            postData.created_date = postData.modified_date = new Date();
+            postData.revision = 1;
+            postData.facility_uuid = facility_uuid;
+            try {
+
+                const consultationsData = await consultationsTbl.create(postData, {
+                    returing: true
+                });
+                if (consultationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Inserted successfully',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                } else {
+                    return res.status(400).send({
+                        code: httpStatus.OK,
+                        message: 'Failed to insert',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                }
+
+
+            } catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.UNAUTHORIZED,
+                message: emr_constants.NO_USER_ID
+            });
+        }
+
+    };
+    const _updateConsultations = async (req, res) => {
+        const {
+            user_uuid
+        } = req.headers;
+        let postData = req.body;
+        let currentDate = new Date();
+        if (user_uuid) {
+            postData.is_active = postData.status = true;
+            postData.modified_by = user_uuid;
+            postData.modified_date = currentDate
+            postData.revision = emr_constants.IS_ACTIVE;
+            if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                postData.approved_by = user_uuid;
+                postData.approved_date = currentDate;
+                postData.reference_no = Math.floor(Math.random() * 9000000000) + 1000000000;
+            }
+            try {
+                const consultationsData = await consultationsTbl.update(postData, {
+                    where: {
+                        uuid: postData.Id
+                    }
+                });
+                if (consultationsData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: 'Update successfully',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                } else {
+                    return res.status(400).send({
+                        code: httpStatus.OK,
+                        message: 'Failed to update',
+                        reqContents: req.body,
+                        responseContents: consultationsData
+                    });
+                }
+            } catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+            }
+        } else {
+            return res.status(400).send({
+                code: httpStatus.UNAUTHORIZED,
+                message: emr_constants.NO_USER_ID
+            });
+        }
+
+    };
     function getWidgetData(actCode, result) {
         switch (actCode) {
             case "Lab":
@@ -697,7 +840,6 @@ const notesController = () => {
         else
             return false;
     };
-
     const getLabResult = async (result) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -725,7 +867,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getRadiologyResult = async (result) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
@@ -752,7 +893,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getInvestResult = async (result) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
@@ -779,7 +919,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getVitalsResult = async (result) => {
         const user_details = await vw_patientVitalsTbl.findAll({
             where: {
@@ -800,7 +939,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getChiefComplaintsResult = async (result) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
@@ -821,18 +959,15 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getDiagnosisResult = async (result) => {
         const user_details = await patient_diagnosisTbl.findAll({
             where: {
                 patient_uuid: result.patient_uuid,
                 encounter_uuid: result.encounter_uuid
             },
-            include:[
-                {
-                    model: diagnosisTbl
-                }
-            ]
+            include: [{
+                model: diagnosisTbl
+            }]
         });
         if (user_details) {
             result.dataValues.details = user_details;
@@ -840,9 +975,7 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getPrescriptionsResult = async (result) => {
-        console.log('prescription')
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -983,8 +1116,6 @@ const notesController = () => {
             };
         }
     };
-
-
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -992,32 +1123,36 @@ const notesController = () => {
         getOPNotesDetailsByPatId: _getOPNotesDetailsByPatId,
         updatePreviousPatientOPNotes: _updatePreviousPatientOPNotes,
         getReviewNotes: _getReviewNotes,
-        print_previous_opnotes: _print_previous_opnotes
+        print_previous_opnotes: _print_previous_opnotes,
+        addConsultations: _addConsultations,
+        updateConsultations: _updateConsultations
     };
 };
 
 module.exports = notesController();
-
-function getHTML() {
-
-}
 async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
     let sortArr = [sortField, sortOrder];
-    return sectionCategoryEntriesTbl.findAll({
+    return consultationsTbl.findAll({
         where: filterQuery,
-        group: ['profile_uuid'],
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
-            [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+            // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
-        //order: [[Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'DESC']],
+        // group: ['profile_uuid'],
+
+
+
+        
         order: [sortArr],
         limit: 10,
-        include: [{
-            model: profilesTbl,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-        }],
+        include: [
+            {
+                model: profilesTbl,
+                required: false,
+                attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+            }
+        ]
     });
 
 }

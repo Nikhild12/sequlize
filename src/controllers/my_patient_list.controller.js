@@ -23,7 +23,7 @@ const MyPatientListController = () => {
     let { departmentId, from_date, to_date, doctor_id } = req.body;
     let { pageNo, paginationSize, sortOrder, sortField } = req.body;
     const rBody = req.body;
-
+    let offset;
     let isFromDateValid, isToDateValid, defFromDate, defToDate;
 
     // Checking From Date
