@@ -13,31 +13,43 @@
         </div>
 
         <h2 style="text-align:center; margin-top:20px; float:left; width:100%;"> OP Notes</h2>
-
+        {{#if headerObj.patientDetails}}
         <div style="width:100%; float:left; padding: 10px 0;position: relative;">
             <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
                 <table>
                     <tbody>
+                        {{#if headerObj.patientDetails.pin}}
                         <tr>
                             <td style="padding: 5px;">PIN</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.pin}}</td>
                         </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.patient_name}}
                         <tr>
                             <td style="padding: 5px;">Patient Name</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.patientDetails.title}} {{headerObj.patientDetails.patient_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.pa_title}} {{headerObj.patientDetails.patient_name}}</td>
                         </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.age}}
                         <tr>
                             <td style="padding: 5px;">Age / Gender</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.patientDetails.age}}/{{headerObj.patientDetails.gender}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.age}} / {{headerObj.patientDetails.gender}}</td>
                         </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.mobile}}
                         <tr>
                             <td style="padding: 5px;">Mobile Number</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.mobile}}</td>
                         </tr>
+                        {{/if}}
+
                     </tbody>
                 </table>
             </div>
@@ -47,29 +59,31 @@
                         <tr>
                             <td style="padding: 5px;">Doctor Name</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.doctorDetails.title}} {{headerObj.doctorDetails.doctor_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.title}} {{headerObj.patientDetails.doctor_name}}</td>
                         </tr>
+                        {{#if headerObj.patientDetails.dept_name}}
                         <tr>
                             <td style="padding: 5px;">Department</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.doctorDetails.dept_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.dept_name}}</td>
                         </tr>
+                        {{/if}}
                         <tr>
                             <td style="padding: 5px;">Date</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.doctorDetails.date}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.date}}</td>
                         </tr>
                         <tr>
                             <td style="padding: 5px;">OP Notes Name</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.doctorDetails.notes_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.notes_name}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        {{/if}}
 
-        {{json headerObj}}
         {{#if headerObj.sectionName}}
         <div style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
@@ -96,7 +110,6 @@
                                 <table>
                                     <tbody>
                                         {{#each headerObj.sectionResult}}
-                                        {{json dataValues}}
                                         <tr>
                                             <td style="padding: 5px;">{{getKey this}}</td>
                                             <td style="padding: 5px;">:</td>
@@ -165,7 +178,6 @@
                 </thead>
                 <tbody>
                     {{#each headerObj.presResult}}
-                    {{json headerObj.presResult}}
                     <tr>
                         <td style="text-align: center; border-bottom: 0;border-left: 0;">{{inc @index}}</td>
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{item_master.name}}</td>
