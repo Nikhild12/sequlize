@@ -12,7 +12,6 @@ const emr_constants = require('../config/constants');
 const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
-const serviceRequest = require('../services/utility.service');
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
@@ -32,6 +31,7 @@ const profileSectionCategoryConceptValuesTbl = db.profile_section_category_conce
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
+const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -109,7 +109,7 @@ const notesController = () => {
             status: emr_constants.IS_ACTIVE,
             is_active: emr_constants.IS_ACTIVE,
             entry_status: {
-                [Op.in]: [ emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
             }
         };
         if (user_uuid && patient_uuid > 0) {
@@ -485,7 +485,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e,consultation_uuid);
+                            data = await getWidgetData(actCode, e, consultation_uuid);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -595,7 +595,7 @@ const notesController = () => {
                 printObj.details = finalData;
                 let arr = []
                 for (let e of finalData) {
-                    if(e.profile_section_category_concept && e.profile_section_category_concept.name){
+                    if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
                             [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
                         };
@@ -754,7 +754,8 @@ const notesController = () => {
     };
     const _updateConsultations = async (req, res) => {
         const {
-            user_uuid
+            user_uuid,
+            authorization
         } = req.headers;
         let postData = req.body;
         let currentDate = new Date();
@@ -764,9 +765,21 @@ const notesController = () => {
             postData.modified_date = currentDate
             postData.revision = emr_constants.IS_ACTIVE;
             if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                let options = {
+                    uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+                    headers: {
+                        Authorization: authorization,
+                        user_uuid: user_uuid
+                    },
+                    body: {
+                        module_uuid: 13,
+                        activity_uuid: 41
+                    }
+                }
+                let screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
                 postData.approved_by = user_uuid;
                 postData.approved_date = currentDate;
-                postData.reference_no = Math.floor(Math.random() * 9000000000) + 1000000000;
+                postData.reference_no = screenSettings_output.prefix + (screenSettings_output.sufix + postData.Id);
             }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
@@ -813,15 +826,15 @@ const notesController = () => {
             case "Prescriptions":
                 return getPrescriptionsResult(result, consultation_uuid);
             case "Investigation":
-                return getInvestResult(result,consultation_uuid);
+                return getInvestResult(result, consultation_uuid);
             case "Vitals":
-                return getVitalsResult(result,consultation_uuid);
+                return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
-                return getChiefComplaintsResult(result,consultation_uuid);
+                return getChiefComplaintsResult(result, consultation_uuid);
             case "Blood Requests":
-                return getBloodRequestResult(result,consultation_uuid);
+                return getBloodRequestResult(result, consultation_uuid);
             case "Diagnosis":
-                return getDiagnosisResult(result,consultation_uuid);
+                return getDiagnosisResult(result, consultation_uuid);
             default:
                 let templateDetails = result;
                 return {
@@ -873,7 +886,7 @@ const notesController = () => {
             json: true
         };
         console.log(options);
-        const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
+        const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
         if (user_details && user_details) {
             result.dataValues.details = user_details;
@@ -1134,33 +1147,6 @@ const notesController = () => {
             };
         }
     };
-    const getReferenceCode = async (req) => {
-        try {
-            const getReferenceUrl = 'facility/getFacilityById';
-            const postData = {
-                module_uuid: 13,
-                activity_uuid: 41
-            };
-
-            const res = await getResultsInObject(getReferenceUrl, req, postData);
-            console.log('>>>>>>>>>>>>>>>facility_res', res);
-            if (res.status && res.data.length > 0) {
-                const resData = res.data;
-                return {
-                    status: true,
-                    data: resData
-                };
-            } else {
-                return res;
-            }
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return {
-                status: false,
-                message: errorMsg
-            };
-        }
-    };
     return {
         addProfiles: _addProfiles,
         getPreviousPatientOPNotes: _getPreviousPatientOPNotes,
@@ -1185,10 +1171,6 @@ async function getPrevNotes(filterQuery, Sequelize) {
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
-
-
-
-        
         order: [sortArr],
         limit: 10,
         include: [
