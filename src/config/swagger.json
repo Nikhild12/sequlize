@@ -8816,12 +8816,39 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get All profile type details"
+					}
+				}
+			}
+		},
+		"/api/profiles/getAllProfileTypepost": {
+			"post": {
+				"summary": "To get all the profiletype Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
 					},
 					{
-						"in": "query",
-						"name": "search",
+						"in": "body",
+						"name": "searchprofileType",
 						"required": false,
-						"type": "string"
+						"schema": {
+							"$ref": "#/definitions/searchprofileType"
+						}
 					}
 				],
 				"produces": [
@@ -9427,6 +9454,14 @@
 		}
 	},
 	"definitions": {
+		"searchprofileType":{
+			"type": "object",
+			"properties": {
+				"search": {
+					"type": "string"
+				}
+			}
+		},
 		"getHealthHistory": {
 			"type": "object",
 			"properties": {

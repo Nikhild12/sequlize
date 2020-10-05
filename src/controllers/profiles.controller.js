@@ -996,7 +996,7 @@ const profilesController = () => {
     } = req.headers;
     const {
      search
-    } = req.query;
+    } = req.body;
     try {
       if (user_uuid) {
         let findquery={
