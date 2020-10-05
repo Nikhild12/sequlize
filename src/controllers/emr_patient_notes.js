@@ -40,6 +40,7 @@ const {
     includes
 } = require("lodash");
 const consultations = require("../models/consultations");
+const { parse } = require("path");
 const notesController = () => {
 
     /**
@@ -762,7 +763,7 @@ const notesController = () => {
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
-            postData.modified_date = currentDate
+            postData.modified_date = currentDate;
             postData.revision = emr_constants.IS_ACTIVE;
             if (postData.entry_status == emr_constants.ENTRY_STATUS) {
                 let options = {
@@ -775,11 +776,11 @@ const notesController = () => {
                         module_uuid: 13,
                         activity_uuid: 41
                     }
-                }
+                };
                 let screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
                 postData.approved_by = user_uuid;
                 postData.approved_date = currentDate;
-                postData.reference_no = screenSettings_output.prefix + (screenSettings_output.sufix + postData.Id);
+                postData.reference_no = screenSettings_output.prefix + (parseInt(screenSettings_output.sufix) + parseInt(postData.Id));
             }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
