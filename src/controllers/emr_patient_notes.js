@@ -107,11 +107,14 @@ const notesController = () => {
             patient_uuid: patient_uuid,
             profile_type_uuid: profile_type_uuid,
             status: emr_constants.IS_ACTIVE,
-            is_active: emr_constants.IS_ACTIVE
+            is_active: emr_constants.IS_ACTIVE,
+            entry_status: {
+                [Op.in]: [ emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            }
         };
         if (user_uuid && patient_uuid > 0) {
             try {
-                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize, emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS);
+                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
                     /**Get department name */
                     let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
@@ -563,23 +566,23 @@ const notesController = () => {
                 }
 
                 let patientObj = {
-                    patient_name : finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
+                    patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                     age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
                     gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
                     pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
                     mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
                     pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
-                    doctor_name : finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
+                    doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                     dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                     title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
                     date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
                     notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                 };
-                
+
                 printObj.patientDetails = finalData ? patientObj : false;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
-                printObj.invResult = invArr;    
+                printObj.invResult = invArr;
                 printObj.vitResult = vitArr;
                 printObj.cheifResult = cheifArr;
                 printObj.presResult = presArr;
@@ -587,7 +590,7 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                
+
                 for (let e of finalData) {
                     if(e.profile_section_category_concept && e.profile_section_category_concept.name){
                         let sampleObj = {
@@ -619,7 +622,6 @@ const notesController = () => {
                 }
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
                 const facility_result = await getFacilityDetails(req);
-                console.log("facility_result::",facility_result);
                 if (facility_result.status) {
                     let {
                         status: data_facility_status,
@@ -692,7 +694,7 @@ const notesController = () => {
     const _addConsultations = async (req, res) => {
 
         const {
-            user_uuid
+            user_uuid, facility_uuid
         } = req.headers;
         let postData = req.body;
 
@@ -701,7 +703,7 @@ const notesController = () => {
             postData.created_by = postData.modified_by = user_uuid;
             postData.created_date = postData.modified_date = new Date();
             postData.revision = 1;
-
+            postData.facility_uuid = facility_uuid;
             try {
 
                 const consultationsData = await consultationsTbl.create(postData, {
@@ -1127,32 +1129,27 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-async function getPrevNotes(filterQuery, Sequelize, accepted, approved) {
+async function getPrevNotes(filterQuery, Sequelize) {
     let sortField = 'created_date';
     let sortOrder = 'DESC';
     let sortArr = [sortField, sortOrder];
-    return sectionCategoryEntriesTbl.findAll({
+    return consultationsTbl.findAll({
         where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'consultation_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
+
+
+
+        
         order: [sortArr],
         limit: 10,
         include: [
             {
                 model: profilesTbl,
+                required: false,
                 attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-            },
-            {
-                model: consultationsTbl,
-                required: true,
-                where: {
-                    entry_status: {
-                        [Op.in]: [accepted, approved]
-                    }
-                },
-                attributes: ['uuid', 'entry_status']
             }
         ]
     });
