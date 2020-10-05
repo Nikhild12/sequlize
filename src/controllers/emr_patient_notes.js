@@ -1061,6 +1061,7 @@ const notesController = () => {
         } else
             return false;
     };
+
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -1087,6 +1088,7 @@ const notesController = () => {
             };
         }
     };
+
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
