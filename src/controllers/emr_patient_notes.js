@@ -589,22 +589,24 @@ const notesController = () => {
                 printObj.details = finalData;
                 
                 for (let e of finalData) {
-                    let sampleObj = {
-                        [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
-                    };
-                    if (sample.length == 0) {
-                        sample.push(sampleObj);
-                    } else {
-                        let check = sample.find(item => {
-                            console.log(item);
-                            return Object.keys(item)[0] == e.profile_section_category_concept.name;
-                        });
-                        if (check) {
-                            var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                            check[e.profile_section_category_concept.name] = value;
-                            sample.push(check);
-                        } else {
+                    if(e.profile_section_category_concept && e.profile_section_category_concept.name){
+                        let sampleObj = {
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                        };
+                        if (sample.length == 0) {
                             sample.push(sampleObj);
+                        } else {
+                            let check = sample.find(item => {
+                                console.log(item);
+                                return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                            });
+                            if (check) {
+                                var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                check[e.profile_section_category_concept.name] = value;
+                                sample.push(check);
+                            } else {
+                                sample.push(sampleObj);
+                            }
                         }
                     }
                 }
