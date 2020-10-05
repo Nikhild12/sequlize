@@ -283,6 +283,17 @@ const profilesController = () => {
       //   //   ];
       //   // }
       // }
+      if (getsearch.noteTypeId && /\S/.test(getsearch.noteTypeId)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_type_uuid')), getsearch.noteTypeId)]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_type_uuid')), getsearch.noteTypeId)
+          ];
+        }
+      }
       if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{

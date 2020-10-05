@@ -14065,6 +14065,9 @@
 				"search": {
 					"type": "string"
 				},
+				"noteTypeId":{
+					"type": "integer"
+				},
 				"departmentId": {
 					"type": "integer"
 				},
