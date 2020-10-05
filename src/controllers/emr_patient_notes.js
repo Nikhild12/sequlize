@@ -305,7 +305,8 @@ const notesController = () => {
     };
     const _getReviewNotes = async (req, res) => {
         const {
-            patient_uuid
+            patient_uuid,
+            consultation_uuid
         } = req.query;
         const {
             user_uuid,
@@ -352,6 +353,7 @@ const notesController = () => {
             ],
             where: {
                 patient_uuid: patient_uuid,
+                consultation_uuid: consultation_uuid,
                 is_latest: emr_constants.IS_ACTIVE
             }
         };
@@ -374,7 +376,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e);
+                            data = await getWidgetData(actCode, e, consultation_uuid);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -403,7 +405,8 @@ const notesController = () => {
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
-                patient_uuid
+                patient_uuid,
+                consultation_uuid
             } = req.query;
             const {
                 user_uuid,
@@ -482,7 +485,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e);
+                            data = await getWidgetData(actCode, e,consultation_uuid);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -793,24 +796,24 @@ const notesController = () => {
         }
 
     };
-    function getWidgetData(actCode, result) {
+    function getWidgetData(actCode, result, consultation_uuid) {
         switch (actCode) {
             case "Lab":
-                return getLabResult(result);
+                return getLabResult(result, consultation_uuid);
             case "Radiology":
-                return getRadiologyResult(result);
+                return getRadiologyResult(result, consultation_uuid);
             case "Prescriptions":
-                return getPrescriptionsResult(result);
+                return getPrescriptionsResult(result, consultation_uuid);
             case "Investigation":
-                return getInvestResult(result);
+                return getInvestResult(result,consultation_uuid);
             case "Vitals":
-                return getVitalsResult(result);
+                return getVitalsResult(result,consultation_uuid);
             case "Chief Complaints":
-                return getChiefComplaintsResult(result);
+                return getChiefComplaintsResult(result,consultation_uuid);
             case "Blood Requests":
-                return getBloodRequestResult(result);
+                return getBloodRequestResult(result,consultation_uuid);
             case "Diagnosis":
-                return getDiagnosisResult(result);
+                return getDiagnosisResult(result,consultation_uuid);
             default:
                 let templateDetails = result;
                 return {
@@ -842,7 +845,7 @@ const notesController = () => {
         else
             return false;
     };
-    const getLabResult = async (result) => {
+    const getLabResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -855,6 +858,7 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -869,7 +873,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getRadiologyResult = async (result) => {
+    const getRadiologyResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -882,6 +886,7 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -895,7 +900,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getInvestResult = async (result) => {
+    const getInvestResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -908,6 +913,7 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -921,11 +927,12 @@ const notesController = () => {
         } else
             return false;
     };
-    const getVitalsResult = async (result) => {
+    const getVitalsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientVitalsTbl.findAll({
             where: {
                 pv_patient_uuid: result.patient_uuid,
-                pv_encounter_uuid: result.encounter_uuid
+                pv_encounter_uuid: result.encounter_uuid,
+                pv_consultation_uuid: consultation_uuid
             },
             limit: 10,
             order: [
@@ -941,7 +948,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getChiefComplaintsResult = async (result) => {
+    const getChiefComplaintsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
             order: [
@@ -949,6 +956,7 @@ const notesController = () => {
             ],
             where: {
                 pcc_patient_uuid: result.patient_uuid,
+                pcc_consultation_uuid: consultation_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
             },
             attributes: {
@@ -961,10 +969,11 @@ const notesController = () => {
         } else
             return false;
     };
-    const getDiagnosisResult = async (result) => {
+    const getDiagnosisResult = async (result, consultation_uuid) => {
         const user_details = await patient_diagnosisTbl.findAll({
             where: {
                 patient_uuid: result.patient_uuid,
+                consultation_uuid: consultation_uuid,
                 encounter_uuid: result.encounter_uuid
             },
             include: [{
@@ -977,7 +986,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getPrescriptionsResult = async (result) => {
+    const getPrescriptionsResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -990,6 +999,7 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -1004,7 +1014,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getBloodRequestResult = async (result) => {
+    const getBloodRequestResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             method: "POST",
@@ -1015,6 +1025,7 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -1107,6 +1118,33 @@ const notesController = () => {
                 }
             }
 
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return {
+                status: false,
+                message: errorMsg
+            };
+        }
+    };
+    const getReferenceCode = async (req) => {
+        try {
+            const getReferenceUrl = 'facility/getFacilityById';
+            const postData = {
+                module_uuid: 13,
+                activity_uuid: 41
+            };
+
+            const res = await getResultsInObject(getReferenceUrl, req, postData);
+            console.log('>>>>>>>>>>>>>>>facility_res', res);
+            if (res.status && res.data.length > 0) {
+                const resData = res.data;
+                return {
+                    status: true,
+                    data: resData
+                };
+            } else {
+                return res;
+            }
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return {
