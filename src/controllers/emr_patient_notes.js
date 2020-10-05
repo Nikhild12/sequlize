@@ -593,7 +593,7 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-
+                let arr = []
                 for (let e of finalData) {
                     if(e.profile_section_category_concept && e.profile_section_category_concept.name){
                         let sampleObj = {
@@ -608,7 +608,8 @@ const notesController = () => {
                             });
                             if (check) {
                                 var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                                check[e.profile_section_category_concept.name] = value;
+                                arr.push(value);
+                                check[e.profile_section_category_concept.name] = arr.join();
                                 sample.push(check);
                             } else {
                                 sample.push(sampleObj);
