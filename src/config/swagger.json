@@ -5497,7 +5497,7 @@
 					{
 						"in": "query",
 						"name": "department_uuid",
-						"required": true,
+						"required": false,
 						"type": "integer"
 					},
 					{

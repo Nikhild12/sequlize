@@ -223,7 +223,7 @@ const profilesController = () => {
         limit: itemsPerPage,
         where: {
           p_status: 1,
-          p_department_uuid: department_uuid
+          // p_department_uuid: department_uuid
         },
         // where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
         order: [
@@ -237,6 +237,11 @@ const profilesController = () => {
         },
 
       };
+      if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
+        findQuery.where = {
+          p_department_uuid: department_uuid
+
+        }}
 
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
