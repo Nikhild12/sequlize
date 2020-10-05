@@ -12,7 +12,6 @@ const emr_constants = require('../config/constants');
 const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
-const serviceRequest = require('../services/utility.service');
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
@@ -32,6 +31,7 @@ const profileSectionCategoryConceptValuesTbl = db.profile_section_category_conce
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
+const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -40,6 +40,7 @@ const {
     includes
 } = require("lodash");
 const consultations = require("../models/consultations");
+const { parse } = require("path");
 const notesController = () => {
 
     /**
@@ -109,7 +110,7 @@ const notesController = () => {
             status: emr_constants.IS_ACTIVE,
             is_active: emr_constants.IS_ACTIVE,
             entry_status: {
-                [Op.in]: [ emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
             }
         };
         if (user_uuid && patient_uuid > 0) {
@@ -305,7 +306,8 @@ const notesController = () => {
     };
     const _getReviewNotes = async (req, res) => {
         const {
-            patient_uuid
+            patient_uuid,
+            consultation_uuid
         } = req.query;
         const {
             user_uuid,
@@ -352,6 +354,7 @@ const notesController = () => {
             ],
             where: {
                 patient_uuid: patient_uuid,
+                consultation_uuid: consultation_uuid,
                 is_latest: emr_constants.IS_ACTIVE
             }
         };
@@ -374,7 +377,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e);
+                            data = await getWidgetData(actCode, e, consultation_uuid);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -403,7 +406,8 @@ const notesController = () => {
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
-                patient_uuid
+                patient_uuid,
+                consultation_uuid
             } = req.query;
             const {
                 user_uuid,
@@ -482,7 +486,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e);
+                            data = await getWidgetData(actCode, e, consultation_uuid);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -590,24 +594,34 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-
+                let arr = []
                 for (let e of finalData) {
-                    let sampleObj = {
-                        [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
-                    };
-                    if (sample.length == 0) {
-                        sample.push(sampleObj);
-                    } else {
-                        let check = sample.find(item => {
-                            console.log(item);
-                            return Object.keys(item)[0] == e.profile_section_category_concept.name;
-                        });
-                        if (check) {
-                            var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                            check[e.profile_section_category_concept.name] = value;
-                            sample.push(check);
-                        } else {
+                    if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
+                        let sampleObj = {
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                        };
+                        if (sample.length == 0) {
                             sample.push(sampleObj);
+                        } else {
+                            let check = sample.find(item => {
+                                console.log(item);
+                                return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                            });
+                            if (check) {
+                                if(Object.keys(check)[0]==e.profile_section_category_concept.name){
+                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                    var value = [...Object.values(check),name];
+                                    // arr.push(value);
+                                    check[e.profile_section_category_concept.name] = value;
+                                    sample.push(check); 
+                                }
+                                // var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                // arr.push(value);
+                                // check[e.profile_section_category_concept.name] = arr.join();
+                                // sample.push(check);
+                            } else {
+                                sample.push(sampleObj);
+                            }
                         }
                     }
                 }
@@ -741,19 +755,32 @@ const notesController = () => {
     };
     const _updateConsultations = async (req, res) => {
         const {
-            user_uuid
+            user_uuid,
+            authorization
         } = req.headers;
         let postData = req.body;
         let currentDate = new Date();
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
-            postData.modified_date = currentDate
+            postData.modified_date = currentDate;
             postData.revision = emr_constants.IS_ACTIVE;
             if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                let options = {
+                    uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+                    headers: {
+                        Authorization: authorization,
+                        user_uuid: user_uuid
+                    },
+                    body: {
+                        module_uuid: 13,
+                        activity_uuid: 41
+                    }
+                };
+                let screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
                 postData.approved_by = user_uuid;
                 postData.approved_date = currentDate;
-                postData.reference_no = Math.floor(Math.random() * 9000000000) + 1000000000;
+                postData.reference_no = screenSettings_output.prefix + (parseInt(screenSettings_output.sufix) + parseInt(postData.Id));
             }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
@@ -791,24 +818,24 @@ const notesController = () => {
         }
 
     };
-    function getWidgetData(actCode, result) {
+    function getWidgetData(actCode, result, consultation_uuid) {
         switch (actCode) {
             case "Lab":
-                return getLabResult(result);
+                return getLabResult(result, consultation_uuid);
             case "Radiology":
-                return getRadiologyResult(result);
+                return getRadiologyResult(result, consultation_uuid);
             case "Prescriptions":
-                return getPrescriptionsResult(result);
+                return getPrescriptionsResult(result, consultation_uuid);
             case "Investigation":
-                return getInvestResult(result);
+                return getInvestResult(result, consultation_uuid);
             case "Vitals":
-                return getVitalsResult(result);
+                return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
-                return getChiefComplaintsResult(result);
+                return getChiefComplaintsResult(result, consultation_uuid);
             case "Blood Requests":
-                return getBloodRequestResult(result);
+                return getBloodRequestResult(result, consultation_uuid);
             case "Diagnosis":
-                return getDiagnosisResult(result);
+                return getDiagnosisResult(result, consultation_uuid);
             default:
                 let templateDetails = result;
                 return {
@@ -840,7 +867,7 @@ const notesController = () => {
         else
             return false;
     };
-    const getLabResult = async (result) => {
+    const getLabResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -853,13 +880,14 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
             json: true
         };
         console.log(options);
-        const user_details = await serviceRequest.postRequest(options.uri, options.headers, options.body);
+        const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
         if (user_details && user_details) {
             result.dataValues.details = user_details;
@@ -867,7 +895,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getRadiologyResult = async (result) => {
+    const getRadiologyResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -880,6 +908,7 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -893,7 +922,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getInvestResult = async (result) => {
+    const getInvestResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -906,6 +935,7 @@ const notesController = () => {
             },
             body: {
                 "patient_id": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -919,11 +949,12 @@ const notesController = () => {
         } else
             return false;
     };
-    const getVitalsResult = async (result) => {
+    const getVitalsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientVitalsTbl.findAll({
             where: {
                 pv_patient_uuid: result.patient_uuid,
-                pv_encounter_uuid: result.encounter_uuid
+                pv_encounter_uuid: result.encounter_uuid,
+                pv_consultation_uuid: consultation_uuid
             },
             limit: 10,
             order: [
@@ -939,7 +970,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getChiefComplaintsResult = async (result) => {
+    const getChiefComplaintsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientCheifTbl.findAll({
             limit: 10,
             order: [
@@ -947,6 +978,7 @@ const notesController = () => {
             ],
             where: {
                 pcc_patient_uuid: result.patient_uuid,
+                pcc_consultation_uuid: consultation_uuid,
                 pcc_encounter_uuid: result.encounter_uuid
             },
             attributes: {
@@ -959,10 +991,11 @@ const notesController = () => {
         } else
             return false;
     };
-    const getDiagnosisResult = async (result) => {
+    const getDiagnosisResult = async (result, consultation_uuid) => {
         const user_details = await patient_diagnosisTbl.findAll({
             where: {
                 patient_uuid: result.patient_uuid,
+                consultation_uuid: consultation_uuid,
                 encounter_uuid: result.encounter_uuid
             },
             include: [{
@@ -975,7 +1008,7 @@ const notesController = () => {
         } else
             return false;
     };
-    const getPrescriptionsResult = async (result) => {
+    const getPrescriptionsResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2InvUrl + 'prescriptions/getPrescriptionByPatientId',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -988,6 +1021,7 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -1002,8 +1036,7 @@ const notesController = () => {
         } else
             return false;
     };
-
-    const getBloodRequestResult = async (result) => {
+    const getBloodRequestResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             method: "POST",
@@ -1014,6 +1047,7 @@ const notesController = () => {
             },
             body: {
                 "patient_uuid": result.patient_uuid,
+                "consultation_uuid": consultation_uuid,
                 // "encounter_uuid": result.encounter_uuid
             },
             //body: {},
@@ -1140,10 +1174,6 @@ async function getPrevNotes(filterQuery, Sequelize) {
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
-
-
-
-        
         order: [sortArr],
         limit: 10,
         include: [

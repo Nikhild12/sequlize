@@ -223,7 +223,7 @@ const profilesController = () => {
         limit: itemsPerPage,
         where: {
           p_status: 1,
-          p_department_uuid: department_uuid
+          // p_department_uuid: department_uuid
         },
         // where: { p_is_active: 1, p_status: 1, p_department_uuid: department_uuid },
         order: [
@@ -237,6 +237,11 @@ const profilesController = () => {
         },
 
       };
+      if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
+        findQuery.where = {
+          p_department_uuid: department_uuid
+
+        }}
 
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
@@ -283,6 +288,17 @@ const profilesController = () => {
       //   //   ];
       //   // }
       // }
+      if (getsearch.noteTypeId && /\S/.test(getsearch.noteTypeId)) {
+        if (findQuery.where[Op.or]) {
+          findQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_type_uuid')), getsearch.noteTypeId)]
+          }];
+        } else {
+          findQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_profile.p_profile_type_uuid')), getsearch.noteTypeId)
+          ];
+        }
+      }
       if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
@@ -983,11 +999,20 @@ const profilesController = () => {
     const {
       user_uuid
     } = req.headers;
-
+    const {
+     search
+    } = req.body;
     try {
       if (user_uuid) {
         let findquery={
           where: { is_active: 1, status: 1 },
+        }
+        if (search && /\S/.test(search)) {
+          findquery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.code')), 'LIKE', '%' + search.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+  
+          ];
         }
         const typesData = await profilesTypesTbl.findAll(findquery);
         return res.status(200).send({

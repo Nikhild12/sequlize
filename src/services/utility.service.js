@@ -100,12 +100,10 @@ const _checkTATIsValid = array => {
   });
 };
 const _postRequest = async (api, headers, data) => {
-
   return new Promise((resolve, reject) => {
     request.post({ uri: api, headers: headers, json: data },
       function (error, response, body) {
         console.log("\n body...", body);
-
         if (error) {
           reject(error);
         }
