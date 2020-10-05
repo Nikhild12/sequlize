@@ -994,11 +994,20 @@ const profilesController = () => {
     const {
       user_uuid
     } = req.headers;
-
+    const {
+     search
+    } = req.query;
     try {
       if (user_uuid) {
         let findquery={
           where: { is_active: 1, status: 1 },
+        }
+        if (search && /\S/.test(search)) {
+          findquery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.code')), 'LIKE', '%' + search.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+  
+          ];
         }
         const typesData = await profilesTypesTbl.findAll(findquery);
         return res.status(200).send({

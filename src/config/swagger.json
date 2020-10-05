@@ -8816,6 +8816,12 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"type": "string"
 					}
 				],
 				"produces": [
