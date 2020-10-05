@@ -131,7 +131,8 @@ module.exports = Object.freeze({
   DEPENDENCY_URLS: {
     APPMASTER_GET_SPECIFIC_USERS: 'userProfile/getSpecificUsersByIds',
     APPMASTER_GET_SPECIFIC_DEPARTMENT: 'department/getSpecificDepartmentsByIds',
-    APPMASTER_GET_SPECIFIC_FACILITY: 'facility/getSpecificFacilitiesByIds'
+    APPMASTER_GET_SPECIFIC_FACILITY: 'facility/getSpecificFacilitiesByIds',
+    APPMASTER_GET_SCREEN_SETTINGS :'screenSetting/getCodeCreation'
   },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
