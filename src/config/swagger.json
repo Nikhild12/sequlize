@@ -8832,6 +8832,39 @@
 				}
 			}
 		},
+		"/api/profiles/getAllProfileTypepost": {
+			"post": {
+				"summary": "To get all the profiletype Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "searchprofileType",
+						"required": false,
+						"schema": {
+							"$ref": "#/definitions/searchprofileType"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get All profile type details"
+					}
+				}
+			}
+		},
 		"/api/emr-notes/get-prev-by-patient": {
 			"get": {
 				"summary": "To get patient notes details",
@@ -9421,6 +9454,14 @@
 		}
 	},
 	"definitions": {
+		"searchprofileType":{
+			"type": "object",
+			"properties": {
+				"search": {
+					"type": "string"
+				}
+			}
+		},
 		"getHealthHistory": {
 			"type": "object",
 			"properties": {
@@ -14064,6 +14105,9 @@
 				},
 				"search": {
 					"type": "string"
+				},
+				"noteTypeId":{
+					"type": "integer"
 				},
 				"departmentId": {
 					"type": "integer"
