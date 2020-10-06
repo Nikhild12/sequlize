@@ -189,6 +189,38 @@ const _putBlockChainRequest = async (url, req, data) => {
   }
 };
 
+const _putRequest = async (api, headers, data) => {
+  return new Promise((resolve, reject) => {
+    request.put({ uri: api, headers: headers, json: data },
+      function (error, response, body) {
+        console.log("\n body...", body);
+        if (error) {
+          reject(error);
+        }
+        else if (body && !body.status && !body.status === "error") {
+          if (body.responseContent || body.responseContents || body.benefMembers || body.req) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
+          }
+        }
+        else if (body && body.status == "error") {
+          reject(body);
+        }
+        else {
+          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
+          }
+          else if (body && body.status == true) {
+            resolve(body);
+          }
+          else {
+            reject(body);
+          }
+        }
+      }
+    );
+  });
+};
+
 const _isNumberValid = value => {
   value = Number(value);
   return !isNaN(value);
@@ -270,6 +302,7 @@ module.exports = {
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest,
+  putRequest : _putRequest,
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
