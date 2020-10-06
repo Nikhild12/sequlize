@@ -584,7 +584,7 @@ const notesController = () => {
                     doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                     dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                     title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
-                    date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
+                    date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY HH:mm a') : '',
                     notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                 };
 
@@ -645,23 +645,15 @@ const notesController = () => {
                         facility_uuid: data_facility_uuid,
                         facility
                     } = facility_result.data;
-
                     let {
                         facility_printer_setting: facPrSet
                     } = facility;
-
                     let isFaciltySame = (facility_uuid == data_facility_uuid);
                     printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header1 : facPrSet.pharmacy_print_header1) : '');
                     printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header2 : facPrSet.pharmacy_print_header2) : '');
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
-
-
-                // return res.status(200).send({
-                //     code: httpStatus.OK,
-                //     responseContent: printObj
-                // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
