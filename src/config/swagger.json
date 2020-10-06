@@ -2385,6 +2385,48 @@
 				}
 			}
 		},
+		"/api/emr-workflow-settings/getEMRWorkflowByUserIdsearch": {
+			"post": {
+				"description": "To get a EMR Workflow",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "context_uuid",
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "EMRWorkflowUser",
+						"required": false,
+						"schema": {
+							"$ref": "#/definitions/emrflowuser"
+						}
+					}
+
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRWorkflowSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+					}
+				}
+			}
+		},
 		"/api/emr-history-settings/create": {
 			"post": {
 				"description": "To Create a EMR History for the Master",
@@ -9454,6 +9496,14 @@
 		}
 	},
 	"definitions": {
+		"emrflowuser":{
+			"type": "object",
+			"properties": {
+				"search": {
+					"type": "string"
+				}
+			}
+		},
 		"searchprofileType":{
 			"type": "object",
 			"properties": {

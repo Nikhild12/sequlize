@@ -3,7 +3,8 @@ const httpStatus = require("http-status");
 
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
-
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 // Initialize EMR Workflow
 const emr_workflow_settings = sequelizeDb.emr_workflow_settings;
 const vm_emr_workflow = sequelizeDb.vw_emr_work_flow_setting;
@@ -100,13 +101,14 @@ const EMRWorkflowSettings = () => {
   const _getEMRWorkFlowByUserId = async (req, res) => {
     const { user_uuid } = req.headers;
     let { context_uuid } = req.query;
+    let { search } = req.body;
     if (user_uuid) {
       try {
 
         if (!context_uuid) {
           context_uuid = 2;
         }
-        const emr_data = await vm_emr_workflow.findAll({
+        let findquery={
           attributes: getEMRWorkFlowSettings,
           where: {
             ews_is_active: emr_constants.IS_ACTIVE,
@@ -114,8 +116,15 @@ const EMRWorkflowSettings = () => {
             ews_context_uuid: context_uuid,
             act_is_active: emr_constants.IS_ACTIVE,
             act_status: emr_constants.IS_ACTIVE
-          }
-        });
+          },
+        }
+        if (search && /\S/.test(search)) {
+          findquery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+  
+          ];
+        }
+        const emr_data = await vm_emr_workflow.findAll(findquery);
 
         if (emr_data) {
           const responseMessage =
