@@ -2408,7 +2408,6 @@
 							"$ref": "#/definitions/emrflowuser"
 						}
 					}
-
 				],
 				"produces": [
 					"application/json",
@@ -8994,6 +8993,12 @@
 						"name": "patient_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "consultation_uuid",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -9496,7 +9501,7 @@
 		}
 	},
 	"definitions": {
-		"emrflowuser":{
+		"emrflowuser": {
 			"type": "object",
 			"properties": {
 				"search": {
@@ -9504,7 +9509,7 @@
 				}
 			}
 		},
-		"searchprofileType":{
+		"searchprofileType": {
 			"type": "object",
 			"properties": {
 				"search": {
@@ -14156,7 +14161,7 @@
 				"search": {
 					"type": "string"
 				},
-				"noteTypeId":{
+				"noteTypeId": {
 					"type": "integer"
 				},
 				"departmentId": {

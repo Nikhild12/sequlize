@@ -226,7 +226,7 @@ const notesController = () => {
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
-            patient_uuid
+            patient_uuid, consultation_uuid
         } = req.query;
         const {
             user_uuid
@@ -234,14 +234,18 @@ const notesController = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const patNotesData = await sectionCategoryEntriesTbl.findAll({
+                let findQuery = {
                     where: {
                         patient_uuid: patient_uuid
                     }
-                }, {
-                    returning: true
-                });
-                if (!patNotesData) {
+                }
+                if (consultation_uuid && /\S/.test(consultation_uuid)) {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        consultation_uuid: consultation_uuid
+                    });
+                }
+                const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+                if (patNotesData.count == 0) {
                     return res.status(404).send({
                         code: 404,
                         message: emr_constants.NO_RECORD_FOUND
@@ -249,7 +253,8 @@ const notesController = () => {
                 }
                 return res.status(200).send({
                     code: httpStatus.OK,
-                    responseContent: patNotesData
+                    responseContent: patNotesData.rows,
+                    totalRecords: patNotesData.count
                 });
             } else {
                 return res.status(400).send({
@@ -608,12 +613,12 @@ const notesController = () => {
                                 return Object.keys(item)[0] == e.profile_section_category_concept.name;
                             });
                             if (check) {
-                                if(Object.keys(check)[0]==e.profile_section_category_concept.name){
+                                if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                                    var value = [...Object.values(check),name];
+                                    var value = [...Object.values(check), name];
                                     // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
-                                    sample.push(check); 
+                                    sample.push(check);
                                 }
                                 // var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
                                 // arr.push(value);
