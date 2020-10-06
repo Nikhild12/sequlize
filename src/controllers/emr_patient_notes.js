@@ -1180,7 +1180,7 @@ async function getPrevNotes(filterQuery, Sequelize) {
     let sortArr = [sortField, sortOrder];
     return consultationsTbl.findAll({
         where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
