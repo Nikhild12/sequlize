@@ -31,7 +31,7 @@ const profileSectionCategoryConceptValuesTbl = db.profile_section_category_conce
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
-const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
+const { APPMASTER_GET_SCREEN_SETTINGS, APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -614,7 +614,7 @@ const notesController = () => {
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')' : e.term_key;
                                     var value = [...Object.values(check), name];
                                     // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
@@ -757,6 +757,8 @@ const notesController = () => {
         } = req.headers;
         let postData = req.body;
         let currentDate = new Date();
+        let suffix_current_value_consult;
+        let screenSettings_output;
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
@@ -774,10 +776,11 @@ const notesController = () => {
                         activity_uuid: 41
                     }
                 };
-                let screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+                screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
                 postData.approved_by = user_uuid;
                 postData.approved_date = currentDate;
-                postData.reference_no = screenSettings_output.prefix + (parseInt(screenSettings_output.sufix) + parseInt(postData.Id));
+                suffix_current_value_consult = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+                postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
@@ -786,6 +789,18 @@ const notesController = () => {
                     }
                 });
                 if (consultationsData) {
+                    let options_two = {
+                        uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                        headers: {
+                            Authorization: authorization,
+                            user_uuid: user_uuid
+                        },
+                        body: {
+                            screenId: screenSettings_output.uuid,
+                            suffix_current_value: suffix_current_value_consult
+                        }
+                    };
+                    await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Update successfully',
