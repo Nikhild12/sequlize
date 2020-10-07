@@ -586,7 +586,7 @@ const notesController = () => {
                         doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                         dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                         title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
-                        date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY HH:mm a') : '',
+                        date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY hh:mm a') : '',
                         notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                     };
                 } else {
@@ -609,8 +609,11 @@ const notesController = () => {
                     console.log(e.term_key);
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                     if(val.test(e.term_key)){
-                        e.term_key = new Date(e.term_key).toISOString();
-                        e.term_key = moment(emr_utility.indiaTz(e.term_key).toDate()).add(380,'minutes').format('DD-MMM-YYYY HH:mm a');
+                        // e.term_key = new Date(e.term_key).toISOString();
+                        console.log('///////////////////',e.term_key);
+                        e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm a');
+                        console.log(',,,,,,,,,,,,',e.term_key);
+
                     } else {
                         e.term_key = e.term_key;
                     }
