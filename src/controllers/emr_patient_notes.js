@@ -586,7 +586,7 @@ const notesController = () => {
                         doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                         dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                         title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
-                        date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY hh:mm a') : '',
+                        date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY hh:mm A') : '',
                         notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                     };
                 } else {
@@ -611,7 +611,7 @@ const notesController = () => {
                     if(val.test(e.term_key)){
                         // e.term_key = new Date(e.term_key).toISOString();
                         console.log('///////////////////',e.term_key);
-                        e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm a');
+                        e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm A');
                         console.log(',,,,,,,,,,,,',e.term_key);
 
                     } else {
@@ -621,6 +621,8 @@ const notesController = () => {
                         let sampleObj = {
                             [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key
                         };
+                        // let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + e.term_key == '1' || true ? '' : '(' + e.term_key + ')') : e.term_key;
+
                         if (sample.length == 0) {
                             sample.push(sampleObj);
                         } else {
@@ -656,7 +658,7 @@ const notesController = () => {
                     printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
                     printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
                 }
-                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY HH:mm a');
+                printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
                     let {
