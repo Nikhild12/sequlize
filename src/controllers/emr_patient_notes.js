@@ -575,7 +575,7 @@ const notesController = () => {
                     });
                 }
                 let patientObj;
-                if(finalData&&finalData[0].vw_consultation_detail){
+                if(finalData&&finalData[0]&&finalData[0].vw_consultation_detail){
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
@@ -607,9 +607,12 @@ const notesController = () => {
                 printObj.details = finalData;
                 let arr = []
                 for (let e of finalData) {
+                    if(moment(e.term_key).isValid()){
+                        e.term_key = moment(e.term_key).format('DD-MMM-YYYY HH:mm a');
+                    }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
-                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key
                         };
                         if (sample.length == 0) {
                             sample.push(sampleObj);
@@ -620,7 +623,10 @@ const notesController = () => {
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
+
+                                   
                                     let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key;
+                                    
                                     var value = [...Object.values(check), name];
                                     // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
@@ -661,8 +667,7 @@ const notesController = () => {
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
                 // return res.status(400).send({
-                //     status: "failed",
-                //     statusCode: httpStatus[500],
+             
                 //     message: printObj
                 // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
