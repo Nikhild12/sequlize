@@ -31,7 +31,7 @@ const profileSectionCategoryConceptValuesTbl = db.profile_section_category_conce
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
-const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
+const { APPMASTER_GET_SCREEN_SETTINGS, APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -226,7 +226,7 @@ const notesController = () => {
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
-            patient_uuid
+            patient_uuid, consultation_uuid
         } = req.query;
         const {
             user_uuid
@@ -234,14 +234,18 @@ const notesController = () => {
 
         try {
             if (user_uuid && patient_uuid) {
-                const patNotesData = await sectionCategoryEntriesTbl.findAll({
+                let findQuery = {
                     where: {
                         patient_uuid: patient_uuid
                     }
-                }, {
-                    returning: true
-                });
-                if (!patNotesData) {
+                }
+                if (consultation_uuid && /\S/.test(consultation_uuid)) {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        consultation_uuid: consultation_uuid
+                    });
+                }
+                const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+                if (patNotesData.count == 0) {
                     return res.status(404).send({
                         code: 404,
                         message: emr_constants.NO_RECORD_FOUND
@@ -249,7 +253,8 @@ const notesController = () => {
                 }
                 return res.status(200).send({
                     code: httpStatus.OK,
-                    responseContent: patNotesData
+                    responseContent: patNotesData.rows,
+                    totalRecords: patNotesData.count
                 });
             } else {
                 return res.status(400).send({
@@ -579,7 +584,7 @@ const notesController = () => {
                     doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
                     dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
                     title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
-                    date: finalData ? finalData[0].vw_consultation_detail.dataValues.created_date : '',
+                    date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY HH:mm a') : '',
                     notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
                 };
 
@@ -608,12 +613,12 @@ const notesController = () => {
                                 return Object.keys(item)[0] == e.profile_section_category_concept.name;
                             });
                             if (check) {
-                                if(Object.keys(check)[0]==e.profile_section_category_concept.name){
-                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                                    var value = [...Object.values(check),name];
+                                if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
+                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')' : e.term_key;
+                                    var value = [...Object.values(check), name];
                                     // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
-                                    sample.push(check); 
+                                    sample.push(check);
                                 }
                                 // var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
                                 // arr.push(value);
@@ -640,23 +645,15 @@ const notesController = () => {
                         facility_uuid: data_facility_uuid,
                         facility
                     } = facility_result.data;
-
                     let {
                         facility_printer_setting: facPrSet
                     } = facility;
-
                     let isFaciltySame = (facility_uuid == data_facility_uuid);
                     printObj.header1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header1 : facPrSet.pharmacy_print_header1) : '');
                     printObj.header2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header2 : facPrSet.pharmacy_print_header2) : '');
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
-
-
-                // return res.status(200).send({
-                //     code: httpStatus.OK,
-                //     responseContent: printObj
-                // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
@@ -760,6 +757,8 @@ const notesController = () => {
         } = req.headers;
         let postData = req.body;
         let currentDate = new Date();
+        let suffix_current_value_consult;
+        let screenSettings_output;
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
@@ -777,10 +776,11 @@ const notesController = () => {
                         activity_uuid: 41
                     }
                 };
-                let screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+                screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
                 postData.approved_by = user_uuid;
                 postData.approved_date = currentDate;
-                postData.reference_no = screenSettings_output.prefix + (parseInt(screenSettings_output.sufix) + parseInt(postData.Id));
+                suffix_current_value_consult = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+                postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
             try {
                 const consultationsData = await consultationsTbl.update(postData, {
@@ -789,6 +789,18 @@ const notesController = () => {
                     }
                 });
                 if (consultationsData) {
+                    let options_two = {
+                        uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                        headers: {
+                            Authorization: authorization,
+                            user_uuid: user_uuid
+                        },
+                        body: {
+                            screenId: screenSettings_output.uuid,
+                            suffix_current_value: suffix_current_value_consult
+                        }
+                    };
+                    await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Update successfully',
@@ -1170,7 +1182,7 @@ async function getPrevNotes(filterQuery, Sequelize) {
     let sortArr = [sortField, sortOrder];
     return consultationsTbl.findAll({
         where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date',
+        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
             // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
         ],
         // group: ['profile_uuid'],
