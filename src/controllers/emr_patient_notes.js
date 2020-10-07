@@ -607,8 +607,12 @@ const notesController = () => {
                 printObj.details = finalData;
                 let arr = []
                 for (let e of finalData) {
-                    if(moment(e.term_key).isValid()){
+                    console.log(e.term_key)
+                    const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
+                    if(val.test(e.term_key)){
                         e.term_key = moment(e.term_key).format('DD-MMM-YYYY HH:mm a');
+                    } else {
+                        e.term_key = e.term_key;
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
