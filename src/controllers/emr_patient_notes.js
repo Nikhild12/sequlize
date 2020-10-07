@@ -549,7 +549,7 @@ const notesController = () => {
                         if (e.activity_uuid == 44) {
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                 e.dataValues.details[0].prescription_details.forEach(i => {
-                                    i.store_master = e.dataValues.details[0].injection_room;
+                                    i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room :  e.dataValues.details[0].store_master;
                                     i.has_e_mar = e.dataValues.details[0].has_e_mar;
                                 });
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
