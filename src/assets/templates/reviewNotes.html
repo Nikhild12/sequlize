@@ -56,11 +56,15 @@
             <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
                 <table>
                     <tbody>
+                        {{#if headerObj.patientDetails.doctor_name}}
+
                         <tr>
                             <td style="padding: 5px;">Doctor Name</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.title}} {{headerObj.patientDetails.doctor_name}}</td>
                         </tr>
+                        {{/if}}
+
                         {{#if headerObj.patientDetails.dept_name}}
                         <tr>
                             <td style="padding: 5px;">Department</td>
@@ -68,16 +72,23 @@
                             <td style="padding: 5px;">{{headerObj.patientDetails.dept_name}}</td>
                         </tr>
                         {{/if}}
+                        {{#if headerObj.patientDetails.date}}
+
                         <tr>
                             <td style="padding: 5px;">Date</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.date}}</td>
                         </tr>
+                        {{/if}}
+                        {{#if headerObj.patientDetails.notes_name}}
+
                         <tr>
                             <td style="padding: 5px;">OP Notes Name</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.notes_name}}</td>
                         </tr>
+                        {{/if}}
+
                     </tbody>
                 </table>
             </div>
