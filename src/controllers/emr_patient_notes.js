@@ -240,10 +240,11 @@ const notesController = () => {
                     }
                 }
                 if (consultation_uuid && /\S/.test(consultation_uuid)) {
-                    findQuery.where = Object.assign(findQuery.where, {
+                    Object.assign(findQuery.where, {
                         consultation_uuid: consultation_uuid
                     });
                 }
+                console.log(findQuery);
                 const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
                 if (patNotesData.count == 0) {
                     return res.status(404).send({
