@@ -574,22 +574,27 @@ const notesController = () => {
                         }
                     });
                 }
+                let patientObj;
+                if(finalData&&finalData[0].vw_consultation_detail){
+                    patientObj = {
+                        patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
+                        age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
+                        gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
+                        pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
+                        mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
+                        pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
+                        doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
+                        dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
+                        title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
+                        date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY HH:mm a') : '',
+                        notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
+                    };
+                } else {
+                    patientObj = {};
+                }
+               
 
-                let patientObj = {
-                    patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
-                    age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
-                    gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
-                    pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
-                    mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
-                    pin: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_pin : '',
-                    doctor_name: finalData ? finalData[0].vw_consultation_detail.dataValues.u_first_name : '',
-                    dept_name: finalData ? finalData[0].vw_consultation_detail.dataValues.d_name : '',
-                    title: finalData ? finalData[0].vw_consultation_detail.dataValues.t_name : '',
-                    date: finalData ? moment(finalData[0].vw_consultation_detail.dataValues.created_date).format('DD-MMM-YYYY HH:mm a') : '',
-                    notes_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pr_name : ''
-                };
-
-                printObj.patientDetails = finalData ? patientObj : false;
+                printObj.patientDetails = finalData ? patientObj : false;    
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -615,7 +620,7 @@ const notesController = () => {
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-                                    let name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')' : e.term_key;
+                                    let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key;
                                     var value = [...Object.values(check), name];
                                     // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
@@ -655,6 +660,11 @@ const notesController = () => {
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
+                // return res.status(400).send({
+                //     status: "failed",
+                //     statusCode: httpStatus[500],
+                //     message: printObj
+                // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
