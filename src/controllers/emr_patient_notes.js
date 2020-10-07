@@ -592,8 +592,7 @@ const notesController = () => {
                 } else {
                     patientObj = {};
                 }
-               
-
+            
                 printObj.patientDetails = finalData ? patientObj : false;    
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
@@ -605,12 +604,12 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                let arr = []
+                let arr = [];
                 for (let e of finalData) {
-                    console.log(e.term_key)
+                    console.log(e.term_key);
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                     if(val.test(e.term_key)){
-                        e.term_key = moment(e.term_key).format('DD-MMM-YYYY HH:mm a');
+                        e.term_key = moment(emr_utility.indiaTz(e.term_key).toDate()).format('DD-MMM-YYYY HH:mm a');
                     } else {
                         e.term_key = e.term_key;
                     }
