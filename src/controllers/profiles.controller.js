@@ -631,8 +631,11 @@ const profilesController = () => {
     var profileDetailsUpdate = [];
     var sectionsResponse = [];
     var categoryResponse = [];
+    var categoryResponse_1=[];
     var conceptsResponse = [];
+    var conceptsResponse_1=[]
     var conceptValuesResponse = [];
+    var  conceptValuesResponse_1=[];
     var element3 = {};
     var element2 = {};
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
@@ -675,6 +678,7 @@ const profilesController = () => {
       }
       for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
         element2 = profileData.profiles.sections[i].categories[j];
+       
         if (element2.profile_section_categories_uuid) {
           profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({
             category_uuid: element2.category_uuid,
@@ -684,9 +688,21 @@ const profilesController = () => {
               uuid: element2.profile_section_categories_uuid
             }
           }));
-        } else {
+        } 
+        else if(element.profile_sections_uuid){
+          let elementArrsection = [];
+          // elementArr2.push(element);
+          var index = 0;
+          elementArrsection.push({
+            profile_section_uuid: element.profile_sections_uuid,
+            category_uuid: element2.category_uuid,
+            display_order: element.display_order
+          });
+          categoryResponse_1 = await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
+        }else {
           let elementArr2 = [];
           // elementArr2.push(element);
+          var index = 0;
           elementArr2.push({
             profile_section_uuid: sectionsResponse[0].uuid,
             category_uuid: element2.category_uuid,
@@ -710,7 +726,23 @@ const profilesController = () => {
                 uuid: element3.profile_section_category_concepts_uuid
               }
             }));
-          } else {
+          } else if(element2.profile_section_categories_uuid){
+            let elementArr_2 = [];
+            // elementArr1.push(element);
+            var index = 0;
+            elementArr_2.push({
+              profile_section_category_uuid: element2.profile_section_categories_uuid,
+              code: element3.code,
+              name: element3.name,
+              description: element3.description,
+              value_type_uuid: element3.value_type_uuid,
+              is_mandatory: element3.is_mandatory,
+              display_order: element3.display_order,
+              is_multiple: element3.is_multiple
+            });
+            conceptsResponse_1 = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
+          }
+          else {
             let elementArr1 = [];
             // elementArr1.push(element);
             var index = 0;
@@ -739,7 +771,17 @@ const profilesController = () => {
                   uuid: element.profile_section_category_concept_values_uuid
                 }
               }));
-            } else if (!conceptsResponse[0] == undefined) {
+            } else if(element3.profile_section_category_concepts_uuid){
+              let elementArr_3 = [];
+              elementArr_3.push({
+                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
+                value_code: element.value_code,
+                value_name: element.value_name,
+                display_order: element.display_order
+              });
+              conceptValuesResponse_1 = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
+            }
+            else if (!conceptsResponse[0] == undefined) {
               let elementArr = [];
               elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
