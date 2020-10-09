@@ -999,7 +999,7 @@ const notesController = () => {
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
-        result.dataValues.details = {};
+        // result.dataValues.details = {};
         if (user_details && user_details) {
             result.dataValues.details = user_details;
             return result;
