@@ -503,23 +503,28 @@ const notesController = () => {
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 42) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-
-                                labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
-
+                        if(e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result){
+                            if (e.activity_uuid == 42) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+    
+                                    labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+    
+                                }
                             }
-                        }
-                        if (e.activity_uuid == 43) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                            if (e.activity_uuid == 43) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                    radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                                }
                             }
-                        }
-                        if (e.activity_uuid == 58) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                            if (e.activity_uuid == 58) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                    invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                                }
                             }
+                        } else {
+                            labArr = radArr = invArr = [];
                         }
+                        
                     });
                 }
                 if (printObj.Vitals) {
