@@ -495,7 +495,7 @@ const notesController = () => {
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result){
+                        if(e && e.dataValues.details&&e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result){
                             if (e.activity_uuid == 42) {
                                 if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
     
@@ -521,53 +521,76 @@ const notesController = () => {
                 }
                 if (printObj.Vitals) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 57) {
-                            vitArr = [...vitArr, ...e.dataValues.details];
-                            // vitArr.push(e.dataValues.details);
+                        if(e.dataValues.details){
+                            if (e.activity_uuid == 57) {
+                                vitArr = [...vitArr, ...e.dataValues.details];
+                                // vitArr.push(e.dataValues.details);
+                            }
+                        } else {
+                            vitArr = [];
                         }
                     });
                 }
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 49) {
-                            cheifArr = [...cheifArr, ...e.dataValues.details];
+                        if(e.dataValues.details){
+                            if (e.activity_uuid == 49) {
+                                cheifArr = [...cheifArr, ...e.dataValues.details];
+                            }
+                        } else {
+                            cheifArr = [];
                         }
+                        
                     });
                 }
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 59) {
-                            diaArr = [...diaArr, ...e.dataValues.details];
+                        if(e.dataValues.details){
+                            if (e.activity_uuid == 59) {
+                                diaArr = [...diaArr, ...e.dataValues.details];
+                            }
+                        } else {
+                            diaArr = [];
                         }
+                        
                     });
                 }
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 44) {
-                            if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
-                                e.dataValues.details[0].prescription_details.forEach(i => {
-                                    i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
-                                    i.has_e_mar = e.dataValues.details[0].has_e_mar;
-                                });
-                                presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
+                        if(e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details){
+                            if (e.activity_uuid == 44) {
+                                if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
+                                    e.dataValues.details[0].prescription_details.forEach(i => {
+                                        i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
+                                        i.has_e_mar = e.dataValues.details[0].has_e_mar;
+                                    });
+                                    presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
+                                }
                             }
+                        } else {
+                            presArr = [];
                         }
+                        
                     });
                 }
                 if (printObj.BloodRequests) {
                     finalData.forEach(e => {
-                        if (e.dataValues.activity_uuid == 252) {
-                            if (e.dataValues.details) {
-                                let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
-                                    return {
-                                        blood_request_status: e.dataValues.details[0].blood_request_status.name,
-                                        blood_group: e.dataValues.details[0].blood_group.name,
-                                        blood_hb: e.dataValues.details[0].blood_hb,
-                                        a: i.blood_component.name
-                                    };
-                                });
-                                bbArr = [...bbArr, ...detailsArr];
+                        if(e.dataValues.details && e.dataValues.details[0].blood_request_details){
+                            if (e.dataValues.activity_uuid == 252) {
+                                if (e.dataValues.details) {
+                                    let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
+                                        return {
+                                            blood_request_status: e.dataValues.details[0].blood_request_status.name,
+                                            blood_group: e.dataValues.details[0].blood_group.name,
+                                            blood_hb: e.dataValues.details[0].blood_hb,
+                                            a: i.blood_component.name
+                                        };
+                                    });
+                                    bbArr = [...bbArr, ...detailsArr];
+                                }
                             }
+                        } else {
+                            bbArr = [];
                         }
                     });
                 }
