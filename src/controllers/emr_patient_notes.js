@@ -56,13 +56,6 @@ const notesController = () => {
         let currentDate = new Date();
         if (user_uuid) {
             try {
-                await sectionCategoryEntriesTbl.update({
-                    is_latest: emr_constants.IS_IN_ACTIVE
-                }, {
-                    where: {
-                        is_latest: emr_constants.IS_ACTIVE
-                    }
-                });
                 profiles.forEach(e => {
                     e.is_active = e.status = true;
                     e.created_by = e.modified_by = user_uuid;
@@ -98,7 +91,7 @@ const notesController = () => {
         const {
             user_uuid
         } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
         const {
             patient_uuid,
             profile_type_uuid
@@ -113,7 +106,7 @@ const notesController = () => {
                 [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
             }
         };
-        if (user_uuid && patient_uuid > 0) {
+        if (user_uuid && patient_uuid > 0 && Authorization) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
@@ -711,12 +704,10 @@ const notesController = () => {
         }
     };
     const _addConsultations = async (req, res) => {
-
         const {
             user_uuid, facility_uuid
         } = req.headers;
         let postData = req.body;
-
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.created_by = postData.modified_by = user_uuid;
@@ -724,26 +715,30 @@ const notesController = () => {
             postData.revision = 1;
             postData.facility_uuid = facility_uuid;
             try {
-
-                const consultationsData = await consultationsTbl.create(postData, {
-                    returing: true
+                await consultationsTbl.update({
+                    is_latest: emr_constants.IS_IN_ACTIVE
+                }, {
+                    where: {
+                        is_latest: emr_constants.IS_ACTIVE,
+                        patient_uuid: postData.patient_uuid
+                    }
                 });
+                const consultationsData = await consultationsTbl.create(postData);
                 if (consultationsData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Inserted successfully',
-                        reqContents: req.body,
+                        reqContents: postData,
                         responseContents: consultationsData
                     });
                 } else {
                     return res.status(400).send({
                         code: httpStatus.OK,
                         message: 'Failed to insert',
-                        reqContents: req.body,
+                        reqContents: postData,
                         responseContents: consultationsData
                     });
                 }
-
 
             } catch (ex) {
                 console.log('Exception happened', ex);
