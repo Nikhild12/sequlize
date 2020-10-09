@@ -806,10 +806,20 @@ const profilesController = () => {
             //   });
             //   conceptValuesResponse_1= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_1);
             // }
-            else {
+            else if(!conceptsResponse_1[0] == undefined){
               let elementArray = [];
               elementArray.push({
-                profile_section_category_concept_uuid: conceptsRespons_1[0].uuid,
+                profile_section_category_concept_uuid:  conceptsResponse_1[0].uuid,
+                value_code: element4.value_code,
+                value_name: element4.value_name,
+                display_order: element4.display_order
+              });
+              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
+            }
+            else{
+              let elementArray = [];
+              elementArray.push({
+                profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order

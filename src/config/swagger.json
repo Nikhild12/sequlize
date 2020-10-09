@@ -3094,6 +3094,39 @@
 				}
 			}
 		},
+		"/api/encounter/updateecounterbyid": {
+			"put": {
+				"description": "To Update a Encounter For Patient",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updateEncounterById",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updateEncounterById"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Inserted Encounter"
+					}
+				}
+			}
+		},
 		"/api/patient-diagnosis/create": {
 			"post": {
 				"description": "To create Patient Diagnosis",
@@ -11863,6 +11896,23 @@
 				},
 				"discharge_date": {
 					"type": "string"
+				}
+			}
+		},
+		"updateEncounterById": {
+			"type": "object",
+			"properties": {
+				"encounter_uuid": {
+					"type": "number",
+					"example": 0
+				},
+				"admission_uuid": {
+					"type": "number",
+					"example": 0
+				},
+				"admission_request_uuid": {
+					"type": "number",
+					"example": 0
 				}
 			}
 		},
