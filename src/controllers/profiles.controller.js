@@ -797,7 +797,7 @@ const profilesController = () => {
 
               let elementArr_3 = [];
               elementArr_3.push({
-                profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
+                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
