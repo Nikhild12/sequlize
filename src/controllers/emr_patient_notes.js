@@ -91,7 +91,7 @@ const notesController = () => {
         const {
             user_uuid
         } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
             patient_uuid,
             profile_type_uuid
@@ -106,7 +106,7 @@ const notesController = () => {
                 [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
             }
         };
-        if (user_uuid && patient_uuid > 0 && Authorization) {
+        if (user_uuid && patient_uuid > 0) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
@@ -411,7 +411,7 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            const Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [
                     {

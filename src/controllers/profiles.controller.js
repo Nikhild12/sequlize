@@ -600,7 +600,7 @@ const profilesController = () => {
     } = req.body;
     if (user_uuid && profiles) {
       try {
-        let bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
+        let bulkUpdateProfileResponse = await bulkUpdateProfile(profiles);
         return res.send({
           status: 'success',
           statusCode: 200,
