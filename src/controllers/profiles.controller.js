@@ -804,8 +804,8 @@ const profilesController = () => {
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
-            else if (conceptsResponse && conceptsResponse[0]) {
-              // console.log("conceptsResponse[0]..",conceptsResponse[0])
+            else if (conceptsResponse &&(conceptsResponse[0] != undefined)) {
+              // console.log("conceptsResp/onse[0]..",conceptsResponse[0])
               let elementArr = [];
               elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
@@ -852,14 +852,14 @@ const profilesController = () => {
               let elementArray = [];
               // let element5=
               // console.log("conceptsResponse[0]..",conceptsResponse[0])
-              // console.log("conceptsResponse[0]..11111",conceptsRespons[0])
-              // console.log("conceptsResponse[0]..11111cdvwvf",conceptsRespons[0].uuid)
+              // console.log("conceptsResponse[0]..11111",conceptsResponse[0])
+              // console.log("conceptsResponse[0]..11111cdvwvf",conceptsResponse[0].uuid)
 
               // console.log("else condition. late else.",element4.profile_section_category_concepts_uuid)
               // console.log("else condition. late else.",element4)
 
               elementArray.push({
-                profile_section_category_concept_uuid: conceptsRespons[0].uuid,
+                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
