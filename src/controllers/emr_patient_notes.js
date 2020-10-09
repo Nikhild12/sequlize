@@ -31,7 +31,10 @@ const profileSectionCategoryConceptValuesTbl = db.profile_section_category_conce
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
-const { APPMASTER_GET_SCREEN_SETTINGS, APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
+const {
+    APPMASTER_GET_SCREEN_SETTINGS,
+    APPMASTER_UPDATE_SCREEN_SETTINGS
+} = emr_constants.DEPENDENCY_URLS;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -40,7 +43,9 @@ const {
     includes
 } = require("lodash");
 const consultations = require("../models/consultations");
-const { parse } = require("path");
+const {
+    parse
+} = require("path");
 const notesController = () => {
 
     /**
@@ -53,6 +58,8 @@ const notesController = () => {
             user_uuid
         } = req.headers;
         let profiles = req.body;
+        // let consultation_data = req.body.header; // consultation_data
+        // let consultation_details_data = req.body.details; // consultation_details_data
         let currentDate = new Date();
         if (user_uuid) {
             try {
@@ -62,17 +69,69 @@ const notesController = () => {
                     e.created_date = e.modified_date = e.entry_date = currentDate;
                     e.revision = emr_constants.IS_ACTIVE;
                 });
+                let result_data = [];
+                // if (!consultation_data.consultation_uuid) {
+                //     consultation_result = await consultationsTbl.create(consultation_data);
+                //     for (let i = 0; i < consultation_details_data.length; i++) {
+                //         consultation_details.push({
+                //             ...consultation_details_data[i],
+                //             ...{
+                //                 consultation_uuid: consultation_result.dataValues.uuid,
+                //                 created_by: user_uuid,
+                //                 modified_by: user_uuid
+                //             }
+                //         });
+                //     }
+                // } else {
+                //     consultation_details = consultation_details_data;
+                // }
+                // const uuids = [...new Set(_.concat(created_by, modified_by))];
+                // const arr = profiles.map(profileData => {
+                //     return {
+                //         patient_uuid: profileData.patient_uuid,
+                //         consultation_uuid: profileData.consultation_uuid,
+                //         encounter_uuid: profileData.encounter_uuid
+                //     };
+                // });
+                let consultation_uuids = [...new Set(profiles.map(e => e.consultation_uuid))];
+
+                const sectionResult = await sectionCategoryEntriesTbl.findAll({
+                    where: {
+                        consultation_uuid: {
+                            [Op.in]: consultation_uuids
+                        }
+                    }
+                });
+
+                // for(let p of sectionResult){
+
+                // }
+
+                for (let epwod of profiles) {
+                    let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
+                        updateOnDuplicate: Object.keys(epwod)
+                    }, {
+                        returning: true
+                    });
+                    for (let d of bulkData) {
+                        result_data.push(d.dataValues);
+                    }
+                }
                 await sectionCategoryEntriesTbl.bulkCreate(profiles, {
-                    returing: true
+                    updateOnDuplicate: ["uuid", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
                 });
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
-                    reqContents: req.body
+                    reqContents: req.body,
+                    responseContents: result_data
                 });
             } catch (err) {
                 if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
-                    return res.status(400).json({ Error: err.errors, msg: "Validation error" });
+                    return res.status(400).json({
+                        Error: err.errors,
+                        msg: "Validation error"
+                    });
                 }
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
@@ -219,7 +278,8 @@ const notesController = () => {
     const _getOPNotesDetailsByPatId = async (req, res) => {
 
         const {
-            patient_uuid, consultation_uuid
+            patient_uuid,
+            consultation_uuid
         } = req.query;
         const {
             user_uuid
@@ -314,41 +374,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -411,13 +471,15 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
+            // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [
-                    {
+                include: [{
                         model: vw_consultation_detailsTbl,
                         required: false,
-                        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
                     },
                     {
                         model: profilesTbl,
@@ -458,6 +520,7 @@ const notesController = () => {
                 ],
                 where: {
                     patient_uuid: patient_uuid,
+                    consultation_uuid: consultation_uuid,
                     is_latest: emr_constants.IS_ACTIVE
                 }
             };
@@ -495,12 +558,12 @@ const notesController = () => {
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
-                        if(e && e.dataValues.details&&e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result){
+                        if (e && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result) {
                             if (e.activity_uuid == 42) {
                                 if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-    
+
                                     labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
-    
+
                                 }
                             }
                             if (e.activity_uuid == 43) {
@@ -516,12 +579,11 @@ const notesController = () => {
                         } else {
                             labArr = radArr = invArr = [];
                         }
-                        
                     });
                 }
                 if (printObj.Vitals) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details){
+                        if (e.dataValues.details) {
                             if (e.activity_uuid == 57) {
                                 vitArr = [...vitArr, ...e.dataValues.details];
                                 // vitArr.push(e.dataValues.details);
@@ -533,31 +595,31 @@ const notesController = () => {
                 }
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details){
+                        if (e.dataValues.details) {
                             if (e.activity_uuid == 49) {
                                 cheifArr = [...cheifArr, ...e.dataValues.details];
                             }
                         } else {
                             cheifArr = [];
                         }
-                        
+
                     });
                 }
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details){
+                        if (e.dataValues.details) {
                             if (e.activity_uuid == 59) {
                                 diaArr = [...diaArr, ...e.dataValues.details];
                             }
                         } else {
                             diaArr = [];
                         }
-                        
+
                     });
                 }
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details){
+                        if (e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details) {
                             if (e.activity_uuid == 44) {
                                 if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                     e.dataValues.details[0].prescription_details.forEach(i => {
@@ -570,12 +632,12 @@ const notesController = () => {
                         } else {
                             presArr = [];
                         }
-                        
+
                     });
                 }
                 if (printObj.BloodRequests) {
                     finalData.forEach(e => {
-                        if(e.dataValues.details && e.dataValues.details[0].blood_request_details){
+                        if (e.dataValues.details && e.dataValues.details[0].blood_request_details) {
                             if (e.dataValues.activity_uuid == 252) {
                                 if (e.dataValues.details) {
                                     let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
@@ -633,8 +695,7 @@ const notesController = () => {
                         } else {
                             e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm A');
                         }
-                    }
-                    else {
+                    } else {
                         e.term_key = e.term_key;
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
@@ -735,7 +796,8 @@ const notesController = () => {
     };
     const _addConsultations = async (req, res) => {
         const {
-            user_uuid, facility_uuid
+            user_uuid,
+            facility_uuid
         } = req.headers;
         let postData = req.body;
         if (user_uuid) {
@@ -865,6 +927,7 @@ const notesController = () => {
         }
 
     };
+
     function getWidgetData(actCode, result, consultation_uuid) {
         switch (actCode) {
             case "Lab":
@@ -936,6 +999,7 @@ const notesController = () => {
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         console.log(user_details);
+        result.dataValues.details = {};
         if (user_details && user_details) {
             result.dataValues.details = user_details;
             return result;
@@ -1088,7 +1152,7 @@ const notesController = () => {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             method: "POST",
             headers: {
-                // Authorization: result.Authorization,
+                Authorization: result.Authorization,
                 user_uuid: result.user_uuid,
                 facility_uuid: result.facility_uuid
             },
@@ -1221,13 +1285,11 @@ async function getPrevNotes(filterQuery, Sequelize) {
         // group: ['profile_uuid'],
         order: [sortArr],
         limit: 10,
-        include: [
-            {
-                model: profilesTbl,
-                required: false,
-                attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-            }
-        ]
+        include: [{
+            model: profilesTbl,
+            required: false,
+            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+        }]
     });
 
 }
