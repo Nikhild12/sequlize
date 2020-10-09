@@ -56,13 +56,6 @@ const notesController = () => {
         let currentDate = new Date();
         if (user_uuid) {
             try {
-                await sectionCategoryEntriesTbl.update({
-                    is_latest: emr_constants.IS_IN_ACTIVE
-                }, {
-                    where: {
-                        is_latest: emr_constants.IS_ACTIVE
-                    }
-                });
                 profiles.forEach(e => {
                     e.is_active = e.status = true;
                     e.created_by = e.modified_by = user_uuid;
@@ -244,7 +237,6 @@ const notesController = () => {
                         consultation_uuid: consultation_uuid
                     });
                 }
-                console.log(findQuery);
                 const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
                 if (patNotesData.count == 0) {
                     return res.status(404).send({
@@ -554,7 +546,7 @@ const notesController = () => {
                         if (e.activity_uuid == 44) {
                             if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                 e.dataValues.details[0].prescription_details.forEach(i => {
-                                    i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room :  e.dataValues.details[0].store_master;
+                                    i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
                                     i.has_e_mar = e.dataValues.details[0].has_e_mar;
                                 });
                                 presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
@@ -580,7 +572,7 @@ const notesController = () => {
                     });
                 }
                 let patientObj;
-                if(finalData&&finalData[0]&&finalData[0].vw_consultation_detail){
+                if (finalData && finalData[0] && finalData[0].vw_consultation_detail) {
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
@@ -597,8 +589,7 @@ const notesController = () => {
                 } else {
                     patientObj = {};
                 }
-            
-                printObj.patientDetails = finalData ? patientObj : false;    
+                printObj.patientDetails = finalData ? patientObj : false;
                 printObj.labResult = labArr;
                 printObj.radResult = radArr;
                 printObj.invResult = invArr;
@@ -611,45 +602,35 @@ const notesController = () => {
                 printObj.details = finalData;
                 let arr = [];
                 for (let e of finalData) {
-                    console.log(e.term_key);
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
-                    if(val.test(e.term_key)){
-                        // e.term_key = new Date(e.term_key).toISOString();
-                        console.log('///////////////////',e.term_key);
-                        e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm A');
-                        console.log(',,,,,,,,,,,,',e.term_key);
-
-                    } else {
+                    const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
+                    if (val.test(e.term_key)) {
+                        if (val2.test(e.term_key)) {
+                            e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY');
+                        } else {
+                            e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm A');
+                        }
+                    }
+                    else {
                         e.term_key = e.term_key;
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
                             [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key
                         };
-                        // let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + e.term_key == '1' || true ? '' : '(' + e.term_key + ')') : e.term_key;
-
                         if (sample.length == 0) {
                             sample.push(sampleObj);
                         } else {
                             let check = sample.find(item => {
-                                console.log(item);
                                 return Object.keys(item)[0] == e.profile_section_category_concept.name;
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-
-                                   
                                     let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key;
-                                    
                                     var value = [...Object.values(check), name];
-                                    // arr.push(value);
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
                                 }
-                                // var value = Object.values(check).toString() + ',' + e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                                // arr.push(value);
-                                // check[e.profile_section_category_concept.name] = arr.join();
-                                // sample.push(check);
                             } else {
                                 sample.push(sampleObj);
                             }
@@ -680,8 +661,7 @@ const notesController = () => {
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
-                // return res.status(400).send({
-             
+                // return res.send({
                 //     message: printObj
                 // });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
@@ -731,12 +711,10 @@ const notesController = () => {
         }
     };
     const _addConsultations = async (req, res) => {
-
         const {
             user_uuid, facility_uuid
         } = req.headers;
         let postData = req.body;
-
         if (user_uuid) {
             postData.is_active = postData.status = true;
             postData.created_by = postData.modified_by = user_uuid;
@@ -744,26 +722,30 @@ const notesController = () => {
             postData.revision = 1;
             postData.facility_uuid = facility_uuid;
             try {
-
-                const consultationsData = await consultationsTbl.create(postData, {
-                    returing: true
+                await consultationsTbl.update({
+                    is_latest: emr_constants.IS_IN_ACTIVE
+                }, {
+                    where: {
+                        is_latest: emr_constants.IS_ACTIVE,
+                        patient_uuid: postData.patient_uuid
+                    }
                 });
+                const consultationsData = await consultationsTbl.create(postData);
                 if (consultationsData) {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Inserted successfully',
-                        reqContents: req.body,
+                        reqContents: postData,
                         responseContents: consultationsData
                     });
                 } else {
                     return res.status(400).send({
                         code: httpStatus.OK,
                         message: 'Failed to insert',
-                        reqContents: req.body,
+                        reqContents: postData,
                         responseContents: consultationsData
                     });
                 }
-
 
             } catch (ex) {
                 console.log('Exception happened', ex);
