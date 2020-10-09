@@ -631,11 +631,8 @@ const profilesController = () => {
     var profileDetailsUpdate = [];
     var sectionsResponse = [];
     var categoryResponse = [];
-    var categoryResponse_1=[];
     var conceptsResponse = [];
-    var conceptsResponse_1=[];
     var conceptValuesResponse = [];
-    var conceptValuesResponse_1=[];
     var element3 = {};
     var element2 = {};
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
@@ -777,6 +774,8 @@ const profilesController = () => {
               }));
             } 
             else if(element3.profile_section_category_concepts_uuid){
+              // console.log("element3.profile_section_category_concepts_uuid",element3.profile_section_category_concepts_uuid)
+
               let elementArr_3 = [];
               elementArr_3.push({
                 profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
@@ -787,9 +786,10 @@ const profilesController = () => {
               conceptValuesResponse= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
             else if (!conceptsResponse[0] == undefined) {
+              // console.log("conceptsResponse[0]..",conceptsResponse[0])
               let elementArr = [];
               elementArr.push({
-                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
+                profile_section_category_concept_uuid:conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
@@ -806,31 +806,41 @@ const profilesController = () => {
             //   });
             //   conceptValuesResponse_1= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_1);
             // }
-            // else if(!conceptsResponse_1[0] == undefined){
+            // else if(!conceptsRespons_1[0] == undefined){
+            //   console.log("conceptsResponse[0]_1..",conceptsRespons_1[0])
+
             //   let elementArray = [];
             //   elementArray.push({
-            //     profile_section_category_concept_uuid:  conceptsResponse_1[0].uuid,
+            //     profile_section_category_concept_uuid:conceptsRespons_1[0].uuid,
             //     value_code: element4.value_code,
             //     value_name: element4.value_name,
             //     display_order: element4.display_order
             //   });
             //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             // }
-            else if(!conceptsResponse[0]==undefined){
-              let elementArray = [];
-              elementArray.push({
-                profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
-                value_code: element4.value_code,
-                value_name: element4.value_name,
-                display_order: element4.display_order
-              });
-              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
-            }
+            // else if(!conceptsResponse[0]==undefined){
+            //   let elementArray = [];
+            //   elementArray.push({
+            //     profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
+            //     value_code: element4.value_code,
+            //     value_name: element4.value_name,
+            //     display_order: element4.display_order
+            //   });
+            //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
+            // }
             else {
+              // console.log("else condition..")
               let elementArray = [];
-              let element5= profileData.profiles.sections[i].categories[j].concepts[k]
+              // let element5=
+              // console.log("conceptsResponse[0]..",conceptsResponse[0])
+              // console.log("conceptsResponse[0]..11111",conceptsRespons[0])
+              // console.log("conceptsResponse[0]..11111cdvwvf",conceptsRespons[0].uuid)
+
+              // console.log("else condition. late else.",element4.profile_section_category_concepts_uuid)
+              // console.log("else condition. late else.",element4)
+
               elementArray.push({
-                profile_section_category_concept_uuid: element5.uuid,
+                profile_section_category_concept_uuid: conceptsRespons[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
