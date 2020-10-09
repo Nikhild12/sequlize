@@ -91,7 +91,7 @@ const notesController = () => {
         const {
             user_uuid
         } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         const {
             patient_uuid,
             profile_type_uuid
@@ -106,7 +106,7 @@ const notesController = () => {
                 [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
             }
         };
-        if (user_uuid && patient_uuid > 0 && Authorization) {
+        if (user_uuid && patient_uuid > 0) {
             try {
                 const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
                 if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
@@ -411,7 +411,7 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            const Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [
                     {
@@ -495,21 +495,28 @@ const notesController = () => {
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
-                        if (e.activity_uuid == 42) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+                        if(e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result){
+                            if (e.activity_uuid == 42) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+    
+                                    labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+    
+                                }
                             }
-                        }
-                        if (e.activity_uuid == 43) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                            if (e.activity_uuid == 43) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                    radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                                }
                             }
-                        }
-                        if (e.activity_uuid == 58) {
-                            if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                            if (e.activity_uuid == 58) {
+                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
+                                    invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                                }
                             }
+                        } else {
+                            labArr = radArr = invArr = [];
                         }
+                        
                     });
                 }
                 if (printObj.Vitals) {
