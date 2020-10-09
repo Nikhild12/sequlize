@@ -741,7 +741,7 @@ const profilesController = () => {
               display_order: element3.display_order,
               is_multiple: element3.is_multiple
             });
-            conceptsRespons_1= await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
+            conceptsRespons= await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
           }
           // else if(){
 
@@ -806,20 +806,31 @@ const profilesController = () => {
             //   });
             //   conceptValuesResponse_1= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_1);
             // }
-            else if(!conceptsResponse_1[0] == undefined){
+            // else if(!conceptsResponse_1[0] == undefined){
+            //   let elementArray = [];
+            //   elementArray.push({
+            //     profile_section_category_concept_uuid:  conceptsResponse_1[0].uuid,
+            //     value_code: element4.value_code,
+            //     value_name: element4.value_name,
+            //     display_order: element4.display_order
+            //   });
+            //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
+            // }
+            else if(!conceptsResponse[0]==undefined){
               let elementArray = [];
               elementArray.push({
-                profile_section_category_concept_uuid:  conceptsResponse_1[0].uuid,
+                profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
-            else{
+            else {
               let elementArray = [];
+              let element5= profileData.profiles.sections[i].categories[j].concepts[k]
               elementArray.push({
-                profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
+                profile_section_category_concept_uuid: element5.uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
