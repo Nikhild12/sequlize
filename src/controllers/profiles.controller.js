@@ -757,7 +757,7 @@ const profilesController = () => {
               display_order: element3.display_order,
               is_multiple: element3.is_multiple
             });
-            conceptsRespons = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
+            conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
           }
           // else if(){
 
@@ -797,15 +797,15 @@ const profilesController = () => {
 
               let elementArr_3 = [];
               elementArr_3.push({
-                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
+                profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
-            else if (conceptsResponse &&(conceptsResponse[0] != undefined)) {
-              // console.log("conceptsResp/onse[0]..",conceptsResponse[0])
+            else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
+              // console.log("conceptsResponse[0]..",conceptsResponse[0])
               let elementArr = [];
               elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
@@ -851,12 +851,12 @@ const profilesController = () => {
               // console.log("else condition..")
               let elementArray = [];
               // let element5=
-              // console.log("conceptsResponse[0]..",conceptsResponse[0])
-              // console.log("conceptsResponse[0]..11111",conceptsResponse[0])
-              // console.log("conceptsResponse[0]..11111cdvwvf",conceptsResponse[0].uuid)
+              console.log("conceptsResponse[0]..", conceptsResponse[0])
+              console.log("conceptsResponse[0]..11111", conceptsResponse[0])
+              console.log("conceptsResponse[0]..11111cdvwvf", conceptsResponse[0].uuid)
 
-              // console.log("else condition. late else.",element4.profile_section_category_concepts_uuid)
-              // console.log("else condition. late else.",element4)
+              console.log("else condition. late else.", element4.profile_section_category_concepts_uuid)
+              console.log("else condition. late else.", element4)
 
               elementArray.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
