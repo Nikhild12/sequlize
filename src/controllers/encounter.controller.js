@@ -657,6 +657,46 @@ const Encounter = () => {
     }
   };
 
+  const _updateEcounterById = async (req, res) => {
+    try {
+      const postData = req.body;
+      let dataJson = {};
+
+      if (postData.admission_uuid && /\S/.test(postData.admission_uuid)) {
+        dataJson.admission_uuid = postData.admission_uuid;
+      } else {
+        return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+          status: 'error',
+          statusCode: httpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Failed to update admission/ admission request'
+        })
+      }
+
+      dataJson.admission_request_uuid = postData.admission_request_uuid ? postData.admission_request_uuid : 0
+
+      let data = await encounter_tbl.update(dataJson, {
+        where: {
+          uuid: postData.encounter_uuid
+        }
+      });
+
+      return res.status(httpStatus.OK).json({
+        status: 'success',
+        statusCode: httpStatus.OK,
+        msg: 'Encounter admission/ admission request updated successfully',
+        responseContents: data
+      })
+    } catch (err) {
+      let errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+        msg: 'Failed to update admission/ admission request',
+        actual: errorMsg
+      })
+    }
+  };
+
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     createPatientEncounter: _createPatientEncounter,
@@ -669,7 +709,8 @@ const Encounter = () => {
     getEncounterByPatientIdAndVisitdate: _getEncounterByPatientIdAndVisitdate,
     getLatestEncounterByPatientId: _getLatestEncounterByPatientId,
     createEncounterBulk: _createEncounterBulk,
-    getEncounterByAdmissionId: _getEncounterByAdmissionId
+    getEncounterByAdmissionId: _getEncounterByAdmissionId,
+    updateEcounterById: _updateEcounterById
   };
 };
 
