@@ -634,6 +634,22 @@ const profilesController = () => {
           })
         }
       }
+      try {
+        return res.send({
+          status: 'success',
+          statusCode: 200,
+          msg: 'success',
+          responseContents: bulkUpdateProfileResponse
+        });
+      } catch (err) {
+        console.log('err===', err);
+        return res.send({
+          status: 'error',
+          statusCode: 400,
+          msg: 'failed',
+          error: err.message
+        });
+      }
     }
     else {
       return res.send({
