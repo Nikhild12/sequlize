@@ -20,6 +20,4 @@ profilesRoute.route('/getProfilesDefault').get(profilesController.getDefaultProf
 profilesRoute.route('/setProfilesDefault').post(profilesController.setDefaultProfiles);
 profilesRoute.route('/get-notes-by-type').get(profilesController.getNotesByType);
 
-
-
 module.exports = profilesRoute;

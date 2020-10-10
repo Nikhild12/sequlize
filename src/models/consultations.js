@@ -71,6 +71,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
+            is_latest: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: true
+            },
             approved_by: {
                 type: DataTypes.INTEGER,
                 allowNull: true
