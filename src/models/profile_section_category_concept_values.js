@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
             is_defult: {
 
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                // defaultValue: 1,
                 allowNull: false
 
             },
