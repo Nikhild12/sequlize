@@ -131,7 +131,8 @@ const profilesController = () => {
                         profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
                         value_code: element.value_code,
                         value_name: element.value_name,
-                        display_order: element.display_order
+                        display_order: element.display_order,
+                        is_defult:element.is_defult
                       });
                     }
                   }
