@@ -131,7 +131,8 @@ const profilesController = () => {
                         profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
                         value_code: element.value_code,
                         value_name: element.value_name,
-                        display_order: element.display_order
+                        display_order: element.display_order,
+                        is_defult:element.is_defult
                       });
                     }
                   }
@@ -487,7 +488,7 @@ const profilesController = () => {
             {
               model: profileSectionCategoryConceptValuesTbl,
               as: 'profile_section_category_concept_values',
-              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
+              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name','is_defult'],
               where: {
                 is_active: 1,
                 status: 1
@@ -801,7 +802,8 @@ const profilesController = () => {
               profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult:element4.is_defult
               }, {
                 where: {
                   uuid: element4.profile_section_category_concept_values_uuid
@@ -816,7 +818,8 @@ const profilesController = () => {
                 profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult:element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
@@ -827,7 +830,8 @@ const profilesController = () => {
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult:element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             }
@@ -878,7 +882,8 @@ const profilesController = () => {
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult:element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
