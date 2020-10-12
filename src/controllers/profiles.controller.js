@@ -131,7 +131,8 @@ const profilesController = () => {
                         profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
                         value_code: element.value_code,
                         value_name: element.value_name,
-                        display_order: element.display_order
+                        display_order: element.display_order,
+                        is_defult: element.is_defult
                       });
                     }
                   }
@@ -487,7 +488,7 @@ const profilesController = () => {
             {
               model: profileSectionCategoryConceptValuesTbl,
               as: 'profile_section_category_concept_values',
-              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
+              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
               where: {
                 is_active: 1,
                 status: 1
@@ -634,6 +635,22 @@ const profilesController = () => {
           })
         }
       }
+      try {
+        return res.send({
+          status: 'success',
+          statusCode: 200,
+          msg: 'success',
+          responseContents: bulkUpdateProfileResponse
+        });
+      } catch (err) {
+        console.log('err===', err);
+        return res.send({
+          status: 'error',
+          statusCode: 400,
+          msg: 'failed',
+          error: err.message
+        });
+      }
     }
     else {
       return res.send({
@@ -683,7 +700,6 @@ const profilesController = () => {
         }));
       } else {
         let elementArr3 = [];
-        // elementArr3.push(element);
         elementArr3.push({
           profile_uuid: profileData.profiles.profile_uuid,
           section_uuid: element.section_uuid,
@@ -694,7 +710,6 @@ const profilesController = () => {
       }
       for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
         element2 = profileData.profiles.sections[i].categories[j];
-
         if (element2.profile_section_categories_uuid) {
           profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({
             category_uuid: element2.category_uuid,
@@ -707,7 +722,6 @@ const profilesController = () => {
         }
         else if (element.profile_sections_uuid) {
           let elementArrsection = [];
-          // elementArr2.push(element);
           var index = 0;
           elementArrsection.push({
             profile_section_uuid: element.profile_sections_uuid,
@@ -745,7 +759,6 @@ const profilesController = () => {
           }
           else if (element2.profile_section_categories_uuid) {
             let elementArr_2 = [];
-            // elementArr1.push(element);
             var index = 0;
             elementArr_2.push({
               profile_section_category_uuid: element2.profile_section_categories_uuid,
@@ -759,12 +772,8 @@ const profilesController = () => {
             });
             conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
           }
-          // else if(){
-
-          // }
           else {
             let elementArr1 = [];
-            // elementArr1.push(element);
             var index = 0;
             elementArr1.push({
               profile_section_category_uuid: categoryResponse[0].uuid,
@@ -780,12 +789,12 @@ const profilesController = () => {
           }
           for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
             const element4 = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
-
             if (element4.profile_section_category_concept_values_uuid) {
               profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               }, {
                 where: {
                   uuid: element4.profile_section_category_concept_values_uuid
@@ -793,25 +802,24 @@ const profilesController = () => {
               }));
             }
             else if (element3.profile_section_category_concepts_uuid) {
-              // console.log("element3.profile_section_category_concepts_uuid",element3.profile_section_category_concepts_uuid)
-
               let elementArr_3 = [];
               elementArr_3.push({
-                profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
+                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
             else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
-              // console.log("conceptsResponse[0]..",conceptsResponse[0])
               let elementArr = [];
               elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             }
@@ -848,21 +856,13 @@ const profilesController = () => {
             //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             // }
             else {
-              // console.log("else condition..")
               let elementArray = [];
-              // let element5=
-              console.log("conceptsResponse[0]..", conceptsResponse[0])
-              console.log("conceptsResponse[0]..11111", conceptsResponse[0])
-              console.log("conceptsResponse[0]..11111cdvwvf", conceptsResponse[0].uuid)
-
-              console.log("else condition. late else.", element4.profile_section_category_concepts_uuid)
-              console.log("else condition. late else.", element4)
-
               elementArray.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
