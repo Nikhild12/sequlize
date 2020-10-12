@@ -50,8 +50,8 @@ const notesController = () => {
 
     /**
      * OPNotes main template save
-     * @param {*} req 
-     * @param {*} res 
+     * @param {*} req
+     * @param {*} res
      */
     const _addProfiles = async (req, res) => {
         const {
@@ -335,7 +335,7 @@ const notesController = () => {
         try {
             if (user_uuid && updateData) {
                 const data = await sectionCategoryEntriesTbl.bulkCreate(updateData, {
-                    updateOnDuplicate: ["patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
+                    updateOnDuplicate: ["status", "is_active", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
                 }, {
                     returing: true
                 });
