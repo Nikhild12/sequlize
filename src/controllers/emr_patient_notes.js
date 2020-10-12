@@ -334,7 +334,7 @@ const notesController = () => {
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Updated Successfully',
-                        requestContent: data
+                        responseContents: data
                     });
                 }
             } else {
