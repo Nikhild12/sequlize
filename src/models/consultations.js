@@ -111,7 +111,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
                 allowNull: false
             },
             revision: {
@@ -134,7 +133,12 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ["uuid"]
                 }
-            ]
+            ],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
 
