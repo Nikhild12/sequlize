@@ -336,8 +336,6 @@ const notesController = () => {
                       let  findQuery= {
                             where: {
                                 consultation_uuid: postData[0].consultation_uuid,
-                                is_active: 1,
-                                status: 1,
                             }
                         };
                         patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
