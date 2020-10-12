@@ -131,7 +131,8 @@ const profilesController = () => {
                         profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
                         value_code: element.value_code,
                         value_name: element.value_name,
-                        display_order: element.display_order
+                        display_order: element.display_order,
+                        is_defult: element.is_defult
                       });
                     }
                   }
@@ -241,7 +242,8 @@ const profilesController = () => {
         findQuery.where = {
           p_department_uuid: department_uuid
 
-        }}
+        }
+      }
 
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
@@ -435,9 +437,28 @@ const profilesController = () => {
         },
         required: false,
         include: [{
-            model: sectionsTbl,
-            as: 'sections',
-            attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+          model: sectionsTbl,
+          as: 'sections',
+          attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+          where: {
+            is_active: 1,
+            status: 1
+          },
+          required: false
+        },
+        {
+          model: profileSectionCategoriesTbl,
+          as: 'profile_section_categories',
+          attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+          where: {
+            is_active: 1,
+            status: 1
+          },
+          required: false,
+          include: [{
+            model: categoriesTbl,
+            as: 'categories',
+            attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
             where: {
               is_active: 1,
               status: 1
@@ -445,59 +466,40 @@ const profilesController = () => {
             required: false
           },
           {
-            model: profileSectionCategoriesTbl,
-            as: 'profile_section_categories',
-            attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+            model: profileSectionCategoryConceptsTbl,
+            as: 'profile_section_category_concepts',
+            attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
             where: {
               is_active: 1,
               status: 1
             },
             required: false,
             include: [{
-                model: categoriesTbl,
-                as: 'categories',
-                attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-                where: {
-                  is_active: 1,
-                  status: 1
-                },
-                required: false
+              model: valueTypesTbl,
+              as: 'value_types',
+              attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+              where: {
+                is_active: 1,
+                status: 1
               },
-              {
-                model: profileSectionCategoryConceptsTbl,
-                as: 'profile_section_category_concepts',
-                attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-                where: {
-                  is_active: 1,
-                  status: 1
-                },
-                required: false,
-                include: [{
-                    model: valueTypesTbl,
-                    as: 'value_types',
-                    attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
-                    where: {
-                      is_active: 1,
-                      status: 1
-                    },
-                    required: false
-                  },
-                  // include: [
-                  {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    as: 'profile_section_category_concept_values',
-                    attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name'],
-                    where: {
-                      is_active: 1,
-                      status: 1
-                    },
-                    required: false
-                  }
-                ]
-                //],
-              }
+              required: false
+            },
+            // include: [
+            {
+              model: profileSectionCategoryConceptValuesTbl,
+              as: 'profile_section_category_concept_values',
+              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
+              where: {
+                is_active: 1,
+                status: 1
+              },
+              required: false
+            }
             ]
+            //],
           }
+          ]
+        }
         ]
       }]
 
@@ -536,7 +538,7 @@ const profilesController = () => {
           profileData.forEach(e => {
             const department_uuid = e.dataValues.department_uuid;
             e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
-        });
+          });
         }
         /**Get user name */
         let doctorIds = [...new Set(profileData.map(e => e.created_by))];
@@ -550,10 +552,10 @@ const profilesController = () => {
           });
           profileData.forEach(e => {
             const {
-                created_by,
+              created_by,
             } = e.dataValues;
             e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
-        });
+          });
         }
         // if (profileData[0].profile_sections[0].activity_uuid > 0) {
         // if (profileData.length == 0) {
@@ -595,12 +597,45 @@ const profilesController = () => {
     const {
       user_uuid
     } = req.headers;
-    const {
-      profiles
-    } = req.body;
-    if (user_uuid && profiles) {
+    const { profiles, deletedHeadings, deletedSubheadings, deletedFieldInfo } = req.body;
+    if (user_uuid) {
+      if (profiles) {
+        bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
+      }
+      if (deletedHeadings && deletedHeadings.length > 0) {
+        for (let dh of deletedHeadings) {
+          await profileSectionsTbl.update({
+            status: 0
+          }, {
+            where: {
+              uuid: dh.profile_sections_uuid
+            }
+          });
+        }
+      }
+      if (deletedSubheadings && deletedSubheadings.length > 0) {
+        for (let dsh of deletedSubheadings) {
+          await profileSectionCategoriesTbl.update({
+            status: 0
+          }, {
+            where: {
+              uuid: dsh.profile_section_categories_uuid
+            }
+          });
+        }
+      }
+      if (deletedFieldInfo && deletedFieldInfo.length > 0) {
+        for (let dfi of deletedFieldInfo) {
+          await profileSectionCategoryConceptsTbl.update({
+            status: 0
+          }, {
+            where: {
+              uuid: dfi.profile_section_category_concepts_uuid
+            }
+          })
+        }
+      }
       try {
-        let bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
         return res.send({
           status: 'success',
           statusCode: 200,
@@ -616,11 +651,12 @@ const profilesController = () => {
           error: err.message
         });
       }
-    } else {
+    }
+    else {
       return res.send({
         status: 'error',
         statusCode: 400,
-        msg: 'Authentication error or profile detail should not be empty'
+        msg: 'Authentication error'
       });
     }
   };
@@ -664,7 +700,6 @@ const profilesController = () => {
         }));
       } else {
         let elementArr3 = [];
-        // elementArr3.push(element);
         elementArr3.push({
           profile_uuid: profileData.profiles.profile_uuid,
           section_uuid: element.section_uuid,
@@ -675,7 +710,6 @@ const profilesController = () => {
       }
       for (let j = 0; j < profileData.profiles.sections[i].categories.length; j++) {
         element2 = profileData.profiles.sections[i].categories[j];
-       
         if (element2.profile_section_categories_uuid) {
           profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({
             category_uuid: element2.category_uuid,
@@ -685,18 +719,17 @@ const profilesController = () => {
               uuid: element2.profile_section_categories_uuid
             }
           }));
-        } 
-        else if(element.profile_sections_uuid){
+        }
+        else if (element.profile_sections_uuid) {
           let elementArrsection = [];
-          // elementArr2.push(element);
           var index = 0;
           elementArrsection.push({
             profile_section_uuid: element.profile_sections_uuid,
             category_uuid: element2.category_uuid,
             display_order: element.display_order
           });
-          categoryResponse= await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
-        }else {
+          categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
+        } else {
           let elementArr2 = [];
           // elementArr2.push(element);
           var index = 0;
@@ -723,10 +756,9 @@ const profilesController = () => {
                 uuid: element3.profile_section_category_concepts_uuid
               }
             }));
-          } 
-          else if(element2.profile_section_categories_uuid){
+          }
+          else if (element2.profile_section_categories_uuid) {
             let elementArr_2 = [];
-            // elementArr1.push(element);
             var index = 0;
             elementArr_2.push({
               profile_section_category_uuid: element2.profile_section_categories_uuid,
@@ -738,14 +770,10 @@ const profilesController = () => {
               display_order: element3.display_order,
               is_multiple: element3.is_multiple
             });
-            conceptsRespons= await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
+            conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
           }
-          // else if(){
-
-          // }
           else {
             let elementArr1 = [];
-            // elementArr1.push(element);
             var index = 0;
             elementArr1.push({
               profile_section_category_uuid: categoryResponse[0].uuid,
@@ -760,42 +788,41 @@ const profilesController = () => {
             conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr1);
           }
           for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
-            const element4= profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
-
+            const element4 = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
             if (element4.profile_section_category_concept_values_uuid) {
               profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               }, {
                 where: {
                   uuid: element4.profile_section_category_concept_values_uuid
                 }
               }));
-            } 
-            else if(element3.profile_section_category_concepts_uuid){
-              // console.log("element3.profile_section_category_concepts_uuid",element3.profile_section_category_concepts_uuid)
-
+            }
+            else if (element3.profile_section_category_concepts_uuid) {
               let elementArr_3 = [];
               elementArr_3.push({
-                profile_section_category_concept_uuid: element2.profile_section_categories_uuid,
+                profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
-              conceptValuesResponse= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
+              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             }
-            else if (!conceptsResponse[0] == undefined) {
-              // console.log("conceptsResponse[0]..",conceptsResponse[0])
+            else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
               let elementArr = [];
               elementArr.push({
-                profile_section_category_concept_uuid:conceptsResponse[0].uuid,
+                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
-              conceptValuesResponse= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
-            } 
+              conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
+            }
             // else if (conceptsResponse[0] == undefined) {
             //   let elementArr_1 = [];
             //   elementArr_1.push({
@@ -829,21 +856,13 @@ const profilesController = () => {
             //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             // }
             else {
-              // console.log("else condition..")
               let elementArray = [];
-              // let element5=
-              // console.log("conceptsResponse[0]..",conceptsResponse[0])
-              // console.log("conceptsResponse[0]..11111",conceptsRespons[0])
-              // console.log("conceptsResponse[0]..11111cdvwvf",conceptsRespons[0].uuid)
-
-              // console.log("else condition. late else.",element4.profile_section_category_concepts_uuid)
-              // console.log("else condition. late else.",element4)
-
               elementArray.push({
-                profile_section_category_concept_uuid: conceptsRespons[0].uuid,
+                profile_section_category_concept_uuid: conceptsResponse[0].uuid,
                 value_code: element4.value_code,
                 value_name: element4.value_name,
-                display_order: element4.display_order
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
@@ -1090,18 +1109,18 @@ const profilesController = () => {
       user_uuid
     } = req.headers;
     const {
-     search
+      search
     } = req.body;
     try {
       if (user_uuid) {
-        let findquery={
+        let findquery = {
           where: { is_active: 1, status: 1 },
         }
         if (search && /\S/.test(search)) {
           findquery.where[Op.or] = [
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.code')), 'LIKE', '%' + search.toLowerCase() + '%'),
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('profile_types.name')), 'LIKE', '%' + search.toLowerCase() + '%'),
-  
+
           ];
         }
         const typesData = await profilesTypesTbl.findAll(findquery);
@@ -1321,11 +1340,11 @@ async function findDuplicateProfilesByCodeAndName({
     attributes: ['profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
-          profile_code: profile_code
-        },
-        {
-          profile_name: profile_name
-        }
+        profile_code: profile_code
+      },
+      {
+        profile_name: profile_name
+      }
       ]
     }
   });
@@ -1357,11 +1376,11 @@ async function findDuplicateConValueByCodeAndName(profileData) {
     attributes: ['value_code', 'value_name', 'is_active'],
     where: {
       [Op.or]: [{
-          value_code: ValuesInfoDetails[0].value_code
-        },
-        {
-          value_name: ValuesInfoDetails[0].value_name
-        }
+        value_code: ValuesInfoDetails[0].value_code
+      },
+      {
+        value_name: ValuesInfoDetails[0].value_name
+      }
       ]
     }
   });

@@ -93,33 +93,24 @@ const notesController = () => {
                 //         encounter_uuid: profileData.encounter_uuid
                 //     };
                 // });
-                let consultation_uuids = [...new Set(profiles.map(e => e.consultation_uuid))];
+                // let consultation_uuids = [...new Set(profiles.map(e => e.consultation_uuid))];
 
-                const sectionResult = await sectionCategoryEntriesTbl.findAll({
-                    where: {
-                        consultation_uuid: {
-                            [Op.in]: consultation_uuids
-                        }
-                    }
-                });
-
-                // for(let p of sectionResult){
-
-                // }
+                // const sectionResult = await sectionCategoryEntriesTbl.findAll({
+                //     where: {
+                //         consultation_uuid: {
+                //             [Op.in]: consultation_uuids
+                //         }
+                //     }
+                // });
 
                 for (let epwod of profiles) {
                     let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
                         updateOnDuplicate: Object.keys(epwod)
-                    }, {
-                        returning: true
                     });
                     for (let d of bulkData) {
                         result_data.push(d.dataValues);
                     }
                 }
-                await sectionCategoryEntriesTbl.bulkCreate(profiles, {
-                    updateOnDuplicate: ["uuid", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
-                });
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'inserted successfully',
@@ -374,41 +365,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -475,48 +466,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: vw_consultation_detailsTbl,
-                        required: false,
-                        attributes: {
-                            "exclude": ['id', 'createdAt', 'updatedAt']
-                        },
+                    model: vw_consultation_detailsTbl,
+                    required: false,
+                    attributes: {
+                        "exclude": ['id', 'createdAt', 'updatedAt']
                     },
-                    {
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    }
+                },
+                {
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -882,12 +873,18 @@ const notesController = () => {
                 postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
             try {
-                const consultationsData = await consultationsTbl.update(postData, {
+                let consultationsupdate = await consultationsTbl.update(postData, {
                     where: {
                         uuid: postData.Id
                     }
                 });
-                if (consultationsData) {
+                if (!consultationsupdate || consultationsupdate[0] == 0) {
+                    throw {
+                        errors: "consultation data not updated",
+                        error_type: "validationErr"
+                    }
+                }
+                if (postData.entry_status == emr_constants.ENTRY_STATUS) {
                     let options_two = {
                         uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
                         headers: {
@@ -900,21 +897,36 @@ const notesController = () => {
                         }
                     };
                     await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'Update successfully',
-                        reqContents: req.body,
-                        responseContents: consultationsData
-                    });
-                } else {
+                }
+                let consultationsdata = await consultationsTbl.findOne({
+                    where: {
+                        uuid: postData.Id
+                    },
+                    include: [{
+                        model: profilesTbl,
+                        required: false,
+                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                    }]
+                });
+                const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
+                if (departmentsResponse) {
+                    const resData = departmentsResponse.responseContent.rows[0];
+                    consultationsdata.dataValues.department_name = resData.name;
+                    consultationsdata.dataValues.department_code = resData.code;
+                }
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'Update successfully',
+                    reqContents: req.body,
+                    responseContents: consultationsdata
+                });
+            } catch (ex) {
+                if (ex.error_type == "validationErr") {
                     return res.status(400).send({
-                        code: httpStatus.OK,
-                        message: 'Failed to update',
-                        reqContents: req.body,
-                        responseContents: consultationsData
+                        code: httpStatus.BAD_REQUEST,
+                        message: ex.errors
                     });
                 }
-            } catch (ex) {
                 console.log('Exception happened', ex);
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
