@@ -899,8 +899,19 @@ const notesController = () => {
                 let consultationsdata = await consultationsTbl.findOne({
                     where: {
                         uuid: postData.Id
-                    }
+                    },
+                    include: [{
+                        model: profilesTbl,
+                        required: false,
+                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                    }]
                 });
+                const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
+                if (departmentsResponse) {
+                    const resData = departmentsResponse.responseContent.rows[0];
+                    consultationsdata.dataValues.department_name = resData.name;
+                    consultationsdata.dataValues.department_code = resData.code;
+                }
                 return res.status(200).send({
                     code: httpStatus.OK,
                     message: 'Update successfully',
