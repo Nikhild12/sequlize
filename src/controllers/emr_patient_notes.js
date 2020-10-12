@@ -871,12 +871,18 @@ const notesController = () => {
                 postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
             try {
-                const consultationsData = await consultationsTbl.update(postData, {
+                let consultationsupdate = await consultationsTbl.update(postData, {
                     where: {
                         uuid: postData.Id
                     }
                 });
-                if (consultationsData) {
+                if (!consultationsupdate || consultationsupdate[0] == 0) {
+                    throw {
+                        errors: "consultation data not updated",
+                        error_type: "validationErr"
+                    }
+                }
+                if (postData.entry_status == emr_constants.ENTRY_STATUS) {
                     let options_two = {
                         uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
                         headers: {
@@ -889,21 +895,36 @@ const notesController = () => {
                         }
                     };
                     await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'Update successfully',
-                        reqContents: req.body,
-                        responseContents: consultationsData
-                    });
-                } else {
+                }
+                let consultationsdata = await consultationsTbl.findOne({
+                    where: {
+                        uuid: postData.Id
+                    },
+                    include: [{
+                        model: profilesTbl,
+                        required: false,
+                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                    }]
+                });
+                const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
+                if (departmentsResponse) {
+                    const resData = departmentsResponse.responseContent.rows[0];
+                    consultationsdata.dataValues.department_name = resData.name;
+                    consultationsdata.dataValues.department_code = resData.code;
+                }
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'Update successfully',
+                    reqContents: req.body,
+                    responseContents: consultationsdata
+                });
+            } catch (ex) {
+                if (ex.error_type == "validationErr") {
                     return res.status(400).send({
-                        code: httpStatus.OK,
-                        message: 'Failed to update',
-                        reqContents: req.body,
-                        responseContents: consultationsData
+                        code: httpStatus.BAD_REQUEST,
+                        message: ex.errors
                     });
                 }
-            } catch (ex) {
                 console.log('Exception happened', ex);
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
