@@ -331,10 +331,27 @@ const notesController = () => {
                     returing: true
                 });
                 if (data) {
+                    let patNotesData = null
+                    if (postData.length > 0) {
+                      let  findQuery= {
+                            where: {
+                                consultation_uuid: postData[0].consultation_uuid,
+                                is_active: 1,
+                                status: 1,
+                            }
+                        };
+                        patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+                    } else {
+                        return res.status(400).send({
+                            code: httpStatus.UNAUTHORIZED,
+                            message: `consultation id not persent`
+                        });
+                    }
+
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Updated Successfully',
-                        responseContents: data
+                        responseContents: patNotesData
                     });
                 }
             } else {
@@ -702,8 +719,8 @@ const notesController = () => {
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = e.profile_section_category_concept_value.value_name ?
-                                        (' ' + e.profile_section_category_concept_value.value_name + 
-                                        ' (' + (e.term_key == true ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                        (' ' + e.profile_section_category_concept_value.value_name +
+                                            ' (' + (e.term_key == true ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
