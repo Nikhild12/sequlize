@@ -50,8 +50,8 @@ const notesController = () => {
 
     /**
      * OPNotes main template save
-     * @param {*} req 
-     * @param {*} res 
+     * @param {*} req
+     * @param {*} res
      */
     const _addProfiles = async (req, res) => {
         const {
@@ -326,15 +326,30 @@ const notesController = () => {
         try {
             if (user_uuid && updateData) {
                 const data = await sectionCategoryEntriesTbl.bulkCreate(updateData, {
-                    updateOnDuplicate: ["patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
+                    updateOnDuplicate: ["status", "is_active", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
                 }, {
                     returing: true
                 });
                 if (data) {
+                    let patNotesData = null
+                    if (postData.length > 0) {
+                      let  findQuery= {
+                            where: {
+                                consultation_uuid: postData[0].consultation_uuid,
+                            }
+                        };
+                        patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+                    } else {
+                        return res.status(400).send({
+                            code: httpStatus.UNAUTHORIZED,
+                            message: `consultation id not persent`
+                        });
+                    }
+
                     return res.status(200).send({
                         code: httpStatus.OK,
                         message: 'Updated Successfully',
-                        requestContent: data
+                        responseContents: patNotesData
                     });
                 }
             } else {
@@ -691,7 +706,7 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
-                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
                         };
                         if (sample.length == 0) {
                             sample.push(sampleObj);
@@ -701,7 +716,9 @@ const notesController = () => {
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-                                    let name = e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + '(' + e.term_key + ')') : e.term_key;
+                                    let name = e.profile_section_category_concept_value.value_name ?
+                                        (' ' + e.profile_section_category_concept_value.value_name +
+                                            ' (' + (e.term_key == true ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
