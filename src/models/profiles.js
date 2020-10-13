@@ -158,6 +158,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_uuid',
             as: 'profile_sections'
         });
+        profiles.belongsTo(models.profile_types, {
+            foreignKey: 'profile_type_uuid'
+        });
     };
 
     return profiles;

@@ -122,9 +122,9 @@
                                     <tbody>
                                         {{#each headerObj.sectionResult}}
                                         <tr>
-                                            <td style="padding: 5px;">{{getKey this}}</td>
+                                            <td style="padding: 5px;white-space: nowrap;vertical-align: baseline;">{{getKey this}}</td>
                                             <td style="padding: 5px;">:</td>
-                                            <td style="padding: 5px;">{{getValue this}}</td>
+                                            <td style="padding: 5px; word-break: break-all;">{{getValue this}}</td>
                                         </tr>
 
                                         {{/each}}
