@@ -599,6 +599,15 @@ const profilesController = () => {
     } = req.headers;
     const { profiles, deletedHeadings, deletedSubheadings, deletedFieldInfo } = req.body;
     if (user_uuid) {
+      const duplicateProfileRecord = await findDuplicateProfilesByCodeAndName(
+        profiles
+      );
+      if (duplicateProfileRecord && duplicateProfileRecord.length > 0) {
+        return res.status(400).send({
+          code: emr_constants.DUPLICATE_ENTRIE,
+          message: getDuplicateMsg(duplicateProfileRecord)
+        });
+      }
       if (profiles) {
         bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
       }
