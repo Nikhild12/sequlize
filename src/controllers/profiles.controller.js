@@ -19,7 +19,7 @@ const profileSectionsTbl = db.profile_sections;
 const profileSectionCategoriesTbl = db.profile_section_categories;
 const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
-const opProfilesViewTbl = db.vw_op_notes_details;
+const profileTypeTbl = db.profile_types;
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
@@ -501,7 +501,13 @@ const profilesController = () => {
           ]
         }
         ]
-      }]
+      },
+      {
+        model: profileTypeTbl,
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+      }
+    ]
 
     };
     let findQuery1 = {
@@ -542,7 +548,9 @@ const profilesController = () => {
         }
         /**Get user name */
         let doctorIds = [...new Set(profileData.map(e => e.created_by))];
-        const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
+        let modifiedIds = [...new Set(profileData.map(e => e.modified_by))];
+        let userIds = [...doctorIds,...modifiedIds];
+        const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, userIds);
         if (doctorResponse && doctorResponse.responseContents) {
           let newData = [];
           const resData = doctorResponse.responseContents;
@@ -553,8 +561,10 @@ const profilesController = () => {
           profileData.forEach(e => {
             const {
               created_by,
+              modified_by,
             } = e.dataValues;
             e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+            e.dataValues.modified_user_name = (newData[modified_by] ? newData[modified_by] : null);
           });
         }
         // if (profileData[0].profile_sections[0].activity_uuid > 0) {
