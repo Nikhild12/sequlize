@@ -608,11 +608,19 @@ const profilesController = () => {
       user_uuid
     } = req.headers;
     const { profiles, deletedHeadings, deletedSubheadings, deletedFieldInfo } = req.body;
+    let duplicateCount = 0;
     if (user_uuid) {
       const duplicateProfileRecord = await findDuplicateProfilesByCodeAndName(
         profiles
       );
       if (duplicateProfileRecord && duplicateProfileRecord.length > 0) {
+        for (let e of duplicateProfileRecord) {
+          if (e.uuid != (profiles.profile_uuid)) {
+            duplicateCount += 1;
+          }
+        }
+      }
+      if (duplicateCount > 0) {
         return res.status(400).send({
           statusCode: 400,
           code: emr_constants.DUPLICATE_ENTRIE,
@@ -1357,15 +1365,14 @@ async function findDuplicateProfilesByCodeAndName({
   // checking for Duplicate 
   // before creating profiles 
   return await profilesTbl.findAll({
-    attributes: ['profile_code', 'profile_name', 'is_active'],
+    attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
         profile_code: profile_code
       },
       {
         profile_name: profile_name
-      }
-      ]
+      }]
     }
   });
 }
