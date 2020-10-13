@@ -507,7 +507,7 @@ const profilesController = () => {
         required: false,
         attributes: ['uuid', 'code', 'name'],
       }
-    ]
+      ]
 
     };
     let findQuery1 = {
@@ -549,7 +549,7 @@ const profilesController = () => {
         /**Get user name */
         let doctorIds = [...new Set(profileData.map(e => e.created_by))];
         let modifiedIds = [...new Set(profileData.map(e => e.modified_by))];
-        let userIds = [...doctorIds,...modifiedIds];
+        let userIds = [...doctorIds, ...modifiedIds];
         const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, userIds);
         if (doctorResponse && doctorResponse.responseContents) {
           let newData = [];
@@ -614,6 +614,7 @@ const profilesController = () => {
       );
       if (duplicateProfileRecord && duplicateProfileRecord.length > 0) {
         return res.status(400).send({
+          statusCode: 400,
           code: emr_constants.DUPLICATE_ENTRIE,
           message: getDuplicateMsg(duplicateProfileRecord)
         });
