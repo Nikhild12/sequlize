@@ -1197,11 +1197,16 @@ const profilesController = () => {
         department_uuid: department_uuid,
         facility_uuid: facility_uuid,
         profile_type_uuid: profile_type_uuid,
-        profile_uuid: profile_uuid,
+        // profile_uuid: profile_uuid,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE
       }
     };
+    if (profile_uuid && /\S/.test(profile_uuid)) {
+      Object.assign(whereCond.where, {
+          profile_uuid: profile_uuid
+      });
+    }
     try {
       if (user_uuid) {
         const result = await profilesDefaultTbl.findOne(whereCond, {
