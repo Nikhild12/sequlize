@@ -5,15 +5,12 @@ module.exports = (sequelize, DataTypes) => {
         "profile_section_category_concept_values",
         {
             uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
-
             },
             profile_section_category_concept_uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -30,60 +27,42 @@ module.exports = (sequelize, DataTypes) => {
                 }
             },
             value_code: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             value_name: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             display_order: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false
-
             },
             is_active: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             status: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             revision: {
-
                 type: DataTypes.INTEGER,
                 defaultValue: 1,
                 allowNull: false
-
             },
             created_by: {
-
                 type: DataTypes.INTEGER
-
             },
             modified_by: {
-
                 type: DataTypes.INTEGER
-
             },
             is_defult: {
-
                 type: DataTypes.BOOLEAN,
                 // defaultValue: 1,
                 allowNull: false
-
             },
             created_date: 'created_date',
             modified_date: 'modified_date',
