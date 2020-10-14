@@ -607,7 +607,12 @@ const profilesController = () => {
     const {
       user_uuid
     } = req.headers;
-    const { profiles, deletedHeadings, deletedSubheadings, deletedFieldInfo } = req.body;
+    const {
+      profiles,
+      deletedHeadings,
+      deletedSubheadings,
+      deletedFieldInfo
+    } = req.body;
     let duplicateCount = 0;
     if (user_uuid) {
       const duplicateProfileRecord = await findDuplicateProfilesByCodeAndName(
@@ -1180,17 +1185,26 @@ const profilesController = () => {
       user_uuid
     } = req.headers;
     const {
-      profile_type_uuid
+      profile_type_uuid,
+      user_uuid: user_uuid1,
+      facility_uuid,
+      department_uuid,
+      profile_uuid
     } = req.query;
-
+    let whereCond = {
+      where: {
+        user_uuid: user_uuid1,
+        department_uuid: department_uuid,
+        facility_uuid: facility_uuid,
+        profile_type_uuid: profile_type_uuid,
+        profile_uuid: profile_uuid,
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE
+      }
+    };
     try {
       if (user_uuid) {
-        const result = await profilesDefaultTbl.findOne({
-          where: {
-            user_uuid: user_uuid,
-            profile_type_uuid: profile_type_uuid
-          }
-        }, {
+        const result = await profilesDefaultTbl.findOne(whereCond, {
           returning: true
         });
         // if (result != null && IsObjectEmpty(result)) {
@@ -1249,14 +1263,16 @@ const profilesController = () => {
           profile_type_uuid: postData.profile_type_uuid,
           modified_by: user_uuid
         };
-        postData.created_by = postData.user_uuid = user_uuid;
+        postData.created_by = user_uuid;
         postData.modified_by = 0;
         if (postData.is_default) {
           const checkProfileExistsOrNot = await getProfiles(whereCond);
           if (checkProfileExistsOrNot.status) {
             const proData = await profilesDefaultTbl.findOne({
               where: {
-                profile_uuid: postData.profile_uuid
+                profile_uuid: postData.profile_uuid,
+                status: 1,
+                is_active: 1
               },
               attributes: ['is_active']
             });
@@ -1270,37 +1286,18 @@ const profilesController = () => {
                 is_active: emr_constants.IS_IN_ACTIVE,
                 status: emr_constants.IS_IN_ACTIVE
               }, whereCond);
-              const insertProfile = await profilesDefaultTbl.create(postData, {
-                returning: true
+              const insertResult = await insertProfiles(postData);
+              return res.send({
+                statusCode: insertResult.statusCode,
+                message: insertResult.message
               });
-              if (insertProfile) {
-                return res.status(201).send({
-                  statusCode: 201,
-                  message: " inserted successfully ",
-                  responseContent: insertProfile
-                });
-              } else {
-                return res.status(400).send({
-                  statusCode: 400,
-                  message: " inserted failed "
-                });
-              }
             }
           } else {
-            const insertProfile = await profilesDefaultTbl.create(postData, {
-              returning: true
-            });
-            if (insertProfile) {
-              return res.status(201).send({
-                statusCode: 201,
-                message: " inserted successfully "
+            const insertResult = await insertProfiles(postData);
+              return res.send({
+                statusCode: insertResult.statusCode,
+                message: insertResult.message
               });
-            } else {
-              return res.status(400).send({
-                statusCode: 400,
-                message: " inserted failed "
-              });
-            }
           }
         } else {
           const checkProfileExistsOrNot = await profilesDefaultTbl.update({
@@ -1444,11 +1441,12 @@ async function findDuplicateProfilesByCodeAndName({
     attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
-        profile_code: profile_code
-      },
-      {
-        profile_name: profile_name
-      }]
+          profile_code: profile_code
+        },
+        {
+          profile_name: profile_name
+        }
+      ]
     }
   });
 }
@@ -1616,5 +1614,53 @@ async function getProfiles(data) {
       status: false,
       details: {}
     };
+  }
+}
+async function insertProfiles(postData){
+  let whereCond = {
+    where: {
+      profile_uuid: postData.profile_uuid,
+      user_uuid: postData.user_uuid,
+      department_uuid: postData.department_uuid,
+      facility_uuid: postData.facility_uuid,
+      profile_type_uuid: postData.profile_type_uuid
+    }
+  };
+  const getProfile = await profilesDefaultTbl.findOne(whereCond);
+  if (getProfile) {
+    const insertProfile = await profilesDefaultTbl.update({
+      status: emr_constants.IS_ACTIVE,
+      is_active: emr_constants.IS_ACTIVE
+    }, {
+      where: {
+        profile_uuid: postData.profile_uuid
+      }
+    });
+    if (insertProfile) {
+      return {
+        statusCode: 200,
+        message: "Updated successfully "
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "Failed to update"
+      };
+    }
+  } else {
+    const insertProfile = await profilesDefaultTbl.create(postData, {
+      returning: true
+    });
+    if (insertProfile) {
+      return {
+        statusCode: 200,
+        message: "Inserted successfully "
+      };
+    } else {
+      return {
+        statusCode: 400,
+        message: "Failed to insert"
+      };
+    }
   }
 }
