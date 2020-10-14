@@ -28,8 +28,9 @@ const EMRPatientVitals = () => {
   const _createPatientVital = async (req, res) => {
 
     let emr_patient_vitals_response;
+    const emrPatientVitalReqData = req.body;
+
     try {
-      const emrPatientVitalReqData = req.body;
       const { user_uuid } = req.headers;
       if (Object.keys(req.body).length != 0) {
         //validating the keys in req.body
@@ -40,8 +41,7 @@ const EMRPatientVitals = () => {
             "patient_uuid",
             "encounter_uuid",
             "encounter_type_uuid",
-            "consultation_uuid",
-            "vital_group_uuid",
+            "vital_group_uuid", 
             "vital_type_uuid",
             "vital_master_uuid",
             "vital_qualifier_uuid",
