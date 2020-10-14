@@ -66,6 +66,18 @@ module.exports = (sequelize, DataTypes) => {
                 // }
 
             },
+            department_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+
+            },
+            facility_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false,
+
+            },
             is_active: {
 
                 type: DataTypes.BOOLEAN,
