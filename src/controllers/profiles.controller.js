@@ -428,85 +428,85 @@ const profilesController = () => {
         status: 1
       },
       include: [{
-        model: profileSectionsTbl,
-        as: 'profile_sections',
-        attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
-        where: {
-          is_active: 1,
-          status: 1
-        },
-        required: false,
-        include: [{
-          model: sectionsTbl,
-          as: 'sections',
-          attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
-          where: {
-            is_active: 1,
-            status: 1
-          },
-          required: false
-        },
-        {
-          model: profileSectionCategoriesTbl,
-          as: 'profile_section_categories',
-          attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+          model: profileSectionsTbl,
+          as: 'profile_sections',
+          attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
           where: {
             is_active: 1,
             status: 1
           },
           required: false,
           include: [{
-            model: categoriesTbl,
-            as: 'categories',
-            attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-            where: {
-              is_active: 1,
-              status: 1
-            },
-            required: false
-          },
-          {
-            model: profileSectionCategoryConceptsTbl,
-            as: 'profile_section_category_concepts',
-            attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-            where: {
-              is_active: 1,
-              status: 1
-            },
-            required: false,
-            include: [{
-              model: valueTypesTbl,
-              as: 'value_types',
-              attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+              model: sectionsTbl,
+              as: 'sections',
+              attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
               where: {
                 is_active: 1,
                 status: 1
               },
               required: false
             },
-            // include: [
             {
-              model: profileSectionCategoryConceptValuesTbl,
-              as: 'profile_section_category_concept_values',
-              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
+              model: profileSectionCategoriesTbl,
+              as: 'profile_section_categories',
+              attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
               where: {
                 is_active: 1,
                 status: 1
               },
-              required: false
+              required: false,
+              include: [{
+                  model: categoriesTbl,
+                  as: 'categories',
+                  attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+                  where: {
+                    is_active: 1,
+                    status: 1
+                  },
+                  required: false
+                },
+                {
+                  model: profileSectionCategoryConceptsTbl,
+                  as: 'profile_section_category_concepts',
+                  attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+                  where: {
+                    is_active: 1,
+                    status: 1
+                  },
+                  required: false,
+                  include: [{
+                      model: valueTypesTbl,
+                      as: 'value_types',
+                      attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+                      where: {
+                        is_active: 1,
+                        status: 1
+                      },
+                      required: false
+                    },
+                    // include: [
+                    {
+                      model: profileSectionCategoryConceptValuesTbl,
+                      as: 'profile_section_category_concept_values',
+                      attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
+                      where: {
+                        is_active: 1,
+                        status: 1
+                      },
+                      required: false
+                    }
+                  ]
+                  //],
+                }
+              ]
             }
-            ]
-            //],
-          }
           ]
+        },
+        {
+          model: profileTypeTbl,
+          required: false,
+          attributes: ['uuid', 'code', 'name'],
         }
-        ]
-      },
-      {
-        model: profileTypeTbl,
-        required: false,
-        attributes: ['uuid', 'code', 'name'],
-      }
       ]
 
     };
@@ -608,11 +608,19 @@ const profilesController = () => {
       user_uuid
     } = req.headers;
     const { profiles, deletedHeadings, deletedSubheadings, deletedFieldInfo } = req.body;
+    let duplicateCount = 0;
     if (user_uuid) {
       const duplicateProfileRecord = await findDuplicateProfilesByCodeAndName(
         profiles
       );
       if (duplicateProfileRecord && duplicateProfileRecord.length > 0) {
+        for (let e of duplicateProfileRecord) {
+          if (e.uuid != (profiles.profile_uuid)) {
+            duplicateCount += 1;
+          }
+        }
+      }
+      if (duplicateCount > 0) {
         return res.status(400).send({
           statusCode: 400,
           code: emr_constants.DUPLICATE_ENTRIE,
@@ -671,8 +679,7 @@ const profilesController = () => {
           error: err.message
         });
       }
-    }
-    else {
+    } else {
       return res.send({
         status: 'error',
         statusCode: 400,
@@ -739,8 +746,7 @@ const profilesController = () => {
               uuid: element2.profile_section_categories_uuid
             }
           }));
-        }
-        else if (element.profile_sections_uuid) {
+        } else if (element.profile_sections_uuid) {
           let elementArrsection = [];
           var index = 0;
           elementArrsection.push({
@@ -776,8 +782,7 @@ const profilesController = () => {
                 uuid: element3.profile_section_category_concepts_uuid
               }
             }));
-          }
-          else if (element2.profile_section_categories_uuid) {
+          } else if (element2.profile_section_categories_uuid) {
             let elementArr_2 = [];
             var index = 0;
             elementArr_2.push({
@@ -791,8 +796,7 @@ const profilesController = () => {
               is_multiple: element3.is_multiple
             });
             conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
-          }
-          else {
+          } else {
             let elementArr1 = [];
             var index = 0;
             elementArr1.push({
@@ -820,8 +824,7 @@ const profilesController = () => {
                   uuid: element4.profile_section_category_concept_values_uuid
                 }
               }));
-            }
-            else if (element3.profile_section_category_concepts_uuid) {
+            } else if (element3.profile_section_category_concepts_uuid) {
               let elementArr_3 = [];
               elementArr_3.push({
                 profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
@@ -831,8 +834,7 @@ const profilesController = () => {
                 is_defult: element4.is_defult
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
-            }
-            else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
+            } else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
               let elementArr = [];
               elementArr.push({
                 profile_section_category_concept_uuid: conceptsResponse[0].uuid,
@@ -1134,7 +1136,10 @@ const profilesController = () => {
     try {
       if (user_uuid) {
         let findquery = {
-          where: { is_active: 1, status: 1 },
+          where: {
+            is_active: 1,
+            status: 1
+          },
         }
         if (search && /\S/.test(search)) {
           findquery.where[Op.or] = [
@@ -1223,6 +1228,16 @@ const profilesController = () => {
         user_uuid
       } = req.headers;
       let postData = req.body;
+      let whereCond = {
+        where: {
+          user_uuid: postData.user_uuid,
+          department_uuid: postData.department_uuid,
+          facility_uuid: postData.facility_uuid,
+          profile_type_uuid: postData.profile_type_uuid,
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
+        }
+      };
       // if (profile_uuid && profile_type_uuid) {
       //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
       // }
@@ -1236,48 +1251,117 @@ const profilesController = () => {
         };
         postData.created_by = postData.user_uuid = user_uuid;
         postData.modified_by = 0;
-        //  const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
-        const checkProfileExistsOrNot = await getProfiles(postData.profile_uuid);
-        //   if (checkUserExistsOrNot.status) {
-        if (checkProfileExistsOrNot.status) {
-          const updateProfileId = await profilesDefaultTbl.update(updateData, {
-            where: {
-              user_uuid
+        if (postData.is_default) {
+          const checkProfileExistsOrNot = await getProfiles(whereCond);
+          if (checkProfileExistsOrNot.status) {
+            const proData = await profilesDefaultTbl.findOne({
+              where: {
+                profile_uuid: postData.profile_uuid
+              },
+              attributes: ['is_active']
+            });
+            if (proData) {
+              return res.status(400).send({
+                code: emr_constants.DUPLICATE_ENTRIE,
+                message: getDuplicateMsg([proData])
+              });
+            } else {
+              const updateRes = await profilesDefaultTbl.update({
+                is_active: emr_constants.IS_IN_ACTIVE,
+                status: emr_constants.IS_IN_ACTIVE
+              }, whereCond);
+              const insertProfile = await profilesDefaultTbl.create(postData, {
+                returning: true
+              });
+              if (insertProfile) {
+                return res.status(201).send({
+                  statusCode: 201,
+                  message: " inserted successfully ",
+                  responseContent: insertProfile
+                });
+              } else {
+                return res.status(400).send({
+                  statusCode: 400,
+                  message: " inserted failed "
+                });
+              }
             }
-          });
-          if (updateProfileId && updateProfileId[0] != 0) {
-            return res.status(200).send({
-              statusCode: 200,
-              message: " updated successfully"
-            });
           } else {
-            return res.status(400).send({
-              statusCode: 400,
-              message: " not updated "
+            const insertProfile = await profilesDefaultTbl.create(postData, {
+              returning: true
             });
+            if (insertProfile) {
+              return res.status(201).send({
+                statusCode: 201,
+                message: " inserted successfully "
+              });
+            } else {
+              return res.status(400).send({
+                statusCode: 400,
+                message: " inserted failed "
+              });
+            }
           }
         } else {
-          const insertProfile = await profilesDefaultTbl.create(postData, {
-            returning: true
-          });
-          if (insertProfile) {
-            return res.status(201).send({
-              statusCode: 201,
-              message: " inserted successfully "
+          const checkProfileExistsOrNot = await profilesDefaultTbl.update({
+            is_active: emr_constants.IS_IN_ACTIVE,
+            status: emr_constants.IS_IN_ACTIVE
+          }, whereCond);
+          if (checkProfileExistsOrNot) {
+            return res.status(200).send({
+              statusCode: 200,
+              message: "In active record successfully"
             });
           } else {
-            return res.status(400).send({
+            return res.status(200).send({
               statusCode: 400,
-              message: " inserted failed "
+              message: "Failed to In active record"
             });
           }
+
         }
-      } else {
-        return res.status(422).send({
-          statusCode: 422,
-          req: req.body,
-          message: "you are missing 'user_uuid / profile_id'"
-        });
+        //  const checkUserExistsOrNot = await getUserProfiles(user_uuid, postData);
+        //   const checkProfileExistsOrNot = await getProfiles(postData);
+        //   //   if (checkUserExistsOrNot.status) {
+        //   if (checkProfileExistsOrNot.status) {
+        //     const updateProfileId = await profilesDefaultTbl.update(updateData, {
+        //       where: {
+        //         user_uuid
+        //       }
+        //     });
+        //     if (updateProfileId && updateProfileId[0] != 0) {
+        //       return res.status(200).send({
+        //         statusCode: 200,
+        //         message: " updated successfully"
+        //       });
+        //     } else {
+        //       return res.status(400).send({
+        //         statusCode: 400,
+        //         message: " not updated "
+        //       });
+        //     }
+        //   } else {
+        //     const insertProfile = await profilesDefaultTbl.create(postData, {
+        //       returning: true
+        //     });
+        //     if (insertProfile) {
+        //       return res.status(201).send({
+        //         statusCode: 201,
+        //         message: " inserted successfully "
+        //       });
+        //     } else {
+        //       return res.status(400).send({
+        //         statusCode: 400,
+        //         message: " inserted failed "
+        //       });
+        //     }
+        //   }
+        // } else {
+        //   return res.status(422).send({
+        //     statusCode: 422,
+        //     req: req.body,
+        //     message: "you are missing 'user_uuid / profile_id'"
+        //   });
       }
 
     } catch (ex) {
@@ -1357,15 +1441,14 @@ async function findDuplicateProfilesByCodeAndName({
   // checking for Duplicate 
   // before creating profiles 
   return await profilesTbl.findAll({
-    attributes: ['profile_code', 'profile_name', 'is_active'],
+    attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
         profile_code: profile_code
       },
       {
         profile_name: profile_name
-      }
-      ]
+      }]
     }
   });
 }
@@ -1396,11 +1479,11 @@ async function findDuplicateConValueByCodeAndName(profileData) {
     attributes: ['value_code', 'value_name', 'is_active'],
     where: {
       [Op.or]: [{
-        value_code: ValuesInfoDetails[0].value_code
-      },
-      {
-        value_name: ValuesInfoDetails[0].value_name
-      }
+          value_code: ValuesInfoDetails[0].value_code
+        },
+        {
+          value_name: ValuesInfoDetails[0].value_name
+        }
       ]
     }
   });
@@ -1518,12 +1601,8 @@ async function getUserProfiles(user_uuid) {
   }
 }
 
-async function getProfiles(profile_uuid) {
-  let result = await profilesDefaultTbl.findOne({
-    where: {
-      profile_uuid: profile_uuid
-    }
-  }, {
+async function getProfiles(data) {
+  let result = await profilesDefaultTbl.findOne(data, {
     returning: true
   });
   if (result) {
