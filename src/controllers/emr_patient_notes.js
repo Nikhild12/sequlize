@@ -561,6 +561,8 @@ const notesController = () => {
                         finalData.push(e);
                     }
                 }
+                // return res.send(finalData);
+
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
@@ -569,12 +571,14 @@ const notesController = () => {
                                 if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
 
                                     labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+                                    console.log(labArr);
 
                                 }
                             }
                             if (e.activity_uuid == 43) {
                                 if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
                                     radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                                    console.log(radArr)
                                 }
                             }
                             if (e.activity_uuid == 58) {
@@ -583,7 +587,7 @@ const notesController = () => {
                                 }
                             }
                         } else {
-                            labArr = radArr = invArr = [];
+                            labArr = labArr;radArr=radArr;invArr=invArr;
                         }
                     });
                 }
@@ -595,7 +599,7 @@ const notesController = () => {
                                 // vitArr.push(e.dataValues.details);
                             }
                         } else {
-                            vitArr = [];
+                            vitArr = vitArr;
                         }
                     });
                 }
@@ -606,7 +610,7 @@ const notesController = () => {
                                 cheifArr = [...cheifArr, ...e.dataValues.details];
                             }
                         } else {
-                            cheifArr = [];
+                            cheifArr = cheifArr;
                         }
 
                     });
@@ -618,7 +622,7 @@ const notesController = () => {
                                 diaArr = [...diaArr, ...e.dataValues.details];
                             }
                         } else {
-                            diaArr = [];
+                            diaArr = diaArr;
                         }
 
                     });
@@ -636,9 +640,8 @@ const notesController = () => {
                                 }
                             }
                         } else {
-                            presArr = [];
+                            presArr = presArr;
                         }
-
                     });
                 }
                 if (printObj.BloodRequests) {
@@ -658,7 +661,7 @@ const notesController = () => {
                                 }
                             }
                         } else {
-                            bbArr = [];
+                            bbArr = bbArr;
                         }
                     });
                 }
@@ -706,7 +709,7 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
-                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1'? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
                         };
                         if (sample.length == 0) {
                             sample.push(sampleObj);
@@ -718,7 +721,7 @@ const notesController = () => {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = e.profile_section_category_concept_value.value_name ?
                                         (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == true ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
@@ -1172,9 +1175,10 @@ const notesController = () => {
         console.log(user_details);
         if (user_details && user_details.responseContents) {
             result.dataValues.details = user_details.responseContents;
-            return result;
-        } else
-            return false;
+        } else {
+            result.dataValues.details = {};
+        }
+        return result;
     };
     const getBloodRequestResult = async (result, consultation_uuid) => {
         let options = {
