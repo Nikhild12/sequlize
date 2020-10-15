@@ -57,21 +57,21 @@ const profilesController = () => {
             message: getDuplicateMsg(duplicateProfileRecord)
           });
         }
-        let getDuplication = await addConceptDuplicationByCodeAndName(profiles.sections[0].categories[0].concepts);
-        if (getDuplication.duplicateConcepts && getDuplication.duplicateConcepts.length > 0) {
-          return res.status(400).send({
-            statusCode: 400,
-            code: emr_constants.DUPLICATE_ENTRIE,
-            message: "concept already exists"
-          });
-        }
-        if (getDuplication.duplicateConceptValues && getDuplication.duplicateConceptValues.length > 0) {
-          return res.status(400).send({
-            statusCode: 400,
-            code: emr_constants.DUPLICATE_ENTRIE,
-            message: "conceptvalues already exists"
-          });
-        }
+        // let getDuplication = await addConceptDuplicationByCodeAndName(profiles.sections[0].categories[0].concepts);
+        // if (getDuplication.duplicateConcepts && getDuplication.duplicateConcepts.length > 0) {
+        //   return res.status(400).send({
+        //     statusCode: 400,
+        //     code: emr_constants.DUPLICATE_ENTRIE,
+        //     message: "concept already exists"
+        //   });
+        // }
+        // if (getDuplication.duplicateConceptValues && getDuplication.duplicateConceptValues.length > 0) {
+        //   return res.status(400).send({
+        //     statusCode: 400,
+        //     code: emr_constants.DUPLICATE_ENTRIE,
+        //     message: "conceptvalues already exists"
+        //   });
+        // }
 
         profiles.status = true;
         profiles.created_by = profiles.modified_by = user_uuid;
