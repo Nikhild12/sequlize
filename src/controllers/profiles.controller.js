@@ -1322,8 +1322,12 @@ const profilesController = () => {
             const proData = await profilesDefaultTbl.findOne({
               where: {
                 profile_uuid: postData.profile_uuid,
-                status: 1,
-                is_active: 1
+                user_uuid: postData.user_uuid,
+                department_uuid: postData.department_uuid,
+                facility_uuid: postData.facility_uuid,
+                profile_type_uuid: postData.profile_type_uuid,
+                status: emr_constants.IS_ACTIVE,
+                is_active: emr_constants.IS_ACTIVE
               },
               attributes: ['is_active']
             });
@@ -1740,7 +1744,7 @@ async function conceptDuplicationByCodeAndName(conceptArray) {
           [Op.notIn]: [e.profile_section_category_concepts_uuid]
         }
       }
-    }))
+    }));
   }
 
   var duplicationWithOutNull = duplicationData.filter((el) => { return el != null; });
@@ -1753,7 +1757,9 @@ async function conceptDuplicationByCodeAndName(conceptArray) {
 }
 async function conceptValuesDuplicationByCodeAndName(conceptValuesArray) {
   let duplicationData = [];
+  let findQuery = {};
   for (let e of conceptValuesArray) {
+    if(e.value_code&&e.value_name){
     console.log("=================+>>>eeee", e.value_code, e.value_name, e.profile_section_category_concept_uuid, e.profile_section_category_concept_values_uuid);
     duplicationData.push(await profileSectionCategoryConceptValuesTbl.findOne({
       where: {
@@ -1770,7 +1776,8 @@ async function conceptValuesDuplicationByCodeAndName(conceptValuesArray) {
           [Op.notIn]: [e.profile_section_category_concept_values_uuid]
         }
       }
-    }))
+    }));
+  }
   }
   return duplicationData.filter((el) => { return el != null; });
 }
@@ -1808,18 +1815,20 @@ async function addConceptDuplicationByCodeAndName(conceptArray) {
 async function addConceptValuesDuplicationByCodeAndName(conceptValuesArray) {
   let duplicationData = [];
   for (let e of conceptValuesArray) {
-    duplicationData.push(await profileSectionCategoryConceptValuesTbl.findOne({
-      where: {
-        [Op.or]: [
-          {
-            value_code: e.value_code
-          },
-          {
-            value_name: e.value_name
-          }
-        ]
-      }
-    }))
+    if(e.value_code && e.value_name){
+      duplicationData.push(await profileSectionCategoryConceptValuesTbl.findOne({
+        where: {
+          [Op.or]: [
+            {
+              value_code: e.value_code
+            },
+            {
+              value_name: e.value_name
+            }
+          ]
+        }
+      }));
+    }
   }
   return duplicationData.filter((el) => { return el != null; });
 }
