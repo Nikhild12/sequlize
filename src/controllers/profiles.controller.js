@@ -676,21 +676,36 @@ const profilesController = () => {
           });
         }
       }
+      // Delete profile Section Category Concepts
       if (deletedFieldInfo && deletedFieldInfo.length > 0) {
         for (let dfi of deletedFieldInfo) {
-          if (dfi && dfi.conceptvalues.length > 0) {
-            for (let cv of dfi.conceptvalues) {
-              await profileSectionCategoryConceptsTbl.update({
-                status: 0
-              }, {
-                where: {
-                  uuid: cv.profile_section_category_concept_uuid
-                }
-              });
+          await profileSectionCategoryConceptsTbl.update({
+            status: 0
+          }, {
+            where: {
+              uuid: dfi.profile_section_category_concepts_uuid
             }
-          }
+          });
         }
       }
+      // Delete profile Section Category Concepts values
+
+      // if (deletedFieldInfo && deletedFieldInfo.length > 0) {
+      //   for (let dfi of deletedFieldInfo) {
+      //     if (dfi && dfi.conceptvalues.length > 0) {
+      //       for (let cv of dfi.conceptvalues) {
+      //         await profileSectionCategoryConceptsTbl.update({
+      //           status: 0
+      //         }, {
+      //           where: {
+      //             uuid: cv.profile_section_category_concept_values_uuid
+      //           }
+      //         });
+      //       }
+      //     }
+      //   }
+      // }
+      // profile_section_category_concept_values_uuid
       try {
         return res.send({
           status: 'success',
