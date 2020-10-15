@@ -678,13 +678,17 @@ const profilesController = () => {
       }
       if (deletedFieldInfo && deletedFieldInfo.length > 0) {
         for (let dfi of deletedFieldInfo) {
-          await profileSectionCategoryConceptsTbl.update({
-            status: 0
-          }, {
-            where: {
-              uuid: dfi.profile_section_category_concept_uuid
+          if (dfi && dfi.conceptvalues.length > 0) {
+            for (let cv of dfi.conceptvalues) {
+              await profileSectionCategoryConceptsTbl.update({
+                status: 0
+              }, {
+                where: {
+                  uuid: cv.profile_section_category_concept_uuid
+                }
+              });
             }
-          })
+          }
         }
       }
       try {
@@ -855,16 +859,16 @@ const profilesController = () => {
               //     message: "concept already exists"
               //   });
               // } else {
-                profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
-                  value_code: element4.value_code,
-                  value_name: element4.value_name,
-                  display_order: element4.display_order,
-                  is_defult: element4.is_defult
-                }, {
-                  where: {
-                    uuid: element4.profile_section_category_concept_values_uuid
-                  }
-                }));
+              profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
+                value_code: element4.value_code,
+                value_name: element4.value_name,
+                display_order: element4.display_order,
+                is_defult: element4.is_defult
+              }, {
+                where: {
+                  uuid: element4.profile_section_category_concept_values_uuid
+                }
+              }));
               // }            
             } else if (element3.profile_section_category_concepts_uuid) {
               let elementArr_3 = [];
@@ -1646,7 +1650,7 @@ async function findDuplicateProfilesByCodeAndNameForUpdate({
         }
       ],
       uuid: {
-        [Op.notIn] : [profile_uuid]
+        [Op.notIn]: [profile_uuid]
       },
       status: 1,
       is_active: 1
