@@ -1193,18 +1193,30 @@ const profilesController = () => {
     } = req.query;
     let whereCond = {
       where: {
-        user_uuid: user_uuid1,
-        department_uuid: department_uuid,
-        facility_uuid: facility_uuid,
         profile_type_uuid: profile_type_uuid,
         // profile_uuid: profile_uuid,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE
       }
     };
+    if (user_uuid1 && /\S/.test(user_uuid1)) {
+      Object.assign(whereCond.where, {
+          user_uuid: user_uuid1
+      });
+    }
     if (profile_uuid && /\S/.test(profile_uuid)) {
       Object.assign(whereCond.where, {
           profile_uuid: profile_uuid
+      });
+    }
+    if (facility_uuid && /\S/.test(facility_uuid)) {
+      Object.assign(whereCond.where, {
+          facility_uuid: facility_uuid
+      });
+    }
+    if (department_uuid && /\S/.test(department_uuid)) {
+      Object.assign(whereCond.where, {
+          department_uuid: department_uuid
       });
     }
     try {
