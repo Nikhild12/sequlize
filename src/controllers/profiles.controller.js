@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 //EMR Constants Import
 const emr_constants = require('../config/constants');
-
+const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
 // Patient notes
@@ -26,6 +26,10 @@ const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
 const profilesTypesTbl = db.profile_types;
 const profilesDefaultTbl = db.profiles_default;
+const {
+  APPMASTER_GET_SCREEN_SETTINGS,
+  APPMASTER_UPDATE_SCREEN_SETTINGS
+} = emr_constants.DEPENDENCY_URLS;
 
 const Q = require('q');
 
@@ -37,7 +41,7 @@ const profilesController = () => {
    */
   const _createProfileOpNotes = async (req, res) => {
     const {
-      user_uuid
+      user_uuid, authorization
     } = req.headers;
     let {
       profiles
@@ -47,7 +51,6 @@ const profilesController = () => {
     // creating profile
     if (user_uuid && profiles.profile_code && profiles.profile_name) {
       try {
-
         const duplicateProfileRecord = await findDuplicateProfilesByCodeAndNameForAdd(
           profiles
         );
@@ -78,15 +81,38 @@ const profilesController = () => {
         profiles.created_date = profiles.modified_date = new Date();
         profiles.revision = 1;
 
-        let profileSectionSave = [],
-          CategorySave = [],
-          ConceptsSave = [],
-          conceptValuesSave = [];
-        // profiles = emr_utility.createIsActiveAndStatus(profiles, user_uuid);
-        //Profiles save
-        const profileResponse = await profilesTbl.create(profiles, {
-          returning: true
-        });
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code : 'CLN'
+          }
+        };
+        let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [], screenSettings_output, suffix_current_value_consult;
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          const replace_value = parseInt(screenSettings_output.suffix_current_value.replace(screenSettings_output.sufix, ''));
+          suffix_current_value_consult = screenSettings_output.sufix + (replace_value + emr_constants.IS_ACTIVE);
+          profiles.profile_code = screenSettings_output.prefix + suffix_current_value_consult;
+        }
+        const profileResponse = await profilesTbl.create(profiles);
+        if (profileResponse) {
+          let options_two = {
+            uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              screenId: screenSettings_output.uuid,
+              suffix_current_value: suffix_current_value_consult
+            }
+          };
+          await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+        }
 
         // Profile and Sections mapping
         for (let i = 0; i < sectionsDetails.length; i++) {
@@ -443,85 +469,85 @@ const profilesController = () => {
         status: 1
       },
       include: [{
-          model: profileSectionsTbl,
-          as: 'profile_sections',
-          attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+        model: profileSectionsTbl,
+        as: 'profile_sections',
+        attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+        where: {
+          is_active: 1,
+          status: 1
+        },
+        required: false,
+        include: [{
+          model: sectionsTbl,
+          as: 'sections',
+          attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+          where: {
+            is_active: 1,
+            status: 1
+          },
+          required: false
+        },
+        {
+          model: profileSectionCategoriesTbl,
+          as: 'profile_section_categories',
+          attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
           where: {
             is_active: 1,
             status: 1
           },
           required: false,
           include: [{
-              model: sectionsTbl,
-              as: 'sections',
-              attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+            model: categoriesTbl,
+            as: 'categories',
+            attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+            where: {
+              is_active: 1,
+              status: 1
+            },
+            required: false
+          },
+          {
+            model: profileSectionCategoryConceptsTbl,
+            as: 'profile_section_category_concepts',
+            attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+            where: {
+              is_active: 1,
+              status: 1
+            },
+            required: false,
+            include: [{
+              model: valueTypesTbl,
+              as: 'value_types',
+              attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
               where: {
                 is_active: 1,
                 status: 1
               },
               required: false
             },
+            // include: [
             {
-              model: profileSectionCategoriesTbl,
-              as: 'profile_section_categories',
-              attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+              model: profileSectionCategoryConceptValuesTbl,
+              as: 'profile_section_category_concept_values',
+              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
               where: {
                 is_active: 1,
                 status: 1
               },
-              required: false,
-              include: [{
-                  model: categoriesTbl,
-                  as: 'categories',
-                  attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-                  where: {
-                    is_active: 1,
-                    status: 1
-                  },
-                  required: false
-                },
-                {
-                  model: profileSectionCategoryConceptsTbl,
-                  as: 'profile_section_category_concepts',
-                  attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
-                  where: {
-                    is_active: 1,
-                    status: 1
-                  },
-                  required: false,
-                  include: [{
-                      model: valueTypesTbl,
-                      as: 'value_types',
-                      attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
-                      where: {
-                        is_active: 1,
-                        status: 1
-                      },
-                      required: false
-                    },
-                    // include: [
-                    {
-                      model: profileSectionCategoryConceptValuesTbl,
-                      as: 'profile_section_category_concept_values',
-                      attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
-                      where: {
-                        is_active: 1,
-                        status: 1
-                      },
-                      required: false
-                    }
-                  ]
-                  //],
-                }
-              ]
+              required: false
             }
+            ]
+            //],
+          }
           ]
-        },
-        {
-          model: profileTypeTbl,
-          required: false,
-          attributes: ['uuid', 'code', 'name'],
         }
+        ]
+      },
+      {
+        model: profileTypeTbl,
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+      }
       ]
 
     };
@@ -1503,7 +1529,6 @@ const profilesController = () => {
     setDefaultProfiles: _setDefaultProfiles,
     getNotesByType: _getNotesByType
   };
-
 };
 
 module.exports = profilesController();
@@ -1518,11 +1543,11 @@ async function findDuplicateProfilesByCodeAndName({
     attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
-          profile_code: profile_code
-        },
-        {
-          profile_name: profile_name
-        }
+        profile_code: profile_code
+      },
+      {
+        profile_name: profile_name
+      }
       ]
     }
   });
@@ -1554,11 +1579,11 @@ async function findDuplicateConValueByCodeAndName(profileData) {
     attributes: ['value_code', 'value_name', 'is_active'],
     where: {
       [Op.or]: [{
-          value_code: ValuesInfoDetails[0].value_code
-        },
-        {
-          value_name: ValuesInfoDetails[0].value_name
-        }
+        value_code: ValuesInfoDetails[0].value_code
+      },
+      {
+        value_name: ValuesInfoDetails[0].value_name
+      }
       ]
     }
   });
@@ -1583,7 +1608,6 @@ function checkProfiles(req) {
     !checkprofilesSectionCategoryInfo(profilesSectionCategoryInfo) &&
     !checkprofileSectionCategoryConceptsInfo(profileSectionCategoryConceptsInfo) &&
     !checkprofileSectionCategoryConceptValuesInfo(profileSectionCategoryConceptValuesInfo);
-
 }
 
 function checkSections(sections) {
@@ -1635,9 +1659,7 @@ async function findDuplicateProfilesByCodeAndNameForAdd({
   return await profilesTbl.findAll({
     attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
-      [Op.or]: [{
-          profile_code: profile_code
-        },
+      [Op.or]: [
         {
           profile_name: profile_name
         }
@@ -1658,11 +1680,11 @@ async function findDuplicateProfilesByCodeAndNameForUpdate({
     attributes: ['uuid', 'profile_code', 'profile_name', 'is_active'],
     where: {
       [Op.or]: [{
-          profile_code: profile_code
-        },
-        {
-          profile_name: profile_name
-        }
+        profile_code: profile_code
+      },
+      {
+        profile_name: profile_name
+      }
       ],
       uuid: {
         [Op.notIn]: [profile_uuid]
@@ -1793,11 +1815,11 @@ async function conceptDuplicationByCodeAndName(conceptObj, uuid) {
   const result = await profileSectionCategoryConceptsTbl.findOne({
     where: {
       [Op.or]: [{
-          code: conceptObj.code
-        },
-        {
-          name: conceptObj.name
-        }
+        code: conceptObj.code
+      },
+      {
+        name: conceptObj.name
+      }
       ],
       value_type_uuid: conceptObj.value_type_uuid,
       uuid: {
@@ -1815,11 +1837,11 @@ async function conceptValuesDuplicationByCodeAndName(conceptValuesObj, uuid) {
   const result = await profileSectionCategoryConceptValuesTbl.findOne({
     where: {
       [Op.or]: [{
-          value_code: conceptValuesObj.value_code
-        },
-        {
-          value_name: conceptValuesObj.value_name
-        }
+        value_code: conceptValuesObj.value_code
+      },
+      {
+        value_name: conceptValuesObj.value_name
+      }
       ],
       profile_section_category_concept_uuid: uuid,
       uuid: {
@@ -1835,7 +1857,6 @@ async function conceptDuplicationByCodeAndName1(conceptArray) {
   let duplicationData = [];
   let conceptValuesArray = [];
   for (let e of conceptArray) {
-    console.log("=================+>>>eeee22222", e.code, e.name, e.value_type_uuid, e.profile_section_category_concepts_uuid);
     if (e.conceptvalues && e.conceptvalues.length > 0) {
       for (ecv of e.conceptvalues) {
         ecv.profile_section_category_concept_uuid = e.profile_section_category_concepts_uuid;
@@ -1845,11 +1866,11 @@ async function conceptDuplicationByCodeAndName1(conceptArray) {
     duplicationData.push(await profileSectionCategoryConceptsTbl.findOne({
       where: {
         [Op.or]: [{
-            code: e.code
-          },
-          {
-            name: e.name
-          }
+          code: e.code
+        },
+        {
+          name: e.name
+        }
         ],
         value_type_uuid: e.value_type_uuid,
         uuid: {
@@ -1862,7 +1883,6 @@ async function conceptDuplicationByCodeAndName1(conceptArray) {
   var duplicationWithOutNull = duplicationData.filter((el) => {
     return el != null;
   });
-  console.log("============++>>>conceptValuesArray", conceptValuesArray);
   let getConceptValuesDuplication = await conceptValuesDuplicationByCodeAndName(conceptValuesArray);
   return {
     duplicateConcepts: duplicationWithOutNull,
@@ -1874,15 +1894,14 @@ async function conceptValuesDuplicationByCodeAndName1(conceptValuesArray, profil
   let findQuery = {};
   for (let e of conceptValuesArray) {
     if (e.value_code && e.value_name) {
-      console.log("=================+>>>eeee", e.value_code, e.value_name, e.profile_section_category_concept_uuid, e.profile_section_category_concept_values_uuid);
       duplicationData.push(await profileSectionCategoryConceptValuesTbl.findOne({
         where: {
           [Op.or]: [{
-              value_code: e.value_code
-            },
-            {
-              value_name: e.value_name
-            }
+            value_code: e.value_code
+          },
+          {
+            value_name: e.value_name
+          }
           ],
           profile_section_category_concept_uuid: e.profile_section_category_concept_uuid,
           uuid: {
@@ -1908,11 +1927,11 @@ async function addConceptDuplicationByCodeAndName(conceptArray) {
     duplicationData.push(await profileSectionCategoryConceptsTbl.findOne({
       where: {
         [Op.or]: [{
-            code: e.code
-          },
-          {
-            name: e.name
-          }
+          code: e.code
+        },
+        {
+          name: e.name
+        }
         ],
         value_type_uuid: e.value_type_uuid
       }
@@ -1935,11 +1954,11 @@ async function addConceptValuesDuplicationByCodeAndName(conceptValuesArray) {
       duplicationData.push(await profileSectionCategoryConceptValuesTbl.findOne({
         where: {
           [Op.or]: [{
-              value_code: e.value_code
-            },
-            {
-              value_name: e.value_name
-            }
+            value_code: e.value_code
+          },
+          {
+            value_name: e.value_name
+          }
           ]
         }
       }));

@@ -383,10 +383,9 @@
                     {{#each headerObj.diaResult}}
                     <tr>
                         <td style="text-align: center; border-bottom: 0;border-left: 0;">{{inc @index}}</td>
-                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{diagnosis.dataValues.code}}</td>
-                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{diagnosis.dataValues.name}}</td>
-                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{#if is_snomed}} ICD10 {{else}}
-                            SNOMED{{/if}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{code}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dia_type}}</td>
                     </tr>
                     {{/each}}
                 </tbody>
