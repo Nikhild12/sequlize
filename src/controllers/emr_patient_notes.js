@@ -615,11 +615,21 @@ const notesController = () => {
 
                     });
                 }
+                // let snomed = [];
+                let dia_type = '';
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
                             if (e.activity_uuid == 59) {
-                                diaArr = [...diaArr, ...e.dataValues.details];
+                                console.log(e.dataValues.details);
+                                e.dataValues.details.forEach(i=>{
+                                    let data = {
+                                        name : i.is_snomed == true ? i.other_diagnosis : i.diagnosis.name,
+                                        code : i.is_snomed == true ? i.diagnosis_uuid : i.diagnosis.code,
+                                        dia_type : i.is_snomed == true ? 'SNOMED' : 'ICD10'
+                                    };
+                                    diaArr = [...diaArr, data];
+                                });
                             }
                         } else {
                             diaArr = diaArr;
