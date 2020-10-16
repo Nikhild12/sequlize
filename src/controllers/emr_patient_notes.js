@@ -333,7 +333,7 @@ const notesController = () => {
                 if (data) {
                     let patNotesData = null
                     if (postData.length > 0) {
-                      let  findQuery= {
+                        let findQuery = {
                             where: {
                                 consultation_uuid: postData[0].consultation_uuid,
                             }
@@ -587,7 +587,7 @@ const notesController = () => {
                                 }
                             }
                         } else {
-                            labArr = labArr;radArr=radArr;invArr=invArr;
+                            labArr = labArr; radArr = radArr; invArr = invArr;
                         }
                     });
                 }
@@ -622,11 +622,11 @@ const notesController = () => {
                         if (e && e.dataValues.details) {
                             if (e.activity_uuid == 59) {
                                 console.log(e.dataValues.details);
-                                e.dataValues.details.forEach(i=>{
+                                e.dataValues.details.forEach(i => {
                                     let data = {
-                                        name : i.is_snomed == true ? i.other_diagnosis : i.diagnosis.name,
-                                        code : i.is_snomed == true ? i.diagnosis_uuid : i.diagnosis.code,
-                                        dia_type : i.is_snomed == true ? 'SNOMED' : 'ICD10'
+                                        name: i.is_snomed == true ? i.other_diagnosis : i.diagnosis.name,
+                                        code: i.is_snomed == true ? i.diagnosis_uuid : i.diagnosis.code,
+                                        dia_type: i.is_snomed == true ? 'SNOMED' : 'ICD10'
                                     };
                                     diaArr = [...diaArr, data];
                                 });
@@ -719,7 +719,7 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj = {
-                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1'? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
                         };
                         if (sample.length == 0) {
                             sample.push(sampleObj);
@@ -731,7 +731,7 @@ const notesController = () => {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = e.profile_section_category_concept_value.value_name ?
                                         (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
@@ -890,8 +890,7 @@ const notesController = () => {
                         user_uuid: user_uuid
                     },
                     body: {
-                        module_uuid: 13,
-                        activity_uuid: 41
+                        code: 'OPN'
                     }
                 };
                 screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);

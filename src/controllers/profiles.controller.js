@@ -88,8 +88,7 @@ const profilesController = () => {
             user_uuid: user_uuid
           },
           body: {
-            module_uuid: 37,
-            activity_uuid: 550
+            code : 'CLN'
           }
         };
         let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [], screenSettings_output, suffix_current_value_consult;
