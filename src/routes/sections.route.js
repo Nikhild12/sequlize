@@ -12,5 +12,6 @@ sectionsRoute.route('/getAll').get(sectionsController.getAllSections);
 sectionsRoute.route('/delete').put(sectionsController.deleteSections);
 sectionsRoute.route('/getById').post(sectionsController.getSectionsById);
 sectionsRoute.route('/update').put(sectionsController.updateSections);
+sectionsRoute.route('/getAllSections').put(sectionsController.getSections);
 
 module.exports = sectionsRoute;
