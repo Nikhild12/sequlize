@@ -35,6 +35,11 @@ const {
     APPMASTER_GET_SCREEN_SETTINGS,
     APPMASTER_UPDATE_SCREEN_SETTINGS
 } = emr_constants.DEPENDENCY_URLS;
+const {
+    BOOLEAN,
+    CHECKBOX,
+    DROPDOWN
+} = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 const {
     object
@@ -419,7 +424,8 @@ const notesController = () => {
             where: {
                 patient_uuid: patient_uuid,
                 consultation_uuid: consultation_uuid,
-                is_latest: emr_constants.IS_ACTIVE
+                status: emr_constants.IS_ACTIVE,
+                is_active: emr_constants.IS_ACTIVE
             }
         };
         try {
@@ -527,7 +533,8 @@ const notesController = () => {
                 where: {
                     patient_uuid: patient_uuid,
                     consultation_uuid: consultation_uuid,
-                    is_latest: emr_constants.IS_ACTIVE
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE
                 }
             };
             if (user_uuid && patient_uuid) {
@@ -677,9 +684,11 @@ const notesController = () => {
                 }
                 let patientObj;
                 if (finalData && finalData[0] && finalData[0].vw_consultation_detail) {
+                    console.log(finalData[0].vw_consultation_detail);
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
+                        period: finalData ? (finalData[0].vw_consultation_detail.dataValues.period_name == 'Year' ? 'Years' : finalData[0].vw_consultation_detail.dataValues.period_name) : '',
                         gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
                         pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
                         mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
@@ -718,9 +727,16 @@ const notesController = () => {
                         e.term_key = e.term_key;
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
-                        let sampleObj = {
-                            [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
-                        };
+                        let sampleObj;
+                        if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                            sampleObj = {
+                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name) : e.term_key
+                            };
+                        } else {
+                            sampleObj = {
+                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                            };
+                        }
                         if (sample.length == 0) {
                             sample.push(sampleObj);
                         } else {
@@ -729,9 +745,14 @@ const notesController = () => {
                             });
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-                                    let name = e.profile_section_category_concept_value.value_name ?
+                                    let name = '';
+                                    if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                                        name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                    } else {
+                                        name = e.profile_section_category_concept_value.value_name ?
                                         (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                    }
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
                                     sample.push(check);
