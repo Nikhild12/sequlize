@@ -686,39 +686,45 @@ const profilesController = () => {
       }
       if (deletedHeadings && deletedHeadings.length > 0) {
         for (let dh of deletedHeadings) {
-          await profileSectionsTbl.update({
-            status: 0,
-            modified_by: user_uuid
-          }, {
-            where: {
-              uuid: dh.profile_sections_uuid
-            }
-          });
+          if (dh.profile_sections_uuid) {
+            await profileSectionsTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dh.profile_sections_uuid
+              }
+            });
+          }
         }
       }
       if (deletedSubheadings && deletedSubheadings.length > 0) {
         for (let dsh of deletedSubheadings) {
-          await profileSectionCategoriesTbl.update({
-            status: 0,
-            modified_by: user_uuid
-          }, {
-            where: {
-              uuid: dsh.profile_section_categories_uuid
-            }
-          });
+          if (dsh.profile_section_categories_uuid) {
+            await profileSectionCategoriesTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dsh.profile_section_categories_uuid
+              }
+            });
+          }
         }
       }
       // Delete profile Section Category Concepts
       if (deletedFieldInfo && deletedFieldInfo.length > 0) {
         for (let dfi of deletedFieldInfo) {
-          await profileSectionCategoryConceptsTbl.update({
-            status: 0,
-            modified_by: user_uuid
-          }, {
-            where: {
-              uuid: dfi.profile_section_category_concepts_uuid
-            }
-          });
+          if (dfi.profile_section_category_concepts_uuid) {
+            await profileSectionCategoryConceptsTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dfi.profile_section_category_concepts_uuid
+              }
+            });
+          }
         }
       }
       // Delete profile Section Category Concepts values
