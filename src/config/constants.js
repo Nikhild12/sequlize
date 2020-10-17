@@ -2,6 +2,11 @@ module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
   ENTRY_STATUS: 2,
+  VALUE_TYPES:{
+    BOOLEAN: 4,
+    CHECKBOX: 5,
+    DROPDOWN: 11
+  },
   NO: "No",
   OR: "or",
   FOUND: "Found",

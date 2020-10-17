@@ -63,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
             pa_age: {
                 type: DataTypes.INTEGER
             },
+            period_name: {
+                type: DataTypes.STRING(255)
+            },
             p_dob: {
                 type: DataTypes.STRING
             },

@@ -88,7 +88,7 @@ const profilesController = () => {
             user_uuid: user_uuid
           },
           body: {
-            code : 'CLN'
+            code: 'CLN'
           }
         };
         let profileSectionSave = [], CategorySave = [], ConceptsSave = [], conceptValuesSave = [], screenSettings_output, suffix_current_value_consult;
@@ -121,7 +121,8 @@ const profilesController = () => {
             profile_uuid: profileResponse.uuid,
             section_uuid: element.section_uuid,
             activity_uuid: element.activity_uuid,
-            display_order: element.display_order
+            display_order: element.display_order,
+            created_by: user_uuid
           });
         }
         if (profileSectionSave.length > 0) {
@@ -132,7 +133,8 @@ const profilesController = () => {
               CategorySave.push({
                 profile_section_uuid: profileSectionResponse[i].uuid,
                 category_uuid: element.category_uuid,
-                display_order: element.display_order
+                display_order: element.display_order,
+                created_by: user_uuid
               });
             }
           }
@@ -153,7 +155,8 @@ const profilesController = () => {
                     value_type_uuid: element.value_type_uuid,
                     is_mandatory: element.is_mandatory,
                     display_order: element.display_order,
-                    is_multiple: element.is_multiple
+                    is_multiple: element.is_multiple,
+                    created_by: user_uuid
                   });
                 }
               }
@@ -173,7 +176,8 @@ const profilesController = () => {
                         value_code: element.value_code,
                         value_name: element.value_name,
                         display_order: element.display_order,
-                        is_defult: element.is_defult
+                        is_defult: element.is_defult,
+                        created_by: user_uuid
                       });
                     }
                   }
@@ -678,40 +682,49 @@ const profilesController = () => {
         });
       }
       if (profiles) {
-        bulkUpdateProfileResponse = await bulkUpdateProfile(req.body);
+        bulkUpdateProfileResponse = await bulkUpdateProfile(req.body, user_uuid);
       }
       if (deletedHeadings && deletedHeadings.length > 0) {
         for (let dh of deletedHeadings) {
-          await profileSectionsTbl.update({
-            status: 0
-          }, {
-            where: {
-              uuid: dh.profile_sections_uuid
-            }
-          });
+          if (dh.profile_sections_uuid) {
+            await profileSectionsTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dh.profile_sections_uuid
+              }
+            });
+          }
         }
       }
       if (deletedSubheadings && deletedSubheadings.length > 0) {
         for (let dsh of deletedSubheadings) {
-          await profileSectionCategoriesTbl.update({
-            status: 0
-          }, {
-            where: {
-              uuid: dsh.profile_section_categories_uuid
-            }
-          });
+          if (dsh.profile_section_categories_uuid) {
+            await profileSectionCategoriesTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dsh.profile_section_categories_uuid
+              }
+            });
+          }
         }
       }
       // Delete profile Section Category Concepts
       if (deletedFieldInfo && deletedFieldInfo.length > 0) {
         for (let dfi of deletedFieldInfo) {
-          await profileSectionCategoryConceptsTbl.update({
-            status: 0
-          }, {
-            where: {
-              uuid: dfi.profile_section_category_concepts_uuid
-            }
-          });
+          if (dfi.profile_section_category_concepts_uuid) {
+            await profileSectionCategoryConceptsTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dfi.profile_section_category_concepts_uuid
+              }
+            });
+          }
         }
       }
       // Delete profile Section Category Concepts values
@@ -757,7 +770,7 @@ const profilesController = () => {
     }
   };
 
-  const bulkUpdateProfile = async (req) => {
+  const bulkUpdateProfile = async (req, user_uuid) => {
     var deferred = new Q.defer();
     var profileData = req;
     var profileDetailsUpdate = [];
@@ -776,7 +789,8 @@ const profilesController = () => {
         profile_description: element1.profile_description,
         facility_uuid: element1.facility_uuid,
         department_uuid: element1.department_uuid,
-        is_active: element1.is_active
+        is_active: element1.is_active,
+        modified_by: user_uuid
       }, {
         where: {
           uuid: element1.profile_uuid
@@ -788,7 +802,8 @@ const profilesController = () => {
         profileDetailsUpdate.push(await profileSectionsTbl.update({
           section_uuid: element.section_uuid,
           activity_uuid: element.activity_uuid,
-          display_order: element.display_order
+          display_order: element.display_order,
+          modified_by: user_uuid
         }, {
           where: {
             uuid: element.profile_sections_uuid
@@ -800,7 +815,8 @@ const profilesController = () => {
           profile_uuid: profileData.profiles.profile_uuid,
           section_uuid: element.section_uuid,
           activity_uuid: element.activity_uuid,
-          display_order: element.display_order
+          display_order: element.display_order,
+          created_by: user_uuid
         });
         sectionsResponse = await profileSectionsTbl.bulkCreate(elementArr3);
       }
@@ -809,7 +825,8 @@ const profilesController = () => {
         if (element2.profile_section_categories_uuid) {
           profileDetailsUpdate.push(await profileSectionCategoriesTbl.update({
             category_uuid: element2.category_uuid,
-            display_order: element2.display_order
+            display_order: element2.display_order,
+            modified_by: user_uuid
           }, {
             where: {
               uuid: element2.profile_section_categories_uuid
@@ -821,7 +838,8 @@ const profilesController = () => {
           elementArrsection.push({
             profile_section_uuid: element.profile_sections_uuid,
             category_uuid: element2.category_uuid,
-            display_order: element.display_order
+            display_order: element.display_order,
+            created_by: user_uuid
           });
           categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
         } else {
@@ -831,7 +849,8 @@ const profilesController = () => {
           elementArr2.push({
             profile_section_uuid: sectionsResponse[0].uuid,
             category_uuid: element2.category_uuid,
-            display_order: element.display_order
+            display_order: element.display_order,
+            created_by: user_uuid
           });
           categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
         }
@@ -853,7 +872,8 @@ const profilesController = () => {
               value_type_uuid: element3.value_type_uuid,
               is_multiple: element3.is_multiple,
               is_mandatory: element3.is_mandatory,
-              display_order: element3.display_order
+              display_order: element3.display_order,
+              modified_by: user_uuid
             }, {
               where: {
                 uuid: element3.profile_section_category_concepts_uuid
@@ -871,7 +891,8 @@ const profilesController = () => {
               value_type_uuid: element3.value_type_uuid,
               is_mandatory: element3.is_mandatory,
               display_order: element3.display_order,
-              is_multiple: element3.is_multiple
+              is_multiple: element3.is_multiple,
+              created_by: user_uuid
             });
             conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
           } else {
@@ -885,7 +906,8 @@ const profilesController = () => {
               value_type_uuid: element3.value_type_uuid,
               is_mandatory: element3.is_mandatory,
               display_order: element3.display_order,
-              is_multiple: element3.is_multiple
+              is_multiple: element3.is_multiple,
+              created_by: user_uuid
             });
             conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr1);
           }
@@ -904,7 +926,8 @@ const profilesController = () => {
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order,
-                is_defult: element4.is_defult
+                is_defult: element4.is_defult,
+                modified_by: user_uuid
               }, {
                 where: {
                   uuid: element4.profile_section_category_concept_values_uuid
@@ -918,7 +941,8 @@ const profilesController = () => {
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order,
-                is_defult: element4.is_defult
+                is_defult: element4.is_defult,
+                created_by: user_uuid
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
             } else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
@@ -928,7 +952,8 @@ const profilesController = () => {
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order,
-                is_defult: element4.is_defult
+                is_defult: element4.is_defult,
+                created_by: user_uuid
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
             }
@@ -971,11 +996,11 @@ const profilesController = () => {
                 value_code: element4.value_code,
                 value_name: element4.value_name,
                 display_order: element4.display_order,
-                is_defult: element4.is_defult
+                is_defult: element4.is_defult,
+                created_by: user_uuid
               });
               conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
             }
-
           }
         }
       }
