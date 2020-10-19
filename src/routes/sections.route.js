@@ -9,6 +9,7 @@ const sectionsRoute = Express.Router();
 
 sectionsRoute.route('/create').post(sectionsController.addSections);
 sectionsRoute.route('/getAll').get(sectionsController.getAllSections);
+sectionsRoute.route('/getAllSections').post(sectionsController.getAllSectionsPost);
 sectionsRoute.route('/delete').put(sectionsController.deleteSections);
 sectionsRoute.route('/getById').post(sectionsController.getSectionsById);
 sectionsRoute.route('/update').put(sectionsController.updateSections);
