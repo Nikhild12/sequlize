@@ -125,22 +125,24 @@ const profilesController = () => {
               categoriesResponse = await profileSectionCategoriesTbl.bulkCreate(CategorySave);
               var index = 0;
               for (let i = 0; i < sectionsDetails.length; i++) {
-                for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
-                  index++;
-                  if (sectionsDetails[i].categories[j].concepts && sectionsDetails[i].categories[j].concepts.length > 0) {
-                    for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
-                      const element = sectionsDetails[i].categories[j].concepts[k];
-                      ConceptsSave.push({
-                        profile_section_category_uuid: categoriesResponse[index - 1].uuid,
-                        code: element.code,
-                        name: element.name,
-                        description: element.description,
-                        value_type_uuid: element.value_type_uuid,
-                        is_mandatory: element.is_mandatory,
-                        display_order: element.display_order,
-                        is_multiple: element.is_multiple,
-                        created_by: user_uuid
-                      });
+                if (sectionsDetails[i].categories && sectionsDetails[i].categories.length > 0) {
+                  for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                    index++;
+                    if (sectionsDetails[i].categories[j].concepts && sectionsDetails[i].categories[j].concepts.length > 0) {
+                      for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                        const element = sectionsDetails[i].categories[j].concepts[k];
+                        ConceptsSave.push({
+                          profile_section_category_uuid: categoriesResponse[index - 1].uuid,
+                          code: element.code,
+                          name: element.name,
+                          description: element.description,
+                          value_type_uuid: element.value_type_uuid,
+                          is_mandatory: element.is_mandatory,
+                          display_order: element.display_order,
+                          is_multiple: element.is_multiple,
+                          created_by: user_uuid
+                        });
+                      }
                     }
                   }
                 }
@@ -150,20 +152,24 @@ const profilesController = () => {
                 conceptResponse = await profileSectionCategoryConceptsTbl.bulkCreate(ConceptsSave);
                 var index = 0;
                 for (let i = 0; i < sectionsDetails.length; i++) {
-                  for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
-                    for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
-                      index++;
-                      if (sectionsDetails[i].categories[j].concepts[k].conceptvalues && sectionsDetails[i].categories[j].concepts[k].conceptvalues.length > 0) {
-                        for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
-                          const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
-                          conceptValuesSave.push({
-                            profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
-                            value_code: element.value_code,
-                            value_name: element.value_name,
-                            display_order: element.display_order,
-                            is_defult: element.is_defult,
-                            created_by: user_uuid
-                          });
+                  if (sectionsDetails[i].categories && sectionsDetails[i].categories.length > 0) {
+                    for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                      if (sectionsDetails[i].categories[j].concepts && sectionsDetails[i].categories[j].concepts.length > 0) {
+                        for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                          index++;
+                          if (sectionsDetails[i].categories[j].concepts[k].conceptvalues && sectionsDetails[i].categories[j].concepts[k].conceptvalues.length > 0) {
+                            for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
+                              const element = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l];
+                              conceptValuesSave.push({
+                                profile_section_category_concept_uuid: conceptResponse[index - 1].uuid,
+                                value_code: element.value_code,
+                                value_name: element.value_name,
+                                display_order: element.display_order,
+                                is_defult: element.is_defult,
+                                created_by: user_uuid
+                              });
+                            }
+                          }
                         }
                       }
                     }
