@@ -148,15 +148,38 @@ const categoriesController = () => {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
+    const _getAllCategoriesPost = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        const { uuid } = req.body;
+        try {
+
+            if (user_uuid) {
+                const categoriesData = await categoriesTbl.findAll({
+                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
+                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
+                    where: { status: 1, is_active: 1 },
+
+                });
+                return res.status(200).send({ code: httpStatus.OK, message: 'Fetched categories Details successfully', responseContents: categoriesData });
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+            }
+        } catch (ex) {
+
+            console.log(ex.message);
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
 
     return {
         addCategories: _addCategories,
         deleteCategories: _deleteCategories,
         updateCategories: _updateCategories,
         getCategoriesById: _getCategoriesById,
-        getAllCategories: _getAllCategories
-
-
+        getAllCategories: _getAllCategories,
+        getAllCategoriesPost: _getAllCategoriesPost
     };
 };
 
