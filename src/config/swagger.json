@@ -8247,6 +8247,39 @@
 				}
 			}
 		},
+		"/api/sections/getAllSections": {
+			"post": {
+				"summary": "To get all the section Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Sections",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllSections"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Sections"
+				],
+				"responses": {
+					"200": {
+						"description": "get All Sections"
+					}
+				}
+			}
+		},
 		"/api/categories/getAll": {
 			"get": {
 				"summary": "To get all the categories Details ",
@@ -8256,6 +8289,39 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Categories"
+				],
+				"responses": {
+					"200": {
+						"description": "get All categories"
+					}
+				}
+			}
+		},
+		"/api/categories/getAllCategories": {
+			"post": {
+				"summary": "To get all the categories Details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Categories",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getAllSections"
+						}
 					}
 				],
 				"produces": [
@@ -16917,6 +16983,14 @@
 					"type": "string"
 				},
 				"searchValue": {
+					"type": "string"
+				}
+			}
+		},
+		"getAllSections": {
+			"type": "object",
+			"properties": {
+				"uuid": {
 					"type": "string"
 				}
 			}
