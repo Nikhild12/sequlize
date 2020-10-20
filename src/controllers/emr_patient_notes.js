@@ -712,8 +712,23 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                let arr = [];
+                let checkSectionName = false;
+                let checkCategoryName = false;
+                printObj.sectionName = '';
+                printObj.categoryName = '';
                 for (let e of finalData) {
+                    if (!checkSectionName) {
+                        if(e.section && e.section.name){
+                            printObj.sectionName =e.section.name;
+                            checkSectionName = true;
+                        }
+                    }
+                    if (!checkCategoryName) {
+                        if(e.category && e.category.name){
+                            printObj.categoryName =e.category.name;
+                            checkCategoryName = true;
+                        }
+                    }
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                     const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
                     if (val.test(e.term_key)) {
@@ -766,10 +781,6 @@ const notesController = () => {
 
                 printObj.sectionResult = [...new Set(sample)];
 
-                if (finalData && finalData.length > 0) {
-                    printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
-                    printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
-                }
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
