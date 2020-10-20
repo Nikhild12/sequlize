@@ -649,7 +649,8 @@ const profilesController = () => {
       profiles,
       deletedHeadings,
       deletedSubheadings,
-      deletedFieldInfo
+      deletedFieldInfo,
+      deletedTerms
     } = req.body;
     let duplicateCount = 0;
     let duplicateConceptCount = 0;
@@ -714,23 +715,20 @@ const profilesController = () => {
         }
       }
       // Delete profile Section Category Concepts values
-
-      // if (deletedFieldInfo && deletedFieldInfo.length > 0) {
-      //   for (let dfi of deletedFieldInfo) {
-      //     if (dfi && dfi.conceptvalues.length > 0) {
-      //       for (let cv of dfi.conceptvalues) {
-      //         await profileSectionCategoryConceptsTbl.update({
-      //           status: 0
-      //         }, {
-      //           where: {
-      //             uuid: cv.profile_section_category_concept_values_uuid
-      //           }
-      //         });
-      //       }
-      //     }
-      //   }
-      // }
-      // profile_section_category_concept_values_uuid
+      if (deletedTerms && deletedTerms.length > 0) {
+        for (let dtk of deletedTerms) {
+          if (dtk.profile_section_category_concept_values_uuid) {
+            await profileSectionCategoryConceptValuesTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dtk.profile_section_category_concept_values_uuid
+              }
+            });
+          }
+        }
+      }
       try {
         return res.send({
           status: 'success',
@@ -739,7 +737,6 @@ const profilesController = () => {
           responseContents: bulkUpdateProfileResponse
         });
       } catch (err) {
-        console.log('err===', err);
         return res.send({
           status: 'error',
           statusCode: 400,

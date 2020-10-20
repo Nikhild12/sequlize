@@ -385,42 +385,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
-            ],
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }],
             where: {
                 patient_uuid: patient_uuid,
                 consultation_uuid: consultation_uuid,
@@ -713,8 +712,23 @@ const notesController = () => {
                 printObj.diaResult = diaArr;
 
                 printObj.details = finalData;
-                let arr = [];
+                let checkSectionName = false;
+                let checkCategoryName = false;
+                printObj.sectionName = '';
+                printObj.categoryName = '';
                 for (let e of finalData) {
+                    if (!checkSectionName) {
+                        if(e.section && e.section.name){
+                            printObj.sectionName =e.section.name;
+                            checkSectionName = true;
+                        }
+                    }
+                    if (!checkCategoryName) {
+                        if(e.category && e.category.name){
+                            printObj.categoryName =e.category.name;
+                            checkCategoryName = true;
+                        }
+                    }
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                     const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
                     if (val.test(e.term_key)) {
@@ -728,13 +742,14 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj;
-                        if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                        let value_type_uuid = e.profile_section_category_concept.value_type_uuid;
+                        if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
                             sampleObj = {
                                 [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name) : e.term_key
                             };
                         } else {
                             sampleObj = {
-                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
                             };
                         }
                         if (sample.length == 0) {
@@ -746,12 +761,12 @@ const notesController = () => {
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = '';
-                                    if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                                    if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
                                         name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
                                     } else {
                                         name = e.profile_section_category_concept_value.value_name ?
                                         (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     }
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
@@ -766,10 +781,6 @@ const notesController = () => {
 
                 printObj.sectionResult = [...new Set(sample)];
 
-                if (finalData && finalData.length > 0) {
-                    printObj.sectionName = finalData[0].section ? finalData[0].section.name : '';
-                    printObj.categoryName = finalData[0].category ? finalData[0].category.name : '';
-                }
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
