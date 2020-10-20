@@ -385,42 +385,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
-            ],
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }],
             where: {
                 patient_uuid: patient_uuid,
                 consultation_uuid: consultation_uuid,
@@ -728,7 +727,7 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj;
-                        if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                        if (e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN) {
                             sampleObj = {
                                 [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name) : e.term_key
                             };
@@ -746,12 +745,12 @@ const notesController = () => {
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = '';
-                                    if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                                    if (e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN) {
                                         name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
                                     } else {
                                         name = e.profile_section_category_concept_value.value_name ?
-                                        (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            (' ' + e.profile_section_category_concept_value.value_name +
+                                                ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     }
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
