@@ -728,13 +728,14 @@ const notesController = () => {
                     }
                     if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
                         let sampleObj;
-                        if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                        let value_type_uuid = e.profile_section_category_concept.value_type_uuid;
+                        if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
                             sampleObj = {
                                 [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name) : e.term_key
                             };
                         } else {
                             sampleObj = {
-                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (e.term_key == 'true' || true || '1' ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
                             };
                         }
                         if (sample.length == 0) {
@@ -746,12 +747,12 @@ const notesController = () => {
                             if (check) {
                                 if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
                                     let name = '';
-                                    if(e.profile_section_category_concept.value_type_uuid == BOOLEAN || CHECKBOX || DROPDOWN){
+                                    if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
                                         name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
                                     } else {
                                         name = e.profile_section_category_concept_value.value_name ?
                                         (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (e.term_key == 'true'|| true || '1' ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                            ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
                                     }
                                     var value = [...Object.values(check), name];
                                     check[e.profile_section_category_concept.name] = value;
