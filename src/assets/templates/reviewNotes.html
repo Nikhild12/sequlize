@@ -4,6 +4,14 @@
 <head>
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
+    <style>
+        @media print {
+        .first_tbl {
+        page-break-inside: avoid;
+        page-break-before: always;
+        }
+        }
+        </style>
 </head>
 
 <body style="margin: 0 auto; font-family: poppins; font-size: 10px; width: 100%; height: 100%;">
@@ -30,7 +38,8 @@
                         <tr>
                             <td style="padding: 5px;">Patient Name</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.patientDetails.pa_title}} {{headerObj.patientDetails.patient_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.pa_title}}
+                                {{headerObj.patientDetails.patient_name}}</td>
                         </tr>
                         {{/if}}
 
@@ -38,7 +47,8 @@
                         <tr>
                             <td style="padding: 5px;">Age / Gender</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.patientDetails.age}} {{headerObj.patientDetails.period}} / {{headerObj.patientDetails.gender}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.age}}
+                                {{headerObj.patientDetails.period}} / {{headerObj.patientDetails.gender}}</td>
                         </tr>
                         {{/if}}
 
@@ -61,7 +71,8 @@
                         <tr>
                             <td style="padding: 5px;">Doctor Name</td>
                             <td style="padding: 5px;">:</td>
-                            <td style="padding: 5px;">{{headerObj.patientDetails.title}} {{headerObj.patientDetails.doctor_name}}</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.title}}
+                                {{headerObj.patientDetails.doctor_name}}</td>
                         </tr>
                         {{/if}}
 
@@ -95,50 +106,61 @@
         </div>
         {{/if}}
 
-        {{#if headerObj.sectionName}}
+       
+        {{#each headerObj.sectionObj}}
         <div style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
                 <thead>
                     <!-- {{json headerObj.sectionName}} -->
-                    {{#if headerObj.sectionName}}
+                    {{#if name}}
                     <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
-                        <th colspan="5">{{headerObj.sectionName}}</th>
-                    </tr>
-                    {{/if}}
-                    {{#if headerObj.categoryName}}
-                    <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
-                        <th colspan="5">{{headerObj.categoryName}}</th>
+                        <th colspan="5">{{name}}</th>
                     </tr>
                     {{/if}}
                 </thead>
 
                 <tbody>
-
-                    <tr>
-                        <td>
-                            <div style="width: calc(400px - 20px); float:left; padding: 0 10px;">
-                                <table>
-                                    <tbody>
-                                        {{#each headerObj.sectionResult}}
-                                        <tr>
-                                            <td style="padding: 5px;white-space: nowrap;vertical-align: baseline;">{{getKey this}}</td>
-                                            <td style="padding: 5px;">:</td>
-                                            <td style="padding: 5px; word-break: break-all;">{{getValue this}}</td>
-                                        </tr>
-
-                                        {{/each}}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-
+                    {{#each categoryObj}}
+                    <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3'
+                        cellspacing='0' style="width:100%; float:left; text-align: left;">
+                        <thead>
+                            {{#if categoryName}}
+                            <tr style="background-color:rgb(236, 234, 234); text-align: left; font-size: 10px;">
+                                <th colspan="5">{{categoryName}}</th>
+                            </tr>
+                            {{/if}}
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="width: calc(400px - 20px); float:left; padding: 0 10px;">
+                                        <table>
+                                            <tbody>
+                                                {{#each categoryArray}}
+                                                <tr>
+                                                    <td style="padding: 5px;white-space: nowrap;vertical-align: baseline;">
+                                                        {{getKey this}}</td>
+                                                    <td style="padding: 5px;vertical-align: baseline;">:</td>
+                                                    <td style="padding: 5px; word-break: break-all;vertical-align: baseline;">{{getValue this}}</td>
+                                                </tr>
+    
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {{/each}}
                 </tbody>
 
             </table>
         </div>
-        {{/if}}
+        {{/each}}
+
+     
         {{#if headerObj.Vitals}}
 
         <div style="width: 100%; float: left; padding: 10px 0;">
