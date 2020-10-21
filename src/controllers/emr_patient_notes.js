@@ -419,7 +419,8 @@ const notesController = () => {
                 {
                     model: profileSectionCategoryConceptValuesTbl,
                     required: false
-                }],
+                }
+            ],
             where: {
                 patient_uuid: patient_uuid,
                 consultation_uuid: consultation_uuid,
@@ -472,6 +473,28 @@ const notesController = () => {
             });
         }
     };
+    // getfilternotes(value) {
+    //     console.log(value, 'va;ue');
+
+    //     if (this.filteredrivewnotes.length === 0 && value.activity_uuid === 0) {
+    //     this.filteredrivewnotes.push(value);
+    //     } else if (value.activity_uuid !== 0) {
+    //     this.filteredrivewnotes.push(value);
+    //     } else {
+    //     const obj = this.filteredrivewnotes.find((data: any) => {
+    //     return data.section_uuid === value.section_uuid;
+    //     });
+    //     obj ? null : this.filteredrivewnotes.push(value);
+    //     }
+    //     this.filteredrivewnotes = this.filteredrivewnotes.sort((a, b) => {
+    //     return this.emrworkflow.map(headerTabmenuId => headerTabmenuId.activity_id).indexOf(a.activity_uuid) -
+    //     this.emrworkflow.map(headerTabmenuId => headerTabmenuId.activity_id).indexOf(b.activity_uuid);
+    //     });
+    //     // tslint:disable-next-line: max-line-length
+    //     this.filteredrivewnotes.sort((a, b) => a.profile_section.display_order < b.profile_section.display_order ? -1 : a.profile_section.display_order > b.profile_section.display_order ? 1 : 0)
+    //     console.log(this.filteredrivewnotes, 'this.filteredrivewnotes');
+
+    //     }
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
@@ -486,48 +509,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
+                        model: vw_consultation_detailsTbl,
+                        required: false,
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
                     },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -593,7 +616,9 @@ const notesController = () => {
                                 }
                             }
                         } else {
-                            labArr = labArr; radArr = radArr; invArr = invArr;
+                            labArr = labArr;
+                            radArr = radArr;
+                            invArr = invArr;
                         }
                     });
                 }
@@ -716,71 +741,133 @@ const notesController = () => {
                 let checkCategoryName = false;
                 printObj.sectionName = '';
                 printObj.categoryName = '';
+                const sectionObj = [];
+                    let sectionId;
+                    let categoryId;
+              
                 for (let e of finalData) {
-                    if (!checkSectionName) {
-                        if(e.section && e.section.name){
-                            printObj.sectionName =e.section.name;
-                            checkSectionName = true;
+                    let sampleObj;
+                    let { 
+                        section:eSec, 
+                        category: eCat, 
+                        term_key: eTermKey,
+                        profile_section_category_concept: profSecCatConcept,
+                        profile_section_category_concept_value: profSecCatConVal 
+                    } = e;
+                    console.log(eSec);                    
+                    sectionId = eSec.uuid;
+                    if( !sectionObj[sectionId]){
+                        sectionObj[sectionId] = {
+                            name: eSec.name,
+                            categoryObj: [],
+                            sectionRes: []
+                        };
+                    }
+                    
+                    if( sectionObj[sectionId] && sectionObj[sectionId].categoryObj ){
+                        categoryId = eCat.uuid;
+                        if( !sectionObj[sectionId].categoryObj[categoryId] ){
+                            sectionObj[sectionId].categoryObj[categoryId] = {
+                                categoryName: eCat.name,
+                                categoryArray: []
+                            };
                         }
                     }
-                    if (!checkCategoryName) {
-                        if(e.category && e.category.name){
-                            printObj.categoryName =e.category.name;
-                            checkCategoryName = true;
-                        }
-                    }
+                    
                     const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                     const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
-                    if (val.test(e.term_key)) {
-                        if (val2.test(e.term_key)) {
-                            e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY');
+                    if (val.test(eTermKey)) {
+                        if (val2.test(eTermKey)) {
+                            eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY');
                         } else {
-                            e.term_key = emr_utility.indiaTz(e.term_key).format('DD-MMM-YYYY hh:mm A');
+                            eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
                         }
-                    } else {
-                        e.term_key = e.term_key;
                     }
-                    if (e.profile_section_category_concept && e.profile_section_category_concept.name) {
-                        let sampleObj;
-                        let value_type_uuid = e.profile_section_category_concept.value_type_uuid;
-                        if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
+
+                    console.log('sectionId::', sectionId);
+                    console.log('categoryId::', categoryId);
+
+                    if (profSecCatConcept && profSecCatConcept.name) {
+                        let { value_type_uuid, name: profCatName } = profSecCatConcept;
+                        let { value_name: profCatValValueName } = profSecCatConVal;
+                        console.log('value_type_uuid::', value_type_uuid);
+                        if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                            
                             sampleObj = {
-                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name) : e.term_key
+                                [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
                             };
                         } else {
                             sampleObj = {
-                                [e.profile_section_category_concept.name]: e.profile_section_category_concept_value.value_name ? (e.profile_section_category_concept_value.value_name + ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == 'false' ? 'No' : e.term_key)) + ')') : e.term_key
+                                [profCatName]: profCatValValueName ? (profCatValValueName + 
+                                    ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
                             };
                         }
-                        if (sample.length == 0) {
-                            sample.push(sampleObj);
-                        } else {
-                            let check = sample.find(item => {
-                                return Object.keys(item)[0] == e.profile_section_category_concept.name;
+
+                        console.log('sampleObj::', sampleObj);
+                        let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
+                        if ( categoryArray.length !== 0 ){
+                            let check = categoryArray.find(item => {
+                                return Object.keys(item)[0] == profSecCatConcept.name;
                             });
-                            if (check) {
-                                if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
+
+                            if( check ) {
+                                if (Object.keys(check)[0] == profSecCatConcept.name) {
                                     let name = '';
-                                    if((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)){
-                                        name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                                    if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                        name = profCatValValueName ? profCatValValueName : e.term_key;
                                     } else {
-                                        name = e.profile_section_category_concept_value.value_name ?
-                                        (' ' + e.profile_section_category_concept_value.value_name +
-                                            ' (' + (((e.term_key == 'true')|| (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                                        name = profCatValValueName ?
+                                            (' ' + profCatValValueName +
+                                                ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
                                     }
                                     var value = [...Object.values(check), name];
-                                    check[e.profile_section_category_concept.name] = value;
-                                    sample.push(check);
+                                    check[profSecCatConcept.name] = value;
+                                    // sample.push(check);
                                 }
                             } else {
-                                sample.push(sampleObj);
+                                categoryArray.push(sampleObj);
                             }
+
+                        } else {
+                            categoryArray.push(sampleObj);
                         }
+                        
+
+                        
+                        // if (sample.length == 0) {
+                        //     sample.push(sampleObj);
+                        // } else {
+                        //     let check = sample.find(item => {
+                        //         return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                        //     });
+                        //     if (check) {
+                        //         if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
+                        //             let name = '';
+                        //             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                        //                 name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                        //             } else {
+                        //                 name = e.profile_section_category_concept_value.value_name ?
+                        //                     (' ' + e.profile_section_category_concept_value.value_name +
+                        //                         ' (' + (((e.term_key == 'true') || (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                        //             }
+                        //             var value = [...Object.values(check), name];
+                        //             check[e.profile_section_category_concept.name] = value;
+                        //             sample.push(check);
+                        //         }
+                        //     } else {
+                        //         sample.push(sampleObj);
+                        //     }
+                        // }
                     }
                 }
 
-                printObj.sectionResult = [...new Set(sample)];
+                console.log('sectionObj::', sectionObj);
 
+                printObj.sectionObj = sectionObj;
+                printObj.sectionResult = [...new Set(sample)];
+                // sectionObj[sectionId].categoryObj[categoryId].categoryArray.push(sample);
+                // sectionObj[sectionId].categoryObj[categoryId].categoryArray = [...new Set(sample)];
+                console.log('//////////////////', printObj);
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
