@@ -66,7 +66,7 @@ const notesController = () => {
         let currentDate = new Date();
         if (user_uuid) {
             try {
-                if ((!Array.isArray(profiles)) || profiles.details.length < 1) {
+                if ((!Array.isArray(profiles)) || profiles.length < 1) {
                     throw ({
                         error_type: "validation",
                         errors: "Invalid request"
@@ -105,6 +105,7 @@ const notesController = () => {
                         Error: err.errors
                     });
                 }
+                console.log("==============+>>>", err);
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
                     message: err
