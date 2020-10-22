@@ -59,62 +59,52 @@ const notesController = () => {
      * @param {*} res
      */
     const _addProfiles = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        let profiles = req.body;
-        let currentDate = new Date();
-        if (user_uuid) {
-            try {
-                if ((!Array.isArray(profiles)) || profiles.length < 1) {
-                    throw ({
-                        error_type: "validation",
-                        errors: "Invalid request"
-                    });
-                }
-                profiles.forEach(e => {
-                    if (e.uuid) {
-                        e.modified_by = user_uuid;
-                        e.modified_date = currentDate;
-                    }
-                    else {
-                        e.created_by = user_uuid;
-                        e.created_date = currentDate;
-                        e.entry_date = currentDate;
-                    }
-                });
-                let result_data = [];
-                for (let epwod of profiles) {
-                    let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
-                        updateOnDuplicate: Object.keys(epwod)
-                    });
-                    for (let d of bulkData) {
-                        result_data.push(d.dataValues);
-                    }
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    message: 'inserted successfully',
-                    reqContents: profiles,
-                    responseContents: result_data
-                });
-            } catch (err) {
-                if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
-                    return res.status(400).json({
-                        msg: "Validation error",
-                        Error: err.errors
-                    });
-                }
-                console.log("==============+>>>", err);
-                return res.status(400).send({
-                    code: httpStatus.BAD_REQUEST,
-                    message: err
+        try {
+            const { user_uuid } = req.headers;
+            let profiles = req.body;
+            let currentDate = new Date();
+            if ((!Array.isArray(profiles)) || profiles.length < 1) {
+                throw ({
+                    error_type: "validation",
+                    errors: "Invalid request"
                 });
             }
-        } else {
+            profiles.forEach(e => {
+                if (e.uuid) {
+                    e.modified_by = user_uuid;
+                    e.modified_date = currentDate;
+                }
+                else {
+                    e.created_by = user_uuid;
+                    e.created_date = currentDate;
+                    e.entry_date = currentDate;
+                }
+            });
+            let result_data = [];
+            for (let epwod of profiles) {
+                let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
+                    updateOnDuplicate: Object.keys(epwod)
+                });
+                for (let d of bulkData) {
+                    result_data.push(d.dataValues);
+                }
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                message: 'inserted successfully',
+                reqContents: profiles,
+                responseContents: result_data
+            });
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({
+                    msg: "Validation error",
+                    Error: err.errors
+                });
+            }
             return res.status(400).send({
-                code: httpStatus.UNAUTHORIZED,
-                message: emr_constants.NO_USER_ID
+                code: httpStatus.BAD_REQUEST,
+                message: err
             });
         }
 
