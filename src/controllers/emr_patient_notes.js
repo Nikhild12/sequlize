@@ -59,85 +59,52 @@ const notesController = () => {
      * @param {*} res
      */
     const _addProfiles = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        let profiles = req.body;
-        // let consultation_data = req.body.header; // consultation_data
-        // let consultation_details_data = req.body.details; // consultation_details_data
-        let currentDate = new Date();
-        if (user_uuid) {
-            try {
-                profiles.forEach(e => {
-                    e.is_active = e.status = true;
-                    e.created_by = e.modified_by = user_uuid;
-                    e.created_date = e.modified_date = e.entry_date = currentDate;
-                    e.revision = emr_constants.IS_ACTIVE;
-                });
-                let result_data = [];
-                // if (!consultation_data.consultation_uuid) {
-                //     consultation_result = await consultationsTbl.create(consultation_data);
-                //     for (let i = 0; i < consultation_details_data.length; i++) {
-                //         consultation_details.push({
-                //             ...consultation_details_data[i],
-                //             ...{
-                //                 consultation_uuid: consultation_result.dataValues.uuid,
-                //                 created_by: user_uuid,
-                //                 modified_by: user_uuid
-                //             }
-                //         });
-                //     }
-                // } else {
-                //     consultation_details = consultation_details_data;
-                // }
-                // const uuids = [...new Set(_.concat(created_by, modified_by))];
-                // const arr = profiles.map(profileData => {
-                //     return {
-                //         patient_uuid: profileData.patient_uuid,
-                //         consultation_uuid: profileData.consultation_uuid,
-                //         encounter_uuid: profileData.encounter_uuid
-                //     };
-                // });
-                // let consultation_uuids = [...new Set(profiles.map(e => e.consultation_uuid))];
-
-                // const sectionResult = await sectionCategoryEntriesTbl.findAll({
-                //     where: {
-                //         consultation_uuid: {
-                //             [Op.in]: consultation_uuids
-                //         }
-                //     }
-                // });
-
-                for (let epwod of profiles) {
-                    let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
-                        updateOnDuplicate: Object.keys(epwod)
-                    });
-                    for (let d of bulkData) {
-                        result_data.push(d.dataValues);
-                    }
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    message: 'inserted successfully',
-                    reqContents: req.body,
-                    responseContents: result_data
-                });
-            } catch (err) {
-                if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
-                    return res.status(400).json({
-                        Error: err.errors,
-                        msg: "Validation error"
-                    });
-                }
-                return res.status(400).send({
-                    code: httpStatus.BAD_REQUEST,
-                    message: err
+        try {
+            const { user_uuid } = req.headers;
+            let profiles = req.body;
+            let currentDate = new Date();
+            if ((!Array.isArray(profiles)) || profiles.length < 1) {
+                throw ({
+                    error_type: "validation",
+                    errors: "Invalid request"
                 });
             }
-        } else {
+            profiles.forEach(e => {
+                if (e.uuid) {
+                    e.modified_by = user_uuid;
+                    e.modified_date = currentDate;
+                }
+                else {
+                    e.created_by = user_uuid;
+                    e.created_date = currentDate;
+                    e.entry_date = currentDate;
+                }
+            });
+            let result_data = [];
+            for (let epwod of profiles) {
+                let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
+                    updateOnDuplicate: Object.keys(epwod)
+                });
+                for (let d of bulkData) {
+                    result_data.push(d.dataValues);
+                }
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                message: 'inserted successfully',
+                reqContents: profiles,
+                responseContents: result_data
+            });
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({
+                    msg: "Validation error",
+                    Error: err.errors
+                });
+            }
             return res.status(400).send({
-                code: httpStatus.UNAUTHORIZED,
-                message: emr_constants.NO_USER_ID
+                code: httpStatus.BAD_REQUEST,
+                message: err
             });
         }
 
@@ -385,41 +352,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -509,48 +476,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: vw_consultation_detailsTbl,
-                        required: false,
-                        attributes: {
-                            "exclude": ['id', 'createdAt', 'updatedAt']
-                        },
+                    model: vw_consultation_detailsTbl,
+                    required: false,
+                    attributes: {
+                        "exclude": ['id', 'createdAt', 'updatedAt']
                     },
-                    {
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    }
+                },
+                {
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -742,17 +709,17 @@ const notesController = () => {
                 printObj.sectionName = '';
                 printObj.categoryName = '';
                 const sectionObj = [];
-                    let sectionId;
-                    let categoryId;
-              
+                let sectionId;
+                let categoryId;
+
                 for (let e of finalData) {
                     let sampleObj;
-                    let { 
-                        section:eSec, 
-                        category: eCat, 
+                    let {
+                        section: eSec,
+                        category: eCat,
                         term_key: eTermKey,
                         profile_section_category_concept: profSecCatConcept,
-                        profile_section_category_concept_value: profSecCatConVal 
+                        profile_section_category_concept_value: profSecCatConVal
                     } = e;
                     console.log(eSec);    
                     if(e.section_uuid!==0){
