@@ -140,6 +140,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             revision: {
                 type: DataTypes.INTEGER,
+                defaultValue: 1,
                 allowNull: true
             },
             created_by: {
