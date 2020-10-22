@@ -754,111 +754,113 @@ const notesController = () => {
                         profile_section_category_concept: profSecCatConcept,
                         profile_section_category_concept_value: profSecCatConVal 
                     } = e;
-                    console.log(eSec);                    
-                    sectionId = eSec.uuid;
-                    if( !sectionObj[sectionId]){
-                        sectionObj[sectionId] = {
-                            name: eSec.name,
-                            categoryObj: [],
-                            sectionRes: []
-                        };
-                    }
-                    
-                    if( sectionObj[sectionId] && sectionObj[sectionId].categoryObj ){
-                        categoryId = eCat.uuid;
-                        if( !sectionObj[sectionId].categoryObj[categoryId] ){
-                            sectionObj[sectionId].categoryObj[categoryId] = {
-                                categoryName: eCat.name,
-                                categoryArray: []
+                    console.log(eSec);    
+                    if(e.section_uuid!==0){
+                        sectionId = eSec.uuid;
+                        if( !sectionObj[sectionId]){
+                            sectionObj[sectionId] = {
+                                name: eSec.name,
+                                categoryObj: [],
+                                sectionRes: []
                             };
                         }
-                    }
-                    
-                    const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
-                    const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
-                    if (val.test(eTermKey)) {
-                        if (val2.test(eTermKey)) {
-                            eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY');
-                        } else {
-                            eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
+                        
+                        if( sectionObj[sectionId] && sectionObj[sectionId].categoryObj ){
+                            categoryId = eCat.uuid;
+                            if( !sectionObj[sectionId].categoryObj[categoryId] ){
+                                sectionObj[sectionId].categoryObj[categoryId] = {
+                                    categoryName: eCat.name,
+                                    categoryArray: []
+                                };
+                            }
                         }
-                    }
-
-                    console.log('sectionId::', sectionId);
-                    console.log('categoryId::', categoryId);
-
-                    if (profSecCatConcept && profSecCatConcept.name) {
-                        let { value_type_uuid, name: profCatName } = profSecCatConcept;
-                        let { value_name: profCatValValueName } = profSecCatConVal;
-                        console.log('value_type_uuid::', value_type_uuid);
-                        if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                            
-                            sampleObj = {
-                                [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
-                            };
-                        } else {
-                            sampleObj = {
-                                [profCatName]: profCatValValueName ? (profCatValValueName + 
-                                    ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
-                            };
+                        
+                        const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
+                        const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
+                        if (val.test(eTermKey)) {
+                            if (val2.test(eTermKey)) {
+                                eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY');
+                            } else {
+                                eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
+                            }
                         }
-
-                        console.log('sampleObj::', sampleObj);
-                        let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
-                        if ( categoryArray.length !== 0 ){
-                            let check = categoryArray.find(item => {
-                                return Object.keys(item)[0] == profSecCatConcept.name;
-                            });
-
-                            if( check ) {
-                                if (Object.keys(check)[0] == profSecCatConcept.name) {
-                                    let name = '';
-                                    if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                                        name = profCatValValueName ? profCatValValueName : e.term_key;
-                                    } else {
-                                        name = profCatValValueName ?
-                                            (' ' + profCatValValueName +
-                                                ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+    
+                        console.log('sectionId::', sectionId);
+                        console.log('categoryId::', categoryId);
+    
+                        if (profSecCatConcept && profSecCatConcept.name) {
+                            let { value_type_uuid, name: profCatName } = profSecCatConcept;
+                            let { value_name: profCatValValueName } = profSecCatConVal;
+                            console.log('value_type_uuid::', value_type_uuid);
+                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                
+                                sampleObj = {
+                                    [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
+                                };
+                            } else {
+                                sampleObj = {
+                                    [profCatName]: profCatValValueName ? (profCatValValueName + 
+                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
+                                };
+                            }
+    
+                            console.log('sampleObj::', sampleObj);
+                            let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
+                            if ( categoryArray.length !== 0 ){
+                                let check = categoryArray.find(item => {
+                                    return Object.keys(item)[0] == profSecCatConcept.name;
+                                });
+    
+                                if( check ) {
+                                    if (Object.keys(check)[0] == profSecCatConcept.name) {
+                                        let name = '';
+                                        if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                            name = profCatValValueName ? profCatValValueName : e.term_key;
+                                        } else {
+                                            name = profCatValValueName ?
+                                                (' ' + profCatValValueName +
+                                                    ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                        }
+                                        var value = [...Object.values(check), name];
+                                        check[profSecCatConcept.name] = value;
+                                        // sample.push(check);
                                     }
-                                    var value = [...Object.values(check), name];
-                                    check[profSecCatConcept.name] = value;
-                                    // sample.push(check);
+                                } else {
+                                    categoryArray.push(sampleObj);
                                 }
+    
                             } else {
                                 categoryArray.push(sampleObj);
                             }
-
-                        } else {
-                            categoryArray.push(sampleObj);
+                            
+    
+                            
+                            // if (sample.length == 0) {
+                            //     sample.push(sampleObj);
+                            // } else {
+                            //     let check = sample.find(item => {
+                            //         return Object.keys(item)[0] == e.profile_section_category_concept.name;
+                            //     });
+                            //     if (check) {
+                            //         if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
+                            //             let name = '';
+                            //             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                            //                 name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
+                            //             } else {
+                            //                 name = e.profile_section_category_concept_value.value_name ?
+                            //                     (' ' + e.profile_section_category_concept_value.value_name +
+                            //                         ' (' + (((e.term_key == 'true') || (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
+                            //             }
+                            //             var value = [...Object.values(check), name];
+                            //             check[e.profile_section_category_concept.name] = value;
+                            //             sample.push(check);
+                            //         }
+                            //     } else {
+                            //         sample.push(sampleObj);
+                            //     }
+                            // }
                         }
-                        
-
-                        
-                        // if (sample.length == 0) {
-                        //     sample.push(sampleObj);
-                        // } else {
-                        //     let check = sample.find(item => {
-                        //         return Object.keys(item)[0] == e.profile_section_category_concept.name;
-                        //     });
-                        //     if (check) {
-                        //         if (Object.keys(check)[0] == e.profile_section_category_concept.name) {
-                        //             let name = '';
-                        //             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                        //                 name = e.profile_section_category_concept_value.value_name ? e.profile_section_category_concept_value.value_name : e.term_key;
-                        //             } else {
-                        //                 name = e.profile_section_category_concept_value.value_name ?
-                        //                     (' ' + e.profile_section_category_concept_value.value_name +
-                        //                         ' (' + (((e.term_key == 'true') || (e.term_key == true) || (e.term_key == '1')) ? 'Yes' : (e.term_key == false ? 'No' : e.term_key))) + ')' : e.term_key;
-                        //             }
-                        //             var value = [...Object.values(check), name];
-                        //             check[e.profile_section_category_concept.name] = value;
-                        //             sample.push(check);
-                        //         }
-                        //     } else {
-                        //         sample.push(sampleObj);
-                        //     }
-                        // }
-                    }
+                    }                
                 }
 
                 console.log('sectionObj::', sectionObj);
