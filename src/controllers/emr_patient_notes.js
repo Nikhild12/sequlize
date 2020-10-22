@@ -538,7 +538,7 @@ const notesController = () => {
                 let finalData = [];
                 let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
                 let sample = [];
-
+                const printFlag = true;
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -549,7 +549,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e, consultation_uuid);
+                            data = await getWidgetData(actCode, e, consultation_uuid, printFlag);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -1062,16 +1062,16 @@ const notesController = () => {
 
     };
 
-    function getWidgetData(actCode, result, consultation_uuid) {
+    function getWidgetData(actCode, result, consultation_uuid, printFlag) {
         switch (actCode) {
             case "Lab":
-                return getLabResult(result, consultation_uuid);
+                return getLabResult(result, consultation_uuid, printFlag);
             case "Radiology":
-                return getRadiologyResult(result, consultation_uuid);
+                return getRadiologyResult(result, consultation_uuid, printFlag);
             case "Prescriptions":
                 return getPrescriptionsResult(result, consultation_uuid);
             case "Investigation":
-                return getInvestResult(result, consultation_uuid);
+                return getInvestResult(result, consultation_uuid, printFlag);
             case "Vitals":
                 return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
@@ -1134,13 +1134,17 @@ const notesController = () => {
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         let res_result = [];
-        console.log('////////////////user_details', user_details)
-        if (user_details && user_details.responseContents) {
-            user_details.responseContents.forEach((item,i)=>{
-                res_result =  [...item.pod_arr_result,...res_result];
-             });
-             console.log('res_result...........',res_result);
-            result.dataValues.details = res_result;
+        console.log('////////////////user_details', user_details);
+        if (user_details && user_details) {
+            if(printFlag == true){
+                user_details.forEach((item,i)=>{
+                    res_result =  [...item.pod_arr_result,...res_result];
+                 });
+                 console.log('res_result...........',res_result);
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details.responseContents;
+            }
             return result;
         } else
             return false;
@@ -1169,11 +1173,15 @@ const notesController = () => {
         let res_result = [];
 
         if (user_details && user_details.responseContents) {
-            user_details.responseContents.forEach((item,i)=>{
-                res_result =  [...item.pod_arr_result,...res_result];
-             });
-             console.log(res_result);
-             result.dataValues.details = res_result;
+            if(printFlag == true){
+                user_details.responseContents.forEach((item,i)=>{
+                    res_result =  [...item.pod_arr_result,...res_result];
+                 });
+                 console.log('res_result...........',res_result);
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details.responseContents;
+            }
 
              return result;
         } else
@@ -1202,13 +1210,15 @@ const notesController = () => {
         console.log(user_details);
         let res_result = [];
         if (user_details && user_details.responseContents) {
-            // result.dataValues.details = user_details.responseContents;
-            user_details.responseContents.forEach((item,i)=>{
-               res_result =  [...item.pod_arr_result,...res_result];
-            });
-            console.log(res_result);
-            result.dataValues.details = res_result;
-
+            if(printFlag == true){
+                user_details.responseContents.forEach((item,i)=>{
+                    res_result =  [...item.pod_arr_result,...res_result];
+                 });
+                 console.log('res_result...........',res_result);
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details.responseContents;
+            }
             return result;
         } else
             return false;
