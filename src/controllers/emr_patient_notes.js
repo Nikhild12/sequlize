@@ -561,6 +561,12 @@ const notesController = () => {
                 let labCheck =false;
                 let radCheck =false; 
                 let invCheck = false;
+                let vitalCheck =false;
+                let cheifCheck =false; 
+                let diaCheck = false;
+                let bbCheck = false;
+                let presCheck = false;
+
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
@@ -597,9 +603,10 @@ const notesController = () => {
                 if (printObj.Vitals) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 57) {
+                            if (e.activity_uuid == 57 && vitalCheck==false) {
                                 vitArr = [...vitArr, ...e.dataValues.details];
                                 // vitArr.push(e.dataValues.details);
+                                vitalCheck = true;
                             }
                         } else {
                             vitArr = vitArr;
@@ -609,8 +616,9 @@ const notesController = () => {
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 49) {
+                            if (e.activity_uuid == 49 && cheifCheck==false) {
                                 cheifArr = [...cheifArr, ...e.dataValues.details];
+                                cheifCheck = true;
                             }
                         } else {
                             cheifArr = cheifArr;
@@ -623,7 +631,7 @@ const notesController = () => {
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 59) {
+                            if (e.activity_uuid == 59 && diaCheck==false) {
                                 console.log(e.dataValues.details);
                                 e.dataValues.details.forEach(i => {
                                     let data = {
@@ -633,6 +641,8 @@ const notesController = () => {
                                     };
                                     diaArr = [...diaArr, data];
                                 });
+                                diaCheck = true;
+
                             }
                         } else {
                             diaArr = diaArr;
@@ -643,13 +653,15 @@ const notesController = () => {
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details) {
-                            if (e.activity_uuid == 44) {
+                            if (e.activity_uuid == 44 && presCheck==false) {
                                 if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                     e.dataValues.details[0].prescription_details.forEach(i => {
                                         i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
                                         i.has_e_mar = e.dataValues.details[0].has_e_mar;
                                     });
                                     presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
+                                    presCheck = true;
+                                
                                 }
                             }
                         } else {
@@ -660,7 +672,7 @@ const notesController = () => {
                 if (printObj.BloodRequests) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details && e.dataValues.details[0].blood_request_details) {
-                            if (e.dataValues.activity_uuid == 252) {
+                            if (e.dataValues.activity_uuid == 252 && bbCheck==false) {
                                 if (e.dataValues.details) {
                                     let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
                                         return {
@@ -671,6 +683,8 @@ const notesController = () => {
                                         };
                                     });
                                     bbArr = [...bbArr, ...detailsArr];
+                                    bbCheck = true;
+
                                 }
                             }
                         } else {
