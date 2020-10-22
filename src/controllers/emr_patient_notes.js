@@ -558,29 +558,34 @@ const notesController = () => {
                     }
                 }
                 // return res.send(finalData);
-
+                let labCheck =false;
+                let radCheck =false; 
+                let invCheck = false;
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].pod_arr_result) {
-                            if (e.activity_uuid == 42) {
-                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-
-                                    labArr = [...labArr, ...e.dataValues.details[0].pod_arr_result];
+                        if (e && e.dataValues.details) {
+                            if (e.activity_uuid == 42 && labCheck==false) {
+                                if (e.dataValues.details && e.dataValues.details.length > 0) {
+                                    labArr = [...labArr, ...e.dataValues.details];
                                     console.log(labArr);
-
+                                    labCheck = true;
                                 }
                             }
-                            if (e.activity_uuid == 43) {
-                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                    radArr = [...radArr, ...e.dataValues.details[0].pod_arr_result];
+                            if (e.activity_uuid == 43 && radCheck==false) {
+                                if (e.dataValues.details && e.dataValues.details.length > 0) {
+                                    radArr = [...radArr, ...e.dataValues.details];
                                     console.log(radArr)
+                                    radCheck = true;
                                 }
                             }
-                            if (e.activity_uuid == 58) {
-                                if (e.dataValues.details[0].pod_arr_result && e.dataValues.details[0].pod_arr_result.length > 0) {
-                                    invArr = [...invArr, ...e.dataValues.details[0].pod_arr_result];
+                            console.log(e);
+                            if (e.activity_uuid == 58 && invCheck==false) {
+                                if (e.dataValues.details && e.dataValues.details.length > 0) {
+                                    invArr = [...invArr, ...e.dataValues.details];
+                                    invCheck = true;
                                 }
+
                             }
                         } else {
                             labArr = labArr;
@@ -722,7 +727,7 @@ const notesController = () => {
                         profile_section_category_concept_value: profSecCatConVal
                     } = e;
                     console.log(eSec);    
-                    if(e.section_uuid!==0){
+                    if(e.section_uuid!==0 && e.activity_uuid == 0){
                         sectionId = eSec.uuid;
                         if( !sectionObj[sectionId]){
                             sectionObj[sectionId] = {
@@ -1127,10 +1132,15 @@ const notesController = () => {
         };
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        console.log(user_details);
-        // result.dataValues.details = {};
-        if (user_details && user_details) {
-            result.dataValues.details = user_details;
+        let res_result = [];
+
+        if (user_details && user_details.responseContents) {
+            user_details.responseContents.forEach((item,i)=>{
+                res_result =  [...item.pod_arr_result,...res_result];
+             });
+             console.log(res_result);
+            result.dataValues.details = res_result;
+
             return result;
         } else
             return false;
@@ -1156,9 +1166,16 @@ const notesController = () => {
         };
         const user_details = await rp(options);
         console.log(user_details);
+        let res_result = [];
+
         if (user_details && user_details.responseContents) {
-            result.dataValues.details = user_details.responseContents;
-            return result;
+            user_details.responseContents.forEach((item,i)=>{
+                res_result =  [...item.pod_arr_result,...res_result];
+             });
+             console.log(res_result);
+             result.dataValues.details = res_result;
+
+             return result;
         } else
             return false;
     };
@@ -1183,8 +1200,15 @@ const notesController = () => {
         };
         const user_details = await rp(options);
         console.log(user_details);
+        let res_result = [];
         if (user_details && user_details.responseContents) {
-            result.dataValues.details = user_details.responseContents;
+            // result.dataValues.details = user_details.responseContents;
+            user_details.responseContents.forEach((item,i)=>{
+               res_result =  [...item.pod_arr_result,...res_result];
+            });
+            console.log(res_result);
+            result.dataValues.details = res_result;
+
             return result;
         } else
             return false;
