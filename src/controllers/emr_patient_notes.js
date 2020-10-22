@@ -1111,6 +1111,7 @@ const notesController = () => {
         else
             return false;
     };
+    
     const getLabResult = async (result, consultation_uuid) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
@@ -1133,14 +1134,13 @@ const notesController = () => {
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         let res_result = [];
-
+        console.log('////////////////user_details', user_details)
         if (user_details && user_details.responseContents) {
             user_details.responseContents.forEach((item,i)=>{
                 res_result =  [...item.pod_arr_result,...res_result];
              });
-             console.log(res_result);
+             console.log('res_result...........',res_result);
             result.dataValues.details = res_result;
-
             return result;
         } else
             return false;
@@ -1326,6 +1326,7 @@ const notesController = () => {
         } else
             return false;
     };
+
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -1352,6 +1353,7 @@ const notesController = () => {
             };
         }
     };
+
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
