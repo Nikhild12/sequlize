@@ -538,7 +538,7 @@ const notesController = () => {
                 let finalData = [];
                 let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
                 let sample = [];
-
+                const printFlag = true;
                 for (let e of patNotesData) {
                     let data;
                     if (e.activity_uuid) {
@@ -549,7 +549,7 @@ const notesController = () => {
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e, consultation_uuid);
+                            data = await getWidgetData(actCode, e, consultation_uuid, printFlag);
                             finalData.push(data);
                             console.log(finalData);
                         }
@@ -558,21 +558,21 @@ const notesController = () => {
                     }
                 }
                 // return res.send(finalData);
-                let labCheck =false;
-                let radCheck =false; 
+                let labCheck = false;
+                let radCheck = false;
                 let invCheck = false;
 
                 if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 42 && labCheck==false) {
+                            if (e.activity_uuid == 42 && labCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     labArr = [...labArr, ...e.dataValues.details];
                                     console.log(labArr);
                                     labCheck = true;
                                 }
                             }
-                            if (e.activity_uuid == 43 && radCheck==false) {
+                            if (e.activity_uuid == 43 && radCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     radArr = [...radArr, ...e.dataValues.details];
                                     console.log(radArr)
@@ -580,7 +580,7 @@ const notesController = () => {
                                 }
                             }
                             console.log(e);
-                            if (e.activity_uuid == 58 && invCheck==false) {
+                            if (e.activity_uuid == 58 && invCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     invArr = [...invArr, ...e.dataValues.details];
                                     invCheck = true;
@@ -726,27 +726,27 @@ const notesController = () => {
                         profile_section_category_concept: profSecCatConcept,
                         profile_section_category_concept_value: profSecCatConVal
                     } = e;
-                    console.log(eSec);    
-                    if(e.section_uuid!==0 && e.activity_uuid == 0){
+                    console.log(eSec);
+                    if (e.section_uuid !== 0 && e.activity_uuid == 0) {
                         sectionId = eSec.uuid;
-                        if( !sectionObj[sectionId]){
+                        if (!sectionObj[sectionId]) {
                             sectionObj[sectionId] = {
                                 name: eSec.name,
                                 categoryObj: [],
                                 sectionRes: []
                             };
                         }
-                        
-                        if( sectionObj[sectionId] && sectionObj[sectionId].categoryObj ){
+
+                        if (sectionObj[sectionId] && sectionObj[sectionId].categoryObj) {
                             categoryId = eCat.uuid;
-                            if( !sectionObj[sectionId].categoryObj[categoryId] ){
+                            if (!sectionObj[sectionId].categoryObj[categoryId]) {
                                 sectionObj[sectionId].categoryObj[categoryId] = {
                                     categoryName: eCat.name,
                                     categoryArray: []
                                 };
                             }
                         }
-                        
+
                         const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
                         const val2 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:00.000Z/;
                         if (val.test(eTermKey)) {
@@ -756,34 +756,34 @@ const notesController = () => {
                                 eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
                             }
                         }
-    
+
                         console.log('sectionId::', sectionId);
                         console.log('categoryId::', categoryId);
-    
+
                         if (profSecCatConcept && profSecCatConcept.name) {
                             let { value_type_uuid, name: profCatName } = profSecCatConcept;
                             let { value_name: profCatValValueName } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
                             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                                
+
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
                                 };
                             } else {
                                 sampleObj = {
-                                    [profCatName]: profCatValValueName ? (profCatValValueName + 
+                                    [profCatName]: profCatValValueName ? (profCatValValueName +
                                         ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
                                 };
                             }
-    
+
                             console.log('sampleObj::', sampleObj);
                             let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
-                            if ( categoryArray.length !== 0 ){
+                            if (categoryArray.length !== 0) {
                                 let check = categoryArray.find(item => {
                                     return Object.keys(item)[0] == profSecCatConcept.name;
                                 });
-    
-                                if( check ) {
+
+                                if (check) {
                                     if (Object.keys(check)[0] == profSecCatConcept.name) {
                                         let name = '';
                                         if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
@@ -800,13 +800,13 @@ const notesController = () => {
                                 } else {
                                     categoryArray.push(sampleObj);
                                 }
-    
+
                             } else {
                                 categoryArray.push(sampleObj);
                             }
-                            
-    
-                            
+
+
+
                             // if (sample.length == 0) {
                             //     sample.push(sampleObj);
                             // } else {
@@ -832,7 +832,7 @@ const notesController = () => {
                             //     }
                             // }
                         }
-                    }                
+                    }
                 }
 
                 console.log('sectionObj::', sectionObj);
@@ -1062,16 +1062,16 @@ const notesController = () => {
 
     };
 
-    function getWidgetData(actCode, result, consultation_uuid) {
+    function getWidgetData(actCode, result, consultation_uuid, printFlag) {
         switch (actCode) {
             case "Lab":
-                return getLabResult(result, consultation_uuid);
+                return getLabResult(result, consultation_uuid, printFlag);
             case "Radiology":
-                return getRadiologyResult(result, consultation_uuid);
+                return getRadiologyResult(result, consultation_uuid, printFlag);
             case "Prescriptions":
                 return getPrescriptionsResult(result, consultation_uuid);
             case "Investigation":
-                return getInvestResult(result, consultation_uuid);
+                return getInvestResult(result, consultation_uuid, printFlag);
             case "Vitals":
                 return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
@@ -1111,8 +1111,8 @@ const notesController = () => {
         else
             return false;
     };
-    
-    const getLabResult = async (result, consultation_uuid) => {
+
+    const getLabResult = async (result, consultation_uuid, printFlag) => {
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -1134,18 +1134,21 @@ const notesController = () => {
         console.log(options);
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         let res_result = [];
-        console.log('////////////////user_details', user_details)
-        if (user_details && user_details.responseContents) {
-            user_details.responseContents.forEach((item,i)=>{
-                res_result =  [...item.pod_arr_result,...res_result];
-             });
-             console.log('res_result...........',res_result);
-            result.dataValues.details = res_result;
+        console.log('////////////////user_details', user_details);
+        if (user_details) {
+            if (printFlag == true) {
+                user_details.forEach((item, i) => {
+                    res_result = [...item.pod_arr_result, ...res_result];
+                });
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details;
+            }
             return result;
         } else
             return false;
     };
-    const getRadiologyResult = async (result, consultation_uuid) => {
+    const getRadiologyResult = async (result, consultation_uuid, printFlag) => {
         let options = {
             uri: config.wso2RmisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -1169,17 +1172,20 @@ const notesController = () => {
         let res_result = [];
 
         if (user_details && user_details.responseContents) {
-            user_details.responseContents.forEach((item,i)=>{
-                res_result =  [...item.pod_arr_result,...res_result];
-             });
-             console.log(res_result);
-             result.dataValues.details = res_result;
+            if (printFlag == true) {
+                user_details.responseContents.forEach((item, i) => {
+                    res_result = [...item.pod_arr_result, ...res_result];
+                });
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details.responseContents;
+            }
 
-             return result;
+            return result;
         } else
             return false;
     };
-    const getInvestResult = async (result, consultation_uuid) => {
+    const getInvestResult = async (result, consultation_uuid, printFlag) => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -1202,13 +1208,15 @@ const notesController = () => {
         console.log(user_details);
         let res_result = [];
         if (user_details && user_details.responseContents) {
-            // result.dataValues.details = user_details.responseContents;
-            user_details.responseContents.forEach((item,i)=>{
-               res_result =  [...item.pod_arr_result,...res_result];
-            });
-            console.log(res_result);
-            result.dataValues.details = res_result;
-
+            if (printFlag == true) {
+                user_details.responseContents.forEach((item, i) => {
+                    res_result = [...item.pod_arr_result, ...res_result];
+                });
+                console.log('res_result...........', res_result);
+                result.dataValues.details = res_result;
+            } else {
+                result.dataValues.details = user_details.responseContents;
+            }
             return result;
         } else
             return false;
