@@ -89,7 +89,12 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ["uuid"]
                 }
-            ]
+            ],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
 

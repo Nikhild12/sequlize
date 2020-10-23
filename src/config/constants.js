@@ -2,6 +2,11 @@ module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
   ENTRY_STATUS: 2,
+  VALUE_TYPES:{
+    BOOLEAN: 4,
+    CHECKBOX: 5,
+    DROPDOWN: 11
+  },
   NO: "No",
   OR: "or",
   FOUND: "Found",
@@ -90,22 +95,50 @@ module.exports = Object.freeze({
   INVESTIGATION_RESULT_SUCCESS: "Investigation Result Fetched Successfully",
   BLOCK_CHAIN: {
     BLOCK_CHAIN_URL: {
-      VITAL_CREATE: '/transactionapi/vitals/create',
       ENCOUNTER_CREATE: '/assetapi/encounter/create',
       ENCOUNTER_GET_ID: '/assetapi/encounter/get',
       ENCOUNTER_UPDATE: '/assetapi/encounter/update',
+      ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
       CHIEF_COMPLIANT_CREATE: '/transactionapi/chiefcomplaint/create',
       CHIEF_COMPLIANT_GET_ID: '/transactionapi/chiefcomplaint/get',
       CHIEF_COMPLIANT_UPDATE: '/transactionapi/chiefcomplaint/update',
+      VITAL_CREATE: '/transactionapi/vitals/create',
+      ALLERGY_CREATE: '/transactionapi/allergies/create',
+      ALLERGY_GET: '/transactionapi/allergies/get',
+      ALLERGY_UPDATE: '/transactionapi/allergies/update',
+      ALLERGY_DELETE: '/transactionapi/allergies/delete',
       DIAGNOSIS_CREATE: '/transactionapi/Diagnosis/create',
-      FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
-      ENCOUNTER_DELETE: '/assetapi​/encounter​/delete',
+      DIAGNOSIS_GET: '/transactionapi/Diagnosis/get',
       DIAGNOSIS_DELETE: '/transactionapi/Diagnosis/delete',
+      IMMNUIZATION_CREATE: '/transactionapi/immunization/create',
+      IMMUNIZATION_GET: '/transactionapi/immunization/get',
+      IMMUNIZATION_DELETE: '/transactionapi/immunization/delete',
+      IMMUNIZATION_UPADTE: '/transactionapi/immunization/update',
       FAMILY_DELETE: '/transactionapi/familyhistory/delete',
-      FAMILY_GET: '​/transactionapi​/familyhistory​/get​'
+      FAMILY_HISTORY_CREATE: '/transactionapi/familyhistory/create',
+      FAMILY_GET: '/transactionapi/familyhistory/get',
+      FAMILY_UPDATE: '/transactionapi/familyhistory/update',
+
+      ENOCUNTER_QUERY_STRING: '/assetapi/encounter/querystring',
+      PATIENT_QUERY_STRING: '/participantapi/patient/querystring',
+      CHIEF_COMPLIANT_QUERY_STRING: '/transactionapi/chiefcomplaint/querystring',
+      VITAL_QUERY_STRING: '/transactionapi/vitals/querystring',
+      ALLERGY_QUERY_STRING: '/transactionapi/allergies/querystring',
+      DIAGNOSIS_QUERY_STRING: '/transactionapi/Diagnosis/querystring',
+      LMIS_RMIS_INV_QUERY_STRING: '/transactionapi/labradinvestigations/querystring',
+      PRESCRIPTION_QUERY_STRING: '/transactionapi/labradinvestigations/querystring',
+      IMMUNIZATION_QUERY_STRING: '/transactionapi/immunization/querystring',
+      FAMILY_HISTORY_QUERY_STRING: '/transactionapi/familyhistory/querystring',
     },
     TOKEN:
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhjYWRtaW4iLCJvcmdOYW1lIjoidG5oZWFsdGgiLCJyb2xlIjoiIiwiZGVwYXJ0bWVudCI6ImRlcHQxIiwibmV0d29ya2lkIjoiNWUwOWZiMmNiZWY4Mzc2YTFlNmMxNjdkIiwiaWF0IjoxNTkzNjg2NDM4fQ.lAuKLy56gDvdHcYIpyCm7RZosHAAO6lUkGqeAhMV2ys"
+  },
+  DEPENDENCY_URLS: {
+    APPMASTER_GET_SPECIFIC_USERS: 'userProfile/getSpecificUsersByIds',
+    APPMASTER_GET_SPECIFIC_DEPARTMENT: 'department/getSpecificDepartmentsByIds',
+    APPMASTER_GET_SPECIFIC_FACILITY: 'facility/getSpecificFacilitiesByIds',
+    APPMASTER_GET_SCREEN_SETTINGS: 'screenSetting/getCodeCreation',
+    APPMASTER_UPDATE_SCREEN_SETTINGS: 'screenSetting/updateScreenCode'
   },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";

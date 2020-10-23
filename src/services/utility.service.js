@@ -100,12 +100,10 @@ const _checkTATIsValid = array => {
   });
 };
 const _postRequest = async (api, headers, data) => {
-
   return new Promise((resolve, reject) => {
     request.post({ uri: api, headers: headers, json: data },
       function (error, response, body) {
         console.log("\n body...", body);
-
         if (error) {
           reject(error);
         }
@@ -168,6 +166,59 @@ const _getBlockChainRequest = async (url, req, data) => {
     const errorMsg = err.errors ? err.errors[0].message : err.message;
     return { status: false, message: errorMsg };
   }
+};
+
+const _putBlockChainRequest = async (url, req, data) => {
+  try {
+    let options = {
+      uri: url,
+      headers: { Authorization: req },
+      method: "PUT",
+      json: true, // Automatically parses the JSON string in the response
+    };
+
+    if (data) {
+      options.body = data;
+    }
+    const results = await rp(options);
+    return { block_chain_response: results };
+
+  } catch (err) {
+    const errorMsg = err.errors ? err.errors[0].message : err.message;
+    return { status: false, message: errorMsg };
+  }
+};
+
+const _putRequest = async (api, headers, data) => {
+  return new Promise((resolve, reject) => {
+    request.put({ uri: api, headers: headers, json: data },
+      function (error, response, body) {
+        console.log("\n body...", body);
+        if (error) {
+          reject(error);
+        }
+        else if (body && !body.status && !body.status === "error") {
+          if (body.responseContent || body.responseContents || body.benefMembers || body.req) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
+          }
+        }
+        else if (body && body.status == "error") {
+          reject(body);
+        }
+        else {
+          if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
+            resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
+          }
+          else if (body && body.status == true) {
+            resolve(body);
+          }
+          else {
+            reject(body);
+          }
+        }
+      }
+    );
+  });
 };
 
 const _isNumberValid = value => {
@@ -251,6 +302,7 @@ module.exports = {
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest,
+  putRequest : _putRequest,
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,
@@ -262,5 +314,6 @@ module.exports = {
   checkDateValid: _checkDateValid,
   deployedBlockChainUrl: _deployedBlockChainUrl,
   deleteRequest: _deleteRequest,
-  getBlockChainRequest: _getBlockChainRequest
+  getBlockChainRequest: _getBlockChainRequest,
+  putBlockChainRequest: _putBlockChainRequest
 };

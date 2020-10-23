@@ -38,11 +38,23 @@ const diagnosisMasterBlockChain = () => {
 
     const _deleteDiagnosisBlockChain = async (Id) => {
         const diagnosisDeleteURL = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.DIAGNOSIS_DELETE}`;
-        return await emr_utility.deleteRequest(diagnosisDeleteURL, { Authorization: TOKEN }, { Id });
+        return await emr_utility.deleteRequest(diagnosisDeleteURL, TOKEN, { Id });
+    };
+
+    const _getDiagnosisBlockChain = async (Id) => {
+        const historyGetURL = `${emr_utility.deployedBlockChainUrl()}${BLOCK_CHAIN_URL.DIAGNOSIS_GET}/${Id}`;
+        return await emr_utility.getBlockChainRequest(historyGetURL, TOKEN);
+    };
+
+    const _queryStringDiagnosisBlockChain = async (queryStringObject) => {
+        let diagnosisCreateUrl = emr_utility.deployedBlockChainUrl() + `${BLOCK_CHAIN_URL.DIAGNOSIS_QUERY_STRING}`;
+        return await emr_utility.postRequest(diagnosisCreateUrl, { Authorization: TOKEN }, { "selector": queryStringObject });
     };
     return {
         createDiagnosisMasterBlockChain: _createDiagnosisMasterBlockChain,
-        deleteDiagnosisBlockChain: _deleteDiagnosisBlockChain
+        deleteDiagnosisBlockChain: _deleteDiagnosisBlockChain,
+        getDiagnosisBlockChain: _getDiagnosisBlockChain,
+        queryStringDiagnosisBlockChain: _queryStringDiagnosisBlockChain
     };
 };
 
