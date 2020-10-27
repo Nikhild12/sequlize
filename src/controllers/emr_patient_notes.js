@@ -38,19 +38,13 @@ const {
 const {
     BOOLEAN,
     CHECKBOX,
-    DROPDOWN
+    DROPDOWN,
+    TERMBASED
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
-const {
-    object
-} = require("joi");
-const {
-    includes
-} = require("lodash");
+
 const consultations = require("../models/consultations");
-const {
-    parse
-} = require("path");
+
 const notesController = () => {
 
     /**
@@ -843,7 +837,7 @@ const notesController = () => {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length !== 0) {
-                                if (value_type_uuid == DROPDOWN && concept_uuid == profSecCatConcept.uuid) {
+                                if ((value_type_uuid == DROPDOWN || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func

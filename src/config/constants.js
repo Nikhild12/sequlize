@@ -4,6 +4,7 @@ module.exports = Object.freeze({
   ENTRY_STATUS: 2,
   VALUE_TYPES:{
     BOOLEAN: 4,
+    TERMBASED: 3,
     CHECKBOX: 5,
     DROPDOWN: 11
   },
