@@ -9,6 +9,7 @@ commonRouter.route("/deleteReference").post(commonreferencectrl.deleteReference)
 commonRouter.route("/getReference").post(commonreferencectrl.getReference);
 commonRouter.route("/getReferenceById").post(commonreferencectrl.getReferenceById);
 commonRouter.route("/getReferenceByIdForLanguage").post(commonreferencectrl.getReferenceByIdForLanguage);
+commonRouter.route("/getReferenceBasedOnCondition").post(commonreferencectrl.getReferenceBasedOnCondition);
 
 
 module.exports = commonRouter;
