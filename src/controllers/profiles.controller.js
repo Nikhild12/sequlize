@@ -1186,11 +1186,9 @@ const profilesController = () => {
    * @param {*} res 
    */
   const _getAllValueTypes = async (req, res) => {
-
     const {
       user_uuid
     } = req.headers;
-
     try {
       if (user_uuid) {
         let findquery = {

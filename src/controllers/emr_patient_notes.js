@@ -60,7 +60,9 @@ const notesController = () => {
      */
     const _addProfiles = async (req, res) => {
         try {
-            const { user_uuid } = req.headers;
+            const {
+                user_uuid
+            } = req.headers;
             let profiles = req.body;
             let currentDate = new Date();
             if ((!Array.isArray(profiles)) || profiles.length < 1) {
@@ -73,8 +75,7 @@ const notesController = () => {
                 if (e.uuid) {
                     e.modified_by = user_uuid;
                     e.modified_date = currentDate;
-                }
-                else {
+                } else {
                     e.created_by = user_uuid;
                     e.created_date = currentDate;
                     e.entry_date = currentDate;
@@ -110,89 +111,129 @@ const notesController = () => {
 
     };
     const _getPreviousPatientOPNotes = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-        const {
-            patient_uuid,
-            profile_type_uuid
-        } = req.query;
+        try {
+            const {
+                user_uuid
+            } = req.headers;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            const {
+                patient_uuid,
+                profile_type_uuid,
+                pageNo,
+                paginationSize,
+                sortField,
+                sortOrder
+            } = req.query;
+            let sortArr = ['created_date', 'DESC'];
 
-        let filterQuery = {
-            patient_uuid: patient_uuid,
-            profile_type_uuid: profile_type_uuid,
-            status: emr_constants.IS_ACTIVE,
-            is_active: emr_constants.IS_ACTIVE,
-            entry_status: {
-                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            let pageNum = 0;
+            const itemsPerPage = paginationSize ? parseInt(paginationSize) : 10;
+            if (pageNo) {
+                let temp = parseInt(pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNum = temp;
+                }
             }
-        };
-        if (user_uuid && patient_uuid > 0) {
-            try {
-                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
-                if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
-                    /**Get department name */
-                    let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
-                    const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
-                    if (departmentsResponse) {
-                        let data = [];
-                        const resData = departmentsResponse.responseContent.rows;
-                        resData.forEach(e => {
-                            data[e.uuid] = e.name;
-                            data[e.name] = e.code;
-                        });
-                        getOPNotesByPId.forEach(e => {
-                            const department_uuid = e.dataValues.profile.dataValues.department_uuid;
-                            e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
-                        });
-                    }
-                    /**Get user name */
-                    /**Fetching user details from app master API */
-                    let doctorIds = [...new Set(getOPNotesByPId.map(e => e.created_by))];
-                    const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
-                    if (doctorResponse && doctorResponse.responseContents) {
-                        let newData = [];
-                        const resData = doctorResponse.responseContents;
-                        resData.forEach(e => {
-                            let last_name = (e.last_name ? e.last_name : '');
-                            newData[e.uuid] = e.first_name + '' + last_name;
-                        });
-                        getOPNotesByPId.forEach(e => {
-                            const {
-                                created_by,
-                            } = e.dataValues;
-                            e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
-                        });
-                    }
-                    // Code and Message for Response
-                    const code = emr_utility.getResponseCodeForSuccessRequest(getOPNotesByPId);
-                    const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
-                    // const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
-                    return res.status(200).send({
-                        code: code,
-                        message,
-                        responseContents: getOPNotesByPId
-                    });
+            const offset = pageNum * itemsPerPage;
+            let fieldSplitArr = [];
+            if (sortField) {
+                fieldSplitArr = sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = sortField;
                 } else {
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'No Data Found'
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (sortOrder && ((sortOrder.toLowerCase() == 'asc') || (sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = sortOrder;
+                } else {
+                    sortArr.push(sortOrder);
+                }
+            }
+            const getOPNotesByPId = await consultationsTbl.findAndCountAll({
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    sortArr
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    profile_type_uuid: profile_type_uuid,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE,
+                    entry_status: {
+                        [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+                    }
+                },
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
+                ],
+                include: [{
+                    model: profilesTbl,
+                    required: false,
+                    attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                }]
+            });
+            let rowsData = getOPNotesByPId.rows;
+            if (rowsData != null && rowsData.length > 0) {
+                /**Get department name */
+                let departmentIds = [...new Set(rowsData.map(e => e.profile.department_uuid))];
+                const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
+                if (departmentsResponse) {
+                    let data = [];
+                    const resData = departmentsResponse.responseContent.rows;
+                    resData.forEach(e => {
+                        data[e.uuid] = e.name;
+                        data[e.name] = e.code;
+                    });
+                    rowsData.forEach(e => {
+                        const department_uuid = e.dataValues.profile.dataValues.department_uuid;
+                        e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
                     });
                 }
-
-            } catch (ex) {
-                console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({
-                    code: httpStatus[400],
-                    message: ex.message
+                /**Get user name */
+                /**Fetching user details from app master API */
+                let doctorIds = [...new Set(rowsData.map(e => e.created_by))];
+                const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
+                if (doctorResponse && doctorResponse.responseContents) {
+                    let newData = [];
+                    const resData = doctorResponse.responseContents;
+                    resData.forEach(e => {
+                        let last_name = (e.last_name ? e.last_name : '');
+                        newData[e.uuid] = e.first_name + '' + last_name;
+                    });
+                    rowsData.forEach(e => {
+                        const {
+                            created_by,
+                        } = e.dataValues;
+                        e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+                    });
+                }
+                // Code and Message for Response
+                const code = emr_utility.getResponseCodeForSuccessRequest(rowsData);
+                const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
+                // const notesResponse = patNotesAtt.getPreviousPatientOPNotes(rowsData);
+                return res.status(200).send({
+                    code: code,
+                    message,
+                    responseContents: rowsData,
+                    totalRecords: getOPNotesByPId.count
                 });
-
+            } else {
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'No Data Found'
+                });
             }
-        } else {
+
+        } catch (ex) {
             return res.status(400).send({
                 code: httpStatus[400],
-                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+                message: ex.message
             });
         }
     };
@@ -352,41 +393,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -476,48 +517,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
+                        model: vw_consultation_detailsTbl,
+                        required: false,
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
                     },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -561,8 +602,8 @@ const notesController = () => {
                 let labCheck = false;
                 let radCheck = false;
                 let invCheck = false;
-                let vitalCheck =false;
-                let cheifCheck =false; 
+                let vitalCheck = false;
+                let cheifCheck = false;
                 let diaCheck = false;
                 let bbCheck = false;
                 let presCheck = false;
@@ -603,7 +644,7 @@ const notesController = () => {
                 if (printObj.Vitals) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 57 && vitalCheck==false) {
+                            if (e.activity_uuid == 57 && vitalCheck == false) {
                                 vitArr = [...vitArr, ...e.dataValues.details];
                                 // vitArr.push(e.dataValues.details);
                                 vitalCheck = true;
@@ -616,7 +657,7 @@ const notesController = () => {
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 49 && cheifCheck==false) {
+                            if (e.activity_uuid == 49 && cheifCheck == false) {
                                 cheifArr = [...cheifArr, ...e.dataValues.details];
                                 cheifCheck = true;
                             }
@@ -631,7 +672,7 @@ const notesController = () => {
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
-                            if (e.activity_uuid == 59 && diaCheck==false) {
+                            if (e.activity_uuid == 59 && diaCheck == false) {
                                 console.log(e.dataValues.details);
                                 e.dataValues.details.forEach(i => {
                                     let data = {
@@ -653,17 +694,17 @@ const notesController = () => {
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details) {
-                            if (e.activity_uuid == 44 && presCheck==false) {
+                            if (e.activity_uuid == 44 && presCheck == false) {
                                 if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                     e.dataValues.details[0].prescription_details.forEach(i => {
-                                        console.log('.................',i);
+                                        console.log('.................', i);
                                         i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
                                         i.has_e_mar = i.is_emar;
                                     });
                                     presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
                                     console.log(presArr);
                                     presCheck = true;
-                                
+
                                 }
                             }
                         } else {
@@ -674,7 +715,7 @@ const notesController = () => {
                 if (printObj.BloodRequests) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details && e.dataValues.details[0].blood_request_details) {
-                            if (e.dataValues.activity_uuid == 252 && bbCheck==false) {
+                            if (e.dataValues.activity_uuid == 252 && bbCheck == false) {
                                 if (e.dataValues.details) {
                                     let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
                                         return {
@@ -732,7 +773,7 @@ const notesController = () => {
                 const sectionObj = [];
                 let sectionId;
                 let categoryId;
-
+                let concept_uuid = 0;
                 for (let e of finalData) {
                     let sampleObj;
                     let {
@@ -776,9 +817,15 @@ const notesController = () => {
                         console.log('sectionId::', sectionId);
                         console.log('categoryId::', categoryId);
 
+
                         if (profSecCatConcept && profSecCatConcept.name) {
-                            let { value_type_uuid, name: profCatName } = profSecCatConcept;
-                            let { value_name: profCatValValueName } = profSecCatConVal;
+                            let {
+                                value_type_uuid,
+                                name: profCatName
+                            } = profSecCatConcept;
+                            let {
+                                value_name: profCatValValueName
+                            } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
                             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
 
@@ -791,36 +838,53 @@ const notesController = () => {
                                         ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
                                 };
                             }
-
                             console.log('sampleObj::', sampleObj);
-                            let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
+                            let {
+                                categoryArray
+                            } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length !== 0) {
-                                let check = categoryArray.find(item => {
-                                    return Object.keys(item)[0] == profSecCatConcept.name;
-                                });
-
-                                if (check) {
-                                    if (Object.keys(check)[0] == profSecCatConcept.name) {
-                                        let name = '';
-                                        if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                                            name = profCatValValueName ? profCatValValueName : e.term_key;
-                                        } else {
-                                            name = profCatValValueName ?
-                                                (' ' + profCatValValueName +
-                                                    ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                if (value_type_uuid == DROPDOWN && concept_uuid == profSecCatConcept.uuid) {
+                                    let len = categoryArray.length - 1;
+                                    let check = {};
+                                    // eslint-disable-next-line no-loop-func
+                                    // categoryArray = categoryArray.filter(item=>item !== null);
+                                    categoryArray.forEach((item, index) => {
+                                        if(item !== null){
+                                            if (index == len) {
+                                                if (Object.keys(item) == profSecCatConcept.name) {
+                                                    Object.assign(check, item);
+                                                }
+                                            }
                                         }
-                                        var value = [...Object.values(check), name];
-                                        check[profSecCatConcept.name] = value;
-                                        // sample.push(check);
+                                    });
+                                    if (check) {
+                                        if (Object.keys(check)[0] == profSecCatConcept.name) {
+                                            let name = '';
+                                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                                name = profCatValValueName ? profCatValValueName : e.term_key;
+                                            } else {
+                                                name = profCatValValueName ?
+                                                    (' ' + profCatValValueName +
+                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                            }
+                                            var value = [...Object.values(check), name];
+                                            delete categoryArray[len];
+
+                                            check[profSecCatConcept.name] = value;
+
+                                            categoryArray.push(check);
+
+                                        }
+                                    } else {
+                                        categoryArray.push(sampleObj);
                                     }
                                 } else {
                                     categoryArray.push(sampleObj);
                                 }
-
+                                concept_uuid = profSecCatConcept.uuid;
                             } else {
                                 categoryArray.push(sampleObj);
                             }
-
 
 
                             // if (sample.length == 0) {
@@ -1453,23 +1517,3 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-async function getPrevNotes(filterQuery, Sequelize) {
-    let sortField = 'created_date';
-    let sortOrder = 'DESC';
-    let sortArr = [sortField, sortOrder];
-    return consultationsTbl.findAll({
-        where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
-            // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
-        ],
-        // group: ['profile_uuid'],
-        order: [sortArr],
-        limit: 10,
-        include: [{
-            model: profilesTbl,
-            required: false,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-        }]
-    });
-
-}
