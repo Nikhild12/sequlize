@@ -111,89 +111,129 @@ const notesController = () => {
 
     };
     const _getPreviousPatientOPNotes = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-        const {
-            patient_uuid,
-            profile_type_uuid
-        } = req.query;
+        try {
+            const {
+                user_uuid
+            } = req.headers;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            const {
+                patient_uuid,
+                profile_type_uuid,
+                pageNo,
+                paginationSize,
+                sortField,
+                sortOrder
+            } = req.query;
+            let sortArr = ['created_date', 'DESC'];
 
-        let filterQuery = {
-            patient_uuid: patient_uuid,
-            profile_type_uuid: profile_type_uuid,
-            status: emr_constants.IS_ACTIVE,
-            is_active: emr_constants.IS_ACTIVE,
-            entry_status: {
-                [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+            let pageNum = 0;
+            const itemsPerPage = paginationSize ? parseInt(paginationSize) : 10;
+            if (pageNo) {
+                let temp = parseInt(pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNum = temp;
+                }
             }
-        };
-        if (user_uuid && patient_uuid > 0) {
-            try {
-                const getOPNotesByPId = await getPrevNotes(filterQuery, Sequelize);
-                if (getOPNotesByPId != null && getOPNotesByPId.length > 0) {
-                    /**Get department name */
-                    let departmentIds = [...new Set(getOPNotesByPId.map(e => e.profile.department_uuid))];
-                    const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
-                    if (departmentsResponse) {
-                        let data = [];
-                        const resData = departmentsResponse.responseContent.rows;
-                        resData.forEach(e => {
-                            data[e.uuid] = e.name;
-                            data[e.name] = e.code;
-                        });
-                        getOPNotesByPId.forEach(e => {
-                            const department_uuid = e.dataValues.profile.dataValues.department_uuid;
-                            e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
-                        });
-                    }
-                    /**Get user name */
-                    /**Fetching user details from app master API */
-                    let doctorIds = [...new Set(getOPNotesByPId.map(e => e.created_by))];
-                    const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
-                    if (doctorResponse && doctorResponse.responseContents) {
-                        let newData = [];
-                        const resData = doctorResponse.responseContents;
-                        resData.forEach(e => {
-                            let last_name = (e.last_name ? e.last_name : '');
-                            newData[e.uuid] = e.first_name + '' + last_name;
-                        });
-                        getOPNotesByPId.forEach(e => {
-                            const {
-                                created_by,
-                            } = e.dataValues;
-                            e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
-                        });
-                    }
-                    // Code and Message for Response
-                    const code = emr_utility.getResponseCodeForSuccessRequest(getOPNotesByPId);
-                    const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
-                    // const notesResponse = patNotesAtt.getPreviousPatientOPNotes(getOPNotesByPId);
-                    return res.status(200).send({
-                        code: code,
-                        message,
-                        responseContents: getOPNotesByPId
-                    });
+            const offset = pageNum * itemsPerPage;
+            let fieldSplitArr = [];
+            if (sortField) {
+                fieldSplitArr = sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = sortField;
                 } else {
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'No Data Found'
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (sortOrder && ((sortOrder.toLowerCase() == 'asc') || (sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = sortOrder;
+                } else {
+                    sortArr.push(sortOrder);
+                }
+            }
+            const getOPNotesByPId = await consultationsTbl.findAndCountAll({
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    sortArr
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    profile_type_uuid: profile_type_uuid,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE,
+                    entry_status: {
+                        [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
+                    }
+                },
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
+                ],
+                include: [{
+                    model: profilesTbl,
+                    required: false,
+                    attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                }]
+            });
+            let rowsData = getOPNotesByPId.rows;
+            if (rowsData != null && rowsData.length > 0) {
+                /**Get department name */
+                let departmentIds = [...new Set(rowsData.map(e => e.profile.department_uuid))];
+                const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
+                if (departmentsResponse) {
+                    let data = [];
+                    const resData = departmentsResponse.responseContent.rows;
+                    resData.forEach(e => {
+                        data[e.uuid] = e.name;
+                        data[e.name] = e.code;
+                    });
+                    rowsData.forEach(e => {
+                        const department_uuid = e.dataValues.profile.dataValues.department_uuid;
+                        e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
                     });
                 }
-
-            } catch (ex) {
-                console.log(`Exception Happened ${ex}`);
-                return res.status(400).send({
-                    code: httpStatus[400],
-                    message: ex.message
+                /**Get user name */
+                /**Fetching user details from app master API */
+                let doctorIds = [...new Set(rowsData.map(e => e.created_by))];
+                const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
+                if (doctorResponse && doctorResponse.responseContents) {
+                    let newData = [];
+                    const resData = doctorResponse.responseContents;
+                    resData.forEach(e => {
+                        let last_name = (e.last_name ? e.last_name : '');
+                        newData[e.uuid] = e.first_name + '' + last_name;
+                    });
+                    rowsData.forEach(e => {
+                        const {
+                            created_by,
+                        } = e.dataValues;
+                        e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+                    });
+                }
+                // Code and Message for Response
+                const code = emr_utility.getResponseCodeForSuccessRequest(rowsData);
+                const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
+                // const notesResponse = patNotesAtt.getPreviousPatientOPNotes(rowsData);
+                return res.status(200).send({
+                    code: code,
+                    message,
+                    responseContents: rowsData,
+                    totalRecords: getOPNotesByPId.count
                 });
-
+            } else {
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'No Data Found'
+                });
             }
-        } else {
+
+        } catch (ex) {
             return res.status(400).send({
                 code: httpStatus[400],
-                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+                message: ex.message
             });
         }
     };
@@ -1493,23 +1533,3 @@ const notesController = () => {
 };
 
 module.exports = notesController();
-async function getPrevNotes(filterQuery, Sequelize) {
-    let sortField = 'created_date';
-    let sortOrder = 'DESC';
-    let sortArr = [sortField, sortOrder];
-    return consultationsTbl.findAll({
-        where: filterQuery,
-        attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
-            // [Sequelize.fn('COUNT', Sequelize.col('profile_uuid')), 'Count']
-        ],
-        // group: ['profile_uuid'],
-        order: [sortArr],
-        limit: 10,
-        include: [{
-            model: profilesTbl,
-            required: false,
-            attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-        }]
-    });
-
-}
