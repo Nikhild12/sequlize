@@ -60,7 +60,9 @@ const notesController = () => {
      */
     const _addProfiles = async (req, res) => {
         try {
-            const { user_uuid } = req.headers;
+            const {
+                user_uuid
+            } = req.headers;
             let profiles = req.body;
             let currentDate = new Date();
             if ((!Array.isArray(profiles)) || profiles.length < 1) {
@@ -73,8 +75,7 @@ const notesController = () => {
                 if (e.uuid) {
                     e.modified_by = user_uuid;
                     e.modified_date = currentDate;
-                }
-                else {
+                } else {
                     e.created_by = user_uuid;
                     e.created_date = currentDate;
                     e.entry_date = currentDate;
@@ -392,41 +393,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -516,48 +517,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
+                        model: vw_consultation_detailsTbl,
+                        required: false,
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
                     },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -772,7 +773,7 @@ const notesController = () => {
                 const sectionObj = [];
                 let sectionId;
                 let categoryId;
-
+                let concept_uuid = 0;
                 for (let e of finalData) {
                     let sampleObj;
                     let {
@@ -816,9 +817,15 @@ const notesController = () => {
                         console.log('sectionId::', sectionId);
                         console.log('categoryId::', categoryId);
 
+
                         if (profSecCatConcept && profSecCatConcept.name) {
-                            let { value_type_uuid, name: profCatName } = profSecCatConcept;
-                            let { value_name: profCatValValueName } = profSecCatConVal;
+                            let {
+                                value_type_uuid,
+                                name: profCatName
+                            } = profSecCatConcept;
+                            let {
+                                value_name: profCatValValueName
+                            } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
                             if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
 
@@ -831,36 +838,53 @@ const notesController = () => {
                                         ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
                                 };
                             }
-
                             console.log('sampleObj::', sampleObj);
-                            let { categoryArray } = sectionObj[sectionId].categoryObj[categoryId];
+                            let {
+                                categoryArray
+                            } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length !== 0) {
-                                let check = categoryArray.find(item => {
-                                    return Object.keys(item)[0] == profSecCatConcept.name;
-                                });
-
-                                if (check) {
-                                    if (Object.keys(check)[0] == profSecCatConcept.name) {
-                                        let name = '';
-                                        if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-                                            name = profCatValValueName ? profCatValValueName : e.term_key;
-                                        } else {
-                                            name = profCatValValueName ?
-                                                (' ' + profCatValValueName +
-                                                    ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                if (value_type_uuid == DROPDOWN && concept_uuid == profSecCatConcept.uuid) {
+                                    let len = categoryArray.length - 1;
+                                    let check = {};
+                                    // eslint-disable-next-line no-loop-func
+                                    // categoryArray = categoryArray.filter(item=>item !== null);
+                                    categoryArray.forEach((item, index) => {
+                                        if(item !== null){
+                                            if (index == len) {
+                                                if (Object.keys(item) == profSecCatConcept.name) {
+                                                    Object.assign(check, item);
+                                                }
+                                            }
                                         }
-                                        var value = [...Object.values(check), name];
-                                        check[profSecCatConcept.name] = value;
-                                        // sample.push(check);
+                                    });
+                                    if (check) {
+                                        if (Object.keys(check)[0] == profSecCatConcept.name) {
+                                            let name = '';
+                                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                                name = profCatValValueName ? profCatValValueName : e.term_key;
+                                            } else {
+                                                name = profCatValValueName ?
+                                                    (' ' + profCatValValueName +
+                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                            }
+                                            var value = [...Object.values(check), name];
+                                            delete categoryArray[len];
+
+                                            check[profSecCatConcept.name] = value;
+
+                                            categoryArray.push(check);
+
+                                        }
+                                    } else {
+                                        categoryArray.push(sampleObj);
                                     }
                                 } else {
                                     categoryArray.push(sampleObj);
                                 }
-
+                                concept_uuid = profSecCatConcept.uuid;
                             } else {
                                 categoryArray.push(sampleObj);
                             }
-
 
 
                             // if (sample.length == 0) {
