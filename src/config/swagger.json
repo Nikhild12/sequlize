@@ -9418,6 +9418,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/commonReference/getReferenceBasedOnCondition": {
+			"post": {
+				"description": "get Reference Details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "tablename",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getReferenceBasedOnCondition"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReferenceBasedOnCondition"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/investigation_result/getInvestigationResultById": {
 			"get": {
 				"description": "To get investigation By Id",
@@ -17539,6 +17577,38 @@
 			"properties": {
 				"user_uuid": {
 					"type": "integer"
+				}
+			}
+		},
+		"getReferenceBasedOnCondition": {
+			"type": "object",
+			"properties": {
+				"table_name": {
+					"type": "string"
+				},
+				"paginationSize": {
+					"type": "integer",
+					"example": "optional field"
+				},
+				"pageNo": {
+					"type": "integer",
+					"example": "optional field"
+				},
+				"sortField": {
+					"type": "string",
+					"example":"optional field"
+				},
+				"sortOrder": {
+					"type": "string",
+					"example":"optional field"
+				},
+				"search": {
+					"type": "string",
+					"example":"optional field"
+				},
+				"status": {
+					"type": "integer",
+					"example":"optional field"
 				}
 			}
 		}
