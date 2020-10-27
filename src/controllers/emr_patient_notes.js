@@ -848,19 +848,15 @@ const notesController = () => {
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func
                                     // categoryArray = categoryArray.filter(item=>item !== null);
-                                    console.log('categoryArray',categoryArray)
                                     categoryArray.forEach((item, index) => {
-                                        if (index == len) {
-                                            console.log('.................', Object.keys(item))
-                                            if (Object.keys(item) == profSecCatConcept.name) {
-                                                Object.assign(check, item);
-                                                console.log(item);
-
+                                        if(item !== null){
+                                            if (index == len) {
+                                                if (Object.keys(item) == profSecCatConcept.name) {
+                                                    Object.assign(check, item);
+                                                }
                                             }
                                         }
                                     });
-                                    console.log(check);
-                                    console.log('>>>>>>>>>>>>>>', Object.keys(check)[0]);
                                     if (check) {
                                         if (Object.keys(check)[0] == profSecCatConcept.name) {
                                             let name = '';
@@ -871,21 +867,12 @@ const notesController = () => {
                                                     (' ' + profCatValValueName +
                                                         ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
                                             }
-                                            // if(check[profSecCatConcept.name]){
-                                            //     delete check[profSecCatConcept.name];
-
-                                            // }
-
                                             var value = [...Object.values(check), name];
-                                            console.log('<<<<<<<<<<<<<<<<<', check);
                                             delete categoryArray[len];
-                                            console.log('<<<<<<<<<555555555<<<<<<<<', check);
 
                                             check[profSecCatConcept.name] = value;
 
                                             categoryArray.push(check);
-                                            console.log(categoryArray);
-                                            console.log('<<<<<<<<<4444444444<<<<<<<<', check);
 
                                         }
                                     } else {
@@ -898,9 +885,6 @@ const notesController = () => {
                             } else {
                                 categoryArray.push(sampleObj);
                             }
-
-
-
 
 
                             // if (sample.length == 0) {
