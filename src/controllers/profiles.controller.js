@@ -27,6 +27,7 @@ const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
 const profilesTypesTbl = db.profile_types;
 const profilesDefaultTbl = db.profiles_default;
+const conceptValueTermsTbl = db.concept_value_terms;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -486,189 +487,172 @@ const profilesController = () => {
   @param {} res
   */
   const _getProfileById = async (req, res) => {
-
-    const {
-      user_uuid
-    } = req.headers;
-    const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-    const {
-      profile_uuid
-    } = req.query;
-    let findQuery = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active', 'created_by', 'modified_by', 'created_date', 'modified_date'],
-      where: {
-        uuid: profile_uuid,
-        is_active: 1,
-        status: 1
-      },
-      include: [{
-        model: profileSectionsTbl,
-        as: 'profile_sections',
-        attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+    try {
+      const {
+        user_uuid
+      } = req.headers;
+      const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+      const {
+        profile_uuid
+      } = req.query;
+      let findQuery = {
+        attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active', 'created_by', 'modified_by', 'created_date', 'modified_date'],
         where: {
+          uuid: profile_uuid,
           is_active: 1,
           status: 1
         },
-        required: false,
-        include: [{
-          model: sectionsTbl,
-          as: 'sections',
-          attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
-          where: {
-            is_active: 1,
-            status: 1
-          },
-          required: false
-        },
-        {
-          model: profileSectionCategoriesTbl,
-          as: 'profile_section_categories',
-          attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
-          where: {
-            is_active: 1,
-            status: 1
-          },
-          required: false,
-          include: [{
-            model: categoriesTbl,
-            as: 'categories',
-            attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
-            where: {
-              is_active: 1,
-              status: 1
-            },
-            required: false
-          },
+        include: [
           {
-            model: profileSectionCategoryConceptsTbl,
-            as: 'profile_section_category_concepts',
-            attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+            model: profileSectionsTbl,
+            as: 'profile_sections',
+            attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
             where: {
               is_active: 1,
               status: 1
             },
             required: false,
-            include: [{
-              model: valueTypesTbl,
-              as: 'value_types',
-              attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
-              where: {
-                is_active: 1,
-                status: 1
+            include: [
+              {
+                model: sectionsTbl,
+                as: 'sections',
+                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+                where: {
+                  is_active: 1,
+                  status: 1
+                },
+                required: false
               },
-              required: false
-            },
-            // include: [
-            {
-              model: profileSectionCategoryConceptValuesTbl,
-              as: 'profile_section_category_concept_values',
-              attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
-              where: {
-                is_active: 1,
-                status: 1
-              },
-              required: false
-            }
-            ]
-            //],
+              {
+                model: profileSectionCategoriesTbl,
+                as: 'profile_section_categories',
+                attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+                where: {
+                  is_active: 1,
+                  status: 1
+                },
+                required: false,
+                include: [
+                  {
+                    model: categoriesTbl,
+                    as: 'categories',
+                    attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+                    where: {
+                      is_active: 1,
+                      status: 1
+                    },
+                    required: false
+                  },
+                  {
+                    model: profileSectionCategoryConceptsTbl,
+                    as: 'profile_section_category_concepts',
+                    attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+                    where: {
+                      is_active: 1
+                    },
+                    required: false,
+                    include: [
+                      {
+                        model: valueTypesTbl,
+                        as: 'value_types',
+                        attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+                        where: {
+                          is_active: 1,
+                          status: 1
+                        },
+                        required: false
+                      },
+                      {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        as: 'profile_section_category_concept_values',
+                        attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
+                        where: {
+                          is_active: 1,
+                          status: 1
+                        },
+                        required: false,
+                        include: [
+                          {
+                            model: profileSectionCategoryConceptValueTermsTbl,
+                            as: "profile_section_category_concept_value_terms",
+                            attributes: ['uuid', 'profile_section_category_concept_values_uuid', 'concept_value_terms_uuid', 'display_order', 'is_default', 'is_active'],
+                            required: false,
+                            include: [
+                              { model: conceptValueTermsTbl, required: false, attributes: ['uuid', 'code', 'name'] }
+                            ]
+                          }
+                        ]
+                      }]
+                  }]
+              }]
+          },
+          {
+            model: profileTypeTbl,
+            required: false,
+            attributes: ['uuid', 'code', 'name'],
           }
-          ]
-        }
+        ],
+        order: [
+          [profileSectionsTbl, profileSectionCategoriesTbl, profileSectionCategoryConceptsTbl, 'uuid', 'ASC']
         ]
-      },
-      {
-        model: profileTypeTbl,
-        required: false,
-        attributes: ['uuid', 'code', 'name'],
-      }
-      ]
-
-    };
-    let findQuery1 = {
-      attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid'],
-      where: {
-        uuid: profile_uuid,
-        is_active: 1,
-        status: 1
-      },
-      include: [{
-        model: profileSectionsTbl,
-        as: 'profile_sections',
-        attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
-        where: {
-          is_active: 1,
-          status: 1
-        }
-      }]
-
-    };
-    if (user_uuid && profile_uuid) {
-      try {
-        const profileData = await profilesTbl.findAll(findQuery);
-        /**Get department name */
-        let departmentIds = [...new Set(profileData.map(e => e.department_uuid))];
-        const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
-        if (departmentsResponse) {
-          let data = [];
-          const resData = departmentsResponse.responseContent.rows;
-          resData.forEach(e => {
-            data[e.uuid] = e.name;
-            data[e.name] = e.code;
-          });
-          profileData.forEach(e => {
-            const department_uuid = e.dataValues.department_uuid;
-            e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
-          });
-        }
-        /**Get user name */
-        let doctorIds = [...new Set(profileData.map(e => e.created_by))];
-        let modifiedIds = [...new Set(profileData.map(e => e.modified_by))];
-        let userIds = [...doctorIds, ...modifiedIds];
-        const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, userIds);
-        if (doctorResponse && doctorResponse.responseContents) {
-          let newData = [];
-          const resData = doctorResponse.responseContents;
-          resData.forEach(e => {
-            let last_name = (e.last_name ? e.last_name : '');
-            newData[e.uuid] = e.first_name + '' + last_name;
-          });
-          profileData.forEach(e => {
-            const {
-              created_by,
-              modified_by,
-            } = e.dataValues;
-            e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
-            e.dataValues.modified_user_name = (newData[modified_by] ? newData[modified_by] : null);
-          });
-        }
-        // if (profileData[0].profile_sections[0].activity_uuid > 0) {
-        // if (profileData.length == 0) {
-        //   const profileData1 = await profilesTbl.findAll(findQuery1);
-        //   return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData1 });
-        // }
-        //else {
-        return res.status(httpStatus.OK).send({
-          code: httpStatus.OK,
-          message: 'get Success',
-          responseContents: profileData
+      };
+      const profileData = await profilesTbl.findAll(findQuery);
+      /**Get department name */
+      let departmentIds = [...new Set(profileData.map(e => e.department_uuid))];
+      const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
+      if (departmentsResponse) {
+        let data = [];
+        const resData = departmentsResponse.responseContent.rows;
+        resData.forEach(e => {
+          data[e.uuid] = e.name;
+          data[e.name] = e.code;
         });
-        //   }
-      } catch (ex) {
-
-        console.log(`Exception Happened ${ex}`);
-        return res.status(400).send({
-          code: httpStatus[400],
-          message: ex.message
+        profileData.forEach(e => {
+          const department_uuid = e.dataValues.department_uuid;
+          e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
         });
-
       }
-    } else {
+      /**Get user name */
+      let doctorIds = [...new Set(profileData.map(e => e.created_by))];
+      let modifiedIds = [...new Set(profileData.map(e => e.modified_by))];
+      let userIds = [...doctorIds, ...modifiedIds];
+      const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, userIds);
+      if (doctorResponse && doctorResponse.responseContents) {
+        let newData = [];
+        const resData = doctorResponse.responseContents;
+        resData.forEach(e => {
+          let last_name = (e.last_name ? e.last_name : '');
+          newData[e.uuid] = e.first_name + '' + last_name;
+        });
+        profileData.forEach(e => {
+          const {
+            created_by,
+            modified_by,
+          } = e.dataValues;
+          e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+          e.dataValues.modified_user_name = (newData[modified_by] ? newData[modified_by] : null);
+        });
+      }
+      // if (profileData[0].profile_sections[0].activity_uuid > 0) {
+      // if (profileData.length == 0) {
+      //   const profileData1 = await profilesTbl.findAll(findQuery1);
+      //   return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData1 });
+      // }
+      //else {
+      return res.status(httpStatus.OK).send({
+        code: httpStatus.OK,
+        message: 'get Success',
+        responseContents: profileData
+      });
+      //   }
+    } catch (ex) {
+      console.log(`Exception Happened ${ex}`);
       return res.status(400).send({
         code: httpStatus[400],
-        message: "No Request headers or request Found"
+        message: ex.message
       });
-    }
 
+    }
   };
 
   /**

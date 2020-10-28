@@ -82,5 +82,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     );
+    profile_section_category_concept_value_terms.associate = models => {
+        profile_section_category_concept_value_terms.belongsTo(models.concept_value_terms, {
+            foreignKey: 'concept_value_terms_uuid'
+        });
+    };
     return profile_section_category_concept_value_terms;
 };
