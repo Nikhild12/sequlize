@@ -39,7 +39,8 @@ const {
     BOOLEAN,
     CHECKBOX,
     DROPDOWN,
-    TERMBASED
+    TERMBASED,
+    RADIO
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 
@@ -821,7 +822,7 @@ const notesController = () => {
                                 value_name: profCatValValueName
                             } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
-                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                            if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
 
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
@@ -854,7 +855,7 @@ const notesController = () => {
                                     if (check) {
                                         if (Object.keys(check)[0] == profSecCatConcept.name) {
                                             let name = '';
-                                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                            if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
                                                 name = profCatValValueName ? profCatValValueName : e.term_key;
                                             } else {
                                                 name = profCatValValueName ?

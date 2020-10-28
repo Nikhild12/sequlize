@@ -6,7 +6,8 @@ module.exports = Object.freeze({
     BOOLEAN: 4,
     TERMBASED: 3,
     CHECKBOX: 5,
-    DROPDOWN: 11
+    DROPDOWN: 11,
+    RADIO: 12
   },
   NO: "No",
   OR: "or",
