@@ -275,45 +275,33 @@ const notesController = () => {
         }
     };
     const _getOPNotesDetailsByPatId = async (req, res) => {
-
-        const {
-            patient_uuid,
-            consultation_uuid
-        } = req.query;
-        const {
-            user_uuid
-        } = req.headers;
-
         try {
-            if (user_uuid && patient_uuid) {
-                let findQuery = {
-                    where: {
-                        patient_uuid: patient_uuid
-                    }
+            const {
+                patient_uuid,
+                consultation_uuid
+            } = req.query;
+            let findQuery = {
+                where: {
+                    patient_uuid: patient_uuid
                 }
-                if (consultation_uuid && /\S/.test(consultation_uuid)) {
-                    Object.assign(findQuery.where, {
-                        consultation_uuid: consultation_uuid
-                    });
-                }
-                const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
-                if (patNotesData.count == 0) {
-                    return res.status(404).send({
-                        code: 404,
-                        message: emr_constants.NO_RECORD_FOUND
-                    });
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    responseContent: patNotesData.rows,
-                    totalRecords: patNotesData.count
-                });
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+            }
+            if (consultation_uuid && /\S/.test(consultation_uuid)) {
+                Object.assign(findQuery.where, {
+                    consultation_uuid: consultation_uuid
                 });
             }
+            const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+            if (patNotesData.count == 0) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
+                });
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: patNotesData.rows,
+                totalRecords: patNotesData.count
+            });
         } catch (ex) {
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
@@ -388,41 +376,41 @@ const notesController = () => {
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
         let findQuery = {
             include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                model: profilesTbl,
+                required: false
+            },
+            {
+                model: conceptsTbl,
+                required: false
+            },
+            {
+                model: categoriesTbl,
+                required: false
+            },
+            {
+                model: profilesTypesTbl,
+                required: false
+            },
+            {
+                model: sectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoriesTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptsTbl,
+                required: false
+            },
+            {
+                model: profileSectionCategoryConceptValuesTbl,
+                required: false
+            }
             ],
             where: {
                 patient_uuid: patient_uuid,
@@ -512,48 +500,48 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: vw_consultation_detailsTbl,
-                        required: false,
-                        attributes: {
-                            "exclude": ['id', 'createdAt', 'updatedAt']
-                        },
+                    model: vw_consultation_detailsTbl,
+                    required: false,
+                    attributes: {
+                        "exclude": ['id', 'createdAt', 'updatedAt']
                     },
-                    {
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    }
+                },
+                {
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -844,7 +832,7 @@ const notesController = () => {
                                     // eslint-disable-next-line no-loop-func
                                     // categoryArray = categoryArray.filter(item=>item !== null);
                                     categoryArray.forEach((item, index) => {
-                                        if(item !== null){
+                                        if (item !== null) {
                                             if (index == len) {
                                                 if (Object.keys(item) == profSecCatConcept.name) {
                                                     Object.assign(check, item);

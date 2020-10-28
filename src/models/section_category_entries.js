@@ -128,6 +128,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
+            is_comment_button_selected: {
+                type: DataTypes.BOOLEAN,
+                allowNull: true
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
