@@ -670,7 +670,8 @@ const profilesController = () => {
       deletedHeadings,
       deletedSubheadings,
       deletedFieldInfo,
-      deletedTerms
+      deletedTerms,
+      deletedConceptTermValues
     } = req.body;
     let duplicateCount = 0;
     let duplicateConceptCount = 0;
@@ -744,6 +745,21 @@ const profilesController = () => {
             }, {
               where: {
                 uuid: dtk.profile_section_category_concept_values_uuid
+              }
+            });
+          }
+        }
+      }
+      // Delete profile Section Category Concepts value term
+      if (deletedConceptTermValues && deletedConceptTermValues.length > 0) {
+        for (let dctv of deletedConceptTermValues) {
+          if (dctv.profile_section_category_concept_value_terms_uuid) {
+            await profileSectionCategoryConceptValueTermsTbl.update({
+              status: 0,
+              modified_by: user_uuid
+            }, {
+              where: {
+                uuid: dctv.profile_section_category_concept_value_terms_uuid
               }
             });
           }
