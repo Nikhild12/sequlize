@@ -19,6 +19,7 @@ const profileSectionsTbl = db.profile_sections;
 const profileSectionCategoriesTbl = db.profile_section_categories;
 const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
+const profileSectionCategoryConceptValueTermsTbl = db.profile_section_category_concept_value_terms;
 const profileTypeTbl = db.profile_types;
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const sectionsTbl = db.sections;
@@ -74,7 +75,7 @@ const profilesController = () => {
             code: 'CLN'
           }
         };
-        let profileSectionSave = [], CategorySave = [], profileSectionResponse = [], ConceptsSave = [], conceptValuesSave = [], screenSettings_output, conceptValuesResponse = [], conceptResponse = [], categoriesResponse = [], replace_value;
+        let profileSectionSave = [], CategorySave = [], profileSectionResponse = [], ConceptsSave = [], conceptValuesSave = [], conceptValueTermSave = [], screenSettings_output, conceptValuesResponse = [], conceptResponse = [], conceptValueTermResponse = [], categoriesResponse = [], replace_value;
         screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
         if (screenSettings_output) {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
@@ -178,6 +179,40 @@ const profilesController = () => {
                 // profile_ Sections_categories_concept_values mapping
                 if (conceptValuesSave.length > 0) {
                   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(conceptValuesSave);
+                  var index = 0;
+                  for (let i = 0; i < sectionsDetails.length; i++) {
+                    if (sectionsDetails[i].categories && sectionsDetails[i].categories.length > 0) {
+                      for (let j = 0; j < sectionsDetails[i].categories.length; j++) {
+                        if (sectionsDetails[i].categories[j].concepts && sectionsDetails[i].categories[j].concepts.length > 0) {
+                          for (let k = 0; k < sectionsDetails[i].categories[j].concepts.length; k++) {
+                            if (sectionsDetails[i].categories[j].concepts[k].conceptvalues && sectionsDetails[i].categories[j].concepts[k].conceptvalues.length > 0) {
+                              for (let l = 0; l < sectionsDetails[i].categories[j].concepts[k].conceptvalues.length; l++) {
+                                index++;
+                                if (sectionsDetails[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms && sectionsDetails[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms.length > 0) {
+                                  for (let m = 0; m < sectionsDetails[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms.length; m++) {
+                                    const element_term = sectionsDetails[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms[m];
+                                    conceptValueTermSave.push({
+                                      profile_section_category_concept_values_uuid: conceptValuesResponse[index - 1].uuid,
+                                      concept_value_terms_uuid: element_term.concept_value_terms_uuid,
+                                      display_order: element_term.display_order,
+                                      is_active: element_term.is_active,
+                                      is_default: element_term.is_default,
+                                      revision: element_term.revision,
+                                      created_by: user_uuid
+                                    });
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  // profile_ Sections_categories_concept_value_term mapping
+                  if (conceptValueTermSave.length > 0) {
+                    conceptValueTermResponse = await profileSectionCategoryConceptValueTermsTbl.bulkCreate(conceptValueTermSave);
+                  }
                 }
               }
             }
@@ -190,7 +225,8 @@ const profilesController = () => {
               profileSectionResponse: profileSectionResponse,
               categoriesResponse: categoriesResponse,
               conceptResponse: conceptResponse,
-              conceptValuesResponse: conceptValuesResponse
+              conceptValuesResponse: conceptValuesResponse,
+              conceptValueTermResponse: conceptValueTermResponse
             }
           });
         }
@@ -761,6 +797,7 @@ const profilesController = () => {
     var categoryResponse = [];
     var conceptsResponse = [];
     var conceptValuesResponse = [];
+    var conceptValueTermsResponse = [];
     var element3 = {};
     var element2 = {};
     for (let i = 0; i < profileData.profiles.sections.length; i++) {
@@ -816,7 +853,8 @@ const profilesController = () => {
                 uuid: element2.profile_section_categories_uuid
               }
             }));
-          } else if (element.profile_sections_uuid) {
+          }
+          else if (element.profile_sections_uuid) {
             let elementArrsection = [];
             var index = 0;
             elementArrsection.push({
@@ -826,7 +864,8 @@ const profilesController = () => {
               created_by: user_uuid
             });
             categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
-          } else {
+          }
+          else {
             let elementArr2 = [];
             // elementArr2.push(element);
             var index = 0;
@@ -865,7 +904,8 @@ const profilesController = () => {
                   }
                 }));
 
-              } else if (element2.profile_section_categories_uuid) {
+              }
+              else if (element2.profile_section_categories_uuid) {
                 let elementArr_2 = [];
                 var index = 0;
                 elementArr_2.push({
@@ -880,7 +920,8 @@ const profilesController = () => {
                   created_by: user_uuid
                 });
                 conceptsResponse = await profileSectionCategoryConceptsTbl.bulkCreate(elementArr_2);
-              } else {
+              }
+              else {
                 let elementArr1 = [];
                 var index = 0;
                 elementArr1.push({
@@ -900,14 +941,6 @@ const profilesController = () => {
                 for (let l = 0; l < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues.length; l++) {
                   const element4 = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l];
                   if (element4.profile_section_category_concept_values_uuid) {
-                    // let getDuplication = await conceptValuesDuplicationByCodeAndName(element4, element4.profile_section_category_concept_values_uuid);
-                    // if (getDuplication) {
-                    //   return res.status(400).send({
-                    //     statusCode: 400,
-                    //     code: emr_constants.DUPLICATE_ENTRIE,
-                    //     message: "concept already exists"
-                    //   });
-                    // } else {
                     profileDetailsUpdate.push(await profileSectionCategoryConceptValuesTbl.update({
                       value_code: element4.value_code,
                       value_name: element4.value_name,
@@ -919,8 +952,8 @@ const profilesController = () => {
                         uuid: element4.profile_section_category_concept_values_uuid
                       }
                     }));
-                    // }            
-                  } else if (element3.profile_section_category_concepts_uuid) {
+                  }
+                  else if (element3.profile_section_category_concepts_uuid) {
                     let elementArr_3 = [];
                     elementArr_3.push({
                       profile_section_category_concept_uuid: element3.profile_section_category_concepts_uuid,
@@ -931,7 +964,8 @@ const profilesController = () => {
                       created_by: user_uuid
                     });
                     conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_3);
-                  } else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
+                  }
+                  else if (conceptsResponse && (conceptsResponse[0] != undefined)) {
                     let elementArr = [];
                     elementArr.push({
                       profile_section_category_concept_uuid: conceptsResponse[0].uuid,
@@ -943,38 +977,6 @@ const profilesController = () => {
                     });
                     conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr);
                   }
-                  // else if (conceptsResponse[0] == undefined) {
-                  //   let elementArr_1 = [];
-                  //   elementArr_1.push({
-                  //     profile_section_category_concept_uuid: conceptsResponse[0].uuid,
-                  //     value_code: element.value_code,
-                  //     value_name: element.value_name,
-                  //     display_order: element.display_order
-                  //   });
-                  //   conceptValuesResponse_1= await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArr_1);
-                  // }
-                  // else if(!conceptsRespons_1[0] == undefined){
-                  //   console.log("conceptsResponse[0]_1..",conceptsRespons_1[0])
-
-                  //   let elementArray = [];
-                  //   elementArray.push({
-                  //     profile_section_category_concept_uuid:conceptsRespons_1[0].uuid,
-                  //     value_code: element4.value_code,
-                  //     value_name: element4.value_name,
-                  //     display_order: element4.display_order
-                  //   });
-                  //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
-                  // }
-                  // else if(!conceptsResponse[0]==undefined){
-                  //   let elementArray = [];
-                  //   elementArray.push({
-                  //     profile_section_category_concept_uuid:  conceptsResponse[0].uuid,
-                  //     value_code: element4.value_code,
-                  //     value_name: element4.value_name,
-                  //     display_order: element4.display_order
-                  //   });
-                  //   conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
-                  // }
                   else {
                     let elementArray = [];
                     elementArray.push({
@@ -986,6 +988,65 @@ const profilesController = () => {
                       created_by: user_uuid
                     });
                     conceptValuesResponse = await profileSectionCategoryConceptValuesTbl.bulkCreate(elementArray);
+                  }
+                  if (profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms && profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms.length > 0) {
+                    for (let m = 0; m < profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms.length; m++) {
+                      const element5 = profileData.profiles.sections[i].categories[j].concepts[k].conceptvalues[l].concept_value_terms[m];
+                      if (element5.profile_section_category_concept_value_terms_uuid) {
+                        profileDetailsUpdate.push(await profileSectionCategoryConceptValueTermsTbl.update({
+                          profile_section_category_concept_values_uuid: element5.profile_section_category_concept_values_uuid,
+                          concept_value_terms_uuid: element5.concept_value_terms_uuid,
+                          display_order: element5.display_order,
+                          is_default: element5.is_default,
+                          is_active: element5.is_active,
+                          revision: element5.revision,
+                          modified_by: user_uuid
+                        }, {
+                          where: {
+                            uuid: element5.profile_section_category_concept_value_terms_uuid
+                          }
+                        }));
+                      }
+                      else if (element4.profile_section_category_concept_values_uuid) {
+                        let conceptValueTermSave = [];
+                        conceptValueTermSave.push({
+                          profile_section_category_concept_values_uuid: element4.profile_section_category_concept_values_uuid,
+                          concept_value_terms_uuid: element5.concept_value_terms_uuid,
+                          display_order: element5.display_order,
+                          is_active: element5.is_active,
+                          is_default: element5.is_default,
+                          revision: element5.revision,
+                          created_by: user_uuid
+                        });
+                        conceptValueTermsResponse = await profileSectionCategoryConceptValueTermsTbl.bulkCreate(conceptValueTermSave);
+                      }
+                      else if (conceptValuesResponse && (conceptValuesResponse[0] != undefined)) {
+                        let elementArr_term = [];
+                        elementArr_term.push({
+                          profile_section_category_concept_values_uuid: conceptValuesResponse[0].uuid,
+                          concept_value_terms_uuid: element5.concept_value_terms_uuid,
+                          display_order: element5.display_order,
+                          is_active: element5.is_active,
+                          is_default: element5.is_default,
+                          revision: element5.revision,
+                          created_by: user_uuid
+                        });
+                        conceptValueTermsResponse = await profileSectionCategoryConceptValueTermsTbl.bulkCreate(elementArr_term);
+                      }
+                      // else {
+                      //   let elementArr_term2 = [];
+                      //   elementArr_term2.push({
+                      //     profile_section_category_concept_values_uuid: conceptValuesResponse[0].uuid,
+                      //     concept_value_terms_uuid: element5.concept_value_terms_uuid,
+                      //     display_order: element5.display_order,
+                      //     is_active: element5.is_active,
+                      //     is_default: element5.is_default,
+                      //     revision: element5.revision,
+                      //     created_by: user_uuid
+                      //   });
+                      //   conceptValueTermsResponse = await profileSectionCategoryConceptValueTermsTbl.bulkCreate(elementArr_term2);
+                      // }
+                    }
                   }
                 }
               }
