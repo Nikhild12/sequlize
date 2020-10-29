@@ -89,6 +89,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_section_category_concept_uuid',
             as: 'profile_section_category_concepts'
         });
+        profile_section_category_concept_values.hasMany(models.profile_section_category_concept_value_terms, {
+            foreignKey: 'profile_section_category_concept_values_uuid',
+            as: 'profile_section_category_concept_value_terms'
+        });
     };
 
     return profile_section_category_concept_values;
