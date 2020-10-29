@@ -28,6 +28,8 @@ const profileSectionsTbl = db.profile_sections;
 const profileSectionCategoriesTbl = db.profile_section_categories;
 const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
+const profileSectionCategoryConceptValueTermsTbl = db.profile_section_category_concept_value_terms;
+const conceptValueTermsTbl = db.concept_value_terms;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
@@ -310,152 +312,160 @@ const notesController = () => {
         }
     };
     const _updatePreviousPatientOPNotes = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        let postData = req.body;
-        const updateData = postData.map(v => ({
-            ...v,
-            modified_by: user_uuid,
-            modified_date: new Date()
-        }));
         try {
-            if (user_uuid && updateData) {
-                const data = await sectionCategoryEntriesTbl.bulkCreate(updateData, {
-                    updateOnDuplicate: ["status", "is_active", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
-                }, {
-                    returing: true
+            const {
+                user_uuid
+            } = req.headers;
+            let postData = req.body;
+            let currentDate = new Date();
+            let result_data = [];
+            if (!Array.isArray(postData) || postData.length < 1) {
+                throw ({
+                    error_type: "validation",
+                    errors: "invalid request(send valid payload)"
                 });
-                if (data) {
-                    let patNotesData = null
-                    if (postData.length > 0) {
-                        let findQuery = {
-                            where: {
-                                consultation_uuid: postData[0].consultation_uuid,
-                            }
-                        };
-                        patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
-                    } else {
-                        return res.status(400).send({
-                            code: httpStatus.UNAUTHORIZED,
-                            message: `consultation id not persent`
-                        });
-                    }
-
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'Updated Successfully',
-                        responseContents: patNotesData
-                    });
-                }
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM}  ${emr_constants.FOUND}`
-                });
-
             }
-        } catch (ex) {
-            console.log('Exception happened', ex);
+            let body_id_array = postData.filter(element => {
+                return (element.uuid == null || element.uuid == '' || element.uuid <= 0);
+            });
+            if (body_id_array.length) {
+                throw ({
+                    error_type: "validation",
+                    errors: "uuid need to send"
+                });
+            }
+            let body_array = postData.filter(element => {
+                return (element.consultation_uuid == null || element.consultation_uuid == '' || element.consultation_uuid <= 0);
+            });
+            if (body_array.length) {
+                throw ({
+                    error_type: "validation",
+                    errors: "consultation_uuid should be present and greater than zero"
+                });
+            }
+            for (let epwod of updateData) {
+                epwod.modified_by = user_uuid;
+                epwod.modified_date = currentDate;
+                let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
+                    updateOnDuplicate: Object.keys(epwod)
+                });
+                for (let d of bulkData) {
+                    result_data.push(d.dataValues);
+                }
+            }
+            if (result_data && result_data.length > 0) {
+                let patNotesData = await sectionCategoryEntriesTbl.findAndCountAll({
+                    where: {
+                        consultation_uuid: postData[0].consultation_uuid,
+                    }
+                });
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'Updated Successfully',
+                    responseContents: patNotesData
+                });
+            }
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "validation error" });
+            }
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
-                message: ex.message
+                message: err.message
             });
-
         }
     };
     const _getReviewNotes = async (req, res) => {
-        const {
-            patient_uuid,
-            consultation_uuid
-        } = req.query;
-        const {
-            user_uuid,
-            facility_uuid
-        } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-        let findQuery = {
-            include: [{
-                model: profilesTbl,
-                required: false
-            },
-            {
-                model: conceptsTbl,
-                required: false
-            },
-            {
-                model: categoriesTbl,
-                required: false
-            },
-            {
-                model: profilesTypesTbl,
-                required: false
-            },
-            {
-                model: sectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoriesTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptsTbl,
-                required: false
-            },
-            {
-                model: profileSectionCategoryConceptValuesTbl,
-                required: false
-            }
-            ],
-            where: {
-                patient_uuid: patient_uuid,
-                consultation_uuid: consultation_uuid,
-                status: emr_constants.IS_ACTIVE,
-                is_active: emr_constants.IS_ACTIVE
-            }
-        };
         try {
-            if (user_uuid && patient_uuid) {
-                const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                if (!patNotesData) {
-                    return res.status(404).send({
-                        code: 404,
-                        message: emr_constants.NO_RECORD_FOUND
-                    });
+            const {
+                patient_uuid,
+                consultation_uuid
+            } = req.query;
+            const {
+                user_uuid,
+                facility_uuid
+            } = req.headers;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            let findQuery = {
+                include: [{
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    required: false,
+                    include: [
+                        { model: conceptValueTermsTbl, required: false, attributes: ['uuid', 'code', 'name'] }
+                    ]
+                }],
+                where: {
+                    patient_uuid: patient_uuid,
+                    consultation_uuid: consultation_uuid,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE
                 }
-                let finalData = [];
-                for (let e of patNotesData) {
-                    let data;
-                    if (e.activity_uuid) {
-                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
-                        if (actCode) {
-                            e.temp = [];
-                            e.user_uuid = user_uuid;
-                            e.Authorization = Authorization;
-                            e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e, consultation_uuid);
-                            finalData.push(data);
-                            console.log(finalData);
-                        }
-                    } else {
-                        finalData.push(e);
-                    }
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    responseContent: finalData
-                });
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+            };
+            const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+            if (!patNotesData) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
                 });
             }
+            let finalData = [];
+            for (let e of patNotesData) {
+                let data;
+                if (e.activity_uuid) {
+                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                    if (actCode) {
+                        e.temp = [];
+                        e.user_uuid = user_uuid;
+                        e.Authorization = Authorization;
+                        e.facility_uuid = facility_uuid;
+                        data = await getWidgetData(actCode, e, consultation_uuid);
+                        finalData.push(data);
+                        console.log(finalData);
+                    }
+                } else {
+                    finalData.push(e);
+                }
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: finalData
+            });
         } catch (ex) {
             console.log(ex);
             return res.status(400).send({
@@ -1025,15 +1035,15 @@ const notesController = () => {
 
     };
     const _updateConsultations = async (req, res) => {
-        const {
-            user_uuid,
-            authorization
-        } = req.headers;
-        let postData = req.body;
-        let currentDate = new Date();
-        let suffix_current_value_consult;
-        let screenSettings_output;
-        if (user_uuid) {
+        try {
+            const {
+                user_uuid,
+                authorization
+            } = req.headers;
+            let postData = req.body;
+            let currentDate = new Date();
+            let suffix_current_value_consult;
+            let screenSettings_output;
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
             postData.modified_date = currentDate;
@@ -1055,74 +1065,66 @@ const notesController = () => {
                 suffix_current_value_consult = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
                 postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
-            try {
-                let consultationsupdate = await consultationsTbl.update(postData, {
-                    where: {
-                        uuid: postData.Id
-                    }
-                });
-                if (!consultationsupdate || consultationsupdate[0] == 0) {
-                    throw {
-                        errors: "consultation data not updated",
-                        error_type: "validationErr"
-                    }
+            let consultationsupdate = await consultationsTbl.update(postData, {
+                where: {
+                    uuid: postData.Id
                 }
-                if (postData.entry_status == emr_constants.ENTRY_STATUS) {
-                    let options_two = {
-                        uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
-                        headers: {
-                            Authorization: authorization,
-                            user_uuid: user_uuid
-                        },
-                        body: {
-                            screenId: screenSettings_output.uuid,
-                            suffix_current_value: suffix_current_value_consult
-                        }
-                    };
-                    await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+            });
+            if (!consultationsupdate || consultationsupdate[0] == 0) {
+                throw {
+                    errors: "consultation data not updated",
+                    error_type: "validationErr"
                 }
-                let consultationsdata = await consultationsTbl.findOne({
-                    where: {
-                        uuid: postData.Id
+            }
+            if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                let options_two = {
+                    uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                    headers: {
+                        Authorization: authorization,
+                        user_uuid: user_uuid
                     },
-                    include: [{
-                        model: profilesTbl,
-                        required: false,
-                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-                    }]
-                });
-                const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
-                if (departmentsResponse) {
-                    const resData = departmentsResponse.responseContent.rows[0];
-                    consultationsdata.dataValues.department_name = resData.name;
-                    consultationsdata.dataValues.department_code = resData.code;
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    message: 'Update successfully',
-                    reqContents: req.body,
-                    responseContents: consultationsdata
-                });
-            } catch (ex) {
-                if (ex.error_type == "validationErr") {
-                    return res.status(400).send({
-                        code: httpStatus.BAD_REQUEST,
-                        message: ex.errors
-                    });
-                }
-                console.log('Exception happened', ex);
+                    body: {
+                        screenId: screenSettings_output.uuid,
+                        suffix_current_value: suffix_current_value_consult
+                    }
+                };
+                await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+            }
+            let consultationsdata = await consultationsTbl.findOne({
+                where: {
+                    uuid: postData.Id
+                },
+                include: [{
+                    model: profilesTbl,
+                    required: false,
+                    attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                }]
+            });
+            const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
+            if (departmentsResponse) {
+                const resData = departmentsResponse.responseContent.rows[0];
+                consultationsdata.dataValues.department_name = resData.name;
+                consultationsdata.dataValues.department_code = resData.code;
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                message: 'Update successfully',
+                reqContents: req.body,
+                responseContents: consultationsdata
+            });
+        } catch (ex) {
+            if (ex.error_type == "validationErr") {
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
-                    message: ex
+                    message: ex.errors
                 });
             }
-        } else {
+            console.log('Exception happened', ex);
             return res.status(400).send({
-                code: httpStatus.UNAUTHORIZED,
-                message: emr_constants.NO_USER_ID
+                code: httpStatus.BAD_REQUEST,
+                message: ex
             });
         }
-
     };
 
     function getWidgetData(actCode, result, consultation_uuid, printFlag) {

@@ -565,7 +565,7 @@ const profilesController = () => {
                       {
                         model: profileSectionCategoryConceptValuesTbl,
                         as: 'profile_section_category_concept_values',
-                        attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult'],
+                        attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult', 'display_order'],
                         where: {
                           is_active: 1,
                           status: 1
