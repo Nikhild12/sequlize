@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_defult: {
                 type: DataTypes.BOOLEAN,
-                // defaultValue: 1,
+                defaultValue: 0,
                 allowNull: false
             },
             created_date: 'created_date',
