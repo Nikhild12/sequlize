@@ -508,7 +508,8 @@ const notesController = () => {
             const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
@@ -566,7 +567,10 @@ const notesController = () => {
                     consultation_uuid: consultation_uuid,
                     status: emr_constants.IS_ACTIVE,
                     is_active: emr_constants.IS_ACTIVE
-                }
+                },
+                order: [
+                    [profileSectionCategoryConceptsTbl, 'value_type_uuid', 'ASC']
+                ]
             };
             if (user_uuid && patient_uuid) {
                 let printObj = {};
