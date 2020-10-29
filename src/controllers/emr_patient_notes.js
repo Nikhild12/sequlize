@@ -324,15 +324,6 @@ const notesController = () => {
                     errors: "invalid request(send valid payload)"
                 });
             }
-            let body_id_array = postData.filter(element => {
-                return (element.uuid == null || element.uuid == '' || element.uuid <= 0);
-            });
-            if (body_id_array.length) {
-                throw ({
-                    error_type: "validation",
-                    errors: "uuid need to send"
-                });
-            }
             let body_array = postData.filter(element => {
                 return (element.consultation_uuid == null || element.consultation_uuid == '' || element.consultation_uuid <= 0);
             });
@@ -342,7 +333,7 @@ const notesController = () => {
                     errors: "consultation_uuid should be present and greater than zero"
                 });
             }
-            for (let epwod of updateData) {
+            for (let epwod of postData) {
                 epwod.modified_by = user_uuid;
                 epwod.modified_date = currentDate;
                 let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
