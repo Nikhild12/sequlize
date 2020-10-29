@@ -167,8 +167,7 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
-                ],
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -367,7 +366,11 @@ const notesController = () => {
             }
         } catch (err) {
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
-                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "validation error" });
+                return res.status(400).json({
+                    statusCode: 400,
+                    Error: err.errors,
+                    msg: "validation error"
+                });
             }
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
@@ -388,48 +391,51 @@ const notesController = () => {
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValueTermsTbl,
-                    required: false,
-                    include: [
-                        { model: conceptValueTermsTbl, required: false, attributes: ['uuid', 'code', 'name'] }
-                    ]
-                }],
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
+                    }
+                ],
                 where: {
                     patient_uuid: patient_uuid,
                     consultation_uuid: consultation_uuid,
@@ -510,48 +516,57 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
+                        model: vw_consultation_detailsTbl,
+                        required: false,
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
                     },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -774,7 +789,9 @@ const notesController = () => {
                         category: eCat,
                         term_key: eTermKey,
                         profile_section_category_concept: profSecCatConcept,
-                        profile_section_category_concept_value: profSecCatConVal
+                        profile_section_category_concept_value: profSecCatConVal,
+                        profile_section_category_concept_value_term: profSecCatConValTerm,
+                        profile_section_category_concept_value_terms_uuid: psccvt_uuid
                     } = e;
                     console.log(eSec);
                     if (e.section_uuid !== 0 && e.activity_uuid == 0) {
@@ -828,7 +845,7 @@ const notesController = () => {
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
+                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')') : eTermKey
                                 };
                             }
                             console.log('sampleObj::', sampleObj);
@@ -858,7 +875,7 @@ const notesController = () => {
                                             } else {
                                                 name = profCatValValueName ?
                                                     (' ' + profCatValValueName +
-                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : eTermKey;
                                             }
                                             var value = [...Object.values(check), name];
                                             delete categoryArray[len];
