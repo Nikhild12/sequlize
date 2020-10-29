@@ -5,34 +5,24 @@ module.exports = (sequelize, DataTypes) => {
         "profile_section_category_concepts",
         {
             uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
-
             },
             code: {
-
                 type: DataTypes.STRING,
                 allowNull: false
-
             },
             name: {
-
                 type: DataTypes.STRING,
                 allowNull: false
-
             },
             description: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
-
             profile_section_category_uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -47,9 +37,6 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetZeroValidationMessage('profile_section_category_uuid')
                     }
                 }
-
-
-
             },
             // value_type_uuid: {
 
@@ -70,54 +57,39 @@ module.exports = (sequelize, DataTypes) => {
 
             // },
             is_multiple: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             is_mandatory: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             display_order: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
             is_active: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             status: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             revision: {
-
                 type: DataTypes.INTEGER,
                 defaultValue: 1,
                 allowNull: false
-
             },
             created_by: {
-
                 type: DataTypes.INTEGER
-
             },
             modified_by: {
-
                 type: DataTypes.INTEGER
-
             },
             created_date: 'created_date',
             modified_date: 'modified_date',
@@ -134,7 +106,8 @@ module.exports = (sequelize, DataTypes) => {
             defaultScope: {
                 where: {
                     status: 1
-                }
+                },
+                order :[['uuid', 'ASC']]
             }
         }
     );
