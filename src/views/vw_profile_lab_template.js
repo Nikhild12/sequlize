@@ -26,6 +26,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            tom_uuid: {
+                type: DataTypes.INTEGER
+            },
+            tom_name: {
+                type: DataTypes.STRING
+            },
+            tom_code: {
+                type: DataTypes.STRING
+            },
             tm_lab_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
