@@ -42,7 +42,8 @@ const {
     CHECKBOX,
     DROPDOWN,
     TERMBASED,
-    RADIO
+    RADIO,
+    TEXTWITHDROPDOWN
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 
@@ -740,7 +741,7 @@ const notesController = () => {
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
-                        period: finalData ? (finalData[0].vw_consultation_detail.dataValues.period_name == 'Year' ? 'Years' : finalData[0].vw_consultation_detail.dataValues.period_name) : '',
+                        period: finalData ? (finalData[0].vw_consultation_detail.dataValues.period_name == 'Year' ? "Year(s)" : finalData[0].vw_consultation_detail.dataValues.period_name) : '',
                         gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
                         pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
                         mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
@@ -844,7 +845,7 @@ const notesController = () => {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length !== 0) {
-                                if ((value_type_uuid == DROPDOWN || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
+                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN)|| value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func
