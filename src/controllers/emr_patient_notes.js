@@ -508,8 +508,7 @@ const notesController = () => {
             const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [
-                    {
+                include: [{
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
@@ -842,14 +841,14 @@ const notesController = () => {
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')') : eTermKey
+                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                 };
                             }
                             console.log('sampleObj::', sampleObj);
                             let {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
-                            if (categoryArray.length !== 0) {
+                            if (categoryArray.length >= 0) {
                                 if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == BTNWITHCMTS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
@@ -872,7 +871,9 @@ const notesController = () => {
                                             } else {
                                                 name = profCatValValueName ?
                                                     (' ' + profCatValValueName +
-                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : eTermKey;
+                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+
+                                                // ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : eTermKey;
                                             }
                                             var value = [...Object.values(check), name];
                                             delete categoryArray[len];
