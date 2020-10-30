@@ -819,11 +819,6 @@ const notesController = () => {
                                 eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
                             }
                         }
-
-                        console.log('sectionId::', sectionId);
-                        console.log('categoryId::', categoryId);
-
-
                         if (profSecCatConcept && profSecCatConcept.name) {
                             let {
                                 value_type_uuid,
@@ -841,10 +836,9 @@ const notesController = () => {
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true)) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                 };
                             }
-                            console.log('sampleObj::', sampleObj);
                             let {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
@@ -871,7 +865,7 @@ const notesController = () => {
                                             } else {
                                                 name = profCatValValueName ?
                                                     (' ' + profCatValValueName +
-                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true)) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                             }
                                             var value = [...Object.values(check), name];
                                             delete categoryArray[len];
@@ -921,13 +915,8 @@ const notesController = () => {
                     }
                 }
 
-                console.log('sectionObj::', sectionObj);
-
                 printObj.sectionObj = sectionObj;
                 printObj.sectionResult = [...new Set(sample)];
-                // sectionObj[sectionId].categoryObj[categoryId].categoryArray.push(sample);
-                // sectionObj[sectionId].categoryObj[categoryId].categoryArray = [...new Set(sample)];
-                console.log('//////////////////', printObj);
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
