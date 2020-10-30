@@ -58,12 +58,12 @@ module.exports = (sequelize, DataTypes) => {
             // },
             is_multiple: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
                 allowNull: false
             },
             is_mandatory: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                defaultValue: 0,
                 allowNull: false
             },
             display_order: {
