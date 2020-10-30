@@ -28,6 +28,8 @@ const profileSectionsTbl = db.profile_sections;
 const profileSectionCategoriesTbl = db.profile_section_categories;
 const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
+const profileSectionCategoryConceptValueTermsTbl = db.profile_section_category_concept_value_terms;
+const conceptValueTermsTbl = db.concept_value_terms;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesTypesTbl = db.profile_types;
@@ -39,7 +41,10 @@ const {
     BOOLEAN,
     CHECKBOX,
     DROPDOWN,
-    TERMBASED
+    TERMBASED,
+    RADIO,
+    TEXTWITHDROPDOWN,
+    BTNWITHCMTS
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 
@@ -164,8 +169,7 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',
-                ],
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -274,45 +278,33 @@ const notesController = () => {
         }
     };
     const _getOPNotesDetailsByPatId = async (req, res) => {
-
-        const {
-            patient_uuid,
-            consultation_uuid
-        } = req.query;
-        const {
-            user_uuid
-        } = req.headers;
-
         try {
-            if (user_uuid && patient_uuid) {
-                let findQuery = {
-                    where: {
-                        patient_uuid: patient_uuid
-                    }
+            const {
+                patient_uuid,
+                consultation_uuid
+            } = req.query;
+            let findQuery = {
+                where: {
+                    patient_uuid: patient_uuid
                 }
-                if (consultation_uuid && /\S/.test(consultation_uuid)) {
-                    Object.assign(findQuery.where, {
-                        consultation_uuid: consultation_uuid
-                    });
-                }
-                const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
-                if (patNotesData.count == 0) {
-                    return res.status(404).send({
-                        code: 404,
-                        message: emr_constants.NO_RECORD_FOUND
-                    });
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    responseContent: patNotesData.rows,
-                    totalRecords: patNotesData.count
-                });
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+            }
+            if (consultation_uuid && /\S/.test(consultation_uuid)) {
+                Object.assign(findQuery.where, {
+                    consultation_uuid: consultation_uuid
                 });
             }
+            const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
+            if (patNotesData.count == 0) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
+                });
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: patNotesData.rows,
+                totalRecords: patNotesData.count
+            });
         } catch (ex) {
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
@@ -321,152 +313,158 @@ const notesController = () => {
         }
     };
     const _updatePreviousPatientOPNotes = async (req, res) => {
-        const {
-            user_uuid
-        } = req.headers;
-        let postData = req.body;
-        const updateData = postData.map(v => ({
-            ...v,
-            modified_by: user_uuid,
-            modified_date: new Date()
-        }));
         try {
-            if (user_uuid && updateData) {
-                const data = await sectionCategoryEntriesTbl.bulkCreate(updateData, {
-                    updateOnDuplicate: ["status", "is_active", "patient_uuid", "encounter_uuid", "encounter_doctor_uuid", "consultation_uuid", "profile_type_uuid", "profile_uuid", "section_uuid", "section_key", "activity_uuid", "profile_section_uuid", "category_uuid", "category_key", "profile_section_category_uuid", "concept_uuid", "concept_key", "profile_section_category_concept_uuid", "term_key", "profile_section_category_concept_value_uuid", "result_value", "result_value_rich_text", "result_value_json", "result_binary", "result_path", "entry_date", "comments", "entry_status"]
-                }, {
-                    returing: true
+            const {
+                user_uuid
+            } = req.headers;
+            let postData = req.body;
+            let currentDate = new Date();
+            let result_data = [];
+            if (!Array.isArray(postData) || postData.length < 1) {
+                throw ({
+                    error_type: "validation",
+                    errors: "invalid request(send valid payload)"
                 });
-                if (data) {
-                    let patNotesData = null
-                    if (postData.length > 0) {
-                        let findQuery = {
-                            where: {
-                                consultation_uuid: postData[0].consultation_uuid,
-                            }
-                        };
-                        patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
-                    } else {
-                        return res.status(400).send({
-                            code: httpStatus.UNAUTHORIZED,
-                            message: `consultation id not persent`
-                        });
-                    }
-
-                    return res.status(200).send({
-                        code: httpStatus.OK,
-                        message: 'Updated Successfully',
-                        responseContents: patNotesData
-                    });
-                }
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM}  ${emr_constants.FOUND}`
-                });
-
             }
-        } catch (ex) {
-            console.log('Exception happened', ex);
+            let body_array = postData.filter(element => {
+                return (element.consultation_uuid == null || element.consultation_uuid == '' || element.consultation_uuid <= 0);
+            });
+            if (body_array.length) {
+                throw ({
+                    error_type: "validation",
+                    errors: "consultation_uuid should be present and greater than zero"
+                });
+            }
+            for (let epwod of postData) {
+                epwod.modified_by = user_uuid;
+                epwod.modified_date = currentDate;
+                let bulkData = await sectionCategoryEntriesTbl.bulkCreate([epwod], {
+                    updateOnDuplicate: Object.keys(epwod)
+                });
+                for (let d of bulkData) {
+                    result_data.push(d.dataValues);
+                }
+            }
+            if (result_data && result_data.length > 0) {
+                let patNotesData = await sectionCategoryEntriesTbl.findAndCountAll({
+                    where: {
+                        consultation_uuid: postData[0].consultation_uuid,
+                    }
+                });
+                return res.status(200).send({
+                    code: httpStatus.OK,
+                    message: 'Updated Successfully',
+                    responseContents: patNotesData
+                });
+            }
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({
+                    statusCode: 400,
+                    Error: err.errors,
+                    msg: "validation error"
+                });
+            }
             return res.status(400).send({
                 code: httpStatus.BAD_REQUEST,
-                message: ex.message
+                message: err.message
             });
-
         }
     };
     const _getReviewNotes = async (req, res) => {
-        const {
-            patient_uuid,
-            consultation_uuid
-        } = req.query;
-        const {
-            user_uuid,
-            facility_uuid
-        } = req.headers;
-        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-        let findQuery = {
-            include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                }
-            ],
-            where: {
-                patient_uuid: patient_uuid,
-                consultation_uuid: consultation_uuid,
-                status: emr_constants.IS_ACTIVE,
-                is_active: emr_constants.IS_ACTIVE
-            }
-        };
         try {
-            if (user_uuid && patient_uuid) {
-                const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
-                if (!patNotesData) {
-                    return res.status(404).send({
-                        code: 404,
-                        message: emr_constants.NO_RECORD_FOUND
-                    });
-                }
-                let finalData = [];
-                for (let e of patNotesData) {
-                    let data;
-                    if (e.activity_uuid) {
-                        const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
-                        if (actCode) {
-                            e.temp = [];
-                            e.user_uuid = user_uuid;
-                            e.Authorization = Authorization;
-                            e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e, consultation_uuid);
-                            finalData.push(data);
-                            console.log(finalData);
-                        }
-                    } else {
-                        finalData.push(e);
+            const {
+                patient_uuid,
+                consultation_uuid
+            } = req.query;
+            const {
+                user_uuid,
+                facility_uuid
+            } = req.headers;
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            let findQuery = {
+                include: [{
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
                     }
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    consultation_uuid: consultation_uuid,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE
                 }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    responseContent: finalData
-                });
-            } else {
-                return res.status(400).send({
-                    code: httpStatus.UNAUTHORIZED,
-                    message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+            };
+            const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+            if (!patNotesData) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
                 });
             }
+            let finalData = [];
+            for (let e of patNotesData) {
+                let data;
+                if (e.activity_uuid) {
+                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                    if (actCode) {
+                        e.temp = [];
+                        e.user_uuid = user_uuid;
+                        e.Authorization = Authorization;
+                        e.facility_uuid = facility_uuid;
+                        data = await getWidgetData(actCode, e, consultation_uuid);
+                        finalData.push(data);
+                        console.log(finalData);
+                    }
+                } else {
+                    finalData.push(e);
+                }
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: finalData
+            });
         } catch (ex) {
             console.log(ex);
             return res.status(400).send({
@@ -552,6 +550,15 @@ const notesController = () => {
                     {
                         model: profileSectionCategoryConceptValuesTbl,
                         required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
                     }
                 ],
                 where: {
@@ -559,7 +566,10 @@ const notesController = () => {
                     consultation_uuid: consultation_uuid,
                     status: emr_constants.IS_ACTIVE,
                     is_active: emr_constants.IS_ACTIVE
-                }
+                },
+                order: [
+                    [profileSectionCategoryConceptsTbl, 'value_type_uuid', 'ASC']
+                ]
             };
             if (user_uuid && patient_uuid) {
                 let printObj = {};
@@ -735,7 +745,7 @@ const notesController = () => {
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
-                        period: finalData ? (finalData[0].vw_consultation_detail.dataValues.period_name == 'Year' ? 'Years' : finalData[0].vw_consultation_detail.dataValues.period_name) : '',
+                        period: finalData ? (finalData[0].vw_consultation_detail.dataValues.period_name == 'Year' ? "Year(s)" : finalData[0].vw_consultation_detail.dataValues.period_name) : '',
                         gender: finalData ? finalData[0].vw_consultation_detail.dataValues.g_name : '',
                         pa_title: finalData ? finalData[0].vw_consultation_detail.dataValues.pt_name : '',
                         mobile: finalData ? finalData[0].vw_consultation_detail.dataValues.p_mobile : '',
@@ -775,7 +785,9 @@ const notesController = () => {
                         category: eCat,
                         term_key: eTermKey,
                         profile_section_category_concept: profSecCatConcept,
-                        profile_section_category_concept_value: profSecCatConVal
+                        profile_section_category_concept_value: profSecCatConVal,
+                        profile_section_category_concept_value_term: profSecCatConValTerm,
+                        profile_section_category_concept_value_terms_uuid: psccvt_uuid
                     } = e;
                     console.log(eSec);
                     if (e.section_uuid !== 0 && e.activity_uuid == 0) {
@@ -821,7 +833,7 @@ const notesController = () => {
                                 value_name: profCatValValueName
                             } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
-                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                            if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
 
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
@@ -829,21 +841,21 @@ const notesController = () => {
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + ')') : eTermKey
+                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                 };
                             }
                             console.log('sampleObj::', sampleObj);
                             let {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
-                            if (categoryArray.length !== 0) {
-                                if ((value_type_uuid == DROPDOWN || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
+                            if (categoryArray.length >= 0) {
+                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == BTNWITHCMTS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func
                                     // categoryArray = categoryArray.filter(item=>item !== null);
                                     categoryArray.forEach((item, index) => {
-                                        if(item !== null){
+                                        if (item !== null) {
                                             if (index == len) {
                                                 if (Object.keys(item) == profSecCatConcept.name) {
                                                     Object.assign(check, item);
@@ -854,12 +866,14 @@ const notesController = () => {
                                     if (check) {
                                         if (Object.keys(check)[0] == profSecCatConcept.name) {
                                             let name = '';
-                                            if ((value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
+                                            if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
                                                 name = profCatValValueName ? profCatValValueName : e.term_key;
                                             } else {
                                                 name = profCatValValueName ?
                                                     (' ' + profCatValValueName +
-                                                        ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + ')' : eTermKey;
+                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+
+                                                // ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : eTermKey;
                                             }
                                             var value = [...Object.values(check), name];
                                             delete categoryArray[len];
@@ -1036,15 +1050,15 @@ const notesController = () => {
 
     };
     const _updateConsultations = async (req, res) => {
-        const {
-            user_uuid,
-            authorization
-        } = req.headers;
-        let postData = req.body;
-        let currentDate = new Date();
-        let suffix_current_value_consult;
-        let screenSettings_output;
-        if (user_uuid) {
+        try {
+            const {
+                user_uuid,
+                authorization
+            } = req.headers;
+            let postData = req.body;
+            let currentDate = new Date();
+            let suffix_current_value_consult;
+            let screenSettings_output;
             postData.is_active = postData.status = true;
             postData.modified_by = user_uuid;
             postData.modified_date = currentDate;
@@ -1066,74 +1080,66 @@ const notesController = () => {
                 suffix_current_value_consult = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
                 postData.reference_no = screenSettings_output.prefix + suffix_current_value_consult;
             }
-            try {
-                let consultationsupdate = await consultationsTbl.update(postData, {
-                    where: {
-                        uuid: postData.Id
-                    }
-                });
-                if (!consultationsupdate || consultationsupdate[0] == 0) {
-                    throw {
-                        errors: "consultation data not updated",
-                        error_type: "validationErr"
-                    }
+            let consultationsupdate = await consultationsTbl.update(postData, {
+                where: {
+                    uuid: postData.Id
                 }
-                if (postData.entry_status == emr_constants.ENTRY_STATUS) {
-                    let options_two = {
-                        uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
-                        headers: {
-                            Authorization: authorization,
-                            user_uuid: user_uuid
-                        },
-                        body: {
-                            screenId: screenSettings_output.uuid,
-                            suffix_current_value: suffix_current_value_consult
-                        }
-                    };
-                    await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+            });
+            if (!consultationsupdate || consultationsupdate[0] == 0) {
+                throw {
+                    errors: "consultation data not updated",
+                    error_type: "validationErr"
                 }
-                let consultationsdata = await consultationsTbl.findOne({
-                    where: {
-                        uuid: postData.Id
+            }
+            if (postData.entry_status == emr_constants.ENTRY_STATUS) {
+                let options_two = {
+                    uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                    headers: {
+                        Authorization: authorization,
+                        user_uuid: user_uuid
                     },
-                    include: [{
-                        model: profilesTbl,
-                        required: false,
-                        attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
-                    }]
-                });
-                const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
-                if (departmentsResponse) {
-                    const resData = departmentsResponse.responseContent.rows[0];
-                    consultationsdata.dataValues.department_name = resData.name;
-                    consultationsdata.dataValues.department_code = resData.code;
-                }
-                return res.status(200).send({
-                    code: httpStatus.OK,
-                    message: 'Update successfully',
-                    reqContents: req.body,
-                    responseContents: consultationsdata
-                });
-            } catch (ex) {
-                if (ex.error_type == "validationErr") {
-                    return res.status(400).send({
-                        code: httpStatus.BAD_REQUEST,
-                        message: ex.errors
-                    });
-                }
-                console.log('Exception happened', ex);
+                    body: {
+                        screenId: screenSettings_output.uuid,
+                        suffix_current_value: suffix_current_value_consult
+                    }
+                };
+                await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+            }
+            let consultationsdata = await consultationsTbl.findOne({
+                where: {
+                    uuid: postData.Id
+                },
+                include: [{
+                    model: profilesTbl,
+                    required: false,
+                    attributes: ['uuid', 'profile_code', 'profile_name', 'profile_type_uuid', 'profile_description', 'facility_uuid', 'department_uuid', 'created_date']
+                }]
+            });
+            const departmentsResponse = await appMasterData.getDepartments(user_uuid, authorization, [consultationsdata.department_uuid]);
+            if (departmentsResponse) {
+                const resData = departmentsResponse.responseContent.rows[0];
+                consultationsdata.dataValues.department_name = resData.name;
+                consultationsdata.dataValues.department_code = resData.code;
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                message: 'Update successfully',
+                reqContents: req.body,
+                responseContents: consultationsdata
+            });
+        } catch (ex) {
+            if (ex.error_type == "validationErr") {
                 return res.status(400).send({
                     code: httpStatus.BAD_REQUEST,
-                    message: ex
+                    message: ex.errors
                 });
             }
-        } else {
+            console.log('Exception happened', ex);
             return res.status(400).send({
-                code: httpStatus.UNAUTHORIZED,
-                message: emr_constants.NO_USER_ID
+                code: httpStatus.BAD_REQUEST,
+                message: ex
             });
         }
-
     };
 
     function getWidgetData(actCode, result, consultation_uuid, printFlag) {

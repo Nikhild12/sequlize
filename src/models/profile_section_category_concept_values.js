@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_defult: {
                 type: DataTypes.BOOLEAN,
-                // defaultValue: 1,
+                defaultValue: 0,
                 allowNull: false
             },
             created_date: 'created_date',
@@ -88,6 +88,10 @@ module.exports = (sequelize, DataTypes) => {
         profile_section_category_concept_values.belongsTo(models.profile_section_category_concepts, {
             foreignKey: 'profile_section_category_concept_uuid',
             as: 'profile_section_category_concepts'
+        });
+        profile_section_category_concept_values.hasMany(models.profile_section_category_concept_value_terms, {
+            foreignKey: 'profile_section_category_concept_values_uuid',
+            as: 'profile_section_category_concept_value_terms'
         });
     };
 
