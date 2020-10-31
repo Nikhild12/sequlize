@@ -427,7 +427,9 @@ const notesController = () => {
                         required: false,
                         attributes: ['uuid', 'code', 'name']
                     }]
-                }
+                }],
+                order: [
+                    [profileSectionCategoriesTbl, 'display_order', 'ASC']
                 ],
                 where: {
                     patient_uuid: patient_uuid,
