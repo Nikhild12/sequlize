@@ -613,7 +613,7 @@ const notesController = () => {
                 let presCheck = false;
 
 
-                if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
+                if (printObj.Lab || printObj.Radiology || printObj.Investigation) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
                             if (e.activity_uuid == 42 && labCheck == false) {
@@ -947,9 +947,9 @@ const notesController = () => {
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
-                // return res.send({
-                //     message: printObj
-                // });
+                return res.send({
+                    message: printObj
+                });
                 const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/reviewNotes.html"), {
                     headerObj: printObj
                 }), {
