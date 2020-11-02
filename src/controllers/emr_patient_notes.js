@@ -169,7 +169,7 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -384,50 +384,52 @@ const notesController = () => {
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValueTermsTbl,
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    required: false,
+                    include: [{
+                        model: conceptValueTermsTbl,
                         required: false,
-                        include: [{
-                            model: conceptValueTermsTbl,
-                            required: false,
-                            attributes: ['uuid', 'code', 'name']
-                        }]
-                    }
+                        attributes: ['uuid', 'code', 'name']
+                    }]
+                }],
+                order: [
+                    [profileSectionCategoriesTbl, 'display_order', 'ASC']
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -509,57 +511,57 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: vw_consultation_detailsTbl,
+                    model: vw_consultation_detailsTbl,
+                    required: false,
+                    attributes: {
+                        "exclude": ['id', 'createdAt', 'updatedAt']
+                    },
+                },
+                {
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    required: false,
+                    include: [{
+                        model: conceptValueTermsTbl,
                         required: false,
-                        attributes: {
-                            "exclude": ['id', 'createdAt', 'updatedAt']
-                        },
-                    },
-                    {
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValueTermsTbl,
-                        required: false,
-                        include: [{
-                            model: conceptValueTermsTbl,
-                            required: false,
-                            attributes: ['uuid', 'code', 'name']
-                        }]
-                    }
+                        attributes: ['uuid', 'code', 'name']
+                    }]
+                }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -819,11 +821,6 @@ const notesController = () => {
                                 eTermKey = emr_utility.indiaTz(eTermKey).format('DD-MMM-YYYY hh:mm A');
                             }
                         }
-
-                        console.log('sectionId::', sectionId);
-                        console.log('categoryId::', categoryId);
-
-
                         if (profSecCatConcept && profSecCatConcept.name) {
                             let {
                                 value_type_uuid,
@@ -841,10 +838,9 @@ const notesController = () => {
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                 };
                             }
-                            console.log('sampleObj::', sampleObj);
                             let {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
@@ -871,9 +867,7 @@ const notesController = () => {
                                             } else {
                                                 name = profCatValValueName ?
                                                     (' ' + profCatValValueName +
-                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
-
-                                                // ' (' + (((eTermKey == 'true') || (eTermKey == true) || (eTermKey == '1')) ? 'Yes' : (eTermKey == false ? 'No' : eTermKey))) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : eTermKey;
+                                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
                                             }
                                             var value = [...Object.values(check), name];
                                             delete categoryArray[len];
@@ -923,13 +917,8 @@ const notesController = () => {
                     }
                 }
 
-                console.log('sectionObj::', sectionObj);
-
                 printObj.sectionObj = sectionObj;
                 printObj.sectionResult = [...new Set(sample)];
-                // sectionObj[sectionId].categoryObj[categoryId].categoryArray.push(sample);
-                // sectionObj[sectionId].categoryObj[categoryId].categoryArray = [...new Set(sample)];
-                console.log('//////////////////', printObj);
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
