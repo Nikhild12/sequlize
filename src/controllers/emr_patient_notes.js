@@ -1078,7 +1078,7 @@ const notesController = () => {
                 throw {
                     errors: "consultation data not updated",
                     error_type: "validationErr"
-                }
+                };
             }
             if (postData.entry_status == emr_constants.ENTRY_STATUS) {
                 let options_two = {
@@ -1297,7 +1297,7 @@ const notesController = () => {
                 pv_encounter_uuid: result.encounter_uuid,
                 pv_consultation_uuid: consultation_uuid
             },
-            limit: 10,
+            // limit: 10,   //commented to fetch all vitals
             order: [
                 ['pv_created_date', 'DESC']
             ],
@@ -1313,7 +1313,7 @@ const notesController = () => {
     };
     const getChiefComplaintsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientCheifTbl.findAll({
-            limit: 10,
+            // limit: 10,
             order: [
                 ['pcc_created_date', 'DESC']
             ],
