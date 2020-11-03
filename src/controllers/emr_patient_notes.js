@@ -44,7 +44,8 @@ const {
     TERMBASED,
     RADIO,
     TEXTWITHDROPDOWN,
-    BTNWITHCMTS
+    BTNWITHCMTS,
+    BUTTONS
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 
@@ -169,7 +170,7 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no',],
+                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -179,7 +180,7 @@ const notesController = () => {
             let rowsData = getOPNotesByPId.rows;
             if (rowsData != null && rowsData.length > 0) {
                 /**Get department name */
-                let departmentIds = [...new Set(rowsData.map(e => e.profile.department_uuid))];
+                let departmentIds = [...new Set(rowsData.map(e => e.profile && e.profile.department_uuid ? e.profile.department_uuid : 0))];
                 const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
                 if (departmentsResponse) {
                     let data = [];
@@ -189,7 +190,7 @@ const notesController = () => {
                         data[e.name] = e.code;
                     });
                     rowsData.forEach(e => {
-                        const department_uuid = e.dataValues.profile.dataValues.department_uuid;
+                        const department_uuid = e.dataValues.profile ? e.dataValues.profile.dataValues.department_uuid : '';
                         e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
                     });
                 }
@@ -384,50 +385,51 @@ const notesController = () => {
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValueTermsTbl,
-                    required: false,
-                    include: [{
-                        model: conceptValueTermsTbl,
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
                         required: false,
-                        attributes: ['uuid', 'code', 'name']
-                    }]
-                }],
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
+                    }
+                ],
                 order: [
                     [profileSectionCategoriesTbl, 'display_order', 'ASC']
                 ],
@@ -511,57 +513,57 @@ const notesController = () => {
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
-                    },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValueTermsTbl,
-                    required: false,
-                    include: [{
-                        model: conceptValueTermsTbl,
+                        model: vw_consultation_detailsTbl,
                         required: false,
-                        attributes: ['uuid', 'code', 'name']
-                    }]
-                }
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
+                    },
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,
@@ -845,7 +847,7 @@ const notesController = () => {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length >= 0) {
-                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == BTNWITHCMTS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
+                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == BTNWITHCMTS) || (value_type_uuid == BUTTONS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func
@@ -1078,7 +1080,7 @@ const notesController = () => {
                 throw {
                     errors: "consultation data not updated",
                     error_type: "validationErr"
-                }
+                };
             }
             if (postData.entry_status == emr_constants.ENTRY_STATUS) {
                 let options_two = {
@@ -1297,7 +1299,7 @@ const notesController = () => {
                 pv_encounter_uuid: result.encounter_uuid,
                 pv_consultation_uuid: consultation_uuid
             },
-            limit: 10,
+            // limit: 10,   //commented to fetch all vitals
             order: [
                 ['pv_created_date', 'DESC']
             ],
@@ -1313,7 +1315,7 @@ const notesController = () => {
     };
     const getChiefComplaintsResult = async (result, consultation_uuid) => {
         const user_details = await vw_patientCheifTbl.findAll({
-            limit: 10,
+            // limit: 10,
             order: [
                 ['pcc_created_date', 'DESC']
             ],

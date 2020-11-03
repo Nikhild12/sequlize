@@ -9,7 +9,8 @@ module.exports = Object.freeze({
     DROPDOWN: 11,
     RADIO: 12,
     TEXTWITHDROPDOWN: 16,
-    BTNWITHCMTS: 15
+    BTNWITHCMTS: 15,
+    BUTTONS: 18
   },
   NO: "No",
   OR: "or",
