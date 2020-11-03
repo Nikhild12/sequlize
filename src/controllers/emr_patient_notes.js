@@ -615,7 +615,7 @@ const notesController = () => {
                 let presCheck = false;
 
 
-                if (printObj.Lab || printObj.Radiology || printObj.Invenstigation) {
+                if (printObj.Lab || printObj.Radiology || printObj.Investigation) {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
                             if (e.activity_uuid == 42 && labCheck == false) {
