@@ -10,6 +10,8 @@ const Op = Sequelize.Op;
 const emr_constants = require('../config/constants');
 
 const emr_utility = require('../services/utility.service');
+const appMasterData = require("../controllers/appMasterData");
+
 
 const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
@@ -51,34 +53,37 @@ const sectionsController = () => {
     };
 
     const _deleteSections = async (req, res) => {
-        const { user_uuid } = req.headers;
-        const { uuid } = req.body;
-        if (user_uuid && uuid) {
-            const updatedSectionsData = { status: 0, is_active: 0, modified_by: user_uuid, modified_date: new Date() };
-            try {
-                const data = await sectionsTbl.update(updatedSectionsData, { where: { uuid: uuid } }, { returning: true });
-                if (data) {
-                    return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
-                } else {
-                    return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
-
+        try {
+            const { user_uuid } = req.headers;
+            const { uuid } = req.body;
+            if (!uuid) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
+            }
+            let deleteQuery = {
+                status: 0,
+                is_active: 0,
+                modified_date: new Date(),
+                modified_by: user_uuid,
+                where: {
+                    uuid: uuid
                 }
-
+            };
+            const data = await sectionsTbl.update(deleteQuery);
+            if (data) {
+                return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
+            } else {
+                return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
             }
-            catch (ex) {
-                console.log('Exception happened', ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-
-            }
-
-        } else {
-            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
-
+        }
+        catch (ex) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
 
     const _getSectionsById = async (req, res) => {
         try {
+            let Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization;
+            const { user_uuid } = req.headers;
             const { uuid } = req.body;
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
@@ -99,6 +104,24 @@ const sectionsController = () => {
                 ]
             }
             const sectionsData = await sectionsTbl.findOne(findQuery);
+
+            if (sectionsData) {
+                const usersResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, [sectionsData.created_by, sectionsData.modified_by]);
+                for (let e of usersResponse.responseContents) {
+                    if (e.uuid == sectionsData.created_by) {
+                        sectionsData.dataValues.created_by_first_name = e.first_name;
+                        sectionsData.dataValues.created_by_last_name = e.last_name;
+                        sectionsData.dataValues.created_by_middle_name = e.middle_name;
+                        sectionsData.dataValues.created_by_user_name = e.user_name;
+                    }
+                    if(e.uuid == sectionsData.modified_by){
+                        sectionsData.dataValues.modified_by_first_name = e.first_name;
+                        sectionsData.dataValues.modified_by_last_name = e.last_name;
+                        sectionsData.dataValues.modified_by_middle_name = e.middle_name;
+                        sectionsData.dataValues.modified_by_user_name = e.user_name;
+                    }
+                }
+            }
             return res.status(200).send({ code: httpStatus.OK, responseContent: sectionsData });
         }
         catch (ex) {

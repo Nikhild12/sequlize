@@ -58,6 +58,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
+            visible_institution_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            visible_all_institutions_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             visittype_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
