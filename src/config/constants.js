@@ -10,7 +10,7 @@ module.exports = Object.freeze({
     RADIO: 12,
     BTNWITHCMTS: 15,
     TEXTWITHDROPDOWN: 16,
-    BUTTONWITHDROPDOWN: 17,
+    NUMBERWITHDROPDOWN: 17,
     BUTTONS: 18
   },
   NO: "No",
