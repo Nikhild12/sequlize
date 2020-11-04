@@ -205,7 +205,84 @@ const sectionsController = () => {
                     }
                 ],
                 where: { status: 1 }
+            };
+            if (postData.search && /\S/.test(postData.search)) {
+                findQuery.where = Object.assign(findQuery.where, {
+                    [Op.or]: [
+                        {
+                            name: {
+                                [Op.like]: "%" + postData.search + "%"
+                            }
+                        },
+                        {
+                            code: {
+                                [Op.like]: "%" + postData.search + "%"
+                            }
+                        },
+                        {
+                            "$section_note_type.name$": {
+                                [Op.like]: "%" + postData.search + "%"
+
+                            }
+                        },
+                        {
+                            "$section_type.name$": {
+                                [Op.like]: "%" + postData.search + "%"
+
+                            }
+                        }
+                    ]
+                });
             }
+
+            if (postData.codeOrName && /\S/.test(postData.codeOrName)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        [Op.and]: [{
+                            [Op.or]: [
+                                {
+                                    name: {
+                                        [Op.like]: "%" + postData.codeOrName + "%"
+                                    }
+                                },
+                                {
+                                    code: {
+                                        [Op.like]: "%" + postData.codeOrName + "%"
+                                    }
+                                }
+                            ]
+                        }]
+                    });
+                }
+                else {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        [Op.or]: [
+                            {
+                                name: {
+                                    [Op.like]: "%" + postData.codeOrName + "%"
+                                }
+                            },
+                            {
+                                code: {
+                                    [Op.like]: "%" + postData.codeOrName + "%"
+                                }
+                            }
+                        ]
+                    });
+                }
+            }
+
+            let status;
+            if (postData.status == 0 || postData.status == "0") {
+                status = 0;
+            }
+            else {
+                status = 1;
+            }
+            findQuery.where = Object.assign(findQuery.where, {
+                is_active: status
+            });
+
             const sectionsData = await sectionsTbl.findAndCountAll(findQuery);
             return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData.rows, totalRecords: sectionsData.count })
         } catch (ex) {
