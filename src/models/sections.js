@@ -112,7 +112,12 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ["uuid"]
                 }
-            ]
+            ],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
 
@@ -120,6 +125,12 @@ module.exports = (sequelize, DataTypes) => {
         sections.hasMany(models.profile_sections, {
             foreignKey: 'section_uuid',
             as: 'profile_sections'
+        });
+        sections.belongsTo(models.section_note_types, {
+            foreignKey: 'section_note_type_uuid'
+        });
+        sections.belongsTo(models.section_types, {
+            foreignKey: 'section_type_uuid'
         });
     };
 

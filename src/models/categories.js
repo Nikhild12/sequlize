@@ -49,26 +49,22 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
-            category_group_uuid: {
-
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('category_group_uuid')
-                    }
-
-                }
-
-
-            },
+            // category_group_uuid: {
+            //     type: DataTypes.INTEGER,
+            //     allowNull: false,
+            //     validate: {
+            //         notNull: {
+            //             msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
+            //         },
+            //         notEmpty: {
+            //             msg: emr_constants.GetpleaseProvideMsg('category_group_uuid')
+            //         },
+            //         min: {
+            //             args: [1],
+            //             msg: emr_constants.GetZeroValidationMessage('category_group_uuid')
+            //         }
+            //     }
+            // },
             display_order: {
 
                 type: DataTypes.INTEGER,
@@ -115,7 +111,12 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ["uuid"]
                 }
-            ]
+            ],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
 
@@ -123,6 +124,9 @@ module.exports = (sequelize, DataTypes) => {
         categories.hasMany(models.profile_section_categories, {
             foreignKey: 'category_uuid',
             as: 'profile_section_categories'
+        });
+        categories.belongsTo(models.category_type_master, {
+            foreignKey: 'category_type_uuid'
         });
     };
 

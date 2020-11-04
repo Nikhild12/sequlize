@@ -12,6 +12,8 @@ const emr_constants = require('../config/constants');
 const emr_utility = require('../services/utility.service');
 
 const sectionsTbl = sequelizeDb.sections;
+const sectionNoteTypesTbl = sequelizeDb.section_note_types;
+const sectionTypesTbl = sequelizeDb.section_types;
 
 const sectionsController = () => {
 
@@ -76,18 +78,28 @@ const sectionsController = () => {
     };
 
     const _getSectionsById = async (req, res) => {
-
-        const { uuid } = req.body;
-        const { user_uuid } = req.headers;
-
         try {
-
-            if (user_uuid && uuid) {
-                const sectionsData = await sectionsTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
-                return res.status(200).send({ code: httpStatus.OK, responseContent: sectionsData });
-            } else {
-                return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+            const { uuid } = req.body;
+            if (!uuid) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            let findQuery = {
+                where: { uuid: uuid },
+                include: [
+                    {
+                        model: sectionNoteTypesTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    },
+                    {
+                        model: sectionTypesTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    }
+                ]
+            }
+            const sectionsData = await sectionsTbl.findOne(findQuery);
+            return res.status(200).send({ code: httpStatus.OK, responseContent: sectionsData });
         }
         catch (ex) {
             console.log('Exception happened', ex);
@@ -97,29 +109,25 @@ const sectionsController = () => {
 
     const _updateSections = async (req, res) => {
         try {
-            const { user_uuid } = req.headers;
             let { uuid } = req.body;
-            let postdata = req.body;
-            let selector = {
-                where: { uuid: uuid, status: 1, is_active: 1 }
-            };
-            if (user_uuid && uuid) {
-                const data = await sectionsTbl.update(postdata, selector, { returning: true });
-                if (data) {
-                    return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
-
-                }
-
-                else {
-                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-                }
+            if (!uuid) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
-
+            let postdata = req.body;
+            delete postdata.uuid;
+            let selector = {
+                where: { uuid: uuid, status: 1 }
+            };
+            const data = await sectionsTbl.update(postdata, selector, { returning: true });
+            if (data) {
+                return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
+            }
+            else {
+                return res.status(400).send({ code: httpStatus[400], message: "Not updated" });
+            }
         }
         catch (ex) {
-            console.log('Exception happened', ex);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
-
         }
     };
 
@@ -127,9 +135,7 @@ const sectionsController = () => {
     const _getAllSections = async (req, res) => {
 
         const { user_uuid } = req.headers;
-        const { uuid } = req.body;
         try {
-
             if (user_uuid) {
                 const sectionsData = await sectionsTbl.findAll({
                     // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
@@ -148,25 +154,61 @@ const sectionsController = () => {
         }
     };
     const _getAllSectionsPost = async (req, res) => {
-
-        const { user_uuid } = req.headers;
-        const { uuid } = req.body;
         try {
-
-            if (user_uuid) {
-                const sectionsData = await sectionsTbl.findAll({
-                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
-                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
-                    where: { status: 1, is_active: 1 },
-                });
-                return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData });
+            const postData = req.body;
+            let pageNo = 0;
+            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            let sortArr = ['modified_date', 'DESC'];
+            if (postData.pageNo) {
+                let temp = parseInt(postData.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
             }
-            else {
-                return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (postData.sortField) {
+                fieldSplitArr = postData.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = postData.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
             }
+            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = postData.sortOrder;
+                } else {
+                    sortArr.push(postData.sortOrder);
+                }
+            }
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    sortArr
+                ],
+                include: [
+                    {
+                        model: sectionNoteTypesTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    },
+                    {
+                        model: sectionTypesTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    }
+                ],
+                where: { status: 1 }
+            }
+            const sectionsData = await sectionsTbl.findAndCountAll(findQuery);
+            return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData.rows, totalRecords: sectionsData.count })
         } catch (ex) {
-
-            console.log(ex.message);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
     };
@@ -179,9 +221,7 @@ const sectionsController = () => {
 
             if (user_uuid) {
                 const sectionsData = await sectionsTbl.findAll({
-                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
-                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
-                    where: { status: 1, is_active: 1 },
+                    where: { status: 1, is_active: 1 }
                 });
                 return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData });
             }
@@ -201,7 +241,7 @@ const sectionsController = () => {
         getSectionsById: _getSectionsById,
         getAllSections: _getAllSections,
         getAllSectionsPost: _getAllSectionsPost,
-        getSections:_getAllSectionsListMaster
+        getSections: _getAllSectionsListMaster
 
     };
 };

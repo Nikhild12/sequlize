@@ -12,6 +12,7 @@ const emr_constants = require('../config/constants');
 const emr_utility = require('../services/utility.service');
 
 const categoriesTbl = sequelizeDb.categories;
+const categoryTypeMasterTbl = sequelizeDb.category_type_master;
 
 const categoriesController = () => {
 
@@ -76,45 +77,46 @@ const categoriesController = () => {
     };
 
     const _getCategoriesById = async (req, res) => {
-
-        const { uuid } = req.body;
-        const { user_uuid } = req.headers;
-
         try {
-
-            if (user_uuid && uuid) {
-                const categoriesData = await categoriesTbl.findOne({ where: { uuid: uuid, created_by: user_uuid } }, { returning: true });
-                return res.status(200).send({ code: httpStatus.OK, responseContent: categoriesData });
-            } else {
-                return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+            let { uuid } = req.body;
+            if (!uuid) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            const categoriesData = await categoriesTbl.findOne({
+                include: [
+                    {
+                        model: categoryTypeMasterTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    }
+                ],
+                where: { uuid: uuid }
+            });
+            return res.status(200).send({ code: httpStatus.OK, responseContent: categoriesData });
         }
         catch (ex) {
-            console.log('Exception happened', ex);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
         }
     };
 
     const _updateCategories = async (req, res) => {
         try {
-            const { user_uuid } = req.headers;
             let { uuid } = req.body;
-            let postdata = req.body;
-            let selector = {
-                where: { uuid: uuid, status: 1, is_active: 1 }
-            };
-            if (user_uuid && uuid) {
-                const data = await categoriesTbl.update(postdata, selector, { returning: true });
-                if (data) {
-                    return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
-
-                }
-
-                else {
-                    return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
-                }
+            if (!uuid) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
-
+            let postdata = req.body;
+            delete postdata.uuid;
+            let selector = {
+                where: { uuid: uuid, status: 1 }
+            };
+            const data = await categoriesTbl.update(postdata, selector, { returning: true });
+            if (data) {
+                return res.status(200).send({ code: httpStatus.OK, message: 'Updated Successfully', responseContents: data });
+            }
+            else {
+                return res.status(400).send({ code: httpStatus[400], message: "Not Updated" });
+            }
         }
         catch (ex) {
             console.log('Exception happened', ex);
@@ -149,25 +151,56 @@ const categoriesController = () => {
         }
     };
     const _getAllCategoriesPost = async (req, res) => {
-
-        const { user_uuid } = req.headers;
-        const { uuid } = req.body;
         try {
-
-            if (user_uuid) {
-                const categoriesData = await categoriesTbl.findAll({
-                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
-                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
-                    where: { status: 1, is_active: 1 },
-
-                });
-                return res.status(200).send({ code: httpStatus.OK, message: 'Fetched categories Details successfully', responseContents: categoriesData });
+            const postData = req.body;
+            let pageNo = 0;
+            const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
+            let sortArr = ['modified_date', 'DESC'];
+            if (postData.pageNo) {
+                let temp = parseInt(postData.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
             }
-            else {
-                return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (postData.sortField) {
+                fieldSplitArr = postData.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = postData.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
             }
+            if (postData.sortOrder && ((postData.sortOrder.toLowerCase() == 'asc') || (postData.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = postData.sortOrder;
+                } else {
+                    sortArr.push(postData.sortOrder);
+                }
+            }
+            let findQuery = {
+                offset: offset,
+                limit: itemsPerPage,
+                order: [
+                    sortArr
+                ],
+                include: [
+                    {
+                        model: categoryTypeMasterTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    }
+                ],
+                where: { status: 1 }
+            }
+            const categoriesData = await categoriesTbl.findAndCountAll(findQuery);
+            return res.status(200).send({ code: httpStatus.OK, message: 'Fetched categories Details successfully', responseContents: categoriesData.rows, totalRecords: categoriesData.count });
         } catch (ex) {
-
             console.log(ex.message);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
