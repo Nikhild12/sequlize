@@ -46,7 +46,8 @@ const {
     TEXTWITHDROPDOWN,
     NUMBERWITHDROPDOWN,
     BTNWITHCMTS,
-    BUTTONS
+    BUTTONS,
+    CHECKBOXWITHTEXT
 } = emr_constants.VALUE_TYPES;
 const appMasterData = require("../controllers/appMasterData");
 
@@ -171,7 +172,7 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
+                // attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -288,7 +289,14 @@ const notesController = () => {
             let findQuery = {
                 where: {
                     patient_uuid: patient_uuid
-                }
+                },
+                include: [
+                    {
+                        model: consultationsTbl,
+                        required: false,
+                        attributes: ['uuid', 'visible_user', 'visible_dept', 'visible_institution', 'visible_all_institutions']
+                    }
+                ]
             }
             if (consultation_uuid && /\S/.test(consultation_uuid)) {
                 Object.assign(findQuery.where, {
@@ -385,7 +393,8 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: profilesTbl,
                         required: false
                     },
@@ -513,7 +522,8 @@ const notesController = () => {
             const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
@@ -848,7 +858,7 @@ const notesController = () => {
                                 categoryArray
                             } = sectionObj[sectionId].categoryObj[categoryId];
                             if (categoryArray.length >= 0) {
-                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == NUMBERWITHDROPDOWN) || (value_type_uuid == BTNWITHCMTS) || (value_type_uuid == BUTTONS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
+                                if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == NUMBERWITHDROPDOWN) || (value_type_uuid == CHECKBOXWITHTEXT) || (value_type_uuid == BTNWITHCMTS) || (value_type_uuid == BUTTONS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
                                     let check = {};
                                     // eslint-disable-next-line no-loop-func
