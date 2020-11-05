@@ -59,16 +59,18 @@ const sectionsController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
-            let deleteQuery = {
-                status: 0,
-                is_active: 0,
-                modified_date: new Date(),
-                modified_by: user_uuid,
-                where: {
-                    uuid: uuid
-                }
-            };
-            const data = await sectionsTbl.update(deleteQuery);
+            const data = await sectionsTbl.update(
+                {
+                    status: 0,
+                    is_active: 0,
+                    modified_date: new Date(),
+                    modified_by: user_uuid
+                },
+                {
+                    where: {
+                        uuid: uuid
+                    }
+                });
             if (data) {
                 return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
             } else {
@@ -114,7 +116,7 @@ const sectionsController = () => {
                         sectionsData.dataValues.created_by_middle_name = e.middle_name;
                         sectionsData.dataValues.created_by_user_name = e.user_name;
                     }
-                    if(e.uuid == sectionsData.modified_by){
+                    if (e.uuid == sectionsData.modified_by) {
                         sectionsData.dataValues.modified_by_first_name = e.first_name;
                         sectionsData.dataValues.modified_by_last_name = e.last_name;
                         sectionsData.dataValues.modified_by_middle_name = e.middle_name;
@@ -239,6 +241,11 @@ const sectionsController = () => {
                         },
                         {
                             code: {
+                                [Op.like]: "%" + postData.search + "%"
+                            }
+                        },
+                        {
+                            description: {
                                 [Op.like]: "%" + postData.search + "%"
                             }
                         },

@@ -58,16 +58,19 @@ const categoriesController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
-            let deleteQuery = {
-                status: 0,
-                is_active: 0,
-                modified_date: new Date(),
-                modified_by: user_uuid,
-                where: {
-                    uuid: uuid
-                }
-            };
-            const data = await categoriesTbl.update(deleteQuery);
+
+            const data = await categoriesTbl.update(
+                {
+                    status: 0,
+                    is_active: 0,
+                    modified_date: new Date(),
+                    modified_by: user_uuid
+                },
+                {
+                    where: {
+                        uuid: uuid
+                    }
+                });
             if (data) {
                 return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
             } else {
@@ -232,6 +235,11 @@ const categoriesController = () => {
                         },
                         {
                             code: {
+                                [Op.like]: "%" + postData.search + "%"
+                            }
+                        },
+                        {
+                            description: {
                                 [Op.like]: "%" + postData.search + "%"
                             }
                         },

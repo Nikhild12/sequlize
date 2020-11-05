@@ -5,49 +5,26 @@ module.exports = (sequelize, DataTypes) => {
         "categories",
         {
             uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
-
             },
             code: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             name: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             description: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             category_type_uuid: {
-
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_type_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('category_type_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('category_type_uuid')
-                    }
-
-                }
-
+                defaultValue: 0
             },
             // category_group_uuid: {
             //     type: DataTypes.INTEGER,
@@ -66,39 +43,27 @@ module.exports = (sequelize, DataTypes) => {
             //     }
             // },
             display_order: {
-
                 type: DataTypes.INTEGER,
                 allowNull: true
-
             },
             is_active: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             status: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             revision: {
-
                 type: DataTypes.INTEGER
-
             },
             created_by: {
-
                 type: DataTypes.INTEGER
-
             },
             modified_by: {
-
                 type: DataTypes.INTEGER
-
             },
             created_date: 'created_date',
             modified_date: 'modified_date',

@@ -13,26 +13,12 @@ module.exports = (sequelize, DataTypes) => {
             section_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_type_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_type_uuid')
-                    }
-                }
+                defaultValue : 0
             },
             section_note_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_note_type_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('section_note_type_uuid')
-                    }
-                }
+                defaultValue : 0
             },
             name: {
                 type: DataTypes.STRING,
