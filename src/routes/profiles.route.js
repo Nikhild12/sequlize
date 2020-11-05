@@ -19,5 +19,7 @@ profilesRoute.route('/getAllProfileTypepost').post(profilesController.getAllProf
 profilesRoute.route('/getProfilesDefault').get(profilesController.getDefaultProfiles);
 profilesRoute.route('/setProfilesDefault').post(profilesController.setDefaultProfiles);
 profilesRoute.route('/get-notes-by-type').get(profilesController.getNotesByType);
+profilesRoute.route('/get-profile-section-by-profile-id').get(profilesController.getProfileSectionsByProfileId);
+profilesRoute.route('/get-profile-section-categories-by-profile-section-id').get(profilesController.getProfileSectionsCategoriesByProfileSectionId);
 
 module.exports = profilesRoute;

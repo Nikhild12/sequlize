@@ -481,11 +481,6 @@ const profilesController = () => {
     }
   };
 
-  /**
-  * Get profiles By Id,name and department
-  @param {} req
-  @param {} res
-  */
   const _getProfileById = async (req, res) => {
     try {
       const {
@@ -654,13 +649,6 @@ const profilesController = () => {
 
     }
   };
-
-  /**
-   * update profiles
-   * @param {*} req 
-   * @param {*} res 
-   */
-
   const _updateProfiles = async (req, res) => {
     const {
       user_uuid
@@ -1590,14 +1578,204 @@ const profilesController = () => {
     }
   };
 
-  // const _getProfileSections = async (req, res) => {
-  //   try {
+  const _getProfileSectionsByProfileId = async (req, res) => {
+    try {
+      const {
+        user_uuid
+      } = req.headers;
+      const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+      const {
+        profile_uuid
+      } = req.query;
+      let findQuery = {
+        attributes: ['uuid', 'profile_code', 'profile_name', 'department_uuid', 'profile_description', 'department_uuid', 'profile_type_uuid', 'is_active', 'created_by', 'modified_by', 'created_date', 'modified_date'],
+        where: {
+          uuid: profile_uuid,
+          is_active: 1,
+          status: 1
+        },
+        include: [
+          {
+            model: profileSectionsTbl,
+            as: 'profile_sections',
+            attributes: ['uuid', 'profile_uuid', 'section_uuid', 'activity_uuid', 'display_order'],
+            where: {
+              is_active: 1,
+              status: 1
+            },
+            required: false,
+            include: [
+              {
+                model: sectionsTbl,
+                as: 'sections',
+                attributes: ['uuid', 'code', 'name', 'description', 'sref', 'section_type_uuid', 'section_note_type_uuid', 'display_order'],
+                where: {
+                  is_active: 1,
+                  status: 1
+                },
+                required: false
+              }
+            ]
+          },
+          {
+            model: profileTypeTbl,
+            required: false,
+            attributes: ['uuid', 'code', 'name'],
+          }
+        ]
+      };
+      const profileData = await profilesTbl.findAll(findQuery);
+      /**Get department name */
+      let departmentIds = [...new Set(profileData.map(e => e.department_uuid))];
+      const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
+      if (departmentsResponse) {
+        let data = [];
+        const resData = departmentsResponse.responseContent.rows;
+        resData.forEach(e => {
+          data[e.uuid] = e.name;
+          data[e.name] = e.code;
+        });
+        profileData.forEach(e => {
+          const department_uuid = e.dataValues.department_uuid;
+          e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
+        });
+      }
+      /**Get user name */
+      let doctorIds = [...new Set(profileData.map(e => e.created_by))];
+      let modifiedIds = [...new Set(profileData.map(e => e.modified_by))];
+      let userIds = [...doctorIds, ...modifiedIds];
+      const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, userIds);
+      if (doctorResponse && doctorResponse.responseContents) {
+        let newData = [];
+        const resData = doctorResponse.responseContents;
+        resData.forEach(e => {
+          let last_name = (e.last_name ? e.last_name : '');
+          newData[e.uuid] = e.first_name + '' + last_name;
+        });
+        profileData.forEach(e => {
+          const {
+            created_by,
+            modified_by,
+          } = e.dataValues;
+          e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
+          e.dataValues.modified_user_name = (newData[modified_by] ? newData[modified_by] : null);
+        });
+      }
+      return res.status(httpStatus.OK).send({
+        code: httpStatus.OK,
+        message: 'get Success',
+        responseContents: profileData
+      });
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+        return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  }
+  const _getProfileSectionsCategoriesByProfileSectionId = async (req, res) => {
+    try {
+      const {
+        user_uuid
+      } = req.headers;
+      const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+      const {
+        profile_section_uuid
+      } = req.query;
 
-  //   }
-  //   catch {
+      let findQuery = {
+        attributes: ['uuid', 'profile_section_uuid', 'category_uuid', 'display_order'],
+        where: {
+          profile_section_uuid: profile_section_uuid,
+          is_active: 1,
+          status: 1
+        },
+        include: [
+          {
+            model: categoriesTbl,
+            as: 'categories',
+            attributes: ['uuid', 'code', 'name', 'category_type_uuid', 'category_group_uuid', 'description'],
+            where: {
+              is_active: 1,
+              status: 1
+            },
+            required: false
+          },
+          {
+            model: profileSectionCategoryConceptsTbl,
+            as: 'profile_section_category_concepts',
+            attributes: ['uuid', 'code', 'name', 'profile_section_category_uuid', 'value_type_uuid', 'description', 'is_mandatory', 'display_order', 'is_multiple'],
+            where: {
+              is_active: 1
+            },
+            required: false,
+            include: [
+              {
+                model: valueTypesTbl,
+                as: 'value_types',
+                attributes: ['uuid', 'code', 'name', 'color', 'language', 'display_order', 'Is_default'],
+                where: {
+                  is_active: 1,
+                  status: 1
+                },
+                required: false
+              },
+              {
+                model: profileSectionCategoryConceptValuesTbl,
+                as: 'profile_section_category_concept_values',
+                attributes: ['uuid', 'profile_section_category_concept_uuid', 'value_code', 'value_name', 'is_defult', 'display_order'],
+                where: {
+                  is_active: 1,
+                  status: 1
+                },
+                required: false,
+                include: [
+                  {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    as: "profile_section_category_concept_value_terms",
+                    attributes: ['uuid', 'profile_section_category_concept_values_uuid', 'concept_value_terms_uuid', 'display_order', 'is_default', 'is_active'],
+                    required: false,
+                    include: [
+                      { model: conceptValueTermsTbl, required: false, attributes: ['uuid', 'code', 'name'] }
+                    ]
+                  }
+                ]
+              }]
+          }],
+        order: [
+          [profileSectionCategoryConceptsTbl, 'uuid', 'ASC']
+        ]
+      };
 
-  //   }
-  // }
+      const profileSectionCategoriesData = await profileSectionCategoriesTbl.findAll(findQuery);
+      return res.status(httpStatus.OK).send({
+        code: httpStatus.OK,
+        message: 'get Success',
+        responseContents: profileSectionCategoriesData
+      });
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+        return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  }
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
@@ -1608,7 +1786,9 @@ const profilesController = () => {
     getAllProfileNotesTypes: _getAllProfileNotesTypes,
     getDefaultProfiles: _getDefaultProfiles,
     setDefaultProfiles: _setDefaultProfiles,
-    getNotesByType: _getNotesByType
+    getNotesByType: _getNotesByType,
+    getProfileSectionsByProfileId: _getProfileSectionsByProfileId,
+    getProfileSectionsCategoriesByProfileSectionId: _getProfileSectionsCategoriesByProfileSectionId
   };
 };
 
