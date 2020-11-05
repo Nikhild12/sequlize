@@ -167,7 +167,6 @@ const categoriesController = () => {
             return res.status(200).send({ code: httpStatus.OK, responseContent: categoriesData });
         }
         catch (ex) {
-            console.log('============+>>>', ex);
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
         }
     };
@@ -179,6 +178,22 @@ const categoriesController = () => {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
             let postdata = req.body;
+            let categoriesOutput = await categoriesTbl.findAll({
+                where: {
+                    name: postdata.name,
+                    status: 1,
+                    uuid: {
+                        [Op.notIn]: [uuid]
+                    }
+                }
+            });
+            if (categoriesOutput.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "name already exits"
+                    });
+            }
             delete postdata.uuid;
             let selector = {
                 where: { uuid: uuid, status: 1 }
