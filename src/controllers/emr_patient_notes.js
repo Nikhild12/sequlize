@@ -289,7 +289,14 @@ const notesController = () => {
             let findQuery = {
                 where: {
                     patient_uuid: patient_uuid
-                }
+                },
+                include: [
+                    {
+                        model: consultationsTbl,
+                        required: false,
+                        attributes: ['uuid', 'visible_user', 'visible_dept', 'visible_institution', 'visible_all_institutions']
+                    }
+                ]
             }
             if (consultation_uuid && /\S/.test(consultation_uuid)) {
                 Object.assign(findQuery.where, {
@@ -386,7 +393,8 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: profilesTbl,
                         required: false
                     },
@@ -514,7 +522,8 @@ const notesController = () => {
             const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
             // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
