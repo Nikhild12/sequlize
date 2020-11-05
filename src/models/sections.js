@@ -13,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
             section_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue : 0
+                defaultValue: 0
             },
             section_note_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue : 0
+                defaultValue: 0
             },
             name: {
                 type: DataTypes.STRING,
@@ -41,18 +41,16 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             },
             is_active: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 1,
-            allowNull: false
+                type: DataTypes.BOOLEAN
             },
             status: {
                 type: DataTypes.BOOLEAN,
+                allowNull: false,
                 defaultValue: 1,
-                allowNull: false
             },
             revision: {
                 type: DataTypes.INTEGER,
-                defaultValue: 1,
+                defaultValue: 0,
                 allowNull: false
             },
             created_by: {

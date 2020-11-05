@@ -48,8 +48,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
-                allowNull: false
             },
             status: {
                 type: DataTypes.BOOLEAN,
@@ -57,7 +55,8 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             },
             revision: {
-                type: DataTypes.INTEGER
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
             },
             created_by: {
                 type: DataTypes.INTEGER

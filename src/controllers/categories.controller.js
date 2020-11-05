@@ -8,6 +8,7 @@ const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
+const { validate } = require('../config/validate');
 
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
@@ -26,27 +27,72 @@ const categoriesController = () => {
     * @param {*} res 
     */
     const _addCategories = async (req, res) => {
+        try {
 
-        const { user_uuid } = req.headers;
-        let categories = req.body;
-        if (user_uuid) {
-
-            categories.is_active = categories.status = true;
-            categories.created_by = categories.modified_by = user_uuid;
-            categories.created_date = categories.modified_date = new Date();
-            categories.revision = 1;
-
-            try {
-                await categoriesTbl.create(categories, { returing: true });
-                return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: categories });
-
+            const { user_uuid } = req.headers;
+            let categories = req.body;
+            const body_validation_result = validate(categories, ['code', 'name']);
+            if (!body_validation_result.status) {
+                throw new Error(body_validation_result.errors);
             }
-            catch (ex) {
-                console.log('Exception happened', ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+
+            let categoriesOutput = await categoriesTbl.findAll({
+                where: {
+                    [Op.or]: [{ code: categories.code }, { name: categories.name }],
+                    status: 1
+                }
+            });
+            let duplicate_code = [], duplicate_name = [], duplicate = [];
+            for (let e of categoriesOutput) {
+                if (e.code == categories.code && e.name != categories.name) {
+                    duplicate_code.push(e.uuid);
+                }
+                if (e.name == categories.name && e.code != categories.code) {
+                    duplicate_name.push(e.uuid)
+                }
+                if (e.name == categories.name && e.code == categories.code) {
+                    duplicate.push(e.uuid);
+                }
             }
-        } else {
-            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+            if (duplicate.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "name and code are already exits"
+                    });
+            }
+            if (duplicate_name.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "name already exits"
+                    });
+            }
+            if (duplicate_code.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "code already exits"
+                    });
+            }
+
+            categories.created_by = user_uuid;
+            const categoriesResponse = await categoriesTbl.create(categories);
+            return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: categoriesResponse });
+
+        }
+        catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    status: "error",
+                    msg: errorMsg
+                });
         }
 
     };

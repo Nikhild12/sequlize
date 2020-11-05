@@ -11,6 +11,7 @@ const emr_constants = require('../config/constants');
 
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
+const { validate } = require('../config/validate');
 
 
 const sectionsTbl = sequelizeDb.sections;
@@ -27,27 +28,69 @@ const sectionsController = () => {
     * @param {*} res 
     */
     const _addSections = async (req, res) => {
-
-        const { user_uuid } = req.headers;
-        let sections = req.body;
-        if (user_uuid) {
-
-            sections.is_active = sections.status = true;
-            sections.created_by = sections.modified_by = user_uuid;
-            sections.created_date = sections.modified_date = new Date();
-            sections.revision = 1;
-
-            try {
-                await sectionsTbl.create(sections, { returing: true });
-                return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: sections });
-
+        try {
+            const { user_uuid } = req.headers;
+            let sections = req.body;
+            const body_validation_result = validate(sections, ['code', 'name']);
+            if (!body_validation_result.status) {
+                throw new Error(body_validation_result.errors);
             }
-            catch (ex) {
-                console.log('Exception happened', ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+
+            let sectionOutput = await sectionsTbl.findAndCountAll({
+                where: {
+                    [Op.or]: [{ code: sections.code }, { name: sections.name }],
+                    status: 1
+                }
+            });
+            let duplicate_code = [], duplicate_name = [], duplicate = [];
+            for (let e of sectionOutput.rows) {
+                if (e.code == sections.code && e.name != sections.name) {
+                    duplicate_code.push(e.uuid);
+                }
+                if (e.name == sections.name && e.code != sections.code) {
+                    duplicate_name.push(e.uuid)
+                }
+                if (e.name == sections.name && e.code == sections.code) {
+                    duplicate.push(e.uuid);
+                }
             }
-        } else {
-            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+            if (duplicate.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "name and code are already exits"
+                    });
+            }
+            if (duplicate_name.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "name already exits"
+                    });
+            }
+            if (duplicate_code.length > 0) {
+                return res
+                    .json({
+                        statusCode: 1062,
+                        msg: "code already exits"
+                    });
+            }
+            sections.created_by = user_uuid;
+            const sectionResponse = await sectionsTbl.create(sections);
+            return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: sectionResponse });
+        }
+        catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    status: "error",
+                    msg: errorMsg
+                });
         }
 
     };
