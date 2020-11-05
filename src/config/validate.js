@@ -1,9 +1,8 @@
-const validate = (postData,must_be_present) => {
+const validate = (postData, must_be_present) => {
     let errors = "";
     for (let ele of must_be_present) {
         if (!postData[ele]) {
             errors += errors ? ", " + ele : ele;
-            //console.log("Not Present:", errors);
         }
     }
     return send(errors);
@@ -26,10 +25,10 @@ const send = (errors) => {
     //console.log(errors);
     if (errors) {
         errors += " Must Be Provided";
-        return {status:false,errors};
+        return { status: false, errors };
     } else {
-        return {status:true};
+        return { status: true };
     }
 };
 
-module.exports = {validate,validate_header,send};
+module.exports = { validate, validate_header, send };

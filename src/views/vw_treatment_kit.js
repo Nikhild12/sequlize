@@ -66,6 +66,14 @@ module.exports = (sequelize, DataTypes) => {
             d_name: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
+            },
+            ti_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            ti_name: {
+                type: DataTypes.STRING(500),
+                allowNull: true,
             }
         },
         {

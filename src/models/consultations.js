@@ -50,13 +50,21 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            visible_user_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: true
+            visible_user: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
             },
-            visible_dept_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
+            visible_dept: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
+            },
+            visible_institution: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
+            },
+            visible_all_institutions: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
             },
             visittype_uuid: {
                 type: DataTypes.INTEGER,

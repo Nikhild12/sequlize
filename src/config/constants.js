@@ -11,7 +11,8 @@ module.exports = Object.freeze({
     BTNWITHCMTS: 15,
     TEXTWITHDROPDOWN: 16,
     NUMBERWITHDROPDOWN: 17,
-    BUTTONS: 18
+    BUTTONS: 18,
+    CHECKBOXWITHTEXT: 19
   },
   NO: "No",
   OR: "or",
