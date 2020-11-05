@@ -1590,6 +1590,14 @@ const profilesController = () => {
     }
   };
 
+  // const _getProfileSections = async (req, res) => {
+  //   try {
+
+  //   }
+  //   catch {
+
+  //   }
+  // }
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,

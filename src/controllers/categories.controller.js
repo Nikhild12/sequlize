@@ -236,6 +236,11 @@ const categoriesController = () => {
                             }
                         },
                         {
+                            description: {
+                                [Op.like]: "%" + postData.search + "%"
+                            }
+                        },
+                        {
                             "$category_type_master.name$": {
                                 [Op.like]: "%" + postData.search + "%"
 
