@@ -18,6 +18,7 @@ const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const categoriesTbl = sequelizeDb.categories;
 const categoryTypeMasterTbl = sequelizeDb.category_type_master;
+const profile_section_categories_tbl = sequelizeDb.profile_section_categories;
 
 const categoriesController = () => {
 
@@ -116,6 +117,19 @@ const categoriesController = () => {
             const { uuid } = req.body;
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
+            }
+
+            let get_section_category_data = await profile_section_categories_tbl.findOne({
+                where: {
+                    category_uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_section_category_data && (get_section_category_data != null || Object.keys(get_section_category_data).length > 1)) {
+                throw {
+                    error_type: "validation",
+                    errors: "Data Already Mapped"
+                }
             }
             let get_category_data = await categoriesTbl.findOne({
                 where: {

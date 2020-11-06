@@ -18,7 +18,7 @@ const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
 const sectionTypesTbl = sequelizeDb.section_types;
-
+const profile_sections_tbl = sequelizeDb.profile_sections;
 const sectionsController = () => {
 
 
@@ -116,6 +116,18 @@ const sectionsController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            let get_profile_section_data = await profile_sections_tbl.findOne({
+                where: {
+                    section_uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_profile_section_data && (get_profile_section_data != null || Object.keys(get_profile_section_data).length > 1)) {
+                throw {
+                    error_type: "validation",
+                    errors: "Data Already Mapped"
+                }
+            }
             let get_sections_data = await sectionsTbl.findOne({
                 where: {
                     uuid: uuid,
@@ -147,6 +159,7 @@ const sectionsController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
         catch (err) {
+            console.log("============+>>>", err);
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
                 return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
             }
