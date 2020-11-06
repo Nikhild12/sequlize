@@ -9,10 +9,12 @@ const Op = Sequelize.Op;
 // EMR Constants Import
 const emr_constants = require('../config/constants');
 const { validate } = require('../config/validate');
+const config = require('../config/config');
 
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
 
+const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const categoriesTbl = sequelizeDb.categories;
 const categoryTypeMasterTbl = sequelizeDb.category_type_master;
@@ -30,6 +32,7 @@ const categoriesController = () => {
         try {
 
             const { user_uuid } = req.headers;
+            const Authorization = req.headers.authorization ? req.headers.authorization : req.headers.Authorization;
             let categories = req.body;
             const body_validation_result = validate(categories, ['code', 'name']);
             if (!body_validation_result.status) {
@@ -75,11 +78,21 @@ const categoriesController = () => {
                         msg: "code already exits"
                     });
             }
-
             categories.created_by = user_uuid;
             const categoriesResponse = await categoriesTbl.create(categories);
+            let options = {
+                uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                headers: {
+                    Authorization: Authorization,
+                    user_uuid: user_uuid
+                },
+                body: {
+                    screenId: categories.screen_settings_uuid,
+                    suffix_current_value: categories.code.replace("CAT", '')
+                }
+            };
+            await emr_utility.putRequest(options.uri, options.headers, options.body);
             return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: categoriesResponse });
-
         }
         catch (err) {
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
@@ -104,28 +117,49 @@ const categoriesController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            let get_category_data = await categoriesTbl.findOne({
+                where: {
+                    uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_category_data == null || Object.keys(get_category_data).length < 1) {
+                throw {
+                    error_type: "validation",
+                    errors: "Data not exists"
+                }
+            }
 
             const data = await categoriesTbl.update(
                 {
                     status: 0,
                     is_active: 0,
                     modified_date: new Date(),
-                    modified_by: user_uuid
+                    modified_by: user_uuid,
+                    name: get_category_data.name + " (deleted) " + uuid
                 },
                 {
                     where: {
                         uuid: uuid
                     }
                 });
-            if (data) {
-                return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
-            } else {
+            if (data[0] == 0) {
                 return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
-
             }
+            return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
-        catch (ex) {
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    status: "error",
+                    msg: errorMsg
+                });
         }
     };
 

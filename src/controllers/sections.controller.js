@@ -13,8 +13,7 @@ const emr_constants = require('../config/constants');
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
 const { validate } = require('../config/validate');
-const { constant } = require('lodash');
-const { COMMON_REFERENCE_BY_ID, APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
+const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
@@ -32,6 +31,7 @@ const sectionsController = () => {
     const _addSections = async (req, res) => {
         try {
             const { user_uuid } = req.headers;
+            const Authorization = req.headers.authorization ? req.headers.authorization : req.headers.Authorization;
             let sections = req.body;
             const body_validation_result = validate(sections, ['code', 'name']);
             if (!body_validation_result.status) {
@@ -79,6 +79,18 @@ const sectionsController = () => {
             }
             sections.created_by = user_uuid;
             const sectionResponse = await sectionsTbl.create(sections);
+            let options = {
+                uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                headers: {
+                    Authorization: Authorization,
+                    user_uuid: user_uuid
+                },
+                body: {
+                    screenId: sections.screen_settings_uuid,
+                    suffix_current_value: sections.code.replace('SEC', '')
+                }
+            };
+            await emr_utility.putRequest(options.uri, options.headers, options.body);
             return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: sectionResponse });
         }
         catch (err) {
