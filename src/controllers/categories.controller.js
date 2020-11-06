@@ -128,7 +128,7 @@ const categoriesController = () => {
             if (get_section_category_data && (get_section_category_data != null || Object.keys(get_section_category_data).length > 1)) {
                 throw {
                     error_type: "validation",
-                    errors: "Data Already Mapped"
+                    errors: "The Sub Heading is already mapped to the Notes"
                 }
             }
             let get_category_data = await categoriesTbl.findOne({
