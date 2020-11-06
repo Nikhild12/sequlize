@@ -4,15 +4,17 @@ const httpStatus = require('http-status');
 // Sequelizer Import
 const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
+const config = require('../config/config');
+const rp = require("request-promise");
 const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
-
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
 const { validate } = require('../config/validate');
-
+const { constant } = require('lodash');
+const { COMMON_REFERENCE_BY_ID, APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
@@ -102,26 +104,48 @@ const sectionsController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            let get_sections_data = await sectionsTbl.findOne({
+                where: {
+                    uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_sections_data == null || Object.keys(get_sections_data).length < 1) {
+                throw {
+                    error_type: "validation",
+                    errors: "data not exists"
+                }
+            }
             const data = await sectionsTbl.update(
                 {
                     status: 0,
                     is_active: 0,
                     modified_date: new Date(),
-                    modified_by: user_uuid
+                    modified_by: user_uuid,
+                    name: get_sections_data.name + " (deleted) " + uuid
                 },
                 {
                     where: {
                         uuid: uuid
                     }
                 });
-            if (data) {
-                return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
-            } else {
+            if (data[0] == 0) {
                 return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
             }
+            return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
-        catch (ex) {
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    status: "error",
+                    msg: errorMsg
+                });
         }
     };
 
@@ -223,9 +247,7 @@ const sectionsController = () => {
         try {
             if (user_uuid) {
                 const sectionsData = await sectionsTbl.findAll({
-                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
-                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
-                    where: { status: 1, is_active: 1 },
+                    where: { status: 1, is_active: 1 }
                 });
                 return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData });
             }

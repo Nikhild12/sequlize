@@ -2055,6 +2055,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/commonReference/getSequenceNo": {
+			"post": {
+				"description": "Details Fetched Successfully",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "sequence number",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getSequenceNo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReference"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/allergyMaster/addAllergyMaster": {
 			"post": {
 				"description": "To Create a Allergy for the Master",
@@ -17681,6 +17719,14 @@
 				"status": {
 					"type": "integer",
 					"example": "optional field"
+				}
+			}
+		},
+		"getSequenceNo": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
 				}
 			}
 		}
