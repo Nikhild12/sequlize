@@ -80,7 +80,9 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
 const _comparingDateAndTime = (col, fromDate, toDate) => {
   return {
     [col]: {
-      [Op.between]: [fromDate, toDate]
+      // [Op.between]: [fromDate, toDate]
+      [Op.gte]: fromDate,
+      [Op.lte]: toDate
     }
   };
 };
@@ -302,7 +304,7 @@ module.exports = {
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest,
-  putRequest : _putRequest,
+  putRequest: _putRequest,
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,

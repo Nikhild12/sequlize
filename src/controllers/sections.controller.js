@@ -4,20 +4,21 @@ const httpStatus = require('http-status');
 // Sequelizer Import
 const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
+const config = require('../config/config');
+const rp = require("request-promise");
 const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
-
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
 const { validate } = require('../config/validate');
-
+const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
 const sectionTypesTbl = sequelizeDb.section_types;
-
+const profile_sections_tbl = sequelizeDb.profile_sections;
 const sectionsController = () => {
 
 
@@ -30,6 +31,7 @@ const sectionsController = () => {
     const _addSections = async (req, res) => {
         try {
             const { user_uuid } = req.headers;
+            const Authorization = req.headers.authorization ? req.headers.authorization : req.headers.Authorization;
             let sections = req.body;
             const body_validation_result = validate(sections, ['code', 'name']);
             if (!body_validation_result.status) {
@@ -77,6 +79,18 @@ const sectionsController = () => {
             }
             sections.created_by = user_uuid;
             const sectionResponse = await sectionsTbl.create(sections);
+            let options = {
+                uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+                headers: {
+                    Authorization: Authorization,
+                    user_uuid: user_uuid
+                },
+                body: {
+                    screenId: sections.screen_settings_uuid,
+                    suffix_current_value: sections.code.replace('SEC', '')
+                }
+            };
+            await emr_utility.putRequest(options.uri, options.headers, options.body);
             return res.status(200).send({ code: httpStatus.OK, message: 'inserted successfully', responseContents: sectionResponse });
         }
         catch (err) {
@@ -102,26 +116,61 @@ const sectionsController = () => {
             if (!uuid) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: "Id is missing" });
             }
+            let get_profile_section_data = await profile_sections_tbl.findOne({
+                where: {
+                    section_uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_profile_section_data && (get_profile_section_data != null || Object.keys(get_profile_section_data).length > 1)) {
+                throw {
+                    error_type: "validation",
+                    errors: "The Heading is already mapped to the Notes"
+                }
+            }
+            let get_sections_data = await sectionsTbl.findOne({
+                where: {
+                    uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_sections_data == null || Object.keys(get_sections_data).length < 1) {
+                throw {
+                    error_type: "validation",
+                    errors: "data not exists"
+                }
+            }
             const data = await sectionsTbl.update(
                 {
                     status: 0,
                     is_active: 0,
                     modified_date: new Date(),
-                    modified_by: user_uuid
+                    modified_by: user_uuid,
+                    name: get_sections_data.name + " (deleted) " + uuid
                 },
                 {
                     where: {
                         uuid: uuid
                     }
                 });
-            if (data) {
-                return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully' });
-            } else {
+            if (data[0] == 0) {
                 return res.status(400).send({ code: httpStatus.OK, message: 'Deleted Fail' });
             }
+            return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
-        catch (ex) {
-            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        catch (err) {
+            console.log("============+>>>", err);
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    status: "error",
+                    msg: errorMsg
+                });
         }
     };
 
@@ -223,9 +272,7 @@ const sectionsController = () => {
         try {
             if (user_uuid) {
                 const sectionsData = await sectionsTbl.findAll({
-                    // attributes: ['pis_uuid', 'pis_immunization_date', 'et_name', 'i_name', 'f_name', 'pis_comments'],
-                    //where: { pis_patient_uuid: patient_uuid, pis_is_active: 1, pis_status: 1, et_is_active: 1, et_status: 1, i_is_active: 1, i_status: 1, f_is_active: 1, f_status: 1 }
-                    where: { status: 1, is_active: 1 },
+                    where: { status: 1, is_active: 1 }
                 });
                 return res.status(200).send({ code: httpStatus.OK, message: 'Fetched sections Details successfully', responseContents: sectionsData });
             }

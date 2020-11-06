@@ -52,19 +52,19 @@ module.exports = (sequelize, DataTypes) => {
             },
             visible_user: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 0,
+                defaultValue: 1,
             },
             visible_dept: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 0,
+                defaultValue: 1,
             },
             visible_institution: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 0,
+                defaultValue: 1,
             },
             visible_all_institutions: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 0,
+                defaultValue: 1,
             },
             visittype_uuid: {
                 type: DataTypes.INTEGER,

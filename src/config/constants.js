@@ -2,7 +2,7 @@ module.exports = Object.freeze({
   IS_ACTIVE: 1,
   IS_IN_ACTIVE: 0,
   ENTRY_STATUS: 2,
-  VALUE_TYPES:{
+  VALUE_TYPES: {
     BOOLEAN: 4,
     TERMBASED: 3,
     CHECKBOX: 5,
@@ -12,7 +12,8 @@ module.exports = Object.freeze({
     TEXTWITHDROPDOWN: 16,
     NUMBERWITHDROPDOWN: 17,
     BUTTONS: 18,
-    CHECKBOXWITHTEXT: 19
+    CHECKBOXWITHTEXT: 19,
+    BTNTXTWITHDROPDOWN: 20
   },
   NO: "No",
   OR: "or",
