@@ -4,9 +4,10 @@ const db = require("../config/sequelize");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const checkDuplicate = require("../helpers/checkDuplicate.js");
-var config = require("../config/config");
 const rp = require('request-promise');
+const config = require('../config/config');
 const emr_constants = require("../config/constants");
+const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 
 const commonReferenceGroupController = () => {
@@ -592,6 +593,56 @@ const commonReferenceGroupController = () => {
         }
     };
 
+    const _getSequenceNo = async (req, res, next) => {
+        try {
+            const { code } = req.body;
+            const { user_uuid, authorization } = req.headers;
+            let codeValue, replace_value;
+            let options = {
+                uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+                headers: {
+                    Authorization: authorization,
+                    user_uuid: user_uuid
+                },
+                method: 'POST',
+                json: true,
+                body: {
+                    code: code
+                }
+            };
+            const screenSettings_output = await rp(options);
+            if (screenSettings_output && screenSettings_output.responseContents == null) {
+                throw {
+                    error_type: "validation", errors: "No data found"
+                }
+            }
+            replace_value = parseInt(screenSettings_output.responseContents.suffix_current_value) + emr_constants.IS_ACTIVE;
+            screenSettings_output.responseContents.autoGenerationValue = screenSettings_output.responseContents.prefix + replace_value;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: 'success',
+                    statusCode: httpStatus.OK,
+                    msg: "Fetched successfully",
+                    req: code,
+                    responseContents: screenSettings_output
+                });
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: "error",
+                    statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+                    msg: 'Failed',
+                    actualMsg: errorMsg
+                });
+        }
+    };
+
     // --------------------------------------------return----------------------------------
     return {
         getReference,
@@ -600,7 +651,8 @@ const commonReferenceGroupController = () => {
         updateReference,
         getReferenceById,
         getReferenceByIdForLanguage,
-        getReferenceBasedOnCondition
+        getReferenceBasedOnCondition,
+        getSequenceNo: _getSequenceNo
     };
 };
 
