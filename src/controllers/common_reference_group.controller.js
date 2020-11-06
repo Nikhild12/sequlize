@@ -617,7 +617,7 @@ const commonReferenceGroupController = () => {
                 }
             }
             replace_value = parseInt(screenSettings_output.responseContents.suffix_current_value) + emr_constants.IS_ACTIVE;
-            codeValue = screenSettings_output.responseContents.prefix + replace_value;
+            screenSettings_output.responseContents.autoGenerationValue = screenSettings_output.responseContents.prefix + replace_value;
             return res
                 .status(httpStatus.OK)
                 .json({
@@ -625,7 +625,7 @@ const commonReferenceGroupController = () => {
                     statusCode: httpStatus.OK,
                     msg: "Fetched successfully",
                     req: code,
-                    responseContents: codeValue
+                    responseContents: screenSettings_output
                 });
         } catch (err) {
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
