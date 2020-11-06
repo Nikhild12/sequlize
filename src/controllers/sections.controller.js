@@ -125,7 +125,7 @@ const sectionsController = () => {
             if (get_profile_section_data && (get_profile_section_data != null || Object.keys(get_profile_section_data).length > 1)) {
                 throw {
                     error_type: "validation",
-                    errors: "Data Already Mapped"
+                    errors: "The Heading is already mapped to the Notes"
                 }
             }
             let get_sections_data = await sectionsTbl.findOne({
