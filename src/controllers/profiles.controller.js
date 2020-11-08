@@ -848,7 +848,7 @@ const profilesController = () => {
             elementArrsection.push({
               profile_section_uuid: element.profile_sections_uuid,
               category_uuid: element2.category_uuid,
-              display_order: element.display_order,
+              display_order: element2.display_order,
               created_by: user_uuid
             });
             categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArrsection);
@@ -860,7 +860,7 @@ const profilesController = () => {
             elementArr2.push({
               profile_section_uuid: sectionsResponse[0].uuid,
               category_uuid: element2.category_uuid,
-              display_order: element.display_order,
+              display_order: element2.display_order,
               created_by: user_uuid
             });
             categoryResponse = await profileSectionCategoriesTbl.bulkCreate(elementArr2);
