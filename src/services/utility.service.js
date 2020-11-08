@@ -80,9 +80,7 @@ const _getDateQueryBtwColumn = (columnName, from, to) => {
 const _comparingDateAndTime = (col, fromDate, toDate) => {
   return {
     [col]: {
-      // [Op.between]: [fromDate, toDate]
-      [Op.gte]: fromDate,
-      [Op.lte]: toDate
+      [Op.between]: [fromDate, toDate]
     }
   };
 };
