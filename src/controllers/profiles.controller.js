@@ -28,6 +28,7 @@ const profilesViewTbl = db.vw_profile;
 const profilesTypesTbl = db.profile_types;
 const profilesDefaultTbl = db.profiles_default;
 const conceptValueTermsTbl = db.concept_value_terms;
+const section_category_entries_tbl = db.section_category_entries;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -429,55 +430,61 @@ const profilesController = () => {
 
   // delete profile details
   const _deleteProfiles = async (req, res) => {
-    const {
-      user_uuid
-    } = req.headers;
-    const {
-      uuid
-    } = req.body;
+    try {
+      const {
+        user_uuid
+      } = req.headers;
+      const {
+        uuid
+      } = req.body;
 
-    if (uuid && user_uuid) {
       const updatedProfilesData = {
         status: 0,
         is_active: 0,
         modified_by: user_uuid,
         modified_date: new Date()
       };
-      try {
-        const data = await profilesTbl.update(updatedProfilesData, {
-          where: {
-            uuid: uuid
-          }
-        }, {
-          returning: true
-        });
-        if (data) {
-          return res.status(200).send({
-            code: httpStatus.OK,
-            message: 'Deleted Successfully'
-          });
-        } else {
-          return res.status(400).send({
-            code: httpStatus.OK,
-            message: 'Deleted Fail'
-          });
-
+      let get_section_category_entries_data = await section_category_entries_tbl.findOne({
+        where: {
+          profile_uuid: uuid,
+          status: 1
         }
-
-      } catch (ex) {
-        console.log('Exception happened', ex);
-        return res.status(400).send({
-          code: httpStatus.BAD_REQUEST,
-          message: ex.message
-        });
-
+      });
+      if (get_section_category_entries_data && (get_section_category_entries_data != null || Object.keys(get_section_category_entries_data).length > 1)) {
+        throw {
+          error_type: "validation",
+          errors: "The Profile is already mapped to the Patient"
+        }
       }
-    } else {
-      return res.status(400).send({
-        code: httpStatus.UNAUTHORIZED,
-        message: emr_constants.NO_USER_ID
+      const data = await profilesTbl.update(updatedProfilesData, {
+        where: {
+          uuid: uuid
+        }
+      });
+      if (data[0] == 0) {
+        return res.status(400).send({
+          code: httpStatus.OK,
+          message: 'Not Deleted'
+        });
+      }
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: 'Deleted Successfully'
       });
 
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+        return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          status: "error",
+          message: errorMsg
+        });
     }
   };
 

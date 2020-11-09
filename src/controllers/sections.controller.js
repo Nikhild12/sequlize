@@ -129,18 +129,6 @@ const sectionsController = () => {
                     errors: "The Heading is already mapped to the Notes"
                 }
             }
-            let get_section_category_entries_data = await section_category_entries_tbl.findOne({
-                where: {
-                    section_uuid: uuid,
-                    status: 1
-                }
-            });
-            if (get_section_category_entries_data && (get_section_category_entries_data != null || Object.keys(get_section_category_entries_data).length > 1)) {
-                throw {
-                    error_type: "validation",
-                    errors: "The Heading is already mapped to the Patient"
-                }
-            }
             let get_sections_data = await sectionsTbl.findOne({
                 where: {
                     uuid: uuid,
