@@ -19,6 +19,7 @@ const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
 const sectionTypesTbl = sequelizeDb.section_types;
 const profile_sections_tbl = sequelizeDb.profile_sections;
+const section_category_entries_tbl = sequelizeDb.section_category_entries;
 const sectionsController = () => {
 
 
@@ -128,6 +129,18 @@ const sectionsController = () => {
                     errors: "The Heading is already mapped to the Notes"
                 }
             }
+            let get_section_category_entries_data = await section_category_entries_tbl.findOne({
+                where: {
+                    section_uuid: uuid,
+                    status: 1
+                }
+            });
+            if (get_section_category_entries_data && (get_section_category_entries_data != null || Object.keys(get_section_category_entries_data).length > 1)) {
+                throw {
+                    error_type: "validation",
+                    errors: "The Heading is already mapped to the Patient"
+                }
+            }
             let get_sections_data = await sectionsTbl.findOne({
                 where: {
                     uuid: uuid,
@@ -159,7 +172,6 @@ const sectionsController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
         catch (err) {
-            console.log("============+>>>", err);
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
                 return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
             }
