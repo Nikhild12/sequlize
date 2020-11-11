@@ -6,6 +6,7 @@ const existsSync = require('fs').existsSync;
 const readFileSync = require('fs').readFileSync;
 const resolve = require('path').resolve;
 const moment = require('moment');
+const _ = require('lodash');
 
 const printService = () => {
 
@@ -15,7 +16,7 @@ const printService = () => {
         }
         return handlebars.compile(template)(data);
     };
-   
+
     const register = (key, fn, inverse = false) => {
         return handlebars.registerHelper(key, fn, inverse);
     };
@@ -59,6 +60,33 @@ const printService = () => {
         getFile
     };
 };
+
+printService().register('eachSort', function (array, key, opts) {
+    // zip for sorting
+    var zipped = [];
+    for (var i = 0; i < array.length; i++) {
+        console.log(array[i]);
+        zipped.push({
+            originalData: array[i],
+            originalIndex: i
+        });
+    }
+    // sort
+    var sorted = _.sortBy(zipped, function (item) {
+        return item.originalData[key];
+    });
+    // custom each
+    var result = '';
+    for (var i = 0; i < sorted.length; i++) {
+        var item = sorted[i];
+        // set metadata as @data variables
+        opts.data.index = i;
+        opts.data.originalIndex = item.originalIndex;
+        result += opts.fn(item.originalData, opts);
+    }
+    return result;
+});
+
 printService().register('convertDate', (date) => {
     let retdate = '';
     if (date !== null) {
@@ -66,6 +94,7 @@ printService().register('convertDate', (date) => {
     }
     return retdate;
 });
+
 printService().register('strtodate', (date) => {
     let retdate = '';
     if (date !== null) {
@@ -166,15 +195,15 @@ printService().register('now', () => {
 });
 
 printService().register('getKey', (obj) => {
-    console.log('............',obj);
+    console.log('............', obj);
     let key = '';
-    key = obj?Object.keys(obj)[0]:'';
+    key = obj ? Object.keys(obj)[0] : '';
     return key;
 });
 printService().register('getValue', (obj) => {
-    console.log('............',obj);
+    console.log('............', obj);
     let values = '';
-    values = obj?Object.values(obj)[0]:'';
+    values = obj ? Object.values(obj)[0] : '';
     return values;
 });
 printService().register('include', (...param) => {
@@ -236,32 +265,30 @@ printService().register('notAvailable', (val) => {
     let value = (val != "") ? val : "N/A";
     return value;
 });
-    
-printService().register('nameFormat',(performed_by_title,performed_by_first_name,performed_by_last_name)=>{
-    return performed_by_title+'.'+performed_by_first_name+' '+performed_by_last_name;
+
+printService().register('nameFormat', (performed_by_title, performed_by_first_name, performed_by_last_name) => {
+    return performed_by_title + '.' + performed_by_first_name + ' ' + performed_by_last_name;
 });
 printService().register('check_encounter_type', (val) => {
     if (val == 1) {
         return 'OP';
-    }
-    else {
+    } else {
         return 'IP';
     }
 });
 printService().register('check_len', (arr) => {
     if (arr.length > 0) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 });
 
-printService().register('wait',(val)=>{
-console.log("wait =================>",val);
-    setTimeout(()=>{
+printService().register('wait', (val) => {
+    console.log("wait =================>", val);
+    setTimeout(() => {
         return val;
-    },1000);
+    }, 1000);
 });
 
 
