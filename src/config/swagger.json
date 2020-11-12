@@ -7694,6 +7694,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "List of  patient treatmentkit details ",
 						"schema": {
@@ -17107,6 +17113,9 @@
 				"departmentId": {
 					"type": "integer"
 				},
+				"institutionId": {
+					"type": "integer"
+				},
 				"createdBy": {
 					"type": "string"
 				},
@@ -17114,9 +17123,6 @@
 					"type": "integer"
 				},
 				"status": {
-					"type": "string"
-				},
-				"searchKey": {
 					"type": "string"
 				}
 			}

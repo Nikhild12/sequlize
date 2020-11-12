@@ -329,7 +329,7 @@ const TreatMent_Kit = () => {
       const getsearch = req.body;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-
+      const institutionId = getsearch.institutionId ? getsearch.institutionId : req.headers.facility_uuid;
       let sortArr = ["tk_uuid", "DESC"];
       let sortOrder = 'DESC';
       if (getsearch.pageNo) {
@@ -372,12 +372,15 @@ const TreatMent_Kit = () => {
         group: ['tk_uuid']
 
       };
+      findQuery.where['tk_facility_uuid'] = institutionId;
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.s_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%')
         ];
       }
       if (req.body.codeName && /\S/.test(req.body.codeName)) {
@@ -423,11 +426,11 @@ const TreatMent_Kit = () => {
       if (getsearch.share && /\S/.test(getsearch.share)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
-            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)]
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)
           ];
         }
       }
@@ -438,8 +441,8 @@ const TreatMent_Kit = () => {
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
         .then((data) => {
-          data.rows.forEach(i=>{
-              i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
+          data.rows.forEach(i => {
+            i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
           });
           return res
             .status(httpStatus.OK)
