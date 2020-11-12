@@ -13813,6 +13813,9 @@
 						"department_uuid": {
 							"type": "integer"
 						},
+						"share_uuid":{
+							"type": "integer"
+						},
 						"user_uuid": {
 							"type": "integer"
 						},
