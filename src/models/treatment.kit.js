@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING
             },
             share_uuid: {
-                type: DataTypes.STRING
+                type: DataTypes.INTEGER
             },
             is_public: {
 
