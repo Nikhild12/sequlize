@@ -120,6 +120,7 @@ const TreatMent_Kit = () => {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           treatment_kit.code = screenSettings_output.prefix + replace_value;
         }
+        
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
@@ -136,6 +137,20 @@ const TreatMent_Kit = () => {
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
+        if (treatmentSavedData) {
+          let options_two = {
+            uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              screenId: screenSettings_output.uuid,
+              suffix_current_value: replace_value
+            }
+          };
+          await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+        }
         // Lab
         if (
           treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 &&
