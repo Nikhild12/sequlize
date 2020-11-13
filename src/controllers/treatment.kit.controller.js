@@ -91,21 +91,21 @@ const TreatMent_Kit = () => {
     //let treatmentTransaction;
     let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
     let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
-    // let options = {
-    //   uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
-    //   headers: {
-    //     Authorization: authorization,
-    //     user_uuid: user_uuid
-    //   },
-    //   body: {
-    //     code: 'CLN'
-    //   }
-    // };
-    // screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-    // if (screenSettings_output) {
-    //   replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
-    //   treatment_kit.code = screenSettings_output.prefix + replace_value;
-    // }
+    let options = {
+      uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+      headers: {
+        Authorization: authorization,
+        user_uuid: user_uuid
+      },
+      body: {
+        code: 'CLN'
+      }
+    };
+    screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+    if (screenSettings_output) {
+      replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+      treatment_kit.code = screenSettings_output.prefix + replace_value;
+    }
     if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.name) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
