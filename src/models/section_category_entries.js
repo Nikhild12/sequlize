@@ -90,6 +90,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
+            profile_section_category_concept_value_terms_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             result_value: {
                 type: DataTypes.STRING,
                 allowNull: true
@@ -126,6 +130,10 @@ module.exports = (sequelize, DataTypes) => {
             },
             comments: {
                 type: DataTypes.STRING,
+                allowNull: true
+            },
+            is_comment_button_selected: {
+                type: DataTypes.BOOLEAN,
                 allowNull: true
             },
             is_active: {
@@ -210,6 +218,9 @@ module.exports = (sequelize, DataTypes) => {
         });
         section_category_entries.belongsTo(model.profile_section_category_concept_values, {
             foreignKey: "profile_section_category_concept_value_uuid"
+        });
+        section_category_entries.belongsTo(model.profile_section_category_concept_value_terms, {
+            foreignKey: "profile_section_category_concept_value_terms_uuid"
         });
     };
     return section_category_entries;

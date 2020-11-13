@@ -2055,6 +2055,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/commonReference/getSequenceNo": {
+			"post": {
+				"description": "Details Fetched Successfully",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "sequence number",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getSequenceNo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReference"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/allergyMaster/addAllergyMaster": {
 			"post": {
 				"description": "To Create a Allergy for the Master",
@@ -6627,6 +6665,78 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/profiles/get-profile-section-by-profile-id": {
+			"get": {
+				"summary": "To get profile section by profile Id ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getProfileById"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/profiles/get-profile-section-categories-by-profile-section-id": {
+			"get": {
+				"summary": "To get profile section categories by profile section id ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_section_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Profiles"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getProfileById"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/profiles/delete": {
 			"put": {
 				"summary": "To delete  profile Details ",
@@ -9411,6 +9521,44 @@
 						"description": "get Successfully",
 						"schema": {
 							"$ref": "#/definitions/getReferenceByIdForLanguage"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/commonReference/getReferenceBasedOnCondition": {
+			"post": {
+				"description": "get Reference Details",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "tablename",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getReferenceBasedOnCondition"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Common Reference Group"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getReferenceBasedOnCondition"
 						}
 					}
 				},
@@ -17539,6 +17687,46 @@
 			"properties": {
 				"user_uuid": {
 					"type": "integer"
+				}
+			}
+		},
+		"getReferenceBasedOnCondition": {
+			"type": "object",
+			"properties": {
+				"table_name": {
+					"type": "string"
+				},
+				"paginationSize": {
+					"type": "integer",
+					"example": "optional field"
+				},
+				"pageNo": {
+					"type": "integer",
+					"example": "optional field"
+				},
+				"sortField": {
+					"type": "string",
+					"example": "optional field"
+				},
+				"sortOrder": {
+					"type": "string",
+					"example": "optional field"
+				},
+				"search": {
+					"type": "string",
+					"example": "optional field"
+				},
+				"status": {
+					"type": "integer",
+					"example": "optional field"
+				}
+			}
+		},
+		"getSequenceNo": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
 				}
 			}
 		}

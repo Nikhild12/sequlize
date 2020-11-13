@@ -5,15 +5,12 @@ module.exports = (sequelize, DataTypes) => {
         "profiles",
         {
             uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
-
             },
             profile_type_uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -28,10 +25,8 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetZeroValidationMessage('profile_type_uuid')
                     }
                 }
-
             },
             profile_code: {
-
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
@@ -42,10 +37,8 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetpleaseProvideMsg('profile_code')
                     }
                 }
-
             },
             profile_name: {
-
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
@@ -56,22 +49,16 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetpleaseProvideMsg('profile_name')
                     }
                 }
-
             },
             profile_status: {
-
                 type: DataTypes.INTEGER,
                 allowNull: true
-
             },
             profile_description: {
-
                 type: DataTypes.STRING,
                 allowNull: true
-
             },
             facility_uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -86,10 +73,8 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetZeroValidationMessage('facility_uuid')
                     }
                 }
-
             },
             department_uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
@@ -104,41 +89,30 @@ module.exports = (sequelize, DataTypes) => {
                         msg: emr_constants.GetZeroValidationMessage('department_uuid')
                     }
                 }
-
             },
             is_active: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             status: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: false
-
             },
             revision: {
-
                 type: DataTypes.INTEGER,
                 defaultValue: 1,
                 allowNull: false
-
             },
             created_by: {
-
                 type: DataTypes.INTEGER
-
             },
             modified_by: {
-
                 type: DataTypes.INTEGER
-
             },
             created_date: 'created_date',
-            modified_date: 'modified_date',
+            modified_date: 'modified_date'
         },
         {
             tableName: "profiles",

@@ -4,10 +4,10 @@ const db = require("../config/sequelize");
 var Sequelize = require('sequelize');
 var Op = Sequelize.Op;
 const checkDuplicate = require("../helpers/checkDuplicate.js");
-var config = require("../config/config");
 const rp = require('request-promise');
+const config = require('../config/config');
 const emr_constants = require("../config/constants");
-// const gender_tbl = db.gender;
+const { APPMASTER_GET_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 
 const commonReferenceGroupController = () => {
@@ -19,161 +19,7 @@ const commonReferenceGroupController = () => {
      * @returns {*}
      */
 
-    /*=============== Gender API's================*/
-
-    //     const getReference = async (req, res, next) => {
-    //         const postData = req.body;
-
-    //         const table_name = req.body.table_name;
-
-    //         if (table_name && db[table_name]) {
-    //             const common_tbl = db[table_name];
-
-
-    //             let sortField = 'display_order';
-    //             let sortOrder = 'ASC';
-    //             let pageNo = 0;
-    //             const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-    //             if (postData.pageNo) {
-    //                 let temp = parseInt(postData.pageNo);
-    //                 if (temp && (temp != NaN)) {
-    //                     pageNo = temp;
-    //                 }
-    //             }
-    //             if (postData.sortField) {
-    //                 sortField = postData.sortField;
-    //             }
-
-    //             if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
-    //                 sortOrder = postData.sortOrder;
-    //             }
-
-    //             const offset = pageNo * itemsPerPage;
-    //             var postingData;
-    //             var query1;
-    //             try {
-    //                 postingData = {
-    //                     offset: offset,
-    //                     limit: itemsPerPage,
-    //                     attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-    //                     order: [
-    //                         [sortField, sortOrder],
-    //                     ],
-    //                     where:{is_active:1},
-    //                 };
-
-    //                 if (postData.name != null && postData.name != "") {
-    //                     if (query1 != null) {
-    //                         query1 = {
-    //                             [Op.and]: [{
-    //                                 query1,
-    //                                 [Op.or]: [
-    //                                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
-    //                                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
-    //                                 ]
-    //                             }]
-    //                         };
-    //                     } else {
-    //                         query1 = {
-    //                             [Op.or]: [
-    //                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), postData.name.toLowerCase()),
-    //                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), postData.name.toLowerCase())
-    //                             ]
-    //                         };
-    //                     }
-
-
-
-    //                 }
-
-    //                 if (postData.status != null && postData.status != "") {
-    //                     if (query1 != null) {
-    //                         query1 = {
-    //                             [Op.and]: [
-    //                                 query1,
-    //                                 Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
-    //                             ]
-    //                         };
-    //                     } else {
-    //                         query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
-    //                     }
-
-    //                 }
-    //                 if (query1 == null) {
-    //                     if (postData.search != null && postData.search != "") {
-    //                         query1 = {
-    //                             [Op.or]: [
-    //                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-    //                                 Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
-    //                             ]
-    //                         };
-    //                     }
-
-    //                 }
-    //                 if (query1 != null && query1 != "") {
-    //                     postingData['where'] = query1;
-    //                 }
-    //                 /* gender Data */
-
-    // // if (postData.is_active == 1) {
-    // //             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-    // //         }
-    // //         else if (postData.is_active == 0) {
-    // //             query1.where = { [Op.and]: [{ is_active: 0 },{status:0}] };
-
-
-    // //         }
-    // //         else {
-    // //             query1.where = { [Op.and]: [{ is_active: 1 },{status:1}] };
-
-    // //         }
-    //  postingData.where.is_active= 1;
-
-
-
-
-    //                 await common_tbl.findAndCountAll(postingData).then((data) => {
-    //                         return res
-    //                             .status(httpStatus.OK)
-    //                             .json({
-    //                                 statusCode: 200,
-    //                                 req: '',
-    //                                 responseContents: data.rows,
-    //                                 totalRecords: data.count
-    //                             });
-    //                     })
-    //                     .catch(err => {
-    //                         return res
-    //                             .status(httpStatus.OK)
-    //                             .json({
-    //                                 statusCode: 500,
-    //                                 msg: "Reference Data's not found",
-    //                                 req: '',
-    //                                 error: err
-    //                             });
-    //                     });
-    //             } catch (err) {
-    //                 const errorMsg = err.errors ? err.errors[0].message : err.message;
-    //                 return res
-    //                     .status(httpStatus.INTERNAL_SERVER_ERROR)
-    //                     .json({
-    //                         statusCode: 500,
-    //                         msg: errorMsg
-    //                     });
-    //             }
-    //         } else {
-    //             return res
-    //             .status(httpStatus.BAD_REQUEST)
-    //             .json({
-    //                 statusCode: 400,
-    //                 msg: "Please Provied Vaild Table Name"
-    //             });
-    //         }
-
-
-    //     };
-
-
+    /*=============== common reference API's================*/
     const getReference = async (req, res, next) => {
         try {
             const { search, status = 1, name, table_name, pageNo = 0, paginationSize = 10, sortField = 'display_order', sortOrder = 'ASC' } = req.body;
@@ -202,7 +48,6 @@ const commonReferenceGroupController = () => {
                     }]
                 });
             }
-
             if (search && /\S/.test(search)) {
                 postingData.where = Object.assign(postingData.where, {
                     [Op.and]: [{
@@ -219,10 +64,8 @@ const commonReferenceGroupController = () => {
                     }]
                 });
             }
-
             postingData.where.is_active = status;
             let data = await common_tbl.findAndCountAll(postingData);
-
             const code = data.rows.length === 0 ? 204 : 200;
             const message = data.rows.length === 0 ? emr_constants.NO_RECORD_FOUND : emr_constants.DRUG_FREQUENCY;
             return res
@@ -231,127 +74,6 @@ const commonReferenceGroupController = () => {
                     message, code, responseContents: data.rows, totalRecords: data.count,
                 });
 
-        } catch (err) {
-            const errorMsg = err.errors ? err.errors[0].message : err.message;
-            return res
-                .status(httpStatus.INTERNAL_SERVER_ERROR)
-                .json({
-                    statusCode: 500,
-                    msg: errorMsg
-                });
-        }
-    };
-
-    const getReference_old = async (req, res, next) => {
-        const postData = req.body;
-        const table_name = req.body.table_name;
-        const common_tbl = db[table_name];
-        let sortField = 'display_order';
-        let sortOrder = 'ASC';
-        let pageNo = 0;
-        const itemsPerPage = postData.paginationSize ? postData.paginationSize : 10;
-        if (postData.pageNo) {
-            let temp = parseInt(postData.pageNo);
-            if (temp && (temp != NaN)) {
-                pageNo = temp;
-            }
-        }
-        if (postData.sortField) {
-            sortField = postData.sortField;
-        }
-
-        if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
-            sortOrder = postData.sortOrder;
-        }
-
-        const offset = pageNo * itemsPerPage;
-        var postingData;
-
-        // var query;
-
-        var query1;
-
-
-        try {
-            postingData = {
-                offset: offset,
-                limit: itemsPerPage,
-                order: [
-                    [sortField, sortOrder],
-                ],
-
-            };
-            query1 = [Sequelize.where(Sequelize.col(table_name + '.status'), 1)];
-
-            if (postData.name != null && postData.name != "") {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [{
-                            ...query1,
-                            [Op.or]: [
-                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
-                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.name.toLowerCase() + '%')
-                            ]
-                        }]
-                    };
-                } else {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.name.toLowerCase() + '%')
-                        ]
-                    };
-                }
-            }
-
-            if (postData.status != null) {
-                if (query1 != null) {
-                    query1 = {
-                        [Op.and]: [
-                            query1,
-                            Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
-                        ]
-                    };
-                } else {
-                    query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
-                }
-            }
-            if (query1 == null) {
-                if (postData.search != null && postData.search != "") {
-                    query1 = {
-                        [Op.or]: [
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
-                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
-                        ]
-                    };
-                }
-            }
-            if (query1 != null && query1 != "") {
-                postingData['where'] = query1;
-            }
-
-            // remove it after demo on 30/06/2020
-            postingData.where.is_active = 1;
-            await common_tbl.findAndCountAll(postingData).then((data) => {
-                return res
-                    .status(httpStatus.OK)
-                    .json({
-                        statusCode: 200,
-                        req: '',
-                        responseContents: data.rows,
-                        totalRecords: data.count
-                    });
-            })
-                .catch(err => {
-                    return res
-                        .status(httpStatus.OK)
-                        .json({
-                            statusCode: 500,
-                            msg: "Reference Data's not found",
-                            req: '',
-                            error: err
-                        });
-                });
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
@@ -382,7 +104,6 @@ const commonReferenceGroupController = () => {
         const user_details = await rp(options);
         return user_details.responseContents[0];
     }
-
 
     const getReferenceByIdForLanguage = async (req, res, next) => {
         const postData = req.body;
@@ -587,8 +308,6 @@ const commonReferenceGroupController = () => {
         }
     };
 
-
-
     const updateReference = async (req, res, next) => {
         const postData = req.body;
         // const table_name = "department";
@@ -721,8 +440,6 @@ const commonReferenceGroupController = () => {
         }
     };
 
-
-
     function dynamicField(postData, tableName, keyValue) {
         let postingData;
         // if(true)
@@ -774,6 +491,158 @@ const commonReferenceGroupController = () => {
         return postingData;
     }
 
+    const getReferenceBasedOnCondition = async (req, res, next) => {
+        const postData = req.body;
+        const table_name = req.body.table_name;
+        const common_tbl = db[table_name];
+        let sortField = 'name';
+        let sortOrder = 'ASC';
+        if (postData.sortField) {
+            sortField = postData.sortField;
+        }
+        if (postData.sortOrder && ((postData.sortOrder == 'DESC') || (postData.sortOrder == 'ASC'))) {
+            sortOrder = postData.sortOrder;
+        }
+        var postingData;
+        var query1;
+        try {
+            postingData = {
+                order: [
+                    [sortField, sortOrder]
+                ]
+            };
+            if (postData.paginationSize) {
+                let itemsPerPage = parseInt(postData.paginationSize);
+                let pageNo = parseInt(postData.pageNo);
+                let offset = pageNo * itemsPerPage;
+                postingData['offset'] = offset;
+                postingData['limit'] = itemsPerPage;
+            }
+            if (postData.name) {
+                if (query1 != null) {
+                    query1 = {
+                        [Op.and]: [{
+                            query1,
+                            [Op.or]: [
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
+                            ]
+                        }]
+                    };
+                } else {
+                    query1 = {
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.name.toLowerCase() + '%'),
+                        ]
+                    };
+                }
+            }
+            if (postData.status != null && postData.status != "") {
+                if (query1 != null) {
+                    query1 = {
+                        [Op.and]: [
+                            query1,
+                            Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status)
+                        ]
+                    };
+                } else {
+                    query1 = Sequelize.where(Sequelize.col(table_name + '.is_active'), postData.status);
+                }
+            }
+            if (postData.search) {
+                if (query1 != null) {
+                    query1 = {
+                        [Op.and]: [{
+                            query1,
+                            [Op.or]: [
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                                Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
+                            ]
+                        }]
+                    };
+                } else {
+                    query1 = {
+                        [Op.or]: [
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.name')), 'LIKE', '%' + postData.search.toLowerCase() + '%'),
+                            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col(table_name + '.code')), 'LIKE', '%' + postData.search.toLowerCase() + '%')
+                        ]
+                    };
+                }
+            }
+            if (query1 != null && query1 != "") {
+                postingData['where'] = query1;
+            }
+            let data = await common_tbl.findAndCountAll(postingData);
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    statusCode: 200,
+                    req: postData,
+                    responseContents: data.rows,
+                    totalRecords: data.count
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    statusCode: 500,
+                    msg: errorMsg
+                });
+        }
+    };
+
+    const _getSequenceNo = async (req, res, next) => {
+        try {
+            const { code } = req.body;
+            const { user_uuid, authorization } = req.headers;
+            let codeValue, replace_value;
+            let options = {
+                uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+                headers: {
+                    Authorization: authorization,
+                    user_uuid: user_uuid
+                },
+                method: 'POST',
+                json: true,
+                body: {
+                    code: code
+                }
+            };
+            const screenSettings_output = await rp(options);
+            if (screenSettings_output && screenSettings_output.responseContents == null) {
+                throw {
+                    error_type: "validation", errors: "No data found"
+                }
+            }
+            replace_value = parseInt(screenSettings_output.responseContents.suffix_current_value) + emr_constants.IS_ACTIVE;
+            screenSettings_output.responseContents.autoGenerationValue = screenSettings_output.responseContents.prefix + replace_value;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: 'success',
+                    statusCode: httpStatus.OK,
+                    msg: "Fetched successfully",
+                    req: code,
+                    responseContents: screenSettings_output
+                });
+        } catch (err) {
+            if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+                return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+            }
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: "error",
+                    statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+                    msg: 'Failed',
+                    actualMsg: errorMsg
+                });
+        }
+    };
+
     // --------------------------------------------return----------------------------------
     return {
         getReference,
@@ -781,7 +650,9 @@ const commonReferenceGroupController = () => {
         deleteReference,
         updateReference,
         getReferenceById,
-        getReferenceByIdForLanguage
+        getReferenceByIdForLanguage,
+        getReferenceBasedOnCondition,
+        getSequenceNo: _getSequenceNo
     };
 };
 

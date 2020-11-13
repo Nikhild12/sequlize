@@ -302,7 +302,7 @@ module.exports = {
   checkTATIsPresent: _checkTATIsPresent,
   checkTATIsValid: _checkTATIsValid,
   postRequest: _postRequest,
-  putRequest : _putRequest,
+  putRequest: _putRequest,
   isNumberValid: _isNumberValid,
   getResponseCodeForSuccessRequest: _getResponseCodeForSuccessRequest,
   getResponseMessageForSuccessRequest: _getResponseMessageForSuccessRequest,

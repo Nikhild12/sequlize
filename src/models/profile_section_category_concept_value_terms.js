@@ -1,77 +1,73 @@
 const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const profile_section_categories = sequelize.define(
-        "profile_section_categories",
+    const profile_section_category_concept_value_terms = sequelize.define(
+        "profile_section_category_concept_value_terms",
         {
             uuid: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
-
             },
-            profile_section_uuid: {
-
+            profile_section_category_concept_values_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
                     notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_concept_values_uuid')
                     },
                     notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('profile_section_uuid')
-                    },
+                        msg: emr_constants.GetpleaseProvideMsg('profile_section_category_concept_values_uuid')
+                    }
                 }
-
             },
-            category_uuid: {
+            concept_value_terms_uuid: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: emr_constants.GetpleaseProvideMsg('concept_value_terms_uuid')
+                    },
+                    notEmpty: {
+                        msg: emr_constants.GetpleaseProvideMsg('concept_value_terms_uuid')
+                    }
+                }
             },
             display_order: {
-
                 type: DataTypes.INTEGER,
-                allowNull: false
-
+                allowNull: false,
+                defaultValue: 0
             },
-
-            is_active: {
-
+            is_default: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1,
+                allowNull: true,
+                defaultValue: 0
+            },
+            is_active: {
+                type: DataTypes.BOOLEAN,
                 allowNull: true
-
             },
             status: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1,
                 allowNull: true
-
             },
             revision: {
-
                 type: DataTypes.INTEGER,
                 allowNull: true
-
             },
             created_by: {
-
                 type: DataTypes.INTEGER
-
             },
             modified_by: {
-
                 type: DataTypes.INTEGER
-
             },
             created_date: 'created_date',
             modified_date: 'modified_date',
         },
         {
-            tableName: "profile_section_categories",
+            tableName: "profile_section_category_concept_value_terms",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [
@@ -86,21 +82,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     );
-
-    profile_section_categories.associate = models => {
-        profile_section_categories.belongsTo(models.categories, {
-            foreignKey: 'category_uuid',
-            as: 'categories'
-        });
-        profile_section_categories.belongsTo(models.profile_sections, {
-            foreignKey: 'profile_section_uuid',
-            as: 'profile_sections'
-        });
-        profile_section_categories.hasMany(models.profile_section_category_concepts, {
-            foreignKey: 'profile_section_category_uuid',
-            as: 'profile_section_category_concepts'
+    profile_section_category_concept_value_terms.associate = models => {
+        profile_section_category_concept_value_terms.belongsTo(models.concept_value_terms, {
+            foreignKey: 'concept_value_terms_uuid'
         });
     };
-
-    return profile_section_categories;
+    return profile_section_category_concept_value_terms;
 };

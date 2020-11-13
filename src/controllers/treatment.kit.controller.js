@@ -438,8 +438,9 @@ const TreatMent_Kit = () => {
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
         .then((data) => {
-      console.log('////////////',data.count);
-
+          data.rows.forEach(i=>{
+              i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
+          });
           return res
             .status(httpStatus.OK)
             .json({

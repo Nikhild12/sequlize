@@ -1,8 +1,8 @@
-const emr_constants = require('../config/constants');
+//const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
-    const sections = sequelize.define(
-        "sections",
+    const concept_value_terms = sequelize.define(
+        "concept_value_terms",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -10,48 +10,43 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
-            section_type_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 0
-            },
-            section_note_type_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 0
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
             code: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            description: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            sref: {
+            name: {
                 type: DataTypes.STRING,
+                allowNull: true
+            },
+            color: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            language: {
+                type: DataTypes.INTEGER,
                 allowNull: true
             },
             display_order: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: true
+            },
+            Is_default: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: true
             },
             is_active: {
-                type: DataTypes.BOOLEAN
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1,
+                allowNull: false
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false,
                 defaultValue: 1,
+                allowNull: false
             },
             revision: {
-                type: DataTypes.INTEGER,
-                defaultValue: 0,
-                allowNull: false
+                type: DataTypes.INTEGER
             },
             created_by: {
                 type: DataTypes.INTEGER
@@ -63,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
             modified_date: 'modified_date',
         },
         {
-            tableName: "sections",
+            tableName: "concept_value_terms",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             indexes: [
@@ -78,19 +73,5 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     );
-
-    sections.associate = models => {
-        sections.hasMany(models.profile_sections, {
-            foreignKey: 'section_uuid',
-            as: 'profile_sections'
-        });
-        sections.belongsTo(models.section_note_types, {
-            foreignKey: 'section_note_type_uuid'
-        });
-        sections.belongsTo(models.section_types, {
-            foreignKey: 'section_type_uuid'
-        });
-    };
-
-    return sections;
+    return concept_value_terms;
 };
