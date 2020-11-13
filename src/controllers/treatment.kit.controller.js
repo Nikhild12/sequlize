@@ -91,22 +91,8 @@ const TreatMent_Kit = () => {
     //let treatmentTransaction;
     let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
     let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
-    let options = {
-      uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
-      headers: {
-        Authorization: authorization,
-        user_uuid: user_uuid
-      },
-      body: {
-        code: 'TRK'
-      }
-    };
-    screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-    if (screenSettings_output) {
-      replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
-      treatment_kit.code = screenSettings_output.prefix + replace_value;
-    }
-    if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
+  
+    if (user_uuid && treatment_kit && treatment_kit.name) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
           code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED
@@ -118,7 +104,22 @@ const TreatMent_Kit = () => {
         let treatmentSave = [];
 
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
-
+        console.log("duplicateTreatmentRecord..",duplicateTreatmentRecord)
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'TRK'
+          }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          treatment_kit.code = screenSettings_output.prefix + replace_value;
+        }
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
@@ -706,19 +707,19 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName( name ) {
+async function findDuplicateTreatmentKitByCodeAndName( {code ,name},checkType = 'both' ) {
   // checking for Duplicate
   // before creating Treatment
 
-  // let codeOrname = {
-   
-  //   name: [{ name: name }],
-   
-  // };
+  let codeOrname = {
+    // code: [{ code: code }],
+    name: [{ name: name }],
+  // both: [{ code: code }, { name: name }]
+  };
   return await treatmentkitTbl.findAll({
-    attributes: ["code", "name", "is_active"],
+    attributes: ["name", "is_active"],
     where: {
-      [Op.or]: name
+      [Op.or]:codeOrname.name
     }
   });
 }
