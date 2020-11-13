@@ -106,7 +106,7 @@ const TreatMent_Kit = () => {
       replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
       treatment_kit.code = screenSettings_output.prefix + replace_value;
     }
-    if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.name) {
+    if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
           code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED
@@ -706,19 +706,19 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
+async function findDuplicateTreatmentKitByCodeAndName( name ) {
   // checking for Duplicate
   // before creating Treatment
 
-  let codeOrname = {
-    code: [{ code: code }],
-    name: [{ name: name }],
-    both: [{ code: code }, { name: name }]
-  };
+  // let codeOrname = {
+   
+  //   name: [{ name: name }],
+   
+  // };
   return await treatmentkitTbl.findAll({
     attributes: ["code", "name", "is_active"],
     where: {
-      [Op.or]: codeOrname[checkType]
+      [Op.or]: name
     }
   });
 }
