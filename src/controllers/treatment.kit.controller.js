@@ -98,7 +98,7 @@ const TreatMent_Kit = () => {
         user_uuid: user_uuid
       },
       body: {
-        code: 'TRK'
+        code: 'CLN'
       }
     };
     screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
