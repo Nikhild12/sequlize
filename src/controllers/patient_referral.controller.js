@@ -24,10 +24,10 @@ const Referral_History = () => {
 
   const _getReferralHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { patient_uuid } = req.query;
+    const { patient_uuid, facility_uuid, department_uuid } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getReferralData(patient_uuid);
+        const referralHistory = await getReferralData(patient_uuid, facility_uuid, department_uuid);
         return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContent: referralHistory });
 
       } else {
@@ -62,9 +62,39 @@ const Referral_History = () => {
     }
   };
 
+  const _updatePatientReferral = async (req, res) => {
+    try {
+      const { patient_referral_uuid } = req.body;
+      if (!patient_referral_uuid) {
+        return res
+          .status(httpStatus.UNPROCESSABLE_ENTITY)
+          .send({
+            status: 'error',
+            code: httpStatus.UNPROCESSABLE_ENTITY,
+            message: 'patient_referral_uuid is required'
+          });
+      }
+
+      let data = await patientReferralTbl.update({ is_reviewed: 1 },
+        { where: { uuid: patient_referral_uuid } });
+      return res
+        .status(httpStatus.OK)
+        .send({
+          status: 'success',
+          code: httpStatus.OK,
+          responseContent: data,
+          message: 'Updated Successfully'
+        });
+
+    } catch (ex) {
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  }
+
   return {
     getReferralHistory: _getReferralHistory,
-    createPatientReferral: _createPatientReferral
+    createPatientReferral: _createPatientReferral,
+    updatePatientReferral: _updatePatientReferral
   };
 
 };
@@ -81,11 +111,31 @@ async function assignDefault(patientReferralData, user_uuid) {
   return patientReferralData;
 }
 
-async function getReferralData(patient_uuid) {
-  return vw_patient_referral.findAll({
-    limit: 10,
+async function getReferralData(patient_uuid, facility_uuid, department_uuid) {
+  let findQuery = {
+    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'pr_facility_uuid', 'pr_department_uuid', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
+    where: {},
     order: [['pr_uuid', 'DESC']],
-    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
-    where: { pr_patient_uuid: patient_uuid }
-  }, { returning: true });
+    limit: 10
+  };
+
+  if (patient_uuid && /\S/.test(patient_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      pr_patient_uuid: patient_uuid
+    })
+  }
+
+  if (facility_uuid && /\S/.test(facility_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      pr_facility_uuid: facility_uuid
+    })
+  }
+
+  if (department_uuid && /\S/.test(department_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      pr_department_uuid: department_uuid
+    })
+  }
+
+  return vw_patient_referral.findAll(findQuery, { returning: true });
 }
