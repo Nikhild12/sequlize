@@ -48,6 +48,10 @@ const treatmentKitAtt = [
     "activeactiveto",
     "activefrom",
     "description",
+    'tk_facility_uuid',
+    'f_name',
+    'tk_share_uuid',
+    's_name'
 ];
 
 // Treatment Kit Common Attributes
@@ -415,7 +419,11 @@ function getTreatmentDetails(treatFav) {
         activefrom: treatFav[0].activefrom,
         activeto: treatFav[0].activeactiveto,
         description: treatFav[0].description,
-        department_id: treatFav[0].d_uuid
+        department_id: treatFav[0].d_uuid,
+        facility_id:treatFav[0].tk_facility_uuid,
+        facility_name:treatFav[0].f_name,
+        share_id:treatFav[0].tk_share_uuid,
+        share_name:treatFav[0].s_name
     };
 
 }

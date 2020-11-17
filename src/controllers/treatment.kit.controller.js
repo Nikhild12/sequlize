@@ -8,7 +8,7 @@ const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require("../config/constants");
-
+const config = require('../config/config');
 const emr_utility = require("../services/utility.service");
 
 // Initialize Treatment Kit
@@ -19,7 +19,10 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
-
+const {
+  APPMASTER_GET_SCREEN_SETTINGS,
+  APPMASTER_UPDATE_SCREEN_SETTINGS
+} = emr_constants.DEPENDENCY_URLS;
 // Treatment Kit Attribute
 const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
 
@@ -83,13 +86,13 @@ const TreatMent_Kit = () => {
    * @param {*} res
    */
   const _createTreatmentKit = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid,authorization } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
     let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
     let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
-
-    if (user_uuid && treatment_kit && treatment_kit.name && treatment_kit.code) {
+  
+    if (user_uuid && treatment_kit && treatment_kit.name) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
           code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED
@@ -101,7 +104,23 @@ const TreatMent_Kit = () => {
         let treatmentSave = [];
 
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
-
+        console.log("duplicateTreatmentRecord..",duplicateTreatmentRecord)
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'TRK'
+          }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          treatment_kit.code = screenSettings_output.prefix + replace_value;
+        }
+        
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
@@ -118,6 +137,20 @@ const TreatMent_Kit = () => {
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
+        if (treatmentSavedData) {
+          let options_two = {
+            uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              screenId: screenSettings_output.uuid,
+              suffix_current_value: replace_value
+            }
+          };
+          await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+        }
         // Lab
         if (
           treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 &&
@@ -257,7 +290,7 @@ const TreatMent_Kit = () => {
     } else {
       return res.status(400).send({
         code: httpStatus[400],
-        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR}`
       });
     }
   };
@@ -329,7 +362,7 @@ const TreatMent_Kit = () => {
       const getsearch = req.body;
       let pageNo = 0;
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
-
+      const institutionId = getsearch.institutionId ? getsearch.institutionId : req.headers.facility_uuid;
       let sortArr = ["tk_uuid", "DESC"];
       let sortOrder = 'DESC';
       if (getsearch.pageNo) {
@@ -372,12 +405,15 @@ const TreatMent_Kit = () => {
         group: ['tk_uuid']
 
       };
+      findQuery.where['tk_facility_uuid'] = institutionId;
       if (getsearch.search && /\S/.test(getsearch.search)) {
         findQuery.where[Op.or] = [
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.s_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%')
         ];
       }
       if (req.body.codeName && /\S/.test(req.body.codeName)) {
@@ -423,11 +459,11 @@ const TreatMent_Kit = () => {
       if (getsearch.share && /\S/.test(getsearch.share)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
-            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)]
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)]
           }];
         } else {
           findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_is_public')), getsearch.share)
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)
           ];
         }
       }
@@ -438,8 +474,8 @@ const TreatMent_Kit = () => {
       await treatmentKitViewTbl
         .findAndCountAll(findQuery)
         .then((data) => {
-          data.rows.forEach(i=>{
-              i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
+          data.rows.forEach(i => {
+            i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
           });
           return res
             .status(httpStatus.OK)
@@ -686,19 +722,19 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
+async function findDuplicateTreatmentKitByCodeAndName( {code ,name},checkType = 'both' ) {
   // checking for Duplicate
   // before creating Treatment
 
   let codeOrname = {
-    code: [{ code: code }],
+    // code: [{ code: code }],
     name: [{ name: name }],
-    both: [{ code: code }, { name: name }]
+  // both: [{ code: code }, { name: name }]
   };
   return await treatmentkitTbl.findAll({
-    attributes: ["code", "name", "is_active"],
+    attributes: ["name", "is_active"],
     where: {
-      [Op.or]: codeOrname[checkType]
+      [Op.or]:codeOrname.name
     }
   });
 }

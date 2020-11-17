@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING
             },
+            share_uuid: {
+                type: DataTypes.INTEGER
+            },
             is_public: {
 
                 type: DataTypes.BOOLEAN
