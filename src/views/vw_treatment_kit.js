@@ -54,7 +54,24 @@ module.exports = (sequelize, DataTypes) => {
             tk_is_active: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false
-
+            },
+            tk_share_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            s_code: {
+                type: DataTypes.STRING,
+            },
+            s_name: {
+                type: DataTypes.STRING,
+            },
+            tk_facility_uuid:{
+                type: DataTypes.INTEGER,
+            },
+            f_code: {
+                type: DataTypes.STRING,
+            },
+            f_name: {
+                type: DataTypes.STRING,
             },
             modified_date: {
                 type: DataTypes.DATE

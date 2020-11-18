@@ -7240,6 +7240,18 @@
 						"name": "patient_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "facility_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -7277,6 +7289,44 @@
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/createPatientReferral"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientReferral"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					},
+					"400": {
+						"description": "Insertion failed"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient-referral/updatePatientReferral": {
+			"post": {
+				"description": "To Update Patient Referral",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "update PatientReferral ",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePatientReferral"
 						}
 					}
 				],
@@ -7690,6 +7740,12 @@
 					{
 						"in": "header",
 						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -13807,6 +13863,9 @@
 						"department_uuid": {
 							"type": "integer"
 						},
+						"share_uuid":{
+							"type": "integer"
+						},
 						"user_uuid": {
 							"type": "integer"
 						},
@@ -15698,6 +15757,15 @@
 				}
 			}
 		},
+		"updatePatientReferral": {
+			"type": "object",
+			"properties": {
+				"patient_referral_uuid": {
+					"type": "integer",
+					"example": 0
+				}
+			}
+		},
 		"deleteDiagnosisById": {
 			"type": "object",
 			"properties": {
@@ -17107,6 +17175,9 @@
 				"departmentId": {
 					"type": "integer"
 				},
+				"institutionId": {
+					"type": "integer"
+				},
 				"createdBy": {
 					"type": "string"
 				},
@@ -17114,9 +17185,6 @@
 					"type": "integer"
 				},
 				"status": {
-					"type": "string"
-				},
-				"searchKey": {
 					"type": "string"
 				}
 			}
