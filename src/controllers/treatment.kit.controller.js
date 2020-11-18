@@ -86,7 +86,7 @@ const TreatMent_Kit = () => {
    * @param {*} res
    */
   const _createTreatmentKit = async (req, res) => {
-    const { user_uuid,authorization } = req.headers;
+    const { user_uuid, authorization } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
     let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
@@ -104,7 +104,7 @@ const TreatMent_Kit = () => {
         let treatmentSave = [];
 
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
-        console.log("duplicateTreatmentRecord..",duplicateTreatmentRecord)
+        console.log("duplicateTreatmentRecord..", duplicateTreatmentRecord)
         let options = {
           uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
           headers: {
@@ -120,7 +120,7 @@ const TreatMent_Kit = () => {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           treatment_kit.code = screenSettings_output.prefix + replace_value;
         }
-        
+
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
@@ -571,7 +571,6 @@ const TreatMent_Kit = () => {
       try {
 
         const treatmentById = await treatmentKitAtt.getTreatmentFavByIdPromise(treatmentKitId);
-
         // Checking Response
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
           return acc + cur.length;
@@ -722,19 +721,19 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName( {code ,name},checkType = 'both' ) {
+async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
   // checking for Duplicate
   // before creating Treatment
 
   let codeOrname = {
     // code: [{ code: code }],
     name: [{ name: name }],
-  // both: [{ code: code }, { name: name }]
+    // both: [{ code: code }, { name: name }]
   };
   return await treatmentkitTbl.findAll({
     attributes: ["name", "is_active"],
     where: {
-      [Op.or]:codeOrname.name
+      [Op.or]: codeOrname.name
     }
   });
 }

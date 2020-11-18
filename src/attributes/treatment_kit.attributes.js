@@ -110,6 +110,7 @@ let getTreatmentKitInvestigationAtt = [
     "tm_name",
     "tm_description",
     "tkim_order_to_location_uuid",
+    "tl_order_to_location_name", //30653
     "tkim_order_priority_uuid",
     "pm_profile_code",
     "pm_name",
@@ -129,6 +130,7 @@ let getTreatmentKitRadiologyAtt = [
     "tkrm_test_master_uuid",
     "tkrm_treatment_kit_uuid",
     "tkrm_order_to_location_uuid",
+    "tl_order_to_location_name", //30653
     "tkrm_order_priority_uuid",
     "tkrm_profile_master_uuid",
     "pm_profile_code",
@@ -148,6 +150,7 @@ let getTreatmentKitLabAtt = [
     "tklm_test_master_uuid",
     "tklm_treatment_kit_uuid",
     "tklm_order_to_location_uuid",
+    "tl_order_to_location_name", //30653
     "tklm_order_priority_uuid",
     "pm_profile_code",
     "pm_name",
@@ -362,6 +365,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
             investigation_code: iv.tm_code || iv.pm_profile_code,
             investigation_description: iv.tm_description || iv.pm_description,
             order_to_location_uuid: iv.tkim_order_to_location_uuid,
+            order_to_location_name: iv.tl_order_to_location_name, //30653
             test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: iv.tkim_order_priority_uuid,
             treatment_kit_investigation_id: iv.tkim_uuid
@@ -378,6 +382,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
             radiology_code: r.tm_code || r.pm_profile_code,
             radiology_description: r.tm_description || r.pm_description,
             order_to_location_uuid: r.tkrm_order_to_location_uuid,
+            order_to_location_name: r.tl_order_to_location_name, //30653
             test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: r.tkrm_order_priority_uuid,
             treatment_kit_radiology_id: r.tkrm_uuid
@@ -394,6 +399,7 @@ function getLabDetailsFromTreatment(lab) {
             lab_code: l.tm_code || l.pm_profile_code,
             lab_description: l.tm_description || l.pm_description,
             order_to_location_uuid: l.tklm_order_to_location_uuid,
+            order_to_location_name: l.tl_order_to_location_name, //30653
             test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: l.tklm_order_priority_uuid,
             treatment_kit_lab_id: l.tklm_uuid
