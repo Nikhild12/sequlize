@@ -143,9 +143,9 @@ const _favouriteDuplicateMessage = (favList, sKey, sVal, dO) => {
 const favouriteViewAttributes = [
   "fm_uuid",
   "fm_name",
-  "tom_uuid",
-  "tom_name",
-  "tom_code",
+  // "tom_uuid",
+  // "tom_name",
+  // "tom_code",
   "fm_department_uuid",
   "fm_user_uuid",
   "fm_favourite_type_uuid",

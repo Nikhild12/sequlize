@@ -106,8 +106,7 @@
         </div>
         {{/if}}
 
-       
-        {{#each headerObj.sectionObj}}
+        {{#eachSort headerObj.sectionObj 'display_order'}}
         <div style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -121,7 +120,7 @@
                 </thead>
 
                 <tbody>
-                    {{#each categoryObj}}
+                    {{#eachSort categoryObj 'display_order'}}
                     <table class='first_tbl' borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3'
                         cellspacing='0' style="width:100%; float:left; text-align: left;">
                         <thead>
@@ -137,15 +136,15 @@
                                     <div style="width: calc(100% - 20px); float:left; padding: 0 10px;">
                                         <table>
                                             <tbody>
-                                                {{#each categoryArray}}
+                                                {{#eachSort categoryArray 'display_order'}}
                                                 <tr>
                                                     <td style="padding: 5px;white-space: nowrap;vertical-align: baseline;">
                                                         {{getKey this}}</td>
                                                     <td style="padding: 5px;vertical-align: baseline;">:</td>
                                                     <td style="padding: 5px; word-break: break-all;vertical-align: baseline;">{{getValue this}}</td>
                                                 </tr>
-    
-                                                {{/each}}
+
+                                                {{/eachSort}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -153,12 +152,12 @@
                             </tr>
                         </tbody>
                     </table>
-                    {{/each}}
+                    {{/eachSort}}
                 </tbody>
 
             </table>
         </div>
-        {{/each}}
+        {{/eachSort}}
 
      
         {{#if headerObj.Vitals}}

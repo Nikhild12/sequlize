@@ -19,6 +19,7 @@ const sectionsTbl = sequelizeDb.sections;
 const sectionNoteTypesTbl = sequelizeDb.section_note_types;
 const sectionTypesTbl = sequelizeDb.section_types;
 const profile_sections_tbl = sequelizeDb.profile_sections;
+const section_category_entries_tbl = sequelizeDb.section_category_entries;
 const sectionsController = () => {
 
 
@@ -159,7 +160,6 @@ const sectionsController = () => {
             return res.status(200).send({ code: httpStatus.OK, message: 'Deleted Successfully', responseContents: data });
         }
         catch (err) {
-            console.log("============+>>>", err);
             if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
                 return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
             }

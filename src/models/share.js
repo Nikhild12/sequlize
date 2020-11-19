@@ -26,10 +26,8 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 1
             },
             revision: {
-                type: DataTypes.STRING,
-                allowNull: false,
+                type: DataTypes.BOOLEAN,
                 defaultValue: 1
-                
             },
             is_active: {
                 type: DataTypes.BOOLEAN,

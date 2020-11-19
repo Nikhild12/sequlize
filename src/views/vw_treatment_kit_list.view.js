@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     const VW_TREATMENT_KIT_LIST = sequelize.define(
         "vw_treatment_kit_list",
         {
-
             u_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -85,6 +84,24 @@ module.exports = (sequelize, DataTypes) => {
             },
             description: {
                 type: DataTypes.STRING(500)
+            },
+            tk_share_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            s_code: {
+                type: DataTypes.STRING,
+            },
+            s_name: {
+                type: DataTypes.STRING,
+            },
+            tk_facility_uuid:{
+                type: DataTypes.INTEGER,
+            },
+            f_code: {
+                type: DataTypes.STRING,
+            },
+            f_name: {
+                type: DataTypes.STRING,
             }
         },
         {
