@@ -336,15 +336,33 @@ const ChiefComplaints = () => {
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
     let sortField = 'modified_date';
     let sortOrder = 'ASC';
-  
-    Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
+    if (getsearch.pageNo) {
+      let temp = parseInt(getsearch.pageNo);
+
+
+      if (temp && (temp != NaN)) {
+          pageNo = temp;
+      }
+  }
+  const offset = pageNo * itemsPerPage;
+
+
+    if (getsearch.sortField) {
+
+      sortField = getsearch.sortField;
+    }
+
+    if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
+
+      sortOrder = getsearch.sortOrder;
+    }
+    // Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
     let postingData = {
-      offset: pageNo * itemsPerPage,
+      offset: offset,
+      limit: itemsPerPage,
       where: { is_active: 1, status: 1, },
-      limit: getsearch.paginationSize,
-      order: [[sortField, sortOrder]],
-
+      order: [[sortField, sortOrder]]
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
