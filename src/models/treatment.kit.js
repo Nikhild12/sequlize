@@ -74,36 +74,36 @@ module.exports = (sequelize, DataTypes) => {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('facility_uuid')
-                    }
-                }
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('facility_uuid')
+                //     },
+                //     min: {
+                //         args: [1],
+                //         msg: emr_constants.GetZeroValidationMessage('facility_uuid')
+                //     }
+                // }
 
             },
             department_uuid: {
 
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('department_uuid')
-                    },
-                    min: {
-                        args: [1],
-                        msg: emr_constants.GetZeroValidationMessage('department_uuid')
-                    }
-                }
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('department_uuid')
+                //     },
+                //     min: {
+                //         args: [1],
+                //         msg: emr_constants.GetZeroValidationMessage('department_uuid')
+                //     }
+                // }
 
             },
             user_uuid: {
