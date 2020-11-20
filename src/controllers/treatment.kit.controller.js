@@ -35,10 +35,8 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
       filterByQuery = {
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
-        [Op.and]: [
-          {
-            [Op.or]: [
-              {
+        [Op.and]: [{
+            [Op.or]: [{
                 name: {
                   [Op.like]: `%${searchValue}%`
                 }
@@ -51,12 +49,19 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
             ]
           },
           {
-            [Op.or]: [
-              {
-                department_uuid: { [Op.eq]: dept_id },
-                is_public: { [Op.eq]: emr_constants.IS_ACTIVE }
+            [Op.or]: [{
+                department_uuid: {
+                  [Op.eq]: dept_id
+                },
+                is_public: {
+                  [Op.eq]: emr_constants.IS_ACTIVE
+                }
               },
-              { user_uuid: { [Op.eq]: user_uuid } }
+              {
+                user_uuid: {
+                  [Op.eq]: user_uuid
+                }
+              }
             ]
           }
         ]
@@ -66,8 +71,8 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
     default:
       return {
         uuid: searchValue,
-        is_active: emr_constants.IS_ACTIVE,
-        status: emr_constants.IS_ACTIVE
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE
       };
   }
 };
@@ -86,23 +91,35 @@ const TreatMent_Kit = () => {
    * @param {*} res
    */
   const _createTreatmentKit = async (req, res) => {
-    const { user_uuid, authorization } = req.headers;
+    const {
+      user_uuid,
+      authorization
+    } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
-    let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
-    let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
-  
+    let {
+      treatment_kit,
+      treatment_kit_lab,
+      treatment_kit_drug
+    } = req.body;
+    let {
+      treatment_kit_investigation,
+      treatment_kit_radiology,
+      treatment_kit_diagnosis
+    } = req.body;
+
     if (user_uuid && treatment_kit && treatment_kit.name) {
       if (checkTreatmentKit(req)) {
         return res.status(400).send({
-          code: httpStatus.BAD_REQUEST, message: emr_constants.TREATMENT_REQUIRED
+          code: httpStatus.BAD_REQUEST,
+          message: emr_constants.TREATMENT_REQUIRED
         });
       }
       try {
 
         // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
-
+        treatment_kit.post = true;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
         console.log("duplicateTreatmentRecord..", duplicateTreatmentRecord)
         let options = {
@@ -209,8 +226,9 @@ const TreatMent_Kit = () => {
           treatmentSave = [
             ...treatmentSave,
             treatmentkitInvestigationTbl.bulkCreate(
-              treatment_kit_investigation,
-              { returning: true }
+              treatment_kit_investigation, {
+                returning: true
+              }
             )
           ];
         }
@@ -281,7 +299,10 @@ const TreatMent_Kit = () => {
         // }
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: ex });
+          .send({
+            code: httpStatus.BAD_REQUEST,
+            message: ex
+          });
       } finally {
         // if (treatmentTransaction && !treatTransStatus) {
         //     treatmentTransaction.rollback();
@@ -301,17 +322,27 @@ const TreatMent_Kit = () => {
    * @param {*} res
    */
   const _getTreatmentKitByFilters = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const {
+      user_uuid
+    } = req.headers;
     //const { searchKey, searchValue, departmentId } = req.query;
 
     let searchKey, searchValue, departmentId;
 
     // If method is GET in query
     if (req.method === "GET") {
-      ({ searchKey, searchValue, departmentId } = req.query);
+      ({
+        searchKey,
+        searchValue,
+        departmentId
+      } = req.query);
     } else if (req.method === "POST") {
 
-      ({ searchKey, searchValue, departmentId } = req.body);
+      ({
+        searchKey,
+        searchValue,
+        departmentId
+      } = req.body);
     }
 
 
@@ -327,9 +358,9 @@ const TreatMent_Kit = () => {
           attributes: getFilterByCodeAndNameAttributes
         });
         const returnMessage =
-          treatmentKitFilteredData.length > 0
-            ? emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY
-            : emr_constants.NO_RECORD_FOUND;
+          treatmentKitFilteredData.length > 0 ?
+          emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
+          emr_constants.NO_RECORD_FOUND;
 
         let response = getFilterTreatmentKitResponse(treatmentKitFilteredData);
         let responseLength = response.length;
@@ -346,7 +377,10 @@ const TreatMent_Kit = () => {
         console.log("Exception happened", ex);
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: ex });
+          .send({
+            code: httpStatus.BAD_REQUEST,
+            message: ex
+          });
       }
     } else {
       return res.status(400).send({
@@ -399,9 +433,14 @@ const TreatMent_Kit = () => {
         subQuery: false,
         offset: offset,
         limit: itemsPerPage,
-        where: { tk_status: 1, tk_is_active: 1 },
+        where: {
+          tk_status: 1,
+          tk_is_active: 1
+        },
         order: [sortArr],
-        attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
+        attributes: {
+          "exclude": ['id', 'createdAt', 'updatedAt']
+        },
         group: ['tk_uuid']
 
       };
@@ -508,8 +547,12 @@ const TreatMent_Kit = () => {
 
 
   const _deleteTreatmentKit = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const { treatmentKitId } = req.query;
+    const {
+      user_uuid
+    } = req.headers;
+    const {
+      treatmentKitId
+    } = req.query;
 
     const isTreatmenKitValid = emr_utility.isNumberValid(treatmentKitId);
     const treatmentUpdateValue = {
@@ -528,7 +571,9 @@ const TreatMent_Kit = () => {
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
-            where: { uuid: treatmentKitId }
+            where: {
+              uuid: treatmentKitId
+            }
           }),
           treatmentkitLabTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Lab
           treatmentkitRadiologyTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Radiology
@@ -542,16 +587,20 @@ const TreatMent_Kit = () => {
         );
 
         const responseCode = deleteTreatmentKitPromise[0][0] === 1 ? httpStatus.OK : httpStatus.NO_CONTENT;
-        const responseMessage = deleteTreatmentKitPromise[0][0] === 1
-          ? emr_constants.TREATMENT_DELETE_SUCCESS : emr_constants.NO_RECORD_FOUND;
+        const responseMessage = deleteTreatmentKitPromise[0][0] === 1 ?
+          emr_constants.TREATMENT_DELETE_SUCCESS : emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
-          code: responseCode, message: responseMessage
+          code: responseCode,
+          message: responseMessage
         });
       } catch (ex) {
         console.log("Exception happened", ex);
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: ex });
+          .send({
+            code: httpStatus.BAD_REQUEST,
+            message: ex
+          });
       }
     } else {
       return res.status(400).send({
@@ -563,8 +612,12 @@ const TreatMent_Kit = () => {
 
   const _getTreatmentKitById = async (req, res) => {
 
-    const { user_uuid } = req.headers;
-    let { treatmentKitId } = req.query;
+    const {
+      user_uuid
+    } = req.headers;
+    let {
+      treatmentKitId
+    } = req.query;
 
     treatmentKitId = +(treatmentKitId);
     if (user_uuid && (treatmentKitId && treatmentKitId > 0)) {
@@ -590,7 +643,10 @@ const TreatMent_Kit = () => {
         console.log("Exception happened", error);
         return res
           .status(500)
-          .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+          .send({
+            code: httpStatus.INTERNAL_SERVER_ERROR,
+            message: error.message
+          });
 
       }
     } else {
@@ -602,21 +658,36 @@ const TreatMent_Kit = () => {
   };
 
   const _updateTreatmentKitById = async (req, res) => {
-    const { user_uuid } = req.headers;
-    let { treatment_kit, treatment_kit_lab, treatment_kit_drug } = req.body;
-    let { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
+    const {
+      user_uuid
+    } = req.headers;
+    let {
+      treatment_kit,
+      treatment_kit_lab,
+      treatment_kit_drug
+    } = req.body;
+    let {
+      treatment_kit_investigation,
+      treatment_kit_radiology,
+      treatment_kit_diagnosis
+    } = req.body;
     if (user_uuid && Object.keys(req.body).length > 0) {
       try {
 
-        let { treatment_kit_uuid } = treatment_kit;
+        let {
+          treatment_kit_uuid
+        } = treatment_kit;
         let updateTreatmentPromise = [];
 
         if (+(treatment_kit_uuid) > 0) {
 
           // getting treatment kit record
-          const treatmentKitRecord = await treatmentkitTbl.findAll(
-            { attributes: ["code", "name"], where: { uuid: treatment_kit_uuid } }
-          );
+          const treatmentKitRecord = await treatmentkitTbl.findAll({
+            attributes: ["code", "name"],
+            where: {
+              uuid: treatment_kit_uuid
+            }
+          });
 
           // Checking for duplicate code and name
           if (treatmentKitRecord && treatmentKitRecord.length > 0 && (treatment_kit.hasOwnProperty('name') || treatment_kit.hasOwnProperty('code'))) {
@@ -633,10 +704,13 @@ const TreatMent_Kit = () => {
               } else if (!name) {
                 checkType = 'name';
               }
+              treatment_kit.post = false;
+
               const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit, checkType);
               if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
                 return res.status(400).send({
-                  code: emr_constants.DUPLICATE_ENTRIE, message: getDuplicateMsg(duplicateTreatmentRecord)
+                  code: emr_constants.DUPLICATE_ENTRIE,
+                  message: getDuplicateMsg(duplicateTreatmentRecord)
                 });
               }
             }
@@ -645,11 +719,18 @@ const TreatMent_Kit = () => {
           // Updating Master Table i.e Treatment Kit Table
           treatment_kit.modified_by = user_uuid;
           treatment_kit.modified_date = new Date();
-          const updateTreatmentKit = await treatmentkitTbl.update(treatment_kit, { where: { uuid: treatment_kit_uuid } });
+          const updateTreatmentKit = await treatmentkitTbl.update(treatment_kit, {
+            where: {
+              uuid: treatment_kit_uuid
+            }
+          });
 
           // Checking whether master record found or not
           if (updateTreatmentKit && updateTreatmentKit.length > 0 && !updateTreatmentKit[0]) {
-            return res.status(200).send({ code: httpStatus.NO_CONTENT, message: emr_constants.NO_RECORD_FOUND });
+            return res.status(200).send({
+              code: httpStatus.NO_CONTENT,
+              message: emr_constants.NO_RECORD_FOUND
+            });
           }
 
           // Drug Update, Delete and Create
@@ -686,7 +767,11 @@ const TreatMent_Kit = () => {
 
           const code = httpStatus.OK;
           const message = emr_constants.TREATMENT_UPDATE;
-          return res.status(200).send({ code, message, responseContent: updateTreatmentKitPromise });
+          return res.status(200).send({
+            code,
+            message,
+            responseContent: updateTreatmentKitPromise
+          });
 
         } else {
           return res.status(400).send({
@@ -699,7 +784,10 @@ const TreatMent_Kit = () => {
         console.log("Exception happened", error);
         return res
           .status(500)
-          .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: error.message });
+          .send({
+            code: httpStatus.INTERNAL_SERVER_ERROR,
+            message: error.message
+          });
       }
     } else {
       return res.status(400).send({
@@ -721,19 +809,29 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
+async function findDuplicateTreatmentKitByCodeAndName({
+  code,
+  name,
+  treatment_kit_uuid,
+  post
+}, checkType = 'both') {
   // checking for Duplicate
   // before creating Treatment
 
   let codeOrname = {
     // code: [{ code: code }],
-    name: [{ name: name }],
+    name: [{
+      name: name
+    }],
     // both: [{ code: code }, { name: name }]
   };
   return await treatmentkitTbl.findAll({
     attributes: ["name", "is_active"],
     where: {
-      [Op.or]: codeOrname.name
+      [Op.or]: codeOrname.name,
+      uuid: {
+        [Op.notIn]: post ? [0] : [treatment_kit_uuid]
+      }
     }
   });
 }
@@ -750,8 +848,15 @@ function getDuplicateMsg(record) {
  * @param {*} req
  */
 function checkTreatmentKit(req) {
-  const { treatment_kit_lab, treatment_kit_drug } = req.body;
-  const { treatment_kit_investigation, treatment_kit_radiology, treatment_kit_diagnosis } = req.body;
+  const {
+    treatment_kit_lab,
+    treatment_kit_drug
+  } = req.body;
+  const {
+    treatment_kit_investigation,
+    treatment_kit_radiology,
+    treatment_kit_diagnosis
+  } = req.body;
 
   return (
     !checkTreatmentKitObj(treatment_kit_lab) && !checkTreatmentKitDrug(treatment_kit_drug) &&

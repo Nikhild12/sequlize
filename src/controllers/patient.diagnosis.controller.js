@@ -550,13 +550,11 @@ async function _helperdelPatDignsById(diagnosisId) {
 async function _helperCreatePatientDiagnosis(patientsDiagnosisData, user_uuid) {
   patientsDiagnosisData.forEach(pD => {
     pD.is_snomed = pD.is_snomed;
-    pD.is_patient_condition =
-      pD.is_patient_condition || emr_constants.IS_ACTIVE;
+    pD.is_patient_condition = pD.is_patient_condition || emr_constants.IS_ACTIVE;
     pD.is_chronic = pD.is_chronic || emr_constants.IS_ACTIVE;
-
     pD = utilityService.createIsActiveAndStatus(pD, user_uuid);
     pD.performed_by = user_uuid;
-    pD.performed_date = new Date();
+    pD.performed_date = pD.performed_date ? pD.performed_date : new Date();
   });
 
   return await patient_diagnosis_tbl.bulkCreate(patientsDiagnosisData, {
