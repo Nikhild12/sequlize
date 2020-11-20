@@ -28,8 +28,8 @@ if (config.env === "development") {
 }
 
 // parse body params and attache them to req.body
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // app.use(cookieParser());
 app.use(compress());
@@ -117,8 +117,8 @@ app.get('/api/getAPIVersion', function (req, res) {
 	let versiondata = {
 		'dev': pkg.version,
 		'qa': pkg.qaversion,
-		'uat':pkg.uatversion,
-		'prod':pkg.prodversion
+		'uat': pkg.uatversion,
+		'prod': pkg.prodversion
 	};
 	return res.send({
 		statusCode: '200',
@@ -133,7 +133,7 @@ app.get('/api/getAPIVersion', function (req, res) {
 const makeServiceCall = (req, res, next) => {
 	const modulename = config.serverName;
 	let partUrl = req.url;
-	let resp_dt =new Date().toLocaleString('en-US', {timeZone: 'Asia/Kolkata'});
+	let resp_dt = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
 	if (partUrl !== '/api/userslog/getUsersLogById') {
 		if (partUrl !== '/api/userslog/getUsersLog') {
 			if (req.headers) {
@@ -143,7 +143,7 @@ const makeServiceCall = (req, res, next) => {
 					hostName: req.headers['host-name'] || null,
 					ModuleName: modulename || null,
 					APIName: req.url || null,
-					Status:  res.body.statusCode || res.body.code,
+					Status: res.body.statusCode || res.body.code,
 					statusCode: res.body.statusCode || res.body.code,
 					reqId: req.headers['session_id'] || null,
 					IPAddress: req.headers['ip_address'] || null,
@@ -190,7 +190,7 @@ const makeServiceCall = (req, res, next) => {
 			req: logObj,
 			res: res
 		}
-	}, function (error, response, body) {});
+	}, function (error, response, body) { });
 };
 
 function getCurrentDateTime(givendt) {
@@ -244,16 +244,16 @@ var myLogger = function (req, res, next) {
 			if (reqrescontent) {
 				sendLog(reqrescontent, sqlcontent);
 			}
-			fs.writeFile('./sql.txt', '', function () {
-				return true;
-			});
-			fs.writeFile('./access-info.log', '', function () {
-				return true;
-			});
-			fs.writeFile('./access-error.log', '', function () {
-				return true;
-			});
 		}
+		fs.writeFile('./sql.txt', '', function () {
+			return true;
+		});
+		fs.writeFile('./access-info.log', '', function () {
+			return true;
+		});
+		fs.writeFile('./access-error.log', '', function () {
+			return true;
+		});
 	});
 	next();
 };
