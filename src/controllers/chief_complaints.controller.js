@@ -330,52 +330,53 @@ const ChiefComplaints = () => {
         .send({ statusCode: 400, message: "No Request Body Found" });
     }
   };   
-
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
-    const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
-    const itemsPerPage = paginationSize ? paginationSize : 10;
+    let pageNo = 0;
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+    let sortField = 'modified_date';
+    let sortOrder = 'ASC';
   
-    Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
+    // Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
     let postingData = {
       offset: pageNo * itemsPerPage,
       where: { is_active: 1, status: 1, },
-      limit: paginationSize,
+      limit: getsearch.paginationSize,
       order: [[sortField, sortOrder]],
 
     };
 
-    if (search && /\S/.test(search)) {
+    if (getsearch.search && /\S/.test(getsearch.search)) {
       postingData.where = Object.assign(postingData.where, {
         [Op.and]: [{
           [Op.or]: [{
             code: {
-              [Op.like]: '%' + search.toLowerCase() + '%',
+              [Op.like]: '%' + getsearch.search.toLowerCase() + '%',
             }
           }, {
             name: {
-              [Op.like]: '%' + search.toLowerCase() + '%',
+              [Op.like]: '%' +getsearch.search.toLowerCase() + '%',
             }
           },
           {
             description: {
-              [Op.like]: '%' + search.toLowerCase() + '%',
+              [Op.like]: '%' + getsearch.search.toLowerCase() + '%',
             }
           }]
         }]
       });
     }
-    if (searchKeyWord && /\S/.test(searchKeyWord)) {
+    if (getsearch.searchKeyWord && /\S/.test(getsearch.searchKeyWord)) {
       postingData.where = Object.assign(postingData.where, {
         [Op.and]: [{
           [Op.or]: [{
             code: {
-              [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+              [Op.like]: '%' + getsearch.searchKeyWord.toLowerCase() + '%',
             }
           }, {
             name: {
-              [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+              [Op.like]: '%' + getsearch.searchKeyWord.toLowerCase() + '%',
             }
           }]
         }]
@@ -404,6 +405,80 @@ const ChiefComplaints = () => {
         });
     }
   };
+
+  // const _getChiefComplaints = async (req, res, next) => {
+  //   let getsearch = req.body;
+  //   const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
+  //   const itemsPerPage = paginationSize ? paginationSize : 10;
+  
+  //   Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
+
+  //   let postingData = {
+  //     offset: pageNo * itemsPerPage,
+  //     where: { is_active: 1, status: 1, },
+  //     limit: paginationSize,
+  //     order: [[sortField, sortOrder]],
+
+  //   };
+
+  //   if (search && /\S/.test(search)) {
+  //     postingData.where = Object.assign(postingData.where, {
+  //       [Op.and]: [{
+  //         [Op.or]: [{
+  //           code: {
+  //             [Op.like]: '%' + search.toLowerCase() + '%',
+  //           }
+  //         }, {
+  //           name: {
+  //             [Op.like]: '%' + search.toLowerCase() + '%',
+  //           }
+  //         },
+  //         {
+  //           description: {
+  //             [Op.like]: '%' + search.toLowerCase() + '%',
+  //           }
+  //         }]
+  //       }]
+  //     });
+  //   }
+  //   if (searchKeyWord && /\S/.test(searchKeyWord)) {
+  //     postingData.where = Object.assign(postingData.where, {
+  //       [Op.and]: [{
+  //         [Op.or]: [{
+  //           code: {
+  //             [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+  //           }
+  //         }, {
+  //           name: {
+  //             [Op.like]: '%' + searchKeyWord.toLowerCase() + '%',
+  //           }
+  //         }]
+  //       }]
+  //     });
+  //   }
+
+  //   postingData.where.is_active = status;
+
+  //   try {
+  //     let data = await chief_complaints_tbl.findAndCountAll(postingData);
+  //     const code = data.rows.length === 0 ? 204 : 200;
+  //     const message = data.rows.length === 0 ? emr_constants.NO_RECORD_FOUND : emr_constants.DRUG_FREQUENCY;
+  //     return res
+  //       .status(httpStatus.OK)
+  //       .json({
+  //         message, code, responseContents: data.rows, totalRecords: data.count,
+  //       });
+
+  //   } catch (err) {
+  //     const errorMsg = err.errors ? err.errors[0].message : err.message;
+  //     return res
+  //       .status(httpStatus.INTERNAL_SERVER_ERROR)
+  //       .json({
+  //         statusCode: 500,
+  //         msg: errorMsg
+  //       });
+  //   }
+  // };
 
   return {
     getChiefComplaintsFilter: _getChiefComplaintsFilter,
