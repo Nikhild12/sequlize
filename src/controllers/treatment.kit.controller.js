@@ -721,7 +721,7 @@ const TreatMent_Kit = () => {
 
 module.exports = TreatMent_Kit();
 
-async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType = 'both') {
+async function findDuplicateTreatmentKitByCodeAndName({ code, name,treatment_kit_uuid }, checkType = 'both') {
   // checking for Duplicate
   // before creating Treatment
 
@@ -733,7 +733,10 @@ async function findDuplicateTreatmentKitByCodeAndName({ code, name }, checkType 
   return await treatmentkitTbl.findAll({
     attributes: ["name", "is_active"],
     where: {
-      [Op.or]: codeOrname.name
+      [Op.or]: codeOrname.name,
+      uuid:{
+        [Op.notIn]: [treatment_kit_uuid] 
+      }
     }
   });
 }
