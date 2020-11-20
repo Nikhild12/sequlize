@@ -337,7 +337,7 @@ const ChiefComplaints = () => {
     let sortField = 'modified_date';
     let sortOrder = 'ASC';
   
-    // Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
+    Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
     let postingData = {
       offset: pageNo * itemsPerPage,
@@ -382,8 +382,8 @@ const ChiefComplaints = () => {
         }]
       });
     }
-
-    postingData.where.is_active = status;
+    getsearch.status=1;
+    postingData.where.is_active =getsearch.status;
 
     try {
       let data = await chief_complaints_tbl.findAndCountAll(postingData);
