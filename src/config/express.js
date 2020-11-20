@@ -244,16 +244,19 @@ var myLogger = function (req, res, next) {
 			if (reqrescontent) {
 				sendLog(reqrescontent, sqlcontent);
 			}
-			fs.writeFile('./sql.txt', '', function () {
-				return true;
-			});
-			fs.writeFile('./access-info.log', '', function () {
-				return true;
-			});
-			fs.writeFile('./access-error.log', '', function () {
-				return true;
-			});
+			
 		}
+
+		fs.writeFile('./sql.txt', '', function () {
+			return true;
+		});
+		fs.writeFile('./access-info.log', '', function () {
+			return true;
+		});
+		fs.writeFile('./access-error.log', '', function () {
+			return true;
+		});
+
 	});
 	next();
 };
