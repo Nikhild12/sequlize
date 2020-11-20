@@ -39,7 +39,6 @@ const Referral_History = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err });
     }
   };
-
   /**
     * Adding Patient References
     * @param {*} req 
