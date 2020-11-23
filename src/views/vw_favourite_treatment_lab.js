@@ -38,6 +38,12 @@ module.exports = (sequelize, DataTypes) => {
             tklm_order_to_location_uuid: {
                 type: DataTypes.INTEGER
             },
+            tl_order_to_location_code: { //30653
+                type: DataTypes.INTEGER
+            },
+            tl_order_to_location_name: { //30653
+                type: DataTypes.INTEGER
+            },
             tklm_treatment_kit_uuid: {
                 type: DataTypes.INTEGER
             },

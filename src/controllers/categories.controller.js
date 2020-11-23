@@ -19,6 +19,7 @@ const { APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 const categoriesTbl = sequelizeDb.categories;
 const categoryTypeMasterTbl = sequelizeDb.category_type_master;
 const profile_section_categories_tbl = sequelizeDb.profile_section_categories;
+const section_category_entries_tbl = sequelizeDb.section_category_entries;
 
 const categoriesController = () => {
 

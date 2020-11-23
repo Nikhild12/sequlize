@@ -66,8 +66,9 @@ const tmpmstrController = () => {
           lab_id,
           store_master_uuid
         );
+        console.log(table_name);
         const templateList = await table_name.findAll(query);
-
+          console.log(templateList);
         if (templateList != null && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,

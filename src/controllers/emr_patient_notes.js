@@ -12,6 +12,7 @@ const emr_constants = require('../config/constants');
 const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
+const _ = require('lodash');
 // Patient notes
 const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
@@ -794,6 +795,7 @@ const notesController = () => {
                 let sectionId;
                 let categoryId;
                 let concept_uuid = 0;
+
                 for (let e of finalData) {
                     let sampleObj;
                     let {
@@ -811,6 +813,7 @@ const notesController = () => {
                         if (!sectionObj[sectionId]) {
                             sectionObj[sectionId] = {
                                 name: eSec.name,
+                                display_order: eSec.display_order,
                                 categoryObj: [],
                                 sectionRes: []
                             };
@@ -818,12 +821,22 @@ const notesController = () => {
 
                         if (sectionObj[sectionId] && sectionObj[sectionId].categoryObj) {
                             categoryId = eCat.uuid;
-                            if (!sectionObj[sectionId].categoryObj[categoryId]) {
-                                sectionObj[sectionId].categoryObj[categoryId] = {
+                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {categoryId: eCat.uuid});
+                            if(categoryFindIdx == -1){
+                                sectionObj[sectionId].categoryObj.push({
+                                    categoryId: eCat.uuid,
                                     categoryName: eCat.name,
+                                    display_order: eCat.display_order,
                                     categoryArray: []
-                                };
-                            }
+                                });
+                            }                            
+                            // if (!sectionObj[sectionId].categoryObj[categoryId]) {
+                            //     sectionObj[sectionId].categoryObj[categoryId] = {
+                            //         categoryName: eCat.name,
+                            //         display_order: eCat.display_order,
+                            //         categoryArray: []
+                            //     };
+                            // }
                         }
 
                         const val = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;
@@ -838,26 +851,35 @@ const notesController = () => {
                         if (profSecCatConcept && profSecCatConcept.name) {
                             let {
                                 value_type_uuid,
-                                name: profCatName
+                                name: profCatName,
+                                display_order: profCatDisOrder
                             } = profSecCatConcept;
                             let {
-                                value_name: profCatValValueName
+                                value_name: profCatValValueName,
+                                display_order: profCatValDisOrder
                             } = profSecCatConVal;
                             console.log('value_type_uuid::', value_type_uuid);
                             if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
-
                                 sampleObj = {
-                                    [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey
+                                    [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey,
+                                    display_order: profCatDisOrder
                                 };
                             } else {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
-                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey
+                                        (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey,
+                                        display_order: profCatDisOrder
                                 };
                             }
-                            let {
-                                categoryArray
-                            } = sectionObj[sectionId].categoryObj[categoryId];
+                            // let {
+                            //     categoryArray
+                            // } = sectionObj[sectionId].categoryObj[categoryId];
+                            let categoryArray = [];
+                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {categoryId: categoryId});
+                            if(categoryFindIdx !== -1){
+                                categoryArray = sectionObj[sectionId].categoryObj[categoryFindIdx].categoryArray;
+                            }
+                            
                             if (categoryArray.length >= 0) {
                                 if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == NUMBERWITHDROPDOWN) || (value_type_uuid == BTNTXTWITHDROPDOWN) || (value_type_uuid == CHECKBOXWITHTEXT) || (value_type_uuid == BTNWITHCMTS) || (value_type_uuid == BUTTONS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
@@ -901,6 +923,9 @@ const notesController = () => {
                             } else {
                                 categoryArray.push(sampleObj);
                             }
+                            // if(categoryFindIdx!== -1){
+                            //     sectionObj[sectionId].categoryObj[categoryFindIdx].categoryArray = categoryArray;
+                            // }
 
 
                             // if (sample.length == 0) {
@@ -931,8 +956,12 @@ const notesController = () => {
                     }
                 }
 
-                printObj.sectionObj = sectionObj;
-                printObj.sectionResult = [...new Set(sample)];
+                // sectionArr = [
+                //     section_display_order: 1
+                // ]
+                
+                printObj.sectionObj = sectionObj.filter(item=> item !== null);
+                // printObj.sectionResult = [...new Set(sample)];
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
