@@ -410,7 +410,7 @@ const ChiefComplaints = () => {
       return res
         .status(httpStatus.OK)
         .json({
-          message, code, responseContents: data.rows, totalRecords: data.count,
+          message, code,statusCode: 200,responseContents: data.rows, totalRecords: data.count,
         });
 
     } catch (err) {
