@@ -125,6 +125,7 @@ const treatmentKitAtt = [
   "fm_name",
   "fm_dept",
   "fm_userid",
+  "fm_facilityid",
   "fm_favourite_type_uuid",
   "fm_active",
   "fm_public",
@@ -278,12 +279,14 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   return favouriteQuery;
 }
 
-function getTreatmentQuery(dept_id, user_uuid) {
+function getTreatmentQuery(dept_id, user_uuid, facility_uuid) {
   return {
     fm_active: active_boolean,
     fm_status: active_boolean,
     fm_favourite_type_uuid: 8,
-    fm_userid: user_uuid
+    fm_userid: user_uuid,
+    fm_facilityid: facility_uuid,
+    fm_dept: dept_id
   };
 }
 
@@ -762,14 +765,15 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
   const _getTreatmentKitFavourite = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const { departmentId } = req.query;
 
     if (user_uuid && departmentId) {
       try {
         const treatMentFav = await vmTreatmentFavourite.findAll({
           attributes: treatmentKitAtt,
-          where: getTreatmentQuery(departmentId, user_uuid),
+          where: getTreatmentQuery(departmentId, user_uuid, facility_uuid),
+          returning: true
         });
 
         let favouriteList = getAllTreatmentFavsInReadable(treatMentFav);
@@ -1141,8 +1145,10 @@ function getAllTreatmentFavsInReadable(treatFav) {
       treatment_kit_id: t.tk_uuid,
       favourite_active: t.fm_active,
       favourite_type_id: t.fm_favourite_type_uuid,
-      favourite_active: t.fm_active,
-      favourite_display_order: t.fm_display_order,
+      favourite_user_uuid: t.fm_userid,
+      favourite_facility_uuid: t.fm_facilityid,
+      favourite_department_uuid: t.fm_dept,
+      favourite_display_order: t.fm_display_order
     };
   });
 }
