@@ -64,7 +64,7 @@ const PatientTreatmentController = () => {
       try {
         // transaction Initialization
         // patientTransaction = await sequelizeDb.sequelize.transaction();
-        patientTreatment.treatment_given_by = user_uuid;
+        patientTreatment.treatment_given_by = patientTreatment.created_by = patientTreatment.modified_by = user_uuid;
         patientTreatment.treatment_given_date = new Date();
         patientTreatment.tat_start_time = new Date();
         const patientTKCreatedData = await patientTreatmenttbl.create(
