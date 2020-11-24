@@ -115,6 +115,9 @@ const _postRequest = async (api, headers, data) => {
         else if (body && body.status == "error") {
           reject(body);
         }
+        else if (body && body.status == 422) {
+          reject(body);
+        }
         else {
           if (body.statusCode && (body.statusCode === 200 || body.statusCode === 201)) {
             resolve(body.responseContent || body.responseContents || body.benefMembers || body.req);
