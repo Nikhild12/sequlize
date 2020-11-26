@@ -49,27 +49,11 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, facility_uuid, dept_
             }]
           },
           {
-            [Op.or]: [
-              {
-                department_uuid: {
-                  [Op.eq]: dept_id
-                },
-                user_uuid: {
-                  [Op.eq]: user_uuid
-                },
-                facility_uuid: {
-                  [Op.eq]: facility_uuid
-                }
-              },
-              {
-                department_uuid: {
-                  [Op.eq]: dept_id
-                },
-                facility_uuid: {
-                  [Op.eq]: facility_uuid
-                }
-              }]
-          }]
+            share_uuid: {
+              [Op.gt]: 0
+            }
+          }
+        ]
       };
       return filterByQuery;
     case "treatment_kit_id":
@@ -86,7 +70,11 @@ const getFilterByCodeAndNameAttributes = [
   "uuid",
   "treatment_kit_type_uuid",
   "code",
-  "name"
+  "name",
+  "share_uuid",
+  "facility_uuid",
+  "user_uuid",
+  "department_uuid"
 ];
 
 const TreatMent_Kit = () => {
@@ -353,10 +341,7 @@ const TreatMent_Kit = () => {
         const treatmentKitFilteredData = await treatmentkitTbl.findAll({
           where: getByFilterQuery(
             searchKey,
-            searchValue,
-            user_uuid,
-            facility_uuid,
-            departmentId
+            searchValue
           ),
           attributes: getFilterByCodeAndNameAttributes
         });
@@ -365,7 +350,7 @@ const TreatMent_Kit = () => {
             emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
             emr_constants.NO_RECORD_FOUND;
 
-        let response = getFilterTreatmentKitResponse(treatmentKitFilteredData);
+        let response = getFilterTreatmentKitResponse(treatmentKitFilteredData, user_uuid, facility_uuid, departmentId);
         let responseLength = response.length;
         if (searchKey.toLowerCase() === "treatment_kit_id") {
           response = response[0];
@@ -878,13 +863,38 @@ function checkTreatmentKitDrug(drug) {
   return drug && Array.isArray(drug) && drug.length > 0;
 }
 
-function getFilterTreatmentKitResponse(argument) {
-  return argument.map(a => {
+function getFilterTreatmentKitResponse(argument, user_uuid, facility_uuid, departmentId) {
+  let new_argument = [];
+  for (let e of argument) {
+    if (e.share_uuid == 1) {
+      if (e.facility_uuid == facility_uuid && e.user_uuid == user_uuid && e.department_uuid == departmentId) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 2) {
+      if (e.facility_uuid == facility_uuid && e.department_uuid == departmentId) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 3) {
+      if (e.facility_uuid == facility_uuid) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 4) {
+      new_argument.push(e);
+    }
+  }
+  return new_argument.map(a => {
     return {
       treatment_kit_id: a.uuid,
       treatment_code: a.code,
       treatment_name: a.name,
-      treatment_type_id: a.treatment_kit_type_uuid
+      treatment_type_id: a.treatment_kit_type_uuid,
+      share_id: a.share_uuid,
+      facility_id: a.facility_uuid,
+      department_id: a.department_uuid,
+      user_id: a.user_uuid
     };
   });
 }
