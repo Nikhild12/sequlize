@@ -197,10 +197,11 @@ const PatientTreatmentController = () => {
   const _previousKitRepeatOrder = async (req, res) => {
     const { user_uuid, facility_uuid, Authorization } = req.headers;
     const { patient_uuid } = req.query;
-
+    console.log('/////////////////',user_uuid, facility_uuid, Authorization);
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
+        console.log('>>>>>>>>>',prevKitOrderData);
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
         let departmentIds = [], doctorIds = [], orderIds = [];
