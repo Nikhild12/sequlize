@@ -398,7 +398,6 @@ const TreatMent_Kit = () => {
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
       const institutionId = getsearch.institutionId ? getsearch.institutionId : req.headers.facility_uuid;
       let sortArr = ["tk_uuid", "DESC"];
-      let sortOrder = 'DESC';
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
         if (temp && (temp != NaN)) {

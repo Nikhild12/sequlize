@@ -43,92 +43,110 @@ const proceduresController = () => {
     let getsearch = req.body;
 
     let pageNo = 0;
-    const itemsPerPage = getsearch.paginationSize ?
-      getsearch.paginationSize :
-      10;
-    let sortField = "modified_date";
-    let sortOrder = "DESC";
+    const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
 
+    let sortArr = ["modified_date", "DESC"];
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
-
-      if (temp && temp != NaN) {
+      if (temp && (temp != NaN)) {
         pageNo = temp;
       }
     }
-
     const offset = pageNo * itemsPerPage;
 
+    let fieldSplitArr = [];
     if (getsearch.sortField) {
-      sortField = getsearch.sortField;
+      if (getsearch.sortField == 'modified_date') {
+        getsearch.sortField = 'modified_date';
+      }
+      fieldSplitArr = getsearch.sortField.split('.');
+      if (fieldSplitArr.length == 1) {
+        sortArr[0] = getsearch.sortField;
+      } else {
+        for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+          const element = fieldSplitArr[idx];
+          fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+        }
+        sortArr = fieldSplitArr;
+      }
     }
-
-    if (
-      getsearch.sortOrder &&
-      (getsearch.sortOrder == "ASC" || getsearch.sortOrder == "DESC")
-    ) {
-      sortOrder = getsearch.sortOrder;
+    if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+      if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+        sortArr[1] = getsearch.sortOrder;
+      } else {
+        sortArr.push(getsearch.sortOrder);
+      }
     }
     let findQuery = {
       offset: offset,
       limit: itemsPerPage,
-      order: [
-        [sortField, sortOrder]
-      ],
+      order: [sortArr],
       where: {
-        // is_active: 1,
         status: 1
       },
-      include: [{
-          model: procedureNoteTbl,
-          // include: [
-          //   {
-          //     model: noteTemplatetypeTbl,
-          //     attributes: ['uuid', 'name'],
-          //   },
-          //   {
-          //     model: npotetemplateTbl,
-          //     attributes: ['uuid', 'name']
-          //   }]
-        },
+      include: [
+        // {
+        //   model: procedureNoteTbl,
+        //   required: false,
+        //   include: [
+        //     {
+        //       model: noteTemplatetypeTbl,
+        //       attributes: ['uuid', 'name'],
+        //     },
+        //     {
+        //       model: npotetemplateTbl,
+        //       attributes: ['uuid', 'name']
+        //     }]
+        // },
         {
           model: procedure_schemeTbl,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: procedure_technique,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: procedure_version,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: procedure_region,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: procedure_type,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: procedure_category,
-          attributes: ['uuid', 'name']
-        }, {
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
           model: procedure_sub_category,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: operation_type,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: anesthesia_type,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         },
         {
           model: body_site,
-          attributes: ['uuid', 'name']
+          attributes: ['uuid', 'name'],
+          required: false
         }
       ],
     };
@@ -183,8 +201,6 @@ const proceduresController = () => {
     }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
-      //findQuery.where['status'] = getsearch.status;
-      findQuery.where['status'] = emr_constants.IS_ACTIVE;
     }
 
     try {
@@ -274,11 +290,7 @@ const proceduresController = () => {
             postData.modified_date = new Date();
             postData.revision = 1;
 
-            const proceduresCreatedData = await proceduresTbl.create(
-              postData, {
-                returning: true
-              }
-            );
+            const proceduresCreatedData = await proceduresTbl.create(postData);
 
             if (proceduresCreatedData) {
               postData.uuid = proceduresCreatedData.uuid;
@@ -379,68 +391,76 @@ const proceduresController = () => {
             uuid: postData.Procedures_id
           },
 
-          include: [{
+          include: [
+            {
               model: procedureNoteTbl,
+              required: false,
               include: [{
-                  model: noteTemplatetypeTbl,
-                  attributes: ['uuid', 'name'],
-                },
-                {
-                  model: npotetemplateTbl,
-                  attributes: ['uuid', 'name']
-                },
-                {
-                  model: categoriesTbl,
-                  attributes: ['uuid', 'name'],
-                }
+                model: noteTemplatetypeTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              },
+              {
+                model: npotetemplateTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              },
+              {
+                model: categoriesTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              }
               ]
             },
             {
               model: procedure_schemeTbl,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: procedure_technique,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: procedure_version,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: procedure_region,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: procedure_type,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: procedure_category,
-              attributes: ['uuid', 'name']
-            }, {
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
               model: procedure_sub_category,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: operation_type,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: anesthesia_type,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
               model: body_site,
-              attributes: ['uuid', 'name']
-            },
-            {
-              model: equipment,
-              attributes: ['uuid', 'name']
-            },
-            {
-              model: speciality_sketches,
-              attributes: ['uuid', 'name']
+              attributes: ['uuid', 'name'],
+              required: false
             }
           ],
           offset: offset,
@@ -491,8 +511,8 @@ const proceduresController = () => {
         const procedureSearchData = await proceduresTbl.findAll(pQuery);
         const responseMessage =
           procedureSearchData && procedureSearchData.length > 0 ?
-          emr_constants.PROCEDURE_FETCHED :
-          emr_constants.NO_RECORD_FOUND;
+            emr_constants.PROCEDURE_FETCHED :
+            emr_constants.NO_RECORD_FOUND;
         return res.status(200).send({
           code: httpStatus.OK,
           message: responseMessage,
@@ -679,11 +699,11 @@ async function findDuplicateProceduresByCodeAndName({
     attributes: ['code', 'name', 'is_active'],
     where: {
       [Op.or]: [{
-          code: code
-        },
-        {
-          name: name
-        }
+        code: code
+      },
+      {
+        name: name
+      }
       ]
     }
   });
