@@ -820,7 +820,7 @@ const TickSheetMasterController = () => {
         const favourite_details = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteId,
-          },
+          }
         });
 
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
@@ -1259,6 +1259,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
       investigation_description: iv.tm_description || iv.pm_description,
       order_to_location_uuid: iv.tkim_order_to_location_uuid,
       test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: iv.tkim_test_master_uuid ? 0 : 1,
       order_priority_uuid: iv.tkim_order_priority_uuid
     };
   });
@@ -1273,6 +1274,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
       radiology_description: r.tm_description || r.pm_description,
       order_to_location_uuid: r.tkrm_order_to_location_uuid,
       test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: r.tkrm_test_master_uuid ? 0 : 1,
       order_priority_uuid: r.tkrm_order_priority_uuid
     };
   });
@@ -1287,6 +1289,7 @@ function getLabDetailsFromTreatment(lab) {
       lab_description: l.tm_description || l.pm_description,
       order_to_location_uuid: l.tklm_order_to_location_uuid,
       test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: l.tklm_test_master_uuid ? 0 : 1,
       order_priority_uuid: l.tklm_order_priority_uuid
     };
   });
@@ -1329,7 +1332,7 @@ function getTreatmentFavByIdPromise(treatmentId) {
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
       where: getTreatmentKitByIdQuery(treatmentId, "Lab"),
-    }), // lab
+    }) // lab
   ]);
 }
 

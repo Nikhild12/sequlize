@@ -668,7 +668,10 @@ async function getLabResponse(labData) {
         // //OrderToLocation Details
         to_location_uuid: l.to_location != null ? l.to_location.uuid : null,
         location_code: l.to_location != null ? l.to_location.location_code : null,
-        location_name: l.to_location != null ? l.to_location.location_name : null
+        location_name: l.to_location != null ? l.to_location.location_name : null,
+
+        // is_profile
+        is_profile: l.is_profile
       };
     });
   }
@@ -705,9 +708,8 @@ async function getRadialogyResponse(radialogyData) {
         to_location_uuid: r.to_location != null ? r.to_location.uuid : null,
         location_code: r.to_location != null ? r.to_location.location_code : null,
         location_name: r.to_location != null ? r.to_location.location_name : null,
-
-
-
+        // is_profile
+        is_profile: l.is_profile
       };
     });
   }
@@ -742,7 +744,9 @@ async function getInvestigationResponse(investigationData) {
         // //OrderToLocation Details
         to_location_uuid: i.to_location != null ? i.to_location.uuid : null,
         location_code: i.to_location != null ? i.to_location.location_code : null,
-        location_name: i.to_location != null ? i.to_location.location_name : null
+        location_name: i.to_location != null ? i.to_location.location_name : null,
+        // is_profile
+        is_profile: l.is_profile
       };
     });
   }

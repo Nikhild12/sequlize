@@ -27,7 +27,7 @@ const {
 const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
 
 // Treatment Kit Filters Query Function
-const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
+const getByFilterQuery = (searchBy, searchValue, user_uuid, facility_uuid, dept_id) => {
   searchBy = searchBy.toLowerCase();
 
   switch (searchBy) {
@@ -35,44 +35,49 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
       filterByQuery = {
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
-        [Op.and]: [{
-            [Op.or]: [{
-                name: {
-                  [Op.like]: `%${searchValue}%`
-                }
-              },
-              {
-                code: {
-                  [Op.like]: `%${searchValue}%`
-                }
-              }
-            ]
-          },
+        [Op.and]: [
           {
             [Op.or]: [{
+              name: {
+                [Op.like]: `%${searchValue}%`
+              }
+            },
+            {
+              code: {
+                [Op.like]: `%${searchValue}%`
+              }
+            }]
+          },
+          {
+            [Op.or]: [
+              {
                 department_uuid: {
                   [Op.eq]: dept_id
                 },
-                is_public: {
-                  [Op.eq]: emr_constants.IS_ACTIVE
+                user_uuid: {
+                  [Op.eq]: user_uuid
+                },
+                facility_uuid: {
+                  [Op.eq]: facility_uuid
                 }
               },
               {
-                user_uuid: {
-                  [Op.eq]: user_uuid
+                department_uuid: {
+                  [Op.eq]: dept_id
+                },
+                facility_uuid: {
+                  [Op.eq]: facility_uuid
                 }
-              }
-            ]
-          }
-        ]
+              }]
+          }]
       };
       return filterByQuery;
     case "treatment_kit_id":
     default:
       return {
         uuid: searchValue,
-          is_active: emr_constants.IS_ACTIVE,
-          status: emr_constants.IS_ACTIVE
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE
       };
   }
 };
@@ -227,8 +232,8 @@ const TreatMent_Kit = () => {
             ...treatmentSave,
             treatmentkitInvestigationTbl.bulkCreate(
               treatment_kit_investigation, {
-                returning: true
-              }
+              returning: true
+            }
             )
           ];
         }
@@ -323,12 +328,9 @@ const TreatMent_Kit = () => {
    */
   const _getTreatmentKitByFilters = async (req, res) => {
     const {
-      user_uuid
+      user_uuid, facility_uuid
     } = req.headers;
-    //const { searchKey, searchValue, departmentId } = req.query;
-
     let searchKey, searchValue, departmentId;
-
     // If method is GET in query
     if (req.method === "GET") {
       ({
@@ -353,14 +355,15 @@ const TreatMent_Kit = () => {
             searchKey,
             searchValue,
             user_uuid,
+            facility_uuid,
             departmentId
           ),
           attributes: getFilterByCodeAndNameAttributes
         });
         const returnMessage =
           treatmentKitFilteredData.length > 0 ?
-          emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
-          emr_constants.NO_RECORD_FOUND;
+            emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
+            emr_constants.NO_RECORD_FOUND;
 
         let response = getFilterTreatmentKitResponse(treatmentKitFilteredData);
         let responseLength = response.length;
