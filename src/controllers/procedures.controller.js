@@ -84,57 +84,70 @@ const proceduresController = () => {
       where: {
         status: 1
       },
-      include: [{
-        model: procedureNoteTbl,
-        // include: [
-        //   {
-        //     model: noteTemplatetypeTbl,
-        //     attributes: ['uuid', 'name'],
-        //   },
-        //   {
-        //     model: npotetemplateTbl,
-        //     attributes: ['uuid', 'name']
-        //   }]
-      },
-      {
-        model: procedure_schemeTbl,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_technique,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_version,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_region,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: procedure_category,
-        attributes: ['uuid', 'name']
-      }, {
-        model: procedure_sub_category,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: operation_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: anesthesia_type,
-        attributes: ['uuid', 'name']
-      },
-      {
-        model: body_site,
-        attributes: ['uuid', 'name']
-      }
+      include: [
+        {
+          model: procedureNoteTbl,
+          required: false
+          // include: [
+          //   {
+          //     model: noteTemplatetypeTbl,
+          //     attributes: ['uuid', 'name'],
+          //   },
+          //   {
+          //     model: npotetemplateTbl,
+          //     attributes: ['uuid', 'name']
+          //   }]
+        },
+        {
+          model: procedure_schemeTbl,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_technique,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_version,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_region,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_type,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_category,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: procedure_sub_category,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: operation_type,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: anesthesia_type,
+          attributes: ['uuid', 'name'],
+          required: false
+        },
+        {
+          model: body_site,
+          attributes: ['uuid', 'name'],
+          required: false
+        }
       ],
     };
 
@@ -380,69 +393,77 @@ const proceduresController = () => {
             uuid: postData.Procedures_id
           },
 
-          include: [{
-            model: procedureNoteTbl,
-            include: [{
-              model: noteTemplatetypeTbl,
-              attributes: ['uuid', 'name'],
+          include: [
+            {
+              model: procedureNoteTbl,
+              required: false,
+              include: [{
+                model: noteTemplatetypeTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              },
+              {
+                model: npotetemplateTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              },
+              {
+                model: categoriesTbl,
+                attributes: ['uuid', 'name'],
+                required: false
+              }
+              ]
             },
             {
-              model: npotetemplateTbl,
-              attributes: ['uuid', 'name']
+              model: procedure_schemeTbl,
+              attributes: ['uuid', 'name'],
+              required: false
             },
             {
-              model: categoriesTbl,
+              model: procedure_technique,
               attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: procedure_version,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: procedure_region,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: procedure_type,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: procedure_category,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: procedure_sub_category,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: operation_type,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: anesthesia_type,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: body_site,
+              attributes: ['uuid', 'name'],
+              required: false
             }
-            ]
-          },
-          {
-            model: procedure_schemeTbl,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_technique,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_version,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_region,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: procedure_category,
-            attributes: ['uuid', 'name']
-          }, {
-            model: procedure_sub_category,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: operation_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: anesthesia_type,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: body_site,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: equipment,
-            attributes: ['uuid', 'name']
-          },
-          {
-            model: speciality_sketches,
-            attributes: ['uuid', 'name']
-          }
           ],
           offset: offset,
           limit: itemsPerPage
