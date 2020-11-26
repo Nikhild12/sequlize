@@ -709,7 +709,7 @@ async function getRadialogyResponse(radialogyData) {
         location_code: r.to_location != null ? r.to_location.location_code : null,
         location_name: r.to_location != null ? r.to_location.location_name : null,
         // is_profile
-        is_profile: l.is_profile
+        is_profile: r.is_profile
       };
     });
   }
@@ -746,7 +746,7 @@ async function getInvestigationResponse(investigationData) {
         location_code: i.to_location != null ? i.to_location.location_code : null,
         location_name: i.to_location != null ? i.to_location.location_name : null,
         // is_profile
-        is_profile: l.is_profile
+        is_profile: i.is_profile
       };
     });
   }
