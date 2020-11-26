@@ -85,19 +85,19 @@ const proceduresController = () => {
         status: 1
       },
       include: [
-        {
-          model: procedureNoteTbl,
-          required: false
-          // include: [
-          //   {
-          //     model: noteTemplatetypeTbl,
-          //     attributes: ['uuid', 'name'],
-          //   },
-          //   {
-          //     model: npotetemplateTbl,
-          //     attributes: ['uuid', 'name']
-          //   }]
-        },
+        // {
+        //   model: procedureNoteTbl,
+        //   required: false,
+        //   include: [
+        //     {
+        //       model: noteTemplatetypeTbl,
+        //       attributes: ['uuid', 'name'],
+        //     },
+        //     {
+        //       model: npotetemplateTbl,
+        //       attributes: ['uuid', 'name']
+        //     }]
+        // },
         {
           model: procedure_schemeTbl,
           attributes: ['uuid', 'name'],
@@ -201,8 +201,6 @@ const proceduresController = () => {
     }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
-      //findQuery.where['status'] = getsearch.status;
-      findQuery.where['status'] = emr_constants.IS_ACTIVE;
     }
 
     try {
