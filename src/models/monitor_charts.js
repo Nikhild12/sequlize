@@ -164,7 +164,14 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey:"cc_chart_uuid",
             as:'critical_care_charts'
         });
-        
+        monitor_charts.belongsTo(models.critical_care_concepts , {
+            foreignKey:"cc_chart_uuid",
+            as:'critical_care_concepts'
+        });
+        monitor_charts.belongsTo(models.critical_care_concept_values , {
+            foreignKey:"cc_chart_uuid",
+            as:'critical_care_concept_values'
+        });
     };
 
     return monitor_charts;
