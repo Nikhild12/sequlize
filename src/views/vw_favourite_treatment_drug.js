@@ -31,9 +31,9 @@ module.exports = (sequelize, DataTypes) => {
             im_strength: {
                 type: DataTypes.STRING(255)
             },
-            // im_can_calculate_frequency_qty: {
-            //     type: DataTypes.STRING(255)
-            // },
+            im_can_calculate_frequency_qty: {
+                type: DataTypes.STRING(255)
+            },
             tkd_item_master_uuid: {
                 type: DataTypes.INTEGER
             },
