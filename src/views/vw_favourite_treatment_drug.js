@@ -16,6 +16,15 @@ module.exports = (sequelize, DataTypes) => {
             tk_treatment_kit_type_uuid: {
                 type: DataTypes.INTEGER
             },
+            tk_is_public: {
+                type: DataTypes.BOOLEAN
+            },
+            tk_share_uuid: {
+                type: DataTypes.INTEGER
+            },
+            tk_description: {
+                type: DataTypes.STRING(255)
+            },
             tk_status: {
                 type: DataTypes.BOOLEAN
             },

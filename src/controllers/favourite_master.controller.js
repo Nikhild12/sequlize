@@ -144,6 +144,9 @@ const getTreatmentByIdInVWAtt = [
   "tk_treatment_kit_type_uuid",
   "tk_status",
   "tk_active",
+  "tk_is_public",
+  "tk_share_uuid",
+  "tk_description"
 ];
 let gedTreatmentKitDrug = [
   "im_code",
@@ -1156,13 +1159,16 @@ function getAllTreatmentFavsInReadable(treatFav) {
 function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
   let favouritesByIdResponse = {};
 
-  const { name, code, id, active } = getTreatmentDetails(treatFav);
+  const { name, code, id, active, is_public, description, share_uuid } = getTreatmentDetails(treatFav);
 
   // treatment Details
   favouritesByIdResponse.treatment_name = name;
   favouritesByIdResponse.treatment_code = code;
   favouritesByIdResponse.treatment_id = id;
   favouritesByIdResponse.treatment_active = active;
+  favouritesByIdResponse.treatment_is_public = is_public;
+  favouritesByIdResponse.treatment_description = description;
+  favouritesByIdResponse.treatment_share_uuid = share_uuid;
 
   // Drug Details
   if (treatFav && treatFav.length > 0 && treatFav[0] && treatFav[0].length) {
@@ -1296,7 +1302,7 @@ function getLabDetailsFromTreatment(lab) {
 }
 
 function getTreatmentDetails(treatFav) {
-  let name, code, id, active;
+  let name, code, id, active, is_public, share_uuid, description;
   let argLength = treatFav.length;
   while (!name) {
     const selectedArray = treatFav[argLength - 1];
@@ -1305,10 +1311,13 @@ function getTreatmentDetails(treatFav) {
       code = selectedArray[0].tk_code;
       id = selectedArray[0].tk_uuid;
       active = selectedArray[0].tk_active;
+      is_public = selectedArray[0].tk_is_public;
+      share_uuid = selectedArray[0].tk_share_uuid;
+      description = selectedArray[0].tk_description;
     }
     argLength--;
   }
-  return { name, code, id, active };
+  return { name, code, id, active, is_public, description, share_uuid };
 }
 
 function getTreatmentFavByIdPromise(treatmentId) {
