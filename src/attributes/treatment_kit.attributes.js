@@ -85,7 +85,8 @@ let gedTreatmentKitDrug = [
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
     "tkd_duration",
-    "tkd_uuid"
+    "tkd_uuid",
+    "im_can_calculate_frequency_qty"
 ];
 
 // Concating Drug Attributes
