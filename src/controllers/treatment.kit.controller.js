@@ -74,7 +74,9 @@ const getFilterByCodeAndNameAttributes = [
   "share_uuid",
   "facility_uuid",
   "user_uuid",
-  "department_uuid"
+  "department_uuid",
+  "description",
+  "is_public"
 ];
 
 const TreatMent_Kit = () => {
@@ -893,7 +895,9 @@ function getFilterTreatmentKitResponse(argument, user_uuid, facility_uuid, depar
       share_id: a.share_uuid,
       facility_id: a.facility_uuid,
       department_id: a.department_uuid,
-      user_id: a.user_uuid
+      user_id: a.user_uuid,
+      description: a.description,
+      is_public: a.is_public
     };
   });
 }
