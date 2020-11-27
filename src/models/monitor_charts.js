@@ -165,11 +165,11 @@ module.exports = (sequelize, DataTypes) => {
             as:'critical_care_charts'
         });
         monitor_charts.belongsTo(models.critical_care_concepts , {
-            foreignKey:"cc_chart_uuid",
+            foreignKey:"cc_concept_uuid",
             as:'critical_care_concepts'
         });
         monitor_charts.belongsTo(models.critical_care_concept_values , {
-            foreignKey:"cc_chart_uuid",
+            foreignKey:"cc_concept_value_uuid",
             as:'critical_care_concept_values'
         });
     };
