@@ -722,12 +722,12 @@ function getmdList(fetchedData, p_id, from_date) {
                 ccc_name: pV.critical_care_charts.name,
                 ccc_desc: pV.critical_care_charts.description,
 
-                ccc_concept_uuid :pV && pV.critical_care_concepts.uuid || 0,
-                ccc_concept_name :pV && pV.critical_care_concepts.concept_name || 0,
-                ccc_concept_code :pV && pV.critical_care_concepts.concept_code || 0,
+                ccc_concept_uuid :pV && pV.critical_care_concepts ? pV.critical_care_concepts.uuid : 0,
+                ccc_concept_name :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_name : 0,
+                ccc_concept_code :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_code : 0,
 
                 ccc_concept_value_uuid :pV && pV.cc_concept_value_uuid || 0,
-                ccc_concept_value_name :pV && pV.critical_care_concept_values.concept_value || 0,
+                ccc_concept_value_name :pV && pV.critical_care_concept_values ? pV.critical_care_concept_values.concept_value : null,
 
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
