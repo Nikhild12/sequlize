@@ -197,11 +197,9 @@ const PatientTreatmentController = () => {
   const _previousKitRepeatOrder = async (req, res) => {
     const { user_uuid, facility_uuid, Authorization } = req.headers;
     const { patient_uuid } = req.query;
-    console.log('/////////////////',user_uuid, facility_uuid, Authorization);
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
-        console.log('>>>>>>>>>',prevKitOrderData);
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
         let departmentIds = [], doctorIds = [], orderIds = [];
@@ -378,7 +376,7 @@ async function getPatientTreatmentKitData(patient_uuid) {
     include: [
       {
         model: treatmentKitTable,
-        attributes: ['uuid', 'name', 'code'],
+        attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
         // where: { is_active: 1, status: 1 }
         required: false
 
@@ -405,7 +403,11 @@ function getPrevKitOrdersResponse(orders) {
       encounter_type_uuid: o.encounter_type.uuid,
       encounter_type: o.encounter_type.name,
       treatment_kit_uuid: o.treatment_kit == null ? null : o.treatment_kit.uuid,
+      treatment_kit_code: o.treatment_kit == null ? null : o.treatment_kit.code,
       treatment_kit_name: o.treatment_kit == null ? null : o.treatment_kit.name,
+      treatment_kit_is_public: o.treatment_kit == null ? null : o.treatment_kit.is_public,
+      treatment_kit_description: o.treatment_kit == null ? null : o.treatment_kit.description,
+      treatment_kit_share_uuid: o.treatment_kit == null ? null : o.treatment_kit.share_uuid,
       department_id: o.department_uuid,
     };
   });
