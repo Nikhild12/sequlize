@@ -338,7 +338,10 @@ function getDrugDetailsFromTreatment(drugArray) {
             strength: d.strength,
 
             // treatment kit Drug
-            treatment_kit_drug_id: d.tkd_uuid
+            treatment_kit_drug_id: d.tkd_uuid,
+
+            //im_can_calculate_frequency_qty
+            im_can_calculate_frequency_qty : d.im_can_calculate_frequency_qty
         };
     });
 }
