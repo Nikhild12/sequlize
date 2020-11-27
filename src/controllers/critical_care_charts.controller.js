@@ -199,7 +199,7 @@ const CCchartsController = () => {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
             }
         } catch (err) {
-
+            console.log(err)
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
         }
@@ -717,10 +717,10 @@ function getmdList(fetchedData, p_id, from_date) {
                 monitor_uuid: pV.dataValues.uuid,
                 observed_value: pV.dataValues.observed_value,
 
-                ccc_uuid: pV.critical_care_charts.uuid,
-                ccc_code: pV.critical_care_charts.code,
-                ccc_name: pV.critical_care_charts.name,
-                ccc_desc: pV.critical_care_charts.description,
+                ccc_uuid: pV.critical_care_charts ? pV.critical_care_charts.uuid : 0,
+                ccc_code: pV.critical_care_charts ? pV.critical_care_charts.code : null,
+                ccc_name: pV.critical_care_charts ? pV.critical_care_charts.name : null,
+                ccc_desc: pV.critical_care_charts ? pV.critical_care_charts.description : null,
 
                 ccc_concept_uuid :pV && pV.critical_care_concepts ? pV.critical_care_concepts.uuid : 0,
                 ccc_concept_name :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_name : 0,
@@ -729,9 +729,9 @@ function getmdList(fetchedData, p_id, from_date) {
                 ccc_concept_value_uuid :pV && pV.cc_concept_value_uuid || 0,
                 ccc_concept_value_name :pV && pV.critical_care_concept_values ? pV.critical_care_concept_values.concept_value : null,
 
-                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
-                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
-                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+                critical_care_type_uuid: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.uuid : 0,
+                critical_care_type_code: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.code : null,
+                critical_care_type_name: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.name : null,
             };
         });
     }
