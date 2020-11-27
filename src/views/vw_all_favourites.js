@@ -67,6 +67,9 @@ module.exports = (sequelize, DataTypes) => {
       u_salutation_uuid: {
         type: DataTypes.INTEGER
       },
+      u_salutation_name: {
+        type: DataTypes.STRING
+      },
       u_first_name: {
         type: DataTypes.STRING
       },
