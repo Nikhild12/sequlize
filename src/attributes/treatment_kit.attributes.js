@@ -79,6 +79,8 @@ let gedTreatmentKitDrug = [
     "tkd_drug_frequency_uuid",
     "dp_code",
     "dp_name",
+    "store_code",
+    "store_name",
     "tkd_duration_period_uuid",
     "di_code",
     "di_name",
