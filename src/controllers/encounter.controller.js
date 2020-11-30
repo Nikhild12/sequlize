@@ -426,8 +426,9 @@ const Encounter = () => {
           wher_con.ed_encounter_uuid = enc_uuid;
         }
         const docList = await vw_patientdoc.findAll({
-          attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-          where: wher_con,
+          // attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+          attributes: ['ed_patient_uuid', 'ed_encounter_uuid', 'ed_doctor_uuid', 'ed_department_uuid', 'ed_is_active', 'ed_status', 'ed_created_date', 't_uuid', 't_name', 'u_uuid', 'u_first_name', 'u_middle_name', 'u_last_name', 'd_uuid', 'd_name'],
+          where: wher_con
           //group: ['ed_created_date']
         });
         if (docList) {
