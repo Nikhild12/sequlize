@@ -73,6 +73,12 @@ module.exports = (sequelize, DataTypes) => {
             dp_name: {
                 type: DataTypes.STRING(255)
             },
+            store_code: {
+                type: DataTypes.STRING(255)
+            },
+            store_name: {
+                type: DataTypes.STRING(255)
+            },
             tkd_duration_period_uuid: {
                 type: DataTypes.INTEGER
             },

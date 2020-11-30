@@ -37,6 +37,12 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            store_master_uuid: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
             drug_route_uuid: {
 
                 type: DataTypes.INTEGER,
