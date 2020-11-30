@@ -144,6 +144,9 @@ const getTreatmentByIdInVWAtt = [
   "tk_treatment_kit_type_uuid",
   "tk_status",
   "tk_active",
+  "tk_is_public",
+  "tk_share_uuid",
+  "tk_description"
 ];
 let gedTreatmentKitDrug = [
   "im_code",
@@ -820,7 +823,7 @@ const TickSheetMasterController = () => {
         const favourite_details = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteId,
-          },
+          }
         });
 
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
@@ -1156,13 +1159,16 @@ function getAllTreatmentFavsInReadable(treatFav) {
 function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
   let favouritesByIdResponse = {};
 
-  const { name, code, id, active } = getTreatmentDetails(treatFav);
+  const { name, code, id, active, is_public, description, share_uuid } = getTreatmentDetails(treatFav);
 
   // treatment Details
   favouritesByIdResponse.treatment_name = name;
   favouritesByIdResponse.treatment_code = code;
   favouritesByIdResponse.treatment_id = id;
   favouritesByIdResponse.treatment_active = active;
+  favouritesByIdResponse.treatment_is_public = is_public;
+  favouritesByIdResponse.treatment_description = description;
+  favouritesByIdResponse.treatment_share_uuid = share_uuid;
 
   // Drug Details
   if (treatFav && treatFav.length > 0 && treatFav[0] && treatFav[0].length) {
@@ -1259,6 +1265,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
       investigation_description: iv.tm_description || iv.pm_description,
       order_to_location_uuid: iv.tkim_order_to_location_uuid,
       test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: iv.tkim_test_master_uuid ? 0 : 1,
       order_priority_uuid: iv.tkim_order_priority_uuid
     };
   });
@@ -1273,6 +1280,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
       radiology_description: r.tm_description || r.pm_description,
       order_to_location_uuid: r.tkrm_order_to_location_uuid,
       test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: r.tkrm_test_master_uuid ? 0 : 1,
       order_priority_uuid: r.tkrm_order_priority_uuid
     };
   });
@@ -1287,13 +1295,14 @@ function getLabDetailsFromTreatment(lab) {
       lab_description: l.tm_description || l.pm_description,
       order_to_location_uuid: l.tklm_order_to_location_uuid,
       test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: l.tklm_test_master_uuid ? 0 : 1,
       order_priority_uuid: l.tklm_order_priority_uuid
     };
   });
 }
 
 function getTreatmentDetails(treatFav) {
-  let name, code, id, active;
+  let name, code, id, active, is_public, share_uuid, description;
   let argLength = treatFav.length;
   while (!name) {
     const selectedArray = treatFav[argLength - 1];
@@ -1302,10 +1311,13 @@ function getTreatmentDetails(treatFav) {
       code = selectedArray[0].tk_code;
       id = selectedArray[0].tk_uuid;
       active = selectedArray[0].tk_active;
+      is_public = selectedArray[0].tk_is_public;
+      share_uuid = selectedArray[0].tk_share_uuid;
+      description = selectedArray[0].tk_description;
     }
     argLength--;
   }
-  return { name, code, id, active };
+  return { name, code, id, active, is_public, description, share_uuid };
 }
 
 function getTreatmentFavByIdPromise(treatmentId) {
@@ -1329,7 +1341,7 @@ function getTreatmentFavByIdPromise(treatmentId) {
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
       where: getTreatmentKitByIdQuery(treatmentId, "Lab"),
-    }), // lab
+    }) // lab
   ]);
 }
 

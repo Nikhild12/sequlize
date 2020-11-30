@@ -197,7 +197,6 @@ const PatientTreatmentController = () => {
   const _previousKitRepeatOrder = async (req, res) => {
     const { user_uuid, facility_uuid, Authorization } = req.headers;
     const { patient_uuid } = req.query;
-
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
@@ -377,7 +376,7 @@ async function getPatientTreatmentKitData(patient_uuid) {
     include: [
       {
         model: treatmentKitTable,
-        attributes: ['uuid', 'name', 'code'],
+        attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
         // where: { is_active: 1, status: 1 }
         required: false
 
@@ -404,7 +403,11 @@ function getPrevKitOrdersResponse(orders) {
       encounter_type_uuid: o.encounter_type.uuid,
       encounter_type: o.encounter_type.name,
       treatment_kit_uuid: o.treatment_kit == null ? null : o.treatment_kit.uuid,
+      treatment_kit_code: o.treatment_kit == null ? null : o.treatment_kit.code,
       treatment_kit_name: o.treatment_kit == null ? null : o.treatment_kit.name,
+      treatment_kit_is_public: o.treatment_kit == null ? null : o.treatment_kit.is_public,
+      treatment_kit_description: o.treatment_kit == null ? null : o.treatment_kit.description,
+      treatment_kit_share_uuid: o.treatment_kit == null ? null : o.treatment_kit.share_uuid,
       department_id: o.department_uuid,
     };
   });
@@ -667,7 +670,10 @@ async function getLabResponse(labData) {
         // //OrderToLocation Details
         to_location_uuid: l.to_location != null ? l.to_location.uuid : null,
         location_code: l.to_location != null ? l.to_location.location_code : null,
-        location_name: l.to_location != null ? l.to_location.location_name : null
+        location_name: l.to_location != null ? l.to_location.location_name : null,
+
+        // is_profile
+        is_profile: l.is_profile
       };
     });
   }
@@ -704,9 +710,8 @@ async function getRadialogyResponse(radialogyData) {
         to_location_uuid: r.to_location != null ? r.to_location.uuid : null,
         location_code: r.to_location != null ? r.to_location.location_code : null,
         location_name: r.to_location != null ? r.to_location.location_name : null,
-
-
-
+        // is_profile
+        is_profile: r.is_profile
       };
     });
   }
@@ -741,7 +746,9 @@ async function getInvestigationResponse(investigationData) {
         // //OrderToLocation Details
         to_location_uuid: i.to_location != null ? i.to_location.uuid : null,
         location_code: i.to_location != null ? i.to_location.location_code : null,
-        location_name: i.to_location != null ? i.to_location.location_name : null
+        location_name: i.to_location != null ? i.to_location.location_name : null,
+        // is_profile
+        is_profile: i.is_profile
       };
     });
   }
