@@ -85,7 +85,8 @@ let gedTreatmentKitDrug = [
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
     "tkd_duration",
-    "tkd_uuid"
+    "tkd_uuid",
+    "im_can_calculate_frequency_qty"
 ];
 
 // Concating Drug Attributes
@@ -338,7 +339,13 @@ function getDrugDetailsFromTreatment(drugArray) {
             strength: d.strength,
 
             // treatment kit Drug
-            treatment_kit_drug_id: d.tkd_uuid
+            treatment_kit_drug_id: d.tkd_uuid,
+
+            store_master_name: d.store_name,
+            store_master_code: d.store_code,
+
+            //im_can_calculate_frequency_qty
+            im_can_calculate_frequency_qty : d.im_can_calculate_frequency_qty
         };
     });
 }

@@ -15,6 +15,8 @@ const bpTbl = db.bp_charts;
 const diabetesTbl = db.diabetes_charts;
 const dialysisTbl = db.dialysis_charts;
 const cccTbl = db.critical_care_charts;
+const ccc_conceptTbl = db.critical_care_concepts;
+const ccc_concept_valuesTbl = db.critical_care_concept_values;
 const cctypeTbl = db.critical_care_types;
 
 
@@ -197,7 +199,7 @@ const CCchartsController = () => {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
             }
         } catch (err) {
-
+            console.log(err)
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: "error", msg: errorMsg });
         }
@@ -545,9 +547,23 @@ function getCCquery(patient_uuid) {
                         attributes: ['uuid', 'code', 'name'],
                         where: { is_active: 1, status: 1 },
                         required: false,
-                    },]
-
-            },]
+                    }]
+            },
+            {
+                model: ccc_conceptTbl,
+                as: 'critical_care_concepts',
+                attributes: ['uuid', 'concept_code', 'concept_name'],
+                where: { is_active: 1, status: 1 },
+                required: false,
+            },
+            {
+                model: ccc_concept_valuesTbl,
+                as: 'critical_care_concept_values',
+                attributes: ['uuid', 'concept_value'],
+                where: { is_active: 1, status: 1 },
+                required: false,
+            }
+        ]
 
     };
 }
@@ -701,15 +717,21 @@ function getmdList(fetchedData, p_id, from_date) {
                 monitor_uuid: pV.dataValues.uuid,
                 observed_value: pV.dataValues.observed_value,
 
-                ccc_uuid: pV.critical_care_charts.uuid,
-                ccc_code: pV.critical_care_charts.code,
-                ccc_name: pV.critical_care_charts.name,
-                ccc_desc: pV.critical_care_charts.description,
-                ccc_value_uuid :pV && pV.cc_concept_value_uuid || 0,
+                ccc_uuid: pV.critical_care_charts ? pV.critical_care_charts.uuid : 0,
+                ccc_code: pV.critical_care_charts ? pV.critical_care_charts.code : null,
+                ccc_name: pV.critical_care_charts ? pV.critical_care_charts.name : null,
+                ccc_desc: pV.critical_care_charts ? pV.critical_care_charts.description : null,
 
-                critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
-                critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
-                critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+                ccc_concept_uuid :pV && pV.critical_care_concepts ? pV.critical_care_concepts.uuid : 0,
+                ccc_concept_name :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_name : 0,
+                ccc_concept_code :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_code : 0,
+
+                ccc_concept_value_uuid :pV && pV.cc_concept_value_uuid || 0,
+                ccc_concept_value_name :pV && pV.critical_care_concept_values ? pV.critical_care_concept_values.concept_value : null,
+
+                critical_care_type_uuid: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.uuid : 0,
+                critical_care_type_code: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.code : null,
+                critical_care_type_name: pV.critical_care_charts ? pV.critical_care_charts.critical_care_types.name : null,
             };
         });
     }

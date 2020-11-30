@@ -27,7 +27,7 @@ const {
 const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
 
 // Treatment Kit Filters Query Function
-const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
+const getByFilterQuery = (searchBy, searchValue, user_uuid, facility_uuid, dept_id) => {
   searchBy = searchBy.toLowerCase();
 
   switch (searchBy) {
@@ -35,34 +35,23 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
       filterByQuery = {
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
-        [Op.and]: [{
-            [Op.or]: [{
-                name: {
-                  [Op.like]: `%${searchValue}%`
-                }
-              },
-              {
-                code: {
-                  [Op.like]: `%${searchValue}%`
-                }
-              }
-            ]
-          },
+        [Op.and]: [
           {
             [Op.or]: [{
-                department_uuid: {
-                  [Op.eq]: dept_id
-                },
-                is_public: {
-                  [Op.eq]: emr_constants.IS_ACTIVE
-                }
-              },
-              {
-                user_uuid: {
-                  [Op.eq]: user_uuid
-                }
+              name: {
+                [Op.like]: `%${searchValue}%`
               }
-            ]
+            },
+            {
+              code: {
+                [Op.like]: `%${searchValue}%`
+              }
+            }]
+          },
+          {
+            share_uuid: {
+              [Op.gt]: 0
+            }
           }
         ]
       };
@@ -71,8 +60,8 @@ const getByFilterQuery = (searchBy, searchValue, user_uuid, dept_id) => {
     default:
       return {
         uuid: searchValue,
-          is_active: emr_constants.IS_ACTIVE,
-          status: emr_constants.IS_ACTIVE
+        is_active: emr_constants.IS_ACTIVE,
+        status: emr_constants.IS_ACTIVE
       };
   }
 };
@@ -81,7 +70,13 @@ const getFilterByCodeAndNameAttributes = [
   "uuid",
   "treatment_kit_type_uuid",
   "code",
-  "name"
+  "name",
+  "share_uuid",
+  "facility_uuid",
+  "user_uuid",
+  "department_uuid",
+  "description",
+  "is_public"
 ];
 
 const TreatMent_Kit = () => {
@@ -227,8 +222,8 @@ const TreatMent_Kit = () => {
             ...treatmentSave,
             treatmentkitInvestigationTbl.bulkCreate(
               treatment_kit_investigation, {
-                returning: true
-              }
+              returning: true
+            }
             )
           ];
         }
@@ -323,12 +318,9 @@ const TreatMent_Kit = () => {
    */
   const _getTreatmentKitByFilters = async (req, res) => {
     const {
-      user_uuid
+      user_uuid, facility_uuid
     } = req.headers;
-    //const { searchKey, searchValue, departmentId } = req.query;
-
     let searchKey, searchValue, departmentId;
-
     // If method is GET in query
     if (req.method === "GET") {
       ({
@@ -351,18 +343,16 @@ const TreatMent_Kit = () => {
         const treatmentKitFilteredData = await treatmentkitTbl.findAll({
           where: getByFilterQuery(
             searchKey,
-            searchValue,
-            user_uuid,
-            departmentId
+            searchValue
           ),
           attributes: getFilterByCodeAndNameAttributes
         });
         const returnMessage =
           treatmentKitFilteredData.length > 0 ?
-          emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
-          emr_constants.NO_RECORD_FOUND;
+            emr_constants.FETCHD_TREATMENT_KIT_SUCCESSFULLY :
+            emr_constants.NO_RECORD_FOUND;
 
-        let response = getFilterTreatmentKitResponse(treatmentKitFilteredData);
+        let response = getFilterTreatmentKitResponse(treatmentKitFilteredData, user_uuid, facility_uuid, departmentId);
         let responseLength = response.length;
         if (searchKey.toLowerCase() === "treatment_kit_id") {
           response = response[0];
@@ -398,7 +388,6 @@ const TreatMent_Kit = () => {
       const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
       const institutionId = getsearch.institutionId ? getsearch.institutionId : req.headers.facility_uuid;
       let sortArr = ["tk_uuid", "DESC"];
-      let sortOrder = 'DESC';
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
         if (temp && (temp != NaN)) {
@@ -622,7 +611,6 @@ const TreatMent_Kit = () => {
     treatmentKitId = +(treatmentKitId);
     if (user_uuid && (treatmentKitId && treatmentKitId > 0)) {
       try {
-
         const treatmentById = await treatmentKitAtt.getTreatmentFavByIdPromise(treatmentKitId);
         // Checking Response
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
@@ -876,13 +864,40 @@ function checkTreatmentKitDrug(drug) {
   return drug && Array.isArray(drug) && drug.length > 0;
 }
 
-function getFilterTreatmentKitResponse(argument) {
-  return argument.map(a => {
+function getFilterTreatmentKitResponse(argument, user_uuid, facility_uuid, departmentId) {
+  let new_argument = [];
+  for (let e of argument) {
+    if (e.share_uuid == 1) {
+      if (e.facility_uuid == facility_uuid && e.user_uuid == user_uuid && e.department_uuid == departmentId) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 2) {
+      if (e.facility_uuid == facility_uuid && e.department_uuid == departmentId) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 3) {
+      if (e.facility_uuid == facility_uuid) {
+        new_argument.push(e);
+      }
+    }
+    if (e.share_uuid == 4) {
+      new_argument.push(e);
+    }
+  }
+  return new_argument.map(a => {
     return {
       treatment_kit_id: a.uuid,
       treatment_code: a.code,
       treatment_name: a.name,
-      treatment_type_id: a.treatment_kit_type_uuid
+      treatment_type_id: a.treatment_kit_type_uuid,
+      share_id: a.share_uuid,
+      facility_id: a.facility_uuid,
+      department_id: a.department_uuid,
+      user_id: a.user_uuid,
+      description: a.description,
+      is_public: a.is_public
     };
   });
 }
