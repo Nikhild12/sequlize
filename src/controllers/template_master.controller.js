@@ -293,12 +293,15 @@ const tmpmstrController = () => {
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
+        let userUuid = templateMasterReqData.user_uuid;
+        let facilityUuid = templateMasterReqData.facility_uuid;
+        let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
 
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
-        const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
+        const displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
@@ -1610,16 +1613,17 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-const displayOrderExists = (displayOrder, userUUID) => {
+const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid) => {
   if (displayOrder !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         attributes: ["display_order"],
         where: {
           display_order: displayOrder,
-          user_uuid: userUUID,
-          status: 1,
-          is_active: 1
+          user_uuid: userUuid,
+          facility_uuid : facilityUuid,
+          department_uuid : departmentUuid,
+          status: 1
         }
       });
       if (value) {
