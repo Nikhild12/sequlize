@@ -879,7 +879,7 @@ const notesController = () => {
                             if(categoryFindIdx !== -1){
                                 categoryArray = sectionObj[sectionId].categoryObj[categoryFindIdx].categoryArray;
                             }
-                            
+                            let displayOrder;
                             if (categoryArray.length >= 0) {
                                 if ((value_type_uuid == DROPDOWN || (value_type_uuid == TEXTWITHDROPDOWN) || (value_type_uuid == NUMBERWITHDROPDOWN) || (value_type_uuid == BTNTXTWITHDROPDOWN) || (value_type_uuid == CHECKBOXWITHTEXT) || (value_type_uuid == BTNWITHCMTS) || (value_type_uuid == BUTTONS) || value_type_uuid == TERMBASED || value_type_uuid == CHECKBOX) && concept_uuid == profSecCatConcept.uuid) {
                                     let len = categoryArray.length - 1;
@@ -889,7 +889,10 @@ const notesController = () => {
                                     categoryArray.forEach((item, index) => {
                                         if (item !== null) {
                                             if (index == len) {
-                                                if (Object.keys(item) == profSecCatConcept.name) {
+                                                if (Object.keys(item).includes(profSecCatConcept.name)) {
+                                                    displayOrder = item.display_order;
+                                                    delete item.display_order;
+                                                    console.log('///////////');
                                                     Object.assign(check, item);
                                                 }
                                             }
@@ -909,7 +912,7 @@ const notesController = () => {
                                             delete categoryArray[len];
 
                                             check[profSecCatConcept.name] = value;
-
+                                            check.display_order = displayOrder;
                                             categoryArray.push(check);
 
                                         }
@@ -959,8 +962,31 @@ const notesController = () => {
                 // sectionArr = [
                 //     section_display_order: 1
                 // ]
-                
-                printObj.sectionObj = sectionObj.filter(item=> item !== null);
+                // let cateArr = sectionObj.map(i=>i.categoryObj.map(e=>e.categoryArray.filter(el=>{return el!=null} )));
+                // console.log(sectionObj.map(i=>i.categoryObj));
+                let secArr = [];
+                // for(let s=0; s<sectionObj.length;s++){
+                //     // console.log(sectionObj[s].categoryObj.length,sectionObj[s].categoryObj)
+                //     if(sectionObj[s].categoryObj&&sectionObj[s].categoryObj.length>0){
+                //         for(let c=0; c<sectionObj[s].categoryObj.length;c++){
+                //             sectionObj[s].categoryObj[c].categoryArr = sectionObj[s].categoryObj[c].categoryArr.filter(i=>{ return i!=null });
+                //         }
+                //     }
+                    
+                    // if(sectionObj[s] != null){
+                    //     if(){
+
+                    //     }
+                    //     secArr.push(sectionObj[s]);
+
+                    // }
+                // }
+                sectionObj.forEach(i=>{
+                    i.categoryObj.forEach(j=>{
+                        j.categoryArray = j.categoryArray.filter(k=>k!=null);
+                    });
+                });
+                printObj.sectionObj =  sectionObj.filter(i=>{ return i!=null });
                 // printObj.sectionResult = [...new Set(sample)];
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
                 const facility_result = await getFacilityDetails(req);

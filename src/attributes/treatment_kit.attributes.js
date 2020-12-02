@@ -170,18 +170,18 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
     let treatmentQuery = {
         tk_uuid: treatmentId,
         tk_status: emr_constants.IS_ACTIVE,
-        tk_active: emr_constants.IS_ACTIVE,
+        // tk_active: emr_constants.IS_ACTIVE, //H30-21747
     };
     if (["Lab", "Investigation", "Radiology"].includes(tType)) {
         treatmentQuery = {
             ...treatmentQuery, [Op.or]: [
                 {
                     tm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-                    tm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+                    // tm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE }, //H30-21747
                 },
                 {
                     pm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-                    pm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+                    // pm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE }, //H30-21747
                 },
             ]
         };
@@ -189,7 +189,7 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
 
     if (["TreatmentKit"].includes(tType)) {
         delete treatmentQuery.tk_active;
-        treatmentQuery.tk_is_active = emr_constants.IS_ACTIVE;
+        // treatmentQuery.tk_is_active = emr_constants.IS_ACTIVE; //H30-21747
     }
 
     return treatmentQuery;
