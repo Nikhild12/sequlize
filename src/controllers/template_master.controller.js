@@ -654,6 +654,14 @@ const tmpmstrController = () => {
       findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
     }
 
+    if (getsearch.facility_uuid && /\S/.test(getsearch.facility_uuid)) {
+      findQuery.where['tm_facility_uuid'] = getsearch.facility_uuid;
+    }
+    
+    if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
+      findQuery.where['tm_department_uuid'] = getsearch.department_uuid;
+    }
+
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
     }
