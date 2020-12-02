@@ -585,7 +585,7 @@ const notesController = () => {
                     is_active: emr_constants.IS_ACTIVE
                 },
                 order: [
-                    [profileSectionCategoryConceptsTbl, 'value_type_uuid', 'ASC']
+                    [profileSectionCategoryConceptsTbl, 'uuid', 'ASC']
                 ]
             };
             if (user_uuid && patient_uuid) {
