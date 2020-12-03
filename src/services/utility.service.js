@@ -17,7 +17,7 @@ const _getActiveAndStatusObject = is_active => {
 };
 
 const _createIsActiveAndStatus = (create_object, userId) => {
-  create_object.modified_by = create_object.user_uuid = create_object.created_by = userId;
+  create_object.modified_by = create_object.created_by = userId;
   create_object.is_active = create_object.status = emr_constants.IS_ACTIVE;
   create_object.created_date = create_object.modified_date = new Date();
   create_object.revision = 1;

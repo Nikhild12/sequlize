@@ -80,6 +80,7 @@ let gedTreatmentKitDrug = [
     "tkd_drug_frequency_uuid",
     "dp_code",
     "dp_name",
+    "store_uuid",
     "store_code",
     "store_name",
     "tkd_duration_period_uuid",
@@ -344,11 +345,12 @@ function getDrugDetailsFromTreatment(drugArray) {
             // treatment kit Drug
             treatment_kit_drug_id: d.tkd_uuid,
             is_emar: d.im_is_emar,
+            store_master_uuid: d.store_uuid,
             store_master_name: d.store_name,
             store_master_code: d.store_code,
 
             //im_can_calculate_frequency_qty
-            im_can_calculate_frequency_qty : d.im_can_calculate_frequency_qty
+            im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty
         };
     });
 }
@@ -436,10 +438,10 @@ function getTreatmentDetails(treatFav) {
         activeto: treatFav[0].activeactiveto,
         description: treatFav[0].description,
         department_id: treatFav[0].d_uuid,
-        facility_id:treatFav[0].tk_facility_uuid,
-        facility_name:treatFav[0].f_name,
-        share_id:treatFav[0].tk_share_uuid,
-        share_name:treatFav[0].s_name
+        facility_id: treatFav[0].tk_facility_uuid,
+        facility_name: treatFav[0].f_name,
+        share_id: treatFav[0].tk_share_uuid,
+        share_name: treatFav[0].s_name
     };
 
 }
