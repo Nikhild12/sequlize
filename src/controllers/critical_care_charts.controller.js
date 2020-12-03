@@ -45,7 +45,7 @@ const CCchartsController = () => {
                 }
 
                 for (let detail of data2) {
-                    let body_details_validation_result = validate.validate(detail, ['cc_chart_uuid', 'cc_concept_uuid', 'cc_concept_value_uuid', 'from_date', 'observed_value']);
+                    let body_details_validation_result = validate.validate(detail, ['cc_chart_uuid', 'cc_concept_uuid', 'cc_concept_value_uuid', 'from_date']);
                     if (!body_details_validation_result.status) {
                         return res.status(400).send({ code: httpStatus[400], message: body_details_validation_result.errors });
                     }
