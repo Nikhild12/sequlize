@@ -297,7 +297,6 @@ const tmpmstrController = () => {
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
-
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
@@ -312,7 +311,7 @@ const tmpmstrController = () => {
             });
         }
 
-        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+        if (exists && exists.length > 0) {
           //template already exits
           return res
             .status(400)
@@ -321,11 +320,11 @@ const tmpmstrController = () => {
               statusCode: httpStatus.BAD_REQUEST,
               message: emr_constants.TEMPLATE_NAME_EXISTS
             });
-        } else if (
+        }
+        else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
-
           // templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
@@ -343,7 +342,7 @@ const tmpmstrController = () => {
             .status(400)
             .send({
               code: httpStatus[400],
-              message: NO_REQUEST_FOUND
+              message: emr_constants.NO_REQUEST_FOUND
             });
         }
       } catch (err) {
@@ -591,7 +590,7 @@ const tmpmstrController = () => {
 
   const _getalltemplates = async (req, res) => {
     const {
-      user_uuid
+      user_uuid, facility_uuid
     } = req.headers;
     let getsearch = req.body;
 
@@ -632,13 +631,19 @@ const tmpmstrController = () => {
       order: [
         [sortField, sortOrder]
       ],
-      attributes: {
-        exclude: ["id", "createdAt", "updatedAt"]
-      },
+      attributes: [
+        "tm_uuid", "tm_name", "tm_template_type_uuid", "tm_is_public", "tm_facility_uuid",
+        "tm_department_uuid", "tm_user_uuid", "is_active", "tm_status", "tm_created_by",
+        "tm_created_date", "tm_modified_by", "tm_modified_date", "tt_name", "tt_is_active",
+        "tt_status", "f_uuid", "f_name", "f_is_active", "f_status", "d_uuid", "d_name", "uct_name",
+        "u_first_name", "u_middle_name", "u_last_name", "umt_name", "um_first_name", "um_middle_name",
+        "um_last_name"
+      ],
       where: {
         is_active: 1,
-        tm_status: 1
-      },
+        tm_status: 1,
+        tm_facility_uuid: facility_uuid
+      }
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -660,7 +665,7 @@ const tmpmstrController = () => {
     if (getsearch.facility_uuid && /\S/.test(getsearch.facility_uuid)) {
       findQuery.where['tm_facility_uuid'] = getsearch.facility_uuid;
     }
-    
+
     if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
       findQuery.where['tm_department_uuid'] = getsearch.department_uuid;
     }
@@ -671,10 +676,9 @@ const tmpmstrController = () => {
     try {
       if (user_uuid) {
         const templateList = await vw_all_temp.findAndCountAll(findQuery);
-
         return res.status(httpStatus.OK).json({
           statusCode: 200,
-          req: "",
+          req: getsearch,
           responseContents: templateList.rows ? templateList.rows : [],
           totalRecords: templateList.count ? templateList.count : 0
         });
@@ -1599,7 +1603,8 @@ const nameExists = (temp_name, userUUID) => {
         ],
         attributes: ["name", "is_active", "status"],
         where: {
-          name: temp_name
+          name: temp_name,
+          status: 1
         }
       });
       if (value) {
@@ -1621,8 +1626,8 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
         where: {
           display_order: displayOrder,
           user_uuid: userUuid,
-          facility_uuid : facilityUuid,
-          department_uuid : departmentUuid,
+          facility_uuid: facilityUuid,
+          department_uuid: departmentUuid,
           status: 1
         }
       });

@@ -27,7 +27,7 @@ const {
 const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
 
 // Treatment Kit Filters Query Function
-const getByFilterQuery = (searchBy, searchValue, user_uuid, facility_uuid, dept_id) => {
+const getByFilterQuery = (searchBy, searchValue) => {
   searchBy = searchBy.toLowerCase();
 
   switch (searchBy) {
@@ -326,14 +326,18 @@ const TreatMent_Kit = () => {
       ({
         searchKey,
         searchValue,
-        departmentId
+        departmentId,
+        pageNo,
+        paginationSize
       } = req.query);
     } else if (req.method === "POST") {
 
       ({
         searchKey,
         searchValue,
-        departmentId
+        departmentId,
+        pageNo,
+        paginationSize
       } = req.body);
     }
 
@@ -354,14 +358,22 @@ const TreatMent_Kit = () => {
 
         let response = getFilterTreatmentKitResponse(treatmentKitFilteredData, user_uuid, facility_uuid, departmentId);
         let responseLength = response.length;
+        let declarepageNo = 0;
+        declarepageNo = pageNo ? pageNo + 1 : pageNo + 1;
+        let itemsPerPage = paginationSize ? paginationSize : 10;
+        let start = (declarepageNo - 1) * itemsPerPage;
+        let end = start + itemsPerPage;
+
+        let response_pagination = response.slice(start, end)
         if (searchKey.toLowerCase() === "treatment_kit_id") {
           response = response[0];
         }
         return res.status(200).send({
           code: httpStatus.OK,
           message: returnMessage,
-          responseContents: response,
-          responseLength
+          responseContents: response_pagination,
+          responseLength,
+          totalRecords: response && response.length
         });
       } catch (ex) {
         console.log("Exception happened", ex);
