@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
             im_name: {
                 type: DataTypes.STRING(255)
             },
+            im_is_emar: {
+                type: DataTypes.BOOLEAN
+            },
             im_strength: {
                 type: DataTypes.STRING(255)
             },

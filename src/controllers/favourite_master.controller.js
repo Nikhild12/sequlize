@@ -900,61 +900,56 @@ const TickSheetMasterController = () => {
   };
 
   const _getAllFavourites = async (req, res) => {
-
-    const { user_uuid } = req.headers;
-
-    // Destructuring Req Body
-    const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
-    const { pageNo = 0, status = 1 } = req.body;
-
-
-    let findQuery = {
-      offset: +(pageNo) * +(paginationSize),
-      limit: +(paginationSize),
-      order: [[sortField, sortOrder]],
-      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-      where: { fm_status: 1 },
-    };
-
-    findQuery.where['is_active'] = +(status);
-    console.log(findQuery.where['is_active']);
-
-    if (req.body.search && /\S/.test(req.body.search)) {
-      findQuery.where = {
-        fm_name: {
-          [Op.like]: "%" + req.body.search + "%"
-        }
-      };
-    }
-    if (req.body.name && /\S/.test(req.body.name)) {
-      findQuery.where['fm_name'] = {
-        [Op.like]: "%" + req.body.name + "%"
-      };
-    }
-
-    if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
-      req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
-      if (!isNaN(req.body.favourite_type_uuid)) {
-        findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
-      }
-    }
-
     try {
-      if (user_uuid) {
-        const templateList = await vmAllFavourites.findAndCountAll(findQuery);
+      const { user_uuid, facility_uuid } = req.headers;
+      // Destructuring Req Body
+      const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
+      const { pageNo = 0, status = 1, facility_id, department_id, search } = req.body;
+      let findQuery = {
+        offset: +(pageNo) * +(paginationSize),
+        limit: +(paginationSize),
+        order: [[sortField, sortOrder]],
+        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid },
+        logging : console.log
+      };
 
-        return res.status(httpStatus.OK).json({
-          statusCode: 200,
-          req: "",
-          responseContents: templateList.rows ? templateList.rows : [],
-          totalRecords: templateList.count ? templateList.count : 0
-        });
-      } else {
-        return res.status(400).send({
-          code: httpStatus[400],
-          message: "No Request Body or Search key Found"
-        });
+      findQuery.where['is_active'] = +(status);
+
+      if (search && /\S/.test(search)) {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('ft_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('u_first_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('d_name')), 'LIKE', '%' + search.toLowerCase() + '%')
+        ];
       }
+      if (req.body.name && /\S/.test(req.body.name)) {
+        findQuery.where['fm_name'] = {
+          [Op.like]: "%" + req.body.name + "%"
+        };
+      }
+      if (facility_id && /\S/.test(facility_id)) {
+        findQuery.where['fm_facility_uuid'] = facility_id;
+      }
+
+      if (department_id && /\S/.test(department_id)) {
+        findQuery.where['fm_department_uuid'] = department_id;
+      }
+
+      if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
+        req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+        if (!isNaN(req.body.favourite_type_uuid)) {
+          findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
+        }
+      }
+
+      const templateList = await vmAllFavourites.findAndCountAll(findQuery);
+      return res.status(httpStatus.OK).json({
+        statusCode: 200,
+        req: "",
+        responseContents: templateList.rows ? templateList.rows : [],
+        totalRecords: templateList.count ? templateList.count : 0
+      });
     } catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
       return res

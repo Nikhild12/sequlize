@@ -1,11 +1,10 @@
-const uuidparse = require("uuid-parse");
-
 module.exports = (sequelize, DataTypes) => {
     const vw_all_templates = sequelize.define(
         "vw_all_templates",
         {
             tm_uuid: {
                 type: DataTypes.INTEGER,
+                primaryKey: true
             },
             tm_name: {
                 type: DataTypes.STRING(100),
@@ -110,7 +109,8 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
-            timestamps: false
+            timestamps: false,
+            tableName: "vw_all_templates",
         }
     );
 
