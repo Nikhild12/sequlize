@@ -293,7 +293,7 @@ const tmpmstrController = () => {
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
-        let userUuid = templateMasterReqData.user_uuid;
+        let userUuid = templateMasterReqData.user_uuid ? templateMasterReqData.user_uuid : userUUID;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
