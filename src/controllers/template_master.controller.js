@@ -198,7 +198,6 @@ const tmpmstrController = () => {
       store_master_uuid
     } = req.query;
     try {
-
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 8].includes(+(temp_type_id))) {
@@ -294,6 +293,7 @@ const tmpmstrController = () => {
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
         let userUuid = templateMasterReqData.user_uuid ? templateMasterReqData.user_uuid : userUUID;
+        templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
@@ -346,6 +346,7 @@ const tmpmstrController = () => {
             });
         }
       } catch (err) {
+        console.log("err==============", err);
         return res
           .status(400)
           .send({
@@ -358,7 +359,7 @@ const tmpmstrController = () => {
         .status(400)
         .send({
           code: httpStatus[400],
-          message: NO_REQUEST_FOUND
+          message: emr_constants.NO_REQUEST_FOUND
         });
     }
   };
@@ -1571,12 +1572,7 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   templateMasterReqData.is_active = tIsActive ? 1 : 0;
 
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
-
-  const templateMasterCreatedData = await tempmstrTbl.create(
-    templateMasterReqData, {
-    returning: true
-  }
-  );
+  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData);
   templateMasterDetailsReqData.forEach((item, index) => {
     item.template_master_uuid = templateMasterCreatedData.dataValues.uuid;
     item.created_by = userUUID;
