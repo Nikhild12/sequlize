@@ -14,11 +14,26 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_template_type_uuid :{
+            tm_title_name: {
+                type: DataTypes.STRING
+            },
+            tm_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_template_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_template_type_name :{
+            tm_template_type_name: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
             },
@@ -39,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_is_public:{
+            tm_is_public: {
                 type: DataTypes.BOOLEAN
             },
             tmd_uuid: {
@@ -50,80 +65,80 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_active:{
+            tmd_active: {
                 type: DataTypes.BOOLEAN
             },
-            tmd_status:{
+            tmd_status: {
                 type: DataTypes.BOOLEAN
             },
-            tm_description:{
+            tm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            tm_display_order:{
+            tm_display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_test_master_uuid:{
+            tmd_test_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_status:{
+            tm_status: {
                 type: DataTypes.BOOLEAN
             },
-            tm_is_active:{
+            tm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            ltm_uuid:{
+            ltm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ltm_code:{
+            ltm_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            ltm_name:{
+            ltm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            ltm_description:{
+            ltm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            ltm_lab_master_type_uuid:{
+            ltm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ltm_status:{
+            ltm_status: {
                 type: DataTypes.BOOLEAN
             },
-            ltm_is_active:{
+            ltm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            lpm_uuid:{
+            lpm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_profile_code:{
+            lpm_profile_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            lpm_name:{
+            lpm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            lpm_description:{
+            lpm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            lpm_lab_master_type_uuid:{
+            lpm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            lpm_status:{
+            lpm_status: {
                 type: DataTypes.BOOLEAN
             },
-            lpm_is_active:{
+            lpm_is_active: {
                 type: DataTypes.BOOLEAN
             },
             tm_created_by: {
@@ -184,11 +199,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
-            tableName: "vw_profile_lab_template" ,
+            tableName: "vw_profile_lab_template",
             timestamps: false
         }
-        
+
     );
-   
+
     return vw_profile_lab_template;
 };
