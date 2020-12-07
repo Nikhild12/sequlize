@@ -195,7 +195,9 @@ const PatientTreatmentController = () => {
 
 
   const _previousKitRepeatOrder = async (req, res) => {
-    const { user_uuid, facility_uuid, Authorization } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
+    let Authorization, authorization;
+    Authorization = authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
     const { patient_uuid } = req.query;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
@@ -481,7 +483,7 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
     return radialogyResult;
   }
 }
-async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order_id) {
+async function getPreviousLab({ user_uuid, facility_uuid, Authorization }, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
@@ -491,7 +493,7 @@ async function getPreviousLab({ user_uuid, facility_uuid, authorization }, order
       'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      Authorization: authorization
+      Authorization: Authorization
     },
     {
       patient_treatment_uuid: order_id
@@ -608,6 +610,12 @@ async function getPrescriptionRseponse(prescriptions) {
 
             //Duration
             "duration": e.duration,
+
+            "store_master_uuid": pd.store_master != null ? pd.store_master.uuid : null,
+            "store_master_name": pd.store_master != null ? pd.store_master.name : null,
+            "store_master_code": pd.store_master != null ? pd.store_master.code : null,
+            "is_emar": e.is_emar != null ? e.is_emar : null,
+            "im_can_calculate_frequency_qty": e.item_master != null ? e.item_master.can_calculate_frequency_qty : null,
 
             // Drug Instruction Details
             "drug_instruction_code": e.drug_instruction != null ? e.drug_instruction.code : null,
