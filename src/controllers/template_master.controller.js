@@ -669,7 +669,9 @@ const tmpmstrController = () => {
     if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
       findQuery.where['tm_department_uuid'] = getsearch.department_uuid;
     }
-
+    if (getsearch.user_uuid && /\S/.test(getsearch.user_uuid)) {
+      findQuery.where['tm_user_uuid'] = getsearch.user_uuid;
+    }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
     }
