@@ -198,7 +198,6 @@ const tmpmstrController = () => {
       store_master_uuid
     } = req.query;
     try {
-
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 8].includes(+(temp_type_id))) {
@@ -293,7 +292,8 @@ const tmpmstrController = () => {
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
-        let userUuid = templateMasterReqData.user_uuid;
+        let userUuid = templateMasterReqData.user_uuid ? templateMasterReqData.user_uuid : userUUID;
+        templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
@@ -346,6 +346,7 @@ const tmpmstrController = () => {
             });
         }
       } catch (err) {
+        console.log("err==============", err);
         return res
           .status(400)
           .send({
@@ -358,7 +359,7 @@ const tmpmstrController = () => {
         .status(400)
         .send({
           code: httpStatus[400],
-          message: NO_REQUEST_FOUND
+          message: emr_constants.NO_REQUEST_FOUND
         });
     }
   };
@@ -669,7 +670,9 @@ const tmpmstrController = () => {
     if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
       findQuery.where['tm_department_uuid'] = getsearch.department_uuid;
     }
-
+    if (getsearch.user_uuid && /\S/.test(getsearch.user_uuid)) {
+      findQuery.where['tm_user_uuid'] = getsearch.user_uuid;
+    }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
     }
@@ -742,8 +745,8 @@ function getTemplateData(fetchedData) {
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
       template_department_name: fetchedData[0].dataValues.d_name,
       template_department: fetchedData[0].dataValues.tm_dept,
-
       user_uuid: fetchedData[0].dataValues.tm_userid,
+      user_first_name: fetchedData[0].dataValues.tm_title_name + "" + fetchedData[0].dataValues.tm_first_name,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
       is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false,
@@ -862,6 +865,7 @@ function getTemplateListData1(fetchedData) {
             template_template_type_uuid: tD.dataValues.tm_template_type_uuid,
             template_template_type_name: tD.dataValues.tm_template_type_name,
             user_uuid: tD.dataValues.tm_userid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
             is_public: tD.dataValues.tm_public[0] === 1 ? true : false,
@@ -1113,6 +1117,7 @@ function getLabListData(fetchedData) {
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_department_uuid,
             user_uuid: tD.dataValues.tm_user_uuid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1168,6 +1173,7 @@ function getRisListData(fetchedData) {
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_department_uuid,
             user_uuid: tD.dataValues.tm_user_uuid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1224,6 +1230,7 @@ function getInvestData(fetchedData) {
           template_name: tD.dataValues.tm_name,
           template_department: tD.dataValues.tm_department_uuid,
           user_uuid: tD.dataValues.tm_user_uuid,
+          user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
           template_description: tD.dataValues.tm_description,
           template_displayorder: tD.dataValues.tm_display_order,
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1571,12 +1578,7 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   templateMasterReqData.is_active = tIsActive ? 1 : 0;
 
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
-
-  const templateMasterCreatedData = await tempmstrTbl.create(
-    templateMasterReqData, {
-    returning: true
-  }
-  );
+  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData);
   templateMasterDetailsReqData.forEach((item, index) => {
     item.template_master_uuid = templateMasterCreatedData.dataValues.uuid;
     item.created_by = userUUID;

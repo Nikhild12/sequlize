@@ -14,11 +14,26 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_template_type_uuid :{
+            tm_title_name: {
+                type: DataTypes.STRING
+            },
+            tm_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            tm_template_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_template_type_name :{
+            tm_template_type_name: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
             },
@@ -30,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_is_public:{
+            tm_is_public: {
                 type: DataTypes.BOOLEAN
             },
             tmd_uuid: {
@@ -41,80 +56,80 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_active:{
+            tmd_active: {
                 type: DataTypes.BOOLEAN
             },
-            tmd_status:{
+            tmd_status: {
                 type: DataTypes.BOOLEAN
             },
-            tm_description:{
+            tm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            tm_display_order:{
+            tm_display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tmd_test_master_uuid:{
+            tmd_test_master_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            tm_status:{
+            tm_status: {
                 type: DataTypes.BOOLEAN
             },
-            tm_is_active:{
+            tm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            itm_uuid:{
+            itm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            itm_code:{
+            itm_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            itm_name:{
+            itm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            itm_description:{
+            itm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            itm_lab_master_type_uuid:{
+            itm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            itm_status:{
+            itm_status: {
                 type: DataTypes.BOOLEAN
             },
-            itm_is_active:{
+            itm_is_active: {
                 type: DataTypes.BOOLEAN
             },
-            ipm_uuid:{
+            ipm_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ipm_profile_code:{
+            ipm_profile_code: {
                 type: DataTypes.STRING(8),
                 allowNull: true,
             },
-            ipm_name:{
+            ipm_name: {
                 type: DataTypes.STRING(100),
                 allowNull: true,
             },
-            ipm_description:{
+            ipm_description: {
                 type: DataTypes.STRING(500),
                 allowNull: true,
             },
-            ipm_lab_master_type_uuid:{
+            ipm_lab_master_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            ipm_status:{
+            ipm_status: {
                 type: DataTypes.BOOLEAN
             },
-            ipm_is_active:{
+            ipm_is_active: {
                 type: DataTypes.BOOLEAN
             },
             tm_created_by: {
@@ -175,11 +190,11 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
-            tableName: "vw_profile_invest_template" ,
+            tableName: "vw_profile_invest_template",
             timestamps: false
         }
-        
+
     );
-   
+
     return vw_profile_invest_template;
 };
