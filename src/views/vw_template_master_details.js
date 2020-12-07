@@ -21,6 +21,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      tm_title_name: {
+        type: DataTypes.STRING
+      },
+      tm_first_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      tm_middle_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      tm_last_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       tm_template_type_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false
