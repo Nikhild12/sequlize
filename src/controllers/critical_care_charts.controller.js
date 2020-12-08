@@ -560,6 +560,7 @@ function getCCquery(patient_uuid) {
                 include:[
                     {
                         model: value_typeTbl,
+                        as:'value_types',
                         where: { is_active: 1, status: 1 },
                         required: false,
                     }
@@ -734,6 +735,10 @@ function getmdList(fetchedData, p_id, from_date) {
                 ccc_concept_uuid :pV && pV.critical_care_concepts ? pV.critical_care_concepts.uuid : 0,
                 ccc_concept_name :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_name : 0,
                 ccc_concept_code :pV && pV.critical_care_concepts ? pV.critical_care_concepts.concept_code : 0,
+
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_type_uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
 
                 ccc_concept_value_uuid :pV && pV.cc_concept_value_uuid || 0,
                 ccc_concept_value_name :pV && pV.critical_care_concept_values ? pV.critical_care_concept_values.concept_value : null,
