@@ -18,6 +18,8 @@ const cccTbl = db.critical_care_charts;
 const ccc_conceptTbl = db.critical_care_concepts;
 const ccc_concept_valuesTbl = db.critical_care_concept_values;
 const cctypeTbl = db.critical_care_types;
+const value_typeTbl = db.value_types;
+
 
 
 const CCchartsController = () => {
@@ -555,6 +557,13 @@ function getCCquery(patient_uuid) {
                 attributes: ['uuid', 'concept_code', 'concept_name'],
                 where: { is_active: 1, status: 1 },
                 required: false,
+                include:[
+                    {
+                        model: value_typeTbl,
+                        where: { is_active: 1, status: 1 },
+                        required: false,
+                    }
+                ]
             },
             {
                 model: ccc_concept_valuesTbl,
