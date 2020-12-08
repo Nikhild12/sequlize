@@ -853,6 +853,11 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
 						"in": "body",
 						"name": "add",
 						"required": true,
@@ -2102,6 +2107,11 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
 					},
 					{
 						"in": "body",

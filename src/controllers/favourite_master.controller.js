@@ -904,14 +904,13 @@ const TickSheetMasterController = () => {
       const { user_uuid, facility_uuid } = req.headers;
       // Destructuring Req Body
       const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
-      const { pageNo = 0, status = 1, facility_id, department_id, search } = req.body;
+      const { pageNo = 0, status = 1, facility_id, department_id, search, user_id } = req.body;
       let findQuery = {
         offset: +(pageNo) * +(paginationSize),
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid },
-        logging : console.log
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid},
       };
 
       findQuery.where['is_active'] = +(status);
@@ -936,6 +935,9 @@ const TickSheetMasterController = () => {
         findQuery.where['fm_department_uuid'] = department_id;
       }
 
+      if (user_id && /\S/.test(user_id)) {
+        findQuery.where['fm_user_uuid'] = user_id;
+      }
       if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
         req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
         if (!isNaN(req.body.favourite_type_uuid)) {
