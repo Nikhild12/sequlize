@@ -6,6 +6,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const rp = require("request-promise");
 var config = require("../config/config");
+const emr_utility = require("../services/utility.service");
 
 const proceduresTbl = db.procedures;
 const procedureNoteTbl = db.procedure_note_templates;
@@ -29,6 +30,11 @@ const emr_constants = require("../config/constants");
 
 // Procedures Attributes
 const proceduresAttributes = require("../attributes/procedure");
+
+const {
+  APPMASTER_GET_SCREEN_SETTINGS,
+  APPMASTER_UPDATE_SCREEN_SETTINGS
+} = emr_constants.DEPENDENCY_URLS;
 
 const proceduresController = () => {
   /**
@@ -234,87 +240,68 @@ const proceduresController = () => {
   const postprocedures = async (req, res) => {
 
     if (Object.keys(req.body).length != 0) {
-
-      const {
-        user_uuid
-      } = req.headers;
-      const postData = req.body;
-      if (user_uuid > 0 && postData.code && postData.name) {
-
-        try {
-          // const duplicateProcedureRecord = await findDuplicateProceduresByCodeAndName(
-          //   postData
-          // );
-          // if (duplicateProcedureRecord && duplicateProcedureRecord.length > 0) {
-          //   return res.status(400).send({
-          //     code: emr_constants.DUPLICATE_ENTRIE,
-          //     message: getDuplicateMsg(duplicateProcedureRecord)
-          //   });
-          // }
-
-          const code_exits = await codeexists(req.body.code);
-          const name_exits = await nameexists(req.body.name);
-          const tblname_exits = await codenameexists(req.body.code, req.body.name);
-
-          if (tblname_exits && tblname_exits.length > 0) {
-            return res
-              .status(400)
-              .send({
-                statusCode: 402,
-                message: "code and name already exists"
-              });
-          } else if (code_exits && code_exits.length > 0) {
-            return res
-              .status(401)
-              .send({
-                statusCode: 400,
-                message: "code already exists"
-              });
-
-          } else if (name_exits && name_exits.length > 0) {
-            return res
-              .status(400)
-              .send({
-                statusCode: 400,
-                message: "name already exists"
-              });
-
-          } else {
-
-            // postData.status = postData.is_active;
-            postData.status = emr_constants.IS_ACTIVE;
-            postData.created_by = user_uuid;
-            postData.modified_by = user_uuid;
-
-            postData.created_date = new Date();
-            postData.modified_date = new Date();
-            postData.revision = 1;
-
-            const proceduresCreatedData = await proceduresTbl.create(postData);
-
-            if (proceduresCreatedData) {
-              postData.uuid = proceduresCreatedData.uuid;
-              return res.status(200).send({
-                statusCode: 200,
-                message: "Inserted Procedures Master Successfully",
-                responseContents: postData
-              });
-            }
-          }
-        } catch (ex) {
-          console.log(ex.message);
-          return res.status(400).send({
-            statusCode: 400,
-            message: ex.message
-          });
+      try {
+        const { user_uuid, authorization } = req.headers;
+        const name_exits = await nameexists(req.body.name);
+        if (name_exits && name_exits.length > 0) {
+          return res
+            .status(400)
+            .send({
+              statusCode: 400,
+              message: "name already exists"
+            });
         }
-      } else {
-        return res
-          .status(400)
-          .send({
-            code: httpStatus[400],
-            message: "No Request Body Found"
-          });
+        const postData = req.body;
+        let screenSettings_output;
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'PROCED'
+          }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          postData.code = screenSettings_output.prefix + replace_value;
+        }
+        let currentDate = new Date();
+        postData.status = postData.revision = emr_constants.IS_ACTIVE;
+        postData.created_by = postData.modified_by = user_uuid;
+        postData.created_date = postData.modified_date = currentDate;
+        const proceduresCreatedData = await proceduresTbl.create(postData);
+
+        if (proceduresCreatedData) {
+          let options_two = {
+            uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              screenId: screenSettings_output.uuid,
+              suffix_current_value: replace_value
+            }
+          };
+          await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+          postData.uuid = proceduresCreatedData.uuid;
+          return res
+            .status(200)
+            .send({
+              statusCode: 200,
+              message: "Inserted Procedures Master Successfully",
+              responseContents: postData
+            });
+        }
+      } catch (ex) {
+        console.log(ex.message);
+        return res.status(400).send({
+          statusCode: 400,
+          message: ex.message
+        });
       }
     } else {
       return res
@@ -666,48 +653,6 @@ const nameexists = (name) => {
     });
   }
 };
-
-const codenameexists = (code, name) => {
-  if (code !== undefined && name !== undefined) {
-    return new Promise((resolve, reject) => {
-      let value = proceduresTbl.findAll({
-        //order: [['created_date', 'DESC']],
-        attributes: ["code", "name"],
-        where: {
-          code: code,
-          name: name
-        }
-      });
-      if (value) {
-        resolve(value);
-        return value;
-      } else {
-        reject({
-          message: "code does not existed"
-        });
-      }
-    });
-  }
-};
-async function findDuplicateProceduresByCodeAndName({
-  code,
-  name
-}) {
-  // checking for Duplicate 
-  // before creating procedures 
-  return await proceduresTbl.findAll({
-    attributes: ['code', 'name', 'is_active'],
-    where: {
-      [Op.or]: [{
-        code: code
-      },
-      {
-        name: name
-      }
-      ]
-    }
-  });
-}
 
 function getDuplicateMsg(record) {
   return record[0].is_active ? emr_constants.DUPLICATE_ACTIVE_MSG : emr_constants.DUPLICATE_IN_ACTIVE_MSG;
