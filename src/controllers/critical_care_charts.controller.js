@@ -517,6 +517,11 @@ function getvdList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
@@ -672,6 +677,11 @@ function getadList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
@@ -808,6 +818,11 @@ function getioList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
@@ -869,6 +884,11 @@ function getdbList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+                
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
@@ -931,6 +951,10 @@ function getdlList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
@@ -994,6 +1018,11 @@ function getbpList(fetchedData, p_id, from_date) {
                 critical_care_type_uuid: pV.critical_care_charts.critical_care_types.uuid,
                 critical_care_type_code: pV.critical_care_charts.critical_care_types.code,
                 critical_care_type_name: pV.critical_care_charts.critical_care_types.name,
+
+                ccc_value_type_uuid :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.uuid : 0,
+                ccc_value_type_name :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.name : 0,
+                ccc_value_type_code :pV && pV.critical_care_concepts && pV.critical_care_concepts.value_types ? pV.critical_care_concepts.value_types.code : 0,
+
             };
         });
     }
