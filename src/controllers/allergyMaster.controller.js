@@ -282,7 +282,6 @@ const allergyMasterController = () => {
           });
         }
       } catch (ex) {
-        console.log(ex.message);
         return res.status(400).send({ statusCode: 400, message: ex.message });
       }
     } else {
