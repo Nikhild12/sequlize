@@ -611,9 +611,9 @@ async function getPrescriptionRseponse(prescriptions) {
             //Duration
             "duration": e.duration,
 
-            "store_master_uuid": pd.store_master != null ? pd.store_master.uuid : null,
-            "store_master_name": pd.store_master != null ? pd.store_master.name : null,
-            "store_master_code": pd.store_master != null ? pd.store_master.code : null,
+            "injection_room_uuid": pd.injection_room != null ? pd.injection_room.uuid : null,
+            "injection_room_name": pd.injection_room != null ? pd.injection_room.name : null,
+            "injection_room_code": pd.injection_room != null ? pd.injection_room.code : null,
             "is_emar": e.is_emar != null ? e.is_emar : null,
             "im_can_calculate_frequency_qty": e.item_master != null ? e.item_master.can_calculate_frequency_qty : null,
 
