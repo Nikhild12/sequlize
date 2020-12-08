@@ -243,7 +243,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatLabOrder = await getPreviousLab({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatLabOrder = await getPreviousLab( user_uuid, facility_uuid, Authorization , orderIds);
           if (repeatLabOrder && repeatLabOrder.length > 0) {
             response.forEach((l) => {
               l.labDetails = repeatLabOrder.filter((rl) => {
@@ -260,7 +260,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatRadilogyOrder = await getPreviousRadiology({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatRadilogyOrder = await getPreviousRadiology(user_uuid, facility_uuid, Authorization, orderIds);
           if (repeatRadilogyOrder && repeatRadilogyOrder.length > 0) {
             response.forEach((r) => {
               r.radilogyDetails = repeatRadilogyOrder.filter((rm) => {
@@ -269,7 +269,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatInvestOrder = await getPreviousInvest({ user_uuid, facility_uuid, Authorization }, orderIds);
+          const repeatInvestOrder = await getPreviousInvest( user_uuid, facility_uuid, Authorization , orderIds);
           if (repeatInvestOrder && repeatInvestOrder.length > 0) {
             response.forEach((r) => {
               r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
@@ -461,7 +461,7 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
     return prescriptionResult;
   }
 }
-async function getPreviousRadiology({ user_uuid, facility_uuid, authorization }, order_id) {
+async function getPreviousRadiology( user_uuid, facility_uuid, Authorization , order_id) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
@@ -471,7 +471,7 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
       'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      Authorization: authorization
+      Authorization: Authorization
     },
     {
       patient_treatment_uuid: order_id
@@ -483,7 +483,7 @@ async function getPreviousRadiology({ user_uuid, facility_uuid, authorization },
     return radialogyResult;
   }
 }
-async function getPreviousLab({ user_uuid, facility_uuid, Authorization }, order_id) {
+async function getPreviousLab( user_uuid, facility_uuid, Authorization , order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
@@ -505,7 +505,7 @@ async function getPreviousLab({ user_uuid, facility_uuid, Authorization }, order
   }
 
 }
-async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, order_id) {
+async function getPreviousInvest(user_uuid, facility_uuid, Authorization , order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const investigationData = await utilityService.postRequest(
@@ -516,7 +516,7 @@ async function getPreviousInvest({ user_uuid, facility_uuid, authorization }, or
       'Content-Type': 'application/json',
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
-      Authorization: authorization
+      Authorization: Authorization
     },
     {
       patient_treatment_uuid: order_id
@@ -573,6 +573,14 @@ async function getPrescriptionRseponse(prescriptions) {
   //let prescriptions = prescriptionData.responseContents;
   let result = [];
   if (prescriptions && Array.isArray(prescriptions)) {
+    let injection_room_name = '';
+    let injection_room_code = '';
+    prescriptions.forEach(i=>{
+      if(i.injection_room){
+        injection_room_name = i.injection_room.store_name;
+        injection_room_code = i.injection_room.store_code;
+      }
+    });
     prescriptions.map((pd, pIdx) => {
 
       let p = pd.prescription_details;
@@ -611,9 +619,9 @@ async function getPrescriptionRseponse(prescriptions) {
             //Duration
             "duration": e.duration,
 
-            "store_master_uuid": pd.store_master != null ? pd.store_master.uuid : null,
-            "store_master_name": pd.store_master != null ? pd.store_master.name : null,
-            "store_master_code": pd.store_master != null ? pd.store_master.code : null,
+            "injection_room_uuid": pd.injection_room != null ? pd.injection_room.uuid : null,
+            "injection_room_name": injection_room_name,
+            "injection_room_code": injection_room_code,
             "is_emar": e.is_emar != null ? e.is_emar : null,
             "im_can_calculate_frequency_qty": e.item_master != null ? e.item_master.can_calculate_frequency_qty : null,
 

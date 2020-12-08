@@ -6,7 +6,6 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const rp = require("request-promise");
 var config = require("../config/config");
-
 // EMR Constants Import
 const emr_constants = require('../config/constants');
 
@@ -16,6 +15,7 @@ const emr_utility = require('../services/utility.service');
 const allergyMastersTbl = db.allergy_masters;
 const allergySourceTbl = db.allergy_source;
 const allergySeverityTbl = db.allergy_severity;
+const { APPMASTER_GET_SCREEN_SETTINGS, APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const allergyMasterController = () => {
   /**
@@ -229,65 +229,60 @@ const allergyMasterController = () => {
   const postAlleryMaster = async (req, res) => {
 
     if (Object.keys(req.body).length != 0) {
-
-      const { user_uuid } = req.headers;
-      const postData = req.body;
-
-      if (user_uuid > 0 && postData) {
-
-        try {
-
-          const code_exits = await codeexists(req.body.allergey_code);
-          const name_exits = await nameexists(req.body.allergy_name);
-          const tblname_exits = await codenameexists(req.body.allergey_code, req.body.allergy_name);
-
-          if (tblname_exits && tblname_exits.length > 0) {
-            return res
-              .status(422)
-              .send({ statusCode: 422, message: "code and name already exists" });
-          }
-          else if (code_exits && code_exits.length > 0) {
-            return res
-              .status(422)
-              .send({ statusCode: 422, message: "code already exists" });
-
-          } else if (name_exits && name_exits.length > 0) {
-            return res
-              .status(422)
-              .send({ statusCode: 422, message: "name already exists" });
-
-          } else {
-
-            postData.status = postData.is_active;
-            postData.created_by = user_uuid;
-            postData.modified_by = user_uuid;
-
-            postData.created_date = new Date();
-            postData.modified_date = new Date();
-            postData.revision = 1;
-
-            const allergyCreatedData = await allergyMastersTbl.create(
-              postData,
-              { returning: true }
-            );
-
-            if (allergyCreatedData) {
-              postData.uuid = allergyCreatedData.uuid;
-              return res.status(200).send({
-                statusCode: 200,
-                message: "Inserted Allergy Master Successfully",
-                responseContents: postData
-              });
-            }
-          }
-        } catch (ex) {
-          console.log(ex.message);
-          return res.status(400).send({ statusCode: 400, message: ex.message });
+      try {
+        const { user_uuid, authorization } = req.headers;
+        const name_exits = await nameexists(req.body.allergy_name);
+        if (name_exits && name_exits.length > 0) {
+          return res
+            .status(422)
+            .send({ statusCode: 422, message: "name already exists" });
         }
-      } else {
-        return res
-          .status(400)
-          .send({ code: httpStatus[400], message: "No Request Body Found" });
+        const postData = req.body;
+        let screenSettings_output;
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'ALLERGY'
+          }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          postData.allergey_code = screenSettings_output.prefix + replace_value;
+        }
+        let currentDate = new Date();
+        postData.status = postData.revision = emr_constants.IS_ACTIVE;
+        postData.created_by = postData.modified_by = user_uuid;
+        postData.created_date = postData.modified_date = currentDate;
+
+        const allergyCreatedData = await allergyMastersTbl.create(postData);
+
+        if (allergyCreatedData) {
+          let options_two = {
+            uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              screenId: screenSettings_output.uuid,
+              suffix_current_value: replace_value
+            }
+          };
+          await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
+          postData.uuid = allergyCreatedData.uuid;
+          return res.status(200).send({
+            statusCode: 200,
+            message: "Inserted Allergy Master Successfully",
+            responseContents: postData
+          });
+        }
+      } catch (ex) {
+        return res.status(400).send({ statusCode: 400, message: ex.message });
       }
     } else {
       return res
