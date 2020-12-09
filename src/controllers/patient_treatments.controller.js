@@ -243,7 +243,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatLabOrder = await getPreviousLab( user_uuid, facility_uuid, Authorization , orderIds);
+          const repeatLabOrder = await getPreviousLab(user_uuid, facility_uuid, Authorization, orderIds);
           if (repeatLabOrder && repeatLabOrder.length > 0) {
             response.forEach((l) => {
               l.labDetails = repeatLabOrder.filter((rl) => {
@@ -269,7 +269,7 @@ const PatientTreatmentController = () => {
             });
           }
 
-          const repeatInvestOrder = await getPreviousInvest( user_uuid, facility_uuid, Authorization , orderIds);
+          const repeatInvestOrder = await getPreviousInvest(user_uuid, facility_uuid, Authorization, orderIds);
           if (repeatInvestOrder && repeatInvestOrder.length > 0) {
             response.forEach((r) => {
               r.InvestigationDetails = repeatInvestOrder.filter((rI) => {
@@ -309,7 +309,7 @@ const PatientTreatmentController = () => {
         }
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
-          if(updatePrescriptionDetails.header && updatePrescriptionDetails.details.length>0){
+          if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
             prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
           }
         }
@@ -370,7 +370,6 @@ async function getPatientTreatmentKitData(patient_uuid) {
     patient_uuid: patient_uuid,
     is_active: emr_constants.IS_ACTIVE,
     status: emr_constants.IS_ACTIVE
-
   };
   return patientTreatmenttbl.findAll({
     where: query,
@@ -381,19 +380,14 @@ async function getPatientTreatmentKitData(patient_uuid) {
       {
         model: treatmentKitTable,
         attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
-        // where: { is_active: 1, status: 1 }
         required: false
-
       },
       {
         model: encounterTypeTbl,
         attributes: ['uuid', 'code', 'name'],
         required: false
-
       }
-    ],
-    required: false
-
+    ]
   });
 
 }
@@ -461,7 +455,7 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
     return prescriptionResult;
   }
 }
-async function getPreviousRadiology( user_uuid, facility_uuid, Authorization , order_id) {
+async function getPreviousRadiology(user_uuid, facility_uuid, Authorization, order_id) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
@@ -483,7 +477,7 @@ async function getPreviousRadiology( user_uuid, facility_uuid, Authorization , o
     return radialogyResult;
   }
 }
-async function getPreviousLab( user_uuid, facility_uuid, Authorization , order_id) {
+async function getPreviousLab(user_uuid, facility_uuid, Authorization, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
   const labData = await utilityService.postRequest(
@@ -505,7 +499,7 @@ async function getPreviousLab( user_uuid, facility_uuid, Authorization , order_i
   }
 
 }
-async function getPreviousInvest(user_uuid, facility_uuid, Authorization , order_id) {
+async function getPreviousInvest(user_uuid, facility_uuid, Authorization, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
   const investigationData = await utilityService.postRequest(
@@ -575,8 +569,8 @@ async function getPrescriptionRseponse(prescriptions) {
   if (prescriptions && Array.isArray(prescriptions)) {
     let injection_room_name = '';
     let injection_room_code = '';
-    prescriptions.forEach(i=>{
-      if(i.injection_room){
+    prescriptions.forEach(i => {
+      if (i.injection_room) {
         injection_room_name = i.injection_room.store_name;
         injection_room_code = i.injection_room.store_code;
       }
@@ -666,6 +660,7 @@ async function getLabResponse(labData) {
       return {
         uuid: l.patient_order_uuid,
         details_uuid: l.uuid,
+        test_details_uuid: l.patient_order_test_details_uuid,
         order_id: l.patient_treatment_uuid,
         //comments
         comments: l.details_comments != null ? l.details_comments : null,
@@ -677,6 +672,10 @@ async function getLabResponse(labData) {
         test_master_uuid: l.test_master != null ? l.test_master.uuid : null,
         lab_name: l.test_master != null ? l.test_master.name : null,
         lab_code: l.test_master != null ? l.test_master.code : null,
+        // //profile details
+        profile_master_uuid: l.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: l.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: l.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: l.order_priority != null ? l.order_priority.uuid : null,
         priority_code: l.order_priority != null ? l.order_priority.code : null,
@@ -704,6 +703,7 @@ async function getRadialogyResponse(radialogyData) {
       return {
         uuid: r.patient_order_uuid,
         details_uuid: r.uuid,
+        test_details_uuid: r.patient_order_test_details_uuid,
         order_id: r.patient_treatment_uuid,
         //comments
         comments: r.details_comments != null ? r.details_comments : null,
@@ -715,7 +715,10 @@ async function getRadialogyResponse(radialogyData) {
         test_master_uuid: r.test_master != null ? r.test_master.uuid : null,
         lab_name: r.test_master != null ? r.test_master.name : null,
         lab_code: r.test_master != null ? r.test_master.code : null,
-
+        // //profile details
+        profile_master_uuid: r.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: r.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: r.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: r.order_priority != null ? r.order_priority.uuid : null,
         priority_code: r.order_priority != null ? r.order_priority.code : null,
@@ -741,6 +744,7 @@ async function getInvestigationResponse(investigationData) {
       return {
         uuid: i.patient_order_uuid,
         details_uuid: i.uuid,
+        test_details_uuid: i.patient_order_test_details_uuid,
         order_id: i.patient_treatment_uuid,
         //comments
         comments: i.details_comments != null ? i.details_comments : null,
@@ -752,7 +756,10 @@ async function getInvestigationResponse(investigationData) {
         test_master_uuid: i.test_master != null ? i.test_master.uuid : null,
         lab_name: i.test_master != null ? i.test_master.name : null,
         lab_code: i.test_master != null ? i.test_master.code : null,
-
+        // //profile details
+        profile_master_uuid: i.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: i.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: i.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: i.order_priority != null ? i.order_priority.uuid : null,
         priority_code: i.order_priority != null ? i.order_priority.code : null,
