@@ -680,7 +680,7 @@ const cccMasterController = () => {
         try {
             let result = await criticalcareTypeTbl.findOne({
                 attributes: ['uuid', 'name', 'color', 'language', 'display_order', 'Is_default', 'is_active', 'status'],
-                where: { name: postData.type },
+                where: { name: postData.type, is_active: 1, status: 1 },
                 include: [{
                     model: cccMasterTbl,
                     required: false,

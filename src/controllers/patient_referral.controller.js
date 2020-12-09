@@ -24,10 +24,10 @@ const Referral_History = () => {
 
   const _getReferralHistory = async (req, res) => {
     const { user_uuid } = req.headers;
-    const { patient_uuid, facility_uuid, department_uuid } = req.query;
+    const { patient_uuid, facility_uuid, department_uuid, is_reviewed } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getReferralData(patient_uuid, facility_uuid, department_uuid);
+        const referralHistory = await getReferralData(patient_uuid, facility_uuid, department_uuid, is_reviewed);
         return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContent: referralHistory });
 
       } else {
@@ -64,6 +64,7 @@ const Referral_History = () => {
   const _updatePatientReferral = async (req, res) => {
     try {
       const { patient_referral_uuid } = req.body;
+      const postData = req.body;
       if (!patient_referral_uuid) {
         return res
           .status(httpStatus.UNPROCESSABLE_ENTITY)
@@ -74,7 +75,9 @@ const Referral_History = () => {
           });
       }
 
-      let data = await patientReferralTbl.update({ is_reviewed: 1 },
+      postData.is_reviewed = 1;
+
+      let data = await patientReferralTbl.update(postData,
         { where: { uuid: patient_referral_uuid } });
       return res
         .status(httpStatus.OK)
@@ -88,7 +91,7 @@ const Referral_History = () => {
     } catch (ex) {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
     }
-  }
+  };
 
   return {
     getReferralHistory: _getReferralHistory,
@@ -110,7 +113,7 @@ async function assignDefault(patientReferralData, user_uuid) {
   return patientReferralData;
 }
 
-async function getReferralData(patient_uuid, facility_uuid, department_uuid) {
+async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_reviewed) {
   let findQuery = {
     attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'pr_facility_uuid', 'pr_department_uuid', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
     where: {},
@@ -133,6 +136,12 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid) {
   if (department_uuid && /\S/.test(department_uuid)) {
     findQuery.where = Object.assign(findQuery.where, {
       pr_department_uuid: department_uuid
+    })
+  }
+
+  if (is_reviewed && /\S/.test(is_reviewed)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      pr_is_reviewed: is_reviewed
     })
   }
 
