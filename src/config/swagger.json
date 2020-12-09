@@ -7274,6 +7274,12 @@
 						"name": "department_uuid",
 						"required": false,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "is_reviewed",
+						"required": false,
+						"type": "boolean"
 					}
 				],
 				"produces": [
