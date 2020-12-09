@@ -660,7 +660,6 @@ async function getLabResponse(labData) {
       return {
         uuid: l.patient_order_uuid,
         details_uuid: l.uuid,
-        test_details_uuid: l.patient_order_test_details_uuid,
         order_id: l.patient_treatment_uuid,
         //comments
         comments: l.details_comments != null ? l.details_comments : null,
@@ -703,7 +702,6 @@ async function getRadialogyResponse(radialogyData) {
       return {
         uuid: r.patient_order_uuid,
         details_uuid: r.uuid,
-        test_details_uuid: r.patient_order_test_details_uuid,
         order_id: r.patient_treatment_uuid,
         //comments
         comments: r.details_comments != null ? r.details_comments : null,
@@ -744,7 +742,6 @@ async function getInvestigationResponse(investigationData) {
       return {
         uuid: i.patient_order_uuid,
         details_uuid: i.uuid,
-        test_details_uuid: i.patient_order_test_details_uuid,
         order_id: i.patient_treatment_uuid,
         //comments
         comments: i.details_comments != null ? i.details_comments : null,
