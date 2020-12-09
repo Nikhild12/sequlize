@@ -72,7 +72,9 @@ printService().register('eachSort', function (array, key, opts) {
         });
     }
     // sort
+    console.log(zipped);
     var sorted = _.sortBy(zipped, function (item) {
+        console.log(item.originalData[key]);
         return item.originalData[key];
     });
     // custom each

@@ -16,6 +16,15 @@ module.exports = (sequelize, DataTypes) => {
             tk_treatment_kit_type_uuid: {
                 type: DataTypes.INTEGER
             },
+            tk_is_public: {
+                type: DataTypes.BOOLEAN
+            },
+            tk_share_uuid: {
+                type: DataTypes.INTEGER
+            },
+            tk_description: {
+                type: DataTypes.STRING(255)
+            },
             tk_status: {
                 type: DataTypes.BOOLEAN
             },
@@ -28,8 +37,14 @@ module.exports = (sequelize, DataTypes) => {
             im_name: {
                 type: DataTypes.STRING(255)
             },
+            im_is_emar: {
+                type: DataTypes.BOOLEAN
+            },
             im_strength: {
                 type: DataTypes.STRING(255)
+            },
+            im_can_calculate_frequency_qty: {
+                type: DataTypes.BOOLEAN
             },
             tkd_item_master_uuid: {
                 type: DataTypes.INTEGER
@@ -59,6 +74,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(255)
             },
             dp_name: {
+                type: DataTypes.STRING(255)
+            },
+            store_uuid: {
+                type: DataTypes.STRING(255)
+            },
+            store_code: {
+                type: DataTypes.STRING(255)
+            },
+            store_name: {
                 type: DataTypes.STRING(255)
             },
             tkd_duration_period_uuid: {

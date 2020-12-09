@@ -68,7 +68,6 @@ const tmpmstrController = () => {
         );
         console.log(table_name);
         const templateList = await table_name.findAll(query);
-          console.log(templateList);
         if (templateList != null && templateList.length > 0) {
           return res.status(httpStatus.OK).json({
             statusCode: 200,
@@ -199,7 +198,6 @@ const tmpmstrController = () => {
       store_master_uuid
     } = req.query;
     try {
-
       user_uuid = isMaster && ((isMaster === 'true') || (isMaster === true)) ? createdUserId : user_uuid;
       if (user_uuid > 0 && temp_id > 0 && temp_type_id > 0 && (dept_id > 0 || lab_id > 0)) {
         if ([5, 6, 8].includes(+(temp_type_id))) {
@@ -294,12 +292,15 @@ const tmpmstrController = () => {
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
+        let userUuid = templateMasterReqData.user_uuid ? templateMasterReqData.user_uuid : userUUID;
+        templateMasterReqData.user_uuid = userUuid;
+        let facilityUuid = templateMasterReqData.facility_uuid;
+        let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
-
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
 
-        const displayOrderexists = await displayOrderExists(displayOrder, userUUID);
+        const displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
@@ -310,7 +311,7 @@ const tmpmstrController = () => {
             });
         }
 
-        if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
+        if (exists && exists.length > 0) {
           //template already exits
           return res
             .status(400)
@@ -319,11 +320,11 @@ const tmpmstrController = () => {
               statusCode: httpStatus.BAD_REQUEST,
               message: emr_constants.TEMPLATE_NAME_EXISTS
             });
-        } else if (
+        }
+        else if (
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
-
           // templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
@@ -341,10 +342,11 @@ const tmpmstrController = () => {
             .status(400)
             .send({
               code: httpStatus[400],
-              message: NO_REQUEST_FOUND
+              message: emr_constants.NO_REQUEST_FOUND
             });
         }
       } catch (err) {
+        console.log("err==============", err);
         return res
           .status(400)
           .send({
@@ -357,7 +359,7 @@ const tmpmstrController = () => {
         .status(400)
         .send({
           code: httpStatus[400],
-          message: NO_REQUEST_FOUND
+          message: emr_constants.NO_REQUEST_FOUND
         });
     }
   };
@@ -407,26 +409,26 @@ const tmpmstrController = () => {
           }
           const del_temp_drugs =
             tmpDtlsRmvdDrugs && tmpDtlsRmvdDrugs.length > 0 ?
-            await removedTmpDetails(
-              tempmstrdetailsTbl,
-              tmpDtlsRmvdDrugs,
-              user_uuid
-            ) :
-            "";
+              await removedTmpDetails(
+                tempmstrdetailsTbl,
+                tmpDtlsRmvdDrugs,
+                user_uuid
+              ) :
+              "";
           const new_temp_drugs = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewDrugsDetailsReqData, {
-              returning: true
-            }
+            returning: true
+          }
           );
           const temp_mas = await tempmstrTbl.update(
             templateMasterUpdateData, {
-              where: {
-                uuid: templateMasterReqData.template_id
-              }
-            }, {
-              returning: true,
-              plain: true
+            where: {
+              uuid: templateMasterReqData.template_id
             }
+          }, {
+            returning: true,
+            plain: true
+          }
           );
           const temp_mas_dtls = await Promise.all(
             getTemplateMasterDetailsWithUUID(
@@ -511,26 +513,26 @@ const tmpmstrController = () => {
         if (templateMasterReqData.template_type_uuid == 1) {
           const del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0 ?
-            await removedTmpDetails(
-              tempmstrdetailsTbl,
-              tmpDtlsRmvd,
-              user_uuid
-            ) :
-            "";
+              await removedTmpDetails(
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              ) :
+              "";
           const new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData, {
-              returning: true
-            }
+            returning: true
+          }
           );
           const temp_mas = await tempmstrTbl.update(
             templateMasterUpdateData, {
-              where: {
-                uuid: templateMasterReqData.template_id
-              }
-            }, {
-              returning: true,
-              plain: true
+            where: {
+              uuid: templateMasterReqData.template_id
             }
+          }, {
+            returning: true,
+            plain: true
+          }
           );
           const temp_mas_dtls = await Promise.all(
             getTemplateMasterDetailsWithUUID(
@@ -552,16 +554,16 @@ const tmpmstrController = () => {
         if (templateMasterReqData.template_type_uuid == 4) {
           del_temp_dtls =
             tmpDtlsRmvd && tmpDtlsRmvd.length > 0 ?
-            await removedTmpDetails(
-              tempmstrdetailsTbl,
-              tmpDtlsRmvd,
-              user_uuid
-            ) :
-            "";
+              await removedTmpDetails(
+                tempmstrdetailsTbl,
+                tmpDtlsRmvd,
+                user_uuid
+              ) :
+              "";
           new_temp_dtls = await tempmstrdetailsTbl.bulkCreate(
             templateMasterNewTempDetailsReqData, {
-              returning: true
-            }
+            returning: true
+          }
           );
           return res.status(200).send({
             code: httpStatus.OK,
@@ -589,7 +591,7 @@ const tmpmstrController = () => {
 
   const _getalltemplates = async (req, res) => {
     const {
-      user_uuid
+      user_uuid, facility_uuid
     } = req.headers;
     let getsearch = req.body;
 
@@ -630,13 +632,19 @@ const tmpmstrController = () => {
       order: [
         [sortField, sortOrder]
       ],
-      attributes: {
-        exclude: ["id", "createdAt", "updatedAt"]
-      },
+      attributes: [
+        "tm_uuid", "tm_name", "tm_template_type_uuid", "tm_is_public", "tm_facility_uuid",
+        "tm_department_uuid", "tm_user_uuid", "is_active", "tm_status", "tm_created_by",
+        "tm_created_date", "tm_modified_by", "tm_modified_date", "tt_name", "tt_is_active",
+        "tt_status", "f_uuid", "f_name", "f_is_active", "f_status", "d_uuid", "d_name", "uct_name",
+        "u_first_name", "u_middle_name", "u_last_name", "umt_name", "um_first_name", "um_middle_name",
+        "um_last_name"
+      ],
       where: {
         is_active: 1,
-        tm_status: 1
-      },
+        tm_status: 1,
+        tm_facility_uuid: facility_uuid
+      }
     };
 
     if (getsearch.search && /\S/.test(getsearch.search)) {
@@ -653,20 +661,27 @@ const tmpmstrController = () => {
     }
     if (getsearch.template_type_uuid && /\S/.test(getsearch.template_type_uuid)) {
       findQuery.where['tm_template_type_uuid'] = getsearch.template_type_uuid;
-
     }
 
+    if (getsearch.facility_uuid && /\S/.test(getsearch.facility_uuid)) {
+      findQuery.where['tm_facility_uuid'] = getsearch.facility_uuid;
+    }
+
+    if (getsearch.department_uuid && /\S/.test(getsearch.department_uuid)) {
+      findQuery.where['tm_department_uuid'] = getsearch.department_uuid;
+    }
+    if (getsearch.user_uuid && /\S/.test(getsearch.user_uuid)) {
+      findQuery.where['tm_user_uuid'] = getsearch.user_uuid;
+    }
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
-      findQuery.where['tm_status'] = emr_constants.IS_ACTIVE;
     }
     try {
       if (user_uuid) {
         const templateList = await vw_all_temp.findAndCountAll(findQuery);
-
         return res.status(httpStatus.OK).json({
           statusCode: 200,
-          req: "",
+          req: getsearch,
           responseContents: templateList.rows ? templateList.rows : [],
           totalRecords: templateList.count ? templateList.count : 0
         });
@@ -730,8 +745,8 @@ function getTemplateData(fetchedData) {
       template_type_uuid: fetchedData[0].dataValues.tm_template_type_uuid,
       template_department_name: fetchedData[0].dataValues.d_name,
       template_department: fetchedData[0].dataValues.tm_dept,
-
       user_uuid: fetchedData[0].dataValues.tm_userid,
+      user_first_name: fetchedData[0].dataValues.tm_title_name + "" + fetchedData[0].dataValues.tm_first_name,
       display_order: fetchedData[0].dataValues.tm_display_order,
       template_desc: fetchedData[0].dataValues.tm_description,
       is_public: fetchedData[0].dataValues.tm_public[0] === 1 ? true : false,
@@ -821,8 +836,8 @@ function getTemplateListData(fetchedData) {
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-      !uniq[obj.temp_details.template_id] &&
-      (uniq[obj.temp_details.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
     return {
       templates_list: temp_list
@@ -850,6 +865,7 @@ function getTemplateListData1(fetchedData) {
             template_template_type_uuid: tD.dataValues.tm_template_type_uuid,
             template_template_type_name: tD.dataValues.tm_template_type_name,
             user_uuid: tD.dataValues.tm_userid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             display_order: tD.dataValues.tm_display_order,
             template_desc: tD.dataValues.tm_description,
             is_public: tD.dataValues.tm_public[0] === 1 ? true : false,
@@ -875,8 +891,8 @@ function getTemplateListData1(fetchedData) {
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-      !uniq[obj.temp_details.template_id] &&
-      (uniq[obj.temp_details.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
 
     return {
@@ -900,36 +916,36 @@ function getTemplateMasterDetailsWithUUID(
   // updating template master details
   detailsData.forEach(mD => {
     (mD.template_details_uuid = mD.template_details_uuid),
-    (mD.chief_complaint_uuid = mD.chief_complaint_uuid),
-    (mD.vital_master_uuid = mD.vital_master_uuid),
-    (mD.item_master_uuid = mD.drug_id),
-    (mD.drug_route_uuid = mD.drug_route_uuid),
-    (mD.drug_frequency_uuid = mD.drug_frequency_uuid),
-    (mD.diet_master_uuid = mD.diet_master_uuid),
-    (mD.diet_category_uuid = mD.diet_category_uuid),
-    (mD.diet_frequency_uuid = mD.diet_frequency_uuid),
-    (mD.display_order = mD.display_order),
-    (mD.duration = mD.drug_duration),
-    (mD.duration_period_uuid = mD.drug_period_uuid),
-    (mD.drug_instruction_uuid = mD.drug_instruction_uuid),
-    (mD.modified_by = user_uuid),
-    (mD.modified_date = new Date()),
-    (mD.quantity = mD.quantity),
-    (mD.status = mD.status),
-    (mD.revision = mD.revision),
-    (mD.is_active = mD.is_active);
+      (mD.chief_complaint_uuid = mD.chief_complaint_uuid),
+      (mD.vital_master_uuid = mD.vital_master_uuid),
+      (mD.item_master_uuid = mD.drug_id),
+      (mD.drug_route_uuid = mD.drug_route_uuid),
+      (mD.drug_frequency_uuid = mD.drug_frequency_uuid),
+      (mD.diet_master_uuid = mD.diet_master_uuid),
+      (mD.diet_category_uuid = mD.diet_category_uuid),
+      (mD.diet_frequency_uuid = mD.diet_frequency_uuid),
+      (mD.display_order = mD.display_order),
+      (mD.duration = mD.drug_duration),
+      (mD.duration_period_uuid = mD.drug_period_uuid),
+      (mD.drug_instruction_uuid = mD.drug_instruction_uuid),
+      (mD.modified_by = user_uuid),
+      (mD.modified_date = new Date()),
+      (mD.quantity = mD.quantity),
+      (mD.status = mD.status),
+      (mD.revision = mD.revision),
+      (mD.is_active = mD.is_active);
     masterDetailsPromise = [
       ...masterDetailsPromise,
       detailsTbl.update(
         mD, {
-          where: {
-            uuid: mD.template_details_uuid,
-            template_master_uuid: masterData.template_id
-          },
-          transaction: templateTransaction
-        }, {
-          returning: true
-        }
+        where: {
+          uuid: mD.template_details_uuid,
+          template_master_uuid: masterData.template_id
+        },
+        transaction: templateTransaction
+      }, {
+        returning: true
+      }
       )
     ];
   });
@@ -987,13 +1003,13 @@ function removedTmpDetails(dtlsTbl, dtls, user_id) {
       ...masterDetailsPromise,
       dtlsTbl.update(
         mD, {
-          where: {
-            uuid: mD.template_details_uuid,
-            template_master_uuid: mD.template_uuid
-          }
-        }, {
-          returning: true
+        where: {
+          uuid: mD.template_details_uuid,
+          template_master_uuid: mD.template_uuid
         }
+      }, {
+        returning: true
+      }
       )
     ];
   });
@@ -1101,6 +1117,7 @@ function getLabListData(fetchedData) {
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_department_uuid,
             user_uuid: tD.dataValues.tm_user_uuid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1129,8 +1146,8 @@ function getLabListData(fetchedData) {
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-      !uniq[obj.temp_details.template_id] &&
-      (uniq[obj.temp_details.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
     return {
       templates_lab_list: temp_list
@@ -1156,6 +1173,7 @@ function getRisListData(fetchedData) {
             template_name: tD.dataValues.tm_name,
             template_department: tD.dataValues.tm_department_uuid,
             user_uuid: tD.dataValues.tm_user_uuid,
+            user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
             template_description: tD.dataValues.tm_description,
             template_displayorder: tD.dataValues.tm_display_order,
             template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1184,8 +1202,8 @@ function getRisListData(fetchedData) {
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-      !uniq[obj.temp_details.template_id] &&
-      (uniq[obj.temp_details.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
     return {
       templates_radiology_list: temp_list
@@ -1212,6 +1230,7 @@ function getInvestData(fetchedData) {
           template_name: tD.dataValues.tm_name,
           template_department: tD.dataValues.tm_department_uuid,
           user_uuid: tD.dataValues.tm_user_uuid,
+          user_first_name: tD.dataValues.tm_title_name + "" + tD.dataValues.tm_first_name,
           template_description: tD.dataValues.tm_description,
           template_displayorder: tD.dataValues.tm_display_order,
           template_type_uuid: tD.dataValues.tm_template_type_uuid,
@@ -1239,8 +1258,8 @@ function getInvestData(fetchedData) {
     let uniq = {};
     let temp_list = templateList.filter(
       obj =>
-      !uniq[obj.temp_details.template_id] &&
-      (uniq[obj.temp_details.template_id] = true)
+        !uniq[obj.temp_details.template_id] &&
+        (uniq[obj.temp_details.template_id] = true)
     );
     return {
       templates_invest_list: temp_list
@@ -1367,18 +1386,18 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId) {
     si_is_active: emr_constants.IS_ACTIVE,
     si_status: emr_constants.IS_ACTIVE,
     [Op.or]: [{
-        tm_dept: {
-          [Op.eq]: dept_id
-        },
-        tm_public: {
-          [Op.eq]: 1
-        }
+      tm_dept: {
+        [Op.eq]: dept_id
       },
-      {
-        tm_userid: {
-          [Op.eq]: user_uuid
-        }
+      tm_public: {
+        [Op.eq]: 1
       }
+    },
+    {
+      tm_userid: {
+        [Op.eq]: user_uuid
+      }
+    }
     ]
   };
 }
@@ -1394,18 +1413,18 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
     dm_is_active: 1,
     f_uuid: fId,
     [Op.or]: [{
-        tm_dept: {
-          [Op.eq]: dept_id
-        },
-        tm_public: {
-          [Op.eq]: 1
-        }
+      tm_dept: {
+        [Op.eq]: dept_id
       },
-      {
-        tm_userid: {
-          [Op.eq]: user_uuid
-        }
+      tm_public: {
+        [Op.eq]: 1
       }
+    },
+    {
+      tm_userid: {
+        [Op.eq]: user_uuid
+      }
+    }
     ]
   };
 }
@@ -1421,18 +1440,18 @@ function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId) {
     tmd_status: 1,
     tm_template_type_uuid: ttId,
     [Op.or]: [{
-        tm_dept: {
-          [Op.eq]: dId
-        },
-        tm_public: {
-          [Op.eq]: 1
-        }
+      tm_dept: {
+        [Op.eq]: dId
       },
-      {
-        tm_userid: {
-          [Op.eq]: uId
-        }
+      tm_public: {
+        [Op.eq]: 1
       }
+    },
+    {
+      tm_userid: {
+        [Op.eq]: uId
+      }
+    }
     ]
   };
 
@@ -1477,7 +1496,7 @@ function getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id) {
         required: false,
       }],
       required: false,
-    }, ]
+    },]
   };
 }
 
@@ -1492,18 +1511,18 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
     distinct: true,
     where: {
       [Op.or]: [{
-          department_uuid: {
-            [Op.eq]: dept_id
-          },
-          is_public: {
-            [Op.eq]: 1
-          }
+        department_uuid: {
+          [Op.eq]: dept_id
         },
-        {
-          user_uuid: {
-            [Op.eq]: user_uuid
-          }
+        is_public: {
+          [Op.eq]: 1
         }
+      },
+      {
+        user_uuid: {
+          [Op.eq]: user_uuid
+        }
+      }
       ],
       template_type_uuid: temp_type_id,
       status: 1,
@@ -1559,12 +1578,7 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   templateMasterReqData.is_active = tIsActive ? 1 : 0;
 
   templateMasterReqData.active_from = templateMasterReqData.active_to = new Date();
-
-  const templateMasterCreatedData = await tempmstrTbl.create(
-    templateMasterReqData, {
-      returning: true
-    }
-  );
+  const templateMasterCreatedData = await tempmstrTbl.create(templateMasterReqData);
   templateMasterDetailsReqData.forEach((item, index) => {
     item.template_master_uuid = templateMasterCreatedData.dataValues.uuid;
     item.created_by = userUUID;
@@ -1573,8 +1587,8 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   });
   const dtls_result = await tempmstrdetailsTbl.bulkCreate(
     templateMasterDetailsReqData, {
-      returning: true
-    }
+    returning: true
+  }
   );
   return {
     templateMasterReqData: templateMasterCreatedData,
@@ -1591,7 +1605,8 @@ const nameExists = (temp_name, userUUID) => {
         ],
         attributes: ["name", "is_active", "status"],
         where: {
-          name: temp_name
+          name: temp_name,
+          status: 1
         }
       });
       if (value) {
@@ -1605,16 +1620,17 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-const displayOrderExists = (displayOrder, userUUID) => {
+const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid) => {
   if (displayOrder !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
         attributes: ["display_order"],
         where: {
           display_order: displayOrder,
-          user_uuid: userUUID,
-          status: 1,
-          is_active: 1
+          user_uuid: userUuid,
+          facility_uuid: facilityUuid,
+          department_uuid: departmentUuid,
+          status: 1
         }
       });
       if (value) {
@@ -1662,15 +1678,15 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
     case "1":
       return {
         table_name: vw_template,
-          query: {
-            order: [
-              ["tm_display_order", "ASC"]
-            ],
-            where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId),
-            attributes: {
-              exclude: ["id", "createdAt", "updatedAt"]
-            }
+        query: {
+          order: [
+            ["tm_display_order", "ASC"]
+          ],
+          where: getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId),
+          attributes: {
+            exclude: ["id", "createdAt", "updatedAt"]
           }
+        }
       };
     case "2":
       lab_id = +(lab_id);
@@ -1679,114 +1695,114 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
       const searchValue = labValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_lab,
-          query: {
-            order: [
-              ["tm_display_order", "ASC"]
-            ],
-            where: {
-              tm_template_type_uuid: temp_type_id,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1,
-              f_uuid: fId,
-              [Op.or]: [{
-                  [searchKey]: {
-                    [Op.eq]: searchValue
-                  },
-                  "`tm_is_public`": {
-                    [Op.eq]: 1
-                  }
-                },
-                {
-                  tm_user_uuid: {
-                    [Op.eq]: user_uuid
-                  }
-                }
-              ]
+        query: {
+          order: [
+            ["tm_display_order", "ASC"]
+          ],
+          where: {
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1,
+            f_uuid: fId,
+            [Op.or]: [{
+              [searchKey]: {
+                [Op.eq]: searchValue
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 1
+              }
+            },
+            {
+              tm_user_uuid: {
+                [Op.eq]: user_uuid
+              }
             }
+            ]
           }
+        }
       };
     case "3":
       return {
         table_name: vw_profile_ris,
-          query: {
-            order: [
-              ["tm_display_order", "ASC"]
-            ],
-            where: {
-              tm_template_type_uuid: temp_type_id,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1,
-              f_uuid: fId,
-              [Op.or]: [{
-                  tm_department_uuid: {
-                    [Op.eq]: dept_id
-                  },
-                  "`tm_is_public`": {
-                    [Op.eq]: 1
-                  }
-                },
-                {
-                  tm_user_uuid: {
-                    [Op.eq]: user_uuid
-                  }
-                }
-              ]
+        query: {
+          order: [
+            ["tm_display_order", "ASC"]
+          ],
+          where: {
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1,
+            f_uuid: fId,
+            [Op.or]: [{
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 1
+              }
+            },
+            {
+              tm_user_uuid: {
+                [Op.eq]: user_uuid
+              }
             }
+            ]
           }
+        }
       };
     case "4":
       return {
         table_name: tempmstrTbl,
-          query: getVitalsQuery(temp_type_id, dept_id, user_uuid, fId)
+        query: getVitalsQuery(temp_type_id, dept_id, user_uuid, fId)
       };
     case "7":
       return {
         table_name: vw_profile_invest,
-          query: {
-            order: [
-              ["tm_display_order", "ASC"]
-            ],
-            where: {
-              tm_template_type_uuid: temp_type_id,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1,
-              f_uuid: fId,
-              [Op.or]: [{
-                  tm_department_uuid: {
-                    [Op.eq]: dept_id
-                  },
-                  "`tm_is_public`": {
-                    [Op.eq]: 1
-                  }
-                },
-                {
-                  tm_user_uuid: {
-                    [Op.eq]: user_uuid
-                  }
-                }
-              ]
+        query: {
+          order: [
+            ["tm_display_order", "ASC"]
+          ],
+          where: {
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1,
+            f_uuid: fId,
+            [Op.or]: [{
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 1
+              }
+            },
+            {
+              tm_user_uuid: {
+                [Op.eq]: user_uuid
+              }
             }
+            ]
           }
+        }
       };
 
     case "9":
       return {
         table_name: vw_diet,
-          query: {
-            order: [
-              ["tm_display_order", "ASC"]
-            ],
-            where: getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId),
-            attributes: {
-              exclude: ["id", "createdAt", "updatedAt"]
-            }
+        query: {
+          order: [
+            ["tm_display_order", "ASC"]
+          ],
+          where: getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId),
+          attributes: {
+            exclude: ["id", "createdAt", "updatedAt"]
           }
+        }
       };
   }
 }
@@ -1796,18 +1812,18 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
     case "1":
       return {
         table_name: vw_template,
-          query: {
-            where: getTemplatesdetailsQuery(
-              user_uuid,
-              dept_id,
-              temp_type_id,
-              temp_id,
-              sMId
-            ),
-            attributes: {
-              exclude: ["id", "createdAt", "updatedAt"]
-            }
+        query: {
+          where: getTemplatesdetailsQuery(
+            user_uuid,
+            dept_id,
+            temp_type_id,
+            temp_id,
+            sMId
+          ),
+          attributes: {
+            exclude: ["id", "createdAt", "updatedAt"]
           }
+        }
       };
     case "2":
       lab_id = +(lab_id);
@@ -1816,22 +1832,22 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
       const searchValue = labValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_lab,
-          query: {
-            where: {
-              tm_uuid: temp_id,
-              tm_user_uuid: user_uuid,
-              [searchKey]: searchValue,
-              tm_template_type_uuid: temp_type_id,
-              //ltm_lab_master_type_uuid: 1,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1
-            },
-            order: [
-              ["tm_display_order", "ASC"]
-            ]
-          }
+        query: {
+          where: {
+            tm_uuid: temp_id,
+            tm_user_uuid: user_uuid,
+            [searchKey]: searchValue,
+            tm_template_type_uuid: temp_type_id,
+            //ltm_lab_master_type_uuid: 1,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1
+          },
+          order: [
+            ["tm_display_order", "ASC"]
+          ]
+        }
       };
     case "3":
       lab_id = +(lab_id);
@@ -1840,27 +1856,27 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
       const searchValue1 = risValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_ris,
-          query: {
-            where: {
-              tm_uuid: temp_id,
-              tm_user_uuid: user_uuid,
-              [searchKey1]: searchValue1,
-              tm_template_type_uuid: temp_type_id,
-              // rtm_lab_master_type_uuid: 2,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1
-            },
-            order: [
-              ["tm_display_order", "ASC"]
-            ]
-          }
+        query: {
+          where: {
+            tm_uuid: temp_id,
+            tm_user_uuid: user_uuid,
+            [searchKey1]: searchValue1,
+            tm_template_type_uuid: temp_type_id,
+            // rtm_lab_master_type_uuid: 2,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1
+          },
+          order: [
+            ["tm_display_order", "ASC"]
+          ]
+        }
       };
     case "4":
       return {
         table_name: tempmstrTbl,
-          query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id)
+        query: getVitalsDetailedQuery(temp_type_id, dept_id, user_uuid, temp_id)
       };
     case "7":
       lab_id = +(lab_id);
@@ -1869,36 +1885,36 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
       const investsearchValue = InvestValidation ? dept_id : lab_id;
       return {
         table_name: vw_profile_invest,
-          query: {
-            where: {
-              tm_uuid: temp_id,
-              tm_user_uuid: user_uuid,
-              [investsearchKey]: investsearchValue,
-              tm_template_type_uuid: temp_type_id,
-              tm_is_active: 1,
-              tm_status: 1,
-              tmd_status: 1,
-              tmd_active: 1
-            },
-            order: [
-              ["tm_display_order", "ASC"]
-            ]
-          }
+        query: {
+          where: {
+            tm_uuid: temp_id,
+            tm_user_uuid: user_uuid,
+            [investsearchKey]: investsearchValue,
+            tm_template_type_uuid: temp_type_id,
+            tm_is_active: 1,
+            tm_status: 1,
+            tmd_status: 1,
+            tmd_active: 1
+          },
+          order: [
+            ["tm_display_order", "ASC"]
+          ]
+        }
       };
     case "9":
       return {
         table_name: vw_diet,
-          query: {
-            where: getTemplatesdetailsQuery(
-              user_uuid,
-              dept_id,
-              temp_type_id,
-              temp_id
-            ),
-            attributes: {
-              exclude: ["id", "createdAt", "updatedAt"]
-            }
+        query: {
+          where: getTemplatesdetailsQuery(
+            user_uuid,
+            dept_id,
+            temp_type_id,
+            temp_id
+          ),
+          attributes: {
+            exclude: ["id", "createdAt", "updatedAt"]
           }
+        }
       };
   }
 }

@@ -853,6 +853,11 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
 						"in": "body",
 						"name": "add",
 						"required": true,
@@ -2102,6 +2107,11 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
 					},
 					{
 						"in": "body",
@@ -3620,6 +3630,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "pagination",
 						"schema": {
@@ -3649,6 +3665,12 @@
 					{
 						"in": "header",
 						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -7784,6 +7806,12 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
 						"in": "body",
 						"name": "searchParams",
 						"required": true,
@@ -8126,6 +8154,12 @@
 					{
 						"in": "header",
 						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
@@ -13863,7 +13897,7 @@
 						"department_uuid": {
 							"type": "integer"
 						},
-						"share_uuid":{
+						"share_uuid": {
 							"type": "integer"
 						},
 						"user_uuid": {

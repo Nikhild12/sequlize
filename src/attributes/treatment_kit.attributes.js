@@ -68,6 +68,7 @@ const getTreatmentByIdInVWAtt = [
 let gedTreatmentKitDrug = [
     "im_code",
     "im_name",
+    "im_is_emar",
     "im_strength",
     "tkd_item_master_uuid",
     "dr_code",
@@ -79,13 +80,17 @@ let gedTreatmentKitDrug = [
     "tkd_drug_frequency_uuid",
     "dp_code",
     "dp_name",
+    "store_uuid",
+    "store_code",
+    "store_name",
     "tkd_duration_period_uuid",
     "di_code",
     "di_name",
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
     "tkd_duration",
-    "tkd_uuid"
+    "tkd_uuid",
+    "im_can_calculate_frequency_qty"
 ];
 
 // Concating Drug Attributes
@@ -167,18 +172,18 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
     let treatmentQuery = {
         tk_uuid: treatmentId,
         tk_status: emr_constants.IS_ACTIVE,
-        tk_active: emr_constants.IS_ACTIVE,
+        // tk_active: emr_constants.IS_ACTIVE, //H30-21747
     };
     if (["Lab", "Investigation", "Radiology"].includes(tType)) {
         treatmentQuery = {
             ...treatmentQuery, [Op.or]: [
                 {
                     tm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-                    tm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+                    // tm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE }, //H30-21747
                 },
                 {
                     pm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
-                    pm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+                    // pm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE }, //H30-21747
                 },
             ]
         };
@@ -186,7 +191,7 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
 
     if (["TreatmentKit"].includes(tType)) {
         delete treatmentQuery.tk_active;
-        treatmentQuery.tk_is_active = emr_constants.IS_ACTIVE;
+        // treatmentQuery.tk_is_active = emr_constants.IS_ACTIVE; //H30-21747
     }
 
     return treatmentQuery;
@@ -338,7 +343,14 @@ function getDrugDetailsFromTreatment(drugArray) {
             strength: d.strength,
 
             // treatment kit Drug
-            treatment_kit_drug_id: d.tkd_uuid
+            treatment_kit_drug_id: d.tkd_uuid,
+            is_emar: d.im_is_emar,
+            store_master_uuid: d.store_uuid,
+            store_master_name: d.store_name,
+            store_master_code: d.store_code,
+
+            //im_can_calculate_frequency_qty
+            im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty
         };
     });
 }
@@ -426,10 +438,10 @@ function getTreatmentDetails(treatFav) {
         activeto: treatFav[0].activeactiveto,
         description: treatFav[0].description,
         department_id: treatFav[0].d_uuid,
-        facility_id:treatFav[0].tk_facility_uuid,
-        facility_name:treatFav[0].f_name,
-        share_id:treatFav[0].tk_share_uuid,
-        share_name:treatFav[0].s_name
+        facility_id: treatFav[0].tk_facility_uuid,
+        facility_name: treatFav[0].f_name,
+        share_id: treatFav[0].tk_share_uuid,
+        share_name: treatFav[0].s_name
     };
 
 }

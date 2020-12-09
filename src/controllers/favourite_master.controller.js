@@ -125,6 +125,7 @@ const treatmentKitAtt = [
   "fm_name",
   "fm_dept",
   "fm_userid",
+  "fm_facilityid",
   "fm_favourite_type_uuid",
   "fm_active",
   "fm_public",
@@ -143,6 +144,9 @@ const getTreatmentByIdInVWAtt = [
   "tk_treatment_kit_type_uuid",
   "tk_status",
   "tk_active",
+  "tk_is_public",
+  "tk_share_uuid",
+  "tk_description"
 ];
 let gedTreatmentKitDrug = [
   "im_code",
@@ -278,12 +282,14 @@ function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
   return favouriteQuery;
 }
 
-function getTreatmentQuery(dept_id, user_uuid) {
+function getTreatmentQuery(dept_id, user_uuid, facility_uuid) {
   return {
     fm_active: active_boolean,
     fm_status: active_boolean,
     fm_favourite_type_uuid: 8,
-    fm_userid: user_uuid
+    fm_userid: user_uuid,
+    fm_facilityid: facility_uuid,
+    fm_dept: dept_id
   };
 }
 
@@ -762,14 +768,15 @@ const TickSheetMasterController = () => {
    * @param {*} res
    */
   const _getTreatmentKitFavourite = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const { user_uuid, facility_uuid } = req.headers;
     const { departmentId } = req.query;
 
     if (user_uuid && departmentId) {
       try {
         const treatMentFav = await vmTreatmentFavourite.findAll({
           attributes: treatmentKitAtt,
-          where: getTreatmentQuery(departmentId, user_uuid),
+          where: getTreatmentQuery(departmentId, user_uuid, facility_uuid),
+          returning: true
         });
 
         let favouriteList = getAllTreatmentFavsInReadable(treatMentFav);
@@ -816,7 +823,7 @@ const TickSheetMasterController = () => {
         const favourite_details = await favouriteMasterTbl.findAll({
           where: {
             uuid: favouriteId,
-          },
+          }
         });
 
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
@@ -893,61 +900,58 @@ const TickSheetMasterController = () => {
   };
 
   const _getAllFavourites = async (req, res) => {
-
-    const { user_uuid } = req.headers;
-
-    // Destructuring Req Body
-    const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
-    const { pageNo = 0, status = 1 } = req.body;
-
-
-    let findQuery = {
-      offset: +(pageNo) * +(paginationSize),
-      limit: +(paginationSize),
-      order: [[sortField, sortOrder]],
-      attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-      where: { fm_status: 1 },
-    };
-
-    findQuery.where['is_active'] = +(status);
-    console.log(findQuery.where['is_active']);
-
-    if (req.body.search && /\S/.test(req.body.search)) {
-      findQuery.where = {
-        fm_name: {
-          [Op.like]: "%" + req.body.search + "%"
-        }
-      };
-    }
-    if (req.body.name && /\S/.test(req.body.name)) {
-      findQuery.where['fm_name'] = {
-        [Op.like]: "%" + req.body.name + "%"
-      };
-    }
-
-    if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
-      req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
-      if (!isNaN(req.body.favourite_type_uuid)) {
-        findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
-      }
-    }
-
     try {
-      if (user_uuid) {
-        const templateList = await vmAllFavourites.findAndCountAll(findQuery);
+      const { user_uuid, facility_uuid } = req.headers;
+      // Destructuring Req Body
+      const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
+      const { pageNo = 0, status = 1, facility_id, department_id, search, user_id } = req.body;
+      let findQuery = {
+        offset: +(pageNo) * +(paginationSize),
+        limit: +(paginationSize),
+        order: [[sortField, sortOrder]],
+        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid},
+      };
 
-        return res.status(httpStatus.OK).json({
-          statusCode: 200,
-          req: "",
-          responseContents: templateList.rows ? templateList.rows : [],
-          totalRecords: templateList.count ? templateList.count : 0
-        });
-      } else {
-        return res.status(400).send({
-          code: httpStatus[400],
-          message: "No Request Body or Search key Found"
-        });
+      findQuery.where['is_active'] = +(status);
+
+      if (search && /\S/.test(search)) {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('ft_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('u_first_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('d_name')), 'LIKE', '%' + search.toLowerCase() + '%')
+        ];
       }
+      if (req.body.name && /\S/.test(req.body.name)) {
+        findQuery.where['fm_name'] = {
+          [Op.like]: "%" + req.body.name + "%"
+        };
+      }
+      if (facility_id && /\S/.test(facility_id)) {
+        findQuery.where['fm_facility_uuid'] = facility_id;
+      }
+
+      if (department_id && /\S/.test(department_id)) {
+        findQuery.where['fm_department_uuid'] = department_id;
+      }
+
+      if (user_id && /\S/.test(user_id)) {
+        findQuery.where['fm_user_uuid'] = user_id;
+      }
+      if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
+        req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+        if (!isNaN(req.body.favourite_type_uuid)) {
+          findQuery.where['fm_favourite_type_uuid'] = req.body.favourite_type_uuid;
+        }
+      }
+
+      const templateList = await vmAllFavourites.findAndCountAll(findQuery);
+      return res.status(httpStatus.OK).json({
+        statusCode: 200,
+        req: "",
+        responseContents: templateList.rows ? templateList.rows : [],
+        totalRecords: templateList.count ? templateList.count : 0
+      });
     } catch (ex) {
       const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
       return res
@@ -1141,8 +1145,10 @@ function getAllTreatmentFavsInReadable(treatFav) {
       treatment_kit_id: t.tk_uuid,
       favourite_active: t.fm_active,
       favourite_type_id: t.fm_favourite_type_uuid,
-      favourite_active: t.fm_active,
-      favourite_display_order: t.fm_display_order,
+      favourite_user_uuid: t.fm_userid,
+      favourite_facility_uuid: t.fm_facilityid,
+      favourite_department_uuid: t.fm_dept,
+      favourite_display_order: t.fm_display_order
     };
   });
 }
@@ -1150,13 +1156,16 @@ function getAllTreatmentFavsInReadable(treatFav) {
 function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
   let favouritesByIdResponse = {};
 
-  const { name, code, id, active } = getTreatmentDetails(treatFav);
+  const { name, code, id, active, is_public, description, share_uuid } = getTreatmentDetails(treatFav);
 
   // treatment Details
   favouritesByIdResponse.treatment_name = name;
   favouritesByIdResponse.treatment_code = code;
   favouritesByIdResponse.treatment_id = id;
   favouritesByIdResponse.treatment_active = active;
+  favouritesByIdResponse.treatment_is_public = is_public;
+  favouritesByIdResponse.treatment_description = description;
+  favouritesByIdResponse.treatment_share_uuid = share_uuid;
 
   // Drug Details
   if (treatFav && treatFav.length > 0 && treatFav[0] && treatFav[0].length) {
@@ -1253,6 +1262,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
       investigation_description: iv.tm_description || iv.pm_description,
       order_to_location_uuid: iv.tkim_order_to_location_uuid,
       test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: iv.tkim_test_master_uuid ? 0 : 1,
       order_priority_uuid: iv.tkim_order_priority_uuid
     };
   });
@@ -1267,6 +1277,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
       radiology_description: r.tm_description || r.pm_description,
       order_to_location_uuid: r.tkrm_order_to_location_uuid,
       test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: r.tkrm_test_master_uuid ? 0 : 1,
       order_priority_uuid: r.tkrm_order_priority_uuid
     };
   });
@@ -1281,13 +1292,14 @@ function getLabDetailsFromTreatment(lab) {
       lab_description: l.tm_description || l.pm_description,
       order_to_location_uuid: l.tklm_order_to_location_uuid,
       test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
+      is_profile: l.tklm_test_master_uuid ? 0 : 1,
       order_priority_uuid: l.tklm_order_priority_uuid
     };
   });
 }
 
 function getTreatmentDetails(treatFav) {
-  let name, code, id, active;
+  let name, code, id, active, is_public, share_uuid, description;
   let argLength = treatFav.length;
   while (!name) {
     const selectedArray = treatFav[argLength - 1];
@@ -1296,10 +1308,13 @@ function getTreatmentDetails(treatFav) {
       code = selectedArray[0].tk_code;
       id = selectedArray[0].tk_uuid;
       active = selectedArray[0].tk_active;
+      is_public = selectedArray[0].tk_is_public;
+      share_uuid = selectedArray[0].tk_share_uuid;
+      description = selectedArray[0].tk_description;
     }
     argLength--;
   }
-  return { name, code, id, active };
+  return { name, code, id, active, is_public, description, share_uuid };
 }
 
 function getTreatmentFavByIdPromise(treatmentId) {
@@ -1323,7 +1338,7 @@ function getTreatmentFavByIdPromise(treatmentId) {
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
       where: getTreatmentKitByIdQuery(treatmentId, "Lab"),
-    }), // lab
+    }) // lab
   ]);
 }
 
