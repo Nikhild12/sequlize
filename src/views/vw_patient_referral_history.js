@@ -157,6 +157,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
 
       },
+      pr_is_viewed: {
+
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+        allowNull: false
+
+      },
       pr_referral_type_uuid: {
 
         type: DataTypes.INTEGER,
