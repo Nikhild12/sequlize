@@ -678,6 +678,10 @@ async function getLabResponse(labData) {
         test_master_uuid: l.test_master != null ? l.test_master.uuid : null,
         lab_name: l.test_master != null ? l.test_master.name : null,
         lab_code: l.test_master != null ? l.test_master.code : null,
+        // //profile details
+        profile_master_uuid: l.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: l.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: l.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: l.order_priority != null ? l.order_priority.uuid : null,
         priority_code: l.order_priority != null ? l.order_priority.code : null,
@@ -717,7 +721,10 @@ async function getRadialogyResponse(radialogyData) {
         test_master_uuid: r.test_master != null ? r.test_master.uuid : null,
         lab_name: r.test_master != null ? r.test_master.name : null,
         lab_code: r.test_master != null ? r.test_master.code : null,
-
+        // //profile details
+        profile_master_uuid: l.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: l.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: l.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: r.order_priority != null ? r.order_priority.uuid : null,
         priority_code: r.order_priority != null ? r.order_priority.code : null,
@@ -755,7 +762,10 @@ async function getInvestigationResponse(investigationData) {
         test_master_uuid: i.test_master != null ? i.test_master.uuid : null,
         lab_name: i.test_master != null ? i.test_master.name : null,
         lab_code: i.test_master != null ? i.test_master.code : null,
-
+        // //profile details
+        profile_master_uuid: l.profile_master != null ? l.profile_master.uuid : null,
+        profile_master_name: l.profile_master != null ? l.profile_master.name : null,
+        profile_master_code: l.profile_master != null ? l.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: i.order_priority != null ? i.order_priority.uuid : null,
         priority_code: i.order_priority != null ? i.order_priority.code : null,
