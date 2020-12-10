@@ -180,13 +180,17 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       is_reviewed: {
-
         type: DataTypes.BOOLEAN,
         defaultValue: 1,
         allowNull: false
 
       },
+      is_admitted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+        allowNull: false
 
+      },
       referral_comments: {
         type: DataTypes.STRING(500),
         allowNull: true
