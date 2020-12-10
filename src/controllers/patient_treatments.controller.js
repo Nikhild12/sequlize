@@ -311,6 +311,11 @@ const PatientTreatmentController = () => {
           let updatePrescriptionDetails = req.body.patientPrescription;
           if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
             if(!updatePrescriptionDetails.header.uuid){
+              patientPrescription.details.forEach(i=>{
+                if(i.uuid==0 || i.uuid==''|| i.uuid){
+                  delete i.uuid
+                }
+              });
               prescriptionUpdated = await patientTreatmentAttributes.createPrescriptionHelper(
                 req.headers,
                 patientPrescription
