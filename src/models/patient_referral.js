@@ -181,7 +181,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       is_reviewed: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 1,
+        defaultValue: 0,
         allowNull: false
 
       },

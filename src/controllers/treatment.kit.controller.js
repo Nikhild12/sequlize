@@ -92,6 +92,7 @@ const TreatMent_Kit = () => {
     } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
+    let treatmentSavedData = [];
     let {
       treatment_kit,
       treatment_kit_lab,
@@ -114,42 +115,47 @@ const TreatMent_Kit = () => {
 
         // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
-        treatment_kit.post = true;
+        treatment_kit.post = treatment_kit.uuid ? false : true;
+        treatment_kit.treatment_kit_uuid = treatment_kit.uuid;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
-        console.log("duplicateTreatmentRecord..", duplicateTreatmentRecord)
-        let options = {
-          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
-          headers: {
-            Authorization: authorization,
-            user_uuid: user_uuid
-          },
-          body: {
-            code: 'TRK'
-          }
-        };
-        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        if (screenSettings_output) {
-          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
-          treatment_kit.code = screenSettings_output.prefix + replace_value;
-        }
-
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
             code: emr_constants.DUPLICATE_ENTRIE,
             message: getDuplicateMsg(duplicateTreatmentRecord)
           });
         }
-
+        if (!treatment_kit.treatment_kit_uuid) {
+          let options = {
+            uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+            headers: {
+              Authorization: authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              code: 'TRK'
+            }
+          };
+          screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+          if (screenSettings_output) {
+            replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+            treatment_kit.code = screenSettings_output.prefix + replace_value;
+          }
+        }
         const treatment_active = treatment_kit.is_active;
         treatment_kit = emr_utility.createIsActiveAndStatus(
           treatment_kit,
           user_uuid
         );
         treatment_kit.is_active = treatment_active;
-        const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
-          returning: true
+        let bulkData = await treatmentkitTbl.bulkCreate([treatment_kit], {
+          updateOnDuplicate: Object.keys(treatment_kit)
         });
-        if (treatmentSavedData) {
+        for (let d of bulkData) {
+          treatmentSavedData.push(d.dataValues);
+        }
+        // const treatmentSavedData = await treatmentkitTbl.bulkCreate([treatment_kit]);
+        treatmentSavedData = treatmentSavedData[0];
+        if (!treatment_kit.treatment_kit_uuid && treatmentSavedData) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {

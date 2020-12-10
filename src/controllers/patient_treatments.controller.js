@@ -310,7 +310,7 @@ const PatientTreatmentController = () => {
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
           if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
-            if(updatePrescriptionDetails.header.uuid){
+            if(!updatePrescriptionDetails.header.uuid){
               prescriptionUpdated = await patientTreatmentAttributes.createPrescriptionHelper(
                 req.headers,
                 patientPrescription
@@ -820,7 +820,7 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
 
 async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/updatePrescription'
-  return utilityService.postRequest(
+  const data = await utilityService.postRequest(
     config.wso2InvUrl + 'prescriptions/updatePrescription',
     //url,
     {
@@ -832,6 +832,7 @@ async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id
     updatePrescriptionDetails
 
   );
+  return data
 
 
 }
