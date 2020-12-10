@@ -141,12 +141,12 @@ const Referral_History = () => {
       }
 
       postData.is_reviewed = 1;
-
-      let data = await patientReferralTbl.update(postData, {
-        where: {
-          uuid: patient_referral_uuid
-        }
-      });
+      if (postData.is_admitted) { //This Condition is for IP Management, If Patient admitted the we are setting this flag as true
+        postData.is_admitted = 1
+      }
+      
+      let data = await patientReferralTbl.update(postData,
+        { where: { uuid: patient_referral_uuid } });
       return res
         .status(httpStatus.OK)
         .send({
