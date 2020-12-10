@@ -310,7 +310,14 @@ const PatientTreatmentController = () => {
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
           if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
-            prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
+            if(updatePrescriptionDetails.header.uuid){
+              prescriptionUpdated = await patientTreatmentAttributes.createPrescriptionHelper(
+                req.headers,
+                patientPrescription
+              );
+            } else {
+              prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
+            }
           }
         }
         if (patientLab) {
