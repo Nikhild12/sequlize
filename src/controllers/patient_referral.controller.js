@@ -23,47 +23,112 @@ const Referral_History = () => {
    */
 
   const _getReferralHistory = async (req, res) => {
-    const { user_uuid } = req.headers;
-    const { patient_uuid, facility_uuid, department_uuid, is_reviewed } = req.query;
+    const {
+      user_uuid
+    } = req.headers;
+    const {
+      patient_uuid,
+      facility_uuid,
+      department_uuid,
+      is_reviewed
+    } = req.query;
     try {
       if (user_uuid && patient_uuid) {
         const referralHistory = await getReferralData(patient_uuid, facility_uuid, department_uuid, is_reviewed);
-        return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContent: referralHistory });
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: 'Fetched Successfully',
+          responseContent: referralHistory
+        });
 
       } else {
-        return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+        return res.status(400).send({
+          code: httpStatus.UNAUTHORIZED,
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        });
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log('Exception happened', err);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: err });
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: err
+      });
+    }
+  };
+
+  const _getPatientReferral = async (req, res) => {
+    const {
+      user_uuid
+    } = req.headers;
+    const {
+      patient_uuid,
+      referral_facility_uuid,
+      referral_deptartment_uuid,
+      is_reviewed
+    } = req.query;
+    try {
+      if (user_uuid && patient_uuid) {
+        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed);
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: 'Fetched Successfully',
+          responseContent: referralHistory
+        });
+
+      } else {
+        return res.status(400).send({
+          code: httpStatus.UNAUTHORIZED,
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        });
+      }
+    } catch (err) {
+      console.log('Exception happened', err);
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: err
+      });
     }
   };
   /**
-    * Adding Patient References
-    * @param {*} req 
-    * @param {*} res 
-    */
+   * Adding Patient References
+   * @param {*} req 
+   * @param {*} res 
+   */
   const _createPatientReferral = async (req, res) => {
-    const { user_uuid } = req.headers;
+    const {
+      user_uuid
+    } = req.headers;
     let patientReferralData = req.body;
 
     try {
       if (!user_uuid && !patientReferralData) {
-        return res.status(404).send({ code: httpStatus.NOT_FOUND, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        return res.status(404).send({
+          code: httpStatus.NOT_FOUND,
+          message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+        });
       }
       await assignDefault(patientReferralData, user_uuid);
-      await patientReferralTbl.create(patientReferralData, { returning: true });
-      return res.status(200).send({ code: httpStatus.OK, message: 'Inserted Success' });
+      await patientReferralTbl.create(patientReferralData, {
+        returning: true
+      });
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: 'Inserted Success'
+      });
     } catch (ex) {
       console.log('Exception happened', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: ex.message
+      });
     }
   };
 
   const _updatePatientReferral = async (req, res) => {
     try {
-      const { patient_referral_uuid } = req.body;
+      const {
+        patient_referral_uuid
+      } = req.body;
       const postData = req.body;
       if (!patient_referral_uuid) {
         return res
@@ -77,8 +142,11 @@ const Referral_History = () => {
 
       postData.is_reviewed = 1;
 
-      let data = await patientReferralTbl.update(postData,
-        { where: { uuid: patient_referral_uuid } });
+      let data = await patientReferralTbl.update(postData, {
+        where: {
+          uuid: patient_referral_uuid
+        }
+      });
       return res
         .status(httpStatus.OK)
         .send({
@@ -89,12 +157,16 @@ const Referral_History = () => {
         });
 
     } catch (ex) {
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: ex.message
+      });
     }
   };
 
   return {
     getReferralHistory: _getReferralHistory,
+    getPatientReferral: _getPatientReferral,
     createPatientReferral: _createPatientReferral,
     updatePatientReferral: _updatePatientReferral
   };
@@ -117,7 +189,9 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   let findQuery = {
     attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'pr_facility_uuid', 'pr_department_uuid', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
     where: {},
-    order: [['pr_uuid', 'DESC']],
+    order: [
+      ['pr_uuid', 'DESC']
+    ],
     limit: 10
   };
 
@@ -145,5 +219,52 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
     })
   }
 
-  return vw_patient_referral.findAll(findQuery, { returning: true });
+  return vw_patient_referral.findAll(findQuery, {
+    returning: true
+  });
+}
+
+async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed) {
+  let findQuery = {
+    where: {
+      is_reviewed: getBoolean(is_reviewed)
+    },
+  };
+
+  if (patient_uuid && /\S/.test(patient_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      patient_uuid: patient_uuid
+    })
+  }
+
+  if (referral_facility_uuid && /\S/.test(referral_facility_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      referral_facility_uuid: referral_facility_uuid
+    })
+  }
+
+  if (referral_deptartment_uuid && /\S/.test(referral_deptartment_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      referral_deptartment_uuid: referral_deptartment_uuid
+    })
+  }
+
+  const patientData = await patientReferralTbl.findOne(findQuery);
+  return patientData;
+}
+function getBoolean(booleanValue) {
+  switch (booleanValue) {
+    case '':
+      return false;
+    case 'true':
+      return true;
+    case true:
+      return true;
+    case 'false':
+      return false;
+    case false:
+      return false;
+    default:
+      return false;
+  }
 }
