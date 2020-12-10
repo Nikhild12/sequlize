@@ -65,7 +65,7 @@ const _createPrescriptionHelper = async (
   { header, details }
 ) => {
 
-  return await utilityService.postRequest(
+  const data = await utilityService.postRequest(
     config.wso2InvUrl + 'prescriptions/addAllPrescriptionDetails',
     // config.addAllPrescriptionDetails,
     {
@@ -79,6 +79,7 @@ const _createPrescriptionHelper = async (
       details: details
     }
   );
+  return data
 };
 
 

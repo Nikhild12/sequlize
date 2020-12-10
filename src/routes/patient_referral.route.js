@@ -8,6 +8,7 @@ const referralHistoryController = require('../controllers/patient_referral.contr
 const referralHistoryRoute = express.Router();
 
 referralHistoryRoute.route('/getReferralHistory').get(referralHistoryController.getReferralHistory);
+referralHistoryRoute.route('/getPatientReferral').get(referralHistoryController.getPatientReferral);
 referralHistoryRoute.route('/createPatientReferral').post(referralHistoryController.createPatientReferral);
 referralHistoryRoute.route('/updatePatientReferral').post(referralHistoryController.updatePatientReferral);
 module.exports = referralHistoryRoute;
