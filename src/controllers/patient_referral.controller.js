@@ -64,11 +64,13 @@ const Referral_History = () => {
       patient_uuid,
       referral_facility_uuid,
       referral_deptartment_uuid,
-      is_reviewed
+      is_reviewed,
+      facility_uuid,
+      department_uuid
     } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed);
+        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid);
         return res.status(200).send({
           code: httpStatus.OK,
           message: 'Fetched Successfully',
@@ -144,7 +146,7 @@ const Referral_History = () => {
       if (postData.is_admitted) { //This Condition is for IP Management, If Patient admitted the we are setting this flag as true
         postData.is_admitted = 1
       }
-      
+
       let data = await patientReferralTbl.update(postData,
         { where: { uuid: patient_referral_uuid } });
       return res
@@ -224,7 +226,7 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   });
 }
 
-async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed) {
+async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid) {
   let findQuery = {
     where: {
       is_reviewed: getBoolean(is_reviewed)
@@ -249,6 +251,18 @@ async function getPatientReferralData(patient_uuid, referral_facility_uuid, refe
     })
   }
 
+  if (facility_uuid && /\S/.test(facility_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      facility_uuid: facility_uuid
+    })
+  }
+
+  if (department_uuid && /\S/.test(department_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      department_uuid: department_uuid
+    })
+  }
+  
   const patientData = await patientReferralTbl.findOne(findQuery);
   return patientData;
 }
