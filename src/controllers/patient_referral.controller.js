@@ -112,15 +112,15 @@ const Referral_History = () => {
         });
       }
       await assignDefault(patientReferralData, user_uuid);
-      await patientReferralTbl.create(patientReferralData, {
+      let data = await patientReferralTbl.create(patientReferralData, {
         returning: true
       });
       return res.status(200).send({
         code: httpStatus.OK,
-        message: 'Inserted Success'
+        message: 'Inserted Success',
+        responseContent: data
       });
     } catch (ex) {
-      console.log('Exception happened', ex);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message
