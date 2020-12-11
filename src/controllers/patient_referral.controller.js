@@ -104,6 +104,10 @@ const Referral_History = () => {
     } = req.headers;
     let patientReferralData = req.body;
 
+    let { patient_uuid,
+      referral_facility_uuid,
+      referral_deptartment_uuid } = req.body;
+      
     try {
       if (!user_uuid && !patientReferralData) {
         return res.status(404).send({
@@ -111,6 +115,17 @@ const Referral_History = () => {
           message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
         });
       }
+
+
+      const referralHistory = await getPatientReferralData(patient_uuid, '', referral_facility_uuid, referral_deptartment_uuid, is_reviewed = false, '', '', '');
+      if (referralHistory) {
+        return res.status(409).send({
+          code: httpStatus.CONFLICT,
+          message: 'Duplicate found',
+          responseContent: referralHistory
+        });
+      }
+
       await assignDefault(patientReferralData, user_uuid);
       let data = await patientReferralTbl.create(patientReferralData, {
         returning: true
@@ -318,6 +333,7 @@ async function getPatientReferralData(patient_uuid, referral_type_uuid, referral
   const patientData = await patientReferralTbl.findOne(findQuery);
   return patientData;
 }
+
 function getBoolean(booleanValue) {
   switch (booleanValue) {
     case '':
