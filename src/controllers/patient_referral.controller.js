@@ -107,7 +107,7 @@ const Referral_History = () => {
     let { patient_uuid,
       referral_facility_uuid,
       referral_deptartment_uuid } = req.body;
-      
+
     try {
       if (!user_uuid && !patientReferralData) {
         return res.status(404).send({
@@ -160,9 +160,6 @@ const Referral_History = () => {
       }
 
       postData.is_reviewed = 1;
-      if (postData.is_admitted) { //This Condition is for IP Management, If Patient admitted the we are setting this flag as true
-        postData.is_admitted = 1
-      }
 
       let data = await patientReferralTbl.update(postData,
         { where: { uuid: patient_referral_uuid } });
@@ -199,7 +196,7 @@ const Referral_History = () => {
           });
       }
 
-      postData.is_admitted = 1;
+      // postData.is_admitted = 1;
 
       let data = await patientReferralTbl.update(postData,
         { where: { uuid: patient_referral_uuid } });
