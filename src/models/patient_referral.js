@@ -191,6 +191,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
 
       },
+      ward_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
       referral_comments: {
         type: DataTypes.STRING(500),
         allowNull: true

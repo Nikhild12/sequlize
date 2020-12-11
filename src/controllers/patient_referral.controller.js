@@ -66,11 +66,12 @@ const Referral_History = () => {
       referral_deptartment_uuid,
       is_reviewed,
       facility_uuid,
-      department_uuid
+      department_uuid,
+      ward_uuid
     } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid);
+        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
         return res.status(200).send({
           code: httpStatus.OK,
           message: 'Fetched Successfully',
@@ -226,7 +227,7 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   });
 }
 
-async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid) {
+async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
   let findQuery = {
     where: {
       is_reviewed: getBoolean(is_reviewed)
@@ -262,7 +263,13 @@ async function getPatientReferralData(patient_uuid, referral_facility_uuid, refe
       department_uuid: department_uuid
     })
   }
-  
+
+  if (ward_uuid && /\S/.test(ward_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      ward_uuid: ward_uuid
+    })
+  }
+
   const patientData = await patientReferralTbl.findOne(findQuery);
   return patientData;
 }

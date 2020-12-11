@@ -7339,6 +7339,24 @@
 						"name": "is_reviewed",
 						"required": false,
 						"type": "boolean"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "facility_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "ward_uuid",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"produces": [
