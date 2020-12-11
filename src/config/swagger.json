@@ -5392,6 +5392,11 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
 						"in": "body",
 						"name": "treatmentKit",
 						"required": true,
