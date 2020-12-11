@@ -246,6 +246,12 @@ async function getPatientReferralData(patient_uuid, referral_facility_uuid, refe
     })
   }
 
+  if (referral_type_uuid && /\S/.test(referral_type_uuid)) {
+    findQuery.where = Object.assign(findQuery.where, {
+      referral_type_uuid: referral_type_uuid
+    })
+  }
+
   if (referral_deptartment_uuid && /\S/.test(referral_deptartment_uuid)) {
     findQuery.where = Object.assign(findQuery.where, {
       referral_deptartment_uuid: referral_deptartment_uuid
