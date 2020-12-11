@@ -1,4 +1,3 @@
-// Package Import
 const httpStatus = require("http-status");
 
 // Sequelizer Import
@@ -19,14 +18,6 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
-// Get Treatment Fav Views
-const vmTreatmentFavouriteDrug = sequelizeDb.vw_favourite_treatment_drug;
-const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnosis;
-const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
-const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
-const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
-const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
-
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -87,100 +78,6 @@ const getFilterByCodeAndNameAttributes = [
   "is_public"
 ];
 
-const getTreatmentByIdInVWAtt = [
-  "tk_uuid",
-  "tk_code",
-  "tk_name",
-  "tk_treatment_kit_type_uuid",
-  "tk_status",
-  "tk_active",
-  "tk_is_public",
-  "tk_share_uuid",
-  "tk_description"
-];
-let gedTreatmentKitDrug = [
-  "im_code",
-  "im_name",
-  "im_strength",
-  "tkd_item_master_uuid",
-  "dr_code",
-  "dr_name",
-  "tkd_drug_route_uuid",
-  "df_code",
-  "df_name",
-  "df_display",
-  "tkd_drug_frequency_uuid",
-  "dp_code",
-  "dp_name",
-  "tkd_duration_period_uuid",
-  "di_code",
-  "di_name",
-  "tkd_drug_instruction_uuid",
-  "tkd_quantity",
-  "tkd_duration",
-];
-
-gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
-let getTreatmentKitDiaAtt = [
-  "tkdm_diagnosis_uuid",
-  "td_name",
-  "td_code",
-  "td_description",
-];
-getTreatmentKitDiaAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitDiaAtt];
-
-let getTreatmentKitInvestigationAtt = [
-  "tkim_test_master_uuid",
-  "tm_code",
-  "tm_name",
-  "tm_description",
-  "tkim_order_to_location_uuid",
-  "tkim_order_priority_uuid",
-  "pm_profile_code",
-  "pm_name",
-  "pm_description",
-  "tkim_profile_master_uuid"
-];
-getTreatmentKitInvestigationAtt = [
-  ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitInvestigationAtt,
-];
-
-let getTreatmentKitRadiologyAtt = [
-  "tm_code",
-  "tm_name",
-  "tm_description",
-  "tkrm_test_master_uuid",
-  "tkrm_treatment_kit_uuid",
-  "tkrm_order_to_location_uuid",
-  "tkrm_order_priority_uuid",
-  "tkrm_profile_master_uuid",
-  "pm_profile_code",
-  "pm_name",
-  "pm_description"
-];
-
-getTreatmentKitRadiologyAtt = [
-  ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitRadiologyAtt,
-];
-
-let getTreatmentKitLabAtt = [
-  "tm_code",
-  "tm_name",
-  "tm_description",
-  "tklm_test_master_uuid",
-  "tklm_treatment_kit_uuid",
-  "tklm_order_to_location_uuid",
-  "tklm_order_priority_uuid",
-  "pm_profile_code",
-  "pm_name",
-  "pm_description",
-  "tklm_profile_master_uuid"
-];
-
-getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
-
 const TreatMent_Kit = () => {
   /**
    * Creating Treatment Kit
@@ -194,7 +91,6 @@ const TreatMent_Kit = () => {
     } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
-    let treatmentSavedData = [], treatmentById = [];
     let {
       treatment_kit,
       treatment_kit_lab,
@@ -216,9 +112,8 @@ const TreatMent_Kit = () => {
       try {
 
         // treatmentTransaction = await sequelizeDb.sequelize.transaction();
-        let treatmentSave = [], common_diagnosis_array = [], common_lab_array = [], common_drug_array = [], common_inv_array = [], common_rad_array = [];
-        treatment_kit.post = treatment_kit.uuid ? false : true;
-        treatment_kit.treatment_kit_uuid = treatment_kit.uuid;
+        let treatmentSave = [];
+        treatment_kit.post = true;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
@@ -226,22 +121,20 @@ const TreatMent_Kit = () => {
             message: getDuplicateMsg(duplicateTreatmentRecord)
           });
         }
-        if (!treatment_kit.treatment_kit_uuid) {
-          let options = {
-            uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
-            headers: {
-              Authorization: authorization,
-              user_uuid: user_uuid
-            },
-            body: {
-              code: 'TRK'
-            }
-          };
-          screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-          if (screenSettings_output) {
-            replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
-            treatment_kit.code = screenSettings_output.prefix + replace_value;
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'TRK'
           }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          treatment_kit.code = screenSettings_output.prefix + replace_value;
         }
         const treatment_active = treatment_kit.is_active;
         treatment_kit = emr_utility.createIsActiveAndStatus(
@@ -249,15 +142,10 @@ const TreatMent_Kit = () => {
           user_uuid
         );
         treatment_kit.is_active = treatment_active;
-        let bulkData = await treatmentkitTbl.bulkCreate([treatment_kit], {
-          updateOnDuplicate: Object.keys(treatment_kit)
+        const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
+          returning: true
         });
-        for (let d of bulkData) {
-          treatmentSavedData.push(d.dataValues);
-        }
-        // const treatmentSavedData = await treatmentkitTbl.bulkCreate([treatment_kit]);
-        treatmentSavedData = treatmentSavedData[0];
-        if (!treatment_kit.treatment_kit_uuid && treatmentSavedData) {
+        if (treatmentSavedData) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
@@ -271,46 +159,13 @@ const TreatMent_Kit = () => {
           };
           await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
         }
-        let treamentId = treatment_kit && treatment_kit.treatment_kit_uuid;
+        // Lab
         if (
           treatment_kit_lab && Array.isArray(treatment_kit_lab) && treatment_kit_lab.length > 0 &&
           treatmentSavedData
         ) {
-          let favTreatmentLab = {}, favTreatmentLabArray = [], new_treatment_kit_lab = [];
-          if (treamentId) {
-            for (let e of treatment_kit_lab) {
-              favTreatmentLab = await vmTreatmentFavouriteLab.findOne({
-                attributes: getTreatmentKitLabAtt,
-                where: {
-                  tk_uuid: treamentId,
-                  tklm_test_master_uuid: e.test_master_uuid,
-                  tklm_profile_master_uuid: e.profile_master_uuid ? e.profile_master_uuid : 0 || null
-                },
-              }); // lab
-              favTreatmentLabArray.push(favTreatmentLab);
-            }
-            favTreatmentLabArray = favTreatmentLabArray.filter(e => { return e != null });
-            if (favTreatmentLabArray && favTreatmentLabArray.length > 0) {
-              for (let f of favTreatmentLabArray) {
-                for (let t of treatment_kit_lab) {
-                  if (f.tk_uuid != treamentId && f.tklm_test_master_uuid != t.test_master_uuid && f.tklm_profile_master_uuid != t.profile_master_uuid) {
-                    new_treatment_kit_lab.push(t)
-                  }
-                }
-              }
-            } else {
-              new_treatment_kit_lab = treatment_kit_lab;
-            }
-          }
-          common_lab_array = treamentId ? new_treatment_kit_lab : treatment_kit_lab;
-          // return res.send({
-          //   treatment_kit_lab: treatment_kit_lab,
-          //   favTreatmentLabArray: favTreatmentLabArray,
-          //   new_treatment_kit_lab: new_treatment_kit_lab,
-          //   common_lab_array: common_lab_array
-          // })
           // assigning Default Values
-          common_lab_array.forEach(l => {
+          treatment_kit_lab.forEach(l => {
             l = emr_utility.assignDefaultValuesAndUUIdToObject(
               l, treatmentSavedData, user_uuid, "treatment_kit_uuid"
             );
@@ -319,42 +174,15 @@ const TreatMent_Kit = () => {
           // Treatment Kit Lab Save
           treatmentSave = [
             ...treatmentSave,
-            treatmentkitLabTbl.bulkCreate(common_lab_array, {
+            treatmentkitLabTbl.bulkCreate(treatment_kit_lab, {
               returning: true
             })
           ];
         }
         // Drug
         if (treatment_kit_drug && Array.isArray(treatment_kit_drug) && treatment_kit_drug.length > 0 && treatmentSavedData) {
-          let favTreatmentDrug = {}, favTreatmentDrugArray = [], new_treatment_kit_drug = [];
-          if (treamentId) {
-            for (let e of treatment_kit_drug) {
-              favTreatmentDrug = await vmTreatmentFavouriteDrug.findOne({
-                attributes: gedTreatmentKitDrug,
-                where: {
-                  tk_uuid: treamentId,
-                  tkd_item_master_uuid: e.item_master_uuid
-                },
-              });  // Drug Details
-              favTreatmentDrugArray.push(favTreatmentDrug);
-            }
-            favTreatmentDrugArray = favTreatmentDrugArray.filter(e => { return e != null });
-            if (favTreatmentDrugArray && favTreatmentDrugArray.length > 0) {
-              for (let f of favTreatmentDrugArray) {
-                for (let t of treatment_kit_drug) {
-                  if (f.tk_uuid != treamentId && f.tkd_item_master_uuid != t.item_master_uuid) {
-                    new_treatment_kit_drug.push(t)
-                  }
-                }
-              }
-            }
-            else {
-              new_treatment_kit_drug = treatment_kit_drug;
-            }
-          }
-          common_drug_array = treamentId ? new_treatment_kit_drug : treatment_kit_drug;
           // assigning Default Values
-          common_drug_array.forEach(dr => {
+          treatment_kit_drug.forEach(dr => {
             dr = emr_utility.assignDefaultValuesAndUUIdToObject(
               dr, treatmentSavedData, user_uuid, "treatment_kit_uuid"
             );
@@ -363,7 +191,7 @@ const TreatMent_Kit = () => {
           // Treatment Kit Drug Save
           treatmentSave = [
             ...treatmentSave,
-            treatmentkitDrugTbl.bulkCreate(common_drug_array, {
+            treatmentkitDrugTbl.bulkCreate(treatment_kit_drug, {
               returning: true
             })
           ];
@@ -375,36 +203,8 @@ const TreatMent_Kit = () => {
           treatment_kit_investigation.length > 0 &&
           treatmentSavedData
         ) {
-          let favTreatmentInv = {}, favTreatmentInvArray = [], new_treatment_kit_inv = [];
-          if (treamentId) {
-            for (let e of treatment_kit_investigation) {
-              favTreatmentInv = await vmTreatmentFavouriteInvesti.findOne({
-                attributes: getTreatmentKitInvestigationAtt,
-                where: {
-                  tk_uuid: treamentId,
-                  tkim_test_master_uuid: e.test_master_uuid,
-                  tkim_profile_master_uuid: e.profile_master_uuid
-                },
-              }); // inv
-              favTreatmentInvArray.push(favTreatmentInv);
-            }
-            favTreatmentInvArray = favTreatmentInvArray.filter(e => { return e != null });
-            if (favTreatmentInvArray && favTreatmentInvArray.length > 0) {
-              for (let f of favTreatmentInvArray) {
-                for (let t of treatment_kit_investigation) {
-                  if (f.tk_uuid != treamentId && f.tkim_test_master_uuid != t.test_master_uuid && f.tkim_profile_master_uuid != t.profile_master_uuid) {
-                    new_treatment_kit_inv.push(t)
-                  }
-                }
-              }
-            }
-            else {
-              new_treatment_kit_inv = treatment_kit_investigation;
-            }
-          }
-          common_inv_array = treamentId ? new_treatment_kit_inv : treatment_kit_investigation;
           // assigning Default Values
-          common_inv_array.forEach(i => {
+          treatment_kit_investigation.forEach(i => {
             i = emr_utility.assignDefaultValuesAndUUIdToObject(
               i,
               treatmentSavedData,
@@ -417,7 +217,7 @@ const TreatMent_Kit = () => {
           treatmentSave = [
             ...treatmentSave,
             treatmentkitInvestigationTbl.bulkCreate(
-              common_inv_array, {
+              treatment_kit_investigation, {
               returning: true
             }
             )
@@ -430,35 +230,8 @@ const TreatMent_Kit = () => {
           treatment_kit_diagnosis.length > 0 &&
           treatmentSavedData
         ) {
-          let favTreatmentDiagnosis = {}, favTreatmentDiagnosisArray = [], new_treatment_kit_diagnosis = [];
-          if (treamentId) {
-            for (let e of treatment_kit_diagnosis) {
-              favTreatmentDiagnosis = await vmTreatmentFavouriteDiagnosis.findOne({
-                attributes: getTreatmentKitDiaAtt,
-                where: {
-                  tk_uuid: treamentId,
-                  tkdm_diagnosis_uuid: e.diagnosis_uuid
-                },
-              }); // diagnosis
-              favTreatmentDiagnosisArray.push(favTreatmentDiagnosis);
-            }
-            favTreatmentDiagnosisArray = favTreatmentDiagnosisArray.filter(e => { return e != null });
-            if (favTreatmentDiagnosisArray && favTreatmentDiagnosisArray.length > 0) {
-              for (let f of favTreatmentDiagnosisArray) {
-                for (let t of treatment_kit_diagnosis) {
-                  if (f.tk_uuid != treamentId && f.tkim_test_master_uuid != t.test_master_uuid && f.tkim_profile_master_uuid != t.profile_master_uuid) {
-                    new_treatment_kit_diagnosis.push(t)
-                  }
-                }
-              }
-            }
-            else {
-              new_treatment_kit_diagnosis = treatment_kit_diagnosis;
-            }
-          }
-          common_diagnosis_array = treamentId ? new_treatment_kit_diagnosis : treatment_kit_diagnosis;
           // assigning Default Values
-          common_diagnosis_array.forEach(d => {
+          treatment_kit_diagnosis.forEach(d => {
             d = emr_utility.assignDefaultValuesAndUUIdToObject(
               d,
               treatmentSavedData,
@@ -470,7 +243,7 @@ const TreatMent_Kit = () => {
           // Treatment Kit Drug Save
           treatmentSave = [
             ...treatmentSave,
-            treatmentKitDiagnosisTbl.bulkCreate(common_diagnosis_array, {
+            treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, {
               returning: true
             })
           ];
@@ -482,36 +255,8 @@ const TreatMent_Kit = () => {
           treatment_kit_radiology.length > 0 &&
           treatmentSavedData
         ) {
-          let favTreatmentRad = {}, favTreatmentRadArray = [], new_treatment_kit_rad = [];
-          if (treamentId) {
-            for (let e of treatment_kit_radiology) {
-              favTreatmentRad = await vmTreatmentFavouriteRadiology.findOne({
-                attributes: getTreatmentKitRadiologyAtt,
-                where: {
-                  tk_uuid: treamentId,
-                  tkrm_test_master_uuid: e.test_master_uuid,
-                  tkrm_profile_master_uuid: e.profile_master_uuid
-                },
-              }); // rad
-              favTreatmentRadArray.push(favTreatmentRad);
-            }
-            favTreatmentRadArray = favTreatmentRadArray.filter(e => { return e != null });
-            if (favTreatmentRadArray && favTreatmentRadArray.length > 0) {
-              for (let f of favTreatmentRadArray) {
-                for (let t of treatment_kit_radiology) {
-                  if (f.tk_uuid != treamentId && f.tkrm_test_master_uuid != t.test_master_uuid && f.tkrm_profile_master_uuid != t.profile_master_uuid) {
-                    new_treatment_kit_rad.push(t)
-                  }
-                }
-              }
-            }
-            else {
-              new_treatment_kit_rad = treatment_kit_radiology;
-            }
-          }
-          common_rad_array = treamentId ? new_treatment_kit_rad : treatment_kit_radiology;
           // assigning Default Values
-          common_rad_array.forEach(r => {
+          treatment_kit_radiology.forEach(r => {
             r = emr_utility.assignDefaultValuesAndUUIdToObject(
               r,
               treatmentSavedData,
@@ -523,7 +268,7 @@ const TreatMent_Kit = () => {
           // Treatment Kit Drug Save
           treatmentSave = [
             ...treatmentSave,
-            treatmentkitRadiologyTbl.bulkCreate(common_rad_array, {
+            treatmentkitRadiologyTbl.bulkCreate(treatment_kit_radiology, {
               returning: true
             })
           ];

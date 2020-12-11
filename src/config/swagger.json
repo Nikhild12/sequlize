@@ -7454,6 +7454,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient-referral/updatePatientIsAdmitted": {
+			"post": {
+				"description": "To Update Patient Admitted",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "update PatientAdmitted",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePatientReferral"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientReferral"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					},
+					"400": {
+						"description": "Insertion failed"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/body-side/get-list": {
 			"get": {
 				"description": "To get List of Body Side",
