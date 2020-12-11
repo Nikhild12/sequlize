@@ -67,11 +67,12 @@ const Referral_History = () => {
       is_reviewed,
       facility_uuid,
       department_uuid,
+      referral_type_uuid,
       ward_uuid
     } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
+        const referralHistory = await getPatientReferralData(patient_uuid,referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
         return res.status(200).send({
           code: httpStatus.OK,
           message: 'Fetched Successfully',
@@ -227,7 +228,7 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   });
 }
 
-async function getPatientReferralData(patient_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
+async function getPatientReferralData(patient_uuid,referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
   let findQuery = {
     where: {
       is_reviewed: getBoolean(is_reviewed)
