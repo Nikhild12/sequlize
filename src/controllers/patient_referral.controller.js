@@ -72,7 +72,7 @@ const Referral_History = () => {
     } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getPatientReferralData(patient_uuid,referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
+        const referralHistory = await getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
         return res.status(200).send({
           code: httpStatus.OK,
           message: 'Fetched Successfully',
@@ -168,11 +168,49 @@ const Referral_History = () => {
     }
   };
 
+  const _updatePatientIsAdmitted = async (req, res) => {
+    try {
+      const {
+        patient_referral_uuid
+      } = req.body;
+      const postData = req.body;
+      if (!patient_referral_uuid) {
+        return res
+          .status(httpStatus.UNPROCESSABLE_ENTITY)
+          .send({
+            status: 'error',
+            code: httpStatus.UNPROCESSABLE_ENTITY,
+            message: 'patient_referral_uuid is required'
+          });
+      }
+
+      postData.is_admitted = 1;
+
+      let data = await patientReferralTbl.update(postData,
+        { where: { uuid: patient_referral_uuid } });
+      return res
+        .status(httpStatus.OK)
+        .send({
+          status: 'success',
+          code: httpStatus.OK,
+          responseContent: data,
+          message: 'Updated Successfully'
+        });
+
+    } catch (ex) {
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: ex.message
+      });
+    }
+  };
+
   return {
     getReferralHistory: _getReferralHistory,
     getPatientReferral: _getPatientReferral,
     createPatientReferral: _createPatientReferral,
-    updatePatientReferral: _updatePatientReferral
+    updatePatientReferral: _updatePatientReferral,
+    updatePatientIsAdmitted: _updatePatientIsAdmitted
   };
 
 };
@@ -228,7 +266,7 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   });
 }
 
-async function getPatientReferralData(patient_uuid,referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
+async function getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
   let findQuery = {
     where: {
       is_reviewed: getBoolean(is_reviewed)
