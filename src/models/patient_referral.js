@@ -187,7 +187,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       is_admitted: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 1,
+        defaultValue: 0,
         allowNull: false
 
       },
