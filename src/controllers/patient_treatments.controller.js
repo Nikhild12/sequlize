@@ -321,6 +321,11 @@ const PatientTreatmentController = () => {
                 patientPrescription
               );
             } else {
+              patientPrescription.details.forEach(i=>{
+                if(i.uuid==0 || i.uuid==''){
+                  delete i.uuid
+                }
+              });
               prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
             }
           }

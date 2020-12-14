@@ -168,6 +168,9 @@ let gedTreatmentKitDrug = [
   "tkd_drug_instruction_uuid",
   "tkd_quantity",
   "tkd_duration",
+  "im_is_emar",
+  "im_can_calculate_frequency_qty",
+  "store_uuid"
 ];
 
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
@@ -910,7 +913,7 @@ const TickSheetMasterController = () => {
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid},
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid },
       };
 
       findQuery.where['is_active'] = +(status);
@@ -1237,7 +1240,10 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_instruction_id: d.tkd_drug_instruction_uuid,
 
       // Strength
-      strength: d.strength
+      strength: d.strength,
+      is_emar: d.im_is_emar,
+      im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty,
+      store_uuid : d.store_uuid
     };
   });
 }

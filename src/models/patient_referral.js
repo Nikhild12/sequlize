@@ -187,9 +187,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       is_admitted: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 1,
+        defaultValue: 0,
         allowNull: false
 
+      },
+      ward_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
       },
       referral_comments: {
         type: DataTypes.STRING(500),
