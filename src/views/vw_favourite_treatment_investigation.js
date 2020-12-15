@@ -31,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
       tk_active: {
         type: DataTypes.BOOLEAN
       },
+      tk_comments: {
+        type: DataTypes.STRING(255)
+      },
       tkim_test_master_uuid: {
         type: DataTypes.INTEGER
       },

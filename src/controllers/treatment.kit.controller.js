@@ -18,6 +18,7 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
+const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -565,6 +566,7 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
@@ -590,13 +592,17 @@ const TreatMent_Kit = () => {
           code: responseCode,
           message: responseMessage
         });
-      } catch (ex) {
-        console.log("Exception happened", ex);
+      } catch (err) {
+        if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+        }
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
-          .status(400)
-          .send({
-            code: httpStatus.BAD_REQUEST,
-            message: ex
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            statusCode: 500,
+            status: "error",
+            message: errorMsg
           });
       }
     } else {
@@ -924,4 +930,27 @@ function treatmentKitResponse(treatmentKitData) {
       status: tk.u_status
     };
   });
+}
+
+function getThrow(id) {
+  switch (id) {
+    case 1:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped"
+      };
+  }
+};
+
+async function findOneMethod(tableName, treatmentKitId, id) {
+  let output = await tableName.findOne({
+    where: {
+      treatment_kit_uuid: treatmentKitId,
+      status: 1
+    }
+  });
+  if (output && (output != null || Object.keys(output).length > 1)) {
+    return getThrow(id);
+  }
+  return null;
 }
