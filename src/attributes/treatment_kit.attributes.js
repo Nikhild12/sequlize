@@ -89,6 +89,7 @@ let gedTreatmentKitDrug = [
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
     "tkd_duration",
+    "tkd_strength",
     "tkd_uuid",
     "im_can_calculate_frequency_qty",
     "tk_comments"
@@ -321,6 +322,7 @@ function getDrugDetailsFromTreatment(drugArray) {
             drug_id: d.tkd_item_master_uuid,
             drug_quantity: d.tkd_quantity,
             drug_duration: d.tkd_duration,
+            drug_strength: d.tkd_strength,
 
             // Drug Route Details
             drug_route_name: d.dr_name,
