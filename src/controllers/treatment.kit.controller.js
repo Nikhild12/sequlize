@@ -565,6 +565,11 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        await findOneMethod(treatmentkitLabTbl, treatmentKitId, 1);
+        await findOneMethod(treatmentkitRadiologyTbl, treatmentKitId, 2);
+        await findOneMethod(treatmentkitDrugTbl, treatmentKitId, 3);
+        await findOneMethod(treatmentkitInvestigationTbl, treatmentKitId, 4);
+        await findOneMethod(treatmentKitDiagnosisTbl, treatmentKitId, 5);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
@@ -590,13 +595,17 @@ const TreatMent_Kit = () => {
           code: responseCode,
           message: responseMessage
         });
-      } catch (ex) {
-        console.log("Exception happened", ex);
+      } catch (err) {
+        if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+        }
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
-          .status(400)
-          .send({
-            code: httpStatus.BAD_REQUEST,
-            message: ex
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            statusCode: 500,
+            status: "error",
+            message: errorMsg
           });
       }
     } else {
@@ -924,4 +933,47 @@ function treatmentKitResponse(treatmentKitData) {
       status: tk.u_status
     };
   });
+}
+
+function getThrow(id) {
+  switch (id) {
+    case 1:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped to Lab"
+      };
+    case 2:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped to Radiology"
+      };
+    case 3:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped to Drug"
+      }
+    case 4:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped to Investigation"
+      }
+    case 5:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped to Diagnosis"
+      }
+  }
+};
+
+async function findOneMethod(tableName, treatmentKitId, id) {
+  let output = await tableName.findOne({
+    where: {
+      treatment_kit_uuid: treatmentKitId,
+      status: 1
+    }
+  });
+  if (output && (output != null || Object.keys(output).length > 1)) {
+    return getThrow(id);
+  }
+  return null;
 }
