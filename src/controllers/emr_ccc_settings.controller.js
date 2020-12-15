@@ -13,6 +13,7 @@ const emr_utility = require('../services/utility.service');
 
 // Initialize Tick Sheet Master
 const emrCccSettingsTbl = sequelizeDb.emr_ccc_settings;
+const vw_emr_ccc_settings = sequelizeDb.vw_emr_ccc_settings;
 
 function getEMRCccSettingsByUserId(uId) {
     return {
@@ -25,16 +26,16 @@ function getEMRCccSettingsByUserId(uId) {
 }
 
 const getEMRWorkFlowSettings = [
-    'ehs_uuid',
-    'ehs_facility_uuid',
-    'ehs_department_uuid',
-    'ehs_role_uuid',
-    'ehs_user_uuid',
-    'ehs_context_uuid',
-    'ehs_context_activity_map_uuid',
-    'ehs_activity_uuid',
-    'ehs_history_view_order',
-    'ehs_is_active',
+    'ecs_uuid',
+    'ecs_facility_uuid',
+    'ecs_department_uuid',
+    'ecs_role_uuid',
+    'ecs_user_uuid',
+    'ecs_context_uuid',
+    'ecs_context_activity_map_uuid',
+    'ecs_activity_uuid',
+    'ecs_ccc_view_order',
+    'ecs_is_active',
     'activity_code',
     'activity_name',
     'activity_icon',
@@ -43,7 +44,38 @@ const getEMRWorkFlowSettings = [
 
 const EMR_CCC_SETTINGS = () => {
 
+/**
+     * Get History Settings API By User Id
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const _getEMRCccSettingsByUserId = async (req, res) => {
+        console.log('..............')
+        const { user_uuid } = req.headers;
 
+        if (user_uuid) {
+            try {
+                const emr_ccc_settings_data = await vw_emr_ccc_settings.findAll({
+                    attributes: getEMRWorkFlowSettings,
+                    where: {
+                        ecs_is_active: emr_constants.IS_ACTIVE,
+                        ecs_status: emr_constants.IS_ACTIVE,
+                        ecs_user_uuid: user_uuid
+                    }
+                });
+
+                if (emr_ccc_settings_data) {
+                    const responseMessage = emr_ccc_settings_data && emr_ccc_settings_data.length > 0 ? emr_constants.EMR_FETCHED_SUCCESSFULLY : `${emr_constants.NO_RECORD_FOUND} for the given user_uuid`;
+                    return res.status(200).send({ code: httpStatus.OK, message: responseMessage, responseContents: getEMRCccSetData(emr_ccc_settings_data) });
+                }
+            } catch (ex) {
+                console.log(ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    };
     /**
      * Create History Settings API
      * @param {*} req 
@@ -171,11 +203,10 @@ const EMR_CCC_SETTINGS = () => {
     };
 
     return {
-
         createEmrCccSettings: _createEmrCccSettings,
         deleteEMRCccSettings: _deleteEMRCccSettings,
-        updateEMRCccSettings: _updateEMRCccSettings
-
+        updateEMRCccSettings: _updateEMRCccSettings,
+        getEMRCccSettingsByUserId: _getEMRCccSettingsByUserId
     };
 };
 
@@ -194,17 +225,17 @@ function getEMRCccSetData(emr_data) {
 
     return emr_data.map((e) => {
         return {
-            work_flow_order: e.ehs_history_view_order,
-            emr_history_settings_id: e.ehs_uuid,
-            facility_uuid: e.ehs_facility_uuid,
-            role_uuid: e.ehs_role_uuid,
-            user_uuid: e.ehs_user_uuid,
-            ehs_is_active: e.ehs_is_active[0] === 1 ? true : false,
+            work_flow_order: e.ecs_ccc_view_order,
+            emr_history_settings_id: e.ecs_uuid,
+            facility_uuid: e.ecs_facility_uuid,
+            role_uuid: e.ecs_role_uuid,
+            user_uuid: e.ecs_user_uuid,
+            ecs_is_active: e.ecs_is_active[0] === 1 ? true : false,
             activity_code: e.activity_code,
             activity_icon: e.activity_icon,
             activity_name: e.activity_name,
             activity_route_url: e.activity_route_url,
-            activity_id: e.ehs_activity_uuid
+            activity_id: e.ecs_activity_uuid
         };
     });
 
