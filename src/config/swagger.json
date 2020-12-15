@@ -2634,6 +2634,34 @@
 				}
 			}
 		},
+		"/api/emr-ccc-settings/getById": {
+			"get": {
+				"description": "To get a EMR ccc Settings Workflow",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+					}
+				}
+			}
+		},
 		"/api/emr-ccc-settings/update": {
 			"put": {
 				"description": "To Update a EMR Ccc Settings for the Master",
