@@ -18,6 +18,7 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
+const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -565,11 +566,7 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
-        await findOneMethod(treatmentkitLabTbl, treatmentKitId, 1);
-        await findOneMethod(treatmentkitRadiologyTbl, treatmentKitId, 2);
-        await findOneMethod(treatmentkitDrugTbl, treatmentKitId, 3);
-        await findOneMethod(treatmentkitInvestigationTbl, treatmentKitId, 4);
-        await findOneMethod(treatmentKitDiagnosisTbl, treatmentKitId, 5);
+        await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
@@ -940,28 +937,8 @@ function getThrow(id) {
     case 1:
       throw {
         error_type: "validation",
-        errors: "Treatment Kit Mapped to Lab"
+        errors: "Treatment Kit Mapped"
       };
-    case 2:
-      throw {
-        error_type: "validation",
-        errors: "Treatment Kit Mapped to Radiology"
-      };
-    case 3:
-      throw {
-        error_type: "validation",
-        errors: "Treatment Kit Mapped to Drug"
-      }
-    case 4:
-      throw {
-        error_type: "validation",
-        errors: "Treatment Kit Mapped to Investigation"
-      }
-    case 5:
-      throw {
-        error_type: "validation",
-        errors: "Treatment Kit Mapped to Diagnosis"
-      }
   }
 };
 
