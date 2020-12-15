@@ -280,7 +280,7 @@ const TreatMent_Kit = () => {
           code: httpStatus.OK,
           message: emr_constants.TREATMENT_SUCCESS,
           reqContents: req.body,
-          responseContents: treatmentSave
+          responseContents: { treatment_kit_uuid: treatmentSavedData.uuid }
         });
       } catch (ex) {
         console.log("Exception happened", ex);
