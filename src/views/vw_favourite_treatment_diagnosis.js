@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
             tdkm_uuid: {
                 type: DataTypes.INTEGER
             },
-            tkdm_comments: {
+            tdkm_comments: {
                 type: DataTypes.STRING(255)
             },
         },

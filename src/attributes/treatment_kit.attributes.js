@@ -105,7 +105,7 @@ let getTreatmentKitDiaAtt = [
     "td_name",
     "td_code",
     "td_description",
-    "tkdm_comments",
+    "tdkm_comments",
     "tdkm_uuid"
 ];
 
@@ -371,7 +371,7 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
     return diagnosisArray.map((di) => {
         return {
             diagnosis_id: di.tkdm_diagnosis_uuid,
-            diagnosis_comments: di.tkdm_comments,
+            diagnosis_comments: di.tdkm_comments,
             diagnosis_name: di.td_name,
             diagnosis_code: di.td_code,
             diagnosis_description: di.td_description,
@@ -413,7 +413,7 @@ function getRadiologyDetailsFromTreatment(radiology) {
             order_priority_uuid: r.tkrm_order_priority_uuid,
             treatment_kit_radiology_id: r.tkrm_uuid,
             comments: r.tk_comments,
-            radiology_comments: iv.tkrm_comments,
+            radiology_comments: r.tkrm_comments,
         };
     });
 }
@@ -432,7 +432,7 @@ function getLabDetailsFromTreatment(lab) {
             order_priority_uuid: l.tklm_order_priority_uuid,
             treatment_kit_lab_id: l.tklm_uuid,
             comments: l.tk_comments,
-            lab_comments: iv.tklm_comments,
+            lab_comments: l.tklm_comments,
         };
     });
 }
