@@ -39,11 +39,12 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             quantity: {
-
                 type: DataTypes.STRING(255),
                 allowNull: true,
                 defaultValue: 0
-
+            },
+            comments: {
+                type: DataTypes.STRING
             },
             is_active: {
 

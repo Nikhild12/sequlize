@@ -71,15 +71,12 @@ const PatientTreatmentController = () => {
           patientTreatment,
           {
             returning: true
-            //transaction: patientTransaction
-
           }
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
             p.is_snomed = p.is_snomed;
-            p.is_patient_condition =
-              p.is_patient_condition || emr_constants.IS_ACTIVE;
+            p.is_patient_condition = p.is_patient_condition || emr_constants.IS_ACTIVE;
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
             p.performed_by = user_uuid;
             p.performed_date = new Date();
@@ -94,7 +91,6 @@ const PatientTreatmentController = () => {
             patientDiagnosis,
             {
               returning: true,
-              //transaction: patientTransaction,
               validate: true
             }
           );
@@ -310,9 +306,9 @@ const PatientTreatmentController = () => {
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
           if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
-            if(!updatePrescriptionDetails.header.uuid){
-              patientPrescription.details.forEach(i=>{
-                if(i.uuid==0 || i.uuid==''|| i.uuid){
+            if (!updatePrescriptionDetails.header.uuid) {
+              patientPrescription.details.forEach(i => {
+                if (i.uuid == 0 || i.uuid == '' || i.uuid) {
                   delete i.uuid
                 }
               });
@@ -321,8 +317,8 @@ const PatientTreatmentController = () => {
                 patientPrescription
               );
             } else {
-              patientPrescription.details.forEach(i=>{
-                if(i.uuid==0 || i.uuid==''){
+              patientPrescription.details.forEach(i => {
+                if (i.uuid == 0 || i.uuid == '') {
                   delete i.uuid
                 }
               });

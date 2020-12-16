@@ -139,6 +139,9 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            comments: {
+                type: DataTypes.STRING
+            },
             strength: {
                 type: DataTypes.STRING(255)
             },
