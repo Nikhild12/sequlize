@@ -13,22 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             ecs_department_uuid: {
                 type: DataTypes.INTEGER
             },
-            ecs_role_uuid: {
-                type: DataTypes.INTEGER
-            },
             ecs_user_uuid: {
                 type: DataTypes.INTEGER
             },
-            ecs_context_uuid: {
-                type: DataTypes.INTEGER
-            },
-            ecs_context_activity_map_uuid: {
-                type: DataTypes.INTEGER
-            },
-            ecs_activity_uuid: {
-                type: DataTypes.INTEGER
-            },
-            ecs_ccc_view_order: {
+            ecs_cc_type_uuid: {
                 type: DataTypes.INTEGER
             },
             ecs_is_active: {
@@ -45,20 +33,12 @@ module.exports = (sequelize, DataTypes) => {
             ecs_modified_by: {
                 type: DataTypes.INTEGER
             },
-            activity_code: {
+            cc_type_code: {
                 type: DataTypes.STRING(255)
             },
-            activity_name: {
+            cc_type_name: {
                 type: DataTypes.STRING(255)
-            },
-            activity_icon: {
-                type: DataTypes.STRING(255)
-            },
-            activity_route_url: {
-                type: DataTypes.STRING(255),
             }
-
-
         },
         {
             freezeTableName: true,

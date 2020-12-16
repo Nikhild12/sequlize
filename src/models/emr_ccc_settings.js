@@ -37,19 +37,6 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            role_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('role_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('role_uuid')
-                    },
-                    min: 0
-                }
-            },
             user_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -58,48 +45,9 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            context_uuid: {
+            critical_care_type_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('context_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('context_uuid')
-                    },
-                    min: 0
-                }
-            },
-            activity_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('activity_uuid')
-                    },
-                    min: 0
-                }
-            },
-            context_activity_map_uuid: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('context_activity_map_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('context_activity_map_uuid')
-                    },
-                    min: 0
-                }
-            },
-            ccc_view_order: {
-                type: DataTypes.INTEGER,
-                allowNull: false
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
