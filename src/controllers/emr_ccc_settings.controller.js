@@ -29,9 +29,8 @@ const getEMRWorkFlowSettings = [
     'ecs_uuid',
     'ecs_facility_uuid',
     'ecs_department_uuid',
-    'ecs_role_uuid',
     'ecs_user_uuid',
-    'ecs_critical_care_type_uuid',
+    'ecs_cc_type_uuid',
     'ecs_is_active',
     'cc_type_code',
     'cc_type_name'
