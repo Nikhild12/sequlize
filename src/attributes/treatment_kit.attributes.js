@@ -90,6 +90,7 @@ let gedTreatmentKitDrug = [
     "tkd_quantity",
     "tkd_duration",
     "tkd_strength",
+    "tkd_comments",
     "tkd_uuid",
     "im_can_calculate_frequency_qty",
     "tk_comments"
@@ -104,6 +105,7 @@ let getTreatmentKitDiaAtt = [
     "td_name",
     "td_code",
     "td_description",
+    "tkdm_comments",
     "tdkm_uuid"
 ];
 
@@ -124,7 +126,8 @@ let getTreatmentKitInvestigationAtt = [
     "pm_description",
     "tkim_profile_master_uuid",
     "tkim_uuid",
-    "tk_comments"
+    "tk_comments",
+    "tkim_comments"
 ];
 
 // Concating Investigation Attributes
@@ -145,7 +148,8 @@ let getTreatmentKitRadiologyAtt = [
     "pm_name",
     "pm_description",
     "tkrm_uuid",
-    "tk_comments"
+    "tk_comments",
+    "tkrm_comments"
 ];
 
 // Concating Radiology Attributes
@@ -166,7 +170,8 @@ let getTreatmentKitLabAtt = [
     "pm_description",
     "tklm_profile_master_uuid",
     "tklm_uuid",
-    "tk_comments"
+    "tk_comments",
+    "tklm_comments"
 ];
 
 // Concating Lab Attributes
@@ -208,7 +213,6 @@ const _getTreatmentFavByIdPromise = (treatmentId) => {
             attributes: treatmentKitAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "TreatmentKit"),
         }),
-
         vmTreatmentFavouriteDrug.findAll({
             attributes: gedTreatmentKitDrug,
             where: _getTreatmentKitByIdQuery(treatmentId, "Drug"),
@@ -323,7 +327,7 @@ function getDrugDetailsFromTreatment(drugArray) {
             drug_quantity: d.tkd_quantity,
             drug_duration: d.tkd_duration,
             drug_strength: d.tkd_strength,
-
+            drug_comments: d.tkd_comments,
             // Drug Route Details
             drug_route_name: d.dr_name,
             drug_route_code: d.dr_code,
@@ -367,6 +371,7 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
     return diagnosisArray.map((di) => {
         return {
             diagnosis_id: di.tkdm_diagnosis_uuid,
+            diagnosis_comments: di.tkdm_comments,
             diagnosis_name: di.td_name,
             diagnosis_code: di.td_code,
             diagnosis_description: di.td_description,
@@ -386,6 +391,7 @@ function getInvestigationDetailsFromTreatment(investigationArray) {
             order_to_location_uuid: iv.tkim_order_to_location_uuid,
             order_to_location_name: iv.tl_order_to_location_name, //30653
             test_type: iv.tkim_test_master_uuid ? "test_master" : "profile_master",
+            investigation_comments: iv.tkim_comments,
             order_priority_uuid: iv.tkim_order_priority_uuid,
             treatment_kit_investigation_id: iv.tkim_uuid,
             comments: iv.tk_comments
@@ -406,7 +412,8 @@ function getRadiologyDetailsFromTreatment(radiology) {
             test_type: r.tkrm_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: r.tkrm_order_priority_uuid,
             treatment_kit_radiology_id: r.tkrm_uuid,
-            comments: r.tk_comments
+            comments: r.tk_comments,
+            radiology_comments: iv.tkrm_comments,
         };
     });
 }
@@ -424,7 +431,8 @@ function getLabDetailsFromTreatment(lab) {
             test_type: l.tklm_test_master_uuid ? "test_master" : "profile_master",
             order_priority_uuid: l.tklm_order_priority_uuid,
             treatment_kit_lab_id: l.tklm_uuid,
-            comments: l.tk_comments
+            comments: l.tk_comments,
+            lab_comments: iv.tklm_comments,
         };
     });
 }

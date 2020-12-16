@@ -65,6 +65,9 @@ module.exports = (sequelize, DataTypes) => {
             tklm_profile_master_uuid: {
                 type: DataTypes.INTEGER
             },
+            tklm_comments: {
+                type: DataTypes.STRING(255)
+            },
             pm_profile_code: {
                 type: DataTypes.STRING(255)
             },
