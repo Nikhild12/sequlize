@@ -609,6 +609,7 @@ async function getPrescriptionRseponse(prescriptions) {
             //Drug Details
             "drug_name": e.item_master != null ? e.item_master.name : null,
             "drug_code": e.item_master != null ? e.item_master.code : null,
+            "strength": e.item_master != null ? e.item_master.strength : null,
             "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
             // Drug Route Details
             "drug_route_name": e.drug_route != null ? e.drug_route.name : null,

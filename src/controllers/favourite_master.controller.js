@@ -1240,7 +1240,7 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_instruction_id: d.tkd_drug_instruction_uuid,
 
       // Strength
-      strength: d.strength,
+      strength: d.im_strength,
       is_emar: d.im_is_emar,
       im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty,
       store_uuid : d.store_uuid
