@@ -83,7 +83,7 @@ const allergyMasterController = () => {
       findQuery.where[Op.or] = [
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_source.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
       ];
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {

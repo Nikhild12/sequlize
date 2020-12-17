@@ -40,6 +40,7 @@ const chiefDurationRoute = require("./chief_complaints_duration.route");
 const treatmentKitRoute = require("./treatment.kit.routes");
 
 const emrHisSetCtrl = require("./emr.history.settings.routes");
+const emrCccSetCtrl = require("./emr_ccc_settings.route");
 const bodySideRoute = require("./body_side.route");
 
 const surgeryPositionRoute = require("./surgery.position.route");
@@ -212,6 +213,9 @@ serviceRouter.use("/patient-transfer", patientTransferRoute);
 
 // EMR History Settings Routes
 serviceRouter.use("/emr-history-settings", emrHisSetCtrl);
+
+// EMR ccc Settings Routes
+serviceRouter.use("/emr-ccc-settings", emrCccSetCtrl);
 
 // EMR Profiles Routes
 serviceRouter.use("/profiles", profilesRouter);

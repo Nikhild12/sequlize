@@ -2601,6 +2601,133 @@
 				}
 			}
 		},
+		"/api/emr-ccc-settings/create": {
+			"post": {
+				"description": "To Create a EMR Ccc for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "createEMRCccSettings",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Inserted EMR Workflow"
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/getById": {
+			"get": {
+				"description": "To get a EMR ccc Settings Workflow",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/update": {
+			"put": {
+				"description": "To Update a EMR Ccc Settings for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updateEMRCccSettings",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Upadted Successfully"
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/delete": {
+			"put": {
+				"description": "To delete a EMR Ccc Settingd for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "deleteEMRCcc",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/deleteEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Deleted Successfully"
+					}
+				}
+			}
+		},
 		"/api/patient-chief-complaints/create": {
 			"post": {
 				"description": "To create Patient chief Complaints",
@@ -5392,6 +5519,11 @@
 						"type": "integer"
 					},
 					{
+						"in": "header",
+						"name": "authorization",
+						"type": "string"
+					},
+					{
 						"in": "body",
 						"name": "treatmentKit",
 						"required": true,
@@ -7334,6 +7466,30 @@
 						"name": "is_reviewed",
 						"required": false,
 						"type": "boolean"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "facility_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "ward_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -7406,6 +7562,44 @@
 					{
 						"in": "body",
 						"name": "update PatientReferral ",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePatientReferral"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientReferral"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					},
+					"400": {
+						"description": "Insertion failed"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient-referral/updatePatientIsAdmitted": {
+			"post": {
+				"description": "To Update Patient Admitted",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "update PatientAdmitted",
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/updatePatientReferral"
@@ -11864,6 +12058,48 @@
 			}
 		},
 		"deleteEMRHistory": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"createEMRCcc": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"department_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"role_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"context_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"context_activity_map_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"activity_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"ccc_view_order": {
+						"type": "integer",
+						"example": 1
+					}
+				}
+			}
+		},
+		"deleteEMRCcc": {
 			"type": "array",
 			"items": {
 				"type": "string"

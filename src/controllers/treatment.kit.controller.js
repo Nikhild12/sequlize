@@ -1,4 +1,3 @@
-// Package Import
 const httpStatus = require("http-status");
 
 // Sequelizer Import
@@ -19,6 +18,7 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
+const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -92,7 +92,6 @@ const TreatMent_Kit = () => {
     } = req.headers;
     // let treatTransStatus = false;
     //let treatmentTransaction;
-    let treatmentSavedData = [];
     let {
       treatment_kit,
       treatment_kit_lab,
@@ -115,8 +114,7 @@ const TreatMent_Kit = () => {
 
         // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
-        treatment_kit.post = treatment_kit.uuid ? false : true;
-        treatment_kit.treatment_kit_uuid = treatment_kit.uuid;
+        treatment_kit.post = true;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
         if (duplicateTreatmentRecord && duplicateTreatmentRecord.length > 0) {
           return res.status(400).send({
@@ -124,22 +122,20 @@ const TreatMent_Kit = () => {
             message: getDuplicateMsg(duplicateTreatmentRecord)
           });
         }
-        if (!treatment_kit.treatment_kit_uuid) {
-          let options = {
-            uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
-            headers: {
-              Authorization: authorization,
-              user_uuid: user_uuid
-            },
-            body: {
-              code: 'TRK'
-            }
-          };
-          screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-          if (screenSettings_output) {
-            replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
-            treatment_kit.code = screenSettings_output.prefix + replace_value;
+        let options = {
+          uri: config.wso2AppUrl + APPMASTER_GET_SCREEN_SETTINGS,
+          headers: {
+            Authorization: authorization,
+            user_uuid: user_uuid
+          },
+          body: {
+            code: 'TRK'
           }
+        };
+        screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        if (screenSettings_output) {
+          replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
+          treatment_kit.code = screenSettings_output.prefix + replace_value;
         }
         const treatment_active = treatment_kit.is_active;
         treatment_kit = emr_utility.createIsActiveAndStatus(
@@ -147,15 +143,10 @@ const TreatMent_Kit = () => {
           user_uuid
         );
         treatment_kit.is_active = treatment_active;
-        let bulkData = await treatmentkitTbl.bulkCreate([treatment_kit], {
-          updateOnDuplicate: Object.keys(treatment_kit)
+        const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
+          returning: true
         });
-        for (let d of bulkData) {
-          treatmentSavedData.push(d.dataValues);
-        }
-        // const treatmentSavedData = await treatmentkitTbl.bulkCreate([treatment_kit]);
-        treatmentSavedData = treatmentSavedData[0];
-        if (!treatment_kit.treatment_kit_uuid && treatmentSavedData) {
+        if (treatmentSavedData) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
@@ -283,14 +274,14 @@ const TreatMent_Kit = () => {
             })
           ];
         }
-
         await Promise.all(treatmentSave);
         //await treatmentTransaction.commit();
         //treatTransStatus = true;
         return res.status(200).send({
           code: httpStatus.OK,
           message: emr_constants.TREATMENT_SUCCESS,
-          reqContents: req.body
+          reqContents: req.body,
+          responseContents: { treatment_kit_uuid: treatmentSavedData.uuid }
         });
       } catch (ex) {
         console.log("Exception happened", ex);
@@ -575,6 +566,7 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
@@ -600,13 +592,17 @@ const TreatMent_Kit = () => {
           code: responseCode,
           message: responseMessage
         });
-      } catch (ex) {
-        console.log("Exception happened", ex);
+      } catch (err) {
+        if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+        }
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
-          .status(400)
-          .send({
-            code: httpStatus.BAD_REQUEST,
-            message: ex
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            statusCode: 500,
+            status: "error",
+            message: errorMsg
           });
       }
     } else {
@@ -934,4 +930,27 @@ function treatmentKitResponse(treatmentKitData) {
       status: tk.u_status
     };
   });
+}
+
+function getThrow(id) {
+  switch (id) {
+    case 1:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped"
+      };
+  }
+};
+
+async function findOneMethod(tableName, treatmentKitId, id) {
+  let output = await tableName.findOne({
+    where: {
+      treatment_kit_uuid: treatmentKitId,
+      status: 1
+    }
+  });
+  if (output && (output != null || Object.keys(output).length > 1)) {
+    return getThrow(id);
+  }
+  return null;
 }
