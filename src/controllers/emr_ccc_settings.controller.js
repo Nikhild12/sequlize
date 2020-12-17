@@ -29,17 +29,11 @@ const getEMRWorkFlowSettings = [
     'ecs_uuid',
     'ecs_facility_uuid',
     'ecs_department_uuid',
-    'ecs_role_uuid',
     'ecs_user_uuid',
-    'ecs_context_uuid',
-    'ecs_context_activity_map_uuid',
-    'ecs_activity_uuid',
-    'ecs_ccc_view_order',
+    'ecs_cc_type_uuid',
     'ecs_is_active',
-    'activity_code',
-    'activity_name',
-    'activity_icon',
-    'activity_route_url'
+    'cc_type_code',
+    'cc_type_name'
 ];
 
 const EMR_CCC_SETTINGS = () => {
@@ -231,11 +225,9 @@ function getEMRCccSetData(emr_data) {
             role_uuid: e.ecs_role_uuid,
             user_uuid: e.ecs_user_uuid,
             ecs_is_active: e.ecs_is_active[0] === 1 ? true : false,
-            activity_code: e.activity_code,
-            activity_icon: e.activity_icon,
-            activity_name: e.activity_name,
-            activity_route_url: e.activity_route_url,
-            activity_id: e.ecs_activity_uuid
+            cc_type_code: e.cc_type_code,
+            cc_type_name: e.cc_type_name,
+            cc_type_id: e.ecs_cc_type_uuid
         };
     });
 

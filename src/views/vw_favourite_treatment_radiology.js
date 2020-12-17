@@ -49,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
       tkrm_test_master_uuid: {
         type: DataTypes.INTEGER
       },
+      tkrm_comments: {
+        type: DataTypes.STRING(255)
+      },
       rtm_is_active: {
         type: DataTypes.BOOLEAN
       },

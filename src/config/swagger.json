@@ -7484,6 +7484,12 @@
 						"name": "ward_uuid",
 						"required": false,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": false,
+						"type": "integer"
 					}
 				],
 				"produces": [
