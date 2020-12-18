@@ -112,7 +112,6 @@ const TreatMent_Kit = () => {
       }
       try {
 
-        // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
         treatment_kit.post = true;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
@@ -143,6 +142,7 @@ const TreatMent_Kit = () => {
           user_uuid
         );
         treatment_kit.is_active = treatment_active;
+        delete treatment_kit && reatment_kit.uuid;
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
@@ -295,10 +295,6 @@ const TreatMent_Kit = () => {
             code: httpStatus.BAD_REQUEST,
             message: ex
           });
-      } finally {
-        // if (treatmentTransaction && !treatTransStatus) {
-        //     treatmentTransaction.rollback();
-        // }
       }
     } else {
       return res.status(400).send({
