@@ -14,6 +14,7 @@ treatmentKitRoute.route('/getAll').post(treatmentKitController.getAllTreatmentKi
 treatmentKitRoute.route('/delete').delete(treatmentKitController.deleteTreatmentKit);
 treatmentKitRoute.route('/get-by-id').get(treatmentKitController.getTreatmentKitById);
 treatmentKitRoute.route('/update').put(treatmentKitController.updateTreatmentKitById);
+treatmentKitRoute.route('/check-kit-transaction-mapped').get(treatmentKitController.checkTransactionMapped);
 
 
 module.exports = treatmentKitRoute;

@@ -796,13 +796,50 @@ const TreatMent_Kit = () => {
     }
   };
 
+  const _checkTransactionMapped = async (req, res) => {
+    try {
+      const { treatmentKitId } = req.query;
+      if (treatmentKitId) {
+        let output = await patientDiagnosisTbl.count({
+          where: {
+            treatment_kit_uuid: treatmentKitId,
+            status: 1
+          }
+        });
+        return res.send({
+          statusCode: 200,
+          msg: "Data Fetched successfully",
+          req: treatmentKitId,
+          responseContents: output > 0 ? true : false
+        });
+      }
+      else {
+        throw ({ error_type: "validation", errors: 'treatment kit id is mandatory' });
+      }
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+        return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "validation error" });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  };
+
   return {
     createTreatmentKit: _createTreatmentKit,
     getTreatmentKitByFilters: _getTreatmentKitByFilters,
     getAllTreatmentKit: _getAllTreatmentKit,
     deleteTreatmentKit: _deleteTreatmentKit,
     getTreatmentKitById: _getTreatmentKitById,
-    updateTreatmentKitById: _updateTreatmentKitById
+    updateTreatmentKitById: _updateTreatmentKitById,
+    checkTransactionMapped: _checkTransactionMapped
   };
 };
 
