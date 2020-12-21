@@ -545,7 +545,8 @@ const TreatMent_Kit = () => {
       user_uuid
     } = req.headers;
     const {
-      treatmentKitId
+      treatmentKitId,
+      deleteMapped
     } = req.query;
 
     const isTreatmenKitValid = emr_utility.isNumberValid(treatmentKitId);
@@ -562,7 +563,7 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
-        await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
+        deleteMapped ? deleteMapped : await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {

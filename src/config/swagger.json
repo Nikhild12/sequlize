@@ -5611,6 +5611,12 @@
 						"name": "treatmentKitId",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "deleteMapped",
+						"required": false,
+						"type": "boolean"
 					}
 				],
 				"produces": [
