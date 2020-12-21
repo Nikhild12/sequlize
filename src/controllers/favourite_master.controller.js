@@ -913,7 +913,7 @@ const TickSheetMasterController = () => {
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid },
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid }
       };
 
       findQuery.where['is_active'] = +(status);
