@@ -728,9 +728,9 @@ async function getRadialogyResponse(radialogyData) {
         lab_name: r.test_master != null ? r.test_master.name : null,
         lab_code: r.test_master != null ? r.test_master.code : null,
         // //profile details
-        profile_master_uuid: r.profile_master != null ? l.profile_master.uuid : null,
-        profile_master_name: r.profile_master != null ? l.profile_master.name : null,
-        profile_master_code: r.profile_master != null ? l.profile_master.profile_code : null,
+        profile_master_uuid: r.profile_master != null ? r.profile_master.uuid : null,
+        profile_master_name: r.profile_master != null ? r.profile_master.name : null,
+        profile_master_code: r.profile_master != null ? r.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: r.order_priority != null ? r.order_priority.uuid : null,
         priority_code: r.order_priority != null ? r.order_priority.code : null,
@@ -768,9 +768,9 @@ async function getInvestigationResponse(investigationData) {
         lab_name: i.test_master != null ? i.test_master.name : null,
         lab_code: i.test_master != null ? i.test_master.code : null,
         // //profile details
-        profile_master_uuid: i.profile_master != null ? l.profile_master.uuid : null,
-        profile_master_name: i.profile_master != null ? l.profile_master.name : null,
-        profile_master_code: i.profile_master != null ? l.profile_master.profile_code : null,
+        profile_master_uuid: i.profile_master != null ? i.profile_master.uuid : null,
+        profile_master_name: i.profile_master != null ? i.profile_master.name : null,
+        profile_master_code: i.profile_master != null ? i.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: i.order_priority != null ? i.order_priority.uuid : null,
         priority_code: i.order_priority != null ? i.order_priority.code : null,
