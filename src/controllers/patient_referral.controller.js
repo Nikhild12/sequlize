@@ -13,7 +13,6 @@ const utilityService = require('../services/utility.service');
 const patientReferralTbl = sequelizeDb.patient_referral;
 const vw_patient_referral = sequelizeDb.vw_patient_referral_history;
 
-
 const Referral_History = () => {
 
   /**
@@ -315,7 +314,14 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
 async function getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid, dateTime, findAll = false) {
   let findQuery = {
     where: {
-      is_reviewed: getBoolean(is_reviewed)
+      is_reviewed: getBoolean(is_reviewed),
+      [Op.and]: [
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('created_date')),
+          '=',
+          utilityService.indiaTz(dateTime).format('YYYY-MM-DD')
+        )
+      ]
     }
   };
 
@@ -358,11 +364,6 @@ async function getPatientReferralData(patient_uuid, referral_type_uuid, referral
   if (ward_uuid && /\S/.test(ward_uuid)) {
     findQuery.where = Object.assign(findQuery.where, {
       ward_uuid: ward_uuid
-    })
-  }
-  if (dateTime && /\S/.test(dateTime)) {
-    findQuery.where = Object.assign(findQuery.where, {
-      created_date: dateTime
     })
   }
   const patientData = findAll ? await patientReferralTbl.findAll(findQuery) : await patientReferralTbl.findOne(findQuery);
