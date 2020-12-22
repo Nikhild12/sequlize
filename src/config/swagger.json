@@ -7535,6 +7535,12 @@
 						"name": "encounter_uuid",
 						"required": false,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "dateTime",
+						"required": false,
+						"type": "string"
 					}
 				],
 				"produces": [
@@ -16129,6 +16135,10 @@
 				"referral_comments": {
 					"type": "string",
 					"example": "enter some thing"
+				},
+				"dateTime":{
+					"type": "string",
+					"example": "enter some date"
 				}
 			}
 		},
