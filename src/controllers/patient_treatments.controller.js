@@ -294,14 +294,26 @@ const PatientTreatmentController = () => {
   const _modifyPreviousOrder = async (req, res) => {
     const { user_uuid, authorization, facility_uuid } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
+    const { patientTreatment, patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
     let diagnosisUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
+        if (patientTreatment) {
+          await patientTreatmenttbl.update(
+            {
+              treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+              modified_by: user_uuid,
+              modified_date: new Date()
+            },
+            {
+              where: {
+                uuid: patientTreatment.uuid
+              }
+            })
+        }
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
           diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
-
         }
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
