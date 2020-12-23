@@ -8,5 +8,6 @@ const patientTransferController = require('../controllers/patient_transfer.contr
 const patientTransferRoute = express.Router();
 
 patientTransferRoute.route('/create').post(patientTransferController.addPatientTransfer);
+patientTransferRoute.route('/update').post(patientTransferController.updatePatientTransfer);
 
 module.exports = patientTransferRoute;
