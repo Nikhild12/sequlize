@@ -299,7 +299,11 @@ const PatientTreatmentController = () => {
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientTreatment) {
-          await patientTreatmenttbl.update(
+          let updateTreatmentKitdetails = {
+            patientTreatmentId: patientTreatment.uuid,
+            treatment_kit_uuid: patientTreatment.treatment_kit_uuid
+          };
+          let updateData = await patientTreatmenttbl.update(
             {
               treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
               modified_by: user_uuid,
@@ -310,6 +314,22 @@ const PatientTreatmentController = () => {
                 uuid: patientTreatment.uuid
               }
             })
+          if (updateData && updateData[0] > 0) {
+            await patientDiagnosisTbl.update(
+              {
+                treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+                modified_by: user_uuid,
+                modified_date: new Date()
+              },
+              {
+                where: {
+                  patient_treatment_uuid: patientTreatment.uuid
+                }
+              })
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 1);
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 2);
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 3);
+          }
         }
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
@@ -346,7 +366,6 @@ const PatientTreatmentController = () => {
             });
           }
           labUpdated = updateLabDetails ? await updateLab(updateLabDetails, user_uuid, facility_uuid, authorization) : '';
-
         }
         if (patientRadiology) {
           let updateRadilogyDetails = req.body.patientRadiology;
@@ -872,6 +891,36 @@ async function updateInvestigation(updateInvestigationDetails, facility_uuid, us
 
   return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
 }
+
+async function updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, id) {
+  let options = {
+    uri: geturl(id) + 'patientorders/updatepatientordertreatmentkit',
+    method: 'POST',
+    headers: {
+      Authorization: authorization,
+      user_uuid: user_uuid,
+      'Content-Type': 'application/json'
+    },
+    body: updateTreatmentKitdetails,
+    json: true
+  };
+  const updatetreatmentoutput = await rp(options);
+  if (updatetreatmentoutput) {
+    return updatetreatmentoutput;
+  }
+}
+
+function geturl(id) {
+  switch (id) {
+    case 1:
+      return config.wso2LisUrl;
+    case 2:
+      return config.wso2RmisUrl;
+    case 3:
+      return config.wso2InvestUrl;
+  }
+}
+
 async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
   let options = {
     uri: url,
