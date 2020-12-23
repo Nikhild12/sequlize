@@ -18,6 +18,7 @@ const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
+const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const {
   APPMASTER_GET_SCREEN_SETTINGS,
   APPMASTER_UPDATE_SCREEN_SETTINGS
@@ -111,7 +112,6 @@ const TreatMent_Kit = () => {
       }
       try {
 
-        // treatmentTransaction = await sequelizeDb.sequelize.transaction();
         let treatmentSave = [];
         treatment_kit.post = true;
         const duplicateTreatmentRecord = await findDuplicateTreatmentKitByCodeAndName(treatment_kit);
@@ -142,6 +142,7 @@ const TreatMent_Kit = () => {
           user_uuid
         );
         treatment_kit.is_active = treatment_active;
+        delete treatment_kit && reatment_kit.uuid;
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
@@ -280,7 +281,7 @@ const TreatMent_Kit = () => {
           code: httpStatus.OK,
           message: emr_constants.TREATMENT_SUCCESS,
           reqContents: req.body,
-          responseContents: treatmentSave
+          responseContents: { treatment_kit_uuid: treatmentSavedData.uuid }
         });
       } catch (ex) {
         console.log("Exception happened", ex);
@@ -294,10 +295,6 @@ const TreatMent_Kit = () => {
             code: httpStatus.BAD_REQUEST,
             message: ex
           });
-      } finally {
-        // if (treatmentTransaction && !treatTransStatus) {
-        //     treatmentTransaction.rollback();
-        // }
       }
     } else {
       return res.status(400).send({
@@ -548,7 +545,8 @@ const TreatMent_Kit = () => {
       user_uuid
     } = req.headers;
     const {
-      treatmentKitId
+      treatmentKitId,
+      deleteMapped
     } = req.query;
 
     const isTreatmenKitValid = emr_utility.isNumberValid(treatmentKitId);
@@ -565,6 +563,7 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        deleteMapped ? deleteMapped : await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
           treatmentkitTbl.update(treatmentUpdateValue, {
@@ -590,13 +589,17 @@ const TreatMent_Kit = () => {
           code: responseCode,
           message: responseMessage
         });
-      } catch (ex) {
-        console.log("Exception happened", ex);
+      } catch (err) {
+        if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "Validation error" });
+        }
+        const errorMsg = err.errors ? err.errors[0].message : err.message;
         return res
-          .status(400)
-          .send({
-            code: httpStatus.BAD_REQUEST,
-            message: ex
+          .status(httpStatus.INTERNAL_SERVER_ERROR)
+          .json({
+            statusCode: 500,
+            status: "error",
+            message: errorMsg
           });
       }
     } else {
@@ -793,13 +796,50 @@ const TreatMent_Kit = () => {
     }
   };
 
+  const _checkTransactionMapped = async (req, res) => {
+    try {
+      const { treatmentKitId } = req.query;
+      if (treatmentKitId) {
+        let output = await patientDiagnosisTbl.count({
+          where: {
+            treatment_kit_uuid: treatmentKitId,
+            status: 1
+          }
+        });
+        return res.send({
+          statusCode: 200,
+          msg: "Data Fetched successfully",
+          req: treatmentKitId,
+          responseContents: output > 0 ? true : false
+        });
+      }
+      else {
+        throw ({ error_type: "validation", errors: 'treatment kit id is mandatory' });
+      }
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == 'validation') {
+        return res.status(400).json({ statusCode: 400, Error: err.errors, msg: "validation error" });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({
+          statusCode: 500,
+          status: "error",
+          msg: errorMsg
+        });
+    }
+  };
+
   return {
     createTreatmentKit: _createTreatmentKit,
     getTreatmentKitByFilters: _getTreatmentKitByFilters,
     getAllTreatmentKit: _getAllTreatmentKit,
     deleteTreatmentKit: _deleteTreatmentKit,
     getTreatmentKitById: _getTreatmentKitById,
-    updateTreatmentKitById: _updateTreatmentKitById
+    updateTreatmentKitById: _updateTreatmentKitById,
+    checkTransactionMapped: _checkTransactionMapped
   };
 };
 
@@ -924,4 +964,27 @@ function treatmentKitResponse(treatmentKitData) {
       status: tk.u_status
     };
   });
+}
+
+function getThrow(id) {
+  switch (id) {
+    case 1:
+      throw {
+        error_type: "validation",
+        errors: "Treatment Kit Mapped"
+      };
+  }
+};
+
+async function findOneMethod(tableName, treatmentKitId, id) {
+  let output = await tableName.findOne({
+    where: {
+      treatment_kit_uuid: treatmentKitId,
+      status: 1
+    }
+  });
+  if (output && (output != null || Object.keys(output).length > 1)) {
+    return getThrow(id);
+  }
+  return null;
 }

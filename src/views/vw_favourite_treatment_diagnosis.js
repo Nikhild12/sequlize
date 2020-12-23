@@ -46,7 +46,10 @@ module.exports = (sequelize, DataTypes) => {
             },
             tdkm_uuid: {
                 type: DataTypes.INTEGER
-            }
+            },
+            tdkm_comments: {
+                type: DataTypes.STRING(255)
+            },
         },
         {
             freezeTableName: true

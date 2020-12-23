@@ -2601,6 +2601,133 @@
 				}
 			}
 		},
+		"/api/emr-ccc-settings/create": {
+			"post": {
+				"description": "To Create a EMR Ccc for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "createEMRCccSettings",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Inserted EMR Workflow"
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/getById": {
+			"get": {
+				"description": "To get a EMR ccc Settings Workflow",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/update": {
+			"put": {
+				"description": "To Update a EMR Ccc Settings for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "updateEMRCccSettings",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Upadted Successfully"
+					}
+				}
+			}
+		},
+		"/api/emr-ccc-settings/delete": {
+			"put": {
+				"description": "To delete a EMR Ccc Settingd for the Master",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "deleteEMRCcc",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/deleteEMRCcc"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRCccSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Deleted Successfully"
+					}
+				}
+			}
+		},
 		"/api/patient-chief-complaints/create": {
 			"post": {
 				"description": "To create Patient chief Complaints",
@@ -5484,6 +5611,12 @@
 						"name": "treatmentKitId",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "deleteMapped",
+						"required": false,
+						"type": "boolean"
 					}
 				],
 				"produces": [
@@ -5509,6 +5642,45 @@
 			}
 		},
 		"/api/treatment-kit/get-by-id": {
+			"get": {
+				"summary": "To get the treatment kit Details By Given Id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "treatmentKitId",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"TreatmentKit"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Treatment Kit Successfully"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/treatment-kit/check-kit-transaction-mapped": {
 			"get": {
 				"summary": "To get the treatment kit Details By Given Id",
 				"parameters": [
@@ -7357,6 +7529,18 @@
 						"name": "ward_uuid",
 						"required": false,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "dateTime",
+						"required": false,
+						"type": "string"
 					}
 				],
 				"produces": [
@@ -9507,6 +9691,12 @@
 					{
 						"in": "query",
 						"name": "consultation_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -11925,6 +12115,48 @@
 			}
 		},
 		"deleteEMRHistory": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"createEMRCcc": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"department_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"role_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"context_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"context_activity_map_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"activity_uuid": {
+						"type": "integer",
+						"example": 1
+					},
+					"ccc_view_order": {
+						"type": "integer",
+						"example": 1
+					}
+				}
+			}
+		},
+		"deleteEMRCcc": {
 			"type": "array",
 			"items": {
 				"type": "string"
@@ -15909,6 +16141,10 @@
 				"referral_comments": {
 					"type": "string",
 					"example": "enter some thing"
+				},
+				"dateTime":{
+					"type": "string",
+					"example": "enter some date"
 				}
 			}
 		},

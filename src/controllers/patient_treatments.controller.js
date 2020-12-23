@@ -71,15 +71,12 @@ const PatientTreatmentController = () => {
           patientTreatment,
           {
             returning: true
-            //transaction: patientTransaction
-
           }
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
             p.is_snomed = p.is_snomed;
-            p.is_patient_condition =
-              p.is_patient_condition || emr_constants.IS_ACTIVE;
+            p.is_patient_condition = p.is_patient_condition || emr_constants.IS_ACTIVE;
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
             p.performed_by = user_uuid;
             p.performed_date = new Date();
@@ -94,7 +91,6 @@ const PatientTreatmentController = () => {
             patientDiagnosis,
             {
               returning: true,
-              //transaction: patientTransaction,
               validate: true
             }
           );
@@ -298,21 +294,53 @@ const PatientTreatmentController = () => {
   const _modifyPreviousOrder = async (req, res) => {
     const { user_uuid, authorization, facility_uuid } = req.headers;
     const { patient_uuid, order_id } = req.query;
-    const { patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
+    const { patientTreatment, patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
     let diagnosisUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
+        if (patientTreatment) {
+          let updateTreatmentKitdetails = {
+            patientTreatmentId: patientTreatment.uuid,
+            treatment_kit_uuid: patientTreatment.treatment_kit_uuid
+          };
+          let updateData = await patientTreatmenttbl.update(
+            {
+              treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+              modified_by: user_uuid,
+              modified_date: new Date()
+            },
+            {
+              where: {
+                uuid: patientTreatment.uuid
+              }
+            })
+          if (updateData && updateData[0] > 0) {
+            await patientDiagnosisTbl.update(
+              {
+                treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+                modified_by: user_uuid,
+                modified_date: new Date()
+              },
+              {
+                where: {
+                  patient_treatment_uuid: patientTreatment.uuid
+                }
+              })
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 1);
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 2);
+            await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 3);
+          }
+        }
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
           diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
-
         }
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
           if (updatePrescriptionDetails.header && updatePrescriptionDetails.details.length > 0) {
-            if(!updatePrescriptionDetails.header.uuid){
-              patientPrescription.details.forEach(i=>{
-                if(i.uuid==0 || i.uuid==''|| i.uuid){
+            if (!updatePrescriptionDetails.header.uuid) {
+              patientPrescription.details.forEach(i => {
+                if (i.uuid == 0 || i.uuid == '' || i.uuid) {
                   delete i.uuid
                 }
               });
@@ -321,6 +349,11 @@ const PatientTreatmentController = () => {
                 patientPrescription
               );
             } else {
+              patientPrescription.details.forEach(i => {
+                if (i.uuid == 0 || i.uuid == '') {
+                  delete i.uuid
+                }
+              });
               prescriptionUpdated = updatePrescriptionDetails ? await updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) : "";
             }
           }
@@ -333,7 +366,6 @@ const PatientTreatmentController = () => {
             });
           }
           labUpdated = updateLabDetails ? await updateLab(updateLabDetails, user_uuid, facility_uuid, authorization) : '';
-
         }
         if (patientRadiology) {
           let updateRadilogyDetails = req.body.patientRadiology;
@@ -608,6 +640,7 @@ async function getPrescriptionRseponse(prescriptions) {
             //Drug Details
             "drug_name": e.item_master != null ? e.item_master.name : null,
             "drug_code": e.item_master != null ? e.item_master.code : null,
+            "strength": e.item_master != null ? e.item_master.strength : null,
             "item_master_uuid": e.item_master != null ? e.item_master.uuid : null,
             // Drug Route Details
             "drug_route_name": e.drug_route != null ? e.drug_route.name : null,
@@ -726,9 +759,9 @@ async function getRadialogyResponse(radialogyData) {
         lab_name: r.test_master != null ? r.test_master.name : null,
         lab_code: r.test_master != null ? r.test_master.code : null,
         // //profile details
-        profile_master_uuid: r.profile_master != null ? l.profile_master.uuid : null,
-        profile_master_name: r.profile_master != null ? l.profile_master.name : null,
-        profile_master_code: r.profile_master != null ? l.profile_master.profile_code : null,
+        profile_master_uuid: r.profile_master != null ? r.profile_master.uuid : null,
+        profile_master_name: r.profile_master != null ? r.profile_master.name : null,
+        profile_master_code: r.profile_master != null ? r.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: r.order_priority != null ? r.order_priority.uuid : null,
         priority_code: r.order_priority != null ? r.order_priority.code : null,
@@ -766,9 +799,9 @@ async function getInvestigationResponse(investigationData) {
         lab_name: i.test_master != null ? i.test_master.name : null,
         lab_code: i.test_master != null ? i.test_master.code : null,
         // //profile details
-        profile_master_uuid: i.profile_master != null ? l.profile_master.uuid : null,
-        profile_master_name: i.profile_master != null ? l.profile_master.name : null,
-        profile_master_code: i.profile_master != null ? l.profile_master.profile_code : null,
+        profile_master_uuid: i.profile_master != null ? i.profile_master.uuid : null,
+        profile_master_name: i.profile_master != null ? i.profile_master.name : null,
+        profile_master_code: i.profile_master != null ? i.profile_master.profile_code : null,
         //ordepriority
         priority_uuid: i.order_priority != null ? i.order_priority.uuid : null,
         priority_code: i.order_priority != null ? i.order_priority.code : null,
@@ -858,6 +891,36 @@ async function updateInvestigation(updateInvestigationDetails, facility_uuid, us
 
   return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
 }
+
+async function updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, id) {
+  let options = {
+    uri: geturl(id) + 'patientorders/updatepatientordertreatmentkit',
+    method: 'POST',
+    headers: {
+      Authorization: authorization,
+      user_uuid: user_uuid,
+      'Content-Type': 'application/json'
+    },
+    body: updateTreatmentKitdetails,
+    json: true
+  };
+  const updatetreatmentoutput = await rp(options);
+  if (updatetreatmentoutput) {
+    return updatetreatmentoutput;
+  }
+}
+
+function geturl(id) {
+  switch (id) {
+    case 1:
+      return config.wso2LisUrl;
+    case 2:
+      return config.wso2RmisUrl;
+    case 3:
+      return config.wso2InvestUrl;
+  }
+}
+
 async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
   let options = {
     uri: url,

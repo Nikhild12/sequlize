@@ -31,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
             tk_active: {
                 type: DataTypes.BOOLEAN
             },
+            tk_comments: {
+                type: DataTypes.STRING(255)
+            },
             im_code: {
                 type: DataTypes.STRING(255)
             },
@@ -103,9 +106,15 @@ module.exports = (sequelize, DataTypes) => {
             tkd_duration: {
                 type: DataTypes.STRING(255)
             },
+            tkd_strength: {
+                type: DataTypes.STRING(255)
+            },
             tkd_uuid: {
                 type: DataTypes.INTEGER
-            }
+            },
+            tkd_comments: {
+                type: DataTypes.STRING(255)
+            },
         },
         {
             freezeTableName: true
