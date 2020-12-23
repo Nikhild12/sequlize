@@ -7774,6 +7774,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient-transfer/update": {
+			"post": {
+				"description": "To Update Patient Transfer",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Update PatientTransfer ",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updatePatientTransfer"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientTransfer"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					},
+					"400": {
+						"description": "Insertion failed"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/procedures/getProceduresByFilter": {
 			"get": {
 				"description": "To get List of Procedures",
@@ -9691,6 +9729,12 @@
 					{
 						"in": "query",
 						"name": "consultation_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "profile_type_uuid",
 						"required": true,
 						"type": "integer"
 					}
@@ -16274,6 +16318,99 @@
 				"transfer_comments": {
 					"type": "string",
 					"example": "enter some thing"
+				},
+				"ward_transfer_status_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"admission_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"from_ward_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"doctor_uuid": {
+					"type": "integer",
+					"example": 1
+				}
+			}
+		},
+		"updatePatientTransfer": {
+			"type": "object",
+			"properties": {
+				"Id": {
+					"type": "integer",
+					"example": 1
+				},
+				"patient_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"encounter_type_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_date": {
+					"type": "string",
+					"example": "enter some date"
+				},
+				"facility_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"department_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"comments": {
+					"type": "string",
+					"example": "enter some thing"
+				},
+				"transfer_type_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_facility_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_department_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_ward_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_reason_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"transfer_comments": {
+					"type": "string",
+					"example": "enter some thing"
+				},
+				"ward_transfer_status_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"admission_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"from_ward_uuid": {
+					"type": "integer",
+					"example": 1
+				},
+				"doctor_uuid": {
+					"type": "integer",
+					"example": 1
 				}
 			}
 		},
