@@ -74,8 +74,8 @@ function createFolder(destinationPath) {
     const fileServerPath = ((process.platform === 'linux') ? config.fileServerPath : config.fileServerPath.slice(1));
     const filePath = fileServerPath + config.serverStoragePath + destinationPath;
     const fileExists = fs.existsSync(filePath);
-    const splitFilePath = (process.platform === 'linux') ?
-        filePath.slice(fileServerPath.length).split('/') : filePath.split('/');
+    const splitFilePath = "" ; //(process.platform === 'linux') ?
+        // filePath.slice(fileServerPath.length).split('/') : filePath.split('/');
     let writeFilePath = '';
     if (!fileExists) {
         for (const iterator of splitFilePath) {
