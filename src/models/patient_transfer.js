@@ -230,6 +230,26 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0
 
       },
+      ward_transfer_status_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      admission_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      from_ward_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      doctor_uuid: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      }
     },
     {
       tableName: 'patient_transfer',
