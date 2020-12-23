@@ -38,14 +38,16 @@ const getEMRWorkFlowSettings = [
 
 const EMR_CCC_SETTINGS = () => {
 
-/**
+    /**
      * Get History Settings API By User Id
      * @param {*} req 
      * @param {*} res 
      */
     const _getEMRCccSettingsByUserId = async (req, res) => {
         console.log('..............')
-        const { user_uuid } = req.headers;
+        const {
+            user_uuid
+        } = req.headers;
 
         if (user_uuid) {
             try {
@@ -60,14 +62,24 @@ const EMR_CCC_SETTINGS = () => {
 
                 if (emr_ccc_settings_data) {
                     const responseMessage = emr_ccc_settings_data && emr_ccc_settings_data.length > 0 ? emr_constants.EMR_FETCHED_SUCCESSFULLY : `${emr_constants.NO_RECORD_FOUND} for the given user_uuid`;
-                    return res.status(200).send({ code: httpStatus.OK, message: responseMessage, responseContents: getEMRCccSetData(emr_ccc_settings_data) });
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: responseMessage,
+                        responseContents: getEMRCccSetData(emr_ccc_settings_data)
+                    });
                 }
             } catch (ex) {
                 console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex.message
+                });
             }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+            return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+            });
         }
     };
     /**
@@ -77,7 +89,9 @@ const EMR_CCC_SETTINGS = () => {
      */
     const _createEmrCccSettings = async (req, res) => {
 
-        const { user_uuid } = req.headers;
+        const {
+            user_uuid
+        } = req.headers;
         const emrCccSettingsData = req.body;
 
         // checking user id and Settings Data > 0
@@ -88,7 +102,10 @@ const EMR_CCC_SETTINGS = () => {
                 // Checking for Duplicate Record
                 const existingRecord = await emrCccSettingsTbl.findAll(getEMRCccSettingsByUserId(user_uuid));
                 if (existingRecord && existingRecord.length > 0) {
-                    return res.status(400).send({ code: emr_constants.DUPLICATE_ENTRIE, message: `${emr_constants.DUPLICATE_RECORD} ${emr_constants.GIVEN_USER_UUID}` });
+                    return res.status(400).send({
+                        code: emr_constants.DUPLICATE_ENTRIE,
+                        message: `${emr_constants.DUPLICATE_RECORD} ${emr_constants.GIVEN_USER_UUID}`
+                    });
                 }
 
                 // otherwise create data
@@ -99,17 +116,30 @@ const EMR_CCC_SETTINGS = () => {
                     ele.revision = 1;
                 });
 
-                const emrCccSetCreatedData = await emrCccSettingsTbl.bulkCreate(emrCccSettingsData, { returning: emr_constants.IS_ACTIVE, validate: true });
+                const emrCccSetCreatedData = await emrCccSettingsTbl.bulkCreate(emrCccSettingsData, {
+                    returning: emr_constants.IS_ACTIVE,
+                    validate: true
+                });
                 if (emrCccSetCreatedData) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Inserted EMR Workflow Successfully", responseContents: attachUUIDTORequestedData(emrCccSetCreatedData, emrCccSettingsData) });
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: "Inserted EMR Workflow Successfully",
+                        responseContents: attachUUIDTORequestedData(emrCccSetCreatedData, emrCccSettingsData)
+                    });
                 }
             } catch (ex) {
                 console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+            return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+            });
         }
 
     };
@@ -122,7 +152,9 @@ const EMR_CCC_SETTINGS = () => {
     const _deleteEMRCccSettings = async (req, res) => {
 
         const emrCccSetflowIds = req.body;
-        const { user_uuid } = req.headers;
+        const {
+            user_uuid
+        } = req.headers;
 
         let deleteEMRCccSetPromise = [];
         if (user_uuid && emrCccSetflowIds && emrCccSetflowIds.length > 0) {
@@ -132,29 +164,49 @@ const EMR_CCC_SETTINGS = () => {
                 // Finding NaN element in given body req 
                 // if exists returns bad req
                 if (emrCccSetflowIds.map(Number).includes(NaN)) {
-                    return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.SEND_PROPER_REQUEST} ${emr_constants.I_E_NUMBER_ARRAY}` });
+                    return res.status(400).send({
+                        code: httpStatus[400],
+                        message: `${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.SEND_PROPER_REQUEST} ${emr_constants.I_E_NUMBER_ARRAY}`
+                    });
                 }
 
                 emrCccSetflowIds.forEach((id) => {
                     deleteEMRCccSetPromise = [...deleteEMRCccSetPromise,
-                    emrCccSettingsTbl.update(
-                        { status: emr_constants.IS_IN_ACTIVE, is_active: emr_constants.IS_IN_ACTIVE, modified_by: user_uuid, modified_date: new Date() },
-                        { where: { uuid: id, user_uuid: user_uuid } }
-                    )];
+                        emrCccSettingsTbl.update({
+                            status: emr_constants.IS_IN_ACTIVE,
+                            is_active: emr_constants.IS_IN_ACTIVE,
+                            modified_by: user_uuid,
+                            modified_date: new Date()
+                        }, {
+                            where: {
+                                uuid: id,
+                                user_uuid: user_uuid
+                            }
+                        })
+                    ];
                 });
 
                 const updatedEMRCccSetData = await Promise.all(deleteEMRCccSetPromise);
 
                 if (updatedEMRCccSetData) {
-                    return res.status(200).send({ code: httpStatus.OK, message: "Deleted Successfully" });
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: "Deleted Successfully"
+                    });
                 }
 
             } catch (ex) {
                 console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex.message
+                });
             }
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+            return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+            });
         }
 
     };
@@ -167,32 +219,45 @@ const EMR_CCC_SETTINGS = () => {
     const _updateEMRCccSettings = async (req, res) => {
 
         const emrCccSettingsUpdateData = req.body;
-        const { user_uuid } = req.headers;
+        const {
+            user_uuid
+        } = req.headers;
 
         if (user_uuid && emrCccSettingsUpdateData && emrCccSettingsUpdateData.length > 0) {
 
             try {
                 // Deleting Existing Data and creating new one
                 const deleteCccSetData = await emrCccSettingsTbl.destroy({
-                    where: { user_uuid: user_uuid }
+                    where: {
+                        user_uuid: user_uuid
+                    }
                 });
 
                 emrCccSettingsUpdateData.forEach((emr) => {
                     emr = emr_utility.createIsActiveAndStatus(emr, user_uuid);
                 });
-                if (deleteCccSetData) {
-                    const emrUpdatedData = await emrCccSettingsTbl.bulkCreate(emrCccSettingsUpdateData, { returning: emr_constants.IS_ACTIVE });
-                    if (emrUpdatedData) {
-                        return res.status(200).send({ code: httpStatus.OK, message: emr_constants.UPDATE_EMR_HIS_SET_SUC });
-                    }
+                const emrUpdatedData = await emrCccSettingsTbl.bulkCreate(emrCccSettingsUpdateData, {
+                    returning: emr_constants.IS_ACTIVE
+                });
+                if (emrUpdatedData) {
+                    return res.status(200).send({
+                        code: httpStatus.OK,
+                        message: emr_constants.UPDATE_EMR_HIS_SET_SUC
+                    });
                 }
             } catch (ex) {
                 console.log(ex);
-                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex.message
+                });
             }
 
         } else {
-            return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+            return res.status(400).send({
+                code: httpStatus[400],
+                message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+            });
         }
     };
 
