@@ -8,11 +8,10 @@ const Op = Sequelize.Op;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
-
+const utilityService = require('../services/utility.service');
 
 const patientReferralTbl = sequelizeDb.patient_referral;
 const vw_patient_referral = sequelizeDb.vw_patient_referral_history;
-
 
 const Referral_History = () => {
 
@@ -60,7 +59,7 @@ const Referral_History = () => {
     const {
       user_uuid
     } = req.headers;
-    const {
+    let {
       patient_uuid,
       referral_facility_uuid,
       referral_deptartment_uuid,
@@ -68,15 +67,31 @@ const Referral_History = () => {
       facility_uuid,
       department_uuid,
       referral_type_uuid,
-      ward_uuid
+      ward_uuid,
+      // encounter_uuid,
+      dateTime
     } = req.query;
     try {
       if (user_uuid && patient_uuid) {
-        const referralHistory = await getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid);
+        if (dateTime) {
+          if (utilityService.checkDateValid(dateTime)) {
+            dateTime = utilityService.indiaTz(dateTime);
+          }
+          else {
+            throw ({
+              error_type: "validation",
+              errors: "date formate is invalid"
+            })
+          }
+        }
+        else {
+          dateTime = utilityService.indiaTz();
+        }
+        const referralHistory = await getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid, dateTime, true);
         return res.status(200).send({
           code: httpStatus.OK,
           message: 'Fetched Successfully',
-          responseContent: referralHistory
+          responseContents: referralHistory
         });
 
       } else {
@@ -86,7 +101,13 @@ const Referral_History = () => {
         });
       }
     } catch (err) {
-      console.log('Exception happened', err);
+      if (err.error_type !== undefined && err.error_type == "validation") {
+        return res.status(400).send({
+          code: httpStatus.OK,
+          message: 'failed',
+          responseContents: err.errors
+        });
+      }
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
         message: err
@@ -106,18 +127,30 @@ const Referral_History = () => {
 
     let { patient_uuid,
       referral_facility_uuid,
-      referral_deptartment_uuid } = req.body;
+      referral_deptartment_uuid,
+      facility_uuid,
+      department_uuid,
+      // encounter_uuid,
+      referal_reason_uuid,
+      referral_comments,
+      dateTime
+    } = req.body;
 
     try {
+      if (!referal_reason_uuid && !referral_comments) {
+        return res.status(422).send({
+          statusCode: 422,
+          message: 'Either referal reason or referral comments is mandatory'
+        });
+      }
       if (!user_uuid && !patientReferralData) {
         return res.status(404).send({
           code: httpStatus.NOT_FOUND,
           message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
         });
       }
-
-
-      const referralHistory = await getPatientReferralData(patient_uuid, '', referral_facility_uuid, referral_deptartment_uuid, is_reviewed = false, '', '', '');
+      dateTime = utilityService.indiaTz();
+      const referralHistory = await getPatientReferralData(patient_uuid, '', referral_facility_uuid, referral_deptartment_uuid, is_reviewed = false, facility_uuid, department_uuid, '', dateTime);
       if (referralHistory) {
         return res.status(409).send({
           code: httpStatus.CONFLICT,
@@ -278,11 +311,18 @@ async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_
   });
 }
 
-async function getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid) {
+async function getPatientReferralData(patient_uuid, referral_type_uuid, referral_facility_uuid, referral_deptartment_uuid, is_reviewed, facility_uuid, department_uuid, ward_uuid, dateTime, findAll = false) {
   let findQuery = {
     where: {
-      is_reviewed: getBoolean(is_reviewed)
-    },
+      is_reviewed: getBoolean(is_reviewed),
+      [Op.and]: [
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('created_date')),
+          '=',
+          utilityService.indiaTz(dateTime).format('YYYY-MM-DD')
+        )
+      ]
+    }
   };
 
   if (patient_uuid && /\S/.test(patient_uuid)) {
@@ -326,8 +366,7 @@ async function getPatientReferralData(patient_uuid, referral_type_uuid, referral
       ward_uuid: ward_uuid
     })
   }
-
-  const patientData = await patientReferralTbl.findOne(findQuery);
+  const patientData = findAll ? await patientReferralTbl.findAll(findQuery) : await patientReferralTbl.findOne(findQuery);
   return patientData;
 }
 
