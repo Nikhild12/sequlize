@@ -120,7 +120,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: true
       },
-      transfer_type_uuid: {
+      patient_transfer_type_uuid: {
 
         type: DataTypes.INTEGER,
         allowNull: false,
