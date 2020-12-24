@@ -100,7 +100,10 @@ const Patient_Transfer = () => {
       if (user_uuid && patient_uuid) {
         const notesData = await patientTransferTbl.findAll({
           where: {
-            patient_uuid: patient_uuid
+            patient_uuid: patient_uuid,
+            ward_transfer_status_uuid: {
+              [Op.in]: [1, 2]
+            }
           }
         }, {
           returning: true
