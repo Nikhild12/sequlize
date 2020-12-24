@@ -32,6 +32,20 @@ const Patient_Transfer = () => {
           message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
         });
       }
+      const notesData = await patientTransferTbl.findOne({
+        where: {
+          patient_uuid: patientTransferData.patient_uuid,
+          transfer_ward_uuid: patientTransferData.transfer_ward_uuid
+        }
+      }, {
+        returning: true
+      });
+      if (notesData) {
+        throw {
+          error_type: "validation",
+          message: "patient already transferred to this selected ward"
+        };
+      }
       await assignDefault(patientTransferData, user_uuid);
       const data = await patientTransferTbl.create(patientTransferData, {
         returning: true
