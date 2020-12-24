@@ -9,5 +9,6 @@ const patientTransferRoute = express.Router();
 
 patientTransferRoute.route('/create').post(patientTransferController.addPatientTransfer);
 patientTransferRoute.route('/update').post(patientTransferController.updatePatientTransfer);
+patientTransferRoute.route('/getByPatientId').get(patientTransferController.getPatientTransferByPatientId);
 
 module.exports = patientTransferRoute;

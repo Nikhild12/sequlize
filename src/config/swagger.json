@@ -7812,6 +7812,39 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient-transfer/getByPatientId": {
+			"get": {
+				"summary": "To get a Patient Transfer Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientTransfer"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/procedures/getProceduresByFilter": {
 			"get": {
 				"description": "To get List of Procedures",
