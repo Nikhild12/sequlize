@@ -173,20 +173,7 @@ module.exports = (sequelize, DataTypes) => {
       transfer_reason_uuid: {
 
         type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('transfer_reason_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('transfer_reason_uuid')
-          },
-          min: {
-            args: [0],
-            msg: emr_constants.GetZeroValidationMessage('transfer_reason_uuid')
-          }
-
-        }
+        allowNull: false
       },
       transfer_comments: {
         type: DataTypes.STRING(500),
