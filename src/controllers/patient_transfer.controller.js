@@ -32,6 +32,12 @@ const Patient_Transfer = () => {
           message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
         });
       }
+      if (!(patientTransferData.transfer_reason_uuid||patientTransferData.transfer_comments)) {
+        throw {
+          error_type: "validation",
+          message: "please provide transfer_reason_uuid or transfer_comments"
+        };
+      }
       const notesData = await patientTransferTbl.findOne({
         where: {
           patient_uuid: patientTransferData.patient_uuid,
