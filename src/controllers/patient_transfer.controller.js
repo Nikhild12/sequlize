@@ -37,8 +37,32 @@ const Patient_Transfer = () => {
 
   };
 
+  const updatePatientTransfer = async (req, res) => {
+    const { user_uuid } = req.headers;
+    let patientTransferData = req.body.updatePT;
+    try {
+      if (!user_uuid && patientTransferData) {
+        return res.status(404).send({ code: httpStatus.NOT_FOUND, message: `${emr_constants.NO} ${emr_constants.user_uuid} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+      }
+      for (let i = 0; i < patientTransferData.length; i++) {
+        const element = patientTransferData[i];
+        await patientTransferTbl.update(element, {
+          where: {
+            uuid: element.Id
+          }
+        }, { returning: true });
+      }
+
+      return res.status(200).send({ code: httpStatus.OK, message: 'Update Success' });
+    } catch (ex) {
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+
+  };
+
   return {
-    addPatientTransfer: _addPatientTransfer
+    addPatientTransfer: _addPatientTransfer,
+    updatePatientTransfer
   };
 
 };
