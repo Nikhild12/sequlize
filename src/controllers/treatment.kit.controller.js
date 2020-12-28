@@ -550,11 +550,6 @@ const TreatMent_Kit = () => {
     } = req.query;
 
     const isTreatmenKitValid = emr_utility.isNumberValid(treatmentKitId);
-    const treatmentUpdateValue = {
-      status: emr_constants.IS_IN_ACTIVE,
-      is_active: emr_constants.IS_IN_ACTIVE,
-      modified_by: user_uuid
-    };
     const treatementKitUpdateQuery = {
       where: {
         treatment_kit_uuid: treatmentKitId
@@ -563,6 +558,13 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        let findTreatmentKit = await treatmentkitTbl.findOne({ where: { uuid: treatmentKitId } });
+        const treatmentUpdateValue = {
+          status: emr_constants.IS_IN_ACTIVE,
+          is_active: emr_constants.IS_IN_ACTIVE,
+          modified_by: user_uuid,
+          name: findTreatmentKit.name + "(deleted)"
+        };
         deleteMapped ? deleteMapped : await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
