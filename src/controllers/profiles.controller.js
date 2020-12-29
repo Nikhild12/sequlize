@@ -79,12 +79,12 @@ const profilesController = () => {
         };
         let profileSectionSave = [], CategorySave = [], profileSectionResponse = [], ConceptsSave = [], conceptValuesSave = [], conceptValueTermSave = [], screenSettings_output, conceptValuesResponse = [], conceptResponse = [], conceptValueTermResponse = [], categoriesResponse = [], replace_value;
         screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        if (screenSettings_output) {
+        if (screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           profiles.profile_code = screenSettings_output.prefix + replace_value;
         }
         const profileResponse = await profilesTbl.create(profiles);
-        if (profileResponse) {
+        if (profileResponse && screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
