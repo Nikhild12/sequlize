@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
+            ward_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                defaultValue: 0
+            },
             profile_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
