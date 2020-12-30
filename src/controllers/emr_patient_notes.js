@@ -174,7 +174,6 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                // attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
