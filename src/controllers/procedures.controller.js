@@ -22,8 +22,8 @@ const anesthesia_type = db.anesthesia_type;
 const body_site = db.body_site;
 const noteTemplatetypeTbl = db.note_template_type;
 const npotetemplateTbl = db.note_templates;
-const equipment = db.equipment;
-const speciality_sketches = db.speciality_sketches;
+const equipmentTbl = db.equipment;
+const specialitySketchesTbl = db.speciality_sketches;
 const categoriesTbl = db.categories;
 // Constants Import
 const emr_constants = require("../config/constants");
@@ -396,8 +396,7 @@ const proceduresController = () => {
                 model: categoriesTbl,
                 attributes: ['uuid', 'name'],
                 required: false
-              }
-              ]
+              }]
             },
             {
               model: procedure_schemeTbl,
@@ -447,6 +446,16 @@ const proceduresController = () => {
             {
               model: body_site,
               attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: equipmentTbl,
+              attributes: ['uuid', 'name'],
+              required: false
+            },
+            {
+              model: specialitySketchesTbl,
+              attributes: ['uuid', 'code', 'name'],
               required: false
             }
           ],
@@ -605,7 +614,7 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "anesthesia_type": data.anesthesia_type,
     "body_site": data.body_site,
     "equipment": data.equipment,
-    "speciality_sketch": data.speciality_sketch,
+    "speciality_sketch": data.speciality_sketch
   };
   return newdata;
 }
