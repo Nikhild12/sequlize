@@ -264,7 +264,7 @@ const proceduresController = () => {
           }
         };
         screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        if (screenSettings_output) {
+        if (screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           postData.code = screenSettings_output.prefix + replace_value;
         }
@@ -274,7 +274,7 @@ const proceduresController = () => {
         postData.created_date = postData.modified_date = currentDate;
         const proceduresCreatedData = await proceduresTbl.create(postData);
 
-        if (proceduresCreatedData) {
+        if (proceduresCreatedData && screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
@@ -287,15 +287,15 @@ const proceduresController = () => {
             }
           };
           await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
-          postData.uuid = proceduresCreatedData.uuid;
-          return res
-            .status(200)
-            .send({
-              statusCode: 200,
-              message: "Inserted Procedures Master Successfully",
-              responseContents: postData
-            });
         }
+        postData.uuid = proceduresCreatedData.uuid;
+        return res
+          .status(200)
+          .send({
+            statusCode: 200,
+            message: "Inserted Procedures Master Successfully",
+            responseContents: postData
+          });
       } catch (ex) {
         console.log(ex.message);
         return res.status(400).send({
