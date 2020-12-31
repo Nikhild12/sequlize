@@ -662,11 +662,11 @@ async function getchiefbysessiondate(chiefc_dash_new, user_uuid, depertment_Id, 
 
 async function getdiagbygenderdate(diag_dash_new, user_uuid, depertment_Id, gender, from_date, to_date,facility_uuid) {
     const diag = await diag_dash_new.findAll({
-        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
         attributes: ['pd_diagnosis_uuid', 'd_code', 'd_name', 'g_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
+        group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
         limit: 10,
         where: {
             // ed_doctor_uuid: user_uuid,
@@ -1074,7 +1074,7 @@ async function getconstoday(cons_dash_new, user_uuid, depertment_Id, from_date, 
 async function getDiagnosisbytoday(diag_dash_new, user_uuid, depertment_Id, from_date, to_date,facility_uuid) {
     const diag = await diag_dash_new.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid', 'd_code','d_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
@@ -1571,7 +1571,7 @@ async function getconstodayAll(cons_dash_new, user_uuid, depertment_Id, from_dat
 async function getDiagnosisbytodayAll(diag_dash_new, user_uuid, depertment_Id, session, gender, from_date, to_date,facility_uuid) {
     const diag = await diag_dash_new.findAll({
         group: ['ed_patient_uuid', 'pd_diagnosis_uuid'],
-        attributes: ['pd_diagnosis_uuid', 'd_name', 'pd_performed_date',
+        attributes: ['pd_diagnosis_uuid','d_code', 'd_name', 'pd_performed_date',
             [Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'Count']
         ],
         order: [[Sequelize.fn('COUNT', Sequelize.col('pd_diagnosis_uuid')), 'DESC']],
