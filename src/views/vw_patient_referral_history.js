@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0
       },
+      ti_name: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+
+      },
       u_first_name: {
         type: DataTypes.STRING(255),
         allowNull: true
