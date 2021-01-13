@@ -132,7 +132,7 @@ const TreatMent_Kit = () => {
           }
         };
         screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        if (screenSettings_output) {
+        if (screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           treatment_kit.code = screenSettings_output.prefix + replace_value;
         }
@@ -146,7 +146,7 @@ const TreatMent_Kit = () => {
         const treatmentSavedData = await treatmentkitTbl.create(treatment_kit, {
           returning: true
         });
-        if (treatmentSavedData) {
+        if (treatmentSavedData && screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
@@ -550,11 +550,6 @@ const TreatMent_Kit = () => {
     } = req.query;
 
     const isTreatmenKitValid = emr_utility.isNumberValid(treatmentKitId);
-    const treatmentUpdateValue = {
-      status: emr_constants.IS_IN_ACTIVE,
-      is_active: emr_constants.IS_IN_ACTIVE,
-      modified_by: user_uuid
-    };
     const treatementKitUpdateQuery = {
       where: {
         treatment_kit_uuid: treatmentKitId
@@ -563,6 +558,13 @@ const TreatMent_Kit = () => {
     let deleteTreatmentPromise = [];
     if (user_uuid && isTreatmenKitValid) {
       try {
+        let findTreatmentKit = await treatmentkitTbl.findOne({ where: { uuid: treatmentKitId } });
+        const treatmentUpdateValue = {
+          status: emr_constants.IS_IN_ACTIVE,
+          is_active: emr_constants.IS_IN_ACTIVE,
+          modified_by: user_uuid,
+          name: findTreatmentKit.name + "(deleted)"
+        };
         deleteMapped ? deleteMapped : await findOneMethod(patientDiagnosisTbl, treatmentKitId, 1);
         deleteTreatmentPromise = [
           ...deleteTreatmentPromise,
