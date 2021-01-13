@@ -274,7 +274,7 @@ async function assignDefault(patientReferralData, user_uuid) {
 
 async function getReferralData(patient_uuid, facility_uuid, department_uuid, is_reviewed) {
   let findQuery = {
-    attributes: ['pr_uuid', 'pr_referral_date', 'u_first_name', 'u_middle_name', 'u_last_name', 'pr_facility_uuid', 'pr_department_uuid', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
+    attributes: ['pr_uuid', 'pr_referral_date', 'ti_name','u_first_name', 'u_middle_name', 'u_last_name', 'pr_facility_uuid', 'pr_department_uuid', 'd_uuid', 'd_name', 'pr_referral_deptartment_uuid', 'rd_name', 'f_uuid', 'f_name', 'rf_name'],
     where: {},
     order: [
       ['pr_uuid', 'DESC']
