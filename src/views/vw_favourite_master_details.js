@@ -13,6 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       tsmd_uuid: {
         type: DataTypes.INTEGER,
       },
+      tk_name: {
+        type: DataTypes.STRING(500),
+      },
+      tk_code: {
+        type: DataTypes.STRING(500),
+      },
+      tk_uuid: {
+        type: DataTypes.INTEGER,
+      },
       im_uuid: {
         type: DataTypes.INTEGER,
       },

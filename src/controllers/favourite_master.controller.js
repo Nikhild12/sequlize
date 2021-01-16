@@ -58,6 +58,9 @@ const getFavouritesAttributes = [
   "di_name",
   "tsm_userid",
   "tsm_active",
+  "tk_uuid",
+  "tk_name",
+  "tk_code",
   "tsm_name",
   "tsm_uuid",
   "tsmd_uuid",
@@ -990,6 +993,10 @@ function getFavouritesInList(fetchedData) {
       {
         favourite_id: tD.tsm_uuid,
         favourite_name: tD.tsm_name,
+
+        treatment_kit_id: tD.tk_uuid,
+        treatment_kit_name: tD.tk_name,
+        treatment_kit_code: tD.tk_code,
 
         favourite_details_id: tD.tsmd_uuid,
         favourite_type_id: tD.tsm_favourite_type_uuid,
