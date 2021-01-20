@@ -86,7 +86,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-           
+            rt_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            rt_code: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            rt_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             dp_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
