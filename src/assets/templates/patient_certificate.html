@@ -2,6 +2,155 @@
 <html lang="en">
 
 <head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <style>
+        @media print {
+            .first_tbl {
+                page-break-inside: avoid;
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin: 0 auto; font-family: poppins; font-size: 14px; width: 100%; height: 100%;">
+    <div style="float:left; width:calc(100% - 30px); padding: 0 15px;">
+        <div class="row" id="pageHeader" style="font-weight: bold; border-bottom: 1px solid #bbb;">
+            {{> facility_header this}}
+        </div>
+        {{json headerObj}}
+        <h2 style="text-align:center; margin-top:20px; float:left; width:100%;">{{headerObj.profile_type_name}}</h2>
+        {{#if headerObj.patientDetails}}
+        <div style="width:100%; float:left; padding: 10px 0;position: relative;">
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.patientDetails.pin}}
+                        <tr>
+                            <td style="padding: 5px;">PIN</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.pin}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.patient_name}}
+                        <tr>
+                            <td style="padding: 5px;">Patient Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.pa_title}}
+                                {{headerObj.patientDetails.patient_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.age}}
+                        <tr>
+                            <td style="padding: 5px;">Age / Gender</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.age}}
+                                {{headerObj.patientDetails.period}} / {{headerObj.patientDetails.gender}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.mobile}}
+                        <tr>
+                            <td style="padding: 5px;">Mobile Number</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.mobile}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.patientDetails.doctor_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">Doctor Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.title}}
+                                {{headerObj.patientDetails.doctor_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patientDetails.dept_name}}
+                        <tr>
+                            <td style="padding: 5px;">Department</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.dept_name}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.patientDetails.date}}
+
+                        <tr>
+                            <td style="padding: 5px;">Date</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.date}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.patientDetails.notes_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">OP Notes Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.patientDetails.notes_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{/if}}
+
+        <div>
+            <table borderspacing='1' bordercolor="#ccc" cellpadding='10' cellspacing='0'
+                style="width:100%; float:left; text-align: left; border:1px solid #ccc;">
+                <thead>
+                    <tr style="text-align: left; font-size: 14px; background-color:#e6eff8;">
+                        <th style="border-bottom:1px solid #ccc;" colspan="20">Patient Certificates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table style="width:100%; border:1px solid #ccc; border-right: 0;" cellpadding='10'
+                                cellspacing='0'>
+
+                                <tbody>
+
+                                    <tr class="table-header" style="border-bottom: 1px solid #ccc;">
+                                        <td>{{{headerObj}}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="float:left; padding: 15px; width: calc(100% - 30px);">
+            <div style="width: 50%; float: left;">
+                <p>Printed On: {{headerObj.printedOn}}</p>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
     <title>Patient Certificates</title>
     <meta charset="utf-8">
     <style>
@@ -69,4 +218,4 @@
     </div>
 </body>
 
-</html>
+</html> -->
