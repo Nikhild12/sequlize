@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            immunization_status_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             immunization_route_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
