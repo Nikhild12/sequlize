@@ -22,6 +22,18 @@ module.exports = (sequelize, DataTypes) => {
       tk_uuid: {
         type: DataTypes.INTEGER,
       },
+      dm_name: {
+        type: DataTypes.STRING(500),
+      },
+      dm_code: {
+        type: DataTypes.STRING(500),
+      },
+      ss_name: {
+        type: DataTypes.STRING(500),
+      },
+      ss_code: {
+        type: DataTypes.STRING(500),
+      },
       im_uuid: {
         type: DataTypes.INTEGER,
       },
