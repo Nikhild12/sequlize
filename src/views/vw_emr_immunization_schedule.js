@@ -165,6 +165,18 @@ module.exports = (sequelize, DataTypes) => {
             um_last_name: {
                 type: DataTypes.STRING,
                 allowNull: true,
+            },
+            ps_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ps_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ps_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
             }
         },
         {

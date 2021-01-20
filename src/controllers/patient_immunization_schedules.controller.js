@@ -15,6 +15,7 @@ const immunization_blockchain = require('../blockChain/immunization.blockchain')
 
 const emr_utility = require('../services/utility.service');
 
+const patientImmunizationsTbl = sequelizeDb.patient_immunizations;
 const patientImmunizationSchedulesTbl = sequelizeDb.patient_immunization_schedules;
 const viewPatientImmunzationSchedulesTbl = sequelizeDb.vw_patient_immunization_schedules;
 
@@ -46,6 +47,34 @@ const patient_immunization_Schedules = () => {
                 if (emr_config.isBlockChain === 'ON') {
                     immunization_blockchain.createImmunizationBlockchain(Immunization);
                 }
+                return res.status(200).send({ code: httpStatus.OK, message: 'Inserted successfully', responseContents: Immunization });
+
+            }
+            catch (ex) {
+                console.log('Exception happened', ex);
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: emr_constants.NO_USER_ID });
+        }
+
+    };
+
+    const _addPatientImmunizations = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        let Immunization = req.body;
+
+        if (user_uuid) {
+
+            Immunization.is_active = Immunization.status = true;
+            Immunization.created_by = Immunization.modified_by = user_uuid;
+            Immunization.created_date = Immunization.modified_date = new Date();
+            Immunization.revision = 1;
+
+            try {
+                const createdImmunization = await patientImmunizationsTbl.create(Immunization, { returing: true });
+                Immunization.uuid = createdImmunization.uuid;
                 return res.status(200).send({ code: httpStatus.OK, message: 'Inserted successfully', responseContents: Immunization });
 
             }
@@ -173,7 +202,7 @@ const patient_immunization_Schedules = () => {
     };
 
     return {
-
+        addPatientImmunizations: _addPatientImmunizations,
         addPatientImmunizationSchedules: _addPatientImmunizationSchedules,
         deletePatientImmunizationSchedules: _deletePatientImmunizationSchedules,
         updatePatientImmunizationSchedules: _updatePatientImmunizationSchedules,
