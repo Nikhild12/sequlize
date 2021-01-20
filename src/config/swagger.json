@@ -7237,6 +7237,41 @@
 				}
 			}
 		},
+		"/api/immunization/addPatientImmunizations": {
+			"post": {
+				"summary": "To create patient immunization schedule details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "immunzation",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/patientImmunzationAdd"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientImmunizationSchedule"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/immunization/create": {
 			"post": {
 				"summary": "To create patient immunization schedule details ",

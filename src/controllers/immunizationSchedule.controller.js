@@ -61,9 +61,10 @@ const immunizationScheduleController = () => {
                 order: [
                     sortArr
                 ],
-                attributes: { "exclude": ['id', 'createdAt', 'updatedAt'] },
-                where: {
-                }
+                attributes: {
+                    "exclude": ['id', 'createdAt', 'updatedAt']
+                },
+                where: {}
             };
             if (getsearch.search && /\S/.test(getsearch.search)) {
                 findQuery.where[Op.or] = [
@@ -88,31 +89,31 @@ const immunizationScheduleController = () => {
                 findQuery.where['$vw_emr_immunization_schedule.duration_period_uuid$'] = getsearch.duration_period_uuid;
             }
 
-  if (getsearch.status && (getsearch.status.toLowerCase() == "active" || getsearch.status.toLowerCase() == "inactive")) {
-        let is_active_input = 0;
-        if (getsearch.status.toLowerCase() == "active") {
-          is_active_input = 1;
-        } else {
-          is_active_input = 0;
-        }
-        findQuery.where = Object.assign(findQuery.where, {
-          is_active: {
-            [Op.eq]: is_active_input
-          }
-        });
-      } else {
-        findQuery.where = Object.assign(findQuery.where, {
-          is_active: {
-            [Op.eq]: 1
-          }
-        });
-      }
+            if (getsearch.status && (getsearch.status.toLowerCase() == "active" || getsearch.status.toLowerCase() == "inactive")) {
+                let is_active_input = 0;
+                if (getsearch.status.toLowerCase() == "active") {
+                    is_active_input = 1;
+                } else {
+                    is_active_input = 0;
+                }
+                findQuery.where = Object.assign(findQuery.where, {
+                    is_active: {
+                        [Op.eq]: is_active_input
+                    }
+                });
+            } else {
+                findQuery.where = Object.assign(findQuery.where, {
+                    is_active: {
+                        [Op.eq]: 1
+                    }
+                });
+            }
 
-  
-    // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-    //     findQuery.where['is_active'] = getsearch.status;
-    //     // findQuery.where['status'] = getsearch.status;
-    //  }     
+
+            // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
+            //     findQuery.where['is_active'] = getsearch.status;
+            //     // findQuery.where['status'] = getsearch.status;
+            //  }     
             await vw_immunische.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
@@ -158,11 +159,11 @@ const immunizationScheduleController = () => {
             immunizationScheduleTbl.findAll({
                 where: {
                     [Op.and]: [{
-                        immunization_uuid: postData.immunization_uuid
-                    },
-                    {
-                        schedule_uuid: postData.schedule_uuid
-                    },
+                            immunization_uuid: postData.immunization_uuid
+                        },
+                        {
+                            schedule_uuid: postData.schedule_uuid
+                        },
                     ]
                 }
             }).then(async (result) => {
@@ -238,27 +239,28 @@ const immunizationScheduleController = () => {
                 const itemsPerPage = postData.limit ? postData.limit : 10;
                 const offset = (page - 1) * itemsPerPage;
                 await vw_immunische.findOne({
-                    where: {
-                        uuid: postData.Id
-                    },
-                    include: [
-                        {
-                            model: immunization,
-                            attributes: ['uuid', 'name'],
-                            required: false
+                        where: {
+                            uuid: postData.Id
                         },
-                        {
-                            model: schedules,
-                            attributes: ['uuid', 'name'],
-                            required: false
-                        }
-                    ],
-                    offset: offset,
-                    limit: itemsPerPage,
-                    order: [['uuid', 'DESC']],
-                    // status: 1,
-                    // is_active: 1
-                })
+                        include: [{
+                                model: immunization,
+                                attributes: ['uuid', 'name'],
+                                required: false
+                            },
+                            {
+                                model: schedules,
+                                attributes: ['uuid', 'name'],
+                                required: false
+                            }
+                        ],
+                        offset: offset,
+                        limit: itemsPerPage,
+                        order: [
+                            ['uuid', 'DESC']
+                        ],
+                        // status: 1,
+                        // is_active: 1
+                    })
                     .then((data) => {
                         return res
                             .status(httpStatus.OK)
@@ -331,10 +333,10 @@ const immunizationScheduleController = () => {
         postData.modifed_date = new Date();
         await immunizationScheduleTbl.update(
             postData, {
-            where: {
-                uuid: postData.Id
+                where: {
+                    uuid: postData.Id
+                }
             }
-        }
         ).then((data) => {
             res.send({
                 statusCode: 200,

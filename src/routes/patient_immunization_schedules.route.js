@@ -7,6 +7,7 @@ const patientImmunizationController = require('../controllers/patient_immunizati
 // Express Router Initialize
 const patientImmunizationRoute = express.Router();
 
+patientImmunizationRoute.route('/addPatientImmunizations').post(patientImmunizationController.addPatientImmunizations);
 patientImmunizationRoute.route('/create').post(patientImmunizationController.addPatientImmunizationSchedules);
 patientImmunizationRoute.route('/delete').put(patientImmunizationController.deletePatientImmunizationSchedules);
 patientImmunizationRoute.route('/update').put(patientImmunizationController.updatePatientImmunizationSchedules);
