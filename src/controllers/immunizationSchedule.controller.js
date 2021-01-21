@@ -202,7 +202,11 @@ const immunizationScheduleController = () => {
                     model: scheduleflagsTbl
                 }]
             };
-               
+            if (getsearch.patient_uuid && /\S/.test(getsearch.patient_uuid)) {
+                Object.assign(findQuery.where, {
+                    patient_uuid: getsearch.patient_uuid
+                });
+            }
             await patient_immunization_tbl.findAndCountAll(findQuery)
                 .then((data) => {
                     return res
