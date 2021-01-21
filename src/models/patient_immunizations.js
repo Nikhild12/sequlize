@@ -240,6 +240,19 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-
+    patient_immunizations.associate = model => {
+        patient_immunizations.belongsTo(model.immunizations, {
+            foreignKey: "immunization_uuid"
+        });
+        patient_immunizations.belongsTo(model.immunization_schedule, {
+            foreignKey: "immunization_schedule_uuid"
+        });
+        patient_immunizations.belongsTo(model.schedules, {
+            foreignKey: "schedule_uuid"
+        });
+        patient_immunizations.belongsTo(model.schedule_flags, {
+            foreignKey: "schedule_flag_uuid"
+        });
+    };
     return patient_immunizations;
 };

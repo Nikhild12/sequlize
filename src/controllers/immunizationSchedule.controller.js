@@ -9,6 +9,7 @@ const Op = Sequelize.Op;
 const emr_constants = require('../config/constants');
 
 const immunizationScheduleTbl = db.immunization_schedule;
+const patient_immunization_tbl = db.patient_immunizations;
 const immunization = db.immunizations;
 const schedules = db.schedules;
 const scheduleflagsTbl = db.schedule_flags;
@@ -145,6 +146,93 @@ const immunizationScheduleController = () => {
         }
     };
 
+    const getpatientImmunizationSchedule = async (req, res, next) => {
+        try {
+            const getsearch = req.body;
+            let pageNo = 0;
+            const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
+            let sortArr = ['modified_date', 'DESC'];
+
+
+            if (getsearch.pageNo) {
+                let temp = parseInt(getsearch.pageNo);
+                if (temp && (temp != NaN)) {
+                    pageNo = temp;
+                }
+            }
+            const offset = pageNo * itemsPerPage;
+            let fieldSplitArr = [];
+            if (getsearch.sortField) {
+                fieldSplitArr = getsearch.sortField.split('.');
+                if (fieldSplitArr.length == 1) {
+                    sortArr[0] = getsearch.sortField;
+                } else {
+                    for (let idx = 0; idx < fieldSplitArr.length; idx++) {
+                        const element = fieldSplitArr[idx];
+                        fieldSplitArr[idx] = element.replace(/\[\/?.+?\]/ig, '');
+                    }
+                    sortArr = fieldSplitArr;
+                }
+            }
+            if (getsearch.sortOrder && ((getsearch.sortOrder.toLowerCase() == 'asc') || (getsearch.sortOrder.toLowerCase() == 'desc'))) {
+                if ((fieldSplitArr.length == 1) || (fieldSplitArr.length == 0)) {
+                    sortArr[1] = getsearch.sortOrder;
+                } else {
+                    sortArr.push(getsearch.sortOrder);
+                }
+            }
+            let findQuery = {
+                subQuery: false,
+                offset: offset,
+                limit: getsearch.paginationSize,
+                order: [
+                    sortArr
+                ],
+                where: {},
+                include:[{
+                    model: immunization
+                },
+                {
+                    model: immunizationScheduleTbl
+                },
+                {
+                    model: schedules
+                },
+                {
+                    model: scheduleflagsTbl
+                }]
+            };
+               
+            await patient_immunization_tbl.findAndCountAll(findQuery)
+                .then((data) => {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({
+                            statusCode: 200,
+                            message: "Get Details Fetched successfully",
+                            req: '',
+                            responseContents: data.rows,
+                            totalRecords: data.count
+                        });
+                })
+                .catch(err => {
+                    return res
+                        .status(409)
+                        .json({
+                            statusCode: 409,
+                            error: err
+                        });
+                });
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    status: "error",
+                    msg: errorMsg
+                });
+        }
+    };
 
     const postimmunizationSchedule = async (req, res, next) => {
         let postData = req.body;
@@ -353,8 +441,8 @@ const immunizationScheduleController = () => {
         getimmunizationSchedule,
         getimmunizationScheduleById,
         deleteimmunizationScheduleById,
-        updateimmunizationScheduleById
-
+        updateimmunizationScheduleById,
+        getpatientImmunizationSchedule
     };
 };
 
