@@ -1756,6 +1756,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/immunizationSchedule/getpatientImmunizationSchedule": {
+			"post": {
+				"description": "Inserted Successfully",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "scheduleData",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getimmunizationScheduleReq"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Immunizations Schedule"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getimmunizationSchedule"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/immunizationSchedule/getimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
@@ -7235,6 +7273,41 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/immunization/addPatientImmunizations": {
+			"post": {
+				"summary": "To create patient immunization schedule details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "immunzation",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/patientImmunzationAdd"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientImmunizationSchedule"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
 			}
 		},
 		"/api/immunization/create": {

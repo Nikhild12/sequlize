@@ -188,19 +188,19 @@ module.exports = (sequelize, DataTypes) => {
             note_template_uuid: {
 
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('note_template_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('note_template_uuid')
-                    },
-                    min: {
-                        args: 1,
-                        msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
-                    }
-                }
+                // allowNull: false,
+                // validate: {
+                //     notNull: {
+                //         msg: emr_constants.GetpleaseProvideMsg('note_template_uuid')
+                //     },
+                //     notEmpty: {
+                //         msg: emr_constants.GetpleaseProvideMsg('note_template_uuid')
+                //     },
+                //     min: {
+                //         args: 1,
+                //         msg: emr_constants.GetZeroValidationMessage('encounter_uuid')
+                //     }
+                // }
 
             },
             certificate_status_uuid: {

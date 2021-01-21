@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            immunization_status_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
             immunization_route_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -86,7 +90,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-           
+            rt_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            rt_code: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            rt_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             dp_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -152,6 +167,18 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             um_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ps_first_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ps_middle_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ps_last_name: {
                 type: DataTypes.STRING,
                 allowNull: true,
             }

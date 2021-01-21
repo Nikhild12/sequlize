@@ -2,71 +2,151 @@
 <html lang="en">
 
 <head>
-    <title>Patient Certificates</title>
+    <title>Bootstrap Example</title>
     <meta charset="utf-8">
     <style>
-        .table-header th {
-            border-bottom: 1px solid #ccc;
-            border-right: 1px solid #ccc;
-        }
-
-        .table-header td {
-            border-bottom: 1px solid #ccc;
-            border-right: 1px solid #ccc;
-        }
-
-        .table-header tr {
-            border-bottom: 1px solid #ccc;
-        }
-
-        .table-header1 td {
-            border: 1px solid #ccc;
-        }
-
-        .table-header1 th {
-            border-right: 1px solid #ccc;
-        }
-
         @media print {
-            .first_tbl {
-                margin-top: 20px !important;
-                page-break-inside: avoid;
-                page-break-before: always;
-            }
+        .first_tbl {
+        page-break-inside: avoid;
+        page-break-before: always;
         }
-    </style>
+        }
+        </style>
 </head>
 
-<body style="margin: 0 auto; font-family: poppins; font-size: 12px; width: 100%; height: 100%;">
+<body style="margin: 0 auto; font-family: poppins; font-size: 10px; width: 100%; height: 100%;">
     <div style="float:left; width:calc(100% - 30px); padding: 0 15px;">
-        <div style="width: 100%; float: left; padding: 10px 0 0;">
-            <table borderspacing='1' bordercolor="#ccc" cellpadding='10' cellspacing='0'
-                style="width:100%; float:left; text-align: left; border:1px solid #ccc;">
+        <div class="row" id="pageHeader" style="font-weight: bold; border-bottom: 1px solid #bbb;">
+            {{> facility_header this}}
+        </div>
+
+        <h2 style="text-align:center; margin-top:20px; float:left; width:100%;">Patient Certificate</h2>
+        {{#if headerObj}}
+        <div style="width:100%; float:left; padding: 10px 0;position: relative;">
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.pin}}
+                        <tr>
+                            <td style="padding: 5px;">PIN</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.pin}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patient_name}}
+                        <tr>
+                            <td style="padding: 5px;">Patient Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.pa_title}}
+                                {{headerObj.patient_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.age}}
+                        <tr>
+                            <td style="padding: 5px;">Age / Gender</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.age}}
+                                {{headerObj.period}} / {{headerObj.gender}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.mobile}}
+                        <tr>
+                            <td style="padding: 5px;">Mobile Number</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.mobile}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.doctor_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">Doctor Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.title}}
+                                {{headerObj.doctor_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.dept_name}}
+                        <tr>
+                            <td style="padding: 5px;">Department</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.dept_name}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.date}}
+
+                        <tr>
+                            <td style="padding: 5px;">Date</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.date}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.notes_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">OP Notes Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.notes_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{/if}}
+
+
+        {{#if headerObj}}
+        <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
+            <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
+                style="width:100%; float:left; text-align: left;">
                 <thead>
-                    <tr style="text-align: left; font-size: 14px; background-color:#e6eff8;">
-                        <th style="border-bottom:1px solid #ccc;" colspan="20">Patient Certificates</th>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
+                        <th colspan="5">Lab</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Code</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Test Name</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Type</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Order To Location</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{#each headerObj.labResult}}
                     <tr>
-                        <td>
-                            <table style="width:100%; border:1px solid #ccc; border-right: 0;" cellpadding='10'
-                                cellspacing='0'>
-
-                                <tbody>
-
-                                    <tr class="table-header" style="border-bottom: 1px solid #ccc;">
-                                        <td>{{{data_template}}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">{{inc @index}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{code}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{order_priority_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{order_to_location}}</td>
                     </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
+        {{/if}}
+       
+        <div style="float:left; padding: 15px; width: calc(100% - 30px);">
+            <div style="width: 50%; float: left;">
+                <p>Printed On: {{headerObj.printedOn}}</p>
+            </div>
+        </div>
+
 
     </div>
+
 </body>
 
 </html>
