@@ -58,6 +58,13 @@ const getFavouritesAttributes = [
   "di_name",
   "tsm_userid",
   "tsm_active",
+  "tk_uuid",
+  "tk_name",
+  "tk_code",
+  "dm_name",
+  "dm_code",
+  "ss_name",
+  "ss_code",
   "tsm_name",
   "tsm_uuid",
   "tsmd_uuid",
@@ -168,6 +175,9 @@ let gedTreatmentKitDrug = [
   "tkd_drug_instruction_uuid",
   "tkd_quantity",
   "tkd_duration",
+  "im_is_emar",
+  "im_can_calculate_frequency_qty",
+  "store_uuid"
 ];
 
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
@@ -910,7 +920,7 @@ const TickSheetMasterController = () => {
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid, fm_user_uuid: user_uuid},
+        where: { fm_status: 1, fm_facility_uuid: facility_uuid }
       };
 
       findQuery.where['is_active'] = +(status);
@@ -987,6 +997,16 @@ function getFavouritesInList(fetchedData) {
       {
         favourite_id: tD.tsm_uuid,
         favourite_name: tD.tsm_name,
+
+        treatment_kit_id: tD.tk_uuid,
+        treatment_kit_name: tD.tk_name,
+        treatment_kit_code: tD.tk_code,
+
+        diet_master_name: tD.dm_name,
+        diet_master_code: tD.dm_code,
+
+        speciality_sketch_name: tD.ss_name,
+        speciality_sketch_code: tD.ss_code,
 
         favourite_details_id: tD.tsmd_uuid,
         favourite_type_id: tD.tsm_favourite_type_uuid,
@@ -1237,7 +1257,10 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_instruction_id: d.tkd_drug_instruction_uuid,
 
       // Strength
-      strength: d.strength
+      strength: d.im_strength,
+      is_emar: d.im_is_emar,
+      im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty,
+      store_uuid : d.store_uuid
     };
   });
 }

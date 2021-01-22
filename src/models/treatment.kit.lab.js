@@ -63,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
             order_priority_uuid: {
                 type: DataTypes.INTEGER
             },
+            comments: {
+                type: DataTypes.STRING
+            },
             created_date: 'created_date',
             modified_date: 'modified_date',
             created_by: {

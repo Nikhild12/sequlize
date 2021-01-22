@@ -83,7 +83,7 @@ const allergyMasterController = () => {
       findQuery.where[Op.or] = [
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_source.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
       ];
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
@@ -250,7 +250,7 @@ const allergyMasterController = () => {
           }
         };
         screenSettings_output = await emr_utility.postRequest(options.uri, options.headers, options.body);
-        if (screenSettings_output) {
+        if (screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           replace_value = parseInt(screenSettings_output.suffix_current_value) + emr_constants.IS_ACTIVE;
           postData.allergey_code = screenSettings_output.prefix + replace_value;
         }
@@ -261,7 +261,7 @@ const allergyMasterController = () => {
 
         const allergyCreatedData = await allergyMastersTbl.create(postData);
 
-        if (allergyCreatedData) {
+        if (allergyCreatedData && screenSettings_output && screenSettings_output.prefix && screenSettings_output.suffix_current_value) {
           let options_two = {
             uri: config.wso2AppUrl + APPMASTER_UPDATE_SCREEN_SETTINGS,
             headers: {
@@ -274,13 +274,13 @@ const allergyMasterController = () => {
             }
           };
           await emr_utility.putRequest(options_two.uri, options_two.headers, options_two.body);
-          postData.uuid = allergyCreatedData.uuid;
-          return res.status(200).send({
-            statusCode: 200,
-            message: "Inserted Allergy Master Successfully",
-            responseContents: postData
-          });
         }
+        postData.uuid = allergyCreatedData.uuid;
+        return res.status(200).send({
+          statusCode: 200,
+          message: "Inserted Allergy Master Successfully",
+          responseContents: postData
+        });
       } catch (ex) {
         return res.status(400).send({ statusCode: 400, message: ex.message });
       }

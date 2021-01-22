@@ -216,47 +216,42 @@ async function getPatientAllergyData(patient_uuid) {
           model: encounterTbl,
           as: 'encounter',
           attributes: ['uuid', 'encounter_type_uuid'],
-
           where: { is_active: 1 },
-
+          required: false,
           include: [{
             model: encounterTypeTbl,
-
             attributes: ['uuid', 'name'],
             where: { is_active: 1 },
-
+            required: false
           }],
         },
         {
           model: allergyMasterTbl,
           as: 'allergy_masters',
           attributes: ['uuid', 'allergy_name'],
-
           where: { is_active: 1 },
-
+          required: false
         },
         {
           model: allergySourceTbl,
           as: 'allergy_source',
           attributes: ['uuid', 'name'],
-
           where: { is_active: 1 },
-
+          required: false
         },
         {
           model: allergySevirityTbl,
           as: 'allergy_severity',
           attributes: ['uuid', 'name'],
-
           where: { is_active: 1 },
-
+          required: false
         },
         {
           model: periodsTbl,
           as: 'periods',
           attributes: ['uuid', 'name'],
-
           where: { is_active: 1 },
+          required: false
 
         },
         {
@@ -264,12 +259,10 @@ async function getPatientAllergyData(patient_uuid) {
           as: 'patient_allergy_status',
           attributes: ['uuid', 'name', 'code'],
           where: { is_active: 1, status: 1 },
-
+          required: false
         }
       ]
-    },
-    { returning: true }
-  );
+    });
 }
 
 function allergyData(patient_allergies) {

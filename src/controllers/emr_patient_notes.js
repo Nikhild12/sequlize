@@ -174,7 +174,6 @@ const notesController = () => {
                         [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
                     }
                 },
-                // attributes: ['uuid', 'patient_uuid', 'encounter_uuid', 'encounter_type_uuid', 'encounter_doctor_uuid', 'profile_uuid', 'entry_status', 'is_active', 'status', 'created_date', 'modified_by', 'created_by', 'modified_date', 'reference_no', ],
                 include: [{
                     model: profilesTbl,
                     required: false,
@@ -292,13 +291,11 @@ const notesController = () => {
                 where: {
                     patient_uuid: patient_uuid
                 },
-                include: [
-                    {
-                        model: consultationsTbl,
-                        required: false,
-                        attributes: ['uuid', 'visible_user', 'visible_dept', 'visible_institution', 'visible_all_institutions']
-                    }
-                ]
+                include: [{
+                    model: consultationsTbl,
+                    required: false,
+                    attributes: ['uuid', 'visible_user', 'visible_dept', 'visible_institution', 'visible_all_institutions']
+                }]
             }
             if (consultation_uuid && /\S/.test(consultation_uuid)) {
                 Object.assign(findQuery.where, {
@@ -395,8 +392,7 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [
-                    {
+                include: [{
                         model: profilesTbl,
                         required: false
                     },
@@ -515,17 +511,16 @@ const notesController = () => {
         try {
             const {
                 patient_uuid,
-                consultation_uuid
+                consultation_uuid,
+                profile_type_uuid
             } = req.query;
             const {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            const Authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
-            // req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
-                include: [
-                    {
+                include: [{
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
@@ -821,15 +816,17 @@ const notesController = () => {
 
                         if (sectionObj[sectionId] && sectionObj[sectionId].categoryObj) {
                             categoryId = eCat.uuid;
-                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {categoryId: eCat.uuid});
-                            if(categoryFindIdx == -1){
+                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {
+                                categoryId: eCat.uuid
+                            });
+                            if (categoryFindIdx == -1) {
                                 sectionObj[sectionId].categoryObj.push({
                                     categoryId: eCat.uuid,
                                     categoryName: eCat.name,
                                     display_order: eCat.display_order,
                                     categoryArray: []
                                 });
-                            }                            
+                            }
                             // if (!sectionObj[sectionId].categoryObj[categoryId]) {
                             //     sectionObj[sectionId].categoryObj[categoryId] = {
                             //         categoryName: eCat.name,
@@ -868,15 +865,17 @@ const notesController = () => {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName +
                                         (eTermKey !== '' ? ' (' + (((eTermKey == 'true')) ? 'Yes' : (eTermKey == 'false' ? 'No' : eTermKey)) + '' + (psccvt_uuid !== 0 ? (' - ' + profSecCatConValTerm.concept_value_term.name) : '') + ')' : '')) : eTermKey,
-                                        display_order: profCatDisOrder
+                                    display_order: profCatDisOrder
                                 };
                             }
                             // let {
                             //     categoryArray
                             // } = sectionObj[sectionId].categoryObj[categoryId];
                             let categoryArray = [];
-                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {categoryId: categoryId});
-                            if(categoryFindIdx !== -1){
+                            const categoryFindIdx = _.findIndex(sectionObj[sectionId].categoryObj, {
+                                categoryId: categoryId
+                            });
+                            if (categoryFindIdx !== -1) {
                                 categoryArray = sectionObj[sectionId].categoryObj[categoryFindIdx].categoryArray;
                             }
                             let displayOrder;
@@ -972,23 +971,32 @@ const notesController = () => {
                 //             sectionObj[s].categoryObj[c].categoryArr = sectionObj[s].categoryObj[c].categoryArr.filter(i=>{ return i!=null });
                 //         }
                 //     }
-                    
-                    // if(sectionObj[s] != null){
-                    //     if(){
 
-                    //     }
-                    //     secArr.push(sectionObj[s]);
+                // if(sectionObj[s] != null){
+                //     if(){
 
-                    // }
+                //     }
+                //     secArr.push(sectionObj[s]);
+
                 // }
-                sectionObj.forEach(i=>{
-                    i.categoryObj.forEach(j=>{
-                        j.categoryArray = j.categoryArray.filter(k=>k!=null);
+                // }
+                sectionObj.forEach(i => {
+                    i.categoryObj.forEach(j => {
+                        j.categoryArray = j.categoryArray.filter(k => k != null);
                     });
                 });
-                printObj.sectionObj =  sectionObj.filter(i=>{ return i!=null });
+                printObj.sectionObj = sectionObj.filter(i => {
+                    return i != null;
+                });
                 // printObj.sectionResult = [...new Set(sample)];
                 printObj.printedOn = moment().utcOffset("+05:30").format('DD-MMM-YYYY hh:mm A');
+                const profile_type_details = await profilesTypesTbl.findOne({
+                    where: {
+                        uuid: profile_type_uuid
+                    },
+                    attributes: ['name']
+                });
+                printObj.profile_type_name = profile_type_details.dataValues.name;
                 const facility_result = await getFacilityDetails(req);
                 if (facility_result.status) {
                     let {
