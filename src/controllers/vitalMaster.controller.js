@@ -16,13 +16,13 @@ const vw_vitals_master = db.vw_vitals_master;
 const emr_uom = db.emr_uom;
 
 const vitalmstrController = () => {
-	/**
-	 * Returns jwt token if valid username and password is provided
-	 * @param req
-	 * @param res
-	 * @param next
-	 * @returns {*}
-	 */
+  /**
+   * Returns jwt token if valid username and password is provided
+   * @param req
+   * @param res
+   * @param next
+   * @returns {*}
+   */
 
 
 
@@ -36,7 +36,7 @@ const vitalmstrController = () => {
 
         vitalsMasterData.name = vitalsMasterData.name;
         vitalsMasterData.description = vitalsMasterData.description;
-       // vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
+        // vitalsMasterData.is_active = vitalsMasterData.status = emr_const.IS_ACTIVE;
         vitalsMasterData.created_by = vitalsMasterData.modified_by = user_uuid;
         vitalsMasterData.created_date = vitalsMasterData.modified_date = new Date();
         vitalsMasterData.revision = 1;
@@ -73,7 +73,7 @@ const vitalmstrController = () => {
 
   //function for getting default vitals
   const _getVitals = async (req, res) => {
-    
+
     try {
       const result = await vitalmstrTbl.findAll(getdefaultVitalsQuery(), { returning: true });
       if (result) {
@@ -97,8 +97,8 @@ const vitalmstrController = () => {
       //   }
       // }] 
     };
-   
-    
+
+
     try {
       const result = await vitalmstrTbl.findAll(query, { returning: true });
       if (result) {
@@ -109,7 +109,7 @@ const vitalmstrController = () => {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
     }
   };
- 
+
   const _getAllVitalsFilter = async (req, res) => {
     const { user_uuid } = req.headers;
     const { searchValue } = req.body;
@@ -204,12 +204,12 @@ const vitalmstrController = () => {
       if (findQuery.where[Op.or]) {
         findQuery.where[Op.and] = [{
           [Op.or]: [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.name.toLowerCase() + '%')
           ]
         }];
       } else {
         findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), getsearch.name.toLowerCase())
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_vitals_master.name')), 'LIKE', '%' + getsearch.name.toLowerCase() + '%')
         ];
       }
     }
@@ -404,18 +404,18 @@ const vitalmstrController = () => {
 
   };
   const _getdefultVitals = async (req, res) => {
-    let { is_default }= req.query;
+    let { is_default } = req.query;
     try {
-     
+
       const result = await vitalmstrTbl.findAll(getdefaultVitals(is_default), { returning: true });
-     
+
       const returnMessage = result > 0 ? emr_constants.FETCHD_VITAL_MASTER_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
-        return res.status(httpStatus.OK).send({
-          code: httpStatus.OK,
-          message: returnMessage,
-          responseContents: result
-        });
-      
+      return res.status(httpStatus.OK).send({
+        code: httpStatus.OK,
+        message: returnMessage,
+        responseContents: result
+      });
+
     }
     catch (ex) {
       return res.status(400).send({ statusCode: httpStatus.BAD_REQUEST, message: ex.message });
@@ -431,7 +431,7 @@ const vitalmstrController = () => {
     updatevitalsById: _updatevitalsById,
     deletevitals: _deletevitals,
     getVitalsByUUID: _getVitalsByUUID,
-    getdefultVitals:_getdefultVitals
+    getdefultVitals: _getdefultVitals
   };
 };
 
@@ -466,11 +466,11 @@ function getdefaultVitalsQuery(vital_uuid) {
   return q;
 }
 
-function getdefaultVitals(is_default){
+function getdefaultVitals(is_default) {
   let q = {
-    where: { is_active:1,status:1}
+    where: { is_active: 1, status: 1 }
   };
-    
+
   if (is_default) {
     q.where.is_default = is_default;
   }
