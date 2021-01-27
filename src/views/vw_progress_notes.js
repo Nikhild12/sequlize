@@ -85,10 +85,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-
             u_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+            },
+            u_salutation_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            title_name: {
+                type: DataTypes.STRING,
             },
             u_first_name: {
                 type: DataTypes.STRING,
