@@ -107,6 +107,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            u_gender_uuid:{
+                type: DataTypes.INTEGER
+            },
+            gender_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             u_user_img_url: {
                 type: DataTypes.STRING,
                 allowNull: true,
