@@ -5374,6 +5374,12 @@
 						"name": "patient_uuid",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "attachment_type_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
