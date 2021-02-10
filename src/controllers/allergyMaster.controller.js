@@ -114,6 +114,19 @@ const allergyMasterController = () => {
         ];
       }
     }
+    if (getsearch.allergy_type_uuid && /\S/.test(getsearch.allergy_type_uuid)) {
+      if (findQuery.where[Op.or]) {
+        findQuery.where[Op.and] = [{
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_type_uuid')), getsearch.allergy_type_uuid)
+          ]
+        }];
+      } else {
+        findQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_type_uuid')), getsearch.allergy_type_uuid)
+        ];
+      }
+    }
 
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
