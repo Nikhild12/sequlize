@@ -362,8 +362,6 @@ const allergyMasterController = () => {
 
   const getAlleryMasterById = async (req, res, next) => {
     const postData = req.body;
-
-    //var getcuDetails = {},getmuDetails={};
     try {
       if (postData.Allergy_id <= 0) {
         return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
@@ -377,28 +375,27 @@ const allergyMasterController = () => {
         },
         offset: offset,
         limit: itemsPerPage,
-        // where: { status: 1, is_active: 1 },
-        include: [{
-          model: allergySourceTbl,
-          required: false,
-          // as: 'source' 
-          attributes: ['uuid', 'name'],
-          // where: { status: 1, is_active: 1 }
-        }
-          ,
-        {
-          model: allergySeverityTbl,
-          required: false,
-          // as: 'source' 
-          attributes: ['uuid', 'name'],
-          // where: { status: 1, is_active: 1 }
-        }
+        include: [
+          {
+            model: allergySourceTbl,
+            required: false,
+            attributes: ['uuid', 'name'],
+          },
+          {
+            model: allergySeverityTbl,
+            required: false,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: allergyTypeTbl,
+            required: false,
+            attributes: ['uuid', 'name']
+          }
         ]
       });
       if (!data) {
         return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
       } else {
-
         const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
         const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
         const getdata = getfulldata(data, getcuDetails, getmuDetails);
@@ -411,7 +408,6 @@ const allergyMasterController = () => {
           });
       }
     } catch (err) {
-      console.log(err);
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -494,7 +490,7 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "uuid": data.uuid,
     "allergey_code": data.allergey_code,
     "allergy_name": data.allergy_name,
-    // "allergy_type_uuid": data.allergy_type_uuid,
+    "allergy_type_uuid": data.allergy_type_uuid,
     "allergy_description": data.allergy_description,
     "comments": data.comments,
     "allergy_source_uuid": data.allergy_source_uuid,
@@ -515,8 +511,8 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "created_date": data.created_date,
     "modified_date": data.modified_date,
     "allergy_source": data.allergy_source,
-    "allergy_severity": data.allergy_severity
-
+    "allergy_severity": data.allergy_severity,
+    "allergy_type": data.allergy_type
   };
   return newdata;
 }
