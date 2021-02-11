@@ -306,6 +306,7 @@ function allergyData(patient_allergies) {
     encounter_uuid: patient_allergies.encounter_uuid,
     consultation_uuid: patient_allergies.consultation_uuid,
     allergy_master_uuid: patient_allergies.allergy_master_uuid,
+    item_master_uuid: patient_allergies.item_master_uuid,
     allergy_type_uuid: patient_allergies.allergy_type_uuid,
     symptom: patient_allergies.symptom,
     performed_date: patient_allergies.performed_date,
