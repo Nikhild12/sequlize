@@ -1,5 +1,3 @@
-
-
 module.exports = (sequelize, DataTypes) => {
     const allergy_source = sequelize.define(
         "allergy_source", {
@@ -9,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
-            // 1 to 21 columns
             code: {
                 type: DataTypes.STRING(250),
                 allowNull: true
@@ -34,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
-
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
@@ -52,12 +48,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
-           
             modified_by: {
                 type: DataTypes.INTEGER,
                 allowNull: true
-            },
-           
+            }
         }, {
             tableName: "allergy_source",
             createdAt: 'created_date',
