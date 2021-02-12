@@ -120,28 +120,33 @@ const patientAttachmentsController = () => {
 
     const _getAllAttachments = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { patient_uuid } = req.query;
+        const { patient_uuid, attachment_type_uuid } = req.query;
         try {
             if (user_uuid) {
-                const data = await attachmentTbl.findAll({
+                let findQuery = {
                     where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
                     include: [
                         {
                             model: attachmentTypeTbl,
                             as: 'attachment_type',
                             attributes: ['uuid', 'code', 'name'],
-                            where: { is_active: 1, status: 1 }
+                            where: { is_active: 1, status: 1 },
+                            required: false
                         },
                         {
                             model: encounterTbl,
                             as: 'encounter',
                             attributes: ['uuid', 'patient_uuid', 'encounter_date'],
-                            where: { is_active: 1, status: 1 }
-                        },]
-                },
-                    { returning: true }
-                );
-
+                            where: { is_active: 1, status: 1 },
+                            required: false
+                        }]
+                }
+                if (attachment_type_uuid) {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        attachment_type_uuid: attachment_type_uuid
+                    });
+                }
+                const data = await attachmentTbl.findAll(findQuery);
                 if (data) {
                     return res
                         .status(httpStatus.OK)

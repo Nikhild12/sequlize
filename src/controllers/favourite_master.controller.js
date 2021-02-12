@@ -1260,7 +1260,7 @@ function getDrugDetailsFromTreatment(drugArray) {
       strength: d.im_strength,
       is_emar: d.im_is_emar,
       im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty,
-      store_uuid : d.store_uuid
+      store_uuid: d.store_uuid
     };
   });
 }

@@ -85,10 +85,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
-
             u_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+            },
+            u_salutation_uuid: {
+                type: DataTypes.INTEGER,
+            },
+            title_name: {
+                type: DataTypes.STRING,
             },
             u_first_name: {
                 type: DataTypes.STRING,
@@ -99,6 +104,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             u_last_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            u_gender_uuid:{
+                type: DataTypes.INTEGER
+            },
+            gender_name: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },

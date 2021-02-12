@@ -23,7 +23,8 @@ const allergySourceTbl = sequelizeDb.allergy_source;
 const allergyMasterTbl = sequelizeDb.allergy_masters;
 const periodsTbl = sequelizeDb.periods;
 const patientAllergyStatus = sequelizeDb.patient_allergy_status;
-
+const allergyTypeTbl = sequelizeDb.allergy_type;
+const { INVENTORY_REFERENCY_GETREFERENCTBYARRAYOFIDS } = emr_constants.DEPENDENCY_URLS;
 
 const Patient_Allergies = () => {
 
@@ -33,30 +34,25 @@ const Patient_Allergies = () => {
      * @param {*} res 
      */
   const _addNewAllergy = async (req, res) => {
-
     const { user_uuid } = req.headers;
     let { patient_allergies } = req.body;
-
     if (user_uuid && patient_allergies) {
       try {
         patient_allergies = emr_utility.createIsActiveAndStatus(patient_allergies, user_uuid);
         patient_allergies.start_date = patient_allergies.end_date = patient_allergies.performed_date;
         patient_allergies.performed_by = user_uuid;
-
         if (patient_allergies.hasOwnProperty('no_known_allergy') && typeof patient_allergies.no_known_allergy === 'boolean') {
           if (!patient_allergies.no_known_allergy && !patient_allergies.hasOwnProperty('allergy_master_uuid')) {
             return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: emr_constants.SEND_ALLERGY_MASTER_UUID });
           }
         }
-
         const createdAllergy = await patientAllergiesTbl.create(patient_allergies, { returing: true });
         patient_allergies.uuid = createdAllergy.uuid;
-        if (emr_config.isBlockChain === 'ON') {
-          allergy_blockchain.createPatientAllergyBlockchain(patient_allergies);
-        }
+        // if (emr_config.isBlockChain === 'ON') {
+        //   allergy_blockchain.createPatientAllergyBlockchain(patient_allergies);
+        // }
         return res.status(200).send({ code: httpStatus.OK, message: emr_constants.INSERTED_PATIENT_ALLERGY_SUCCESS, responseContents: patient_allergies });
       } catch (ex) {
-        console.log('Exception happened', ex);
         return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
       }
     } else {
@@ -73,18 +69,39 @@ const Patient_Allergies = () => {
   const _getPatientAllergies = async (req, res) => {
     const { user_uuid } = req.headers;
     const { patient_uuid } = req.query;
-
     try {
       if (user_uuid && patient_uuid) {
+        let item_master_url = emr_config.wso2InvUrl + INVENTORY_REFERENCY_GETREFERENCTBYARRAYOFIDS;
         const patientAllergyData = await getPatientAllergyData(patient_uuid);
         if (patientAllergyData) {
+          let item_master_ids = [... new Set(patientAllergyData.map(e => { return e.item_master_uuid }))];
+          let options = {
+            uri: item_master_url,
+            headers: {
+              Authorization: req.headers.authorization || req.headers.Authorization,
+              user_uuid: user_uuid
+            },
+            body: {
+              table_name: "item_master",
+              Ids: item_master_ids
+            }
+          };
+          let item_master_data = await emr_utility.postRequest(options.uri, options.headers, options.body);
+          for (let e of patientAllergyData) {
+            if (item_master_data && item_master_data.length) {
+              for (let io of item_master_data) {
+                if (e.item_master_uuid == io.uuid) {
+                  e.dataValues.item_master = io;
+                }
+              }
+            }
+          }
           return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
         }
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND} ${emr_constants.OR} ${emr_constants.NO} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
-      console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
   };
@@ -96,19 +113,31 @@ const Patient_Allergies = () => {
 
     try {
       if (user_uuid && uuid) {
-        const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } }, { returning: true });
+        const patientAllergyData = await patientAllergiesTbl.findOne({ where: { uuid: uuid } });
+        // if (patientAllergyData && Object.values(patientAllergyData.item_master_uuid).length > 0) {
+        //   let options = {
+        //     uri: item_master_url,
+        //     headers: {
+        //       Authorization: req.headers.authorization || req.headers.Authorization,
+        //       user_uuid: user_uuid
+        //     },
+        //     body: {
+        //       table_name: "item_master",
+        //       Ids: [patientAllergyData.item_master_uuid]
+        //     }
+        //   };
+        //   let item_master_data = await emr_utility.postRequest(options.uri, options.headers, options.body);
+        // }
 
-        if (emr_config.isBlockChain === 'ON') {
-          allergy_blockchain.getPatientAllergyBlockChain(+(uuid));
-        }
+        // if (emr_config.isBlockChain === 'ON') {
+        //   allergy_blockchain.getPatientAllergyBlockChain(+(uuid));
+        // }
         return res.status(200).send({ code: httpStatus.OK, responseContent: patientAllergyData });
       } else {
         return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.FOUND}` });
       }
     } catch (ex) {
-      console.log('Exception happened', ex);
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
-
     }
   };
 
@@ -233,6 +262,13 @@ async function getPatientAllergyData(patient_uuid) {
           required: false
         },
         {
+          model: allergyTypeTbl,
+          attributes: ['uuid', 'name'],
+          where: { is_active: 1, status: 1 },
+          required: false,
+          as: "allergy_type"
+        },
+        {
           model: allergySourceTbl,
           as: 'allergy_source',
           attributes: ['uuid', 'name'],
@@ -252,7 +288,6 @@ async function getPatientAllergyData(patient_uuid) {
           attributes: ['uuid', 'name'],
           where: { is_active: 1 },
           required: false
-
         },
         {
           model: patientAllergyStatus,
@@ -271,6 +306,7 @@ function allergyData(patient_allergies) {
     encounter_uuid: patient_allergies.encounter_uuid,
     consultation_uuid: patient_allergies.consultation_uuid,
     allergy_master_uuid: patient_allergies.allergy_master_uuid,
+    item_master_uuid: patient_allergies.item_master_uuid,
     allergy_type_uuid: patient_allergies.allergy_type_uuid,
     symptom: patient_allergies.symptom,
     performed_date: patient_allergies.performed_date,
