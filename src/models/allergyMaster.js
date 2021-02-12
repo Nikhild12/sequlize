@@ -1,6 +1,4 @@
 const emr_constants = require('../config/constants');
-
-
 module.exports = (sequelize, DataTypes) => {
     const allergy_masters = sequelize.define(
         "allergy_masters", {
@@ -10,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true
         },
-        // 1 to 21 columns
         allergey_code: {
             type: DataTypes.STRING(250),
             allowNull: true
@@ -71,12 +68,14 @@ module.exports = (sequelize, DataTypes) => {
     }
     );
     allergy_masters.associate = models => {
-
         allergy_masters.belongsTo(models.allergy_source, {
             foreignKey: "allergy_source_uuid"
         });
         allergy_masters.belongsTo(models.allergy_severity, {
             foreignKey: "allergy_severity_uuid"
+        });
+        allergy_masters.belongsTo(models.allergy_type, {
+            foreignKey: "allergy_type_uuid"
         });
     };
 

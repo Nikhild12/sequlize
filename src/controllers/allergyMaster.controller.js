@@ -15,6 +15,7 @@ const emr_utility = require('../services/utility.service');
 const allergyMastersTbl = db.allergy_masters;
 const allergySourceTbl = db.allergy_source;
 const allergySeverityTbl = db.allergy_severity;
+const allergyTypeTbl = db.allergy_type;
 const { APPMASTER_GET_SCREEN_SETTINGS, APPMASTER_UPDATE_SCREEN_SETTINGS } = emr_constants.DEPENDENCY_URLS;
 
 const allergyMasterController = () => {
@@ -28,31 +29,21 @@ const allergyMasterController = () => {
 
   const getAllergyMaster = async (req, res, next) => {
     let getsearch = req.body;
-
     let pageNo = 0;
     const itemsPerPage = getsearch.paginationSize ? getsearch.paginationSize : 10;
     let sortField = 'modified_date';
     let sortOrder = 'DESC';
-
     if (getsearch.pageNo) {
       let temp = parseInt(getsearch.pageNo);
-
-
       if (temp && (temp != NaN)) {
         pageNo = temp;
       }
     }
-
     const offset = pageNo * itemsPerPage;
-
-
     if (getsearch.sortField) {
-
       sortField = getsearch.sortField;
     }
-
     if (getsearch.sortOrder && ((getsearch.sortOrder == 'ASC') || (getsearch.sortOrder == 'DESC'))) {
-
       sortOrder = getsearch.sortOrder;
     }
     let splitSortField;
@@ -66,24 +57,29 @@ const allergyMasterController = () => {
       include: [{
         model: allergySourceTbl,
         required: false,
+        attributes: ['uuid', 'code', 'name']
       },
       {
         model: allergySeverityTbl,
         required: false,
-        attributes: ['uuid', 'name'],
+        attributes: ['uuid', 'code', 'name']
+      },
+      {
+        model: allergyTypeTbl,
+        required: false,
+        attributes: ['uuid', 'code', 'name']
       }],
       order: [
         sortField == "allergy_source.name" ? [allergySourceTbl, splitSortField[1], sortOrder] : [sortField, sortOrder]
       ]
     };
-
-
-
     if (getsearch.search && /\S/.test(getsearch.search)) {
       findQuery.where[Op.or] = [
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergey_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_masters.allergy_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_source.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_severity.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('allergy_type.name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
       ];
     }
     if (getsearch.name && /\S/.test(getsearch.name)) {
@@ -127,16 +123,11 @@ const allergyMasterController = () => {
         ];
       }
     }
-
     if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
       findQuery.where['is_active'] = getsearch.status;
     }
-
-
     try {
       await allergyMastersTbl.findAndCountAll(findQuery)
-
-
         .then((findData) => {
           const newTestJson = JSON.parse(JSON.stringify(findData.rows));
           newTestJson.forEach((item) => {
@@ -145,7 +136,6 @@ const allergyMasterController = () => {
             }
             else { item.name = null; }
           });
-
           row = newTestJson;
           return res
             .status(httpStatus.OK)
@@ -153,13 +143,11 @@ const allergyMasterController = () => {
               message: "success",
               statusCode: 200,
               responseContents: row,
-              totalRecords: (findData.count ? findData.count : 0),
-
+              totalRecords: (findData.count ? findData.count : 0)
             });
         })
         .catch(err => {
           const errorMsg = err.errors ? err.errors[0].message : err.message;
-
           return res
             .status(httpStatus.OK)
             .json({
@@ -374,8 +362,6 @@ const allergyMasterController = () => {
 
   const getAlleryMasterById = async (req, res, next) => {
     const postData = req.body;
-
-    //var getcuDetails = {},getmuDetails={};
     try {
       if (postData.Allergy_id <= 0) {
         return res.status(400).send({ code: 400, message: 'Please provide Valid Allergy id' });
@@ -389,28 +375,27 @@ const allergyMasterController = () => {
         },
         offset: offset,
         limit: itemsPerPage,
-        // where: { status: 1, is_active: 1 },
-        include: [{
-          model: allergySourceTbl,
-          required: false,
-          // as: 'source' 
-          attributes: ['uuid', 'name'],
-          // where: { status: 1, is_active: 1 }
-        }
-          ,
-        {
-          model: allergySeverityTbl,
-          required: false,
-          // as: 'source' 
-          attributes: ['uuid', 'name'],
-          // where: { status: 1, is_active: 1 }
-        }
+        include: [
+          {
+            model: allergySourceTbl,
+            required: false,
+            attributes: ['uuid', 'name'],
+          },
+          {
+            model: allergySeverityTbl,
+            required: false,
+            attributes: ['uuid', 'name']
+          },
+          {
+            model: allergyTypeTbl,
+            required: false,
+            attributes: ['uuid', 'name']
+          }
         ]
       });
       if (!data) {
         return res.status(httpStatus.OK).json({ statusCode: 200, message: 'No Record Found with this Allergy Id' });
       } else {
-
         const getcuDetails = await getuserDetails(req.headers.user_uuid, data.created_by, req.headers.authorization);
         const getmuDetails = await getuserDetails(req.headers.user_uuid, data.modified_by, req.headers.authorization);
         const getdata = getfulldata(data, getcuDetails, getmuDetails);
@@ -423,7 +408,6 @@ const allergyMasterController = () => {
           });
       }
     } catch (err) {
-      console.log(err);
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res
         .status(httpStatus.INTERNAL_SERVER_ERROR)
@@ -506,7 +490,7 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "uuid": data.uuid,
     "allergey_code": data.allergey_code,
     "allergy_name": data.allergy_name,
-    // "allergy_type_uuid": data.allergy_type_uuid,
+    "allergy_type_uuid": data.allergy_type_uuid,
     "allergy_description": data.allergy_description,
     "comments": data.comments,
     "allergy_source_uuid": data.allergy_source_uuid,
@@ -527,8 +511,8 @@ function getfulldata(data, getcuDetails, getmuDetails) {
     "created_date": data.created_date,
     "modified_date": data.modified_date,
     "allergy_source": data.allergy_source,
-    "allergy_severity": data.allergy_severity
-
+    "allergy_severity": data.allergy_severity,
+    "allergy_type": data.allergy_type
   };
   return newdata;
 }
