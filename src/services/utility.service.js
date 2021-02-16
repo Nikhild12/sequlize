@@ -103,7 +103,7 @@ const _postRequest = async (api, headers, data) => {
   return new Promise((resolve, reject) => {
     request.post({ uri: api, headers: headers, json: data },
       function (error, response, body) {
-        console.log("\n body...", api,headers,data);
+        console.log("\n body...", api, headers, data);
         console.log("\n body...", body);
         if (error) {
           reject(error);
@@ -297,6 +297,14 @@ const _deployedBlockChainUrl = () => {
   return urlobj[config.blockChainURL];
 };
 
+const _getDeployedStateLogo = () => {
+  const statedep = {
+    TN: { left: '/assets/images/tnlogo.png', right: '' },
+    PUNE: '/assets/images/punelogo.png'
+  };
+  return statedep[config.state] ? statedep[config.state] : statedep.TN;
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -319,5 +327,6 @@ module.exports = {
   deployedBlockChainUrl: _deployedBlockChainUrl,
   deleteRequest: _deleteRequest,
   getBlockChainRequest: _getBlockChainRequest,
-  putBlockChainRequest: _putBlockChainRequest
+  putBlockChainRequest: _putBlockChainRequest,
+  getDeployedStateLogo: _getDeployedStateLogo
 };
