@@ -9822,6 +9822,12 @@
 				"parameters": [
 					{
 						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
