@@ -413,5 +413,9 @@ module.exports = Object.freeze({
       case 2:
         return "IP";
     }
+  },
+  state: {
+    TN: "TN",
+    PUNE: "PUNE"
   }
 });
