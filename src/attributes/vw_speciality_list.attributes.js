@@ -61,8 +61,8 @@ const _getSpecialityResponse = (record = []) => {
             modified_date: element.ss_modified_date,
             created_user_name: element.created_user_name,
             modified_user_name: element.modified_user_name,
-            created_title_name: element.ss_created_title_name,
-            modified_title_name: element.ss_modified_title_name,
+            created_title_name: element.created_title_name,
+            modified_title_name: element.modified_title_name,
             department_name: element.d_name,
             speciality_sketch_details: record.map((r) => {
                 return {
