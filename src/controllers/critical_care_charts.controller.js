@@ -505,7 +505,7 @@ function getvdList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 ventilator_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.critical_care_charts.code=="Date & Time" ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -939,7 +939,7 @@ function getdlList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 dl_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.critical_care_charts.code=="Date & Time" ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
