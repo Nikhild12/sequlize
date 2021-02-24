@@ -471,10 +471,11 @@ const cccMasterController = () => {
 
     const updatecccMasterById = async (req, res) => {
         const { user_uuid } = req.headers;
-        //   const { data } = req.body;
+         //const { data } = req.body;
+        
         if (user_uuid) {
             try {
-                let bulkUpdateCCCResponse = await bulkUpdateCCC(req.body);
+                let bulkUpdateCCCResponse = await bulkUpdateCCC(req.body,user_uuid);
                 return res.send({ status: 'success', statusCode: 200, msg: 'success', responseContents: bulkUpdateCCCResponse });
             } catch (err) {
                 return res.send({ status: 'error', statusCode: 400, msg: 'failed', error: err.message });
@@ -484,7 +485,7 @@ const cccMasterController = () => {
         }
     };
 
-    const bulkUpdateCCC = async (req) => {
+    const bulkUpdateCCC = async (req,user_uuid) => {
         var deferred = new Q.defer();
         var cccData = req;
         var cccData1 = req.body;
@@ -492,7 +493,7 @@ const cccMasterController = () => {
         var cccData3 = req.body2;
         let valuetypesSave = []; let valuetypesSave1 = [];
         let valuetypesSave2 = [];
-
+       cccData2.modified_by= user_uuid;
         var cccDetailsUpdate = [];
         cccDetailsUpdate = await cccMasterTbl.update(cccData1,
             { where: { uuid: cccData1.critical_care_charts_uuid } });
@@ -502,7 +503,7 @@ const cccMasterController = () => {
         if (cccData3.concept_value) {
             for (let i = 0; i < cccData3.concept_value.length; i++) {
                 const element = cccData3.concept_value[i];
-                cccDetailsUpdate.push(await conceptdetailsTbl.update({ concept_value: element.concept_value, cc_concept_uuid: cccData3.cc_concept_uuid }, { where: { uuid: element.critical_care_concept_values_uuid } }));
+                cccDetailsUpdate.push(await conceptdetailsTbl.update({ concept_value: element.concept_value, cc_concept_uuid: cccData3.cc_concept_uuid,modified_by:user_uuid }, { where: { uuid: element.critical_care_concept_values_uuid } }));
             }
         }
         else {
@@ -510,8 +511,8 @@ const cccMasterController = () => {
             // obj_copy.critical_care_concept_values_uuid = cccData3.critical_care_concept_values_uuid,
             obj_copy.cc_concept_uuid = cccData3.cc_concept_uuid,
                 obj_copy.value_from = cccData3.normalrange.value_from,
-                obj_copy.value_to = cccData3.normalrange.value_to;
-
+                obj_copy.value_to = cccData3.normalrange.value_to,
+                obj_copy.modified_by= user_uuid;
             //valuetypesSave.push(obj_copy);
             cccDetailsUpdate = await conceptdetailsTbl.update(obj_copy,
                 { where: { uuid: cccData3.normalrange.critical_care_concept_values_uuid } },
