@@ -665,7 +665,7 @@ function getadList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'),
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
