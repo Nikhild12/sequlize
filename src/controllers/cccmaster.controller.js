@@ -153,7 +153,19 @@ const cccMasterController = () => {
                     ];
                 }
             }
-
+            /*Critical care type uuid filter*/
+            if (getsearch.ccuuid && /\S/.test(getsearch.ccuuid)) {
+                if (findQuery.where[Op.or]) {
+                    findQuery.where[Op.and] = [{
+                        [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.critical_care_type_uuid')), getsearch.ccuuid)]
+                    }];
+                } else {
+                    findQuery.where[Op.or] = [
+                        Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('critical_care_charts.critical_care_type_uuid')), getsearch.ccuuid)
+                    ];
+                }
+            }
+            /*Critical care type uuid filter*/
             if (getsearch.codeName && /\S/.test(getsearch.codeName)) {
                 if (findQuery.where[Op.or]) {
                     findQuery.where[Op.and] = [{
