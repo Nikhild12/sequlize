@@ -78,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(2000),
                 allowNull: true,
             },
+            is_emr_entry: { // field added by Manikanta 34443
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: "1",
