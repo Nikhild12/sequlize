@@ -25,6 +25,7 @@ const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
+const treatmentKitChiefComplaintsTbl = sequelizeDb.treatment_kit_chief_complaint_map;
 
 const treatmentKitAtt = [
     "u_uuid",
@@ -289,6 +290,11 @@ const _updateDiagnosis = (diagnosis, uId, tkId) => {
     return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id', 'Diagnosis');
 };
 
+// treatment ChiefComplaints Update
+const _updateChiefComplaints = (chiefcomplaints, uId, tkId) => {
+    return updateTreatmentKit(chiefcomplaints, treatmentKitChiefComplaintsTbl, uId, tkId, 'treatment_kit_chiefcomplaints_id', 'ChiefComplaints');
+};
+
 // treatment Lab Update
 const _updateLab = (lab, uId, tkId) => {
     return updateTreatmentKit(lab, treatmentkitLabTbl, uId, tkId, 'treatment_kit_lab_id', 'Lab');
@@ -311,6 +317,8 @@ module.exports = {
     getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable,
     updateDrug: _updateDrug,
     updateDiagnosis: _updateDiagnosis,
+    updateDiagnosis: _updateDiagnosis,
+    updateChiefComplaints: _updateChiefComplaints,
     updateLab: _updateLab,
     updateRadiolgy: _updateRadiolgy,
     updateInvestigation: _updateInvestigation
@@ -379,6 +387,22 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
         };
     });
 }
+
+// Returns ChiefComplaints Details From Treatment Kit
+/*
+function getChiefComplaintsDetailsFromTreatment(chiefcomplaintsArray) {
+    return chiefcomplaintsArray.map((cc) => {
+        return {
+            chiefcomplaints_id: cc.tkdm_diagnosis_uuid,
+            chiefcomplaints_comments: cc.tdkm_comments,
+            chiefcomplaints_name: cc.td_name,
+            chiefcomplaints_code: cc.td_code,
+            chiefcomplaints_description: cc.td_description,
+            treatment_kit_chiefcomplaints_id: cc.tdkm_uuid
+        };
+    });
+}
+*/
 
 // Returns Investigation Details From Treatment Kit
 function getInvestigationDetailsFromTreatment(investigationArray) {
@@ -473,7 +497,7 @@ function updateTreatmentKit(object, table, uId, tkId, updateColumn, tName) {
     }
 
     // Updating Exisiting Record
-    if (object.hasOwnProperty("update") && Array.isArray(object.update) && tName !== 'Diagnosis') {
+    if (object.hasOwnProperty("update") && Array.isArray(object.update) && (tName !== 'Diagnosis' || tName !== 'ChiefComplaints')) {
         updateArray = [...updateArray, ...updateRecords(object.update, table, uId, updateColumn)];
     }
 
