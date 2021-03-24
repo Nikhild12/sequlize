@@ -648,7 +648,6 @@ const TreatMent_Kit = () => {
     if (user_uuid && (treatmentKitId && treatmentKitId > 0)) {
       try {
         const treatmentById = await treatmentKitAtt.getTreatmentFavByIdPromise(treatmentKitId);
-        return res.send(treatmentById);
         // Checking Response
         const responseCount = treatmentById && treatmentById.reduce((acc, cur) => {
           return acc + cur.length;
