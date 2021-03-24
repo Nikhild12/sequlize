@@ -228,23 +228,19 @@ const _getTreatmentFavByIdPromise = (treatmentId) => {
         treatmentKitListViewTbl.findAll({
             attributes: treatmentKitAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "TreatmentKit"),
-        }),
+        }), // Treatment Kit
         vmTreatmentFavouriteDrug.findAll({
             attributes: gedTreatmentKitDrug,
             where: _getTreatmentKitByIdQuery(treatmentId, "Drug"),
-        }), // Drug Details
+        }), // Drug
         vmTreatmentFavouriteDiagnosis.findAll({
             attributes: getTreatmentKitDiaAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Diagnosis"),
-        }),
-        vmTreatmentFavouriteChiefComplaints.findAll({
-            attributes: getTreatmentKitCCAtt,
-            where: _getTreatmentKitByIdQuery(treatmentId, "ChiefComplaints"),
-        }),
+        }), // Diagnosis
         vmTreatmentFavouriteInvesti.findAll({
             attributes: getTreatmentKitInvestigationAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Investigation"),
-        }), // 
+        }), // Investigation
         vmTreatmentFavouriteRadiology.findAll({
             attributes: getTreatmentKitRadiologyAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Radiology"),
@@ -252,7 +248,11 @@ const _getTreatmentFavByIdPromise = (treatmentId) => {
         vmTreatmentFavouriteLab.findAll({
             attributes: getTreatmentKitLabAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Lab"),
-        }), // lab
+        }), // Lab
+        vmTreatmentFavouriteChiefComplaints.findAll({
+            attributes: getTreatmentKitCCAtt,
+            where: _getTreatmentKitByIdQuery(treatmentId, "ChiefComplaints"),
+        }), // Chief Complaints
     ]);
 };
 
