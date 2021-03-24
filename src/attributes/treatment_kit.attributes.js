@@ -18,6 +18,7 @@ const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnos
 const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
+const vmTreatmentFavouriteChiefComplaints = sequelizeDb.vw_favourite_treatment_chief_complaints;
 
 // Treatment Kit Table
 const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
@@ -113,6 +114,19 @@ let getTreatmentKitDiaAtt = [
 // Concating Diagnosis
 getTreatmentKitDiaAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitDiaAtt];
 
+// Chief Complaints Attribute
+let getTreatmentKitCCAtt = [
+    "tkccm_chief_complaint_uuid",
+    "cc_name",
+    "cc_code",
+    "cc_description",
+    "tkccm_comments",
+    "tkccm_uuid"
+];
+
+// Concating Chief Complaints
+getTreatmentKitCCAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitCCAtt];
+
 // Investigation Attributes
 let getTreatmentKitInvestigationAtt = [
     "tkim_test_master_uuid",
@@ -207,6 +221,7 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
 
     return treatmentQuery;
 };
+
 const _getTreatmentFavByIdPromise = (treatmentId) => {
     return Promise.all([
 
@@ -221,6 +236,10 @@ const _getTreatmentFavByIdPromise = (treatmentId) => {
         vmTreatmentFavouriteDiagnosis.findAll({
             attributes: getTreatmentKitDiaAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Diagnosis"),
+        }),
+        vmTreatmentFavouriteChiefComplaints.findAll({
+            attributes: getTreatmentKitCCAtt,
+            where: _getTreatmentKitByIdQuery(treatmentId, "ChiefComplaints"),
         }),
         vmTreatmentFavouriteInvesti.findAll({
             attributes: getTreatmentKitInvestigationAtt,
@@ -274,6 +293,13 @@ const _getTreatmentFavouritesInHumanUnderstandable = (treatFav) => {
     if (treatFav && treatFav.length > 0 && treatFav[5] && treatFav[5].length) {
         favouritesByIdResponse.lab_details = getLabDetailsFromTreatment(
             treatFav[5]
+        );
+    }
+
+    // Chief Complaints Details
+    if (treatFav && treatFav.length > 0 && treatFav[6] && treatFav[6].length) {
+        favouritesByIdResponse.chief_complaints_details = getChiefComplaintsDetailsFromTreatment(
+            treatFav[6]
         );
     }
 
@@ -389,20 +415,18 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
 }
 
 // Returns ChiefComplaints Details From Treatment Kit
-/*
 function getChiefComplaintsDetailsFromTreatment(chiefcomplaintsArray) {
     return chiefcomplaintsArray.map((cc) => {
         return {
-            chiefcomplaints_id: cc.tkdm_diagnosis_uuid,
-            chiefcomplaints_comments: cc.tdkm_comments,
-            chiefcomplaints_name: cc.td_name,
-            chiefcomplaints_code: cc.td_code,
-            chiefcomplaints_description: cc.td_description,
-            treatment_kit_chiefcomplaints_id: cc.tdkm_uuid
+            chief_complaint_id: cc.tkccm_chief_complaint_uuid,
+            chief_complaint_comments: cc.tkccm_comments,
+            chief_complaint_name: cc.cc_name,
+            chief_complaint_code: cc.cc_code,
+            chief_complaint_description: cc.cc_description,
+            treatment_kit_chief_complaint_id: cc.tkccm_uuid
         };
     });
 }
-*/
 
 // Returns Investigation Details From Treatment Kit
 function getInvestigationDetailsFromTreatment(investigationArray) {
