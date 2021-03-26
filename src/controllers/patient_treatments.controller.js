@@ -1,8 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
 
-const moment = require("moment");
-
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
@@ -20,11 +18,11 @@ const emr_constants = require("../config/constants");
 // Utility Service
 const utilityService = require("../services/utility.service");
 
-// tbl
+// Tables
 const patientTreatmenttbl = sequelizeDb.patient_treatments;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
+const patientChiefComplaintsTbl = sequelizeDb.patient_chief_complaints;/* Sreeni - Patient Chief Complaints Added - H30-34349 */
 const diagnosisTbl = sequelizeDb.diagnosis;
-const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
 const encounterTypeTbl = sequelizeDb.encounter_type;
 const treatmentKitTable = sequelizeDb.treatment_kit;
 
@@ -45,7 +43,7 @@ const PatientTreatmentController = () => {
   const _createPatientTreatment = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
     const { patientTreatment } = req.body;
-    const { patientDiagnosis, patientPrescription } = req.body;
+    const { patientDiagnosis, patientChiefComplaints, patientPrescription } = req.body;
     const { patientLab, patientRadiology, patientInvestigation } = req.body;
 
     // let patientTransaction;
@@ -58,7 +56,7 @@ const PatientTreatmentController = () => {
         });
       }
 
-      let patientDgnsCreatedData;
+      let patientDgnsCreatedData, patientCCData;
       let prescriptionCreated, labCreated, investigationCreated, radialogyCreated;
 
       try {
@@ -80,20 +78,18 @@ const PatientTreatmentController = () => {
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
             p.performed_by = user_uuid;
             p.performed_date = new Date();
-            p = utilityService.assignDefaultValuesAndUUIdToObject(
-              p,
-              patientTKCreatedData,
-              user_uuid,
-              "patient_treatment_uuid"
-            );
+            p = utilityService.assignDefaultValuesAndUUIdToObject(p,patientTKCreatedData,user_uuid,"patient_treatment_uuid");
           });
-          patientDgnsCreatedData = await patientDiagnosisTbl.bulkCreate(
-            patientDiagnosis,
-            {
-              returning: true,
-              validate: true
-            }
-          );
+          patientDgnsCreatedData = await patientDiagnosisTbl.bulkCreate(patientDiagnosis,{ returning: true, validate: true });
+        }
+        /* Sreeni - Patient Chief Complaints Added - H30-34349 */
+        if (Array.isArray(patientChiefComplaints) && patientChiefComplaints.length > 0) {
+          patientChiefComplaints.forEach(cc => {
+            cc.performed_by = user_uuid;
+            cc.performed_date = new Date();
+            cc = utilityService.assignDefaultValuesAndUUIdToObject(cc,patientTKCreatedData,user_uuid,"patient_treatment_uuid");
+          });
+          patientCCData = await patientChiefComplaintsTbl.bulkCreate(patientChiefComplaints,{ returning: true, validate: true });
         }
         if (patientTreatmentAttributes.isPrescriptionAvailable(patientPrescription)) {
 
@@ -130,17 +126,15 @@ const PatientTreatmentController = () => {
 
 
         }
-
-
-
         //await patientTransaction.commit();
-        // patientTransactionStatus = true;
+        //patientTransactionStatus = true;
         return res.status(200).send({
           code: httpStatus.OK,
           message: emr_constants.INSERTED_PATIENT_TREATMENT,
           responseContents: {
             patientTKCreatedData,
             patientDgnsCreatedData,
+            patientCCData,
             prescriptionCreated,
             labCreated,
             investigationCreated,
