@@ -6,10 +6,12 @@ const rp = require('request-promise');
 // Utility Service
 const utilityService = require("../services/utility.service");
 
-
-
 const _isDiagnosisAvailable = diagnosis => {
   return Array.isArray(diagnosis) && diagnosis.length > 0;
+};
+/* Sreeni - Patient Chief Complaints Added - H30-34349 */
+const _isChiefComplaintsAvailable = chiefcomplaints => {
+  return Array.isArray(chiefcomplaints) && chiefcomplaints.length > 0;
 };
 const _isLabAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
@@ -25,7 +27,6 @@ const _isPrescriptionAvailable = ({ header, details } = {}) => {
 
   return header && Array.isArray(details) && details.length > 0;
 };
-
 const _isInvistigationAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
     return false;
@@ -33,7 +34,6 @@ const _isInvistigationAvailable = ({ header, details } = {}) => {
 
   return header && Array.isArray(details) && details.length > 0;
 };
-
 const _isRadiologyAvailable = ({ header, details } = {}) => {
   if (header == undefined || details == undefined) {
     return false;
@@ -43,7 +43,7 @@ const _isRadiologyAvailable = ({ header, details } = {}) => {
 };
 
 const _checkPatientTreatmentBody = req => {
-  const { patientDiagnosis, patientPrescription } = req.body;
+  const { patientDiagnosis, patientChiefComplaints, patientPrescription } = req.body;
   const { patientLab, patientRadiology, patientInvestigation } = req.body;
   // console.log("Diagnosis Available", _isDiagnosisAvailable(patientDiagnosis));
   // console.log("RadialogyAvailable", _isRadiologyAvailable(patientRadiology));
@@ -51,13 +51,12 @@ const _checkPatientTreatmentBody = req => {
   // console.log("Pres Available", _isPrescriptionAvailable(patientPrescription));
   // console.log("InvestigationAvailable", _isInvistigationAvailable(patientInvestigation));
   return (
-
     _isDiagnosisAvailable(patientDiagnosis) ||
+    _isChiefComplaintsAvailable(patientChiefComplaints) || /* Sreeni - Patient Chief Complaints Added - H30-34349 */
     _isRadiologyAvailable(patientRadiology) ||
     _isLabAvailable(patientLab) ||
     _isPrescriptionAvailable(patientPrescription)
   );
-
 };
 
 const _createPrescriptionHelper = async (
@@ -81,7 +80,6 @@ const _createPrescriptionHelper = async (
   );
   return data
 };
-
 
 const _createLabHelper = async (
   { facility_uuid, user_uuid, authorization },
@@ -147,7 +145,6 @@ const _deletePrescription = async ({ user_uuid, authorization }, id) => {
   }
 
 };
-
 
 const _createInvestgationHelper = async ({ facility_uuid, user_uuid, authorization }, { header, details }) => {
   return await utilityService.postRequest(
@@ -222,6 +219,7 @@ module.exports = {
   isRadiologyAvailable: _isRadiologyAvailable,
   isInvistigationAvailable: _isInvistigationAvailable,
   isDiagnosisAvailable: _isDiagnosisAvailable,
+  isChiefComplaintsAvailable: _isChiefComplaintsAvailable,
   checkPatientTreatmentBody: _checkPatientTreatmentBody,
   createPrescriptionHelper: _createPrescriptionHelper,
   createLabHelper: _createLabHelper,
@@ -231,5 +229,4 @@ module.exports = {
   deleteInvestigationHelper: _deleteInvestigationHelper,
   createRadialogyHelper: _createRadialogyHelper,
   deleteRadialogyHelper: _deleteRadialogyHelper
-
 };
