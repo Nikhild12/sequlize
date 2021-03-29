@@ -81,8 +81,8 @@ const PatientTreatmentController = () => {
         patientTreatment.tat_start_time = new Date();
         const patientTKCreatedData = await patientTreatmenttbl.create(
           patientTreatment, {
-            returning: true
-          }
+          returning: true
+        }
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
@@ -502,15 +502,15 @@ async function getPatientTreatmentKitData(patient_uuid) {
       ['created_date', 'DESC']
     ],
     include: [{
-        model: treatmentKitTable,
-        attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
-        required: false
-      },
-      {
-        model: encounterTypeTbl,
-        attributes: ['uuid', 'code', 'name'],
-        required: false
-      }
+      model: treatmentKitTable,
+      attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
+      required: false
+    },
+    {
+      model: encounterTypeTbl,
+      attributes: ['uuid', 'code', 'name'],
+      required: false
+    }
     ]
   });
 
@@ -564,7 +564,6 @@ async function getPrevOrderdChiefComplaintsData(order_id) {
     },
     is_active: emr_constants.IS_ACTIVE,
     status: emr_constants.IS_ACTIVE
-
   };
   return patientChiefComplaintsTbl.findAll({
     where: query,
@@ -588,9 +587,9 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
       user_uuid: user_uuid,
       Authorization: authorization
     }, {
-      patient_treatment_uuid: order_id,
-      patient_uuid: patient_uuid
-    }
+    patient_treatment_uuid: order_id,
+    patient_uuid: patient_uuid
+  }
   );
 
   if (prescriptionData) {
@@ -605,13 +604,13 @@ async function getPreviousRadiology(user_uuid, facility_uuid, Authorization, ord
   let radialogyData = await utilityService.postRequest(
     //config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
     config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment', {
-      'Content-Type': 'application/json',
-      facility_uuid: facility_uuid || 1,
-      user_uuid: user_uuid,
-      Authorization: Authorization
-    }, {
-      patient_treatment_uuid: order_id
-    }
+    'Content-Type': 'application/json',
+    facility_uuid: facility_uuid || 1,
+    user_uuid: user_uuid,
+    Authorization: Authorization
+  }, {
+    patient_treatment_uuid: order_id
+  }
   );
 
   if (radialogyData) {
@@ -632,8 +631,8 @@ async function getPreviousLab(user_uuid, facility_uuid, Authorization, order_id)
       user_uuid: user_uuid,
       Authorization: Authorization
     }, {
-      patient_treatment_uuid: order_id
-    }
+    patient_treatment_uuid: order_id
+  }
   );
   if (labData) {
     const labResult = await getLabResponse(labData);
@@ -655,8 +654,8 @@ async function getPreviousInvest(user_uuid, facility_uuid, Authorization, order_
       user_uuid: user_uuid,
       Authorization: Authorization
     }, {
-      patient_treatment_uuid: order_id
-    }
+    patient_treatment_uuid: order_id
+  }
   );
   if (investigationData) {
     const investigationResult = await getInvestigationResponse(investigationData);
@@ -800,14 +799,14 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
 function getRepeatOrderChiefComplaintsResponse(repeatOrderChiefComplaintsData) {
   let result = [];
   repeatOrderChiefComplaintsData.forEach(rcc => {
-    if (rcc.dataValues.chiefcomplaints != null) {
+    if (rcc != null) {
       result.push({
-        order_id: rd.dataValues.patient_treatment_uuid,
-        uuid: rd.dataValues.uuid,
-        chief_complaint_id: rd.dataValues.diagnosis.dataValues.uuid,
-        chief_complaint_name: rd.dataValues.chief_complaints.dataValues.name,
-        chief_complaint_code: rd.dataValues.chief_complaints.dataValues.code,
-        chief_complaint_description: rd.dataValues.chief_complaints.dataValues.description
+        order_id: rcc.dataValues.patient_treatment_uuid,
+        uuid: rcc.dataValues.uuid,
+        chief_complaint_id: rcc.dataValues.chief_complaint.dataValues.uuid,
+        chief_complaint_code: rcc.dataValues.chief_complaint.dataValues.code,
+        chief_complaint_name: rcc.dataValues.chief_complaint.dataValues.name,
+        chief_complaint_description: rcc.dataValues.chief_complaint.dataValues.description
       });
     }
   });
@@ -949,13 +948,13 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
         rD.status = 0;
         rD.is_active = 0;
         diagnosisPromise = [...diagnosisPromise,
-          patientDiagnosisTbl.update(rD, {
-            where: {
-              uuid: rD.uuid
-            }
-          }, {
-            returning: true
-          })
+        patientDiagnosisTbl.update(rD, {
+          where: {
+            uuid: rD.uuid
+          }
+        }, {
+          returning: true
+        })
         ];
       });
     }
@@ -989,13 +988,13 @@ async function updateChiefComplaints(updateChiefComplaintsDetails, user_uuid, or
         rcc.status = 0;
         rcc.is_active = 0;
         chiefcomplaintsPromise = [...chiefcomplaintsPromise,
-          patientChiefComplaintsTbl.update(rcc, {
-            where: {
-              uuid: rcc.uuid
-            }
-          }, {
-            returning: true
-          })
+        patientChiefComplaintsTbl.update(rcc, {
+          where: {
+            uuid: rcc.uuid
+          }
+        }, {
+          returning: true
+        })
         ];
       });
     }
