@@ -998,14 +998,14 @@ async function updateChiefComplaints(updateChiefComplaintsDetails, user_uuid, or
         ];
       });
     }
-    if (r.new_chiefcomplaints && r.new_chiefcomplaints.length > 0 && order_id) {
-      r.new_chiefcomplaints.forEach((pcc) => {
+    if (r.new_chief_complaint && r.new_chief_complaint.length > 0 && order_id) {
+      r.new_chief_complaint.forEach((pcc) => {
         pcc = utilityService.createIsActiveAndStatus(pcc, user_uuid);
         pcc.performed_by = user_uuid;
         pcc.performed_date = new Date();
         pcc.patient_treatment_uuid = order_id;
       });
-      chiefcomplaintsPromise = [...chiefcomplaintsPromise, patientChiefComplaintsTbl.bulkCreate(r.new_chiefcomplaints, {
+      chiefcomplaintsPromise = [...chiefcomplaintsPromise, patientChiefComplaintsTbl.bulkCreate(r.new_chief_complaint, {
         returning: true
       })];
     }
