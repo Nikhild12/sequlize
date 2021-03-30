@@ -30,6 +30,51 @@
 		"application/file"
 	],
 	"paths": {
+		"/api/glass_prescription/create": {
+			"post": {
+				"description": "Inserted Successfully",
+				"operationId": "createglassprescription",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "createglassprescription",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createglassprescription"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "Add Glass Prescription",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
 		"/api/proceduresNoteTemplate/deleteProcedures-note-template": {
 			"post": {
 				"description": "Deleted Successfully",
@@ -16298,7 +16343,7 @@
 					"type": "string",
 					"example": "enter some thing"
 				},
-				"dateTime":{
+				"dateTime": {
 					"type": "string",
 					"example": "enter some date"
 				}
@@ -18435,6 +18480,107 @@
 			"properties": {
 				"code": {
 					"type": "string"
+				}
+			}
+		},
+		"createglassprescription": {
+			"type": "object",
+			"properties": {
+				"header": {
+					"type": "object",
+					"properties": {
+						"prescription_no": {
+							"type": "integer"
+						},
+						"prescription_date": {
+							"type": "string"
+						},
+						"facility_uuid": {
+							"type": "integer"
+						},
+						"department_uuid": {
+							"type": "integer"
+						},
+						"patient_uuid": {
+							"type": "integer"
+						},
+						"encounter_type_uuid": {
+							"type": "integer"
+						},
+						"encounter_uuid": {
+							"type": "integer"
+						},
+						"doctor_uuid": {
+							"type": "integer"
+						},
+						"appointment_uuid": {
+							"type": "integer"
+						},
+						"notes": {
+							"type": "string"
+						},
+						"is_digitally_signed": {
+							"type": "integer"
+						}
+					}
+				},
+				"details": {
+					"type": "array",
+					"items": {
+						"properties": {
+							"prescription_uuid": {
+								"type": "integer"
+							},
+							"re_dis_sph": {
+								"type": "string"
+							},
+							"re_dis_cyl": {
+								"type": "string"
+							},
+							"re_dis_axis": {
+								"type": "integer"
+							},
+							"re_dis_vis_acu": {
+								"type": "string"
+							},
+							"re_near_sph": {
+								"type": "string"
+							},
+							"re_near_cyl": {
+								"type": "string"
+							},
+							"re_near_axis": {
+								"type": "integer"
+							},
+							"re_near_vis_acu": {
+								"type": "string"
+							},
+							"le_dis_sph": {
+								"type": "string"
+							},
+							"le_dis_cyl": {
+								"type": "string"
+							},
+							"le_dis_axis": {
+								"type": "integer"
+							},
+							"le_dis_vis_acu": {
+								"type": "string"
+							},
+							"le_near_sph": {
+								"type": "string"
+							},
+							"le_near_cyl": {
+								"type": "string"
+							},
+							"le_near_axis": {
+								"type": "integer"
+							},
+							"le_near_vis_acu": {
+								"type": "string"
+							}
+						}
+					}
 				}
 			}
 		}
