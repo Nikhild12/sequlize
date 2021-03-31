@@ -54,6 +54,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: true
         },
+        ipd: {
+            type: DataTypes.STRING(255),
+            allowNull: true
+        },
+        glass_type: {
+            type: DataTypes.STRING(255),
+            allowNull: true
+        },
         is_digitally_signed: {
             type: DataTypes.BOOLEAN,
             defaultValue: 0

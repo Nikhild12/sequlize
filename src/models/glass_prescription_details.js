@@ -11,67 +11,39 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        re_dis_sph: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        re_dis_cyl: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        re_dis_axis: {
+        vision_type_uuid: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        re_dis_vis_acu: {
+        re_sph: {
+            type: DataTypes.DECIMAL(16, 2),
+            defaultValue: '0.00'
+        },
+        re_cyl: {
+            type: DataTypes.DECIMAL(16, 2),
+            defaultValue: '0.00'
+        },
+        re_axis: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        re_vis_acu: {
             type: DataTypes.STRING(255),
             allowNull: true
         },
-        re_near_sph: {
+        le_sph: {
             type: DataTypes.DECIMAL(16, 2),
             defaultValue: '0.00'
         },
-        re_near_cyl: {
+        le_cyl: {
             type: DataTypes.DECIMAL(16, 2),
             defaultValue: '0.00'
         },
-        re_near_axis: {
+        le_axis: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        re_near_vis_acu: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        le_dis_sph: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        le_dis_cyl: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        le_dis_axis: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        le_dis_vis_acu: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        le_near_sph: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        le_near_cyl: {
-            type: DataTypes.DECIMAL(16, 2),
-            defaultValue: '0.00'
-        },
-        le_near_axis: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        le_near_vis_acu: {
+        le_vis_acu: {
             type: DataTypes.STRING(255),
             allowNull: true
         },

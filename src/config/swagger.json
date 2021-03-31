@@ -18699,6 +18699,12 @@
 						"notes": {
 							"type": "string"
 						},
+						"ipd": {
+							"type": "string"
+						},
+						"glass_type": {
+							"type": "string"
+						},
 						"is_digitally_signed": {
 							"type": "integer"
 						}
@@ -18711,52 +18717,31 @@
 							"prescription_uuid": {
 								"type": "integer"
 							},
-							"re_dis_sph": {
-								"type": "string"
-							},
-							"re_dis_cyl": {
-								"type": "string"
-							},
-							"re_dis_axis": {
+							"vision_type_uuid": {
 								"type": "integer"
 							},
-							"re_dis_vis_acu": {
+							"re_sph": {
 								"type": "string"
 							},
-							"re_near_sph": {
+							"re_cyl": {
 								"type": "string"
 							},
-							"re_near_cyl": {
-								"type": "string"
-							},
-							"re_near_axis": {
+							"re_axis": {
 								"type": "integer"
 							},
-							"re_near_vis_acu": {
+							"re_vis_acu": {
 								"type": "string"
 							},
-							"le_dis_sph": {
+							"le_sph": {
 								"type": "string"
 							},
-							"le_dis_cyl": {
+							"le_cyl": {
 								"type": "string"
 							},
-							"le_dis_axis": {
+							"le_axis": {
 								"type": "integer"
 							},
-							"le_dis_vis_acu": {
-								"type": "string"
-							},
-							"le_near_sph": {
-								"type": "string"
-							},
-							"le_near_cyl": {
-								"type": "string"
-							},
-							"le_near_axis": {
-								"type": "integer"
-							},
-							"le_near_vis_acu": {
+							"le_vis_acu": {
 								"type": "string"
 							}
 						}
@@ -18834,6 +18819,12 @@
 						"notes": {
 							"type": "string"
 						},
+						"ipd": {
+							"type": "string"
+						},
+						"glass_type": {
+							"type": "string"
+						},
 						"is_digitally_signed": {
 							"type": "integer"
 						}
@@ -18849,52 +18840,31 @@
 							"prescription_uuid": {
 								"type": "integer"
 							},
-							"re_dis_sph": {
-								"type": "string"
-							},
-							"re_dis_cyl": {
-								"type": "string"
-							},
-							"re_dis_axis": {
+							"vision_type_uuid": {
 								"type": "integer"
 							},
-							"re_dis_vis_acu": {
+							"re_sph": {
 								"type": "string"
 							},
-							"re_near_sph": {
+							"re_cyl": {
 								"type": "string"
 							},
-							"re_near_cyl": {
-								"type": "string"
-							},
-							"re_near_axis": {
+							"re_axis": {
 								"type": "integer"
 							},
-							"re_near_vis_acu": {
+							"re_vis_acu": {
 								"type": "string"
 							},
-							"le_dis_sph": {
+							"le_sph": {
 								"type": "string"
 							},
-							"le_dis_cyl": {
+							"le_cyl": {
 								"type": "string"
 							},
-							"le_dis_axis": {
+							"le_axis": {
 								"type": "integer"
 							},
-							"le_dis_vis_acu": {
-								"type": "string"
-							},
-							"le_near_sph": {
-								"type": "string"
-							},
-							"le_near_cyl": {
-								"type": "string"
-							},
-							"le_near_axis": {
-								"type": "integer"
-							},
-							"le_near_vis_acu": {
+							"le_vis_acu": {
 								"type": "string"
 							}
 						}
