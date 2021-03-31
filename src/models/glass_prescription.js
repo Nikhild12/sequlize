@@ -79,15 +79,20 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
 
-    }, {
-        tableName: "glass_prescription",
-        createdAt: 'created_date',
-        updatedAt: 'modified_date',
-        indexes: [{
-            fields: ["uuid"]
-        }]
-    }
-    );
+    },
+        {
+            tableName: "glass_prescription",
+            createdAt: 'created_date',
+            updatedAt: 'modified_date',
+            indexes: [{
+                fields: ["uuid"]
+            }],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
+        });
 
 
     return glass_prescription;

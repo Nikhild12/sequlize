@@ -102,7 +102,12 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: 'modified_date',
             indexes: [{
                 fields: ["uuid"]
-            }]
+            }],
+            defaultScope: {
+                where: {
+                    status: 1
+                }
+            }
         }
     );
     return glass_prescription_details;
