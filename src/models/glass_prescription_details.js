@@ -82,5 +82,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     );
+    glass_prescription_details.associate = model => {
+        glass_prescription_details.belongsTo(model.vision_type, {
+            foreignKey: "vision_type_uuid"
+        });
+    };
     return glass_prescription_details;
 };

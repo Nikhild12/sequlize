@@ -14,7 +14,7 @@ const emr_utility = require('../services/utility.service');
 
 const glass_prescription_tbl = db.glass_prescription;
 const glass_prescription_details_tbl = db.glass_prescription_details;
-
+const vision_type_tbl = db.vision_type;
 const glassPrescriptionController = () => {
   /**
    * Returns jwt token if valid username and password is provided
@@ -23,26 +23,30 @@ const glassPrescriptionController = () => {
    * @param next
    * @returns {*}
    */
-
+  const exclude_attributes = {
+    "exclude": [
+      'status', 'revision', 'is_active', 'created_by', 'modified_by', 'created_date', 'modified_date'
+    ]
+  }
   //method to create glass prescription details        --by Manikanta
   async function details_function(req, glass_prescription_output) {
-    for (let e of req) {
-      if (e.uuid) {
-        e.modified_by = glass_prescription_output.modified_by;
-      } else {
-        e.prescription_uuid = glass_prescription_output.uuid;
-        e.created_by = glass_prescription_output.created_by;
-      }
-      let bulkData = await glass_prescription_details_tbl.bulkCreate([e], {
-        updateOnDuplicate: Object.keys(e)
-      });
-      for (let d of bulkData) {
-        result_data.push(d.dataValues);
-      }
-    }
     try {
-      let data = await glass_prescription_details_tbl.bulkCreate(req);
-      return data;
+      let result_data = [];
+      for (let e of req) {
+        if (e.uuid) {
+          e.modified_by = glass_prescription_output.modified_by;
+        } else {
+          e.prescription_uuid = glass_prescription_output.uuid;
+          e.created_by = glass_prescription_output.created_by;
+        }
+        let bulkData = await glass_prescription_details_tbl.bulkCreate([e], {
+          updateOnDuplicate: Object.keys(e)
+        });
+        for (let d of bulkData) {
+          result_data.push(d.dataValues);
+        }
+      }
+      return result_data;
     }
     catch (err) {
       return { errors: err };
@@ -161,7 +165,19 @@ const glassPrescriptionController = () => {
         order: [
           sortArr
         ],
-        where: {}
+        where: {},
+        include: [
+          {
+            model: glass_prescription_details_tbl,
+            attributes: ['uuid', 'prescription_uuid', 'vision_type_uuid', 're_sph', 're_cyl', 're_axis', 're_vis_acu', 'le_sph', 'le_cyl', 'le_axis', 'le_vis_acu'],
+            include: [
+              {
+                model: vision_type_tbl,
+                attributes: ['uuid', 'code', 'name']
+              }
+            ]
+          }
+        ]
       };
       ////////////encounter filter////////////////////////
       if (postData.encounter_uuid && /\S/.test(postData.encounter_uuid)) {
@@ -207,7 +223,19 @@ const glassPrescriptionController = () => {
       let findQuery = {
         where: {
           uuid: postData.Id
-        }
+        },
+        include: [
+          {
+            model: glass_prescription_details_tbl,
+            attributes: ['uuid', 'prescription_uuid', 'vision_type_uuid', 're_sph', 're_cyl', 're_axis', 're_vis_acu', 'le_sph', 'le_cyl', 'le_axis', 'le_vis_acu'],
+            include: [
+              {
+                model: vision_type_tbl,
+                attributes: ['uuid', 'code', 'name']
+              }
+            ]
+          }
+        ]
       };
       data = await glass_prescription_tbl.findOne(findQuery);
       return res
@@ -240,7 +268,7 @@ const glassPrescriptionController = () => {
       postData.header.modified_by = req.headers.user_uuid;
       let data, finddata;
       finddata = await glass_prescription_tbl.findOne({
-        where: { uuid: postData.Id }
+        where: { uuid: postData.header.Id }
       });
       if (!finddata) {
         throw {
@@ -248,8 +276,8 @@ const glassPrescriptionController = () => {
           errors: "Send Valid Input"
         };
       }
-      data = await glass_prescription_tbl.update(postData, {
-        where: { uuid: postData.Id }
+      data = await glass_prescription_tbl.update(postData.header, {
+        where: { uuid: postData.header.Id }
       });
       glass_prescription_details_output = await details_function(postData.details, data);
       return res
@@ -280,7 +308,7 @@ const glassPrescriptionController = () => {
       let postData = req.body;
       postData.modified_by = req.headers.user_uuid;
       let data, finddata;
-      finddata = await patient_bills_tbl.findOne({
+      finddata = await glass_prescription_tbl.findOne({
         where: { uuid: postData.Id }
       });
       if (!finddata) {
@@ -291,11 +319,21 @@ const glassPrescriptionController = () => {
       }
       data = await glass_prescription_tbl.update({ status: 0, modified_by: postData.modified_by }, {
         where: { uuid: postData.Id }
-      });
+      })
+      if (data == 0) {
+        throw {
+          error_type: "validationError",
+          errors: "Error While Deleting Glass Prescrition"
+        };
+      }
+      await glass_prescription_details_tbl.update({ status: 0, modified_by: postData.modified_by }, {
+        where: { prescription_uuid: postData.Id }
+      })
       return res
         .status(200)
         .json({
           statusCode: 200,
+          msg: "Deleted Successful",
           responseContents: data
         });
     } catch (err) {
