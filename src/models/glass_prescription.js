@@ -102,6 +102,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
 
-
+    glass_prescription.associate = model => {
+        glass_prescription.hasMany(model.glass_prescription_details, {
+            foreignKey: "prescription_uuid"
+        });
+    };
     return glass_prescription;
 };
