@@ -1,7 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const PATIENT_CHIEF_COMPLAINTS = sequelize.define(
-    "patient_chief_complaints",
-    {
+    "patient_chief_complaints", {
       uuid: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -32,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       encounter_doctor_uuid: {
+        type: DataTypes.INTEGER
+      },
+      treatment_kit_uuid: {
+        type: DataTypes.INTEGER
+      },
+      patient_treatment_uuid: {
         type: DataTypes.INTEGER
       },
       encounter_type_uuid: {
@@ -84,7 +89,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       created_date: "created_date",
       modified_date: "modified_date",
-
       created_by: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -105,8 +109,7 @@ module.exports = (sequelize, DataTypes) => {
       tat_end_time: {
         type: DataTypes.DATE
       }
-    },
-    {
+    }, {
       freezeTableName: true,
       timestamps: false,
       createAt: "created_date",
@@ -116,16 +119,17 @@ module.exports = (sequelize, DataTypes) => {
   PATIENT_CHIEF_COMPLAINTS.associate = model => {
     PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaints, {
       foreignKey: "chief_complaint_uuid"
-    }),
-      PATIENT_CHIEF_COMPLAINTS.belongsTo(
-        model.chief_complaint_duration_periods,
-        {
-          foreignKey: "chief_complaint_duration_period_uuid"
-        }
-      ),
-      PATIENT_CHIEF_COMPLAINTS.belongsTo(model.encounter, {
-        foreignKey: "encounter_uuid"
-      });
+    });
+    PATIENT_CHIEF_COMPLAINTS.belongsTo(model.chief_complaint_duration_periods, {
+      foreignKey: "chief_complaint_duration_period_uuid"
+    });
+    PATIENT_CHIEF_COMPLAINTS.belongsTo(model.encounter, {
+      foreignKey: "encounter_uuid"
+    });
+    PATIENT_CHIEF_COMPLAINTS.belongsTo(model.encounter_type, {
+      foreignKey: "encounter_type_uuid",
+      as: "encounter_type"
+    });
   };
   return PATIENT_CHIEF_COMPLAINTS;
 };

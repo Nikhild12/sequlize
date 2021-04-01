@@ -68,7 +68,7 @@ const patientSpecalitySketch = () => {
                     where: { patient_uuid, is_active: emr_constants.IS_ACTIVE, status: emr_constants.IS_ACTIVE },
                     order: [["uuid", "desc"]],
                     limit: 5,
-                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'encounter_uuid', 'speciality_sketch_uuid', 'sketch_path', 'created_date'],
+                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'encounter_uuid', 'speciality_sketch_uuid', 'sketch_path', 'created_date', 'comments'],
                     include: [{
                         model: specialitySketchesTbl,
                         attributes: ['uuid', 'code', 'name', 'description']

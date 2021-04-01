@@ -9,10 +9,13 @@ const path = require('path');
 const fs = require('file-system');
 const mime = require('mime');
 const middleware = require('../middleware/middleware');
-
+const config = require('../config/config.js');
+const constants = require('../config/constants');
+const utilityService = require('../services/utility.service');
 const attachmentTbl = db.patient_attachments;
 const attachmentTypeTbl = db.attachment_type;
 const encounterTbl = db.encounter;
+const { APPMASTER_VIEWUSERSBYARRAYOFIDS } = constants.DEPENDENCY_URLS;
 
 
 const patientAttachmentsController = () => {
@@ -120,6 +123,7 @@ const patientAttachmentsController = () => {
 
     const _getAllAttachments = async (req, res) => {
         const { user_uuid } = req.headers;
+        const authorization = req.headers.authorization || req.headers.Authorization;
         const { patient_uuid, attachment_type_uuid } = req.query;
         try {
             if (user_uuid) {
@@ -148,6 +152,24 @@ const patientAttachmentsController = () => {
                 }
                 const data = await attachmentTbl.findAll(findQuery);
                 if (data) {
+                    //to get uploaded by detials making service to service api calls -- by Manikanta 34443
+                    let created_by_uuids = [... new Set(data.map(e => e.created_by))]
+                    let users_output = await utilityService.postRequest(config.wso2AppUrl + APPMASTER_VIEWUSERSBYARRAYOFIDS, {
+                        "user_uuid": user_uuid,
+                        "authorization": authorization
+                    }, {
+                        Id: created_by_uuids
+                    });
+                    if (users_output.length > 0) {
+                        for (let e of data) {
+                            for (let u of users_output) {
+                                if (e.created_by == u.uuid) {
+                                    e.dataValues.uploaded_by = u;
+                                }
+                            }
+                        }
+                    }
+                    //to get uploaded by detials making service to service api calls -- by Manikanta 34443
                     return res
                         .status(httpStatus.OK)
                         .json({ statusCode: 200, req: '', responseContents: { attachment: data } });

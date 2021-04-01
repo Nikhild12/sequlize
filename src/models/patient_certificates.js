@@ -284,6 +284,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
 
             },
+            is_emr_entry: { // field added by Manikanta 34442
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             revision: {
 
                 type: DataTypes.INTEGER,
