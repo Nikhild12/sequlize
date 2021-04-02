@@ -109,6 +109,45 @@ const immunizationScheduleController = () => {
                     }
                 });
             }
+            if (getsearch.schedule_name && /\S/.test(getsearch.schedule_name)) {
+                Object.assign(findQuery.where, {
+                    schedule_name: {
+                        [Op.like]: '%' + getsearch.schedule_name + '%'
+                    }
+                });
+            }
+
+            if (getsearch.immunization_name && /\S/.test(getsearch.immunization_name)) {
+                Object.assign(findQuery.where, {
+                    immunization_name: {
+                        [Op.like]: '%' + getsearch.immunization_name + '%'
+                    }
+                });
+            }
+
+            if (getsearch.drug_route_name && /\S/.test(getsearch.drug_route_name)) {
+                Object.assign(findQuery.where, {
+                    dr_name: {
+                        [Op.like]: '%' + getsearch.drug_route_name + '%'
+                    }
+                });
+            }
+
+            if (getsearch.duration_period_name && /\S/.test(getsearch.duration_period_name)) {
+                Object.assign(findQuery.where, {
+                    dp_name: {
+                        [Op.like]: '%' + getsearch.duration_period_name + '%'
+                    }
+                });
+            }
+
+            if (getsearch.dosage_name && /\S/.test(getsearch.dosage_name)) {
+                Object.assign(findQuery.where, {
+                    do_name: {
+                        [Op.like]: '%' + getsearch.dosage_name + '%'
+                    }
+                });
+            }
 
 
             // if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {

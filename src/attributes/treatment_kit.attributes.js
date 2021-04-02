@@ -18,6 +18,7 @@ const vmTreatmentFavouriteDiagnosis = sequelizeDb.vw_favourite_treatment_diagnos
 const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investigation;
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
+const vmTreatmentFavouriteChiefComplaints = sequelizeDb.vw_favourite_treatment_chief_complaints;
 
 // Treatment Kit Table
 const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
@@ -25,6 +26,7 @@ const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
+const treatmentKitChiefComplaintsTbl = sequelizeDb.treatment_kit_chief_complaint_map;
 
 const treatmentKitAtt = [
     "u_uuid",
@@ -111,6 +113,19 @@ let getTreatmentKitDiaAtt = [
 
 // Concating Diagnosis
 getTreatmentKitDiaAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitDiaAtt];
+
+// Chief Complaints Attribute
+let getTreatmentKitCCAtt = [
+    "tkccm_chief_complaint_uuid",
+    "cc_name",
+    "cc_code",
+    "cc_description",
+    "tkccm_comments",
+    "tkccm_uuid"
+];
+
+// Concating Chief Complaints
+getTreatmentKitCCAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitCCAtt];
 
 // Investigation Attributes
 let getTreatmentKitInvestigationAtt = [
@@ -206,25 +221,26 @@ const _getTreatmentKitByIdQuery = (treatmentId, tType) => {
 
     return treatmentQuery;
 };
+
 const _getTreatmentFavByIdPromise = (treatmentId) => {
     return Promise.all([
 
         treatmentKitListViewTbl.findAll({
             attributes: treatmentKitAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "TreatmentKit"),
-        }),
+        }), // Treatment Kit
         vmTreatmentFavouriteDrug.findAll({
             attributes: gedTreatmentKitDrug,
             where: _getTreatmentKitByIdQuery(treatmentId, "Drug"),
-        }), // Drug Details
+        }), // Drug
         vmTreatmentFavouriteDiagnosis.findAll({
             attributes: getTreatmentKitDiaAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Diagnosis"),
-        }),
+        }), // Diagnosis
         vmTreatmentFavouriteInvesti.findAll({
             attributes: getTreatmentKitInvestigationAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Investigation"),
-        }), // 
+        }), // Investigation
         vmTreatmentFavouriteRadiology.findAll({
             attributes: getTreatmentKitRadiologyAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Radiology"),
@@ -232,7 +248,11 @@ const _getTreatmentFavByIdPromise = (treatmentId) => {
         vmTreatmentFavouriteLab.findAll({
             attributes: getTreatmentKitLabAtt,
             where: _getTreatmentKitByIdQuery(treatmentId, "Lab"),
-        }), // lab
+        }), // Lab
+        vmTreatmentFavouriteChiefComplaints.findAll({
+            attributes: getTreatmentKitCCAtt,
+            where: _getTreatmentKitByIdQuery(treatmentId, "ChiefComplaints"),
+        }), // Chief Complaints
     ]);
 };
 
@@ -276,6 +296,13 @@ const _getTreatmentFavouritesInHumanUnderstandable = (treatFav) => {
         );
     }
 
+    // Chief Complaints Details
+    if (treatFav && treatFav.length > 0 && treatFav[6] && treatFav[6].length) {
+        favouritesByIdResponse.chief_complaints_details = getChiefComplaintsDetailsFromTreatment(
+            treatFav[6]
+        );
+    }
+
     return favouritesByIdResponse;
 };
 
@@ -287,6 +314,11 @@ const _updateDrug = (drug, uId, tkId) => {
 // treatment Diagnosis Update
 const _updateDiagnosis = (diagnosis, uId, tkId) => {
     return updateTreatmentKit(diagnosis, treatmentKitDiagnosisTbl, uId, tkId, 'treatment_kit_diagnosis_id', 'Diagnosis');
+};
+
+// treatment ChiefComplaints Update
+const _updateChiefComplaints = (chiefcomplaints, uId, tkId) => {
+    return updateTreatmentKit(chiefcomplaints, treatmentKitChiefComplaintsTbl, uId, tkId, 'treatment_kit_chiefcomplaints_id', 'ChiefComplaints');
 };
 
 // treatment Lab Update
@@ -311,6 +343,8 @@ module.exports = {
     getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable,
     updateDrug: _updateDrug,
     updateDiagnosis: _updateDiagnosis,
+    updateDiagnosis: _updateDiagnosis,
+    updateChiefComplaints: _updateChiefComplaints,
     updateLab: _updateLab,
     updateRadiolgy: _updateRadiolgy,
     updateInvestigation: _updateInvestigation
@@ -376,6 +410,20 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
             diagnosis_code: di.td_code,
             diagnosis_description: di.td_description,
             treatment_kit_diagnosis_id: di.tdkm_uuid
+        };
+    });
+}
+
+// Returns ChiefComplaints Details From Treatment Kit
+function getChiefComplaintsDetailsFromTreatment(chiefcomplaintsArray) {
+    return chiefcomplaintsArray.map((cc) => {
+        return {
+            chief_complaint_id: cc.tkccm_chief_complaint_uuid,
+            chief_complaint_comments: cc.tkccm_comments,
+            chief_complaint_name: cc.cc_name,
+            chief_complaint_code: cc.cc_code,
+            chief_complaint_description: cc.cc_description,
+            treatment_kit_chief_complaint_id: cc.tkccm_uuid
         };
     });
 }
@@ -473,7 +521,7 @@ function updateTreatmentKit(object, table, uId, tkId, updateColumn, tName) {
     }
 
     // Updating Exisiting Record
-    if (object.hasOwnProperty("update") && Array.isArray(object.update) && tName !== 'Diagnosis') {
+    if (object.hasOwnProperty("update") && Array.isArray(object.update) && (tName !== 'Diagnosis' || tName !== 'ChiefComplaints')) {
         updateArray = [...updateArray, ...updateRecords(object.update, table, uId, updateColumn)];
     }
 

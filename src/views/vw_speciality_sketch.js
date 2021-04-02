@@ -85,6 +85,30 @@ module.exports = (sequelize, DataTypes) => {
 
 
             },
+            created_user_name:
+            {
+
+                type: DataTypes.STRING(255),
+
+            },
+            modified_user_name:
+            {
+
+                type: DataTypes.STRING(255),
+
+            },
+            created_title_name:
+            {
+
+                type: DataTypes.STRING(255),
+
+            },
+            modified_title_name:
+            {
+
+                type: DataTypes.STRING(255),
+
+            },
             s_created_date: {
                 type: DataTypes.DATE
             },
