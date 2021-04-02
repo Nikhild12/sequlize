@@ -26,6 +26,7 @@ const diagnosisTbl = sequelizeDb.diagnosis;
 const chiefcomplaintsTbl = sequelizeDb.chief_complaints;
 const encounterTypeTbl = sequelizeDb.encounter_type;
 const treatmentKitTable = sequelizeDb.treatment_kit;
+const chief_complaint_duration_periods_tbl = sequelizeDb.chief_complaint_duration_periods;
 
 
 // Patient Treatment Attributes
@@ -567,11 +568,17 @@ async function getPrevOrderdChiefComplaintsData(order_id) {
   };
   return patientChiefComplaintsTbl.findAll({
     where: query,
-    attributes: ['uuid', 'patient_uuid', 'chief_complaint_uuid', 'patient_treatment_uuid'],
-    include: [{
-      model: chiefcomplaintsTbl,
-      attributes: ['uuid', 'code', 'name', 'description']
-    }]
+    attributes: ['uuid', 'patient_uuid', 'chief_complaint_uuid', 'patient_treatment_uuid','chief_complaint_duration'],
+    include: [
+      {
+        model: chiefcomplaintsTbl,
+        attributes: ['uuid', 'code', 'name', 'description']
+      },
+      {
+        model: chief_complaint_duration_periods_tbl,
+        attributes: ['uuid', 'code', 'name']
+      }
+    ]
   });
 
 }
@@ -803,10 +810,15 @@ function getRepeatOrderChiefComplaintsResponse(repeatOrderChiefComplaintsData) {
       result.push({
         order_id: rcc.dataValues.patient_treatment_uuid,
         uuid: rcc.dataValues.uuid,
+        chief_complaint_duration: rcc.dataValues.chief_complaint_duration,
         chief_complaint_id: rcc.dataValues.chief_complaint.dataValues.uuid,
         chief_complaint_code: rcc.dataValues.chief_complaint.dataValues.code,
         chief_complaint_name: rcc.dataValues.chief_complaint.dataValues.name,
-        chief_complaint_description: rcc.dataValues.chief_complaint.dataValues.description
+        chief_complaint_description: rcc.dataValues.chief_complaint.dataValues.description,
+        chief_complaint_duration: rcc.dataValues.chief_complaint_duration,
+        chief_complaint_duration_period_uuid: rcc.dataValues.chief_complaint_duration_period.dataValues.uuid,
+        chief_complaint_duration_period_code: rcc.dataValues.chief_complaint_duration_period.dataValues.code,
+        chief_complaint_duration_period_name: rcc.dataValues.chief_complaint_duration_period.dataValues.name
       });
     }
   });
