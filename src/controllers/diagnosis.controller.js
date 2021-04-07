@@ -14,7 +14,6 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
     switch (searchBy) {
         case 'filterbythree':
-
             return {
                 is_active: emr_const.IS_ACTIVE,
                 status: emr_const.IS_ACTIVE,
@@ -30,8 +29,14 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
                 }
                 ]
             };
-
-
+        case 'inhouse': // to get inhouse filtered data -by Manikanta
+            return {
+                is_active: emr_const.IS_ACTIVE,
+                status: emr_const.IS_ACTIVE,
+                in_house: {
+                    [Op.like]: `%${searchValue}%`
+                }
+            };
         case 'dignosisId':
         default:
             searchValue = +searchValue;
