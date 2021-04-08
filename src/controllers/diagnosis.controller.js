@@ -53,6 +53,7 @@ function getDiagnosisAttributes() {
         'uuid',
         'code',
         'name',
+        'in_house', //diagnosis search api - By Manikanta 
         'description',
         'diagnosis_scheme_uuid',
         'diagnosis_type_uuid',
@@ -67,7 +68,6 @@ function getDiagnosisAttributes() {
         'body_site_uuid',
         'side_uuid',
         'position_id',
-        'in_house',
         'is_notifibale',
         'is_sensitive',
         'is_billable',
@@ -156,7 +156,7 @@ const diagnosisController = () => {
                 const offset = pageno * itemsPerPage;
                 const diagnosisData = await diagnosisTbl.findAndCountAll({
                     where: getDiagnosisFilterByQuery("filterbythree", searchValue),
-                    attributes: getDiagnosisAttributes().splice(0, 3),
+                    attributes: getDiagnosisAttributes().splice(0, 4), // diagnosis search changes - by Manikanta 
                     offset: offset,
                     limit: itemsPerPage
                 });
