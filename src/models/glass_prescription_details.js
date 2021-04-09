@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: '0.00'
         },
         re_axis: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+            type: DataTypes.DECIMAL(16, 2),
+            defaultValue: '0.00'
         },
         re_vis_acu: {
             type: DataTypes.STRING(255),
@@ -40,8 +40,8 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: '0.00'
         },
         le_axis: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+            type: DataTypes.DECIMAL(16, 2),
+            defaultValue: '0.00'
         },
         le_vis_acu: {
             type: DataTypes.STRING(255),
@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 1
         },
         revision: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             defaultValue: 1
         },
         is_active: {
