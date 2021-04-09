@@ -334,7 +334,7 @@ const PatientDiagnsis = () => {
           attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed', 'created_date'],
           include: [{
             model: diagnosis_tbl,
-            attributes: ['uuid', 'code', 'name', 'description']
+            attributes: ['uuid', 'code', 'name', 'description', 'in_house']
           }]
         });
         if (prevDiagnosiData.length > 0) {
