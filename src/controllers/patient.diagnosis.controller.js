@@ -125,6 +125,30 @@ const PatientDiagnsis = () => {
     }
   };
 
+  const _getPatientDiagnosisCount = async (req, res) => {
+    try {
+      const { patient_uuid, encounter_uuid } = req.query;
+      const patientDiagnosisData = await patient_diagnosis_tbl.findAndCountAll(
+        {
+          where: {
+            patient_uuid: patient_uuid,
+            encounter_uuid: encounter_uuid
+          }
+        }
+      );
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Patient Diagnosis Successfully",
+        responseContents: patientDiagnosisData.count
+      });
+    }
+    catch (ex) {
+      return res
+        .status(422)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   const _getPatientDiagnosisFilters = async (req, res) => {
     try {
       const { user_uuid } = req.headers;
@@ -369,6 +393,7 @@ const PatientDiagnsis = () => {
     deletePatientDiagnosisById: _deletePatientDiagnosisById,
     helperCreatePatientDiagnosis: _helperCreatePatientDiagnosis,
     helperdelPatDignsById: _helperdelPatDignsById,
+    getPatientDiagnosisCount: _getPatientDiagnosisCount
   };
 };
 

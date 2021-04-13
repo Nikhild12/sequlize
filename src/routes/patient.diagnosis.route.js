@@ -9,6 +9,7 @@ const PatientDiagnosisRoutes = express.Router();
 
 PatientDiagnosisRoutes.route('/create').post(PatientDiagnosisCtrl.createPatientDiagnosis);
 PatientDiagnosisRoutes.route('/getByFilters').get(PatientDiagnosisCtrl.getPatientDiagnosisByFilters);
+PatientDiagnosisRoutes.route('/getdiagnosiscount').get(PatientDiagnosisCtrl.getPatientDiagnosisCount);
 PatientDiagnosisRoutes.route('/getPatientDiagnosisById').get(PatientDiagnosisCtrl.getPatientDiagnosisHistoryById);
 PatientDiagnosisRoutes.route('/updatePatientDiagnosis').put(PatientDiagnosisCtrl.updatePatientDiagnosisHistory);
 PatientDiagnosisRoutes.route('/getMockJson').get(PatientDiagnosisCtrl.getMobileMockAPI);
