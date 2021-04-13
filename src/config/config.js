@@ -34,6 +34,7 @@ const envVarsSchema = Joi.object({
   wso2InvestUrl: Joi.string(),
   wso2InvUrl: Joi.string(),
   wso2AppUrl: Joi.string(),
+  wso2RegisrationUrl: Joi.string(),
   STATE: Joi.string().default("TN")
 })
   .unknown()
@@ -83,6 +84,7 @@ const config = {
   deletePrescriptionDetails:
     envVars.BASE_URL + envVars.INVENTORY_CONTEXT_PATH + envVars.DELETE_PRESCRIPTION,
   wso2InvUrl: envVars.wso2InvUrl,
+  wso2RegisrationUrl: envVars.wso2RegisrationUrl,
   wso2LisUrl: envVars.wso2_lisUrl,
   wso2RmisUrl: envVars.wso2RmisUrl,
   wso2InvestUrl: envVars.wso2InvestUrl,
