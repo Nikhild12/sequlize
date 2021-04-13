@@ -35,6 +35,9 @@ const utilityService = require("../services/utility.service");
 
 const encounterBlockChain = require('../blockChain/encounter.blockchain');
 
+const patient_age_details_tbl = sequelizeDb.patient_age_details;
+const config = require('../config/config');
+
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
   let encounterQuery = {
@@ -165,6 +168,28 @@ const Encounter = () => {
     }
   };
 
+  // Start -- H30-35488 - Need to track is_adult flag encounter wise Service to Service Call  -- Ashok //  
+  async function getPatientAgeDetails(user_uuid, authorization, patientId) {
+    let options = {
+      uri: config.wso2RegisrationUrl + 'patient/getPatientAgeDetailsById',
+      method: "POST",
+      headers: {
+        'Content-type': "application/json",
+        Authorization: authorization, 
+        'accept-language': 'en',
+        user_uuid: user_uuid
+      },
+      body: { 
+        "patientId": patientId
+      },
+      json: true
+    };
+    const patient_age_details = await rp(options);
+    return patient_age_details;
+  }
+  // End -- H30-35488 - Need to track is_adult flag encounter wise Service to Service Call  -- Ashok //  
+
+
   /**
    *
    * @param {*} req
@@ -224,8 +249,54 @@ const Encounter = () => {
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
-        }
+          
+          // Start -- H30-35488 - Need to track is_adult flag encounter wise  -- Ashok //          
+          const patient_age_details_already_exist = await patient_age_details_tbl.count({
+            where: {
+              encounter_uuid: createdEncounter.uuid
+            }
+          });
+          if (!patient_age_details_already_exist) {
+            let patient_age_details = await getPatientAgeDetails(req.headers.user_uuid, req.headers.authorization, createdEncounter.patient_uuid);
+            if (patient_age_details 
+              && patient_age_details.responseContent
+              && patient_age_details.responseContent.uuid) {
+              patient_age_details = patient_age_details.responseContent;
 
+              try{
+                let diffindays = moment(emr_utility.indiaTz()).diff(moment(patient_age_details.dob).toDate(), 'days');
+                let age = (diffindays / 365.25);
+                patient_age_details.age = Math.round(age);   
+                patient_age_details.period_uuid = 4;             
+                if ((diffindays / 365.25) >= 1) { 
+                  patient_age_details.period_uuid = 4;
+                } else if ((diffindays / 365.25) >= 0.1 && (diffindays / 365.25) < 1) {
+                  patient_age_details.period_uuid = 3;
+                } else if ((diffindays / 365.25) >= 0.001 && (diffindays / 365.25) < 0.1) {
+                  patient_age_details.period_uuid = 2;
+                }   
+              } catch(ex) { console.log('age period calculation error :: ',ex); }
+              let patient_age_details_data = { 
+                patient_uuid: createdEncounter.patient_uuid,
+                encounter_uuid: createdEncounter.uuid,
+                dob: patient_age_details.dob,
+                encounter_created_date: createdEncounter.created_date,
+                age: patient_age_details.age,
+                period_uuid: patient_age_details.period_uuid,
+                is_adult: (patient_age_details.age > 12 && patient_age_details.period_uuid == 4) ? 1 : 0,
+                status: 1,
+                is_active: 1,
+                revision: 1,
+                created_by: createdEncounter.created_by,
+                modified_by: createdEncounter.created_by,
+                modified_date: createdEncounter.created_date,
+              }; 
+              await patient_age_details_tbl.create(patient_age_details_data, { returning: true, }); 
+            }
+          }
+          // End -- H30-35488 -- Ashok //
+
+        }
         const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
         encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
         // checking for Primary Doctor
