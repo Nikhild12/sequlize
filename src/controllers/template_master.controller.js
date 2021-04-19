@@ -1407,6 +1407,12 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId) {
     {
       tm_userid: {
         [Op.eq]: user_uuid
+      },
+      tm_dept: {
+        [Op.eq]: dept_id
+      },
+      tm_public: {
+        [Op.eq]: 0
       }
     }
     ]
@@ -1434,6 +1440,12 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
     {
       tm_userid: {
         [Op.eq]: user_uuid
+      },
+      tm_dept: {
+        [Op.eq]: dept_id
+      },
+      tm_public: {
+        [Op.eq]: 0
       }
     }
     ]
@@ -1532,6 +1544,12 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
       {
         user_uuid: {
           [Op.eq]: user_uuid
+        },
+        department_uuid: {
+          [Op.eq]: dept_id
+        },
+        is_public: {
+          [Op.eq]: 0
         }
       }
       ],
@@ -1736,6 +1754,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              [searchKey]: {
+                [Op.eq]: searchValue
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
@@ -1767,6 +1791,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
@@ -1803,13 +1833,18 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
           }
         }
       };
-
     case "9":
       return {
         table_name: vw_diet,

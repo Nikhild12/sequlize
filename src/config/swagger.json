@@ -3695,6 +3695,43 @@
 				}
 			}
 		},
+		"/api/patient-diagnosis/getdiagnosiscount": {
+			"get": {
+				"description": "To get count of Patient Diagnosis By patient and encounter",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientDiagnosis"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter Type"
+					}
+				}
+			}
+		},
 		"/api/patient-diagnosis/getPreviousDiagnosisByPatiendId": {
 			"get": {
 				"description": "To get list of Patient Diagnosis previous orders",
