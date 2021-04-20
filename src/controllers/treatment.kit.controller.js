@@ -767,7 +767,7 @@ const TreatMent_Kit = () => {
           // Diagnosis Update, Delete and Create
           if (treatment_kit_diagnosis && Object.keys(treatment_kit_diagnosis).length > 0) {
             const diagnosisArray = treatmentKitAtt.updateDiagnosis(treatment_kit_diagnosis, user_uuid, treatment_kit_uuid);
-            updateTreatmentPromise = [...updateTreatmentPromise, ...diagnosisArray]; 
+            updateTreatmentPromise = [...updateTreatmentPromise, ...diagnosisArray];
           }
 
           // Chief Complaints Update, Delete and Create
@@ -881,22 +881,15 @@ async function findDuplicateTreatmentKitByCodeAndName({
   code,
   name,
   treatment_kit_uuid,
+  facility_uuid,
   post
 }, checkType = 'both') {
-  // checking for Duplicate
   // before creating Treatment
-
-  let codeOrname = {
-    // code: [{ code: code }],
-    name: [{
-      name: name
-    }],
-    // both: [{ code: code }, { name: name }]
-  };
   return await treatmentkitTbl.findAll({
     attributes: ["name", "is_active"],
     where: {
-      [Op.or]: codeOrname.name,
+      name: name,
+      facility_uuid: facility_uuid,
       uuid: {
         [Op.notIn]: post ? [0] : [treatment_kit_uuid]
       }
