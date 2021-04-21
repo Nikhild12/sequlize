@@ -357,25 +357,44 @@ function getFavouriteQueryForDuplicate(
   dept_id, user_id, searchKey, searchvalue,
   fav_type_id, display_order, fId
 ) {
-  return {
-    tsm_status: active_boolean,
-    [Op.or]: [
-      {
-        tsm_favourite_type_uuid: fav_type_id,
-        [searchKey]: searchvalue,
-        tsm_dept: { [Op.eq]: dept_id },
-        tsm_userid: { [Op.eq]: user_id },
-        fa_uuid: { [Op.eq]: fId }
-      },
-      {
-        tsm_favourite_type_uuid: fav_type_id,
-        tsm_display_order: display_order,
-        tsm_dept: { [Op.eq]: dept_id },
-        tsm_userid: { [Op.eq]: user_id },
-        fa_uuid: { [Op.eq]: fId }
-      }
-    ]
-  };
+  if (display_order) {
+    return {
+      tsm_status: active_boolean,
+      tsm_favourite_type_uuid: fav_type_id,
+      tsm_display_order: display_order,
+      tsm_dept: { [Op.eq]: dept_id },
+      tsm_userid: { [Op.eq]: user_id },
+      fa_uuid: { [Op.eq]: fId }
+    }
+  } else {
+    return {
+      tsm_status: active_boolean,
+      tsm_favourite_type_uuid: fav_type_id,
+      [searchKey]: searchvalue,
+      tsm_dept: { [Op.eq]: dept_id },
+      tsm_userid: { [Op.eq]: user_id },
+      fa_uuid: { [Op.eq]: fId }
+    }
+  }
+  // return {
+  //   tsm_status: active_boolean,
+  //   [Op.or]: [
+  //     {
+  //       tsm_favourite_type_uuid: fav_type_id,
+  //       [searchKey]: searchvalue,
+  //       tsm_dept: { [Op.eq]: dept_id },
+  //       tsm_userid: { [Op.eq]: user_id },
+  //       fa_uuid: { [Op.eq]: fId }
+  //     },
+  //     {
+  //       tsm_favourite_type_uuid: fav_type_id,
+  //       tsm_display_order: display_order,
+  //       tsm_dept: { [Op.eq]: dept_id },
+  //       tsm_userid: { [Op.eq]: user_id },
+  //       fa_uuid: { [Op.eq]: fId }
+  //     }
+  //   ]
+  // };
 }
 
 function getDisplayOrderByFavType(fav_type_id, user_id, dept_id, fId) {
@@ -464,10 +483,12 @@ const TickSheetMasterController = () => {
         const { facility_uuid } = favouriteMasterReqData;
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
+          logging: console.log,
           where: getFavouriteQueryForDuplicate(
             department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid
           ),
         });
+        // return res.send(checkingForSameFavourite)
 
 
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {

@@ -287,11 +287,13 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       try {
         // plucking data req body
+        let displayOrderexists = [];
         const templateMasterReqData = req.body.headers;
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
+        templateMasterReqData.display_order = templateMasterReqData.display_order ? templateMasterReqData.display_order : 0;
         let userUuid = templateMasterReqData.user_uuid || userUUID;
         templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
@@ -299,8 +301,9 @@ const tmpmstrController = () => {
         const temp_master_active = templateMasterReqData.is_active;
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
-
-        const displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+        if (displayOrder) {
+          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+        }
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
