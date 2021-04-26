@@ -255,6 +255,51 @@
 				]
 			}
 		},
+		"/api/glass_prescription/print": {
+			"post": {
+				"description": "Fetch by id",
+				"operationId": "getglassprescriptionprintbyid",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getglassprescriptionprintbyid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getbyid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "print information by Id.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
 		"/api/proceduresNoteTemplate/deleteProcedures-note-template": {
 			"post": {
 				"description": "Deleted Successfully",
