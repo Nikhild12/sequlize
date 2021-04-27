@@ -389,15 +389,17 @@ const tmpmstrController = () => {
       const tmpDtlsRmvdDrugs = req.body.removed_details;
 
       try {
-        const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, temp_id);
-        if (displayOrderexists.length > 0) {
-          return res
-            .status(400)
-            .send({
-              code: httpStatus[400],
-              statusCode: httpStatus.BAD_REQUEST,
-              message: emr_constants.NAME_DISPLAY_EXISTS
-            });
+        if (display_order) {
+          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, temp_id);
+          if (displayOrderexists.length > 0) {
+            return res
+              .status(400)
+              .send({
+                code: httpStatus[400],
+                statusCode: httpStatus.BAD_REQUEST,
+                message: emr_constants.NAME_DISPLAY_EXISTS
+              });
+          }
         }
         const exists = await nameExistsupdate(temp_name, user_uuid, temp_id);
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
