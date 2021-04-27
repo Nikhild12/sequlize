@@ -520,58 +520,59 @@ const notesController = () => {
             } = req.headers;
             const Authorization = req.headers.Authorization || req.headers.authorization;
             let findQuery = {
-                include: [{
-                    model: vw_consultation_detailsTbl,
-                    required: false,
-                    attributes: {
-                        "exclude": ['id', 'createdAt', 'updatedAt']
-                    },
-                },
-                {
-                    model: profilesTbl,
-                    required: false
-                },
-                {
-                    model: conceptsTbl,
-                    required: false
-                },
-                {
-                    model: categoriesTbl,
-                    required: false
-                },
-                {
-                    model: profilesTypesTbl,
-                    required: false
-                },
-                {
-                    model: sectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoriesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptsTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValuesTbl,
-                    required: false
-                },
-                {
-                    model: profileSectionCategoryConceptValueTermsTbl,
-                    required: false,
-                    include: [{
-                        model: conceptValueTermsTbl,
+                include: [
+                    {
+                        model: vw_consultation_detailsTbl,
                         required: false,
-                        attributes: ['uuid', 'code', 'name']
-                    }]
-                }
+                        attributes: {
+                            "exclude": ['id', 'createdAt', 'updatedAt']
+                        },
+                    },
+                    {
+                        model: profilesTbl,
+                        required: false
+                    },
+                    {
+                        model: conceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: categoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profilesTypesTbl,
+                        required: false
+                    },
+                    {
+                        model: sectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoriesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptsTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValuesTbl,
+                        required: false
+                    },
+                    {
+                        model: profileSectionCategoryConceptValueTermsTbl,
+                        required: false,
+                        include: [{
+                            model: conceptValueTermsTbl,
+                            required: false,
+                            attributes: ['uuid', 'code', 'name']
+                        }]
+                    }
                 ],
                 where: {
                     patient_uuid: patient_uuid,

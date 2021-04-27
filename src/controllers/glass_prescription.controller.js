@@ -8,6 +8,7 @@ const rp = require("request-promise");
 var config = require("../config/config");
 // EMR Constants Import
 const emr_constants = require('../config/constants');
+const printService = require('../services/print.service');
 
 // EMR Utility Import
 const emr_utility = require('../services/utility.service');
@@ -353,13 +354,87 @@ const glassPrescriptionController = () => {
     }
   };
 
+  const _printGlassPrescription = async (req, res) => {
+    try {
+      let postData = req.body;
+      const { user_uuid, authorization } = req.headers;
+      let data;
+      let findQuery = {
+        where: {
+          uuid: postData.Id
+        },
+        include: [
+          {
+            model: glass_prescription_details_tbl,
+            attributes: ['uuid', 'prescription_uuid', 'vision_type_uuid', 're_sph', 're_cyl', 're_axis', 're_vis_acu', 'le_sph', 'le_cyl', 'le_axis', 'le_vis_acu'],
+            include: [
+              {
+                model: vision_type_tbl,
+                attributes: ['uuid', 'code', 'name']
+              }
+            ]
+          }
+        ]
+      };
+      data = await glass_prescription_tbl.findOne(findQuery);
+      return res.send(data)
+      const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/glassprescription.html"), {
+        headerObj: data
+      }),
+        {
+          format: 'A4',
+          orientation: "landscape",
+          header: {
+            height: '45mm'
+          },
+          footer: {
+            height: '20mm',
+            contents: {
+              default: '<div style="color: #444;text-align: right;font-size: 10px;padding-right:0.5in;">Page Number: <span>{{page}}</span>/<span>{{pages}}</span></div>'
+            }
+          },
+        });
+      if (pdfBuffer) {
+        res.writeHead(200, {
+          'Content-Type': 'application/pdf',
+          'Content-disposition': 'attachment;filename=glassprescription.pdf',
+          'Content-Length': pdfBuffer.length
+        });
+        res.end(Buffer.from(pdfBuffer, 'binary'));
+        return;
+      } else {
+        return res.status(400).send({
+          status: "failed",
+          statusCode: httpStatus[500],
+          message: ND_constats.WENT_WRONG
+        });
+      }
+    }
+    catch (err) {
+      if (typeof err.error_type != 'undefined' && err.error_type == "validationError") {
+        return res.status(400).json({
+          statusCode: 400,
+          msg: err.errors,
+        });
+      }
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(400)
+        .send({
+          code: httpStatus.BAD_REQUEST,
+          message: errorMsg
+        });
+    }
+  };
+
 
   return {
     postGlassPrescription: _postGlassPrescription,
     getGlassPrescription: _getGlassPrescription,
     getGlassPrescriptionById: _getGlassPrescriptionById,
     updateGlassPrescriptionById: _updateGlassPrescriptionById,
-    deleteGlassPrescriptionById: _deleteGlassPrescriptionById
+    deleteGlassPrescriptionById: _deleteGlassPrescriptionById,
+    printGlassPrescription: _printGlassPrescription
   };
 };
 
