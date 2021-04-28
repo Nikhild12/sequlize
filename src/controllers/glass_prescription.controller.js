@@ -6,12 +6,15 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const rp = require("request-promise");
 var config = require("../config/config");
+const moment = require("moment");
 // EMR Constants Import
 const emr_constants = require('../config/constants');
 const printService = require('../services/print.service');
 
 // EMR Utility Import
 const emr_utility = require('../services/utility.service');
+// Appmaster service to service call
+const appMasterData = require("../controllers/appMasterData");
 
 const glass_prescription_tbl = db.glass_prescription;
 const glass_prescription_details_tbl = db.glass_prescription_details;
@@ -357,8 +360,9 @@ const glassPrescriptionController = () => {
   const _printGlassPrescription = async (req, res) => {
     try {
       let postData = req.body;
-      const { user_uuid, authorization } = req.headers;
-      let data;
+      const { user_uuid, facility_uuid } = req.headers;
+      const authorization = req.headers.authorization || req.headers.Authorization;
+      let data, detailsResponse;
       let findQuery = {
         where: {
           uuid: postData.Id
@@ -377,15 +381,24 @@ const glassPrescriptionController = () => {
         ]
       };
       data = await glass_prescription_tbl.findOne(findQuery);
-      return res.send(data)
+      const facilityResponse = await appMasterData.getFacilityDetailsById(user_uuid, authorization, facility_uuid);
+      const patientResponse = await appMasterData.getPatientById(user_uuid, authorization, data.patient_uuid);
+      const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, authorization, [data.doctor_uuid]);
+      const departmentResponse = await appMasterData.getDepartments(user_uuid, authorization, [data.department_uuid]);
+      detailsResponse = getDetails(facilityResponse.responseContents, doctorResponse.responseContents[0], departmentResponse.responseContent.rows[0], patientResponse.responseContent, data);
+
+      let obj = {
+        header: detailsResponse,
+        details: data.glass_prescription_details
+      }
       const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/glassprescription.html"), {
-        headerObj: data
+        headerObj: obj
       }),
         {
           format: 'A4',
           orientation: "landscape",
           header: {
-            height: '45mm'
+            height: '20mm'
           },
           footer: {
             height: '20mm',
@@ -411,12 +424,6 @@ const glassPrescriptionController = () => {
       }
     }
     catch (err) {
-      if (typeof err.error_type != 'undefined' && err.error_type == "validationError") {
-        return res.status(400).json({
-          statusCode: 400,
-          msg: err.errors,
-        });
-      }
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res
         .status(400)
@@ -427,6 +434,42 @@ const glassPrescriptionController = () => {
     }
   };
 
+  function getDetails(facilityResponse, doctorResponse, departmentResponse, patientResponse, glassPrescriptionResponse) {
+    let address, address_1, address_2, pincode_uuid, state, district, country;
+    address_1 = facilityResponse.address_line1;
+    address_2 = facilityResponse.address_line2;
+    pincode_uuid = facilityResponse.pincode_uuid;
+    state = facilityResponse.state_master.name;
+    district = facilityResponse.district_master.name;
+    country = facilityResponse.country_master.name;
+
+    address = address_1 ? address_1 : "";
+    address = address_2 ? (address ? address + "," + address_2 : address_2) : address;
+    address = district ? (address ? address + "," + district : district) : address;
+    address = state ? (address ? address + "," + state : state) : address;
+    address = country ? (address ? address + "," + country : country) : address;
+    address = pincode_uuid ? (address ? address + "," + pincode_uuid : pincode_uuid) : address;
+    return {
+      // facility
+      facility: facilityResponse.facility.name,
+      // facility address
+      address: address,
+      // doctor
+      doctor: doctorResponse.first_name,
+      // department
+      department: departmentResponse.name,
+      // patient
+      pin: patientResponse.uhid,
+      patient: patientResponse.title ? patientResponse.salutation_details.name + patientResponse.first_name : patientResponse.first_name,
+      ageAndGender: patientResponse.age + patientResponse.period_detail.name + "/" + patientResponse.gender_details.name,
+      // glass prescription
+      reference_no: glassPrescriptionResponse.prescription_no,
+      ipd: glassPrescriptionResponse.ipd,
+      glass_type: glassPrescriptionResponse.glass_type,
+      notes: glassPrescriptionResponse.notes,
+      date: moment(new Date()).format('DD-MMM-YYYY HH:mm')
+    };
+  }
 
   return {
     postGlassPrescription: _postGlassPrescription,
