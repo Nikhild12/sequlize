@@ -44,9 +44,57 @@ const appManagerController = () => {
             return doctorData;
         }
     };
+
+    const getFacilityDetailsById = async (user_uuid, Authorization, facilityId) => {
+        const url = config.wso2AppUrl + 'facility/getFacilityById';
+        let options = {
+            uri: url,
+            method: 'POST',
+            headers: {
+                Authorization: Authorization,
+                user_uuid: user_uuid,
+                'Content-Type': 'application/json'
+            },
+            body: {
+                "Id": facilityId
+            },
+            json: true
+        };
+
+        const facilityData = await rp(options);
+        if (facilityData) {
+            return facilityData;
+        }
+    };
+
+    const getPatientById = async (user_uuid, Authorization, patientId) => {
+        const url = config.wso2RegisrationUrl + 'patient/getById';
+        let options = {
+            uri: url,
+            method: 'POST',
+            headers: {
+                Authorization: Authorization,
+                user_uuid: user_uuid,
+                'accept-language': 'eng',
+                'Content-Type': 'application/json'
+            },
+            body: {
+                "patientId": patientId
+            },
+            json: true
+        };
+
+        const patientData = await rp(options);
+        if (patientData) {
+            return patientData;
+        }
+    };
+
     return {
         getDepartments,
-        getDoctorDetails
+        getDoctorDetails,
+        getFacilityDetailsById,
+        getPatientById
     };
 };
 
