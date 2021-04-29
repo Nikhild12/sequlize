@@ -189,6 +189,66 @@ const Encounter = () => {
   }
   // End -- H30-35488 - Need to track is_adult flag encounter wise Service to Service Call  -- Ashok //  
 
+ 
+  /**
+   *
+   * @param {*} req
+   * @param {*} res
+   */
+  const _commonVisitInformation = async (req, res, next) => {
+    try {
+      let { patient_ids, visit_date, offset, itemsPerPage } = req.body;
+
+      if (!itemsPerPage) itemsPerPage = 10;
+      if (!offset) offset = 0;
+
+      let wherecondition = {};
+      if (!patient_ids && !visit_date) {
+        return res.status(400).send({
+          code: 400,
+          message: "Request Body Not Found "
+        });
+      }
+      if (visit_date) {
+        let visit_date_frm = emr_utility.indiaTz(visit_date).format('YYYY-MM-DD') + ' 00:00:00';
+        let visit_date_to = emr_utility.indiaTz(visit_date).format('YYYY-MM-DD') + ' 23:59:59';
+        wherecondition = Object.assign(wherecondition, {
+          encounter_date: {
+            [Op.gte]: visit_date_frm,
+            [Op.lte]: visit_date_to
+          }
+        });
+      }
+      if (patient_ids) {
+        wherecondition = Object.assign(wherecondition, {
+          patient_uuid: {
+            [Op.in]: patient_ids
+          }
+        });
+      }
+      let visit_info = await encounter_tbl.findAll({
+        where: wherecondition,
+        offset: offset,
+        limit: itemsPerPage,
+        group: ['patient_uuid'],
+        attributes: ['patient_uuid',
+          [Sequelize.fn('MAX', Sequelize.col('encounter_date')), 'visit_date']]
+      });
+      return res.status(200)
+      .send({
+        code: 200,
+        message: "Fetched Visit info. Successfully", 
+        responseContents: (visit_info) ? visit_info : null,
+        statusCode: 200,
+        totalRecords: visit_info.length });
+
+    } catch (ex) {
+      console.log("Exception happened", ex);
+      return res
+        .status(500)
+        .send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex });
+    }
+  }
 
   /**
    *
@@ -771,6 +831,7 @@ const Encounter = () => {
 
   return {
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
+    commonVisitInformation: _commonVisitInformation,
     createPatientEncounter: _createPatientEncounter,
     getVisitHistoryByPatientId: _getVisitHistoryByPatientId,
     deleteEncounterById: _deleteEncounterById,
