@@ -439,9 +439,9 @@ const glassPrescriptionController = () => {
     address_1 = facilityResponse.address_line1;
     address_2 = facilityResponse.address_line2;
     pincode_uuid = facilityResponse.pincode_uuid;
-    state = facilityResponse.state_master.name;
-    district = facilityResponse.district_master.name;
-    country = facilityResponse.country_master.name;
+    state = facilityResponse.state_uuid ? facilityResponse.state_master.name : '';
+    district = facilityResponse.district_uuid ? facilityResponse.district_master.name : '';
+    country = facilityResponse.country_uuid ? facilityResponse.country_master.name : '';
 
     address = address_1 ? address_1 : "";
     address = address_2 ? (address ? address + "," + address_2 : address_2) : address;
