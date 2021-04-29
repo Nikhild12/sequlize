@@ -462,12 +462,14 @@ const glassPrescriptionController = () => {
       pin: patientResponse.uhid,
       patient: patientResponse.title ? patientResponse.salutation_details.name + patientResponse.first_name : patientResponse.first_name,
       ageAndGender: patientResponse.age + patientResponse.period_detail.name + "/" + patientResponse.gender_details.name,
+      visit_number: patientResponse ? patientResponse.patient_visits ? patientResponse.patient_visits[0].visit_number : "" : "",
       // glass prescription
       reference_no: glassPrescriptionResponse.prescription_no,
       ipd: glassPrescriptionResponse.ipd,
       glass_type: glassPrescriptionResponse.glass_type,
       notes: glassPrescriptionResponse.notes,
-      date: moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
+      prescription_date: moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') || moment(new Date()).format('DD-MMM-YYYY HH:mm')
     };
   }
 
