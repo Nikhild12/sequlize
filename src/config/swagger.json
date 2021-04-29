@@ -13071,11 +13071,11 @@
 			"properties": {
 				"offset": {
 					"type": "number",
-					"example": "0"
+					"example": 0
 				},
 				"itemsPerPage": {
 					"type": "number",
-					"example": "10"
+					"example": 10
 				},
 				"patient_ids": {
 					"type": "number",
