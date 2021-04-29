@@ -469,7 +469,7 @@ const glassPrescriptionController = () => {
       glass_type: glassPrescriptionResponse.glass_type,
       notes: glassPrescriptionResponse.notes,
       date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
-      prescription_date: moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') || moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      prescription_date: glassPrescriptionResponse.prescription_date ? moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : moment(new Date()).format('DD-MMM-YYYY HH:mm')
     };
   }
 
