@@ -3341,6 +3341,45 @@
 					}
 				}
 			}
+		},		
+		"/api/encounter/getcommonvisitinfo": {
+			"post": {
+				"description": "To get a Encounter for Patient",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getcommonvisitinfo",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getcommonvisitinfo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
+					}
+				}
+			}
 		},
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
@@ -12973,6 +13012,27 @@
 						}
 					}
 				}
+			}
+		},
+		"getcommonvisitinfo": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "number",
+					"example": "0"
+				},
+				"itemsPerPage": {
+					"type": "number",
+					"example": "10"
+				},
+				"patient_ids": {
+					"type": "number",
+					"example": "1,3,5"
+				},
+				"visit_date": {
+					"type": "string",
+					"example": "2021-04-29"
+				}				
 			}
 		},
 		"updateEncounter": {
