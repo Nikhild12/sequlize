@@ -226,7 +226,7 @@ const Encounter = () => {
           }
         });
       }
-      let visit_info = await encounter_tbl.findAll({
+      let visit_info = await encounter_tbl.findAndCountAll({
         where: wherecondition,
         offset: offset,
         limit: itemsPerPage,
@@ -238,9 +238,9 @@ const Encounter = () => {
       .send({
         code: 200,
         message: "Fetched Visit info. Successfully", 
-        responseContents: (visit_info) ? visit_info : null,
-        statusCode: 200,
-        totalRecords: visit_info.length });
+        totalRecords: visit_info.count.length,
+        responseContents: (visit_info.rows) ? visit_info.rows : null,
+        statusCode: 200 });
 
     } catch (ex) {
       console.log("Exception happened", ex);

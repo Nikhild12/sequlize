@@ -20,6 +20,7 @@ const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const _getLatestEncounterAttributes = () => {
   return [
     "ed_patient_uuid",
+    "ed_encounter_uuid",
     "ed_encounter_type_uuid", // Encounter Type
     "ed_uuid",
     "ed_doctor_uuid",
