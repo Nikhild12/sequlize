@@ -123,18 +123,7 @@ module.exports = (sequelize, DataTypes) => {
       display_order: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg("display_order"),
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg("display_order"),
-          },
-          min: {
-            args: [0],
-            msg: emr_constants.GetZeroValidationMessage("display_order"),
-          },
-        },
+        defaultValue: 0
       },
       comments: {
         type: DataTypes.STRING(255),

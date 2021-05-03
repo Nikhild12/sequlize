@@ -98,15 +98,7 @@ module.exports = (sequelize, DataTypes) => {
             display_order: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('display_order')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('display_order')
-                    },
-                    min: 0
-                }
+                defaultValue: 0
             },
             active_from: {
                 type: DataTypes.DATE,
