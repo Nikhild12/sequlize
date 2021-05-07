@@ -456,21 +456,30 @@ const notesController = () => {
                 });
             }
             let finalData = [];
+            let i = 0;
             for (let e of patNotesData) {
                 let data;
                 if (e.activity_uuid) {
-                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
-                    if (actCode) {
+                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, 'Bearer 1bf4bc66-353f-33d4-9e78-039770ded6ef');
+                    if (actCode && actCode.name) {
                         e.temp = [];
                         e.user_uuid = user_uuid;
                         e.Authorization = Authorization;
                         e.facility_uuid = facility_uuid;
-                        data = await getWidgetData(actCode, e, consultation_uuid);
+                        data = await getWidgetData(actCode.name, e, consultation_uuid);
                         finalData.push(data);
                         console.log(finalData);
+                        // # Added for Nurse Desk IP Case Sheet Review Notes
+                        if (isNurseCS) {
+                            finalData[i].dataValues.activity_code = actCode.code;
+                            finalData[i].dataValues.activity_name = actCode.name;
+                        }
                     }
                 } else {
                     finalData.push(e);
+                }
+                if (isNurseCS) {
+                    i++;
                 }
             }
             return res.status(200).send({
@@ -1245,7 +1254,7 @@ const notesController = () => {
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents)
-            return user_details.responseContents.name;
+            return user_details.responseContents;
         else
             return false;
     };

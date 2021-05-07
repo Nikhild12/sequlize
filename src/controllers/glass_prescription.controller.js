@@ -19,6 +19,7 @@ const appMasterData = require("../controllers/appMasterData");
 const glass_prescription_tbl = db.glass_prescription;
 const glass_prescription_details_tbl = db.glass_prescription_details;
 const vision_type_tbl = db.vision_type;
+const commonService = require('../services/common.service');
 const glassPrescriptionController = () => {
   /**
    * Returns jwt token if valid username and password is provided
@@ -396,9 +397,9 @@ const glassPrescriptionController = () => {
       }),
         {
           format: 'A4',
-          orientation: "landscape",
+          // orientation: "landscape",
           header: {
-            height: '20mm'
+            height: '10mm'
           },
           footer: {
             height: '20mm',
@@ -451,7 +452,7 @@ const glassPrescriptionController = () => {
     address = pincode_uuid ? (address ? address + "," + pincode_uuid : pincode_uuid) : address;
     return {
       // facility
-      facility: facilityResponse.facility.name,
+      facility: facilityResponse ? facilityResponse.facility.name : '',
       // facility address
       address: address,
       // doctor
@@ -468,8 +469,10 @@ const glassPrescriptionController = () => {
       ipd: glassPrescriptionResponse.ipd,
       glass_type: glassPrescriptionResponse.glass_type,
       notes: glassPrescriptionResponse.notes,
-      date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
-      prescription_date: glassPrescriptionResponse.prescription_date ? moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      // date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
+      // prescription_date: glassPrescriptionResponse.prescription_date ? moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      date: commonService.indiaTz('').format('DD-MMM-YYYY HH:mm'),
+      prescription_date: glassPrescriptionResponse.prescription_date ? commonService.indiaTz(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : commonService.indiaTz('').format('DD-MMM-YYYY HH:mm')
     };
   }
 
