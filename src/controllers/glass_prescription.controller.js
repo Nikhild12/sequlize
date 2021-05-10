@@ -81,7 +81,7 @@ const glassPrescriptionController = () => {
       if (glass_prescription_get) {
         throw {
           error_type: "validationError",
-          errors: "Prescription no should be required."
+          errors: "Data Already exists for same encounter"
         }
       }
       glassPrescriptionObj.header = emr_utility.createIsActiveAndStatus(
@@ -109,7 +109,7 @@ const glassPrescriptionController = () => {
       } else {
         throw {
           error_type: "validationError",
-          errors: "Data Already exists for same encounter"
+          errors: "Prescription no should be required."
         }
       }
       let glass_prescription_details_output, glass_prescription_output;
