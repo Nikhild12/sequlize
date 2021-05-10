@@ -49,6 +49,13 @@
 						"description": "an authorization header",
 						"required": true,
 						"type": "string"
+					},
+					{
+						"name": "facility_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "number"
 					}
 				],
 				"produces": [

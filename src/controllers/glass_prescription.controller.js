@@ -61,7 +61,8 @@ const glassPrescriptionController = () => {
   const _postGlassPrescription = async (req, res) => {
     try {
       let glassPrescriptionObj = req.body;
-      const { user_uuid } = req.headers;
+      const { user_uuid, facility_uuid } = req.headers;
+      const authorization = req.headers.authorization || req.headers.Authorization;
       if (typeof glassPrescriptionObj.header != "object" || Object.keys(glassPrescriptionObj.header).length < 1) {
         throw {
           error_type: "validationError",
@@ -80,13 +81,37 @@ const glassPrescriptionController = () => {
       if (glass_prescription_get) {
         throw {
           error_type: "validationError",
-          errors: "Data Already exists for same encounter"
+          errors: "Prescription no should be required."
         }
       }
       glassPrescriptionObj.header = emr_utility.createIsActiveAndStatus(
         glassPrescriptionObj.header,
         user_uuid
       );
+
+      //Added to Get the Glass Prescription Reference Number fro Inventory
+      let options = {
+        uri: config.wso2InvUrl + 'prescriptions/sequencenogenerating',
+        headers: {
+          user_uuid: user_uuid,
+          facility_uuid: facility_uuid,
+          Authorization: authorization
+        },
+        method: 'POST',
+        json: true,
+        body: {
+          sequence_identifier: 'GlassPrescriptionEntryIdentifier'
+        }
+      };
+      const result = await rp(options);
+      if (result && result.responseContent) {
+        glassPrescriptionObj.header.prescription_no = result.responseContent;
+      } else {
+        throw {
+          error_type: "validationError",
+          errors: "Data Already exists for same encounter"
+        }
+      }
       let glass_prescription_details_output, glass_prescription_output;
       glass_prescription_output = await glass_prescription_tbl.create(glassPrescriptionObj.header);
       if (!glass_prescription_output) {
@@ -461,9 +486,9 @@ const glassPrescriptionController = () => {
       department: departmentResponse.name,
       // patient
       pin: patientResponse.uhid,
-      patient: patientResponse.title ? patientResponse.salutation_details.name + patientResponse.first_name : patientResponse.first_name,
-      ageAndGender: patientResponse.age + patientResponse.period_detail.name + "/" + patientResponse.gender_details.name,
-      visit_number: patientResponse ? patientResponse.patient_visits ? patientResponse.patient_visits[0].visit_number : "" : "",
+      patient: patientResponse.title_uuid && patientResponse.salutation_details ? patientResponse.salutation_details.name + ' ' + patientResponse.first_name : patientResponse.first_name,
+      ageAndGender: patientResponse.age + ' ' + patientResponse.period_detail.name.charAt(0) + ' / ' + patientResponse.gender_details.name.charAt(0),
+      visit_number: patientResponse ? patientResponse.patient_visits ? patientResponse.patient_visits[0].visit_number : '' : '',
       // glass prescription
       reference_no: glassPrescriptionResponse.prescription_no,
       ipd: glassPrescriptionResponse.ipd,
