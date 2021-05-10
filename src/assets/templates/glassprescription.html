@@ -34,78 +34,78 @@
 			<table borderspacing="1" border="1" borderwidth="1" bordercolor="#ccc" cellpadding="3" cellspacing="0"
 				style="width:100%; float:left; text-align: left;">
 				<thead>
-					<tr style="text-align: center; font-size: 14px;">
-						<th colspan="9" style="font-weight: 500;">Glass Prescription</th>
+					<tr style="text-align: center; font-size: 13px;">
+						<th colspan="9" style="font-weight: 600;border-bottom: 0; border-top: 0; border-left: 0; border-right: 0;border-right: 0; color: #000;">Glass Prescription</th>
 					</tr>
 					<tr>
 						<th colspan="3" style="border-bottom: 0; border-right: 0; border-left: 0; padding: 15px; font-size:10px;">
-							<p style="font-weight: 400; color: #555;">Name : {{headerObj.header.patient}} </p>
-							<p style="font-weight: 400; color: #555;">Age / Gender : {{headerObj.header.ageAndGender}}
+							<p style="font-weight: 600; color: #000;"><span>Name: {{headerObj.header.patient}}</span>  </p>
+							<p style="font-weight: 400;color: #000;"><span style="font-weight: 600;">Age / Gender:</span> {{headerObj.header.ageAndGender}}
 							</p>
-							<p style="font-weight: 400; color: #555;">Date : {{headerObj.header.prescription_date}} </p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Date:</span> {{headerObj.header.prescription_date}} </p>
 						</th>
 						<th colspan="3" style="border-bottom: 0; border-right: 0; border-left: 0; padding: 15px; font-size:10px;">
-							<p style="font-weight: 400; color: #555;">PIN: {{headerObj.header.pin}}</p>
-							<p style="font-weight: 400; color: #555;">Doctor Name: {{headerObj.header.doctor}}</p>
-							<p style="font-weight: 400; color: #555;">Department: {{headerObj.header.department}}</p>
+							<p style="font-weight: 600; color: #000;"><span>PIN: {{headerObj.header.pin}}</span> </p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Doctor Name:</span> {{headerObj.header.doctor}}</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Department:</span> {{headerObj.header.department}}</p>
 						</th>
-						<th colspan="3" style="border-bottom: 0;border-left: 0; padding: 15px; font-size:10px;">
-							<p style="font-weight: 400; color: #555;">OP NO: {{headerObj.header.visit_number}}</p>
-							<p style="font-weight: 400; color: #555;">Reference No: {{headerObj.header.reference_no}}
+						<th colspan="3" style="border-bottom: 0;border-left: 0; border-right: 0; padding: 15px; font-size:10px;">
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">OP NO:</span> {{headerObj.header.visit_number}}</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Reference No:</span> {{headerObj.header.reference_no}}
 							</p>
 						</th>
 					</tr>
 				</thead>
 				<tbody style="font-size: 10px;">
 					<tr style="text-align: center;">
-						<td style="border-bottom: 0;"></td>
-						<td colspan="4">Right Eye</td>
-						<td colspan="4">Left Eye</td>
+						<td style="border-bottom: 0; border-left: 0;"></td>
+						<td colspan="4" style="border-bottom: 0; border-right: 0; border-left: 0;font-weight: 600;color: #000;">Right Eye</td>
+						<td colspan="4" style="border-bottom: 0; border-right: 0; font-weight: 600;color: #000;">Left Eye</td>
 					</tr>
 					<tr style="text-align: center;">
-						<td style="width: 11%;border-top: 0;"></td>
-						<td style="width: 11%;">SPH</td>
-						<td style="width: 11%;">CYL</td>
-						<td style="width: 11%;">Axis</td>
-						<td style="width: 11%;">Visual Acuity</td>
-						<td style="width: 11%;">SPH</td>
-						<td style="width: 11%;">CYL</td>
-						<td style="width: 11%;">Axis</td>
-						<td style="width: 11%;">Visual Acuity</td>
+						<td style="width: 11%;border-top: 0;border-bottom: 0; border-left: 0;"></td>
+						<td style="width: 11%;border-bottom: 0; border-right: 0; border-left: 0; font-weight: 600;color: #000;">SPH</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">CYL</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Axis</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Visual Acuity</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">SPH</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">CYL</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Axis</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Visual Acuity</td>
 					</tr>
 					{{#each headerObj.details}}
-					<tr style="text-align: center;">
-						<td>{{this.dataValues.vision_type.dataValues.name}}</td>
-						<td>{{this.dataValues.re_sph}}</td>
-						<td>{{this.dataValues.re_cyl}}</td>
-						<td>{{this.dataValues.re_axis}}</td>
-						<td>{{this.dataValues.re_vis_acu}}</td>
-						<td>{{this.dataValues.le_sph}}</td>
-						<td>{{this.dataValues.le_cyl}}</td>
-						<td>{{this.dataValues.le_axis}}</td>
-						<td>{{this.dataValues.le_vis_acu}}</td>
+					<tr style="text-align: center;"> 
+						<td style="border-bottom: 0; border-left: 0;font-weight: 600;color: #000;">{{this.dataValues.vision_type.dataValues.name}}</td>
+						<td style="border-bottom: 0;border-right: 0; border-left: 0;">{{this.dataValues.re_sph}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_cyl}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_axis}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_vis_acu}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_sph}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_cyl}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_axis}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_vis_acu}}</td>
 					</tr>
 					{{/each}}
 					<tr>
-						<td colspan="4" style="padding: 15px; border-right: 0;">
-							<label>IPD</label>
+						<td colspan="4" style="padding: 15px; border-right: 0; border-left: 0; border-bottom: 0">
+							<label style="font-weight: 600;color: #000;">IPD</label>
 							<div
-								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 6px 0 20px; line-height: 27px;">
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
 								{{headerObj.header.ipd}}</div>
-							<label>Glass Type</label>
+							<label style="font-weight: 600;color: #000;">Glass Type</label>
 							<div
-								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 6px 0 20px; line-height: 27px;">
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
 								{{headerObj.header.glass_type}}</div>
-							<label>Instruction</label>
+							<label style="font-weight: 600;color: #000;">Instruction</label>
 							<div
-								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 6px 0 20px; line-height: 27px;">
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
 								{{headerObj.header.notes}}</div>
 						</td>
-						<td colspan="9" style="border-left: 0;"></td>
+						<td colspan="9" style="border-left: 0; border-right: 0; border-bottom: 0;"></td>
 					</tr>
 					<tr style="text-align: center;">
-						<td colspan="9" style="text-align: right; padding: 80px 15px 20px;">
-							<div>{{headerObj.header.doctor}}</div>
+						<td colspan="9" style="text-align: right; padding: 20px 10px 10px; border-top: 0; border-left: 0;border-right: 0; border-bottom: 0;">
+							<div  style="font-weight: 600;color: #000;">{{headerObj.header.doctor}}</div>
 							Prescribed By
 						</td>
 					</tr>
@@ -113,12 +113,12 @@
 			</table>
 		</div>
 
-		<div style="float:left; padding: 10px; width: calc(100% - 30px);">
+		<div style="float:left; padding: 0px; width: calc(100% - 30px);">
 			<div style="width: 50%; float: left;">
-				<p style="font-size: 10px;">Printed On : {{headerObj.header.date}} </p>
+				<p style="font-size: 10px; margin: 0;">Printed On: {{headerObj.header.date}} </p>
 			</div>
 		</div>
-		<p style="font-size: 10px;text-align: center">***End of Prescription***</p>
+		<p style="font-size: 10px;text-align: center">***End of Glass Prescription***</p>
 
 	</div>
 
