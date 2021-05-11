@@ -19,6 +19,7 @@ const appMasterData = require("../controllers/appMasterData");
 const glass_prescription_tbl = db.glass_prescription;
 const glass_prescription_details_tbl = db.glass_prescription_details;
 const vision_type_tbl = db.vision_type;
+const commonService = require('../services/common.service');
 const glassPrescriptionController = () => {
   /**
    * Returns jwt token if valid username and password is provided
@@ -60,7 +61,8 @@ const glassPrescriptionController = () => {
   const _postGlassPrescription = async (req, res) => {
     try {
       let glassPrescriptionObj = req.body;
-      const { user_uuid } = req.headers;
+      const { user_uuid, facility_uuid } = req.headers;
+      const authorization = req.headers.authorization || req.headers.Authorization;
       if (typeof glassPrescriptionObj.header != "object" || Object.keys(glassPrescriptionObj.header).length < 1) {
         throw {
           error_type: "validationError",
@@ -86,6 +88,30 @@ const glassPrescriptionController = () => {
         glassPrescriptionObj.header,
         user_uuid
       );
+
+      //Added to Get the Glass Prescription Reference Number fro Inventory
+      let options = {
+        uri: config.wso2InvUrl + 'prescriptions/sequencenogenerating',
+        headers: {
+          user_uuid: user_uuid,
+          facility_uuid: facility_uuid,
+          Authorization: authorization
+        },
+        method: 'POST',
+        json: true,
+        body: {
+          sequence_identifier: 'GlassPrescriptionEntryIdentifier'
+        }
+      };
+      const result = await rp(options);
+      if (result && result.responseContent) {
+        glassPrescriptionObj.header.prescription_no = result.responseContent;
+      } else {
+        throw {
+          error_type: "validationError",
+          errors: "Prescription no should be required."
+        }
+      }
       let glass_prescription_details_output, glass_prescription_output;
       glass_prescription_output = await glass_prescription_tbl.create(glassPrescriptionObj.header);
       if (!glass_prescription_output) {
@@ -396,9 +422,9 @@ const glassPrescriptionController = () => {
       }),
         {
           format: 'A4',
-          orientation: "landscape",
+          // orientation: "landscape",
           header: {
-            height: '20mm'
+            height: '10mm'
           },
           footer: {
             height: '20mm',
@@ -451,7 +477,7 @@ const glassPrescriptionController = () => {
     address = pincode_uuid ? (address ? address + "," + pincode_uuid : pincode_uuid) : address;
     return {
       // facility
-      facility: facilityResponse.facility.name,
+      facility: facilityResponse ? facilityResponse.facility.name : '',
       // facility address
       address: address,
       // doctor
@@ -460,16 +486,18 @@ const glassPrescriptionController = () => {
       department: departmentResponse.name,
       // patient
       pin: patientResponse.uhid,
-      patient: patientResponse.title ? patientResponse.salutation_details.name + patientResponse.first_name : patientResponse.first_name,
-      ageAndGender: patientResponse.age + patientResponse.period_detail.name + "/" + patientResponse.gender_details.name,
-      visit_number: patientResponse ? patientResponse.patient_visits ? patientResponse.patient_visits[0].visit_number : "" : "",
+      patient: patientResponse.title_uuid && patientResponse.salutation_details ? patientResponse.salutation_details.name + ' ' + patientResponse.first_name : patientResponse.first_name,
+      ageAndGender: patientResponse.age + ' ' + patientResponse.period_detail.name.charAt(0) + ' / ' + patientResponse.gender_details.name.charAt(0),
+      visit_number: patientResponse ? patientResponse.patient_visits ? patientResponse.patient_visits[0].visit_number : '' : '',
       // glass prescription
       reference_no: glassPrescriptionResponse.prescription_no,
       ipd: glassPrescriptionResponse.ipd,
       glass_type: glassPrescriptionResponse.glass_type,
       notes: glassPrescriptionResponse.notes,
-      date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
-      prescription_date: glassPrescriptionResponse.prescription_date ? moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      // date: moment(new Date()).format('DD-MMM-YYYY HH:mm'),
+      // prescription_date: glassPrescriptionResponse.prescription_date ? moment(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : moment(new Date()).format('DD-MMM-YYYY HH:mm')
+      date: commonService.indiaTz('').format('DD-MMM-YYYY HH:mm'),
+      prescription_date: glassPrescriptionResponse.prescription_date ? commonService.indiaTz(glassPrescriptionResponse.prescription_date).format('DD-MMM-YYYY HH:mm') : commonService.indiaTz('').format('DD-MMM-YYYY HH:mm')
     };
   }
 
