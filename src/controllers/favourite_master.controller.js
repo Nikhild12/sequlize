@@ -557,7 +557,7 @@ const TickSheetMasterController = () => {
         }
       } catch (ex) {
         if (typeof ex.error_type != 'undefined' && ex.error_type == 'validation') {
-          return res.status(400).json({ statusCode: 400, Error: ex.errors, msg: "validation error" });
+          return res.status(400).json({ statusCode: 400, code: "validationError", message: ex.errors });
         }
         return res
           .status(400)
