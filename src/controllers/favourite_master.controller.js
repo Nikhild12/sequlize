@@ -355,7 +355,7 @@ function getTreatmentKitByIdQuery(treatmentId, tType) {
 
 function getFavouriteQueryForDuplicate(
   dept_id, user_id, searchKey, searchvalue,
-  fav_type_id, display_order, fId
+  fav_type_id, display_order, fId, testMasterId, profileMasterId
 ) {
   if (display_order) {
     return {
@@ -364,7 +364,7 @@ function getFavouriteQueryForDuplicate(
       tsm_display_order: display_order,
       tsm_dept: { [Op.eq]: dept_id },
       tsm_userid: { [Op.eq]: user_id },
-      fa_uuid: { [Op.eq]: fId }
+      fa_uuid: { [Op.eq]: fId },
     }
   } else {
     return {
@@ -373,7 +373,9 @@ function getFavouriteQueryForDuplicate(
       [searchKey]: searchvalue,
       tsm_dept: { [Op.eq]: dept_id },
       tsm_userid: { [Op.eq]: user_id },
-      fa_uuid: { [Op.eq]: fId }
+      fa_uuid: { [Op.eq]: fId },
+      tsmd_test_master_uuid: testMasterId,
+      tsmd_profile_master_uuid: profileMasterId
     }
   }
   // return {
@@ -483,14 +485,20 @@ const TickSheetMasterController = () => {
         const { facility_uuid } = favouriteMasterReqData;
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
-          logging: console.log,
           where: getFavouriteQueryForDuplicate(
-            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid
-          ),
+            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid, favouriteMasterDetailsReqData[0].test_master_uuid, favouriteMasterDetailsReqData[0].profile_master_uuid)
         });
-        // return res.send(checkingForSameFavourite)
 
+        const checkingForSameFavouriteTestMaster = await vmTickSheetMasterTbl.findAll({
+          attributes: getFavouritesAttributes,
+          where: getFavouriteQueryForDuplicate(
+            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, 0, facility_uuid, favouriteMasterDetailsReqData[0].test_master_uuid, favouriteMasterDetailsReqData[0].profile_master_uuid
+          )
+        });
 
+        if (checkingForSameFavouriteTestMaster && checkingForSameFavouriteTestMaster.length > 0) {
+          throw ({ error_type: "validation", errors: 'Data Already exists' });
+        }
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
           const { duplicate_msg, duplicate_code, } = emr_all_favourites.favouriteDuplicateMessage(
             checkingForSameFavourite, search_key, search_value, display_order
@@ -548,6 +556,9 @@ const TickSheetMasterController = () => {
           });
         }
       } catch (ex) {
+        if (typeof ex.error_type != 'undefined' && ex.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, Error: ex.errors, msg: "validation error" });
+        }
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
