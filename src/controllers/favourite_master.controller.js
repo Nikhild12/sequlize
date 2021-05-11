@@ -355,7 +355,7 @@ function getTreatmentKitByIdQuery(treatmentId, tType) {
 
 function getFavouriteQueryForDuplicate(
   dept_id, user_id, searchKey, searchvalue,
-  fav_type_id, display_order, fId, testMasterId, profileMasterId
+  fav_type_id, display_order, fId
 ) {
   if (display_order) {
     return {
@@ -373,9 +373,7 @@ function getFavouriteQueryForDuplicate(
       [searchKey]: searchvalue,
       tsm_dept: { [Op.eq]: dept_id },
       tsm_userid: { [Op.eq]: user_id },
-      fa_uuid: { [Op.eq]: fId },
-      tsmd_test_master_uuid: testMasterId,
-      tsmd_profile_master_uuid: profileMasterId
+      fa_uuid: { [Op.eq]: fId }
     }
   }
   // return {
@@ -485,15 +483,12 @@ const TickSheetMasterController = () => {
         const { facility_uuid } = favouriteMasterReqData;
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
-          where: getFavouriteQueryForDuplicate(
-            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid, favouriteMasterDetailsReqData[0].test_master_uuid, favouriteMasterDetailsReqData[0].profile_master_uuid)
+          where: getFavouriteQueryForDuplicate(department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid)
         });
-
         const checkingForSameFavouriteTestMaster = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
-          where: getFavouriteQueryForDuplicate(
-            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, 0, facility_uuid, favouriteMasterDetailsReqData[0].test_master_uuid, favouriteMasterDetailsReqData[0].profile_master_uuid
-          )
+          logging: console.log,
+          where: getFavouriteQueryForDuplicate(department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, 0, facility_uuid)
         });
 
         if (checkingForSameFavouriteTestMaster && checkingForSameFavouriteTestMaster.length > 0) {
