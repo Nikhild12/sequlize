@@ -5732,13 +5732,19 @@
 					{
 						"in": "query",
 						"name": "patient_uuid",
-						"required": true,
+						"required": false,
 						"type": "integer"
 					},
 					{
 						"in": "query",
 						"name": "attachment_type_uuid",
-						"required": true,
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "blood_donor_registration_uuid",
+						"required": false,
 						"type": "integer"
 					}
 				],

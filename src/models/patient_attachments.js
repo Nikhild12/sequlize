@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            blood_donor_registration_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             encounter_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
