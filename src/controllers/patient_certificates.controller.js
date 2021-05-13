@@ -107,6 +107,11 @@ const CertificatesController = () => {
                 facility_uuid
             } = req.headers;
 
+            // this code is for testing purposes later will be removed this code
+            console.log('authorization====>', req.headers.authorization);
+            console.log('Authorization====>', req.headers.Authorization);
+            console.log('headers====>', req.headers);
+
             let certificate_result = {};
             if (certificate_uuid && user_uuid) {
                 const result = await patientCertificatesTbl.findOne({
@@ -117,7 +122,7 @@ const CertificatesController = () => {
                     attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template'],
 
                 });
-                if (result && result != null) {
+                if (result) {
                     certificate_result = {
                         ...result
                     };
@@ -127,7 +132,7 @@ const CertificatesController = () => {
                         const data = allpatientsC.responseContent;
                         console.log('/////////////', data);
 
-                        
+
 
                         const patdetails = {
                             patient_name: data ? data.first_name : '',
@@ -160,7 +165,7 @@ const CertificatesController = () => {
                             certificate_result.dataValues.data_template.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                             certificate_result.dataValues.data_template.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                         }
-// return res.send(certificate_result.dataValues.data_template)
+                        // return res.send(certificate_result.dataValues.data_template)
                         const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
                             headerObj: certificate_result.dataValues.data_template,
                             // language: req.__('dischargeSummary')
