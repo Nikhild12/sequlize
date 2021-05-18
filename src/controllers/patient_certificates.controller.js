@@ -264,8 +264,7 @@ function certificateResponse(certificatesData) {
 }
 async function getallpatientdetials(user_uuid, authorization, PData) {
     let options = {
-        //uri: config.wso2AppUrl + 'department/getDepartmentOnlyById',
-        uri: 'https://qahmisgateway.oasyshealth.co/DEVregistration/v1/api/patient/getById',
+        uri: config.wso2RegisrationUrl.concat('/patient/getById'), //Changed Hardcoded URL By Elumalai
         method: 'POST',
         headers: {
             "Authorization": authorization,
