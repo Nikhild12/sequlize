@@ -384,7 +384,8 @@ const notesController = () => {
         try {
             const {
                 patient_uuid,
-                consultation_uuid
+                consultation_uuid,
+                isNurseCS
             } = req.query;
             const {
                 user_uuid,
