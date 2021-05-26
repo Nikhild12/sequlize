@@ -460,7 +460,7 @@ const notesController = () => {
             for (let e of patNotesData) {
                 let data;
                 if (e.activity_uuid) {
-                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, 'Bearer 1bf4bc66-353f-33d4-9e78-039770ded6ef');
+                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
                     if (actCode && actCode.name) {
                         e.temp = [];
                         e.user_uuid = user_uuid;
