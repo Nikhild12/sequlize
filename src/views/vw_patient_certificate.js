@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            user_title_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             u_is_active: {
                 type: DataTypes.BOOLEAN,
                 allowNull: true
