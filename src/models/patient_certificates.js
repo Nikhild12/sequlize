@@ -321,6 +321,11 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
-
+    patient_certificates.associate = models => {
+        patient_certificates.belongsTo(models.note_templates, {
+            foreignKey: 'note_template_uuid',
+            targetKey: 'uuid'
+        });
+    }
     return patient_certificates;
 };
