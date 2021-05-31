@@ -107,11 +107,6 @@ const CertificatesController = () => {
                 facility_uuid
             } = req.headers;
 
-            // this code is for testing purposes later will be removed this code
-            console.log('authorization====>', req.headers.authorization);
-            console.log('Authorization====>', req.headers.Authorization);
-            console.log('headers====>', req.headers);
-
             let certificate_result = {};
             if (certificate_uuid && user_uuid) {
                 const result = await patientCertificatesTbl.findOne({
@@ -130,9 +125,6 @@ const CertificatesController = () => {
                         const allpatientsC = await getallpatientdetials(user_uuid, req.headers.authorization, result.dataValues.patient_uuid);
 
                         const data = allpatientsC.responseContent;
-                        console.log('/////////////', data);
-
-
 
                         const patdetails = {
                             patient_name: data ? data.first_name : '',
@@ -227,10 +219,86 @@ const CertificatesController = () => {
         }
     };
 
+    // #H30-37944 Added for View Certificate By Elumalai Govindan
+    const _previous_certificatebyid = async (req, res) => {
+        try {
+            const {
+                certificate_uuid
+            } = req.query;
+            const {
+                user_uuid
+            } = req.headers;
+
+            let certificate_result = {};
+            if (certificate_uuid && user_uuid) {
+                const result = await patientCertificatesTbl.findOne({
+                    where: {
+                        uuid: certificate_uuid,
+                        status: 1,
+                    },
+                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template', 'note_template_uuid']
+                });
+                if (result) {
+
+                    const allpatientsC = await getallpatientdetials(user_uuid, req.headers.authorization, result.dataValues.patient_uuid);
+
+                    if (allpatientsC && Object.keys(allpatientsC).length && allpatientsC.statusCode == 200 && allpatientsC.responseContent) {
+
+                        const data = allpatientsC.responseContent;
+
+                        const patdetails = {
+                            patient_name: data.salutation_details ? data.salutation_details.name.concat(' ', data.first_name) : data.first_name,
+                            age: data.age,
+                            period: data.period_detail ? (data.period_detail.name == 'Year' ? "Year(s)" : data.period_detail.name) : '',
+                            gender: data.gender_details ? data.gender_details.name : '',
+                            pa_title: data.salutation_details ? data.salutation_details.name : '',
+                            mobile: data.mobile,
+                            pin: data.pin,
+                            doctor_name: data.first_name,
+                            dept_name: data.patient_visits && data.patient_visits[0].department_details ? data.patient_visits[0].department_details.name : '',
+                            title: data.salutation_details ? data.salutation_details.name : '',
+                            date: moment(data.created_date).format('DD-MMM-YYYY hh:mm A'),
+                        };
+
+                        result.dataValues['patient_details'] = patdetails;
+                    } else {
+                        result.dataValues['patient_details'] = {};
+                    }
+                    return res.status(httpStatus.OK).send({
+                        status: "success",
+                        statusCode: httpStatus.OK,
+                        message: "Success",
+                        responseContent: result
+                    });
+
+                } else {
+                    return res.status(httpStatus.OK).send({
+                        status: "failed",
+                        statusCode: httpStatus.OK,
+                        message: "No data found"
+                    });
+                }
+            } else {
+                return res.status(422).send({
+                    status: "failed",
+                    statusCode: httpStatus.UNPROCESSABLE_ENTITY,
+                    message: "you are missing certificate_uuid / user_uuid "
+                });
+            }
+        } catch (ex) {
+            return res.status(500).send({
+                status: "failed",
+                statusCode: httpStatus.BAD_REQUEST,
+                message: ex.message
+            });
+        }
+    };
+
     return {
 
         createPatientCertificates: _createPatientCertificates,
         getPatientCertificates: _getPatientCertificates,
+        previous_certificatebyid: _previous_certificatebyid,
         print_previous_certificates: _print_previous_certificates
     };
 
@@ -263,21 +331,27 @@ function certificateResponse(certificatesData) {
     });
 }
 async function getallpatientdetials(user_uuid, authorization, PData) {
-    let options = {
-        uri: config.wso2RegisrationUrl.concat('/patient/getById'), //Changed Hardcoded URL By Elumalai
-        method: 'POST',
-        headers: {
-            "Authorization": authorization,
-            "user_uuid": user_uuid,
-            "accept-language": "en"
-        },
-        body: {
-            "patientId": PData
-        },
-        json: true
-    };
-    const dep_details = await rp(options);
-    return dep_details;
+    try {
+        let options = {
+            uri: config.wso2RegisrationUrl.concat('patient/getById'), //Changed Hardcoded URL By Elumalai
+            method: 'POST',
+            headers: {
+                "content-type": 'application/json',
+                "Authorization": authorization,
+                "user_uuid": user_uuid,
+                "accept-language": "en"
+            },
+            body: {
+                "patientId": PData
+            },
+            json: true
+        };
+        const dep_details = await rp(options);
+        return dep_details;
+    } catch (error) {
+        // console.log(error);
+        return {};
+    }
 }
 const getFacilityDetails = async (req) => {
     try {
