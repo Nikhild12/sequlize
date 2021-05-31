@@ -1,8 +1,6 @@
 // Package Import
 const httpStatus = require("http-status");
 
-const moment = require("moment");
-
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
@@ -20,13 +18,15 @@ const emr_constants = require("../config/constants");
 // Utility Service
 const utilityService = require("../services/utility.service");
 
-// tbl
+// Tables
 const patientTreatmenttbl = sequelizeDb.patient_treatments;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
+const patientChiefComplaintsTbl = sequelizeDb.patient_chief_complaints; /* Sreeni - Patient Chief Complaints Added - H30-34349 */
 const diagnosisTbl = sequelizeDb.diagnosis;
-const prevKitOrdersViewTbl = sequelizeDb.vw_patient_pervious_orders;
+const chiefcomplaintsTbl = sequelizeDb.chief_complaints;
 const encounterTypeTbl = sequelizeDb.encounter_type;
 const treatmentKitTable = sequelizeDb.treatment_kit;
+const chief_complaint_duration_periods_tbl = sequelizeDb.chief_complaint_duration_periods;
 
 
 // Patient Treatment Attributes
@@ -43,10 +43,23 @@ const getPrevKitOrders = [
 ];
 const PatientTreatmentController = () => {
   const _createPatientTreatment = async (req, res) => {
-    const { user_uuid, facility_uuid } = req.headers;
-    const { patientTreatment } = req.body;
-    const { patientDiagnosis, patientPrescription } = req.body;
-    const { patientLab, patientRadiology, patientInvestigation } = req.body;
+    const {
+      user_uuid,
+      facility_uuid
+    } = req.headers;
+    const {
+      patientTreatment
+    } = req.body;
+    const {
+      patientDiagnosis,
+      patientChiefComplaints,
+      patientPrescription
+    } = req.body;
+    const {
+      patientLab,
+      patientRadiology,
+      patientInvestigation
+    } = req.body;
 
     // let patientTransaction;
     // let patientTransactionStatus = false;
@@ -58,7 +71,7 @@ const PatientTreatmentController = () => {
         });
       }
 
-      let patientDgnsCreatedData;
+      let patientDgnsCreatedData, patientCCData;
       let prescriptionCreated, labCreated, investigationCreated, radialogyCreated;
 
       try {
@@ -68,10 +81,9 @@ const PatientTreatmentController = () => {
         patientTreatment.treatment_given_date = new Date();
         patientTreatment.tat_start_time = new Date();
         const patientTKCreatedData = await patientTreatmenttbl.create(
-          patientTreatment,
-          {
-            returning: true
-          }
+          patientTreatment, {
+          returning: true
+        }
         );
         if (Array.isArray(patientDiagnosis) && patientDiagnosis.length > 0) {
           patientDiagnosis.forEach(p => {
@@ -80,20 +92,24 @@ const PatientTreatmentController = () => {
             p.is_chronic = p.is_chronic || emr_constants.IS_ACTIVE;
             p.performed_by = user_uuid;
             p.performed_date = new Date();
-            p = utilityService.assignDefaultValuesAndUUIdToObject(
-              p,
-              patientTKCreatedData,
-              user_uuid,
-              "patient_treatment_uuid"
-            );
+            p = utilityService.assignDefaultValuesAndUUIdToObject(p, patientTKCreatedData, user_uuid, "patient_treatment_uuid");
           });
-          patientDgnsCreatedData = await patientDiagnosisTbl.bulkCreate(
-            patientDiagnosis,
-            {
-              returning: true,
-              validate: true
-            }
-          );
+          patientDgnsCreatedData = await patientDiagnosisTbl.bulkCreate(patientDiagnosis, {
+            returning: true,
+            validate: true
+          });
+        }
+        /* Sreeni - Patient Chief Complaints Added - H30-34349 */
+        if (Array.isArray(patientChiefComplaints) && patientChiefComplaints.length > 0) {
+          patientChiefComplaints.forEach(cc => {
+            cc.performed_by = user_uuid;
+            cc.performed_date = new Date();
+            cc = utilityService.assignDefaultValuesAndUUIdToObject(cc, patientTKCreatedData, user_uuid, "patient_treatment_uuid");
+          });
+          patientCCData = await patientChiefComplaintsTbl.bulkCreate(patientChiefComplaints, {
+            returning: true,
+            validate: true
+          });
         }
         if (patientTreatmentAttributes.isPrescriptionAvailable(patientPrescription)) {
 
@@ -130,17 +146,15 @@ const PatientTreatmentController = () => {
 
 
         }
-
-
-
         //await patientTransaction.commit();
-        // patientTransactionStatus = true;
+        //patientTransactionStatus = true;
         return res.status(200).send({
           code: httpStatus.OK,
           message: emr_constants.INSERTED_PATIENT_TREATMENT,
           responseContents: {
             patientTKCreatedData,
             patientDgnsCreatedData,
+            patientCCData,
             prescriptionCreated,
             labCreated,
             investigationCreated,
@@ -175,7 +189,10 @@ const PatientTreatmentController = () => {
         }
         return res
           .status(400)
-          .send({ code: httpStatus.BAD_REQUEST, message: error });
+          .send({
+            code: httpStatus.BAD_REQUEST,
+            message: error
+          });
       } finally {
         // if (patientTransaction && !patientTransactionStatus) {
         //   patientTransaction.rollback();
@@ -189,18 +206,24 @@ const PatientTreatmentController = () => {
     }
   };
 
-
   const _previousKitRepeatOrder = async (req, res) => {
-    const { user_uuid, facility_uuid } = req.headers;
+    const {
+      user_uuid,
+      facility_uuid
+    } = req.headers;
     let Authorization, authorization;
     Authorization = authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
-    const { patient_uuid } = req.query;
+    const {
+      patient_uuid
+    } = req.query;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         let prevKitOrderData = await getPatientTreatmentKitData(patient_uuid);
         const returnMessage = prevKitOrderData.length > 0 ? emr_constants.FETCHED_PREVIOUS_KIT_SUCCESSFULLY : emr_constants.NO_RECORD_FOUND;
         let response = getPrevKitOrdersResponse(prevKitOrderData);
-        let departmentIds = [], doctorIds = [], orderIds = [];
+        let departmentIds = [],
+          doctorIds = [],
+          orderIds = [];
         if (response != null && response.length > 0) {
           response.map(d => {
             departmentIds.push(d.department_id);
@@ -235,6 +258,16 @@ const PatientTreatmentController = () => {
             response.forEach((e, index) => {
               e.diagnosis = responseDiagnosis.filter((rD) => {
                 return rD.order_id === e.order_id;
+              });
+            });
+          }
+
+          const repeatOrderChiefComplaintsData = await getPrevOrderdChiefComplaintsData(orderIds);
+          const responseChiefComplaints = await getRepeatOrderChiefComplaintsResponse(repeatOrderChiefComplaintsData);
+          if (responseChiefComplaints.length > 0) {
+            response.forEach((e, index) => {
+              e.chiefcomplaints = responseChiefComplaints.filter((rcc) => {
+                return rcc.order_id === e.order_id;
               });
             });
           }
@@ -274,28 +307,54 @@ const PatientTreatmentController = () => {
             });
 
           }
-          return res.status(200).send({ code: httpStatus.OK, message: returnMessage, responseContents: response });
-        }
-        else {
-          return res.status(200).send({ code: httpStatus.OK, message: 'No Data Found' });
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: returnMessage,
+            responseContents: response
+          });
+        } else {
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: 'No Data Found'
+          });
         }
 
-      }
-      else {
-        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        });
       }
     } catch (ex) {
       console.log('Exception Happened', ex);
-      return res.status(400).send({ code: 400, message: ex });
+      return res.status(400).send({
+        code: 400,
+        message: ex
+      });
     }
 
   };
 
   const _modifyPreviousOrder = async (req, res) => {
-    const { user_uuid, authorization, facility_uuid } = req.headers;
-    const { patient_uuid, order_id } = req.query;
-    const { patientTreatment, patientDiagnosis, patientPrescription, patientLab, patientRadiology, patientInvestigation } = req.body;
-    let diagnosisUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
+    const {
+      user_uuid,
+      authorization,
+      facility_uuid
+    } = req.headers;
+    const {
+      patient_uuid,
+      order_id
+    } = req.query;
+    const {
+      patientTreatment,
+      patientDiagnosis,
+      patientChiefComplaints,
+      patientPrescription,
+      patientLab,
+      patientRadiology,
+      patientInvestigation
+    } = req.body;
+    let diagnosisUpdated, chiefcomplaintsUpdated, prescriptionUpdated, labUpdated, radilogyUpadated, investigationUpdated;
     try {
       if (user_uuid && patient_uuid && patient_uuid > 0) {
         if (patientTreatment) {
@@ -303,29 +362,34 @@ const PatientTreatmentController = () => {
             patientTreatmentId: patientTreatment.uuid,
             treatment_kit_uuid: patientTreatment.treatment_kit_uuid
           };
-          let updateData = await patientTreatmenttbl.update(
-            {
+          let updateData = await patientTreatmenttbl.update({
+            treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+            modified_by: user_uuid,
+            modified_date: new Date()
+          }, {
+            where: {
+              uuid: patientTreatment.uuid
+            }
+          })
+          if (updateData && updateData[0] > 0) {
+            await patientDiagnosisTbl.update({
               treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
               modified_by: user_uuid,
               modified_date: new Date()
-            },
-            {
+            }, {
               where: {
-                uuid: patientTreatment.uuid
+                patient_treatment_uuid: patientTreatment.uuid
               }
-            })
-          if (updateData && updateData[0] > 0) {
-            await patientDiagnosisTbl.update(
-              {
-                treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
-                modified_by: user_uuid,
-                modified_date: new Date()
-              },
-              {
-                where: {
-                  patient_treatment_uuid: patientTreatment.uuid
-                }
-              })
+            });
+            await patientChiefComplaintsTbl.update({
+              treatment_kit_uuid: patientTreatment.treatment_kit_uuid,
+              modified_by: user_uuid,
+              modified_date: new Date()
+            }, {
+              where: {
+                patient_treatment_uuid: patientTreatment.uuid
+              }
+            });
             await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 1);
             await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 2);
             await updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, 3);
@@ -334,6 +398,10 @@ const PatientTreatmentController = () => {
         if (patientDiagnosis && Array.isArray(patientDiagnosis)) {
           let updateDiagnosisDetails = req.body.patientDiagnosis;
           diagnosisUpdated = updateDiagnosisDetails && updateDiagnosisDetails.length > 0 ? await updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) : "";
+        }
+        if (patientChiefComplaints && Array.isArray(patientChiefComplaints)) {
+          let updateChiefComplaintsDetails = req.body.patientChiefComplaints;
+          chiefcomplaintsUpdated = updateChiefComplaintsDetails && updateChiefComplaintsDetails.length > 0 ? await updateChiefComplaints(updateChiefComplaintsDetails, user_uuid, order_id) : "";
         }
         if (patientPrescription) {
           let updatePrescriptionDetails = req.body.patientPrescription;
@@ -385,18 +453,30 @@ const PatientTreatmentController = () => {
           }
           investigationUpdated = updateInvestigationDetails ? await updateInvestigation(updateInvestigationDetails, user_uuid, facility_uuid, authorization) : '';
         }
-        if (diagnosisUpdated || prescriptionUpdated || labUpdated || radilogyUpadated || investigationUpdated) {
+        if (diagnosisUpdated || chiefcomplaintsUpdated || prescriptionUpdated || labUpdated || radilogyUpadated || investigationUpdated) {
           return res.status(200)
-            .send({ code: httpStatus.OK, message: emr_constants.PATIENT_TREATMENT_UPDATE });
+            .send({
+              code: httpStatus.OK,
+              message: emr_constants.PATIENT_TREATMENT_UPDATE
+            });
         } else {
-          return res.status(400).send({ code: 400, message: emr_constants.FAILED_TO_UPDATE });
+          return res.status(400).send({
+            code: 400,
+            message: emr_constants.FAILED_TO_UPDATE
+          });
         }
       } else {
-        return res.status(400).send({ code: httpStatus[400], message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}` });
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`
+        });
       }
     } catch (ex) {
       console.log('Exception Happened', ex);
-      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      return res.status(400).send({
+        code: httpStatus.BAD_REQUEST,
+        message: ex.message
+      });
     }
   };
 
@@ -419,22 +499,24 @@ async function getPatientTreatmentKitData(patient_uuid) {
     where: query,
     attributes: getPrevKitOrders,
     limit: 5,
-    order: [['created_date', 'DESC']],
-    include: [
-      {
-        model: treatmentKitTable,
-        attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
-        required: false
-      },
-      {
-        model: encounterTypeTbl,
-        attributes: ['uuid', 'code', 'name'],
-        required: false
-      }
+    order: [
+      ['created_date', 'DESC']
+    ],
+    include: [{
+      model: treatmentKitTable,
+      attributes: ['uuid', 'name', 'code', 'is_public', 'description', 'share_uuid'],
+      required: false
+    },
+    {
+      model: encounterTypeTbl,
+      attributes: ['uuid', 'code', 'name'],
+      required: false
+    }
     ]
   });
 
 }
+
 function getPrevKitOrdersResponse(orders) {
   return orders.map(o => {
     return {
@@ -454,6 +536,7 @@ function getPrevKitOrdersResponse(orders) {
     };
   });
 }
+
 async function getPrevOrderdDiagnosisData(order_id) {
 
   let query = {
@@ -475,7 +558,30 @@ async function getPrevOrderdDiagnosisData(order_id) {
 
 }
 
+async function getPrevOrderdChiefComplaintsData(order_id) {
+  let query = {
+    patient_treatment_uuid: {
+      [Op.in]: order_id
+    },
+    is_active: emr_constants.IS_ACTIVE,
+    status: emr_constants.IS_ACTIVE
+  };
+  return patientChiefComplaintsTbl.findAll({
+    where: query,
+    attributes: ['uuid', 'patient_uuid', 'chief_complaint_uuid', 'patient_treatment_uuid','chief_complaint_duration'],
+    include: [
+      {
+        model: chiefcomplaintsTbl,
+        attributes: ['uuid', 'code', 'name', 'description']
+      },
+      {
+        model: chief_complaint_duration_periods_tbl,
+        attributes: ['uuid', 'code', 'name']
+      }
+    ]
+  });
 
+}
 
 async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid, order_id, patient_uuid) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INVENTORY/v1/api/prescriptions/getPrescriptionByPatientTreatmentId';
@@ -487,11 +593,10 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: authorization
-    },
-    {
-      patient_treatment_uuid: order_id,
-      patient_uuid: patient_uuid
-    }
+    }, {
+    patient_treatment_uuid: order_id,
+    patient_uuid: patient_uuid
+  }
   );
 
   if (prescriptionData) {
@@ -499,21 +604,20 @@ async function getPrevOrderPrescription(user_uuid, authorization, facility_uuid,
     return prescriptionResult;
   }
 }
+
 async function getPreviousRadiology(user_uuid, facility_uuid, Authorization, order_id) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
 
   let radialogyData = await utilityService.postRequest(
     //config.wso2RmisUrl + 'patientordertestdetails/getpatientordertestdetailsbypatienttreatment',
-    config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment',
-    {
-      'Content-Type': 'application/json',
-      facility_uuid: facility_uuid || 1,
-      user_uuid: user_uuid,
-      Authorization: Authorization
-    },
-    {
-      patient_treatment_uuid: order_id
-    }
+    config.wso2RmisUrl + 'patientorderdetails/getpatientorderdetailsbypatienttreatment', {
+    'Content-Type': 'application/json',
+    facility_uuid: facility_uuid || 1,
+    user_uuid: user_uuid,
+    Authorization: Authorization
+  }, {
+    patient_treatment_uuid: order_id
+  }
   );
 
   if (radialogyData) {
@@ -521,6 +625,7 @@ async function getPreviousRadiology(user_uuid, facility_uuid, Authorization, ord
     return radialogyResult;
   }
 }
+
 async function getPreviousLab(user_uuid, facility_uuid, Authorization, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorderdetails/getpatientorderdetailsbypatienttreatment';
@@ -532,10 +637,9 @@ async function getPreviousLab(user_uuid, facility_uuid, Authorization, order_id)
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: Authorization
-    },
-    {
-      patient_treatment_uuid: order_id
-    }
+    }, {
+    patient_treatment_uuid: order_id
+  }
   );
   if (labData) {
     const labResult = await getLabResponse(labData);
@@ -543,6 +647,7 @@ async function getPreviousLab(user_uuid, facility_uuid, Authorization, order_id)
   }
 
 }
+
 async function getPreviousInvest(user_uuid, facility_uuid, Authorization, order_id) {
 
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-INV/v1/api/patientordertestdetails/getpatientordertestdetailsbypatienttreatment';
@@ -555,10 +660,9 @@ async function getPreviousInvest(user_uuid, facility_uuid, Authorization, order_
       facility_uuid: facility_uuid || 1,
       user_uuid: user_uuid,
       Authorization: Authorization
-    },
-    {
-      patient_treatment_uuid: order_id
-    }
+    }, {
+    patient_treatment_uuid: order_id
+  }
   );
   if (investigationData) {
     const investigationResult = await getInvestigationResponse(investigationData);
@@ -578,7 +682,9 @@ async function getDepartments(user_uuid, Authorization, departmentIds) {
       user_uuid: user_uuid,
       'Content-Type': 'application/json'
     },
-    body: { "uuid": departmentIds },
+    body: {
+      "uuid": departmentIds
+    },
     json: true
   };
   const departmentData = await rp(options);
@@ -598,7 +704,9 @@ async function getDoctorDetails(user_uuid, Authorization, doctorIds) {
       user_uuid: user_uuid,
       'Content-Type': 'application/json'
     },
-    body: { "uuid": doctorIds },
+    body: {
+      "uuid": doctorIds
+    },
     json: true
   };
   const doctorData = await rp(options);
@@ -681,18 +789,38 @@ function getRepeatOrderDiagnosisResponse(repeatOrderDiagnosisData) {
   let result = [];
   repeatOrderDiagnosisData.forEach(rd => {
     if (rd.dataValues.diagnosis != null) {
-      result.push(
-        {
-          order_id: rd.dataValues.patient_treatment_uuid,
-          uuid: rd.dataValues.uuid,
-          diagnosis_id: rd.dataValues.diagnosis.dataValues.uuid,
-          diagnosis_name: rd.dataValues.diagnosis.dataValues.name,
-          diagnosis_code: rd.dataValues.diagnosis.dataValues.code,
-          diagnosis_description: rd.dataValues.diagnosis.dataValues.description
-        }
-      );
+      result.push({
+        order_id: rd.dataValues.patient_treatment_uuid,
+        uuid: rd.dataValues.uuid,
+        diagnosis_id: rd.dataValues.diagnosis.dataValues.uuid,
+        diagnosis_name: rd.dataValues.diagnosis.dataValues.name,
+        diagnosis_code: rd.dataValues.diagnosis.dataValues.code,
+        diagnosis_description: rd.dataValues.diagnosis.dataValues.description
+      });
     }
 
+  });
+  return result;
+}
+
+function getRepeatOrderChiefComplaintsResponse(repeatOrderChiefComplaintsData) {
+  let result = [];
+  repeatOrderChiefComplaintsData.forEach(rcc => {
+    if (rcc != null) {
+      result.push({
+        order_id: rcc.dataValues.patient_treatment_uuid,
+        uuid: rcc.dataValues.uuid,
+        chief_complaint_duration: rcc.dataValues.chief_complaint_duration,
+        chief_complaint_id: rcc.dataValues.chief_complaint.dataValues.uuid,
+        chief_complaint_code: rcc.dataValues.chief_complaint.dataValues.code,
+        chief_complaint_name: rcc.dataValues.chief_complaint.dataValues.name,
+        chief_complaint_description: rcc.dataValues.chief_complaint.dataValues.description,
+        chief_complaint_duration: rcc.dataValues.chief_complaint_duration,
+        chief_complaint_duration_period_uuid: rcc.dataValues.chief_complaint_duration_period.dataValues.uuid,
+        chief_complaint_duration_period_code: rcc.dataValues.chief_complaint_duration_period.dataValues.code,
+        chief_complaint_duration_period_name: rcc.dataValues.chief_complaint_duration_period.dataValues.name
+      });
+    }
   });
   return result;
 }
@@ -832,7 +960,13 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
         rD.status = 0;
         rD.is_active = 0;
         diagnosisPromise = [...diagnosisPromise,
-        patientDiagnosisTbl.update(rD, { where: { uuid: rD.uuid } }, { returning: true })
+        patientDiagnosisTbl.update(rD, {
+          where: {
+            uuid: rD.uuid
+          }
+        }, {
+          returning: true
+        })
         ];
       });
     }
@@ -854,6 +988,42 @@ async function updateDiagnosis(updateDiagnosisDetails, user_uuid, order_id) {
   });
 
   return Promise.all(diagnosisPromise);
+}
+
+async function updateChiefComplaints(updateChiefComplaintsDetails, user_uuid, order_id) {
+  let chiefcomplaintsPromise = [];
+  updateChiefComplaintsDetails.forEach((r) => {
+    if (r.remove_details && r.remove_details.length > 0) {
+      r.remove_details.forEach((rcc) => {
+        rcc.modified_by = user_uuid;
+        rcc.modified_date = new Date();
+        rcc.status = 0;
+        rcc.is_active = 0;
+        chiefcomplaintsPromise = [...chiefcomplaintsPromise,
+        patientChiefComplaintsTbl.update(rcc, {
+          where: {
+            uuid: rcc.uuid
+          }
+        }, {
+          returning: true
+        })
+        ];
+      });
+    }
+    if (r.new_chief_complaint && r.new_chief_complaint.length > 0 && order_id) {
+      r.new_chief_complaint.forEach((pcc) => {
+        pcc = utilityService.createIsActiveAndStatus(pcc, user_uuid);
+        pcc.performed_by = user_uuid;
+        pcc.performed_date = new Date();
+        pcc.patient_treatment_uuid = order_id;
+      });
+      chiefcomplaintsPromise = [...chiefcomplaintsPromise, patientChiefComplaintsTbl.bulkCreate(r.new_chief_complaint, {
+        returning: true
+      })];
+    }
+  });
+
+  return Promise.all(chiefcomplaintsPromise);
 }
 
 async function updatePrescription(updatePrescriptionDetails, user_uuid, order_id, authorization) {
@@ -879,17 +1049,31 @@ async function updateLab(updateLabDetails, facility_uuid, user_uuid, authorizati
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-LIS/v1/api/patientorders/updatePatientOrder'
   const url = config.wso2LisUrl + 'patientorders/updatePatientOrder';
 
-  return _putRequest(url, updateLabDetails, { user_uuid, facility_uuid, authorization });
+  return _putRequest(url, updateLabDetails, {
+    user_uuid,
+    facility_uuid,
+    authorization
+  });
 }
+
 async function updateRadilogy(updateRadilogyDetails, facility_uuid, user_uuid, authorization) {
   //const url = 'https://qahmisgateway.oasyshealth.co/DEVHMIS-RMIS/v1/api/patientorders/updatePatientOrder'
   const url = config.wso2RmisUrl + 'patientorders/updatePatientOrder';
-  return _putRequest(url, updateRadilogyDetails, { user_uuid, facility_uuid, authorization });
+  return _putRequest(url, updateRadilogyDetails, {
+    user_uuid,
+    facility_uuid,
+    authorization
+  });
 }
+
 async function updateInvestigation(updateInvestigationDetails, facility_uuid, user_uuid, authorization) {
   const url = config.wso2InvestUrl + 'patientorders/updatePatientOrder';
 
-  return _putRequest(url, updateInvestigationDetails, { user_uuid, facility_uuid, authorization });
+  return _putRequest(url, updateInvestigationDetails, {
+    user_uuid,
+    facility_uuid,
+    authorization
+  });
 }
 
 async function updateTreatmentKit(updateTreatmentKitdetails, user_uuid, authorization, id) {
@@ -921,7 +1105,11 @@ function geturl(id) {
   }
 }
 
-async function _putRequest(url, updateDetails, { user_uuid, facility_uuid, authorization }) {
+async function _putRequest(url, updateDetails, {
+  user_uuid,
+  facility_uuid,
+  authorization
+}) {
   let options = {
     uri: url,
     headers: {

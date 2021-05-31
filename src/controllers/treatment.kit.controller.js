@@ -17,6 +17,7 @@ const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
 const treatmentkitInvestigationTbl = sequelizeDb.treatment_kit_investigation_map;
 const treatmentKitDiagnosisTbl = sequelizeDb.treatment_kit_diagnosis_map;
+const treatmentKitChiefComplaintsTbl = sequelizeDb.treatment_kit_chief_complaint_map;
 const treatmentKitViewTbl = sequelizeDb.vw_treatment_kit;
 const patientDiagnosisTbl = sequelizeDb.patient_diagnosis;
 const {
@@ -100,7 +101,8 @@ const TreatMent_Kit = () => {
     let {
       treatment_kit_investigation,
       treatment_kit_radiology,
-      treatment_kit_diagnosis
+      treatment_kit_diagnosis,
+      treatment_kit_chiefcomplaints
     } = req.body;
 
     if (user_uuid && treatment_kit && treatment_kit.name) {
@@ -245,6 +247,26 @@ const TreatMent_Kit = () => {
           treatmentSave = [
             ...treatmentSave,
             treatmentKitDiagnosisTbl.bulkCreate(treatment_kit_diagnosis, {
+              returning: true
+            })
+          ];
+        }
+        // Chief Complaints
+        if (treatment_kit_chiefcomplaints && Array.isArray(treatment_kit_chiefcomplaints) && treatment_kit_chiefcomplaints.length > 0 && treatmentSavedData) {
+          // assigning Default Values
+          treatment_kit_chiefcomplaints.forEach(d => {
+            d = emr_utility.assignDefaultValuesAndUUIdToObject(
+              d,
+              treatmentSavedData,
+              user_uuid,
+              "treatment_kit_uuid"
+            );
+          });
+
+          // Treatment Kit Drug Save
+          treatmentSave = [
+            ...treatmentSave,
+            treatmentKitChiefComplaintsTbl.bulkCreate(treatment_kit_chiefcomplaints, {
               returning: true
             })
           ];
@@ -577,7 +599,8 @@ const TreatMent_Kit = () => {
           treatmentkitRadiologyTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Radiology
           treatmentkitDrugTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Drug
           treatmentkitInvestigationTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Investigation
-          treatmentKitDiagnosisTbl.update(treatmentUpdateValue, treatementKitUpdateQuery) // Diagnosis
+          treatmentKitDiagnosisTbl.update(treatmentUpdateValue, treatementKitUpdateQuery), // Diagnosis
+          treatmentKitChiefComplaintsTbl.update(treatmentUpdateValue, treatementKitUpdateQuery) // Diagnosis
         ];
 
         const deleteTreatmentKitPromise = await Promise.all(
@@ -670,7 +693,8 @@ const TreatMent_Kit = () => {
     let {
       treatment_kit_investigation,
       treatment_kit_radiology,
-      treatment_kit_diagnosis
+      treatment_kit_diagnosis,
+      treatment_kit_chiefcomplaints
     } = req.body;
     if (user_uuid && Object.keys(req.body).length > 0) {
       try {
@@ -744,6 +768,12 @@ const TreatMent_Kit = () => {
           if (treatment_kit_diagnosis && Object.keys(treatment_kit_diagnosis).length > 0) {
             const diagnosisArray = treatmentKitAtt.updateDiagnosis(treatment_kit_diagnosis, user_uuid, treatment_kit_uuid);
             updateTreatmentPromise = [...updateTreatmentPromise, ...diagnosisArray];
+          }
+
+          // Chief Complaints Update, Delete and Create
+          if (treatment_kit_chiefcomplaints && Object.keys(treatment_kit_chiefcomplaints).length > 0) {
+            const chiefcomplaintsArray = treatmentKitAtt.updateChiefComplaints(treatment_kit_chiefcomplaints, user_uuid, treatment_kit_uuid);
+            updateTreatmentPromise = [...updateTreatmentPromise, ...chiefcomplaintsArray];
           }
 
           // Lab Update, Delete and Create
@@ -851,22 +881,15 @@ async function findDuplicateTreatmentKitByCodeAndName({
   code,
   name,
   treatment_kit_uuid,
+  facility_uuid,
   post
 }, checkType = 'both') {
-  // checking for Duplicate
   // before creating Treatment
-
-  let codeOrname = {
-    // code: [{ code: code }],
-    name: [{
-      name: name
-    }],
-    // both: [{ code: code }, { name: name }]
-  };
   return await treatmentkitTbl.findAll({
     attributes: ["name", "is_active"],
     where: {
-      [Op.or]: codeOrname.name,
+      name: name,
+      facility_uuid: facility_uuid,
       uuid: {
         [Op.notIn]: post ? [0] : [treatment_kit_uuid]
       }

@@ -94,7 +94,7 @@
                         {{#if headerObj.patientDetails.notes_name}}
 
                         <tr>
-                            <td style="padding: 5px;">OP Notes Name</td>
+                            <td style="padding: 5px;">{{headerObj.profile_type_name}}</td>
                             <td style="padding: 5px;">:</td>
                             <td style="padding: 5px;">{{headerObj.patientDetails.notes_name}}</td>
                         </tr>
@@ -141,7 +141,7 @@
                                                     <td style="padding: 5px;white-space: nowrap;vertical-align: baseline;">
                                                         {{getKey this}}</td>
                                                     <td style="padding: 5px;vertical-align: baseline;">:</td>
-                                                    <td style="padding: 5px; word-break: break-all;vertical-align: baseline;">{{getValue this}}</td>
+                                                    <td style="padding: 5px; word-break: break-all;vertical-align: baseline;"><pre>{{getValue this}}</pre></td>
                                                 </tr>
 
                                                 {{/eachSort}}

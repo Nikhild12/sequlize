@@ -23,6 +23,7 @@ const vmTreatmentFavouriteInvesti = sequelizeDb.vw_favourite_treatment_investiga
 const vmTreatmentFavouriteRadiology = sequelizeDb.vw_favourite_treatment_radiology;
 const vmTreatmentFavouriteLab = sequelizeDb.vw_favourite_treatment_lab;
 const vmTreatmentFavouriteDiet = sequelizeDb.vw_favourite_master_diet;
+const vmTreatmentFavouriteChiefComplaints = sequelizeDb.vw_favourite_treatment_chief_complaints;
 
 
 const vmFavouriteRad = sequelizeDb.vw_favourite_ris;
@@ -155,6 +156,8 @@ const getTreatmentByIdInVWAtt = [
   "tk_share_uuid",
   "tk_description"
 ];
+
+/* Treatment Kit Drug Attributes */
 let gedTreatmentKitDrug = [
   "im_code",
   "im_name",
@@ -179,9 +182,9 @@ let gedTreatmentKitDrug = [
   "im_can_calculate_frequency_qty",
   "store_uuid"
 ];
-
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
 
+/* Treatment Kit Diagnosis Attributes */
 let getTreatmentKitDiaAtt = [
   "tkdm_diagnosis_uuid",
   "td_name",
@@ -190,6 +193,16 @@ let getTreatmentKitDiaAtt = [
 ];
 getTreatmentKitDiaAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitDiaAtt];
 
+/* Treatment Kit Chief Complaints Attributes */
+let getTreatmentKitCCAtt = [
+  "tkccm_chief_complaint_uuid",
+  "cc_name",
+  "cc_code",
+  "cc_description",
+];
+getTreatmentKitCCAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitCCAtt];
+
+/* Treatment Kit Investigation Attributes */
 let getTreatmentKitInvestigationAtt = [
   "tkim_test_master_uuid",
   "tm_code",
@@ -202,11 +215,9 @@ let getTreatmentKitInvestigationAtt = [
   "pm_description",
   "tkim_profile_master_uuid"
 ];
-getTreatmentKitInvestigationAtt = [
-  ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitInvestigationAtt,
-];
+getTreatmentKitInvestigationAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitInvestigationAtt];
 
+/* Treatment Kit Radiology Attributes */
 let getTreatmentKitRadiologyAtt = [
   "tm_code",
   "tm_name",
@@ -220,12 +231,9 @@ let getTreatmentKitRadiologyAtt = [
   "pm_name",
   "pm_description"
 ];
+getTreatmentKitRadiologyAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitRadiologyAtt];
 
-getTreatmentKitRadiologyAtt = [
-  ...getTreatmentByIdInVWAtt,
-  ...getTreatmentKitRadiologyAtt,
-];
-
+/* Treatment Kit Lab Attributes */
 let getTreatmentKitLabAtt = [
   "tm_code",
   "tm_name",
@@ -239,7 +247,6 @@ let getTreatmentKitLabAtt = [
   "pm_description",
   "tklm_profile_master_uuid"
 ];
-
 getTreatmentKitLabAtt = [...getTreatmentByIdInVWAtt, ...getTreatmentKitLabAtt];
 
 function getFavouriteQuery(dept_id, user_uuid, tsmd_test_id, fId, sMId) {
@@ -350,25 +357,44 @@ function getFavouriteQueryForDuplicate(
   dept_id, user_id, searchKey, searchvalue,
   fav_type_id, display_order, fId
 ) {
-  return {
-    tsm_status: active_boolean,
-    [Op.or]: [
-      {
-        tsm_favourite_type_uuid: fav_type_id,
-        [searchKey]: searchvalue,
-        tsm_dept: { [Op.eq]: dept_id },
-        tsm_userid: { [Op.eq]: user_id },
-        fa_uuid: { [Op.eq]: fId }
-      },
-      {
-        tsm_favourite_type_uuid: fav_type_id,
-        tsm_display_order: display_order,
-        tsm_dept: { [Op.eq]: dept_id },
-        tsm_userid: { [Op.eq]: user_id },
-        fa_uuid: { [Op.eq]: fId }
-      }
-    ]
-  };
+  if (display_order) {
+    return {
+      tsm_status: active_boolean,
+      tsm_favourite_type_uuid: fav_type_id,
+      tsm_display_order: display_order,
+      tsm_dept: { [Op.eq]: dept_id },
+      tsm_userid: { [Op.eq]: user_id },
+      fa_uuid: { [Op.eq]: fId },
+    }
+  } else {
+    return {
+      tsm_status: active_boolean,
+      tsm_favourite_type_uuid: fav_type_id,
+      [searchKey]: searchvalue,
+      tsm_dept: { [Op.eq]: dept_id },
+      tsm_userid: { [Op.eq]: user_id },
+      fa_uuid: { [Op.eq]: fId }
+    }
+  }
+  // return {
+  //   tsm_status: active_boolean,
+  //   [Op.or]: [
+  //     {
+  //       tsm_favourite_type_uuid: fav_type_id,
+  //       [searchKey]: searchvalue,
+  //       tsm_dept: { [Op.eq]: dept_id },
+  //       tsm_userid: { [Op.eq]: user_id },
+  //       fa_uuid: { [Op.eq]: fId }
+  //     },
+  //     {
+  //       tsm_favourite_type_uuid: fav_type_id,
+  //       tsm_display_order: display_order,
+  //       tsm_dept: { [Op.eq]: dept_id },
+  //       tsm_userid: { [Op.eq]: user_id },
+  //       fa_uuid: { [Op.eq]: fId }
+  //     }
+  //   ]
+  // };
 }
 
 function getDisplayOrderByFavType(fav_type_id, user_id, dept_id, fId) {
@@ -410,8 +436,6 @@ function getFavouriteByIdQuery(fav_id, isMaster, activeKey) {
   }
   return favouriteByIdQuery;
 }
-
-
 
 const TickSheetMasterController = () => {
   /**
@@ -459,12 +483,17 @@ const TickSheetMasterController = () => {
         const { facility_uuid } = favouriteMasterReqData;
         const checkingForSameFavourite = await vmTickSheetMasterTbl.findAll({
           attributes: getFavouritesAttributes,
-          where: getFavouriteQueryForDuplicate(
-            department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid
-          ),
+          where: getFavouriteQueryForDuplicate(department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, display_order, facility_uuid)
+        });
+        const checkingForSameFavouriteTestMaster = await vmTickSheetMasterTbl.findAll({
+          attributes: getFavouritesAttributes,
+          logging: console.log,
+          where: getFavouriteQueryForDuplicate(department_uuid, user_uuid, search_key, search_value, favourite_type_uuid, 0, facility_uuid)
         });
 
-
+        if (checkingForSameFavouriteTestMaster && checkingForSameFavouriteTestMaster.length > 0) {
+          throw ({ error_type: "validation", errors: 'Data Already exists' });
+        }
         if (checkingForSameFavourite && checkingForSameFavourite.length > 0) {
           const { duplicate_msg, duplicate_code, } = emr_all_favourites.favouriteDuplicateMessage(
             checkingForSameFavourite, search_key, search_value, display_order
@@ -522,6 +551,9 @@ const TickSheetMasterController = () => {
           });
         }
       } catch (ex) {
+        if (typeof ex.error_type != 'undefined' && ex.error_type == 'validation') {
+          return res.status(400).json({ statusCode: 400, code: "validationError", message: ex.errors });
+        }
         return res
           .status(400)
           .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
@@ -656,32 +688,32 @@ const TickSheetMasterController = () => {
       try {
         const updatingRecord = await favouriteMasterTbl.findAll({
           where: {
-            uuid: favouriteMasterReqData.favourite_id, status: emr_constants.IS_ACTIVE,
+            uuid: favouriteMasterReqData.favourite_id,
+            status: emr_constants.IS_ACTIVE,
           },
         });
-
         if (updatingRecord && updatingRecord.length === 0) {
           return res.status(400)
             .send({ code: httpStatus.BAD_REQUEST, message: emr_constants.NO_CONTENT_MESSAGE });
         }
-
         // Checking Duplicate Display Order
         if (favouriteMasterReqData && favouriteMasterReqData.favourite_display_order) {
 
           const existingDisplayOrder = +(favouriteMasterReqData.favourite_display_order);
-          if (existingDisplayOrder !== updatingRecord[0].display_order) {
-
+          if (existingDisplayOrder != updatingRecord[0].display_order) {
             const { department_uuid, favourite_display_order } = req.body;
             const duplicateDisplay = await favouriteMasterTbl.findAll({
               attributes: ["display_order"],
               where: {
                 favourite_type_uuid: updatingRecord[0].favourite_type_uuid,
                 department_uuid: department_uuid,
-                facility_uuid,
-                display_order: favourite_display_order
+                facility_uuid: facility_uuid,
+                display_order: favourite_display_order,
+                uuid: {
+                  [Op.not]: updatingRecord[0].uuid
+                }
               }
             });
-
             if (duplicateDisplay && duplicateDisplay.length > 0) {
               return res.status(400).send({
                 code: emr_constants.DUPLICATE_DISPLAY_ORDER,
@@ -970,7 +1002,6 @@ const TickSheetMasterController = () => {
     }
   };
 
-
   return {
     createTickSheetMaster: _createTickSheetMaster,
     getFavourite: _getFavourites,
@@ -985,7 +1016,6 @@ const TickSheetMasterController = () => {
 };
 
 module.exports = TickSheetMasterController();
-
 
 // Get Favourite API Response Model
 function getFavouritesInList(fetchedData) {
@@ -1222,6 +1252,13 @@ function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
     );
   }
 
+  // Chief Complaints Details // Sreeni
+  if (treatFav && treatFav.length > 0 && treatFav[5] && treatFav[5].length) {
+    favouritesByIdResponse.chief_complaints_details = getChiefComplaintsDetailsFromTreatment(
+      treatFav[5]
+    );
+  }
+
   return favouritesByIdResponse;
 }
 
@@ -1260,7 +1297,7 @@ function getDrugDetailsFromTreatment(drugArray) {
       strength: d.im_strength,
       is_emar: d.im_is_emar,
       im_can_calculate_frequency_qty: d.im_can_calculate_frequency_qty,
-      store_uuid : d.store_uuid
+      store_uuid: d.store_uuid
     };
   });
 }
@@ -1272,6 +1309,17 @@ function getDiagnosisDetailsFromTreatment(diagnosisArray) {
       diagnosis_name: di.td_name,
       diagnosis_code: di.td_code,
       diagnosis_description: di.td_description,
+    };
+  });
+}
+
+function getChiefComplaintsDetailsFromTreatment(chiefcomplaintsArray) {
+  return chiefcomplaintsArray.map((cc) => {
+    return {
+      chief_complaint_id: cc.tkccm_chief_complaint_uuid,
+      chief_complaint_name: cc.cc_name,
+      chief_complaint_code: cc.cc_code,
+      chief_complaint_description: cc.cc_description,
     };
   });
 }
@@ -1361,7 +1409,11 @@ function getTreatmentFavByIdPromise(treatmentId) {
     vmTreatmentFavouriteLab.findAll({
       attributes: getTreatmentKitLabAtt,
       where: getTreatmentKitByIdQuery(treatmentId, "Lab"),
-    }) // lab
+    }), // lab
+    vmTreatmentFavouriteChiefComplaints.findAll({
+      attributes: getTreatmentKitCCAtt,
+      where: getTreatmentKitByIdQuery(treatmentId, "ChiefComplaints"),
+    }),
   ]);
 }
 

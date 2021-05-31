@@ -147,7 +147,9 @@ module.exports = Object.freeze({
     APPMASTER_GET_SPECIFIC_DEPARTMENT: 'department/getSpecificDepartmentsByIds',
     APPMASTER_GET_SPECIFIC_FACILITY: 'facility/getSpecificFacilitiesByIds',
     APPMASTER_GET_SCREEN_SETTINGS: 'screenSetting/getCodeCreation',
-    APPMASTER_UPDATE_SCREEN_SETTINGS: 'screenSetting/updateScreenCode'
+    APPMASTER_UPDATE_SCREEN_SETTINGS: 'screenSetting/updateScreenCode',
+    INVENTORY_REFERENCY_GETREFERENCTBYARRAYOFIDS: 'commonReference/getReferenceByArrayofIds',
+    APPMASTER_VIEWUSERSBYARRAYOFIDS: "users/viewusersbyarrayofids"
   },
   GetpleaseProvideMsg: function (columnname) {
     let returnProvideMsg = "Please provide";
@@ -412,5 +414,9 @@ module.exports = Object.freeze({
       case 2:
         return "IP";
     }
+  },
+  state: {
+    TN: "TN",
+    PUNE: "PUNE"
   }
 });

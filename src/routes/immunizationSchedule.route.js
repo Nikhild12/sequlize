@@ -7,7 +7,7 @@ router.route("/addimmunizationSchedule").post(immunizationsCtrl.postimmunization
 
 
 router.route("/getimmunizationSchedule").post(immunizationsCtrl.getimmunizationSchedule);
-
+router.route("/getpatientImmunizationSchedule").post(immunizationsCtrl.getpatientImmunizationSchedule);
 router.route("/getimmunizationScheduleById").post(immunizationsCtrl.getimmunizationScheduleById);
 router.route("/deleteimmunizationScheduleById").post(immunizationsCtrl.deleteimmunizationScheduleById);
 router.route("/updateimmunizationScheduleById").post(immunizationsCtrl.updateimmunizationScheduleById);

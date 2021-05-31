@@ -348,14 +348,13 @@ const CCchartsController = () => {
                     }
                 }
                 else if (data7) {
-                    if (data6.critical_care_charts !== null) {
+                    if (data7.critical_care_charts !== null) {
                         vdata = getdialysisData(data7);
                         return res.status(httpStatus.OK).json({ statusCode: 200, req: '', responseContents: vdata });
                     } else {
                         return res.status(400).send({ code: httpStatus[400], message: "no data found" });
                     }
                 }
-
             }
             else {
                 return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
@@ -506,7 +505,7 @@ function getvdList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 ventilator_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -666,7 +665,7 @@ function getadList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 abg_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -735,7 +734,7 @@ function getmdList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 monitor_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts ? pV.critical_care_charts.uuid : 0,
                 ccc_code: pV.critical_care_charts ? pV.critical_care_charts.code : null,
@@ -807,7 +806,7 @@ function getioList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 iot_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -873,7 +872,7 @@ function getdbList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 db_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -940,7 +939,7 @@ function getdlList(fetchedData, p_id, from_date) {
             return {
                 observed_date: pV.dataValues.from_date,
                 dl_uuid: pV.dataValues.uuid,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.critical_care_charts.code=="Date & Time" ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,
@@ -1007,7 +1006,7 @@ function getbpList(fetchedData, p_id, from_date) {
                 observed_date: pV.dataValues.from_date,
                 bp_uuid: pV.dataValues.uuid,
                 // bp_observed_value: pV.dataValues.observed_value,
-                observed_value: pV.dataValues.observed_value,
+                observed_value: pV.cc_concept_value_uuid==6 ? moment(pV.dataValues.observed_value).format('DD-MMM-YYYY HH:mm'): pV.dataValues.observed_value,
 
                 ccc_uuid: pV.critical_care_charts.uuid,
                 ccc_code: pV.critical_care_charts.code,

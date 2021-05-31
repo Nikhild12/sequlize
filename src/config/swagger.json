@@ -30,6 +30,290 @@
 		"application/file"
 	],
 	"paths": {
+		"/api/glass_prescription/create": {
+			"post": {
+				"description": "Inserted Successfully",
+				"operationId": "createglassprescription",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "createglassprescription",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createglassprescription"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "facility_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "number"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "Add Glass Prescription",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
+		"/api/glass_prescription/get": {
+			"post": {
+				"description": "Fetch",
+				"operationId": "getglassprescription",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getglassprescription",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getglassprescription"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "Fetch Information.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
+		"/api/glass_prescription/getbyid": {
+			"post": {
+				"description": "Fetch by id",
+				"operationId": "getglassprescriptionbyid",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getglassprescriptionbyid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getbyid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "Fetch Information by Id.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
+		"/api/glass_prescription/updatebyid": {
+			"post": {
+				"description": "update",
+				"operationId": "updateglassprescriptionbyid",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "updateglassprescriptionbyid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/updateglassprescriptionbyid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "update Information by Id.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
+		"/api/glass_prescription/deletebyid": {
+			"post": {
+				"description": "delete",
+				"operationId": "deleteglassprescriptionbyid",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "deleteglassprescriptionbyid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getbyid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "delete Information by Id.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
+		"/api/glass_prescription/print": {
+			"post": {
+				"description": "Fetch by id",
+				"operationId": "getglassprescriptionprintbyid",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getglassprescriptionprintbyid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getbyid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "facility_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "print information by Id.",
+				"tags": [
+					"Glass Prescription"
+				]
+			}
+		},
 		"/api/proceduresNoteTemplate/deleteProcedures-note-template": {
 			"post": {
 				"description": "Deleted Successfully",
@@ -1756,6 +2040,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/immunizationSchedule/getpatientImmunizationSchedule": {
+			"post": {
+				"description": "Inserted Successfully",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "scheduleData",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getimmunizationScheduleReq"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Immunizations Schedule"
+				],
+				"responses": {
+					"200": {
+						"description": "get Successfully",
+						"schema": {
+							"$ref": "#/definitions/getimmunizationSchedule"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/immunizationSchedule/getimmunizationScheduleById": {
 			"post": {
 				"description": "Inserted Successfully",
@@ -3078,6 +3400,45 @@
 					}
 				}
 			}
+		},		
+		"/api/encounter/getcommonvisitinfo": {
+			"post": {
+				"description": "To get a Encounter for Patient",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getcommonvisitinfo",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getcommonvisitinfo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
+					}
+				}
+			}
 		},
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
@@ -3416,6 +3777,43 @@
 						"name": "to_date",
 						"type": "string",
 						"format": "date"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientDiagnosis"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter Type"
+					}
+				}
+			}
+		},
+		"/api/patient-diagnosis/getdiagnosiscount": {
+			"get": {
+				"description": "To get count of Patient Diagnosis By patient and encounter",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "integer"
 					}
 				],
 				"produces": [
@@ -5334,7 +5732,19 @@
 					{
 						"in": "query",
 						"name": "patient_uuid",
-						"required": true,
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "attachment_type_uuid",
+						"required": false,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "blood_donor_registration_uuid",
+						"required": false,
 						"type": "integer"
 					}
 				],
@@ -7235,6 +7645,41 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/immunization/addPatientImmunizations": {
+			"post": {
+				"summary": "To create patient immunization schedule details ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "immunzation",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/patientImmunzationAdd"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientImmunizationSchedule"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
 			}
 		},
 		"/api/immunization/create": {
@@ -9741,6 +10186,12 @@
 			"get": {
 				"summary": "To get a emr patient op notes by patient Data",
 				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
 					{
 						"in": "header",
 						"name": "user_uuid",
@@ -12626,6 +13077,27 @@
 						}
 					}
 				}
+			}
+		},
+		"getcommonvisitinfo": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "number",
+					"example": 0
+				},
+				"itemsPerPage": {
+					"type": "number",
+					"example": 10
+				},
+				"patient_ids": {
+					"type": "number",
+					"example": "1,3,5"
+				},
+				"visit_date": {
+					"type": "string",
+					"example": "2021-04-29"
+				}				
 			}
 		},
 		"updateEncounter": {
@@ -16213,7 +16685,7 @@
 					"type": "string",
 					"example": "enter some thing"
 				},
-				"dateTime":{
+				"dateTime": {
 					"type": "string",
 					"example": "enter some date"
 				}
@@ -18350,6 +18822,215 @@
 			"properties": {
 				"code": {
 					"type": "string"
+				}
+			}
+		},
+		"createglassprescription": {
+			"type": "object",
+			"properties": {
+				"header": {
+					"type": "object",
+					"properties": {
+						"prescription_no": {
+							"type": "integer"
+						},
+						"prescription_date": {
+							"type": "string"
+						},
+						"facility_uuid": {
+							"type": "integer"
+						},
+						"department_uuid": {
+							"type": "integer"
+						},
+						"patient_uuid": {
+							"type": "integer"
+						},
+						"encounter_type_uuid": {
+							"type": "integer"
+						},
+						"encounter_uuid": {
+							"type": "integer"
+						},
+						"doctor_uuid": {
+							"type": "integer"
+						},
+						"appointment_uuid": {
+							"type": "integer"
+						},
+						"notes": {
+							"type": "string"
+						},
+						"ipd": {
+							"type": "string"
+						},
+						"glass_type": {
+							"type": "string"
+						},
+						"is_digitally_signed": {
+							"type": "integer"
+						}
+					}
+				},
+				"details": {
+					"type": "array",
+					"items": {
+						"properties": {
+							"prescription_uuid": {
+								"type": "integer"
+							},
+							"vision_type_uuid": {
+								"type": "integer"
+							},
+							"re_sph": {
+								"type": "string"
+							},
+							"re_cyl": {
+								"type": "string"
+							},
+							"re_axis": {
+								"type": "integer"
+							},
+							"re_vis_acu": {
+								"type": "string"
+							},
+							"le_sph": {
+								"type": "string"
+							},
+							"le_cyl": {
+								"type": "string"
+							},
+							"le_axis": {
+								"type": "integer"
+							},
+							"le_vis_acu": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"getglassprescription": {
+			"type": "object",
+			"properties": {
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"pageNo": {
+					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"search": {
+					"type": "string"
+				},
+				"encounter_uuid": {
+					"type": "integer"
+				}
+			}
+		},
+		"getbyid": {
+			"type": "object",
+			"properties": {
+				"Id": {
+					"type": "integer"
+				}
+			}
+		},
+		"updateglassprescriptionbyid": {
+			"type": "object",
+			"properties": {
+				"header": {
+					"type": "object",
+					"properties": {
+						"Id": {
+							"type": "integer"
+						},
+						"prescription_no": {
+							"type": "integer"
+						},
+						"prescription_date": {
+							"type": "string"
+						},
+						"facility_uuid": {
+							"type": "integer"
+						},
+						"department_uuid": {
+							"type": "integer"
+						},
+						"patient_uuid": {
+							"type": "integer"
+						},
+						"encounter_type_uuid": {
+							"type": "integer"
+						},
+						"encounter_uuid": {
+							"type": "integer"
+						},
+						"doctor_uuid": {
+							"type": "integer"
+						},
+						"appointment_uuid": {
+							"type": "integer"
+						},
+						"notes": {
+							"type": "string"
+						},
+						"ipd": {
+							"type": "string"
+						},
+						"glass_type": {
+							"type": "string"
+						},
+						"is_digitally_signed": {
+							"type": "integer"
+						}
+					}
+				},
+				"details": {
+					"type": "array",
+					"items": {
+						"properties": {
+							"uuid": {
+								"type": "integer"
+							},
+							"prescription_uuid": {
+								"type": "integer"
+							},
+							"vision_type_uuid": {
+								"type": "integer"
+							},
+							"re_sph": {
+								"type": "string"
+							},
+							"re_cyl": {
+								"type": "string"
+							},
+							"re_axis": {
+								"type": "integer"
+							},
+							"re_vis_acu": {
+								"type": "string"
+							},
+							"le_sph": {
+								"type": "string"
+							},
+							"le_cyl": {
+								"type": "string"
+							},
+							"le_axis": {
+								"type": "integer"
+							},
+							"le_vis_acu": {
+								"type": "string"
+							}
+						}
+					}
 				}
 			}
 		}

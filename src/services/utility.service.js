@@ -17,7 +17,7 @@ const _getActiveAndStatusObject = is_active => {
 };
 
 const _createIsActiveAndStatus = (create_object, userId) => {
-  create_object.modified_by = create_object.created_by = create_object.user_uuid = userId;
+  create_object.modified_by = create_object.created_by = userId;
   create_object.is_active = create_object.status = emr_constants.IS_ACTIVE;
   create_object.created_date = create_object.modified_date = new Date();
   create_object.revision = 1;
@@ -103,6 +103,7 @@ const _postRequest = async (api, headers, data) => {
   return new Promise((resolve, reject) => {
     request.post({ uri: api, headers: headers, json: data },
       function (error, response, body) {
+        console.log("\n body...", api, headers, data);
         console.log("\n body...", body);
         if (error) {
           reject(error);
@@ -296,6 +297,14 @@ const _deployedBlockChainUrl = () => {
   return urlobj[config.blockChainURL];
 };
 
+const _getDeployedStateLogo = () => {
+  const statedep = {
+    TN: { left: '/assets/images/tnlogo.png', right: '' },
+    PUNE: '/assets/images/punelogo.png'
+  };
+  return statedep[config.state] ? statedep[config.state] : statedep.TN;
+};
+
 module.exports = {
   getActiveAndStatusObject: _getActiveAndStatusObject,
   createIsActiveAndStatus: _createIsActiveAndStatus,
@@ -318,5 +327,6 @@ module.exports = {
   deployedBlockChainUrl: _deployedBlockChainUrl,
   deleteRequest: _deleteRequest,
   getBlockChainRequest: _getBlockChainRequest,
-  putBlockChainRequest: _putBlockChainRequest
+  putBlockChainRequest: _putBlockChainRequest,
+  getDeployedStateLogo: _getDeployedStateLogo
 };

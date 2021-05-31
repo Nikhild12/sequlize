@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            blood_donor_registration_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             encounter_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -77,6 +81,10 @@ module.exports = (sequelize, DataTypes) => {
             comments: {
                 type: DataTypes.STRING(2000),
                 allowNull: true,
+            },
+            is_emr_entry: { // field added by Manikanta 34443
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
             },
             is_active: {
                 type: DataTypes.BOOLEAN,

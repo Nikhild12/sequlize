@@ -33,8 +33,6 @@ const printService = () => {
         return renderedTemplate(templateValues);
     };
 
-
-
     const getFile = (filePath, encoding = null) => {
         return fs.readFileSync(filePath, encoding);
     };
@@ -261,6 +259,10 @@ printService().register('json', (context) => {
 
 printService().register('check', (val) => {
     return val;
+});
+
+printService().register('ifEquals', function (arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
 
 printService().register('notAvailable', (val) => {

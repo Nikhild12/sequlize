@@ -287,20 +287,23 @@ const tmpmstrController = () => {
     if (Object.keys(req.body).length != 0) {
       try {
         // plucking data req body
+        let displayOrderexists = [];
         const templateMasterReqData = req.body.headers;
         const templateMasterDetailsReqData = req.body.details;
         let userUUID = req.headers.user_uuid;
         let temp_name = templateMasterReqData.name;
         let displayOrder = templateMasterReqData.display_order;
-        let userUuid = templateMasterReqData.user_uuid ? templateMasterReqData.user_uuid : userUUID;
+        templateMasterReqData.display_order = templateMasterReqData.display_order ? templateMasterReqData.display_order : 0;
+        let userUuid = templateMasterReqData.user_uuid || userUUID;
         templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         const temp_master_active = templateMasterReqData.is_active;
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
-
-        const displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+        if (displayOrder) {
+          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+        }
         if (displayOrderexists.length > 0) {
           return res
             .status(400)
@@ -325,7 +328,6 @@ const tmpmstrController = () => {
           (exists.length == 0 || exists[0].dataValues.status == 0) &&
           userUUID && templateMasterReqData && templateMasterDetailsReqData.length > 0
         ) {
-          // templateMasterReqData.is_public = templateMasterReqData.is_public ? false : true;
           let createData = await createtemp(userUUID, templateMasterReqData, templateMasterDetailsReqData, temp_master_active);
           if (createData) {
             return res.status(200).send({
@@ -346,7 +348,6 @@ const tmpmstrController = () => {
             });
         }
       } catch (err) {
-        console.log("err==============", err);
         return res
           .status(400)
           .send({
@@ -372,6 +373,10 @@ const tmpmstrController = () => {
       const templateMasterReqData = req.body.headers;
       const temp_name = templateMasterReqData.name;
       const temp_id = templateMasterReqData.template_id;
+      const department_uuid = templateMasterReqData.department_uuid;
+      const user_id = templateMasterReqData.user_uuid;
+      const display_order = templateMasterReqData.display_order;
+      const facility_id = templateMasterReqData.facility_uuid;
       const templateMasterDetailsReqData = req.body.existing_details;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(
         user_uuid,
@@ -384,7 +389,18 @@ const tmpmstrController = () => {
       const tmpDtlsRmvdDrugs = req.body.removed_details;
 
       try {
-
+        if (display_order) {
+          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, temp_id);
+          if (displayOrderexists.length > 0) {
+            return res
+              .status(400)
+              .send({
+                code: httpStatus[400],
+                statusCode: httpStatus.BAD_REQUEST,
+                message: emr_constants.NAME_DISPLAY_EXISTS
+              });
+          }
+        }
         const exists = await nameExistsupdate(temp_name, user_uuid, temp_id);
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
@@ -1396,6 +1412,12 @@ function getTemplatesQuery(user_uuid, dept_id, temp_type_id, fId, sMId) {
     {
       tm_userid: {
         [Op.eq]: user_uuid
+      },
+      tm_dept: {
+        [Op.eq]: dept_id
+      },
+      tm_public: {
+        [Op.eq]: 0
       }
     }
     ]
@@ -1423,6 +1445,12 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
     {
       tm_userid: {
         [Op.eq]: user_uuid
+      },
+      tm_dept: {
+        [Op.eq]: dept_id
+      },
+      tm_public: {
+        [Op.eq]: 0
       }
     }
     ]
@@ -1521,6 +1549,12 @@ function getVitalsQuery(temp_type_id, dept_id, user_uuid, fId) {
       {
         user_uuid: {
           [Op.eq]: user_uuid
+        },
+        department_uuid: {
+          [Op.eq]: dept_id
+        },
+        is_public: {
+          [Op.eq]: 0
         }
       }
       ],
@@ -1620,10 +1654,10 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid) => {
+const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid, temp_id) => {
   if (displayOrder !== undefined) {
     return new Promise((resolve, reject) => {
-      let value = tempmstrTbl.findAll({
+      let findQuery = {
         attributes: ["display_order"],
         where: {
           display_order: displayOrder,
@@ -1632,7 +1666,15 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
           department_uuid: departmentUuid,
           status: 1
         }
-      });
+      }
+      if (temp_id) {
+        findQuery.where = Object.assign(findQuery.where, {
+          uuid: {
+            [Op.not]: temp_id
+          }
+        });
+      }
+      let value = tempmstrTbl.findAll(findQuery);
       if (value) {
         resolve(value);
         return value;
@@ -1717,6 +1759,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              [searchKey]: {
+                [Op.eq]: searchValue
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
@@ -1748,6 +1796,12 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
@@ -1784,13 +1838,18 @@ function getTemplateTypeUUID(temp_type_id, dept_id, user_uuid, fId, lab_id, sMId
             {
               tm_user_uuid: {
                 [Op.eq]: user_uuid
+              },
+              tm_department_uuid: {
+                [Op.eq]: dept_id
+              },
+              "`tm_is_public`": {
+                [Op.eq]: 0
               }
             }
             ]
           }
         }
       };
-
     case "9":
       return {
         table_name: vw_diet,

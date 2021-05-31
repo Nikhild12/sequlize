@@ -33,7 +33,9 @@ const envVarsSchema = Joi.object({
   wso2RmisUrl: Joi.string(),
   wso2InvestUrl: Joi.string(),
   wso2InvUrl: Joi.string(),
-  wso2AppUrl: Joi.string()
+  wso2AppUrl: Joi.string(),
+  wso2RegisrationUrl: Joi.string(),
+  STATE: Joi.string().default("TN")
 })
   .unknown()
   .required();
@@ -82,6 +84,7 @@ const config = {
   deletePrescriptionDetails:
     envVars.BASE_URL + envVars.INVENTORY_CONTEXT_PATH + envVars.DELETE_PRESCRIPTION,
   wso2InvUrl: envVars.wso2InvUrl,
+  wso2RegisrationUrl: envVars.wso2RegisrationUrl,
   wso2LisUrl: envVars.wso2_lisUrl,
   wso2RmisUrl: envVars.wso2RmisUrl,
   wso2InvestUrl: envVars.wso2InvestUrl,
@@ -89,6 +92,7 @@ const config = {
   wso2BloodBankUrl: envVars.wso2BloodBankUrl,
   serverName: envVars.SERVER_NAME,
   isBlockChain: envVars.BLOCK_CHAIN,
-  blockChainURL: envVars.BLOCK_CHAIN_URL
+  blockChainURL: envVars.BLOCK_CHAIN_URL,
+  state: envVars.STATE
 };
 module.exports = config;

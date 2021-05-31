@@ -384,7 +384,8 @@ const notesController = () => {
         try {
             const {
                 patient_uuid,
-                consultation_uuid
+                consultation_uuid,
+                isNurseCS
             } = req.query;
             const {
                 user_uuid,
@@ -393,50 +394,50 @@ const notesController = () => {
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
             let findQuery = {
                 include: [{
-                        model: profilesTbl,
-                        required: false
-                    },
-                    {
-                        model: conceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: categoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profilesTypesTbl,
-                        required: false
-                    },
-                    {
-                        model: sectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoriesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptsTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValuesTbl,
-                        required: false
-                    },
-                    {
-                        model: profileSectionCategoryConceptValueTermsTbl,
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    required: false,
+                    include: [{
+                        model: conceptValueTermsTbl,
                         required: false,
-                        include: [{
-                            model: conceptValueTermsTbl,
-                            required: false,
-                            attributes: ['uuid', 'code', 'name']
-                        }]
-                    }
+                        attributes: ['uuid', 'code', 'name']
+                    }]
+                }
                 ],
                 order: [
                     [profileSectionCategoriesTbl, 'display_order', 'ASC']
@@ -456,21 +457,30 @@ const notesController = () => {
                 });
             }
             let finalData = [];
+            let i = 0;
             for (let e of patNotesData) {
                 let data;
                 if (e.activity_uuid) {
                     const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
-                    if (actCode) {
+                    if (actCode && actCode.name) {
                         e.temp = [];
                         e.user_uuid = user_uuid;
                         e.Authorization = Authorization;
                         e.facility_uuid = facility_uuid;
-                        data = await getWidgetData(actCode, e, consultation_uuid);
+                        data = await getWidgetData(actCode.name, e, consultation_uuid);
                         finalData.push(data);
                         console.log(finalData);
+                        // # Added for Nurse Desk IP Case Sheet Review Notes
+                        if (isNurseCS) {
+                            finalData[i].dataValues.activity_code = actCode.code;
+                            finalData[i].dataValues.activity_name = actCode.name;
+                        }
                     }
                 } else {
                     finalData.push(e);
+                }
+                if (isNurseCS) {
+                    i++;
                 }
             }
             return res.status(200).send({
@@ -518,9 +528,10 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            const Authorization = req.headers.Authorization || req.headers.authorization;
             let findQuery = {
-                include: [{
+                include: [
+                    {
                         model: vw_consultation_detailsTbl,
                         required: false,
                         attributes: {
@@ -608,7 +619,6 @@ const notesController = () => {
                             e.facility_uuid = facility_uuid;
                             data = await getWidgetData(actCode, e, consultation_uuid, printFlag);
                             finalData.push(data);
-                            console.log(finalData);
                         }
                     } else {
                         finalData.push(e);
@@ -631,18 +641,15 @@ const notesController = () => {
                             if (e.activity_uuid == 42 && labCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     labArr = [...labArr, ...e.dataValues.details];
-                                    console.log(labArr);
                                     labCheck = true;
                                 }
                             }
                             if (e.activity_uuid == 43 && radCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     radArr = [...radArr, ...e.dataValues.details];
-                                    console.log(radArr)
                                     radCheck = true;
                                 }
                             }
-                            console.log(e);
                             if (e.activity_uuid == 58 && invCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     invArr = [...invArr, ...e.dataValues.details];
@@ -689,7 +696,6 @@ const notesController = () => {
                     finalData.forEach(e => {
                         if (e && e.dataValues.details) {
                             if (e.activity_uuid == 59 && diaCheck == false) {
-                                console.log(e.dataValues.details);
                                 e.dataValues.details.forEach(i => {
                                     let data = {
                                         name: i.is_snomed == true ? i.other_diagnosis : i.diagnosis.name,
@@ -713,12 +719,10 @@ const notesController = () => {
                             if (e.activity_uuid == 44 && presCheck == false) {
                                 if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                     e.dataValues.details[0].prescription_details.forEach(i => {
-                                        console.log('.................', i);
                                         i.store_master = e.dataValues.details[0].injection_room ? e.dataValues.details[0].injection_room : e.dataValues.details[0].store_master;
                                         i.has_e_mar = i.is_emar;
                                     });
                                     presArr = [...presArr, ...e.dataValues.details[0].prescription_details];
-                                    console.log(presArr);
                                     presCheck = true;
 
                                 }
@@ -753,7 +757,6 @@ const notesController = () => {
                 }
                 let patientObj;
                 if (finalData && finalData[0] && finalData[0].vw_consultation_detail) {
-                    console.log(finalData[0].vw_consultation_detail);
                     patientObj = {
                         patient_name: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_first_name : '',
                         age: finalData ? finalData[0].vw_consultation_detail.dataValues.pa_age : '',
@@ -802,7 +805,6 @@ const notesController = () => {
                         profile_section_category_concept_value_term: profSecCatConValTerm,
                         profile_section_category_concept_value_terms_uuid: psccvt_uuid
                     } = e;
-                    console.log(eSec);
                     if (e.section_uuid !== 0 && e.activity_uuid == 0) {
                         sectionId = eSec.uuid;
                         if (!sectionObj[sectionId]) {
@@ -855,7 +857,7 @@ const notesController = () => {
                                 value_name: profCatValValueName,
                                 display_order: profCatValDisOrder
                             } = profSecCatConVal;
-                            console.log('value_type_uuid::', value_type_uuid);
+                            // console.log('value_type_uuid::', value_type_uuid);
                             if ((value_type_uuid == RADIO) || (value_type_uuid == BOOLEAN) || (value_type_uuid == CHECKBOX) || (value_type_uuid == DROPDOWN)) {
                                 sampleObj = {
                                     [profCatName]: profCatValValueName ? (profCatValValueName) : eTermKey,
@@ -891,7 +893,6 @@ const notesController = () => {
                                                 if (Object.keys(item).includes(profSecCatConcept.name)) {
                                                     displayOrder = item.display_order;
                                                     delete item.display_order;
-                                                    console.log('///////////');
                                                     Object.assign(check, item);
                                                 }
                                             }
@@ -1013,6 +1014,7 @@ const notesController = () => {
                     printObj.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
                     printObj.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
                 }
+                printObj.state = config.state;
                 // return res.send({
                 //     message: printObj
                 // });
@@ -1253,7 +1255,7 @@ const notesController = () => {
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents)
-            return user_details.responseContents.name;
+            return user_details.responseContents;
         else
             return false;
     };
@@ -1489,7 +1491,6 @@ const notesController = () => {
             };
 
             const res = await getResultsInObject(getFacilityUrl, req, postData);
-            console.log('>>>>>>>>>>>>>>>facility_res', res);
             if (res.status && res.data.length > 0) {
                 const resData = res.data;
                 return {

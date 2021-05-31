@@ -9,10 +9,13 @@ const path = require('path');
 const fs = require('file-system');
 const mime = require('mime');
 const middleware = require('../middleware/middleware');
-
+const config = require('../config/config.js');
+const constants = require('../config/constants');
+const utilityService = require('../services/utility.service');
 const attachmentTbl = db.patient_attachments;
 const attachmentTypeTbl = db.attachment_type;
 const encounterTbl = db.encounter;
+const { APPMASTER_VIEWUSERSBYARRAYOFIDS } = constants.DEPENDENCY_URLS;
 
 
 const patientAttachmentsController = () => {
@@ -120,36 +123,75 @@ const patientAttachmentsController = () => {
 
     const _getAllAttachments = async (req, res) => {
         const { user_uuid } = req.headers;
-        const { patient_uuid } = req.query;
+        const authorization = req.headers.authorization || req.headers.Authorization;
+        const { patient_uuid, attachment_type_uuid, blood_donor_registration_uuid } = req.query;
         try {
             if (user_uuid) {
-                const data = await attachmentTbl.findAll({
-                    where: { patient_uuid: patient_uuid, is_active: 1, status: 1 },
+                let findQuery = {
+                    where: { is_active: 1, status: 1 },
                     include: [
                         {
                             model: attachmentTypeTbl,
                             as: 'attachment_type',
                             attributes: ['uuid', 'code', 'name'],
-                            where: { is_active: 1, status: 1 }
+                            where: { is_active: 1, status: 1 },
+                            required: false
                         },
                         {
                             model: encounterTbl,
                             as: 'encounter',
                             attributes: ['uuid', 'patient_uuid', 'encounter_date'],
-                            where: { is_active: 1, status: 1 }
-                        },]
-                },
-                    { returning: true }
-                );
+                            where: { is_active: 1, status: 1 },
+                            required: false
+                        }]
+                }
+                if (attachment_type_uuid) {
+                    findQuery.where = Object.assign(findQuery.where, {
+                        attachment_type_uuid: attachment_type_uuid
+                    });
+                }
+                if (patient_uuid) {
+                    Object.assign(findQuery.where, {
+                        patient_uuid: patient_uuid
+                    });
+                }
+                if (blood_donor_registration_uuid) {
+                    Object.assign(findQuery.where, {
+                        blood_donor_registration_uuid: blood_donor_registration_uuid
+                    });
+                }
 
-                if (data) {
+                const data = await attachmentTbl.findAll(findQuery);
+                if (data && data.length > 0) {
+                    //to get uploaded by detials making service to service api calls -- by Manikanta 34443
+                    let created_by_uuids = [... new Set(data.map(e => e.created_by))]
+                    let users_output = await utilityService.postRequest(config.wso2AppUrl + APPMASTER_VIEWUSERSBYARRAYOFIDS, {
+                        "user_uuid": user_uuid,
+                        "authorization": authorization
+                    }, {
+                        Id: created_by_uuids
+                    });
+                    if (users_output.length > 0) {
+                        for (let e of data) {
+                            for (let u of users_output) {
+                                if (e.created_by == u.uuid) {
+                                    e.dataValues.uploaded_by = u;
+                                }
+                            }
+                        }
+                    }
+                    //to get uploaded by detials making service to service api calls -- by Manikanta 34443
                     return res
                         .status(httpStatus.OK)
-                        .json({ statusCode: 200, req: '', responseContents: { attachment: data } });
+                        .json({ status:'success', statusCode: httpStatus.OK, message: 'Successfully retrieved', responseContents: { attachment: data } });
+                } else {
+                    return res
+                        .status(httpStatus.OK)
+                        .json({ status:'success', statusCode: httpStatus.OK, message: 'No data found', responseContents: [] });
                 }
             }
             else {
-                return res.status(400).send({ code: httpStatus[400], message: "No Request Body Found" });
+                return res.status(httpStatus.BAD_REQUEST).send({ status:'error', code: httpStatus.BAD_REQUEST, message: "No Request Body Found" });
             }
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;

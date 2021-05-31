@@ -1,0 +1,126 @@
+<html lang="en">
+
+<head>
+	<title>Bootstrap Example</title>
+	<meta charset="utf-8">
+	<style>
+		@media print {
+			.first_tbl {
+				page-break-inside: avoid;
+				page-break-before: always;
+			}
+		}
+	</style>
+</head>
+
+<body style="margin: 0px; font-family: poppins; font-size: 10px; width: 100%; height: 100%;">
+	<div style="float:left; width:calc(100% - 30px); padding: 0 15px; ">
+		<div style="width:100%; float:left; padding: 10px 0;position: relative; text-align: center;">
+			<div style="width: calc(15% - 20px); float:left; padding: 0 10px;">
+				<img src="{{include '/assets/images/tnlogo.png' 'img'}}" style="width: 60px;">
+			</div>
+			<div style="width: calc(70% - 20px); float:left; padding: 0 10px;">
+				<h2 style="text-align: center; margin: 10px 0 6px; width: 100%; font-size: 15px;">
+					{{headerObj.header.facility}}</h2>
+				<h5 style="font-size: 11px; text-align: center; font-weight: 500; margin: 0;">
+					{{headerObj.header.address}}</h5>
+			</div>
+			<div style="width: calc(15% - 20px); float:right; padding: 0 10px;">
+				<img src="{{include '/assets/images/nrhm_logo.png' 'img'}}" style="width: 75px;">
+			</div>
+		</div>
+
+		<div class="first_tbl" style="width: 100%; float: left; padding: 10px 0;">
+			<table borderspacing="1" border="1" borderwidth="1" bordercolor="#ccc" cellpadding="3" cellspacing="0"
+				style="width:100%; float:left; text-align: left;">
+				<thead>
+					<tr style="text-align: center; font-size: 13px;">
+						<th colspan="9" style="font-weight: 600;border-bottom: 0; border-top: 0; border-left: 0; border-right: 0;border-right: 0; color: #000;">Glass Prescription</th>
+					</tr>
+					<tr>
+						<th colspan="5" style="border-bottom: 0; border-right: 0; border-left: 0; padding: 15px; font-size:10px; padding-left:35px;">
+							<p style="font-weight: 600; color: #000;"><span>Name: {{headerObj.header.patient}}</span>  </p>
+							<p style="font-weight: 600; color: #000;"><span>PIN: {{headerObj.header.pin}}</span> </p>
+							<p style="font-weight: 400;color: #000;"><span style="font-weight: 600;">Age / Gender:</span> {{headerObj.header.ageAndGender}}
+							</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Date:</span> {{headerObj.header.prescription_date}} </p>							
+						</th> 
+						<th colspan="4" style="border-bottom: 0;border-left: 0; border-right: 0; padding: 15px; font-size:10px;padding-left: 10px;">
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Doctor Name:</span> {{headerObj.header.doctor}}</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">OP NO:</span> {{headerObj.header.visit_number}}</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Reference No:</span> {{headerObj.header.reference_no}}</p>
+							<p style="font-weight: 400; color: #000;"><span style="font-weight: 600;">Department:</span> {{headerObj.header.department}}</p>
+						</th>
+					</tr>
+				</thead>
+				<tbody style="font-size: 10px;">
+					<tr style="text-align: center;">
+						<td style="border-bottom: 0; border-left: 0;"></td>
+						<td colspan="4" style="border-bottom: 0; border-right: 0; border-left: 0;font-weight: 600;color: #000;">Right Eye</td>
+						<td colspan="4" style="border-bottom: 0; border-right: 0; font-weight: 600;color: #000;">Left Eye</td>
+					</tr>
+					<tr style="text-align: center;">
+						<td style="width: 11%;border-top: 0;border-bottom: 0; border-left: 0;"></td>
+						<td style="width: 11%;border-bottom: 0; border-right: 0; border-left: 0; font-weight: 600;color: #000;">SPH</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">CYL</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Axis</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Visual Acuity</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">SPH</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">CYL</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Axis</td>
+						<td style="width: 11%;border-bottom: 0;border-right: 0; font-weight: 600;color: #000;">Visual Acuity</td>
+					</tr>
+					{{#each headerObj.details}}
+					<tr style="text-align: center;"> 
+						<td style="border-bottom: 0; border-left: 0;font-weight: 600;color: #000;">{{this.dataValues.vision_type.dataValues.name}}</td>
+						<td style="border-bottom: 0;border-right: 0; border-left: 0;">{{this.dataValues.re_sph}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_cyl}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_axis}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.re_vis_acu}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_sph}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_cyl}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_axis}}</td>
+						<td style="border-bottom: 0;border-right: 0;">{{this.dataValues.le_vis_acu}}</td>
+					</tr>
+					{{/each}}
+					<tr>
+						<td colspan="4" style="padding: 15px; border-right: 0; border-left: 0; border-bottom: 0">
+							<label style="font-weight: 600;color: #000;">IPD</label>
+							<div
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
+								{{headerObj.header.ipd}}</div>
+							<label style="font-weight: 600;color: #000;">Glass Type</label>
+							<div
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
+								{{headerObj.header.glass_type}}</div>
+							<label style="font-weight: 600;color: #000;">Instruction</label>
+							<div
+								style="width: 100%; border-left: 0; border-right: 0; border-top: 0; border-bottom: 1px solid #c7c6c6; margin: 3px 0 10px; line-height: 27px;">
+								{{headerObj.header.notes}}</div>
+						</td>
+						<td colspan="9" style="border-left: 0; border-right: 0; border-bottom: 0;"></td>
+					</tr>
+					<tr style="text-align: center;">
+						<td colspan="9" style="text-align: right; padding: 20px 10px 10px; border-top: 0; border-left: 0;border-right: 0; border-bottom: 0;">
+							<div  style="font-weight: 600;color: #000;">{{headerObj.header.doctor}}</div>
+							Prescribed By
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div style="float:left; padding: 0px; width: calc(100% - 30px);">
+			<div style="width: 50%; float: left;">
+				<p style="font-size: 10px; margin: 0;">Printed On: {{headerObj.header.date}} </p>
+			</div>
+		</div>
+		<p style="font-size: 10px;text-align: center">***End of Glass Prescription***</p>
+
+	</div>
+
+
+
+</body>
+
+</html>
