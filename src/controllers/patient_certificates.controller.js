@@ -2,11 +2,8 @@
 const httpStatus = require('http-status');
 
 // Sequelizer Import
-const Sequelize = require('sequelize');
 const sequelizeDb = require('../config/sequelize');
-const Op = Sequelize.Op;
 const config = require("../config/config");
-const request = require('request');
 const rp = require('request-promise');
 const printService = require('../services/print.service');
 const moment = require("moment");
@@ -15,7 +12,7 @@ const moment = require("moment");
 const emr_constants = require('../config/constants');
 const patientCertificatesTbl = sequelizeDb.patient_certificates;
 const patientCertificateViewTbl = sequelizeDb.vw_patient_certificate;
-
+const note_templatesTbl = sequelizeDb.note_templates;
 const CertificatesController = () => {
 
 
@@ -97,6 +94,7 @@ const CertificatesController = () => {
 
     };
 
+    // #H30-37944 Modified for View Certificate By Elumalai Govindan
     const _print_previous_certificates = async (req, res) => {
         try {
             const {
@@ -110,55 +108,57 @@ const CertificatesController = () => {
             let certificate_result = {};
             if (certificate_uuid && user_uuid) {
                 const result = await patientCertificatesTbl.findOne({
+                    include: [{
+                        model: note_templatesTbl,
+                        attributes: ['uuid', 'name', 'data_template'],
+                        required: false,
+                        where: { status: 1 }
+                    }],
                     where: {
                         uuid: certificate_uuid,
-                        status: 1,
+                        status: 1
                     },
-                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template'],
-
+                    attributes: ['uuid', 'patient_uuid', 'facility_uuid', 'department_uuid', 'data_template', 'doctor_uuid']
                 });
                 if (result) {
                     certificate_result = {
                         ...result
                     };
                     if (certificate_result) {
+                        const doctor_result = await getResultsInObject('users/getusersById', req, { Id: certificate_result.dataValues.doctor_uuid })
                         const allpatientsC = await getallpatientdetials(user_uuid, req.headers.authorization, result.dataValues.patient_uuid);
-
-                        const data = allpatientsC.responseContent;
+                        const doctordata = doctor_result.status ? doctor_result.data : '';
+                        const data = allpatientsC.statusCode == 200 && allpatientsC.responseContent ? allpatientsC.responseContent : '';
 
                         const patdetails = {
-                            patient_name: data ? data.first_name : '',
+                            patient_name: data && data.salutation_details ? data.first_name ? data.salutation_details.name.concat(' ', data.first_name) : data.first_name : '',
                             age: data ? data.age : '',
                             period: data ? (data.period_detail.name == 'Year' ? "Year(s)" : data.period_detail.name) : '',
                             gender: data ? data.gender_details.name : '',
-                            pa_title: data ? data.salutation_details.name : '',
-                            mobile: data ? data.mobile : '',
-                            pin: data ? data.pin : '',
-                            doctor_name: data ? data.first_name : '',
+                            mobile: data && data.patient_detail ? data.patient_detail.mobile : '',
+                            pin: data ? data.uhid : '',
+                            doctor_name: doctordata ? doctordata.title ? doctordata.title.name.concat(' ', doctordata.first_name) : doctordata.first_name : '',
                             dept_name: data ? data.patient_visits[0].department_details.name : '',
-                            title: data ? data.salutation_details.name : '',
                             date: data ? moment(data.created_date).format('DD-MMM-YYYY hh:mm A') : '',
+                            printedOn: moment(new Date()).format('DD-MMM-YYYY hh:mm A'),
+                            note_template_name: result.dataValues.note_template.name,
+                            data_template: result.dataValues.data_template
+                            //.replace( /(<([^>]+)>)/ig, ' ')
                         }
 
                         certificate_result.dataValues.data_template = patdetails;
                         const facility_result = await getFacilityDetails(req);
                         if (facility_result.status) {
-                            let {
-                                status: data_facility_status,
-                                facility_uuid: data_facility_uuid,
-                                facility
-                            } = facility_result.data;
-                            let {
-                                facility_printer_setting: facPrSet
-                            } = facility;
-                            let isFaciltySame = (facility_uuid == data_facility_uuid);
-                            certificate_result.dataValues.data_template.header1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header1 : facPrSet.pharmacy_print_header1) : '');
-                            certificate_result.dataValues.data_template.header2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_header2 : facPrSet.pharmacy_print_header2) : '');
-                            certificate_result.dataValues.data_template.footer1 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer1 : facPrSet.pharmacy_print_footer1) : '');
-                            certificate_result.dataValues.data_template.footer2 = (isFaciltySame ? (facPrSet ? facPrSet.printer_footer2 : facPrSet.pharmacy_print_footer2) : '');
+                            let { status, facility_uuid, facility } = facility_result.data;
+                            let { facility_printer_setting } = facility_result.data.facility;
+                            let isFaciltySame = (facility_uuid == facility_result.data.facility_uuid); // deepscan-disable-line
+                            certificate_result.dataValues.data_template.header1 = (isFaciltySame ? (facility_printer_setting ? facility_printer_setting.printer_header1 : facility_printer_setting.pharmacy_print_header1) : ''); // deepscan-disable-line
+                            certificate_result.dataValues.data_template.header2 = (isFaciltySame ? (facility_printer_setting ? facility_printer_setting.printer_header2 : facility_printer_setting.pharmacy_print_header2) : ''); // deepscan-disable-line
+                            certificate_result.dataValues.data_template.footer1 = (isFaciltySame ? (facility_printer_setting ? facility_printer_setting.printer_footer1 : facility_printer_setting.pharmacy_print_footer1) : ''); // deepscan-disable-line
+                            certificate_result.dataValues.data_template.footer2 = (isFaciltySame ? (facility_printer_setting ? facility_printer_setting.printer_footer2 : facility_printer_setting.pharmacy_print_footer2) : ''); // deepscan-disable-line
                         }
                         // return res.send(certificate_result.dataValues.data_template)
-                        const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate.html"), {
+                        const pdfBuffer = await printService.createPdf(printService.renderTemplate((__dirname + "/../assets/templates/patient_certificate_new.html"), {
                             headerObj: certificate_result.dataValues.data_template,
                             // language: req.__('dischargeSummary')
                         }), {
