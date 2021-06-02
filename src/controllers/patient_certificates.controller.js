@@ -7,6 +7,7 @@ const config = require("../config/config");
 const rp = require('request-promise');
 const printService = require('../services/print.service');
 const moment = require("moment");
+const commonService = require('../services/common.service');
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
@@ -139,8 +140,8 @@ const CertificatesController = () => {
                             pin: data ? data.uhid : '',
                             doctor_name: doctordata ? doctordata.title ? doctordata.title.name.concat(' ', doctordata.first_name) : doctordata.first_name : '',
                             dept_name: data ? data.patient_visits[0].department_details.name : '',
-                            date: data ? moment(data.created_date).format('DD-MMM-YYYY hh:mm A') : '',
-                            printedOn: moment(new Date()).format('DD-MMM-YYYY hh:mm A'),
+                            date: data ? commonService.indiaTz(data.created_date).format('DD-MMM-YYYY hh:mm A') : '',
+                            printedOn: commonService.indiaTz('').format('DD-MMM-YYYY hh:mm A'),
                             note_template_name: result.dataValues.note_template.name,
                             data_template: result.dataValues.data_template
                             //.replace( /(<([^>]+)>)/ig, ' ')
