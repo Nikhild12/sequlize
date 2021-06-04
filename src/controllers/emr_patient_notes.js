@@ -1223,6 +1223,7 @@ const notesController = () => {
             case "Vitals":
                 return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
+            case "ChiefComplaints":
                 return getChiefComplaintsResult(result, consultation_uuid);
             case "Blood Requests":
                 return getBloodRequestResult(result, consultation_uuid);
