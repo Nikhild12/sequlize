@@ -611,13 +611,13 @@ const notesController = () => {
                     let data;
                     if (e.activity_uuid) {
                         const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
-                        if (actCode) {
-                            printObj[actCode.replace(/\s/g, '')] = true;
+                        if (actCode && actCode.name) {
+                            printObj[actCode.name.replace(/\s/g, '')] = true;
                             e.temp = [];
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
                             e.facility_uuid = facility_uuid;
-                            data = await getWidgetData(actCode, e, consultation_uuid, printFlag);
+                            data = await getWidgetData(actCode.name, e, consultation_uuid, printFlag);
                             finalData.push(data);
                         }
                     } else {
@@ -637,7 +637,7 @@ const notesController = () => {
 
                 if (printObj.Lab || printObj.Radiology || printObj.Investigation) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details) {
+                        if (e && e.dataValues && e.dataValues.details) {
                             if (e.activity_uuid == 42 && labCheck == false) {
                                 if (e.dataValues.details && e.dataValues.details.length > 0) {
                                     labArr = [...labArr, ...e.dataValues.details];
@@ -666,7 +666,7 @@ const notesController = () => {
                 }
                 if (printObj.Vitals) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details) {
+                        if (e && e.dataValues && e.dataValues.details) {
                             if (e.activity_uuid == 57 && vitalCheck == false) {
                                 vitArr = [...vitArr, ...e.dataValues.details];
                                 // vitArr.push(e.dataValues.details);
@@ -679,7 +679,7 @@ const notesController = () => {
                 }
                 if (printObj.ChiefComplaints) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details) {
+                        if (e && e.dataValues && e.dataValues.details) {
                             if (e.activity_uuid == 49 && cheifCheck == false) {
                                 cheifArr = [...cheifArr, ...e.dataValues.details];
                                 cheifCheck = true;
@@ -694,7 +694,7 @@ const notesController = () => {
                 let dia_type = '';
                 if (printObj.Diagnosis) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details) {
+                        if (e && e.dataValues && e.dataValues.details) {
                             if (e.activity_uuid == 59 && diaCheck == false) {
                                 e.dataValues.details.forEach(i => {
                                     let data = {
@@ -715,7 +715,7 @@ const notesController = () => {
                 }
                 if (printObj.Prescriptions) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details) {
+                        if (e && e.dataValues && e.dataValues.details && e.dataValues.details[0] && e.dataValues.details[0].prescription_details) {
                             if (e.activity_uuid == 44 && presCheck == false) {
                                 if (e.dataValues.details[0].prescription_details && e.dataValues.details[0].prescription_details.length > 0) {
                                     e.dataValues.details[0].prescription_details.forEach(i => {
@@ -734,7 +734,7 @@ const notesController = () => {
                 }
                 if (printObj.BloodRequests) {
                     finalData.forEach(e => {
-                        if (e && e.dataValues.details && e.dataValues.details[0].blood_request_details) {
+                        if (e && e.dataValues && e.dataValues.details && e.dataValues.details[0].blood_request_details) {
                             if (e.dataValues.activity_uuid == 252 && bbCheck == false) {
                                 if (e.dataValues.details) {
                                     let detailsArr = e.dataValues.details[0].blood_request_details.map(i => {
