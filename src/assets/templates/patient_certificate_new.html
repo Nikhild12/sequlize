@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <style>
+        @media print {
+            .first_tbl {
+                page-break-inside: avoid;
+                page-break-before: always;
+            }
+        }
+    </style>
+
+</head>
+
+<body style="margin: 0 auto; font-family: poppins; font-size: 10px; width: 100%; height: 100%;">
+
+    <div style="float:left; width:calc(100% - 30px); padding: 0 15px;">
+        <div class="row" id="pageHeader" style="font-weight: bold; border-bottom: 1px solid #bbb;">
+            {{> facility_header this}}
+        </div>
+
+        <h2 style="text-align:center; margin-top:0px; float:left; width:100%;">Patient Certificate</h2>
+        {{#if headerObj}}
+        <div style="width:100%; float:left; padding: 0px 0px 10px;position: relative;">
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.pin}}
+                        <tr>
+                            <td style="padding: 5px;">PIN</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.pin}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.patient_name}}
+                        <tr>
+                            <td style="padding: 5px;">Patient Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;"> {{headerObj.patient_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.age}}
+                        <tr>
+                            <td style="padding: 5px;">Age / Gender</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.age}}
+                                {{headerObj.period}} / {{headerObj.gender}}</td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.mobile}}
+                        <tr>
+                            <td style="padding: 5px;">Mobile Number</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.mobile}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+            <div style="width: calc(50% - 20px); float:left; padding: 0 10px;">
+                <table>
+                    <tbody>
+                        {{#if headerObj.doctor_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">Doctor Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;"> {{headerObj.doctor_name}} </td>
+                        </tr>
+                        {{/if}}
+
+                        {{#if headerObj.dept_name}}
+                        <tr>
+                            <td style="padding: 5px;">Department</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.dept_name}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.date}}
+
+                        <tr>
+                            <td style="padding: 5px;">Date</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.date}}</td>
+                        </tr>
+                        {{/if}}
+                        {{#if headerObj.notes_name}}
+
+                        <tr>
+                            <td style="padding: 5px;">OP Notes Name</td>
+                            <td style="padding: 5px;">:</td>
+                            <td style="padding: 5px;">{{headerObj.notes_name}}</td>
+                        </tr>
+                        {{/if}}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{/if}}
+
+        <div style="margin-top: 20px;" class="first_tbl">
+            <hr />
+            {{#if headerObj.data_template}}
+            <div style="margin-top: 20px;">
+                {{{headerObj.data_template}}}
+            </div>
+            {{/if}}
+        </div>
+
+        <br />
+        <div style="float:right;">
+            <div style="font-weight: 600;color: #000;">{{headerObj.doctor_name}}</div>
+            <br />
+            <div> Certified By </div>
+        </div>
+
+        <div style="float:left; padding: 15px; width: calc(100% - 30px);">
+            <div style="width: 50%; float: left;">
+                <p>Printed On: {{headerObj.printedOn}}</p>
+            </div>
+        </div>
+
+    </div>
+    <p style="font-size: 10px;text-align: center">***End of Certificate***</p>
+</body>
+
+</html>
