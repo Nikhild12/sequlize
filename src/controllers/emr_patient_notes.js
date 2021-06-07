@@ -1267,6 +1267,10 @@ const notesController = () => {
     };
 
     const getLabResult = async (result, consultation_uuid, printFlag) => {
+        console.log('patientorders/getLatestRecords Authorization=======>', result.Authorization);
+        console.log('patientorders/getLatestRecords user_uuid ==========>', result.user_uuid);
+        console.log('patientorders/getLatestRecords facility_uuid=======>', result.facility_uuid);
+        
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
