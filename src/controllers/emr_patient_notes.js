@@ -391,7 +391,11 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
+            console.log('req.headers.Authorization=====>', req.headers.Authorization);
+            console.log('req.headers.authorization=====>', req.headers.authorization);
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            
+            console.log('Authorization=====>', Authorization);
             let findQuery = {
                 include: [{
                     model: profilesTbl,
