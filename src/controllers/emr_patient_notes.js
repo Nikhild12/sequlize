@@ -1289,7 +1289,9 @@ const notesController = () => {
             //body: {},
             json: true
         };
-        console.log(options);
+        // console.log(options);
+        console.log('Lab Result URL Checking =======>', options.uri);
+
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         let res_result = [];
         console.log('////////////////user_details', user_details);
@@ -1347,7 +1349,7 @@ const notesController = () => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
-            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            //uri: "https://qahmisgetBloodRequestResult Objecgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
                 Authorization: result.Authorization,
@@ -1486,6 +1488,7 @@ const notesController = () => {
             //body: {},
             json: true
         };
+        console.log('bloodbank url checkking===>',  options.uri);
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents) {
