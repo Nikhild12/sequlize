@@ -391,6 +391,7 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
+            console.log('req.headers =====>', JSON.stringify(req.headers));
             console.log('req.headers.Authorization=====>', req.headers.Authorization);
             console.log('req.headers.authorization=====>', req.headers.authorization);
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
