@@ -1459,6 +1459,8 @@ const notesController = () => {
         return result;
     };
     const getBloodRequestResult = async (result, consultation_uuid) => {
+        console.log('getBloodRequestResult Objec', result);
+        console.log('getBloodRequestResult Objec',  result.Authorization);
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             method: "POST",
