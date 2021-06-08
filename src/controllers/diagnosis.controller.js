@@ -188,11 +188,8 @@ const diagnosisController = () => {
         } = req.headers;
         const diagnosisData = req.body;
         if (Object.keys(req.body).length != 0) {
-
             if (user_uuid && diagnosisData) {
-
                 try {
-
                     const code_exits = await codeexists(req.body.code);
                     const name_exits = await nameexists(req.body.name);
                     const tblname_exits = await codenameexists(req.body.code, req.body.name);
@@ -213,7 +210,6 @@ const diagnosisController = () => {
                             .send({ code: 400, message: "name already exists" });
 
                     } else {
-
                         diagnosisData.code = diagnosisData.code;
                         diagnosisData.name = req.body.name;
                         diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
@@ -243,7 +239,6 @@ const diagnosisController = () => {
                         }
                     }
                 } catch (ex) {
-
                     return res.status(400).send({
                         code: 400,
                         message: ex.message
@@ -260,7 +255,6 @@ const diagnosisController = () => {
                 .status(400)
                 .send({ code: httpStatus[400], message: "No Request Body Found" });
         }
-
     };
 
     const _getDiagnosis = async (req, res, next) => {
