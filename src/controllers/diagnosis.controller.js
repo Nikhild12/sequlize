@@ -218,7 +218,7 @@ const diagnosisController = () => {
                         diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
                         diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
                         diagnosisData.position_id = req.body.position_id;
-                        diagnosisData.department_uuid = req.body.department_uuid;
+                        diagnosisData.department_uuid = diagnosisData.department_uuid;
                         diagnosisData.description = diagnosisData.description;
                         diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
                         diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
