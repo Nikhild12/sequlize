@@ -391,7 +391,12 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
+            console.log('req.headers =====>', JSON.stringify(req.headers));
+            console.log('req.headers.Authorization=====>', req.headers.Authorization);
+            console.log('req.headers.authorization=====>', req.headers.authorization);
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            
+            console.log('Authorization=====>', Authorization);
             let findQuery = {
                 include: [{
                     model: profilesTbl,
@@ -1223,6 +1228,7 @@ const notesController = () => {
             case "Vitals":
                 return getVitalsResult(result, consultation_uuid);
             case "Chief Complaints":
+            case "ChiefComplaints":
                 return getChiefComplaintsResult(result, consultation_uuid);
             case "Blood Requests":
                 return getBloodRequestResult(result, consultation_uuid);
@@ -1261,6 +1267,10 @@ const notesController = () => {
     };
 
     const getLabResult = async (result, consultation_uuid, printFlag) => {
+        console.log('patientorders/getLatestRecords Authorization=======>', result.Authorization);
+        console.log('patientorders/getLatestRecords user_uuid ==========>', result.user_uuid);
+        console.log('patientorders/getLatestRecords facility_uuid=======>', result.facility_uuid);
+        
         let options = {
             uri: config.wso2LisUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
@@ -1279,7 +1289,9 @@ const notesController = () => {
             //body: {},
             json: true
         };
-        console.log(options);
+        // console.log(options);
+        console.log('Lab Result URL Checking =======>', options.uri);
+
         const user_details = await emr_utility.postRequest(options.uri, options.headers, options.body);
         let res_result = [];
         console.log('////////////////user_details', user_details);
@@ -1337,7 +1349,7 @@ const notesController = () => {
         let options = {
             uri: config.wso2InvestUrl + 'patientorders/getLatestRecords',
             //uri: 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/facility/getFacilityByuuid',
-            //uri: "https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
+            //uri: "https://qahmisgetBloodRequestResult Objecgateway.oasyshealth.co/DEVAppmaster/v1/api/userProfile/GetAllDoctors",
             method: "POST",
             headers: {
                 Authorization: result.Authorization,
@@ -1458,6 +1470,8 @@ const notesController = () => {
         return result;
     };
     const getBloodRequestResult = async (result, consultation_uuid) => {
+        console.log('getBloodRequestResult Objec', result);
+        console.log('getBloodRequestResult Objec',  result.Authorization);
         let options = {
             uri: config.wso2BloodBankUrl + 'bloodRequest/getpreviousbloodRequestbyID',
             method: "POST",
@@ -1474,6 +1488,7 @@ const notesController = () => {
             //body: {},
             json: true
         };
+        console.log('bloodbank url checkking===>',  options.uri);
         const user_details = await rp(options);
         console.log(user_details);
         if (user_details && user_details.responseContents) {
