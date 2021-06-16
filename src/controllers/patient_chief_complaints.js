@@ -134,11 +134,25 @@ const PatientChiefComplaints = () => {
           cD.performed_by = user_uuid;
           cD.facility_uuid = facility_uuid || 0;
         });
+        const addData = chiefComplaintsData.filter((i) => i && !i.uuid);
+        const updateData = chiefComplaintsData.filter((i) => i && i.uuid);
 
         const chiefComplaintsCreatedData = await patient_chief_complaints_tbl.bulkCreate(
-          chiefComplaintsData,
+          addData,
           { returning: true }
         );
+        if (updateData && updateData.length) {
+          const singleData = updateData[0];
+          await patient_chief_complaints_tbl.update({
+            chief_complaint_uuid: singleData.chief_complaint_uuid,
+            chief_complaint_duration_period_uuid: singleData.chief_complaint_duration_period_uuid,
+            chief_complaint_duration: singleData.chief_complaint_duration,
+          }, {
+            where: {
+              uuid: singleData.uuid
+            }
+          });
+        }
         // if (chiefComplaintsCreatedData && chiefComplaintsCreatedData.length > 0) {
         //   const duplicate_msg =
         //     chiefComplaintsCreatedData[0].is_active[0] === 1
@@ -156,7 +170,7 @@ const PatientChiefComplaints = () => {
             code: httpStatus.OK,
             message: "Inserted Patient Chief Complaints Successfully",
             responseContents: attachUUIDTOCreatedData(
-              chiefComplaintsData,
+              addData,
               chiefComplaintsCreatedData
             )
           });
