@@ -52,6 +52,8 @@ const _getPreviousPatCCModifiedResponse = records => {
       chiefComplaintCode: r.chief_complaint && r.chief_complaint.code,
       chiefComplaintDuration: r.chief_complaint_duration,
       chiefComplaintUUId: r.chief_complaint_uuid,
+      chiefComplaintDurationUUId: r.chief_complaint_duration_period_uuid,
+      createdDate: r.created_date,
       chiefComplaintDurationName:
         r.chief_complaint_duration_period &&
         r.chief_complaint_duration_period.name
