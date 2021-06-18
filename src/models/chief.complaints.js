@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             },
             comments:{
-                type: DataTypes.STRING
+                type: DataTypes.TEXT
             },
             referrence_link: {
                 type: DataTypes.STRING
