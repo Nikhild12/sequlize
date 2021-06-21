@@ -188,11 +188,8 @@ const diagnosisController = () => {
         } = req.headers;
         const diagnosisData = req.body;
         if (Object.keys(req.body).length != 0) {
-
             if (user_uuid && diagnosisData) {
-
                 try {
-
                     const code_exits = await codeexists(req.body.code);
                     const name_exits = await nameexists(req.body.name);
                     const tblname_exits = await codenameexists(req.body.code, req.body.name);
@@ -213,7 +210,6 @@ const diagnosisController = () => {
                             .send({ code: 400, message: "name already exists" });
 
                     } else {
-
                         diagnosisData.code = diagnosisData.code;
                         diagnosisData.name = req.body.name;
                         diagnosisData.diagnosis_scheme_uuid = req.body.diagnosis_scheme_uuid;
@@ -222,7 +218,7 @@ const diagnosisController = () => {
                         diagnosisData.diagnosis_grade_uuid = req.body.diagnosis_grade_uuid;
                         diagnosisData.diagnosis_region_uuid = req.body.diagnosis_region_uuid;
                         diagnosisData.position_id = req.body.position_id;
-
+                        diagnosisData.department_uuid = diagnosisData.department_uuid;
                         diagnosisData.description = diagnosisData.description;
                         diagnosisData.is_active = diagnosisData.status = emr_const.IS_ACTIVE;
                         diagnosisData.created_by = diagnosisData.modified_by = user_uuid;
@@ -243,7 +239,6 @@ const diagnosisController = () => {
                         }
                     }
                 } catch (ex) {
-
                     return res.status(400).send({
                         code: 400,
                         message: ex.message
@@ -260,7 +255,6 @@ const diagnosisController = () => {
                 .status(400)
                 .send({ code: httpStatus[400], message: "No Request Body Found" });
         }
-
     };
 
     const _getDiagnosis = async (req, res, next) => {
