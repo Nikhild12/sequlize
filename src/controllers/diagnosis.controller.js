@@ -9,7 +9,7 @@ const diagnosisTbl = db.diagnosis;
 
 const emr_utilites = require("../services/utility.service");
 
-
+// #Wild Card Search Changes - Diagnosis name/ code start with the characters By Elumalai
 function getDiagnosisFilterByQuery(searchBy, searchValue) {
     searchBy = searchBy.toLowerCase();
     switch (searchBy) {
@@ -19,12 +19,12 @@ function getDiagnosisFilterByQuery(searchBy, searchValue) {
                 status: emr_const.IS_ACTIVE,
                 [Op.or]: [{
                     name: {
-                        [Op.like]: `%${searchValue}%`
+                        [Op.like]: `${searchValue}%`
                     }
                 },
                 {
                     code: {
-                        [Op.like]: `%${searchValue}%`,
+                        [Op.like]: `${searchValue}%`,
                     }
                 }
                 ]

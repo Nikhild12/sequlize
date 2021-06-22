@@ -39,7 +39,7 @@ const _assignDefaultValuesAndUUIdToObject = (
   return target;
 };
 
-// #Wild Card Search Changes - Chief Complaints name/ code start with the characters By Elumalai
+// #Wild Card Search Changes - Chief Complaints/Diagnosis name/ code start with the characters By Elumalai
 const _getFilterByThreeQueryForCodeAndName = searchValue => {
   return {
     is_active: emr_constants.IS_ACTIVE,
