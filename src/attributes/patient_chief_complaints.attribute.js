@@ -46,11 +46,16 @@ const _getResponseCodeAndMessage = records => {
 
 const _getPreviousPatCCModifiedResponse = records => {
   return records.map(r => {
+    console.log('rrrrrr', r)
     return {
       patientCCId: r.uuid,
       chiefComplaintName: r.chief_complaint && r.chief_complaint.name,
       chiefComplaintCode: r.chief_complaint && r.chief_complaint.code,
       chiefComplaintDuration: r.chief_complaint_duration,
+      chiefComplaintUUId: r.chief_complaint_uuid,
+      chiefComplaintDurationUUId: r.chief_complaint_duration_period_uuid,
+      createdDate: r.created_date,
+      performedBy: r.performed_by,
       chiefComplaintDurationName:
         r.chief_complaint_duration_period &&
         r.chief_complaint_duration_period.name
