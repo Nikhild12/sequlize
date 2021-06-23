@@ -99,6 +99,9 @@ const smRouter = require("./snomed_details.route");
 //progress Notes details routes
 const progressRoute = require("./progress_notes.route");
 
+//clinical Notes details routes
+const clinicalRoute = require("./clinical_notes.route");
+
 //notes details routes
 const notesRoute = require("./emr_patient_notes.route");
 
@@ -274,6 +277,9 @@ serviceRouter.use("/diseases", diseasesRoute);
 
 // progressNotes Routes
 serviceRouter.use("/progress", progressRoute);
+
+// clinicalNotes Routes
+serviceRouter.use("/clinical", clinicalRoute);
 
 // progressNotes Routes
 serviceRouter.use("/emr-notes", notesRoute);

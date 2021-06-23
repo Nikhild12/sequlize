@@ -39,6 +39,7 @@ const _assignDefaultValuesAndUUIdToObject = (
   return target;
 };
 
+// #Wild Card Search Changes - Chief Complaints/Diagnosis name/ code start with the characters By Elumalai
 const _getFilterByThreeQueryForCodeAndName = searchValue => {
   return {
     is_active: emr_constants.IS_ACTIVE,
@@ -46,12 +47,12 @@ const _getFilterByThreeQueryForCodeAndName = searchValue => {
     [Op.or]: [
       {
         name: {
-          [Op.like]: `%${searchValue}%`
+          [Op.like]: `${searchValue}%`
         }
       },
       {
         code: {
-          [Op.like]: `%${searchValue}%`
+          [Op.like]: `${searchValue}%`
         }
       }
     ]
