@@ -1,18 +1,17 @@
-//Package Import
+/* Package Import */
 const httpStatus = require("http-status");
-//Sequelizer Import
+/* Sequelizer Import */
 const db = require('../config/sequelize');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-//EMR Constants Import
+/* EMR Constants Import */
 const emr_constants = require('../config/constants');
 const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const appMasterData = require("../controllers/appMasterData");
-// Patient notes
-const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
+/* Patient Notes */
+/* const patNotesAtt = require('../attributes/patient_previous_notes_attributes'); */
 
-//Initialize profile opNotes
 const profilesTbl = db.profiles;
 const valueTypesTbl = db.value_types;
 const profileSectionsTbl = db.profile_sections;
@@ -21,7 +20,6 @@ const profileSectionCategoryConceptsTbl = db.profile_section_category_concepts;
 const profileSectionCategoryConceptValuesTbl = db.profile_section_category_concept_values;
 const profileSectionCategoryConceptValueTermsTbl = db.profile_section_category_concept_value_terms;
 const profileTypeTbl = db.profile_types;
-const sectionCategoryEntriesTbl = db.section_category_entries;
 const sectionsTbl = db.sections;
 const categoriesTbl = db.categories;
 const profilesViewTbl = db.vw_profile;
@@ -38,7 +36,7 @@ const Q = require('q');
 
 const profilesController = () => {
   /**
-   * Creating  profile opNotes
+   * Creating  Profiles
    * @param {*} req 
    * @param {*} res 
    */
@@ -246,8 +244,7 @@ const profilesController = () => {
     }
   };
 
-  // Get All the Profiles
-
+  /* Get All The Profiles */
   const _getAllProfiles = async (req, res, next) => {
     try {
       const getsearch = req.body;
@@ -392,10 +389,7 @@ const profilesController = () => {
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
         findQuery.where['p_is_active'] = getsearch.status;
         findQuery.where['p_status'] = 1;
-
       }
-      console.log(">>>>>", JSON.stringify(findQuery));
-
 
       await profilesViewTbl.findAndCountAll(findQuery)
         .then((data) => {
@@ -428,7 +422,7 @@ const profilesController = () => {
     }
   };
 
-  // delete profile details
+  /* De-Activate (or) Soft Delete The Profile If Its Not Used to Any Patient */
   const _deleteProfiles = async (req, res) => {
     try {
       const {
@@ -635,20 +629,12 @@ const profilesController = () => {
           e.dataValues.modified_user_name = (newData[modified_by] ? newData[modified_by] : null);
         });
       }
-      // if (profileData[0].profile_sections[0].activity_uuid > 0) {
-      // if (profileData.length == 0) {
-      //   const profileData1 = await profilesTbl.findAll(findQuery1);
-      //   return res.status(httpStatus.OK).send({ code: httpStatus.OK, message: 'get Success', responseContents: profileData1 });
-      // }
-      //else {
       return res.status(httpStatus.OK).send({
         code: httpStatus.OK,
         message: 'get Success',
         responseContents: profileData
       });
-      //   }
     } catch (ex) {
-      console.log(`Exception Happened ${ex}`);
       return res.status(400).send({
         code: httpStatus[400],
         message: ex.message
@@ -656,6 +642,7 @@ const profilesController = () => {
 
     }
   };
+
   const _updateProfiles = async (req, res) => {
     const {
       user_uuid
@@ -1237,7 +1224,7 @@ const profilesController = () => {
   };
 
   /**
-   * Get All  valueTypes
+   * Get All Value Types
    * @param {*} req 
    * @param {*} res 
    */
@@ -1266,8 +1253,6 @@ const profilesController = () => {
         });
       }
     } catch (ex) {
-
-      console.log(ex.message);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message
@@ -1276,12 +1261,11 @@ const profilesController = () => {
   };
 
   /**
-   * Get All notes types
+   * Get All Note Types
    * @param {*} req 
    * @param {*} res 
    */
   const _getAllProfileNotesTypes = async (req, res) => {
-
     const {
       user_uuid
     } = req.headers;
@@ -1316,8 +1300,6 @@ const profilesController = () => {
         });
       }
     } catch (ex) {
-
-      console.log(ex.message);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message
@@ -1326,7 +1308,7 @@ const profilesController = () => {
   };
 
   /**
-   * Get profile default data
+   * Get Default Profile Based On Profile Type (or) Facility (or) Department (or) User
    * @param {*} req 
    * @param {*} res 
    */
@@ -1344,33 +1326,40 @@ const profilesController = () => {
     let whereCond = {
       where: {
         profile_type_uuid: profile_type_uuid,
-        // profile_uuid: profile_uuid,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE
       }
     };
+    /*
     if (user_uuid1 && /\S/.test(user_uuid1)) {
       Object.assign(whereCond.where, {
         user_uuid: user_uuid1
       });
     }
+    */
+   /*
     if (profile_uuid && /\S/.test(profile_uuid)) {
       Object.assign(whereCond.where, {
         profile_uuid: profile_uuid
       });
     }
+    */
+   /*
     if (facility_uuid && /\S/.test(facility_uuid)) {
       Object.assign(whereCond.where, {
         facility_uuid: facility_uuid
       });
     }
+    */
+    /*
     if (department_uuid && /\S/.test(department_uuid)) {
       Object.assign(whereCond.where, {
         department_uuid: department_uuid
       });
     }
+    */
     try {
-      if (user_uuid) {
+      if (profile_type_uuid) {
         const result = await profilesDefaultTbl.findOne(whereCond, {
           returning: true
         });
@@ -1392,7 +1381,8 @@ const profilesController = () => {
         return res.status(422).send({
           statusCode: 422,
           req: req.body,
-          message: "user_uuid required"
+          message: "profile_type_uuid required"
+          /* message: "user_uuid required" */
         });
       }
     } catch (ex) {
@@ -1533,7 +1523,6 @@ const profilesController = () => {
       }
 
     } catch (ex) {
-      console.log('ex===', ex);
       return res.status(500).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message
@@ -1542,7 +1531,6 @@ const profilesController = () => {
   };
 
   const _getNotesByType = async (req, res) => {
-
     const {
       user_uuid
     } = req.headers;
@@ -1558,8 +1546,8 @@ const profilesController = () => {
           where: {
             is_active: 1,
             status: 1,
-            profile_type_uuid: profile_type_uuid,
-            department_uuid: department_uuid
+            profile_type_uuid: profile_type_uuid
+            /* department_uuid: department_uuid */
           },
         }, {
           returning: true
@@ -1576,8 +1564,6 @@ const profilesController = () => {
         });
       }
     } catch (ex) {
-
-      console.log(ex);
       return res.status(400).send({
         code: httpStatus.BAD_REQUEST,
         message: ex.message
@@ -1688,6 +1674,7 @@ const profilesController = () => {
         });
     }
   }
+
   const _getProfileSectionsCategoriesByProfileSectionId = async (req, res) => {
     try {
       const {
@@ -1783,6 +1770,7 @@ const profilesController = () => {
         });
     }
   }
+
   return {
     createProfileOpNotes: _createProfileOpNotes,
     getAllProfiles: _getAllProfiles,
