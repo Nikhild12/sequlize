@@ -86,6 +86,114 @@ const Encounter = () => {
    * @param {*} res
    */
 
+   const _getEncounterDashboardPatientInfo = async (req, res, next) => {
+    try {
+      let PostData = req.body;
+      let dataJson = {
+        encounter_type_id: -1,
+        facility_category_id: -1,
+        gender_id: -1,
+        from_datetime: null,
+        to_datetime: null
+      };
+
+       
+      if( isNaN(PostData.encounter_type_id) || 
+        isNaN(PostData.facility_category_id)  || 
+        isNaN(PostData.gender_id) )   {
+        return res.status(400).send({
+          code: 400,
+          message: " BAD Request..."
+        });
+      }
+
+
+      if (!PostData.encounter_type_id || PostData.encounter_type_id < 1) {
+        return res.status(400).send({
+          code: 400,
+          message: " Encounter Type Id is Required..."
+        });
+      }
+      if (!PostData.facility_category_id || PostData.facility_category_id < 1) {
+        return res.status(400).send({
+          code: 400,
+          message: " Facility Category Id is Required..."
+        });
+      }
+      if (!PostData.gender_id || PostData.gender_id < 1) {
+        return res.status(400).send({
+          code: 400,
+          message: " Gender Id is Required..."
+        });
+      }
+
+      if (PostData.encounter_type_id) dataJson.encounter_type_id = PostData.encounter_type_id;
+      if (PostData.facility_category_id) dataJson.facility_category_id = PostData.facility_category_id;
+      if (PostData.gender_id) dataJson.gender_id = PostData.gender_id;
+      if (PostData.from_datetime) dataJson.from_datetime = PostData.from_datetime;
+      if (PostData.to_datetime) dataJson.to_datetime = PostData.to_datetime;
+
+      let dashboard_data = await sequelizeDb.sequelize.query(
+        'call sp_total_patient_info(:encounter_type_id,\
+         :facility_category_id, :gender_id, :from_datetime ,:to_datetime)', { raw: true, replacements: dataJson, type: Sequelize.QueryTypes.SELECT });
+      dashboard_data = Object.values(dashboard_data[0]);
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Encounter Successfully",
+        responseContents: dashboard_data,
+      });
+    } catch (ex) {
+      return res.status(500).send({
+        statusCode: 500,
+        code: 500,
+        message: ex
+      });
+    }
+  }
+ 
+  const _getEncounterDashboardPatientCount = async (req, res, next) => {
+    try {
+      let PostData = req.body;
+      let dataJson = {
+        encounter_type_id: -1,
+        from_datetime: null,
+        to_datetime: null
+      };
+
+      if( isNaN(PostData.encounter_type_id) )  {
+        return res.status(400).send({
+          code: 400,
+          message: " BAD Request..."
+        });
+      }
+
+      if (!PostData.encounter_type_id || PostData.encounter_type_id < 1) {
+        return res.status(400).send({
+          code: 400,
+          message: " Encounter Type Id is Required..."
+        });
+      }
+
+      if (PostData.encounter_type_id) dataJson.encounter_type_id = PostData.encounter_type_id;
+      if (PostData.from_datetime) dataJson.from_datetime = PostData.from_datetime;
+      if (PostData.to_datetime) dataJson.to_datetime = PostData.to_datetime;
+
+      let dashboard_data = await sequelizeDb.sequelize.query('call sp_total_patient_count(:encounter_type_id, :from_datetime ,:to_datetime)', { raw: true, replacements: dataJson, type: Sequelize.QueryTypes.SELECT });
+      dashboard_data = Object.values(dashboard_data[0]);
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Encounter Successfully",
+        responseContents: dashboard_data,
+      });
+    } catch (ex) {
+      return res.status(500).send({
+        statusCode: 500,
+        code: 500,
+        message: ex
+      });
+    }
+  }
+
   const _getEncounterByDocAndPatientId = async (req, res) => {
     const { user_uuid, facility_uuid } = req.headers;
     let { patientId, doctorId, from_date, to_date, departmentId, encounterType, } = req.query;
@@ -843,7 +951,10 @@ const Encounter = () => {
     getLatestEncounterByPatientId: _getLatestEncounterByPatientId,
     createEncounterBulk: _createEncounterBulk,
     getEncounterByAdmissionId: _getEncounterByAdmissionId,
-    updateEcounterById: _updateEcounterById
+    updateEcounterById: _updateEcounterById,
+    getEncounterDashboardPatientCount: _getEncounterDashboardPatientCount,
+    getEncounterDashboardPatientInfo: _getEncounterDashboardPatientInfo,
+
   };
 };
 
