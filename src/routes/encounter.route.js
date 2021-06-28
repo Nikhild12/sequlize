@@ -27,6 +27,7 @@ EncounterRoutes.route("/get-latest-enc-by-patient").get(Encounter.getLatestEncou
 EncounterRoutes.route("/bulk-create").post(Encounter.createEncounterBulk);
 EncounterRoutes.route("/get-enc-by-admission-id").get(Encounter.getEncounterByAdmissionId);
 EncounterRoutes.route("/updateecounterbyid").put(Encounter.updateEcounterById);
-
+EncounterRoutes.route("/getEncounterDashboardPatientCount").post(Encounter.getEncounterDashboardPatientCount);
+EncounterRoutes.route("/getEncounterDashboardPatientInfo").post(Encounter.getEncounterDashboardPatientInfo);
 
 module.exports = EncounterRoutes;

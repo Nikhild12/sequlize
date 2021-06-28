@@ -65,6 +65,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "sequelize": "^5.19.2",
+    "sequelize-auto": "^0.8.3",
     "sequelize-binary-uuid": "^1.0.0",
     "swagger-ui-express": "^4.1.0",
     "uuid": "^3.3.3",
