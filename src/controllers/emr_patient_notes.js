@@ -20,6 +20,7 @@ const vw_patientVitalsTbl = db.vw_patient_vitals;
 const vw_consultation_detailsTbl = db.vw_consultation_details;
 const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
+const clinical_notesTbl = db.clinical_notes;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
 const consultationsTbl = db.consultations;
@@ -471,7 +472,7 @@ const notesController = () => {
                         e.temp = [];
                         e.user_uuid = user_uuid;
                         e.Authorization = Authorization;
-                        e.facility_uuid = facility_uuid;
+                        e.facility_uuid = facility_uuid; 
                         data = await getWidgetData(actCode.name, e, consultation_uuid);
                         finalData.push(data);
                         console.log(finalData);
@@ -1234,6 +1235,8 @@ const notesController = () => {
                 return getBloodRequestResult(result, consultation_uuid);
             case "Diagnosis":
                 return getDiagnosisResult(result, consultation_uuid);
+            case "Clinical Notes":
+                return getClinicalNotesResult(result, consultation_uuid);
             default:
                 let templateDetails = result;
                 return {
@@ -1419,6 +1422,20 @@ const notesController = () => {
         });
         if (user_details) {
             result.dataValues.details = user_details;
+            return result;
+        } else
+            return false;
+    };
+    const getClinicalNotesResult = async (result, consultation_uuid) => {
+        const note_details = await clinical_notesTbl.findAll({
+            where: {
+                patient_uuid: result.patient_uuid,
+                consultation_uuid: consultation_uuid,
+                encounter_uuid: result.encounter_uuid
+            }
+        });
+        if (note_details) {
+            result.dataValues.details = note_details;
             return result;
         } else
             return false;
