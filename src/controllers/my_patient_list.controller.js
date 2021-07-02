@@ -20,7 +20,7 @@ const myPatientlistAttributes = require("../attributes/my_patient_list");
 const MyPatientListController = () => {
   const _getMyPatientListByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { departmentId, from_date, to_date, doctor_id } = req.body;
+    let { departmentId, from_date, to_date, doctor_id,pa_pin,pd_mobile } = req.body;
     let { pageNo, paginationSize, sortOrder, sortField } = req.body;
     const rBody = req.body;
     let offset;
@@ -53,7 +53,13 @@ const MyPatientListController = () => {
         mypatientListQuery.where = emr_utility.comparingDateAndTime("ec_performed_date", defFromDate, defToDate);
         mypatientListQuery.where.ec_doctor_uuid = +(doctor_id);
         mypatientListQuery.where.d_uuid = +(departmentId);
+        if(user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pd_mobile ){
+          mypatientListQuery.where.pd_mobile = +(pd_mobile);
+        }else if(user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pa_pin){
+          mypatientListQuery.where.pa_pin = +(pa_pin);
+        }else {
 
+        }
         mypatientListQuery.where = getSearchValue(rBody, mypatientListQuery.where);
 
 
