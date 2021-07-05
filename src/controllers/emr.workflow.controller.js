@@ -198,11 +198,14 @@ const EMRWorkflowSettings = () => {
   const _updateEMRWorkflow = async (req, res) => {
     const emrWorkflowUpdateData = req.body;
     const { user_uuid } = req.headers;
-
+    let context_uuid = 2;
     if (user_uuid && emrWorkflowUpdateData.length > 0) {
       try {
+        if (emrWorkflowUpdateData[0].context_uuid === 3) {
+          context_uuid = 3;
+        }
         const deleteData = await emr_workflow_settings.destroy({
-          where: { user_uuid: user_uuid }
+          where: { user_uuid: user_uuid, context_uuid: context_uuid }
         });
         if (deleteData) {
           const emrUpdatedData = await emr_workflow_settings.bulkCreate(
