@@ -104,7 +104,6 @@ const EMRWorkflowSettings = () => {
     let { search } = req.body;
     if (user_uuid) {
       try {
-
         if (!context_uuid) {
           context_uuid = 2;
         }
@@ -147,6 +146,51 @@ const EMRWorkflowSettings = () => {
       return res.status(400).send({
         code: httpStatus[400],
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
+      });
+    }
+  };
+
+  const _getEMRWorkFlowByContextId = async (req, res) => {
+    let { context_uuid } = req.query;
+    let { search } = req.body;
+    if (context_uuid) {
+      try {
+        let findquery={
+          attributes: getEMRWorkFlowSettings,
+          where: {
+            ews_is_active: emr_constants.IS_ACTIVE,
+            ews_context_uuid: context_uuid,
+            act_is_active: emr_constants.IS_ACTIVE,
+            act_status: emr_constants.IS_ACTIVE
+          }
+        };
+        if (search && /\S/.test(search)) {
+          findquery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+          ];
+        }
+        const emr_data = await vm_emr_workflow.findAll(findquery);
+        if (emr_data) {
+          const responseMessage =
+            emr_data && emr_data.length > 0
+              ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+              : `${emr_constants.NO_RECORD_FOUND} for the given context`;
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: responseMessage,
+            responseContents: getEMRData(emr_data)
+          });
+        }
+      } catch (ex) {
+        console.log(ex);
+        return res
+          .status(400)
+          .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    } else {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_CONTEXT_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
       });
     }
   };
@@ -238,6 +282,7 @@ const EMRWorkflowSettings = () => {
   return {
     createEMRWorkFlow: _createEMRWorkflow,
     getEMRWorkFlowByUserId: _getEMRWorkFlowByUserId,
+    getEMRWorkFlowByContextId: _getEMRWorkFlowByContextId,
     updateEMRWorkFlow: _updateEMRWorkflow,
     deleteEMRWorkflow: _deleteEMRWorkflow
   };
