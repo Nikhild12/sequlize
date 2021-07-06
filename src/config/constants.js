@@ -43,7 +43,7 @@ module.exports = Object.freeze({
   FETCHED_PREVIOUS_KIT_SUCCESSFULLY:
     "Fetched Previous  Treatment Kit Orders Successfully",
   FETCHED_FAVOURITES_SUCCESSFULLY: "Feteched Favourites Successfully",
-  NO_RECORD_FOUND: "No Record Found",
+  NO_CONTEXT_ID: "Context Id",
   NO_CONTENT_MESSAGE: "No Content Found or record could be deleted",
   MY_PATIENT_LIST: "My Patient List fetched successfully",
   PROFILES_SUCCESS: "Profile Details Successfully Inserted",

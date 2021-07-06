@@ -2681,6 +2681,38 @@
 				}
 			}
 		},
+		"/api/emr-workflow-settings/getEMRWorkflowByContextId": {
+			"get": {
+				"description": "To get a EMR Workflow",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "context_uuid",
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRWorkflowSettings"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/getEMRData"
+						}
+					}
+				}
+			}
+		},
 		"/api/emr-workflow-settings/getEMRWorkflowByUserIdsearch": {
 			"post": {
 				"description": "To get a EMR Workflow",

@@ -12,6 +12,7 @@ emrWorkflowRoute.route('/create').post(emrWorkflowController.createEMRWorkFlow);
 emrWorkflowRoute.route('/update').put(emrWorkflowController.updateEMRWorkFlow);
 emrWorkflowRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
 emrWorkflowRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);
+emrWorkflowRoute.route('/getEMRWorkflowByContextId').get(emrWorkflowController.getEMRWorkFlowByContextId);
 emrWorkflowRoute.route('/getEMRWorkflowByUserIdsearch').post(emrWorkflowController.getEMRWorkFlowByUserId);
 
 // Exporting EMR Workflow Route
