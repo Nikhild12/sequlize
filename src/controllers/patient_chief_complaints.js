@@ -137,6 +137,49 @@ const PatientChiefComplaints = () => {
         const addData = chiefComplaintsData.filter((i) => i && !i.uuid);
         const updateData = chiefComplaintsData.filter((i) => i && i.uuid);
 
+        // To avoid Chief Complaints duplication for the patient - Added by Elumalai -- Start 
+        if (addData && addData.length > 0) {
+          let chiefId = addData.map(objc => {
+            return objc.chief_complaint_uuid;
+          });
+          const duplicateChief = await patient_chief_complaints_tbl.findAll({
+            attributes: ['uuid', 'chief_complaint_uuid', 'encounter_type_uuid', 'encounter_uuid', 'patient_uuid'],
+            include: [{
+              model: chief_complaints_tbl,
+              attributes: ['uuid', 'code', 'name'],
+              required: false
+            }],
+            where: {
+              chief_complaint_uuid: {
+                [Op.in]: chiefId
+              },
+              encounter_type_uuid: addData[0].encounter_type_uuid,
+              encounter_uuid: addData[0].encounter_uuid,
+              patient_uuid: addData[0].patient_uuid,
+              is_active: 1, status: 1
+            },
+            group: ['chief_complaint_uuid']
+          });
+
+          if (duplicateChief && duplicateChief.length > 0) {
+            const chiefName = addData.reduce((acc, curr) => {
+              const index = duplicateChief.findIndex(item => item.chief_complaint_uuid == curr.chief_complaint_uuid);
+              if (index > -1 && duplicateChief[index].chief_complaint) {
+                acc.push(duplicateChief[index].chief_complaint.name);
+              }
+              return acc;
+            }, []);
+
+            return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+              status: 'error',
+              statusCode: httpStatus.UNPROCESSABLE_ENTITY,
+              msg: chiefName && chiefName.length > 0 ? 'Already Exists ' + chiefName.join() : 'No data found',
+              responseContents: duplicateChief
+            });
+          }
+        }
+        // To avoid Chief Complaints duplication for the patient - Added by Elumalai -- End 
+
         const chiefComplaintsCreatedData = await patient_chief_complaints_tbl.bulkCreate(
           addData,
           { returning: true }
