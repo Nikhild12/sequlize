@@ -173,7 +173,7 @@ const PatientChiefComplaints = () => {
             return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
               status: 'error',
               statusCode: httpStatus.UNPROCESSABLE_ENTITY,
-              msg: chiefName && chiefName.length > 0 ? 'Already Exists ' + chiefName.join() : 'No data found',
+              msg: chiefName && chiefName.length > 0 ? 'Already Exists ' + chiefName.join(',') : 'No data found',
               responseContents: duplicateChief
             });
           }
