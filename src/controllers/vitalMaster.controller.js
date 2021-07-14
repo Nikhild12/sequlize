@@ -14,6 +14,7 @@ const vitalValueTypeTbl = db.vital_value_type;
 const vitalLonicTbl = db.vital_loinc;
 const vw_vitals_master = db.vw_vitals_master;
 const emr_uom = db.emr_uom;
+const vitalmstruomTbl = db.vital_master_uoms;
 
 const vitalmstrController = () => {
   /**
@@ -86,21 +87,15 @@ const vitalmstrController = () => {
   };
   //function for getting all vitals
   const _getALLVitals = async (req, res) => {
+    /*
     let query = {
-      where: { is_active: 1, status: 1 },
-      // include:[{
-      //   model:vitalTypeTbl, 
-      //   as:'vital_type',    
-      //   where:{
-      //     is_active:1,
-      //     status:1
-      //   }
-      // }] 
+      where: { is_active: 1, status: 1 }
     };
-
+    */
 
     try {
-      const result = await vitalmstrTbl.findAll(query, { returning: true });
+      const result = await vitalmstrTbl.findAll(getAllVitalsQuery(), { returning: true });
+      /* const result = await vitalmstrTbl.findAll(query, { returning: true }); */
       if (result) {
         return res.status(200).send({ statusCode: httpStatus.OK, message: "Fetched Vital Master details Successfully", responseContents: { getVitals: result } });
       }
@@ -456,6 +451,28 @@ function getdefaultVitalsQuery(vital_uuid) {
           is_active: clinical_const.IS_ACTIVE,
           status: clinical_const.IS_ACTIVE
         }
+      },
+      {
+        model: vitalmstruomTbl,
+        required: false,
+        include: [
+          {
+            model: emr_uom,
+            as: 'emr_uom',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          },
+          {
+            model: vitalValueTypeTbl,
+            as: 'vital_value_type',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          }
+        ]
       }
     ]
   };
@@ -465,12 +482,96 @@ function getdefaultVitalsQuery(vital_uuid) {
   }
   return q;
 }
-
+function getAllVitalsQuery() {
+  let q = {
+    where: { is_active: clinical_const.IS_ACTIVE, status: clinical_const.IS_ACTIVE },
+    include: [
+      {
+        model: vitalValueTypeTbl,
+        as: 'vital_value_type',
+        where: {
+          is_active: clinical_const.IS_ACTIVE,
+          status: clinical_const.IS_ACTIVE
+        }
+      },
+      {
+        model: vitalTypeTbl,
+        as: 'vital_type',
+        where: {
+          is_active: clinical_const.IS_ACTIVE,
+          status: clinical_const.IS_ACTIVE
+        }
+      },
+      {
+        model: vitalmstruomTbl,
+        required: false,
+        include: [
+          {
+            model: emr_uom,
+            as: 'emr_uom',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          },
+          {
+            model: vitalValueTypeTbl,
+            as: 'vital_value_type',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          }
+        ]
+      }
+    ]
+  };
+  return q;
+}
 function getdefaultVitals(is_default) {
   let q = {
-    where: { is_active: 1, status: 1 }
+    where: { is_active: 1, status: 1 },
+    include: [
+      {
+        model: vitalValueTypeTbl,
+        as: 'vital_value_type',
+        where: {
+          is_active: clinical_const.IS_ACTIVE,
+          status: clinical_const.IS_ACTIVE
+        }
+      },
+      {
+        model: vitalTypeTbl,
+        as: 'vital_type',
+        where: {
+          is_active: clinical_const.IS_ACTIVE,
+          status: clinical_const.IS_ACTIVE
+        }
+      },
+      {
+        model: vitalmstruomTbl,
+        required: false,
+        include: [
+          {
+            model: emr_uom,
+            as: 'emr_uom',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          },
+          {
+            model: vitalValueTypeTbl,
+            as: 'vital_value_type',
+            where: {
+              is_active: clinical_const.IS_ACTIVE,
+              status: clinical_const.IS_ACTIVE
+            }
+          }
+        ]
+      }
+    ]
   };
-
   if (is_default) {
     q.where.is_default = is_default;
   }

@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     vital_master_uoms.associate = models => {
         vital_master_uoms.belongsTo(models.emr_uom, {
-            foreignKey: "emr_eom_uuid",
+            foreignKey: "emr_uom_uuid",
             as: 'emr_uom'
         });
         vital_master_uoms.belongsTo(models.vital_value_type, {
