@@ -1,8 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
 
     const vital_masters = sequelize.define(
-        "vital_masters",
-        {
+        "vital_masters", {
             uuid: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -80,16 +79,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
-        },
-        {
+        }, {
             tableName: "vital_masters",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            indexes: [
-                {
-                    fields: ["uuid"]
-                }
-            ]
+            indexes: [{
+                fields: ["uuid"]
+            }]
 
         }
     );
@@ -106,7 +102,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "vital_master_uuid",
             targetKey: "uuid"
         });
-
+        vital_masters.hasMany(models.vital_master_uoms, {
+            foreignKey: "vital_master_uuid"
+        });
     };
     return vital_masters;
 };
