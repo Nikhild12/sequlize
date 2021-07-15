@@ -133,6 +133,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
         allowNull: true
       },
+      df_nooftimes: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      df_perdayquantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      df_comments: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+      },
       dp_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false
