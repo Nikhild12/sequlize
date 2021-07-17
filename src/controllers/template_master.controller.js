@@ -793,7 +793,11 @@ function getTemplateData(fetchedData) {
           drug_route_id: tD.dr_uuid,
 
           drug_frequency_id: tD.df_uuid,
-          drug_frequency_name: tD.df_code,
+          drug_frequency_code: tD.df_code,
+          drug_frequency_name: tD.df_name,
+          drug_frequency_nooftimes: tD.df_nooftimes,
+          drug_frequency_perdayquantity: tD.df_perdayquantity,
+          drug_frequency_comments: tD.df_comments,
 
           drug_period_id: tD.dp_uuid,
           drug_period_name: tD.dp_name,
@@ -1054,8 +1058,13 @@ function getDrugsListForTemplate(fetchedData, template_id) {
           drug_route_name: dD.dr_code,
           drug_route_id: dD.dr_uuid,
           drug_is_emar: dD.im_is_emar,
+
           drug_frequency_id: dD.df_uuid,
-          drug_frequency_name: dD.df_code,
+          drug_frequency_code: dD.df_code,
+          drug_frequency_name: dD.df_name,
+          drug_frequency_nooftimes: dD.df_nooftimes,
+          drug_frequency_perdayquantity: dD.df_perdayquantity,
+          drug_frequency_comments: dD.df_comments,
 
           drug_period_id: dD.dp_uuid,
           drug_period_name: dD.dp_name,
