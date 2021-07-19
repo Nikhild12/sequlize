@@ -56,10 +56,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true
       },
-      consultation_start_date: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
       token_number: {
         type: DataTypes.STRING(255)
       },
