@@ -493,18 +493,34 @@ const Encounter = () => {
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
         //#40403 - Changes for Department Visit Type By Elumalai - Start
-        const deptVisit = encounter_doctors_tbl.findAll({
+        const deptVisit = await encounter_tbl.findAll({
+          include: [{
+            model: encounter_doctors_tbl,
+            required: false,
+            where: {
+              department_uuid: department_uuid,
+              patient_uuid: patient_uuid,
+            }
+          }],
           where: {
             facility_uuid: facility_uuid,
-            department_uuid: department_uuid,
             patient_uuid: patient_uuid,
+            is_active_encounter: 1,
             is_active: 1,
             status: 1
-          }
+          },
+          required: false
         });
 
-        if (deptVisit && deptVisit.length > 0) {
-          encounterDoctor.dept_visit_type_uuid = 2;
+        for (let index = 0; index < deptVisit.length; index++) {
+          const element = deptVisit[index].encounter_doctors;
+          if (element && element.length > 0) {
+            for (let j = 0; j < element.length; j++) {
+              if (element[j].department_uuid == encounterDoctor.department_uuid) {
+                encounterDoctor.dept_visit_type_uuid = 2;
+              }
+            }
+          }
         }
         //#40403 - Changes for Department Visit Type By Elumalai - End
 
