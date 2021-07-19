@@ -175,11 +175,11 @@ const Encounter = () => {
       method: "POST",
       headers: {
         'Content-type': "application/json",
-        Authorization: authorization, 
+        Authorization: authorization,
         'accept-language': 'en',
         user_uuid: user_uuid
       },
-      body: { 
+      body: {
         "patientId": patientId
       },
       json: true
@@ -189,7 +189,7 @@ const Encounter = () => {
   }
   // End -- H30-35488 - Need to track is_adult flag encounter wise Service to Service Call  -- Ashok //  
 
- 
+
   /**
    *
    * @param {*} req
@@ -235,12 +235,13 @@ const Encounter = () => {
           [Sequelize.fn('MAX', Sequelize.col('encounter_date')), 'visit_date']]
       });
       return res.status(200)
-      .send({
-        code: 200,
-        message: "Fetched Visit info. Successfully", 
-        totalRecords: visit_info.count.length,
-        responseContents: (visit_info.rows) ? visit_info.rows : null,
-        statusCode: 200 });
+        .send({
+          code: 200,
+          message: "Fetched Visit info. Successfully",
+          totalRecords: visit_info.count.length,
+          responseContents: (visit_info.rows) ? visit_info.rows : null,
+          statusCode: 200
+        });
 
     } catch (ex) {
       console.log("Exception happened", ex);
@@ -255,6 +256,135 @@ const Encounter = () => {
    * @param {*} req
    * @param {*} res
    */
+
+  // Backup taken by Elumalai
+  const _createPatientEncounter_old = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    let { encounter, encounterDoctor } = req.body;
+
+    const isAllReqFieldsInEncIsPres = enc_att.checkRequiredFieldsInEncounter(encounter);
+    const isAllReqFieldsInEncDocIsPres = enc_att.checkRequiredFieldsInEncounterDoc(encounterDoctor);
+
+    if (user_uuid && isAllReqFieldsInEncIsPres && isAllReqFieldsInEncDocIsPres && encounterDoctor) {
+
+      let { encounter_type_uuid, patient_uuid, facility_uuid } = encounter;
+      const { doctor_uuid, department_uuid } = encounterDoctor;
+      const { tat_start_time, tat_end_time } = encounterDoctor;
+
+      encounter_type_uuid = +(encounter_type_uuid);
+      if (tat_start_time && tat_end_time) {
+        if (!moment(tat_start_time).isValid() || !moment(tat_end_time).isValid()) {
+          return res.status(400)
+            .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.VALID_START_DATE} ${emr_constants.OR} ${emr_constants.VALID_END_DATE}`));
+        }
+      } else {
+        return res.status(400)
+          .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
+      }
+      try {
+
+        // Assigning
+        encounter = enc_att.assignDefaultValuesToEncounter(encounter, user_uuid);
+        encounterDoctor = enc_att.assignDefaultValuesToEncounterDoctor(encounterDoctor, encounter, user_uuid);
+
+        let encounterDoctorData, encounterData, is_enc_avail, is_enc_doc_avail;
+        encounterData = await getEncounterQueryByPatientId(patient_uuid, encounter_type_uuid, facility_uuid);
+        is_enc_avail = encounterData && encounterData.length > 0;
+        if (is_enc_avail) {
+          encounterDoctorData = await getEncounterDoctorsQueryByPatientId(encounterData[0].uuid, doctor_uuid, department_uuid);
+        }
+
+        is_enc_doc_avail = encounterDoctorData && encounterDoctorData.length > 0;
+        if (([1, 2, 3].includes(encounter_type_uuid)) && is_enc_avail && is_enc_doc_avail) {
+          return res.status(400).send({
+            code: httpStatus.BAD_REQUEST, message: emr_constants.DUPLICATE_ENCOUNTER,
+            existingDetails: getExisitingEncounterDetails(encounterData, encounterDoctorData),
+          });
+        }
+
+        let createdEncounter;
+        if (!is_enc_avail) {
+
+          // closing all previous active encounters patient
+          const encounterUpdate = await encounter_tbl.update(
+            enc_att.getEncounterUpdateAttributes(user_uuid),
+            enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
+          );
+          createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
+
+          // Start -- H30-35488 - Need to track is_adult flag encounter wise  -- Ashok //          
+          const patient_age_details_already_exist = await patient_age_details_tbl.count({
+            where: {
+              encounter_uuid: createdEncounter.uuid
+            }
+          });
+          if (!patient_age_details_already_exist) {
+            let patient_age_details = await getPatientAgeDetails(req.headers.user_uuid, req.headers.authorization, createdEncounter.patient_uuid);
+            if (patient_age_details
+              && patient_age_details.responseContent
+              && patient_age_details.responseContent.uuid) {
+              patient_age_details = patient_age_details.responseContent;
+
+              try {
+                let diffindays = moment(emr_utility.indiaTz()).diff(moment(patient_age_details.dob).toDate(), 'days');
+                let age = (diffindays / 365.25);
+                patient_age_details.age = Math.round(age);
+                patient_age_details.period_uuid = 4;
+                if ((diffindays / 365.25) >= 1) {
+                  patient_age_details.period_uuid = 4;
+                } else if ((diffindays / 365.25) >= 0.1 && (diffindays / 365.25) < 1) {
+                  patient_age_details.period_uuid = 3;
+                } else if ((diffindays / 365.25) >= 0.001 && (diffindays / 365.25) < 0.1) {
+                  patient_age_details.period_uuid = 2;
+                }
+              } catch (ex) { console.log('age period calculation error :: ', ex); }
+              let patient_age_details_data = {
+                patient_uuid: createdEncounter.patient_uuid,
+                encounter_uuid: createdEncounter.uuid,
+                dob: patient_age_details.dob,
+                encounter_created_date: createdEncounter.created_date,
+                age: patient_age_details.age,
+                period_uuid: patient_age_details.period_uuid,
+                is_adult: (patient_age_details.age > 12 && patient_age_details.period_uuid == 4) ? 1 : 0,
+                status: 1,
+                is_active: 1,
+                revision: 1,
+                created_by: createdEncounter.created_by,
+                modified_by: createdEncounter.created_by,
+                modified_date: createdEncounter.created_date,
+              };
+              await patient_age_details_tbl.create(patient_age_details_data, { returning: true, });
+            }
+          }
+          // End -- H30-35488 -- Ashok //
+
+        }
+        const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
+        encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
+        // checking for Primary Doctor
+        encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
+
+        const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
+        encounterDoctor.uuid = createdEncounterDoctorData.uuid;
+        if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
+          encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
+        }
+        return res.status(200)
+          .send({ ...getSendResponseObject(httpStatus.OK, emr_constants.ENCOUNTER_SUCCESS), responseContents: { encounter, encounterDoctor } });
+
+      } catch (ex) {
+        console.log(ex);
+        return res
+          .status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+      }
+    } else {
+      return res.status(400)
+        .send(getSendResponseObject(httpStatus[400], `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`));
+    }
+  };
+
+
   const _createPatientEncounter = async (req, res) => {
 
     const { user_uuid } = req.headers;
@@ -309,7 +439,7 @@ const Encounter = () => {
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
-          
+
           // Start -- H30-35488 - Need to track is_adult flag encounter wise  -- Ashok //          
           const patient_age_details_already_exist = await patient_age_details_tbl.count({
             where: {
@@ -318,25 +448,25 @@ const Encounter = () => {
           });
           if (!patient_age_details_already_exist) {
             let patient_age_details = await getPatientAgeDetails(req.headers.user_uuid, req.headers.authorization, createdEncounter.patient_uuid);
-            if (patient_age_details 
+            if (patient_age_details
               && patient_age_details.responseContent
               && patient_age_details.responseContent.uuid) {
               patient_age_details = patient_age_details.responseContent;
 
-              try{
+              try {
                 let diffindays = moment(emr_utility.indiaTz()).diff(moment(patient_age_details.dob).toDate(), 'days');
                 let age = (diffindays / 365.25);
-                patient_age_details.age = Math.round(age);   
-                patient_age_details.period_uuid = 4;             
-                if ((diffindays / 365.25) >= 1) { 
+                patient_age_details.age = Math.round(age);
+                patient_age_details.period_uuid = 4;
+                if ((diffindays / 365.25) >= 1) {
                   patient_age_details.period_uuid = 4;
                 } else if ((diffindays / 365.25) >= 0.1 && (diffindays / 365.25) < 1) {
                   patient_age_details.period_uuid = 3;
                 } else if ((diffindays / 365.25) >= 0.001 && (diffindays / 365.25) < 0.1) {
                   patient_age_details.period_uuid = 2;
-                }   
-              } catch(ex) { console.log('age period calculation error :: ',ex); }
-              let patient_age_details_data = { 
+                }
+              } catch (ex) { console.log('age period calculation error :: ', ex); }
+              let patient_age_details_data = {
                 patient_uuid: createdEncounter.patient_uuid,
                 encounter_uuid: createdEncounter.uuid,
                 dob: patient_age_details.dob,
@@ -350,8 +480,8 @@ const Encounter = () => {
                 created_by: createdEncounter.created_by,
                 modified_by: createdEncounter.created_by,
                 modified_date: createdEncounter.created_date,
-              }; 
-              await patient_age_details_tbl.create(patient_age_details_data, { returning: true, }); 
+              };
+              await patient_age_details_tbl.create(patient_age_details_data, { returning: true, });
             }
           }
           // End -- H30-35488 -- Ashok //
@@ -361,6 +491,22 @@ const Encounter = () => {
         encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
         // checking for Primary Doctor
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
+
+        //#40403 - Changes for Department Visit Type By Elumalai - Start
+        const deptVisit = encounter_doctors_tbl.findAll({
+          where: {
+            facility_uuid: facility_uuid,
+            department_uuid: department_uuid,
+            patient_uuid: patient_uuid,
+            is_active: 1,
+            status: 1
+          }
+        });
+
+        if (deptVisit && deptVisit.length > 0) {
+          encounterDoctor.dept_visit_type_uuid = 2;
+        }
+        //#40403 - Changes for Department Visit Type By Elumalai - End
 
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
