@@ -299,6 +299,7 @@ const tmpmstrController = () => {
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
         let templateTypeId = templateMasterReqData.template_type_uuid;
+        let temp_id = 0;
         const temp_master_active = templateMasterReqData.is_active;
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
@@ -379,6 +380,7 @@ const tmpmstrController = () => {
       const display_order = templateMasterReqData.display_order;
       const facility_id = templateMasterReqData.facility_uuid;
       const templateMasterDetailsReqData = req.body.existing_details;
+      let templateTypeId = templateMasterReqData.template_type_uuid;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(
         user_uuid,
         req.body.new_details
@@ -1678,7 +1680,7 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
           status: 1
         }
       }
-      if (temp_id) {
+      if (temp_id > 0) {
         findQuery.where = Object.assign(findQuery.where, {
           uuid: {
             [Op.not]: temp_id
