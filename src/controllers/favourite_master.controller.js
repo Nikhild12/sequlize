@@ -56,6 +56,9 @@ const neQuery = { [Op.ne]: null };
 
 const getFavouritesAttributes = [
   "df_name",
+  "df_nooftimes",
+  "df_perdayquantity",
+  "df_comments",
   "di_name",
   "tsm_userid",
   "tsm_active",
@@ -1056,6 +1059,9 @@ function getFavouritesInList(fetchedData) {
         drug_frequency_id: tD.df_uuid,
         drug_frequency_name: tD.df_name,
         drug_frequency_code: tD.df_code,
+        drug_frequency_nooftimes: tD.df_nooftimes,
+        drug_frequency_perdayquantity: tD.df_perdayquantity,
+        drug_frequency_comments: tD.df_comments,
         drug_period_id: tD.dp_uuid,
         drug_period_name: tD.dp_name,
         drug_period_code: tD.dp_code,
