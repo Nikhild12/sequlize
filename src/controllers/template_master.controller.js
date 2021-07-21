@@ -298,11 +298,12 @@ const tmpmstrController = () => {
         templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
+        let templateTypeId = templateMasterReqData.template_type_uuid;
         const temp_master_active = templateMasterReqData.is_active;
         //checking template already exits or not
         const exists = await nameExists(temp_name, userUUID);
         if (displayOrder) {
-          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid, templateTypeId, temp_id);
         }
         if (displayOrderexists.length > 0) {
           return res
@@ -390,7 +391,7 @@ const tmpmstrController = () => {
 
       try {
         if (display_order) {
-          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, temp_id);
+          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, templateTypeId, temp_id);
           if (displayOrderexists.length > 0) {
             return res
               .status(400)
@@ -1663,7 +1664,7 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid, temp_id) => {
+const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid, templateTypeId, temp_id) => {
   if (displayOrder !== undefined) {
     return new Promise((resolve, reject) => {
       let findQuery = {
@@ -1673,6 +1674,7 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
           user_uuid: userUuid,
           facility_uuid: facilityUuid,
           department_uuid: departmentUuid,
+          template_type_uuid: templateTypeId,
           status: 1
         }
       }
