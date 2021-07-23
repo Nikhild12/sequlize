@@ -5,6 +5,7 @@ const moment = require("moment");
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 const VWMyPatientList = sequelizeDb.vw_my_patient_list;
 
@@ -26,13 +27,15 @@ const MyPatientListController = () => {
     let offset;
     let isFromDateValid, isToDateValid, defFromDate, defToDate;
 
+    // Bug-H30-40610 - My Patient list not loading - Start
     // Checking From Date
-    defFromDate = emr_utility.indiaTz(from_date).toDate();
+    defFromDate = emr_utility.indiaTz(from_date).format('YYYY-MM-DD');
     isFromDateValid = emr_utility.checkDateValid(from_date);
 
     // Checking To date
-    defToDate = emr_utility.indiaTz(to_date).toDate();
+    defToDate = emr_utility.indiaTz(to_date).format('YYYY-MM-DD');
     isToDateValid = emr_utility.checkDateValid(to_date);
+    // Bug-H30-40610 - My Patient list not loading - End
 
     // Checking Page Size and No
     pageNo = pageNo && !isNaN(+(pageNo)) ? pageNo : 0;
@@ -49,8 +52,16 @@ const MyPatientListController = () => {
           where: {}
         };
 
-        // if ()
-        mypatientListQuery.where = emr_utility.comparingDateAndTime("ec_performed_date", defFromDate, defToDate);
+        // Bug-H30-40610 - My Patient list not loading - Start
+        mypatientListQuery.where.ec_performed_date = {
+          [Op.and]: [
+            Sequelize.where(Sequelize.fn('DATE', Sequelize.col('ec_performed_date')), '>=', defFromDate),
+            Sequelize.where(Sequelize.fn('DATE', Sequelize.col('ec_performed_date')), '<=', defToDate)
+          ]
+        }
+        // mypatientListQuery.where = emr_utility.comparingDateAndTime("ec_performed_date", defFromDate, defToDate);
+        // Bug-H30-40610 - My Patient list not loading - End
+
         mypatientListQuery.where.ec_doctor_uuid = +(doctor_id);
         mypatientListQuery.where.d_uuid = +(departmentId);
 
@@ -65,22 +76,22 @@ const MyPatientListController = () => {
           where: mypatientListQuery.where,
           attributes: myPatientlistAttributes.myPatientListAttributes
         });
-        const returnMessage =
-          myPatientList && myPatientList.rows.length > 0 ? emr_constants.MY_PATIENT_LIST : emr_constants.NO_RECORD_FOUND;
+
         return res.status(200).send({
           code: httpStatus.OK,
-          message: returnMessage,
-          responseContents: myPatientList.rows,
-          responseLength: myPatientList.length,
-          totalRecords: myPatientList.count
+          message: myPatientList && myPatientList.rows.length > 0 ? emr_constants.MY_PATIENT_LIST : emr_constants.NO_RECORD_FOUND,
+          responseContents: myPatientList ? myPatientList.rows : [],
+          responseLength: myPatientList ? myPatientList.length : 0,
+          totalRecords: myPatientList ? myPatientList.count : 0
         });
+
       } catch (ex) {
-        console.log(ex);
         return res
           .status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
       }
+
     } else {
-      offset;
+      // offset;
       return res.status(400).send({
         code: httpStatus[400],
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`
