@@ -298,11 +298,13 @@ const tmpmstrController = () => {
         templateMasterReqData.user_uuid = userUuid;
         let facilityUuid = templateMasterReqData.facility_uuid;
         let departmentUuid = templateMasterReqData.department_uuid;
+        let templateTypeId = templateMasterReqData.template_type_uuid;
+        let temp_id = 0;
         const temp_master_active = templateMasterReqData.is_active;
         //checking template already exits or not
-        const exists = await nameExists(temp_name, userUUID);
+        const exists = await nameExists(temp_name, userUUID, facilityUuid, departmentUuid, templateTypeId);
         if (displayOrder) {
-          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid);
+          displayOrderexists = await displayOrderExists(displayOrder, userUuid, facilityUuid, departmentUuid, templateTypeId, temp_id);
         }
         if (displayOrderexists.length > 0) {
           return res
@@ -378,6 +380,7 @@ const tmpmstrController = () => {
       const display_order = templateMasterReqData.display_order;
       const facility_id = templateMasterReqData.facility_uuid;
       const templateMasterDetailsReqData = req.body.existing_details;
+      let templateTypeId = templateMasterReqData.template_type_uuid;
       const templateMasterNewDrugsDetailsReqData = getNewTemplateDetails(
         user_uuid,
         req.body.new_details
@@ -390,7 +393,7 @@ const tmpmstrController = () => {
 
       try {
         if (display_order) {
-          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, temp_id);
+          const displayOrderexists = await displayOrderExists(display_order, user_id, facility_id, department_uuid, templateTypeId, temp_id);
           if (displayOrderexists.length > 0) {
             return res
               .status(400)
@@ -401,7 +404,7 @@ const tmpmstrController = () => {
               });
           }
         }
-        const exists = await nameExistsupdate(temp_name, user_uuid, temp_id);
+        const exists = await nameExistsupdate(temp_name, user_uuid, facility_id, department_uuid, templateTypeId, temp_id);
         if (exists && exists.length > 0 && (exists[0].dataValues.is_active == 1 || 0) && exists[0].dataValues.status == 1) {
           //template already exits
           return res
@@ -487,11 +490,6 @@ const tmpmstrController = () => {
             message: ex.message
           });
       }
-      // finally {
-      //   if (templateTransaction && !templateTransStatus) {
-      //     await templateTransaction.rollback();
-      //   }
-      // }
     } else {
       return res
         .status(400)
@@ -502,7 +500,6 @@ const tmpmstrController = () => {
     }
   };
 
-  // Dyanmic function for template drugs and vitals update
   const _updateTemplateDetailsByID = async (req, res) => {
     const {
       user_uuid
@@ -825,7 +822,6 @@ function getTemplateData(fetchedData) {
   }
 }
 
-// function for arrange the list of templates data
 function getTemplateListData(fetchedData) {
   let templateList = [],
     drug_details = [];
@@ -923,7 +919,6 @@ function getTemplateListData1(fetchedData) {
   }
 }
 
-// function for updating the data for template master details
 function getTemplateMasterDetailsWithUUID(
   detailsTbl,
   detailsData,
@@ -972,7 +967,6 @@ function getTemplateMasterDetailsWithUUID(
   return masterDetailsPromise;
 }
 
-//function for adding new values to template details table when perform update action
 function getNewTemplateDetails(user_uuid, temp_master_details) {
   let newTempDtls = [];
   if (temp_master_details && temp_master_details.length > 0) {
@@ -1008,7 +1002,6 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
   return newTempDtls;
 }
 
-//function for delete values from template details table when perform update action
 function removedTmpDetails(dtlsTbl, dtls, user_id) {
   let masterDetailsPromise = [];
 
@@ -1240,7 +1233,6 @@ function getRisListData(fetchedData) {
   }
 }
 
-
 function getInvestData(fetchedData) {
   let templateList = [],
     Invest_details = [];
@@ -1295,7 +1287,6 @@ function getInvestData(fetchedData) {
     };
   }
 }
-
 
 function getLabListForTemplate(fetchedData, template_id) {
   let lab_list = [];
@@ -1367,7 +1358,6 @@ function getRisListForTemplate(fetchedData, template_id) {
   }
   return radiology_list;
 }
-
 
 function getInvestForTemplate(fetchedData, template_id) {
   let Invest_list = [];
@@ -1465,7 +1455,6 @@ function getTemplatesDietQuery(user_uuid, dept_id, temp_type_id, fId) {
     ]
   };
 }
-
 
 function getTemplatesdetailsQuery(uId, dId, ttId, tId, sMId) {
 
@@ -1639,7 +1628,7 @@ async function createtemp(userUUID, templateMasterReqData, templateMasterDetails
   };
 }
 
-const nameExists = (temp_name, userUUID) => {
+const nameExists = (temp_name, userUUID, facilityUuid, departmentUuid, templateTypeId) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
@@ -1649,6 +1638,11 @@ const nameExists = (temp_name, userUUID) => {
         attributes: ["name", "is_active", "status"],
         where: {
           name: temp_name,
+          user_uuid: userUUID,
+          facility_uuid: facilityUuid,
+          department_uuid: departmentUuid,
+          template_type_uuid: templateTypeId,
+          is_active: 1,
           status: 1
         }
       });
@@ -1663,7 +1657,8 @@ const nameExists = (temp_name, userUUID) => {
     });
   }
 };
-const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid, temp_id) => {
+
+const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid, templateTypeId, temp_id) => {
   if (displayOrder !== undefined) {
     return new Promise((resolve, reject) => {
       let findQuery = {
@@ -1673,10 +1668,11 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
           user_uuid: userUuid,
           facility_uuid: facilityUuid,
           department_uuid: departmentUuid,
+          template_type_uuid: templateTypeId,
           status: 1
         }
       }
-      if (temp_id) {
+      if (temp_id > 0) {
         findQuery.where = Object.assign(findQuery.where, {
           uuid: {
             [Op.not]: temp_id
@@ -1696,7 +1692,7 @@ const displayOrderExists = (displayOrder, userUuid, facilityUuid, departmentUuid
   }
 };
 
-const nameExistsupdate = (temp_name, userUUID, temp_id) => {
+const nameExistsupdate = (temp_name, userUUID, facility_id, department_uuid, templateTypeId, temp_id) => {
   if (temp_name !== undefined) {
     return new Promise((resolve, reject) => {
       let value = tempmstrTbl.findAll({
@@ -1707,6 +1703,11 @@ const nameExistsupdate = (temp_name, userUUID, temp_id) => {
         where: {
           name: temp_name,
           user_uuid: userUUID,
+          facility_uuid: facility_id,
+          department_uuid: department_uuid,
+          template_type_uuid: templateTypeId,
+          is_active: 1,
+          status: 1,
           uuid: {
             [Op.not]: temp_id
           }
@@ -1987,7 +1988,6 @@ function getTemplatedetailsUUID(temp_type_id, temp_id, dept_id, user_uuid, lab_i
   }
 }
 
-//function is for getting single Template Detailed Data
 function getTemplateDetailsData(temp_type_id, list) {
   let fetchdata;
   switch (temp_type_id) {
