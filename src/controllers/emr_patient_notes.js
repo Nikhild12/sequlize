@@ -1225,6 +1225,7 @@ const notesController = () => {
                     patient_uuid: patient_uuid,
                     encounter_uuid: encounter_uuid,
                     encounter_type_uuid: 2,
+                    entry_status: 2,
                     status: emr_constants.IS_ACTIVE,
                     is_active: emr_constants.IS_ACTIVE
                 }
