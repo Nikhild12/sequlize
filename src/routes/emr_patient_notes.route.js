@@ -15,5 +15,6 @@ notesRoute.route('/update').post(notesController.updatePreviousPatientOPNotes);
 notesRoute.route('/print').get(notesController.print_previous_opnotes);
 notesRoute.route('/addConsultations').post(notesController.addConsultations);
 notesRoute.route('/updateconsultations').post(notesController.updateConsultations);
+notesRoute.route('/getConsultations').get(notesController.getConsultations);
 
 module.exports = notesRoute;

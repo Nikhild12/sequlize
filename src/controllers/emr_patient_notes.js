@@ -396,7 +396,6 @@ const notesController = () => {
             console.log('req.headers.Authorization=====>', req.headers.Authorization);
             console.log('req.headers.authorization=====>', req.headers.authorization);
             const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-            
             console.log('Authorization=====>', Authorization);
             let findQuery = {
                 include: [{
@@ -1215,7 +1214,40 @@ const notesController = () => {
             });
         }
     };
-
+    const _getConsultations = async (req, res) => {
+        try {
+            const {
+                    patient_uuid,
+                    encounter_uuid
+                } = req.query;
+            let findQuery = {
+                where: {
+                    patient_uuid: patient_uuid,
+                    encounter_uuid: encounter_uuid,
+                    encounter_type_uuid: 2,
+                    entry_status: 2,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE
+                }
+            };
+            const patConsultatioData = await consultationsTbl.findAll(findQuery);
+            if (!patConsultatioData) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
+                });
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: patConsultatioData
+            });
+        } catch (ex) {
+                return res.status(400).send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: ex
+                });
+        }
+    }
     function getWidgetData(actCode, result, consultation_uuid, printFlag) {
         switch (actCode) {
             case "Lab":
@@ -1611,7 +1643,8 @@ const notesController = () => {
         getReviewNotes: _getReviewNotes,
         print_previous_opnotes: _print_previous_opnotes,
         addConsultations: _addConsultations,
-        updateConsultations: _updateConsultations
+        updateConsultations: _updateConsultations,
+        getConsultations: _getConsultations
     };
 };
 
