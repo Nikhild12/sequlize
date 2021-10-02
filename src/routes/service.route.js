@@ -127,6 +127,9 @@ const glassPrescriptionRoutes = require('./glass_prescription.route');
 // glass prescription details
 const glassPrescriptionDetailsRoutes = require('./glass_prescription_details.route');
 
+// history routes
+const historyRoutes = require('./history.route');
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -297,4 +300,8 @@ serviceRouter.use("/health_history", healthHistoryRoutes);
 serviceRouter.use("/glass_prescription", glassPrescriptionRoutes);
 //glass prescription details
 serviceRouter.use("/glass_prescription_details", glassPrescriptionDetailsRoutes);
+
+//history
+serviceRouter.use("/history", historyRoutes);
+
 module.exports = serviceRouter;

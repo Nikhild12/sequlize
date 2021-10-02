@@ -510,7 +510,7 @@ const ChiefComplaints = () => {
           .send({
             statusCode: 400,
             req: reqData,
-            msg: "valid pin and district_uuid is required"
+            msg: "search value is required"
           });
       }
 
@@ -566,15 +566,24 @@ const ChiefComplaints = () => {
           });
       }
 
+      let resultArr = [];
+      let respArr = findResponse.rows;
+
+      for (let i = 0; i < respArr.length; i++) {
+        if(respArr[i].chief_complaint_section){
+          resultArr.push(respArr[i]);
+        }
+      }
+
       return res
         .status(httpStatus.OK)
         .json({
           status: 'success',
           statusCode: httpStatus.OK,
-          msg: "Patient details fetched successfully",
+          msg: "Chief complaint details fetched successfully",
           req: reqData,
-          totalRecords: findResponse.count,
-          responseContents: findResponse.rows
+          totalRecords: resultArr.length,
+          responseContents: resultArr
         });
 
 
