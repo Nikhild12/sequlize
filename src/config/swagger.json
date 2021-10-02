@@ -11122,6 +11122,47 @@
 					"Health History"
 				]
 			}
+		},
+		"/api/history/getHistoryAndSectionsByNameorCode": {
+			"post": {
+				"description": "To get history and section details data by code or name",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "History search value",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getHistoryAndSectionsByNameorCode"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"HistoryMaster"
+				],
+				"responses": {
+					"200": {
+						"description": "History and section details fetched Successfully",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"400": {
+						"description": "Failed to get history and section details"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -19621,6 +19662,15 @@
 							}
 						}
 					}
+				}
+			}
+		},
+		"getHistoryAndSectionsByNameorCode": {
+			"type": "object",
+			"properties": {
+				"searchValue": {
+					"type": "string",
+					"example": "Fever"
 				}
 			}
 		}
