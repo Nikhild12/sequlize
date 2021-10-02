@@ -1,8 +1,7 @@
 const emr_constants = require('../config/constants');
 module.exports = (sequelize, DataTypes) => {
 
-    const CHIEF_COMPLAINTS = sequelize.define(
-        "chief_complaints",
+    const CHIEF_COMPLAINTS = sequelize.define("chief_complaints",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -32,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
-            comments:{
+            comments: {
                 type: DataTypes.TEXT
             },
             referrence_link: {
@@ -42,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING
             },
             is_active: {
-               
+
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
             },
@@ -75,12 +74,12 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
-            created_date:{
+            created_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
 
             },
-            modified_date:{
+            modified_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
 
@@ -98,5 +97,22 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+    CHIEF_COMPLAINTS.associate = models => {
+        CHIEF_COMPLAINTS.belongsTo(models.chief_complaint_sections, {
+            foreignKey: 'uuid',
+            targetKey: 'chief_complaint_uuid'
+        });
+
+        // models.chief_complaint_sections.belongsTo(models.chief_complaint_section_concepts, {
+        //     foreignKey: 'uuid',
+        //     targetKey: 'chief_complaint_section_uuid'
+        // });
+
+        // models.chief_complaint_section_concepts.belongsTo(models.chief_complaint_section_concept_values, {
+        //     foreignKey: 'uuid',
+        //     targetKey: 'chief_complaint_section_concept_uuid'
+        // })
+    }
+
     return CHIEF_COMPLAINTS;
 };
