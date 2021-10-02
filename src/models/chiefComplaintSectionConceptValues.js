@@ -20,7 +20,7 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
                 defaultValue: 0,
             },
-            is_defult: {
+            is_default: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 0
             },
