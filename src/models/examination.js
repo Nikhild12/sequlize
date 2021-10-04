@@ -1,28 +1,38 @@
-module.exports = function (sequelize, DataTypes) {
-    const history_section_concept_value = sequelize.define("history_section_concept_values",
+module.exports = (sequelize, DataTypes) => {
+
+    const examinations = sequelize.define("examinations",
         {
             uuid: {
-                type: DataTypes.INTEGER(11).UNSIGNED,
+                type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            history_section_concept_uuid: {
-                type: DataTypes.INTEGER(11).UNSIGNED,
+            code: {
+                type: DataTypes.STRING,
+            },
+            name: {
+                type: DataTypes.STRING
+            },
+            description: {
+                type: DataTypes.STRING
+            },
+            examination_category_uuid: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue: 0,
-            },
-            value_name: {
-                type: DataTypes.STRING(100),
-                allowNull: true
-            },
-            display_order: {
-                type: DataTypes.INTEGER(11),
-                allowNull: false,
-                defaultValue: 0,
-            },
-            is_default: {
-                type: DataTypes.BOOLEAN,
                 defaultValue: 0
+            },
+            examination_sub_category_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            },
+            department_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            },
+            comments: {
+                type: DataTypes.TEXT
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -33,25 +43,27 @@ module.exports = function (sequelize, DataTypes) {
                 defaultValue: 1
             },
             revision: {
-                type: DataTypes.INTEGER(11),
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 1,
             },
             created_by: {
-                type: DataTypes.INTEGER(11),
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
                 validate: {
                     notNull: true
                 }
+
             },
             modified_by: {
-                type: DataTypes.INTEGER(11),
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
                 validate: {
                     notNull: true
                 }
+
             },
             created_date: {
                 type: DataTypes.DATE,
@@ -61,10 +73,11 @@ module.exports = function (sequelize, DataTypes) {
             modified_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
+
             }
         },
         {
-            tableName: 'history_section_concept_values',
+            tableName: "examinations",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -75,5 +88,12 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    return history_section_concept_value;
+    examinations.associate = models => {
+        examinations.belongsTo(models.examination_sections, {
+            foreignKey: 'uuid',
+            targetKey: 'examination_uuid'
+        });
+    }
+
+    return examinations;
 };

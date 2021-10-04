@@ -1,12 +1,12 @@
 module.exports = function (sequelize, DataTypes) {
-    const history_section_concept_value = sequelize.define("history_section_concept_values",
+    const examination_section_concept_value = sequelize.define("examination_section_concept_values",
         {
             uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED,
                 primaryKey: true,
                 autoIncrement: true
             },
-            history_section_concept_uuid: {
+            examination_section_concept_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED,
                 allowNull: false,
                 defaultValue: 0,
@@ -64,7 +64,7 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         {
-            tableName: 'history_section_concept_values',
+            tableName :'examination_section_concept_values',
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -75,5 +75,5 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    return history_section_concept_value;
+    return examination_section_concept_value;
 };

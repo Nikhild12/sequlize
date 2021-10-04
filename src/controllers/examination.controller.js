@@ -5,16 +5,16 @@ const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
-const history_tbl = sequelizeDb.historys;
-const history_section_tbl = sequelizeDb.history_sections;
-const history_section_concept_tbl = sequelizeDb.history_section_concepts;
-const history_section_concept_value_tbl = sequelizeDb.history_section_concept_values;
-const history_category_tbl = sequelizeDb.history_category;
-const history_sub_category_tbl = sequelizeDb.history_sub_category;
+const examination_tbl = sequelizeDb.examinations;
+const examination_section_tbl = sequelizeDb.examination_sections;
+const examination_section_concept_tbl = sequelizeDb.examination_section_concepts;
+const examination_section_concept_value_tbl = sequelizeDb.examination_section_concept_values;
+const examination_category_tbl = sequelizeDb.examination_category;
+const examination_sub_category_tbl = sequelizeDb.examination_sub_category;
 
-const historys = () => {
-    //H30-43597 get history and their section,concept and values by code or name and their category api done by Vignesh K
-    const _getHistoryAndSectionsByNameorCode = async (req, res) => {
+const examinations = () => {
+    //H30-43597 get examination and their section,concept and values by code or name and their category api done by Vignesh K
+    const _getExaminationAndSectionsByNameorCode = async (req, res) => {
         try {
             let reqData = req.body;
             if (!reqData.searchValue) {
@@ -30,15 +30,15 @@ const historys = () => {
             let findQuery = {
                 attributes: ['uuid', 'code', 'name'],
                 where: {
-                    uuid: reqData.historyCategoryUuid,
+                    uuid: reqData.examinationCategoryUuid,
                     is_active: 1,
                     status: 1
                 },
                 include: [{
-                    model: history_tbl,
+                    model: examination_tbl,
                     required: false,
                     attributes: ['uuid', 'code', 'name', 'description',
-                        'history_category_uuid', 'history_sub_category_uuid',
+                        'examination_category_uuid', 'examination_sub_category_uuid',
                         'department_uuid', 'comments'],
                     where: {
                         [Op.or]: [
@@ -53,26 +53,26 @@ const historys = () => {
                         status: 1
                     },
                     include: [{
-                        model: history_section_tbl,
+                        model: examination_section_tbl,
                         required: false,
-                        attributes: ['uuid', 'history_uuid', 'section_name', 'display_order'],
+                        attributes: ['uuid', 'examination_uuid', 'section_name', 'display_order'],
                         where: {
                             is_active: 1,
                             status: 1
                         },
                         include: [{
-                            model: history_section_concept_tbl,
+                            model: examination_section_concept_tbl,
                             required: false,
-                            attributes: ['uuid', 'concept_name', 'history_section_uuid',
+                            attributes: ['uuid', 'concept_name', 'examination_section_uuid',
                                 'value_type_uuid', 'is_multiple', 'is_mandatory'],
                             where: {
                                 is_active: 1,
                                 status: 1
                             },
                             include: [{
-                                model: history_section_concept_value_tbl,
+                                model: examination_section_concept_value_tbl,
                                 required: false,
-                                attributes: ['uuid', 'history_section_concept_uuid',
+                                attributes: ['uuid', 'examination_section_concept_uuid',
                                     'value_name', 'display_order'],
                                 where: {
                                     is_active: 1,
@@ -83,7 +83,7 @@ const historys = () => {
                     }]
                 }]
             }
-            const findResponse = await history_category_tbl.findAndCountAll(findQuery);
+            const findResponse = await examination_category_tbl.findAndCountAll(findQuery);
 
             if (findResponse.count === 0) {
                 return res
@@ -102,12 +102,11 @@ const historys = () => {
                 .json({
                     status: 'success',
                     statusCode: httpStatus.OK,
-                    msg: "History details fetched successfully",
+                    msg: "Examination details fetched successfully",
                     req: reqData,
                     totalRecords: findResponse.count,
                     responseContents: findResponse.rows
                 });
-
 
         } catch (err) {
             const errorMsg = err.errors ? err.errors[0].message : err.message;
@@ -116,15 +115,15 @@ const historys = () => {
                 .json({
                     status: "error",
                     statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-                    msg: 'Failed to get history and section details',
+                    msg: 'Failed to get examination and section details',
                     actualMsg: errorMsg
                 });
         }
     };
 
     return {
-        getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode
+        getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode
     };
 };
 
-module.exports = historys();
+module.exports = examinations();

@@ -78,6 +78,7 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         {
+            tableName: 'history_section_concepts',
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
