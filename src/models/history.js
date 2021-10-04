@@ -1,7 +1,6 @@
-const emr_constants = require('../config/constants');
 module.exports = (sequelize, DataTypes) => {
 
-    const CHIEF_COMPLAINTS = sequelize.define("chief_complaints",
+    const history = sequelize.define("historys",
         {
             uuid: {
                 type: DataTypes.INTEGER,
@@ -10,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             code: {
                 type: DataTypes.STRING,
-
             },
             name: {
                 type: DataTypes.STRING
@@ -18,30 +16,29 @@ module.exports = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING
             },
-            chief_complaint_category_uuid: {
+            history_category_uuid: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_category_uuid')
-                    },
-                    notEmpty: {
-                        msg: emr_constants.GetpleaseProvideMsg('chief_complaint_category_uuid')
-                    },
-                    min: 0
-                }
+                defaultValue: 0
+            },
+            history_sub_category_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            },
+            department_uuid: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
             },
             comments: {
                 type: DataTypes.TEXT
             },
-            referrence_link: {
-                type: DataTypes.STRING
-            },
-            body_site: {
-                type: DataTypes.STRING
+            is_default: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
             },
             is_active: {
-
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
             },
@@ -55,7 +52,6 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 1,
             },
             created_by: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
@@ -65,7 +61,6 @@ module.exports = (sequelize, DataTypes) => {
 
             },
             modified_by: {
-
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
@@ -84,7 +79,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
 
             }
-
         },
         {
             createdAt: 'created_date',
@@ -97,12 +91,12 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
-    CHIEF_COMPLAINTS.associate = models => {
-        CHIEF_COMPLAINTS.belongsTo(models.chief_complaint_sections, {
+    history.associate = models => {
+        history.belongsTo(models.history_sections, {
             foreignKey: 'uuid',
-            targetKey: 'chief_complaint_uuid'
+            targetKey: 'history_uuid'
         });
     }
 
-    return CHIEF_COMPLAINTS;
+    return history;
 };

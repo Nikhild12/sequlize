@@ -8,6 +8,9 @@ const Op = Sequelize.Op;
 const emr_constants = require("../config/constants");
 
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
+const chief_complaint_sections_tbl = sequelizeDb.chief_complaint_sections;
+const chief_complaint_section_concept_tbl = sequelizeDb.chief_complaint_section_concepts;
+const chief_complaint_section_concept_value_tbl = sequelizeDb.chief_complaint_section_concept_values;
 
 // Import EMR Constants
 const emr_const = require("../config/constants");
@@ -329,7 +332,7 @@ const ChiefComplaints = () => {
         .status(400)
         .send({ statusCode: 400, message: "No Request Body Found" });
     }
-  };   
+  };
   const _getChiefComplaints = async (req, res, next) => {
     let getsearch = req.body;
     let pageNo = 0;
@@ -341,10 +344,10 @@ const ChiefComplaints = () => {
 
 
       if (temp && (temp != NaN)) {
-          pageNo = temp;
+        pageNo = temp;
       }
-  }
-  const offset = pageNo * itemsPerPage;
+    }
+    const offset = pageNo * itemsPerPage;
 
 
     if (getsearch.sortField) {
@@ -374,7 +377,7 @@ const ChiefComplaints = () => {
             }
           }, {
             name: {
-              [Op.like]: '%' +getsearch.search.toLowerCase() + '%',
+              [Op.like]: '%' + getsearch.search.toLowerCase() + '%',
             }
           },
           {
@@ -400,8 +403,8 @@ const ChiefComplaints = () => {
         }]
       });
     }
-    getsearch.status=1;
-    postingData.where.is_active =getsearch.status;
+    getsearch.status = 1;
+    postingData.where.is_active = getsearch.status;
 
     try {
       let data = await chief_complaints_tbl.findAndCountAll(postingData);
@@ -410,7 +413,7 @@ const ChiefComplaints = () => {
       return res
         .status(httpStatus.OK)
         .json({
-          message, code,statusCode: 200,responseContents: data.rows, totalRecords: data.count,
+          message, code, statusCode: 200, responseContents: data.rows, totalRecords: data.count,
         });
 
     } catch (err) {
@@ -428,7 +431,7 @@ const ChiefComplaints = () => {
   //   let getsearch = req.body;
   //   const { search, searchKeyWord, status = 1, pageNo = 0, paginationSize, sortField = 'modified_date', sortOrder = 'ASC' } = getsearch;
   //   const itemsPerPage = paginationSize ? paginationSize : 10;
-  
+
   //   Object.keys(req.body).forEach((key) => (req.body[key] == null || req.body[key] == "") && delete req.body[key]);
 
   //   let postingData = {
@@ -498,6 +501,107 @@ const ChiefComplaints = () => {
   //   }
   // };
 
+  const _getChiefComplaintAndSectionsByNameorCode = async (req, res) => {
+    try {
+      let reqData = req.body;
+      if (!reqData.searchValue) {
+        return res
+          .status(400)
+          .send({
+            statusCode: 400,
+            req: reqData,
+            msg: "search value is required"
+          });
+      }
+
+      let findQuery = {
+        where: {
+          is_active: 1,
+          status: 1
+        },
+        include: [{
+          model: chief_complaint_sections_tbl,
+          required: false,
+          where: {
+            is_active: 1,
+            status: 1
+          },
+          include: [{
+            model: chief_complaint_section_concept_tbl,
+            required: false,
+            where: {
+              is_active: 1,
+              status: 1
+            },
+            include: [{
+              model: chief_complaint_section_concept_value_tbl,
+              required: false,
+              where: {
+                is_active: 1,
+                status: 1
+              }
+            }]
+          }]
+        }]
+      }
+
+      findQuery.where = Object.assign(findQuery.where, {
+        [Op.or]: [
+          Sequelize.where(Sequelize.col('code'), 'LIKE', '%' + reqData.searchValue + '%'),
+          Sequelize.where(Sequelize.col('name'), 'LIKE', '%' + reqData.searchValue + '%'),
+        ]
+      });
+
+      const findResponse = await chief_complaints_tbl.findAndCountAll(findQuery);
+
+      if (findResponse.count === 0) {
+        return res
+          .status(200)
+          .send({
+            statusCode: 200,
+            msg: "No data found!",
+            req: reqData,
+            responseContents: [],
+            totalRecords: 0
+          });
+      }
+
+      let resultArr = [];
+      let respArr = findResponse.rows;
+
+      for (let i = 0; i < respArr.length; i++) {
+        if(respArr[i].chief_complaint_section){
+          resultArr.push(respArr[i]);
+        }
+      }
+
+      return res
+        .status(httpStatus.OK)
+        .json({
+          status: 'success',
+          statusCode: httpStatus.OK,
+          msg: "Chief complaint details fetched successfully",
+          req: reqData,
+          totalRecords: resultArr.length,
+          responseContents: resultArr
+        });
+
+
+    } catch (err) {
+      const errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res
+        .status(httpStatus.OK)
+        .json({
+          status: "error",
+          statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+          msg: 'Failed to get chief complaints and section details',
+          actualMsg: errorMsg
+        });
+
+    }
+  };
+
+
   return {
     getChiefComplaintsFilter: _getChiefComplaintsFilter,
     getChiefComplaintsSearch: _getChiefComplaintsSearch,
@@ -505,7 +609,8 @@ const ChiefComplaints = () => {
     getChiefComplaints: _getChiefComplaints,
     getChiefComplaintsById: _getChiefComplaintsById,
     updateChiefComplaintsById: _updateChiefComplaintsById,
-    deleteChiefComplaints: _deleteChiefComplaints
+    deleteChiefComplaints: _deleteChiefComplaints,
+    getChiefComplaintAndSectionsByNameorCode: _getChiefComplaintAndSectionsByNameorCode //H30-43597 get chief complaints and their section,concept and values by code or name api done by Vignesh K
   };
 };
 

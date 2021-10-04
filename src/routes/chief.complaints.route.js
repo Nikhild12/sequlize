@@ -16,4 +16,6 @@ ChiefComplaintsRoutes.route('/getById').post(ChiefComplaints.getChiefComplaintsB
 ChiefComplaintsRoutes.route('/update').post(ChiefComplaints.updateChiefComplaintsById);
 ChiefComplaintsRoutes.route('/delete').post(ChiefComplaints.deleteChiefComplaints);
 
+ChiefComplaintsRoutes.route('/getChiefComplaintsByNameorCode').post(ChiefComplaints.getChiefComplaintAndSectionsByNameorCode);
+
 module.exports = ChiefComplaintsRoutes;
