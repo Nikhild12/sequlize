@@ -515,6 +515,8 @@ const ChiefComplaints = () => {
       }
 
       let findQuery = {
+        attributes: ['uuid', 'code', 'name', 'description',
+          'chief_complaint_category_uuid', 'comments', 'referrence_link', 'body_site'],
         where: {
           is_active: 1,
           status: 1
@@ -522,6 +524,7 @@ const ChiefComplaints = () => {
         include: [{
           model: chief_complaint_sections_tbl,
           required: false,
+          attributes: ['uuid', 'chief_complaint_uuid', 'section_name', 'display_order'],
           where: {
             is_active: 1,
             status: 1
@@ -529,6 +532,8 @@ const ChiefComplaints = () => {
           include: [{
             model: chief_complaint_section_concept_tbl,
             required: false,
+            attributes: ['uuid', 'concept_name', 'chief_complaint_section_uuid',
+            'value_type_uuid', 'is_multiple', 'is_mandatory'],
             where: {
               is_active: 1,
               status: 1
@@ -536,6 +541,8 @@ const ChiefComplaints = () => {
             include: [{
               model: chief_complaint_section_concept_value_tbl,
               required: false,
+              attributes: ['uuid', 'chief_complaint_section_concept_uuid',
+              'value_name', 'display_order'],
               where: {
                 is_active: 1,
                 status: 1
@@ -570,7 +577,7 @@ const ChiefComplaints = () => {
       let respArr = findResponse.rows;
 
       for (let i = 0; i < respArr.length; i++) {
-        if(respArr[i].chief_complaint_section){
+        if (respArr[i].chief_complaint_section) {
           resultArr.push(respArr[i]);
         }
       }

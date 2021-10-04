@@ -1,28 +1,23 @@
 module.exports = function (sequelize, DataTypes) {
-    const history_section_concept_value = sequelize.define("history_section_concept_values",
+    const examination_section = sequelize.define("examination_sections",
         {
             uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED,
                 primaryKey: true,
                 autoIncrement: true
             },
-            history_section_concept_uuid: {
+            examination_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED,
-                allowNull: false,
-                defaultValue: 0,
+                allowNull: false
             },
-            value_name: {
-                type: DataTypes.STRING(100),
+            section_name: {
+                type: DataTypes.STRING(250),
                 allowNull: true
             },
             display_order: {
                 type: DataTypes.INTEGER(11),
                 allowNull: false,
                 defaultValue: 0,
-            },
-            is_default: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 0
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -61,10 +56,11 @@ module.exports = function (sequelize, DataTypes) {
             modified_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
+
             }
         },
         {
-            tableName: 'history_section_concept_values',
+            tableName: "examination_sections",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -75,5 +71,11 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    return history_section_concept_value;
+    examination_section.associate = models => {
+        examination_section.belongsTo(models.examination_section_concepts, {
+            foreignKey: 'uuid',
+            targetKey: 'examination_section_uuid'
+        });
+    }
+    return examination_section;
 };
