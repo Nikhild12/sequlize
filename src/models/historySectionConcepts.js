@@ -94,6 +94,10 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'uuid',
             targetKey: 'history_section_concept_uuid'
         });
+        history_section_concept.belongsTo(models.value_types, {
+            foreignKey: 'value_type_uuid',
+            targetKey: 'uuid'
+        });
     }
     return history_section_concept;
 };

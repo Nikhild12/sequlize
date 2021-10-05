@@ -11,6 +11,7 @@ const chief_complaints_tbl = sequelizeDb.chief_complaints;
 const chief_complaint_sections_tbl = sequelizeDb.chief_complaint_sections;
 const chief_complaint_section_concept_tbl = sequelizeDb.chief_complaint_section_concepts;
 const chief_complaint_section_concept_value_tbl = sequelizeDb.chief_complaint_section_concept_values;
+const value_type_tbl = sequelizeDb.value_types;
 
 // Import EMR Constants
 const emr_const = require("../config/constants");
@@ -514,54 +515,177 @@ const ChiefComplaints = () => {
           });
       }
 
-      let findQuery = {
+      let findQueryCC = {
         attributes: ['uuid', 'code', 'name', 'description',
           'chief_complaint_category_uuid', 'comments', 'referrence_link', 'body_site'],
         where: {
+          [Op.or]: [
+            {
+              name: { [Op.like]: '%' + reqData.searchValue + '%' }
+            },
+            {
+              code: { [Op.like]: '%' + reqData.searchValue + '%' }
+            }
+          ],
           is_active: 1,
           status: 1
-        },
-        include: [{
-          model: chief_complaint_sections_tbl,
-          required: false,
-          attributes: ['uuid', 'chief_complaint_uuid', 'section_name', 'display_order'],
-          where: {
-            is_active: 1,
-            status: 1
-          },
-          include: [{
-            model: chief_complaint_section_concept_tbl,
-            required: false,
-            attributes: ['uuid', 'concept_name', 'chief_complaint_section_uuid',
-            'value_type_uuid', 'is_multiple', 'is_mandatory'],
-            where: {
-              is_active: 1,
-              status: 1
-            },
-            include: [{
-              model: chief_complaint_section_concept_value_tbl,
-              required: false,
-              attributes: ['uuid', 'chief_complaint_section_concept_uuid',
-              'value_name', 'display_order'],
-              where: {
-                is_active: 1,
-                status: 1
-              }
-            }]
-          }]
-        }]
+        }
+      }
+      const findCCResponse = await chief_complaints_tbl.findAndCountAll(findQueryCC);
+      let cc = findCCResponse.rows;
+      let cc_uuid = cc.reduce((acc, cur) => {
+        acc.push(cur.uuid);
+        return acc;
+      }, []);
+
+
+      let findQueryCCSection = {
+        required: false,
+        attributes: ['uuid', 'chief_complaint_uuid', 'section_name', 'display_order'],
+        where: {
+          chief_complaint_uuid: { [Op.or]: cc_uuid },
+          is_active: 1,
+          status: 1
+        }
+      }
+      const findCCSectionResponse = await chief_complaint_sections_tbl.findAndCountAll(findQueryCCSection);
+      let cc_section = findCCSectionResponse.rows;
+      let cc_section_uuid = cc_section.reduce((acc, cur) => {
+        acc.push(cur.uuid);
+        return acc;
+      }, []);
+
+
+      let findQueryCCSectionConcept = {
+        required: false,
+        attributes: ['uuid', 'concept_name', 'chief_complaint_section_uuid',
+          'value_type_uuid', 'is_multiple', 'is_mandatory'],
+        where: {
+          chief_complaint_section_uuid: { [Op.or]: cc_section_uuid },
+          is_active: 1,
+          status: 1
+        }
+      }
+      const findCCSectionConceptResponse = await chief_complaint_section_concept_tbl.findAndCountAll(findQueryCCSectionConcept);
+      let cc_section_concept = findCCSectionConceptResponse.rows;
+      let cc_section_concept_uuid = cc_section_concept.reduce((acc, cur) => {
+        acc.push(cur.uuid);
+        return acc;
+      }, []);
+
+      let cc_section_concept_value_type_uuid = cc_section_concept.reduce((acc, cur) => {
+        acc.push(cur.value_type_uuid);
+        return acc;
+      }, []);
+      let uniq_vt_uuid = [... new Set(cc_section_concept_value_type_uuid)];
+
+      let findValueTypeNameQuery = {
+        required: false,
+        attributes: ['uuid', 'code', 'name'],
+        where: {
+          uuid: { [Op.or]: uniq_vt_uuid },
+          is_active: 1,
+          status: 1
+        }
+      };
+      const findCCSectionValueTypeResponse = await value_type_tbl.findAndCountAll(findValueTypeNameQuery);
+      let value_type_concept_value = findCCSectionValueTypeResponse.rows;
+
+      let findQueryCCSectionConceptValues = {
+        required: false,
+        attributes: ['uuid', 'chief_complaint_section_concept_uuid',
+          'value_name', 'display_order'],
+        where: {
+          chief_complaint_section_concept_uuid: { [Op.or]: cc_section_concept_uuid },
+          is_active: 1,
+          status: 1
+        }
+      }
+      const findCCSectionConceptValueResponse = await chief_complaint_section_concept_value_tbl.findAndCountAll(findQueryCCSectionConceptValues);
+      let cc_section_concept_value = findCCSectionConceptValueResponse.rows;
+
+
+
+      let concept_and_values_with_no_vt = [];
+      for (let i = 0; i < cc_section_concept.length; i++) {
+        let concept_obj = {
+          uuid: cc_section_concept[i].uuid,
+          concept_name: cc_section_concept[i].concept_name,
+          chief_complaint_section_uuid: cc_section_concept[i].chief_complaint_section_uuid,
+          value_type_uuid: cc_section_concept[i].value_type_uuid,
+          is_multiple: cc_section_concept[i].is_multiple,
+          is_mandatory: cc_section_concept[i].is_mandatory,
+          chief_complaint_section_concept_value: []
+        };
+        for (let j = 0; j < cc_section_concept_value.length; j++) {
+          if (cc_section_concept[i].uuid === cc_section_concept_value[j].chief_complaint_section_concept_uuid) {
+            concept_obj.chief_complaint_section_concept_value.push(cc_section_concept_value[j])
+          }
+        }
+        concept_and_values_with_no_vt.push(concept_obj)
       }
 
-      findQuery.where = Object.assign(findQuery.where, {
-        [Op.or]: [
-          Sequelize.where(Sequelize.col('code'), 'LIKE', '%' + reqData.searchValue + '%'),
-          Sequelize.where(Sequelize.col('name'), 'LIKE', '%' + reqData.searchValue + '%'),
-        ]
-      });
+      let concept_and_values = [];
+      for (let i = 0; i < concept_and_values_with_no_vt.length; i++) {
+        let concept_and_vt_obj = {
+          uuid: concept_and_values_with_no_vt[i].uuid,
+          concept_name: concept_and_values_with_no_vt[i].concept_name,
+          chief_complaint_section_uuid: concept_and_values_with_no_vt[i].chief_complaint_section_uuid,
+          value_type_uuid: concept_and_values_with_no_vt[i].value_type_uuid,
+          value_type_name:'',
+          value_type_code:'',
+          is_multiple: concept_and_values_with_no_vt[i].is_multiple,
+          is_mandatory: concept_and_values_with_no_vt[i].is_mandatory,
+          chief_complaint_section_concept_value: concept_and_values_with_no_vt[i].chief_complaint_section_concept_value
+        }
+        for (let j = 0; j < value_type_concept_value.length; j++) {
+          if (concept_and_values_with_no_vt[i].value_type_uuid === value_type_concept_value[j].uuid) {
+            concept_and_vt_obj.value_type_name = value_type_concept_value[j].name;
+            concept_and_vt_obj.value_type_code = value_type_concept_value[j].code;
+          }
+        }
+        concept_and_values.push(concept_and_vt_obj);
+      }
 
-      const findResponse = await chief_complaints_tbl.findAndCountAll(findQuery);
+      let section_and_concept_values = [];
+      for (let i = 0; i < cc_section.length; i++) {
+        const section_concept = {
+          uuid: cc_section[i].uuid,
+          chief_complaint_uuid: cc_section[i].chief_complaint_uuid,
+          section_name: cc_section[i].section_name,
+          display_order: cc_section[i].display_order,
+          chief_complaint_section_concept: []
+        }
+        for (let j = 0; j < concept_and_values.length; j++) {
+          if (cc_section[i].uuid === concept_and_values[j].chief_complaint_section_uuid) {
+            section_concept.chief_complaint_section_concept.push(concept_and_values[j])
+          }
+        }
+        section_and_concept_values.push(section_concept)
+      }
 
-      if (findResponse.count === 0) {
+      let cc_section_arr = [];
+      for (let i = 0; i < cc.length; i++) {
+        let cc_obj = {
+          uuid: cc[i].uuid,
+          code: cc[i].code,
+          name: cc[i].name,
+          description: cc[i].description,
+          chief_complaint_category_uuid: cc[i].chief_complaint_category_uuid,
+          comments: cc[i].comments,
+          referrence_link: cc[i].referrence_link,
+          body_site: cc[i].body_site,
+          chief_complaint_section: []
+        };
+        for (let j = 0; j < section_and_concept_values.length; j++) {
+          if (cc[i].uuid === section_and_concept_values[j].chief_complaint_uuid) {
+            cc_obj.chief_complaint_section.push(section_and_concept_values[j])
+          }
+        }
+        cc_section_arr.push(cc_obj);
+      }
+
+      if (findCCResponse.count === 0) {
         return res
           .status(200)
           .send({
@@ -573,15 +697,6 @@ const ChiefComplaints = () => {
           });
       }
 
-      let resultArr = [];
-      let respArr = findResponse.rows;
-
-      for (let i = 0; i < respArr.length; i++) {
-        if (respArr[i].chief_complaint_section) {
-          resultArr.push(respArr[i]);
-        }
-      }
-
       return res
         .status(httpStatus.OK)
         .json({
@@ -589,8 +704,8 @@ const ChiefComplaints = () => {
           statusCode: httpStatus.OK,
           msg: "Chief complaint details fetched successfully",
           req: reqData,
-          totalRecords: resultArr.length,
-          responseContents: resultArr
+          totalRecords: cc_section_arr.length,
+          responseContents: cc_section_arr
         });
 
 
