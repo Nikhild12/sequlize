@@ -78,6 +78,7 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         {
+            tableName: 'history_section_concepts',
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -92,6 +93,10 @@ module.exports = function (sequelize, DataTypes) {
         history_section_concept.belongsTo(models.history_section_concept_values, {
             foreignKey: 'uuid',
             targetKey: 'history_section_concept_uuid'
+        });
+        history_section_concept.belongsTo(models.value_types, {
+            foreignKey: 'value_type_uuid',
+            targetKey: 'uuid'
         });
     }
     return history_section_concept;

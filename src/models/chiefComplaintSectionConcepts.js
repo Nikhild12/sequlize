@@ -97,6 +97,11 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'uuid',
             targetKey: 'chief_complaint_section_concept_uuid'
         });
+        chief_complaint_section_concept.belongsTo(models.value_types, {
+            foreignKey: 'value_type_uuid',
+            targetKey: 'uuid'
+        });
+
     }
     return chief_complaint_section_concept;
 };

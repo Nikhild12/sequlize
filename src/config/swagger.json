@@ -11125,7 +11125,7 @@
 		},
 		"/api/history/getHistoryAndSectionsByNameorCode": {
 			"post": {
-				"description": "To get history and section details data by code or name",
+				"description": "To get history and section details data by code or name and category",
 				"parameters": [
 					{
 						"in": "header",
@@ -11147,7 +11147,7 @@
 					"application/xml"
 				],
 				"tags": [
-					"HistoryMaster"
+					"History Master"
 				],
 				"responses": {
 					"200": {
@@ -11158,6 +11158,47 @@
 					},
 					"400": {
 						"description": "Failed to get history and section details"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/examination/getExaminationAndSectionsByNameorCode": {
+			"post": {
+				"description": "To get examination and section details data by code or name and category",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "Examination search value",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getExaminationAndSectionsByNameorCode"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Examination Master"
+				],
+				"responses": {
+					"200": {
+						"description": "Examination and section details fetched Successfully",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"400": {
+						"description": "Failed to get examination and section details"
 					}
 				},
 				"x-auth-type": "Application & Application User",
@@ -19669,8 +19710,25 @@
 			"type": "object",
 			"properties": {
 				"searchValue": {
-					"type": "string",
-					"example": "Fever"
+					"type": "String",
+					"example": "GSH"
+				},
+				"historyCategoryUuid": {
+					"type": "Number",
+					"example": 2
+				}
+			}
+		},
+		"getExaminationAndSectionsByNameorCode": {
+			"type": "object",
+			"properties": {
+				"searchValue": {
+					"type": "String",
+					"example": "GA"
+				},
+				"examinationCategoryUuid": {
+					"type": "Number",
+					"example": 1
 				}
 			}
 		}

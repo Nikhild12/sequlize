@@ -1,28 +1,16 @@
 module.exports = function (sequelize, DataTypes) {
-    const history_section_concept_value = sequelize.define("history_section_concept_values",
+    const examination_category = sequelize.define("examination_category",
         {
             uuid: {
-                type: DataTypes.INTEGER(11).UNSIGNED,
+                type: DataTypes.INTEGER(11),
                 primaryKey: true,
                 autoIncrement: true
             },
-            history_section_concept_uuid: {
-                type: DataTypes.INTEGER(11).UNSIGNED,
-                allowNull: false,
-                defaultValue: 0,
+            code: {
+                type: DataTypes.STRING(50),
             },
-            value_name: {
-                type: DataTypes.STRING(100),
-                allowNull: true
-            },
-            display_order: {
-                type: DataTypes.INTEGER(11),
-                allowNull: false,
-                defaultValue: 0,
-            },
-            is_default: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 0
+            name: {
+                type: DataTypes.STRING(100)
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -45,6 +33,11 @@ module.exports = function (sequelize, DataTypes) {
                     notNull: true
                 }
             },
+            created_date: {
+                type: DataTypes.DATE,
+                allowNull: true,
+
+            },
             modified_by: {
                 type: DataTypes.INTEGER(11),
                 allowNull: false,
@@ -53,18 +46,14 @@ module.exports = function (sequelize, DataTypes) {
                     notNull: true
                 }
             },
-            created_date: {
-                type: DataTypes.DATE,
-                allowNull: true,
-
-            },
             modified_date: {
                 type: DataTypes.DATE,
                 allowNull: true,
+
             }
         },
         {
-            tableName: 'history_section_concept_values',
+            tableName: "examination_category",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -75,5 +64,11 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    return history_section_concept_value;
+    examination_category.associate = models => {
+        examination_category.belongsTo(models.examinations, {
+            foreignKey: 'uuid',
+            targetKey: 'examination_category_uuid'
+        });
+    }
+    return examination_category;
 };
