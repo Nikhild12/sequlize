@@ -55,13 +55,28 @@ const historys = () => {
                     }
                 }]
             }
+
             const findhCResponse = await history_category_tbl.findAndCountAll(findHistoryAndCategoryQuery);
             let hc = findhCResponse.rows;
-            let hc_uuid = hc.reduce((acc, cur) => {
-                acc.push(cur.history.uuid);
-                return acc;
-            }, []);
+            let hc_uuid = [];
 
+            for (let i = 0; i < hc.length; i++) {
+                if (hc[i].history) {
+                    hc_uuid.push(hc[i].history.uuid)
+                }
+            }
+
+            if (hc.count === 0 || !hc_uuid.length) {
+                return res
+                    .status(200)
+                    .send({
+                        statusCode: 200,
+                        msg: "No data found!",
+                        req: reqData,
+                        responseContents: [],
+                        totalRecords: 0
+                    });
+            }
 
             let findQueryHCSection = {
                 required: false,
@@ -210,18 +225,6 @@ const historys = () => {
                     }
                 }
                 hC_section_arr.push(hC_obj);
-            }
-
-            if (findhCResponse.count === 0) {
-                return res
-                    .status(200)
-                    .send({
-                        statusCode: 200,
-                        msg: "No data found!",
-                        req: reqData,
-                        responseContents: [],
-                        totalRecords: 0
-                    });
             }
 
             return res

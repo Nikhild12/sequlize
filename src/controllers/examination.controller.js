@@ -58,11 +58,25 @@ const examinations = () => {
             }
             const findExCResponse = await examination_category_tbl.findAndCountAll(findExaminationAndCategoryQuery);
             let examination = findExCResponse.rows;
-            let examination_uuid = examination.reduce((acc, cur) => {
-                acc.push(cur.examination.uuid);
-                return acc;
-            }, []);
+            let examination_uuid = [];
 
+            for (let i = 0; i < examination.length; i++) {
+                if (examination[i].examination) {
+                    examination_uuid.push(examination[i].examination.uuid)
+                }
+            }
+
+            if (findExCResponse.count === 0 || !examination_uuid.length) {
+                return res
+                    .status(200)
+                    .send({
+                        statusCode: 200,
+                        msg: "No data found!",
+                        req: reqData,
+                        responseContents: [],
+                        totalRecords: 0
+                    });
+            }
 
             let findQueryExaminationSection = {
                 required: false,
@@ -147,6 +161,7 @@ const examinations = () => {
                         concept_obj.examination_section_concept_value.push(examination_section_concept_value[j])
                     }
                 }
+                examination_concept_and_values_with_no_vt.push(concept_obj)
             }
 
             let concept_and_values = [];
@@ -174,7 +189,7 @@ const examinations = () => {
 
             let examination_section_and_concept_values = [];
             for (let i = 0; i < examination_section.length; i++) {
-                const examination_section = {
+                const examination_sections = {
                     uuid: examination_section[i].uuid,
                     examination_uuid: examination_section[i].examination_uuid,
                     section_name: examination_section[i].section_name,
@@ -183,10 +198,10 @@ const examinations = () => {
                 }
                 for (let j = 0; j < concept_and_values.length; j++) {
                     if (examination_section[i].uuid === concept_and_values[j].examination_section_uuid) {
-                        examination_section.examination_section_concept.push(concept_and_values[j])
+                        examination_sections.examination_section_concept.push(concept_and_values[j])
                     }
                 }
-                examination_section_and_concept_values.push(examination_section)
+                examination_section_and_concept_values.push(examination_sections)
             }
 
             let examination_section_arr = [];
@@ -211,19 +226,6 @@ const examinations = () => {
                     }
                 }
                 examination_section_arr.push(examination_obj);
-            }
-
-
-            if (findExCResponse.count === 0) {
-                return res
-                    .status(200)
-                    .send({
-                        statusCode: 200,
-                        msg: "No data found!",
-                        req: reqData,
-                        responseContents: [],
-                        totalRecords: 0
-                    });
             }
 
             return res
