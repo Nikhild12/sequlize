@@ -233,7 +233,7 @@ const examinations = () => {
                     statusCode: httpStatus.OK,
                     msg: "Examination details fetched successfully",
                     req: reqData,
-                    totalRecords: findExCResponse.count,
+                    totalRecords: examination_section_arr.length,
                     responseContents: examination_section_arr
                 });
 
