@@ -19915,6 +19915,14 @@
 						"type": "Number",
 						"example": 2
 					},
+					"history_duration": {
+						"type": "Number",
+						"example": 1
+					},
+					"history_duration_period_uuid": {
+						"type": "Number",
+						"example": 1
+					},
 					"comments": {
 						"type": "String",
 						"example": "Patient history"
