@@ -11,47 +11,39 @@ const patient_examination = () => {
 
     const _create_patient_examination = async (req, res) => {
 
-        if (Object.keys(req.body).length != 0) {
+        const { user_uuid } = req.headers;
+        const patientExaminationData = req.body;
 
-            const { user_uuid } = req.headers;
-            const patientExaminationData = req.body;
+        if (user_uuid > 0 && patientExaminationData) {
 
-            if (user_uuid > 0 && patientExaminationData) {
+            try {
+                patientExaminationData.forEach(exD => {
+                    exD.status = 1;
+                    exD.is_active = 1;
+                    exD.created_by = user_uuid;
+                    exD.modified_by = user_uuid;
 
-                try {
+                    exD.created_date = new Date();
+                    exD.modified_date = new Date();
+                    exD.revision = 1;
+                });
 
-                    patientExaminationData.status = 1;
-                    patientExaminationData.is_active = patientExaminationData.is_active;
-                    patientExaminationData.created_by = user_uuid;
-                    patientExaminationData.modified_by = user_uuid;
+                const patientExaminationCreatedData = await patient_examination_tbl.bulkCreate(
+                    patientExaminationData,
+                    { returning: true }
+                );
 
-                    patientExaminationData.created_date = new Date();
-                    patientExaminationData.modified_date = new Date();
-                    patientExaminationData.revision = 1;
-
-                    const patientExaminationCreatedData = await patient_examination_tbl.create(
-                        patientExaminationData,
-                        { returning: true }
-                    );
-
-
-                    if (patientExaminationCreatedData) {
-                        patientExaminationData.uuid = patientExaminationCreatedData.uuid;
-                        return res.status(200).send({
-                            statusCode: 200,
-                            message: "Patient examination inserted successfully",
-                            responseContents: patientExaminationData
-                        });
-                    }
-
-                } catch (ex) {
-                    console.log(ex.message);
-                    return res.status(400).send({ statusCode: 400, message: ex.message });
+                if (patientExaminationCreatedData) {
+                    return res.status(200).send({
+                        statusCode: 200,
+                        message: "Patient examination inserted successfully",
+                        responseContents: patientExaminationData
+                    });
                 }
-            } else {
-                return res
-                    .status(400)
-                    .send({ code: httpStatus[400], message: "No Request Body Found" });
+
+            } catch (ex) {
+                console.log(ex.message);
+                return res.status(400).send({ statusCode: 400, message: ex.message });
             }
         } else {
             return res
