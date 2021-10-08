@@ -60,6 +60,16 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
                 defaultValue: 0,
             },
+            history_duration: {
+                type: DataTypes.INTEGER(11),
+                allowNull: false,
+                defaultValue: 0,
+            },
+            history_duration_period_uuid: {
+                type: DataTypes.INTEGER(11),
+                allowNull: false,
+                defaultValue: 0,
+            },
             comments: {
                 type: DataTypes.STRING(255),
                 allowNull: true
