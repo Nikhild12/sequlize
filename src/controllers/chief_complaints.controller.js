@@ -9,8 +9,9 @@ const emr_constants = require("../config/constants");
 
 const chief_complaints_tbl = sequelizeDb.chief_complaints;
 const chief_complaint_sections_tbl = sequelizeDb.chief_complaint_sections;
-const chief_complaint_section_concept_tbl = sequelizeDb.chief_complaint_section_concepts;
-const chief_complaint_section_concept_value_tbl = sequelizeDb.chief_complaint_section_concept_values;
+const chief_complaints_section_values_tbl = sequelizeDb.chief_complaint_section_values;
+// const chief_complaint_section_concept_tbl = sequelizeDb.chief_complaint_section_concepts;
+// const chief_complaint_section_concept_value_tbl = sequelizeDb.chief_complaint_section_concept_values;
 const value_type_tbl = sequelizeDb.value_types;
 
 // Import EMR Constants
@@ -541,7 +542,7 @@ const ChiefComplaints = () => {
 
       let findQueryCCSection = {
         required: false,
-        attributes: ['uuid', 'chief_complaint_uuid', 'section_name', 'display_order'],
+        attributes: ['uuid', 'chief_complaint_uuid', 'section_name', 'value_type_uuid', 'display_order'],
         where: {
           chief_complaint_uuid: { [Op.or]: cc_uuid },
           is_active: 1,
@@ -555,29 +556,11 @@ const ChiefComplaints = () => {
         return acc;
       }, []);
 
-
-      let findQueryCCSectionConcept = {
-        required: false,
-        attributes: ['uuid', 'concept_name', 'chief_complaint_section_uuid',
-          'value_type_uuid', 'is_multiple', 'is_mandatory'],
-        where: {
-          chief_complaint_section_uuid: { [Op.or]: cc_section_uuid },
-          is_active: 1,
-          status: 1
-        }
-      }
-      const findCCSectionConceptResponse = await chief_complaint_section_concept_tbl.findAndCountAll(findQueryCCSectionConcept);
-      let cc_section_concept = findCCSectionConceptResponse.rows;
-      let cc_section_concept_uuid = cc_section_concept.reduce((acc, cur) => {
-        acc.push(cur.uuid);
-        return acc;
-      }, []);
-
-      let cc_section_concept_value_type_uuid = cc_section_concept.reduce((acc, cur) => {
+      let cc_section_value_type_uuid = cc_section.reduce((acc, cur) => {
         acc.push(cur.value_type_uuid);
         return acc;
       }, []);
-      let uniq_vt_uuid = [... new Set(cc_section_concept_value_type_uuid)];
+      let uniq_vt_uuid = [... new Set(cc_section_value_type_uuid)];
 
       let findValueTypeNameQuery = {
         required: false,
@@ -591,78 +574,109 @@ const ChiefComplaints = () => {
       const findCCSectionValueTypeResponse = await value_type_tbl.findAndCountAll(findValueTypeNameQuery);
       let value_type_concept_value = findCCSectionValueTypeResponse.rows;
 
-      let findQueryCCSectionConceptValues = {
+      // let findQueryCCSectionConcept = {
+      //   required: false,
+      //   attributes: ['uuid', 'concept_name', 'chief_complaint_section_uuid',
+      //     'value_type_uuid', 'is_multiple', 'is_mandatory'],
+      //   where: {
+      //     chief_complaint_section_uuid: { [Op.or]: cc_section_uuid },
+      //     is_active: 1,
+      //     status: 1
+      //   }
+      // }
+      // const findCCSectionConceptResponse = await chief_complaint_section_concept_tbl.findAndCountAll(findQueryCCSectionConcept);
+      // let cc_section_concept = findCCSectionConceptResponse.rows;
+      // let cc_section_concept_uuid = cc_section_concept.reduce((acc, cur) => {
+      //   acc.push(cur.uuid);
+      //   return acc;
+      // }, []);
+
+      // let cc_section_concept_value_type_uuid = cc_section_concept.reduce((acc, cur) => {
+      //   acc.push(cur.value_type_uuid);
+      //   return acc;
+      // }, []);
+      // let uniq_vt_uuid = [... new Set(cc_section_concept_value_type_uuid)];
+
+      // let findValueTypeNameQuery = {
+      //   required: false,
+      //   attributes: ['uuid', 'code', 'name'],
+      //   where: {
+      //     uuid: { [Op.or]: uniq_vt_uuid },
+      //     is_active: 1,
+      //     status: 1
+      //   }
+      // };
+      // const findCCSectionValueTypeResponse = await value_type_tbl.findAndCountAll(findValueTypeNameQuery);
+      // let value_type_concept_value = findCCSectionValueTypeResponse.rows;
+
+      let findQueryCCSectionValues = {
         required: false,
-        attributes: ['uuid', 'chief_complaint_section_concept_uuid',
+        attributes: ['uuid', 'chief_complaint_section_uuid',
           'value_name', 'display_order'],
         where: {
-          chief_complaint_section_concept_uuid: { [Op.or]: cc_section_concept_uuid },
+          chief_complaint_section_uuid: { [Op.or]: cc_section_uuid },
           is_active: 1,
           status: 1
         }
       }
-      const findCCSectionConceptValueResponse = await chief_complaint_section_concept_value_tbl.findAndCountAll(findQueryCCSectionConceptValues);
-      let cc_section_concept_value = findCCSectionConceptValueResponse.rows;
+      const findCCSectionValueResponse = await chief_complaints_section_values_tbl.findAndCountAll(findQueryCCSectionValues);
+      let cc_section_value = findCCSectionValueResponse.rows;
 
-
-
-      let concept_and_values_with_no_vt = [];
-      for (let i = 0; i < cc_section_concept.length; i++) {
-        let concept_obj = {
-          uuid: cc_section_concept[i].uuid,
-          concept_name: cc_section_concept[i].concept_name,
-          chief_complaint_section_uuid: cc_section_concept[i].chief_complaint_section_uuid,
-          value_type_uuid: cc_section_concept[i].value_type_uuid,
-          is_multiple: cc_section_concept[i].is_multiple,
-          is_mandatory: cc_section_concept[i].is_mandatory,
-          chief_complaint_section_concept_value: []
+      let section_values_with_no_vt = [];
+      for (let i = 0; i < cc_section.length; i++) {
+        let section_and_values_obj = {
+          uuid: cc_section[i].uuid,
+          chief_complaint_uuid: cc_section[i].chief_complaint_uuid,
+          section_name: cc_section[i].section_name,
+          value_type_uuid: cc_section[i].value_type_uuid,
+          display_order: cc_section[i].display_order,
+          chief_complaint_section_value: []
         };
-        for (let j = 0; j < cc_section_concept_value.length; j++) {
-          if (cc_section_concept[i].uuid === cc_section_concept_value[j].chief_complaint_section_concept_uuid) {
-            concept_obj.chief_complaint_section_concept_value.push(cc_section_concept_value[j])
+        for (let j = 0; j < cc_section_value.length; j++) {
+          if (cc_section[i].uuid === cc_section_value[j].chief_complaint_section_uuid) {
+            section_and_values_obj.chief_complaint_section_value.push(cc_section_value[j])
           }
         }
-        concept_and_values_with_no_vt.push(concept_obj)
+        section_values_with_no_vt.push(section_and_values_obj)
       }
 
-      let concept_and_values = [];
-      for (let i = 0; i < concept_and_values_with_no_vt.length; i++) {
+      let section_and_values = [];
+      for (let i = 0; i < section_values_with_no_vt.length; i++) {
         let concept_and_vt_obj = {
-          uuid: concept_and_values_with_no_vt[i].uuid,
-          concept_name: concept_and_values_with_no_vt[i].concept_name,
-          chief_complaint_section_uuid: concept_and_values_with_no_vt[i].chief_complaint_section_uuid,
-          value_type_uuid: concept_and_values_with_no_vt[i].value_type_uuid,
-          value_type_name:'',
-          value_type_code:'',
-          is_multiple: concept_and_values_with_no_vt[i].is_multiple,
-          is_mandatory: concept_and_values_with_no_vt[i].is_mandatory,
-          chief_complaint_section_concept_value: concept_and_values_with_no_vt[i].chief_complaint_section_concept_value
+          uuid: section_values_with_no_vt[i].uuid,
+          chief_complaint_uuid: section_values_with_no_vt[i].chief_complaint_uuid,
+          section_name: section_values_with_no_vt[i].section_name,
+          value_type_uuid: section_values_with_no_vt[i].value_type_uuid,
+          display_order: section_values_with_no_vt[i].display_order,
+          value_type_name: '',
+          value_type_code: '',
+          chief_complaint_section_value: section_values_with_no_vt[i].chief_complaint_section_value
         }
         for (let j = 0; j < value_type_concept_value.length; j++) {
-          if (concept_and_values_with_no_vt[i].value_type_uuid === value_type_concept_value[j].uuid) {
+          if (section_values_with_no_vt[i].value_type_uuid === value_type_concept_value[j].uuid) {
             concept_and_vt_obj.value_type_name = value_type_concept_value[j].name;
             concept_and_vt_obj.value_type_code = value_type_concept_value[j].code;
           }
         }
-        concept_and_values.push(concept_and_vt_obj);
+        section_and_values.push(concept_and_vt_obj);
       }
 
-      let section_and_concept_values = [];
-      for (let i = 0; i < cc_section.length; i++) {
-        const section_concept = {
-          uuid: cc_section[i].uuid,
-          chief_complaint_uuid: cc_section[i].chief_complaint_uuid,
-          section_name: cc_section[i].section_name,
-          display_order: cc_section[i].display_order,
-          chief_complaint_section_concept: []
-        }
-        for (let j = 0; j < concept_and_values.length; j++) {
-          if (cc_section[i].uuid === concept_and_values[j].chief_complaint_section_uuid) {
-            section_concept.chief_complaint_section_concept.push(concept_and_values[j])
-          }
-        }
-        section_and_concept_values.push(section_concept)
-      }
+      // let section_and_concept_values = [];
+      // for (let i = 0; i < cc_section.length; i++) {
+      //   const section_concept = {
+      //     uuid: cc_section[i].uuid,
+      //     chief_complaint_uuid: cc_section[i].chief_complaint_uuid,
+      //     section_name: cc_section[i].section_name,
+      //     display_order: cc_section[i].display_order,
+      //     chief_complaint_section_concept: []
+      //   }
+      //   for (let j = 0; j < concept_and_values.length; j++) {
+      //     if (cc_section[i].uuid === concept_and_values[j].chief_complaint_section_uuid) {
+      //       section_concept.chief_complaint_section_concept.push(concept_and_values[j])
+      //     }
+      //   }
+      //   section_and_concept_values.push(section_concept)
+      // }
 
       let cc_section_arr = [];
       for (let i = 0; i < cc.length; i++) {
@@ -677,9 +691,9 @@ const ChiefComplaints = () => {
           body_site: cc[i].body_site,
           chief_complaint_section: []
         };
-        for (let j = 0; j < section_and_concept_values.length; j++) {
-          if (cc[i].uuid === section_and_concept_values[j].chief_complaint_uuid) {
-            cc_obj.chief_complaint_section.push(section_and_concept_values[j])
+        for (let j = 0; j < section_and_values.length; j++) {
+          if (cc[i].uuid === section_and_values[j].chief_complaint_uuid) {
+            cc_obj.chief_complaint_section.push(section_and_values[j])
           }
         }
         cc_section_arr.push(cc_obj);

@@ -1,23 +1,23 @@
 module.exports = function (sequelize, DataTypes) {
-    const history_section = sequelize.define("history_sections",
+    const history_section_value = sequelize.define("history_section_values",
         {
             uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED,
                 primaryKey: true,
                 autoIncrement: true
             },
-            history_uuid: {
-                type: DataTypes.INTEGER(11).UNSIGNED,
-                allowNull: false
-            },
-            section_name: {
-                type: DataTypes.STRING(250),
-                allowNull: true
-            },
-            value_type_uuid: {
+            history_section_uuid: {
                 type: DataTypes.INTEGER(11),
                 allowNull: false,
                 defaultValue: 0,
+            },
+            value_name: {
+                type: DataTypes.STRING(100),
+                allowNull: true
+            },
+            is_default: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
             },
             display_order: {
                 type: DataTypes.INTEGER(11),
@@ -38,20 +38,24 @@ module.exports = function (sequelize, DataTypes) {
                 defaultValue: 1,
             },
             created_by: {
+
                 type: DataTypes.INTEGER(11),
                 allowNull: false,
                 defaultValue: 0,
                 validate: {
                     notNull: true
                 }
+
             },
             modified_by: {
+
                 type: DataTypes.INTEGER(11),
                 allowNull: false,
                 defaultValue: 0,
                 validate: {
                     notNull: true
                 }
+
             },
             created_date: {
                 type: DataTypes.DATE,
@@ -65,7 +69,7 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         {
-            tableName: 'history_sections',
+            tableName: "history_section_values",
             createdAt: 'created_date',
             updatedAt: 'modified_date',
             timestamps: false,
@@ -76,11 +80,5 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    history_section.associate = models => {
-        history_section.belongsTo(models.history_section_concepts, {
-            foreignKey: 'uuid',
-            targetKey: 'history_section_uuid'
-        });
-    }
-    return history_section;
+    return history_section_value;
 };
