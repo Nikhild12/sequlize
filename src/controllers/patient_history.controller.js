@@ -11,46 +11,40 @@ const patient_history = () => {
 
     const _create_patient_history = async (req, res) => {
 
-        if (Object.keys(req.body).length != 0) {
+        const { user_uuid } = req.headers;
+        const patientHistoryData = req.body;
 
-            const { user_uuid } = req.headers;
-            const patientHistoryData = req.body;
+        if (user_uuid > 0 && patientHistoryData) {
 
-            if (user_uuid > 0 && patientHistoryData) {
+            try {
 
-                try {
+                patientHistoryData.forEach(hsD => {
+                    hsD.status = 1;
+                    hsD.is_active = 1;
+                    hsD.created_by = user_uuid;
+                    hsD.modified_by = user_uuid;
 
-                    patientHistoryData.status = 1;
-                    patientHistoryData.is_active = patientHistoryData.is_active;
-                    patientHistoryData.created_by = user_uuid;
-                    patientHistoryData.modified_by = user_uuid;
+                    hsD.created_date = new Date();
+                    hsD.modified_date = new Date();
+                    hsD.revision = 1;
+                });
 
-                    patientHistoryData.created_date = new Date();
-                    patientHistoryData.modified_date = new Date();
-                    patientHistoryData.revision = 1;
+                const patientHistoryCreatedData = await patient_history_tbl.bulkCreate(
+                    patientHistoryData,
+                    { returning: true }
+                );
 
-                    const patientHistoryCreatedData = await patient_history_tbl.create(
-                        patientHistoryData,
-                        { returning: true }
-                    );
-
-                    if (patientHistoryCreatedData) {
-                        patientHistoryData.uuid = patientHistoryCreatedData.uuid;
-                        return res.status(200).send({
-                            statusCode: 200,
-                            message: "Patient history inserted successfully",
-                            responseContents: patientHistoryData
-                        });
-                    }
-
-                } catch (ex) {
-                    console.log(ex.message);
-                    return res.status(400).send({ statusCode: 400, message: ex.message });
+                if (patientHistoryCreatedData) {
+                    return res.status(200).send({
+                        statusCode: 200,
+                        message: "Patient history inserted successfully",
+                        responseContents: patientHistoryData
+                    });
                 }
-            } else {
-                return res
-                    .status(400)
-                    .send({ code: httpStatus[400], message: "No Request Body Found" });
+
+            } catch (ex) {
+                console.log(ex.message);
+                return res.status(400).send({ statusCode: 400, message: ex.message });
             }
         } else {
             return res
