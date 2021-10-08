@@ -34,7 +34,6 @@ const patient_examination = () => {
                         { returning: true }
                     );
 
-                    console.log("..>>=========== RETURN ==============>..", patientExaminationCreatedData);
 
                     if (patientExaminationCreatedData) {
                         patientExaminationData.uuid = patientExaminationCreatedData.uuid;
