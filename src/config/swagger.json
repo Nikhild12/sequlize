@@ -11204,6 +11204,76 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/patient_examination/createPatientExamination": {
+			"post": {
+				"description": "To create a patient examination Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "createPatientExamination",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createPatientExamination"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient Examination"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient_history/createPatientHistory": {
+			"post": {
+				"description": "To create a patient history Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "createPatientHistory",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/createPatientHistory"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient History"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -19729,6 +19799,134 @@
 				"examinationCategoryUuid": {
 					"type": "Number",
 					"example": 1
+				}
+			}
+		},
+		"createPatientExamination": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"department_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_doctor_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_treatment_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"treatment_kit_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_type_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"consultation_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"examination_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"examination_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"examination_sub_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"comments": {
+						"type": "String",
+						"example": "Patient examinations"
+					}
+				}
+			}
+		},
+		"createPatientHistory": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"department_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_doctor_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"treatment_kit_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_treatment_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_type_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"consultation_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_sub_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_duration": {
+						"type": "Number",
+						"example": 1
+					},
+					"history_duration_period_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"comments": {
+						"type": "String",
+						"example": "Patient history"
+					}
 				}
 			}
 		}

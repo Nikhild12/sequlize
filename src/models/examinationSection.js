@@ -14,6 +14,11 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING(250),
                 allowNull: true
             },
+            value_type_uuid: {
+                type: DataTypes.INTEGER(11),
+                allowNull: false,
+                defaultValue: 0,
+            },
             display_order: {
                 type: DataTypes.INTEGER(11),
                 allowNull: false,

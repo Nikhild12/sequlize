@@ -133,6 +133,12 @@ const historyRoutes = require('./history.route');
 // examination routes
 const examinationRoutes = require('./examination.route');
 
+// patient examination routes
+const patientExaminationRoutes = require('./patient_examination.route');
+
+// patient history routes
+const patientHistoryRoutes = require('./patient_history.route');
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -309,5 +315,11 @@ serviceRouter.use("/history", historyRoutes);
 
 //examination
 serviceRouter.use("/examination", examinationRoutes);
+
+//patient examination
+serviceRouter.use("/patient_examination", patientExaminationRoutes);
+
+//patient examination
+serviceRouter.use("/patient_history", patientHistoryRoutes);
 
 module.exports = serviceRouter;
