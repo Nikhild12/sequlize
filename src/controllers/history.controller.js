@@ -187,7 +187,7 @@ const historys = () => {
                     history_section_value: []
                 };
                 for (let j = 0; j < hC_section_value.length; j++) {
-                    if (hC_section_concept[i].uuid === hC_section_value[j].history_section_uuid) {
+                    if (hC_section[i].uuid === hC_section_value[j].history_section_uuid) {
                         concept_obj.history_section_value.push(hC_section_value[j])
                     }
                 }
