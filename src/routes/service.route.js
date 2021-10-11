@@ -139,6 +139,9 @@ const patientExaminationRoutes = require('./patient_examination.route');
 // patient history routes
 const patientHistoryRoutes = require('./patient_history.route');
 
+// Diet Kitchen routes
+const dietKitchenRoutes = require('./diet_kitchen.route');
+
 // EMR Work Flow Settings Routes
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
 
@@ -321,5 +324,8 @@ serviceRouter.use("/patient_examination", patientExaminationRoutes);
 
 //patient examination
 serviceRouter.use("/patient_history", patientHistoryRoutes);
+
+//diet kitchen
+serviceRouter.use("/diet_kitchen", dietKitchenRoutes);
 
 module.exports = serviceRouter;

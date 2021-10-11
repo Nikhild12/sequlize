@@ -11274,6 +11274,47 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/diet_kitchen/getDietMaster": {
+			"post": {
+				"description": "To get diet master Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "getDietMaster",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getDietMaster"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diet Kitchen"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -19927,6 +19968,31 @@
 						"type": "String",
 						"example": "Patient history"
 					}
+				}
+			}
+		},
+		"getDietMaster": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "Number",
+					"example": 0
+				},
+				"paginationSize": {
+					"type": "Number",
+					"example": 10
+				},
+				"sortField": {
+					"type": "String",
+					"example": "uuid"
+				},
+				"sortOrder": {
+					"type": "String",
+					"example": "DESC"
+				},
+				"search": {
+					"type": "String",
+					"example": "%%%"
 				}
 			}
 		}
