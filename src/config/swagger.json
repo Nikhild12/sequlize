@@ -11315,6 +11315,47 @@
 				"x-auth-type": "Application & Application User",
 				"x-throttling-tier": "Unlimited"
 			}
+		},
+		"/api/diet_kitchen/searchDietMaster": {
+			"post": {
+				"description": "To search diet master code or name",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "searchDietMaster",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/searchDietMaster"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diet Kitchen"
+				],
+				"responses": {
+					"200": {
+						"description": "Searched Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
 		}
 	},
 	"definitions": {
@@ -19990,6 +20031,15 @@
 					"type": "String",
 					"example": "DESC"
 				},
+				"search": {
+					"type": "String",
+					"example": "%%%"
+				}
+			}
+		},
+		"searchDietMaster": {
+			"type": "object",
+			"properties": {
 				"search": {
 					"type": "String",
 					"example": "%%%"

@@ -14,14 +14,13 @@ const dietKitchen = () => {
             const reqData = req.body;
             const { user_uuid, authorization } = req.headers;
             const _url = config.wso2DietKitchen + 'dietmaster/getAllDietMaster';
-            
+
             let options = {
                 uri: _url,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 'accept-language': 'en',
                     user_uuid: user_uuid,
-                    // Authorization: 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2',
                     Authorization: authorization
                 },
                 body: {
@@ -58,8 +57,55 @@ const dietKitchen = () => {
                 });
         }
     }
+
+    const _searchDietMaster = async (req, res) => {
+        try {
+            let searchData = req.body;
+            const { user_uuid, authorization } = req.headers;
+
+            const _url = config.wso2DietKitchen + 'dietmaster/getDietMasterBySearch';
+
+            let options = {
+                uri: _url,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 'accept-language': 'en',
+                    user_uuid: user_uuid,
+                    Authorization: authorization
+                },
+                body: {
+                    search: searchData.search
+                },
+                json: true
+            };
+            const dietKitchen_search_results = await rp(options);
+
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: 'success',
+                    statusCode: httpStatus.OK,
+                    msg: 'Searched diet master data successfully!',
+                    message: dietKitchen_search_results.message,
+                    totalRecords: dietKitchen_search_results.totalRecords,
+                    responseContents: dietKitchen_search_results.responseContents
+                });
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    status: "error",
+                    statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+                    msg: 'Failed to search diet master details',
+                    actualMsg: errorMsg
+                });
+        }
+    }
     return {
-        getDietMaster: _getDietMaster
+        getDietMaster: _getDietMaster,
+        searchDietMaster: _searchDietMaster
     };
 };
 
