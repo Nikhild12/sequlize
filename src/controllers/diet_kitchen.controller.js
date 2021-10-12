@@ -13,7 +13,7 @@ const dietKitchen = () => {
         try {
             const reqData = req.body;
             const { user_uuid, authorization } = req.headers;
-            console.log('..>>===== authorization ===>..',authorization);
+            console.log('..>>===== authorization ===>..',req.headers);
             const _url = config.wso2DietKitchen + 'dietmaster/getAllDietMaster';
 
             let options = {
