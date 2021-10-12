@@ -90,6 +90,7 @@ const config = {
   wso2InvestUrl: envVars.wso2InvestUrl,
   wso2AppUrl: envVars.wso2AppUrl,
   wso2BloodBankUrl: envVars.wso2BloodBankUrl,
+  wso2DietKitchen: envVars.wso2DietKitchenUrl,
   serverName: envVars.SERVER_NAME,
   isBlockChain: envVars.BLOCK_CHAIN,
   blockChainURL: envVars.BLOCK_CHAIN_URL,
