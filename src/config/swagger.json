@@ -11280,40 +11280,49 @@
 				"description": "To get diet master Data",
 				"parameters": [
 					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"in": "header",
-						"name": "authorization",
-						"required": true,
-						"type": "string"
-					},
-					{
 						"in": "body",
 						"name": "getDietMaster",
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/getDietMaster"
 						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
 					}
 				],
 				"produces": [
 					"application/json",
 					"application/xml"
 				],
-				"tags": [
-					"Diet Kitchen"
-				],
 				"responses": {
 					"200": {
-						"description": "Fetched Successfully"
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
 					}
 				},
-				"x-auth-type": "Application & Application User",
-				"x-throttling-tier": "Unlimited"
+				"tags": [
+					"Diet Kitchen"
+				]
 			}
 		},
 		"/api/diet_kitchen/searchDietMaster": {
