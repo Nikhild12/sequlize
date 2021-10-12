@@ -11275,6 +11275,41 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient_history/create_patient_history_section_values": {
+			"post": {
+				"description": "To create a patient history, section and section values",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "create_patient_history_section_values",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/create_patient_history_section_values"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient History"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/diet_kitchen/getDietMaster": {
 			"post": {
 				"description": "To get diet master Data",
@@ -20021,37 +20056,161 @@
 				}
 			}
 		},
-		"getDietMaster": {
-			"type": "object",
-			"properties": {
-				"pageNo": {
-					"type": "Number",
-					"example": 0
+		"create_patient_history_section_values": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"department_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_doctor_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"treatment_kit_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"patient_treatment_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"encounter_type_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"consultation_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_sub_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"history_duration": {
+						"type": "Number",
+						"example": 1
+					},
+					"history_duration_period_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"comments": {
+						"type": "String",
+						"example": "Patient history"
+					},
+					"patient_history_sections": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"patient_history_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"history_section_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"history_section_name": {
+									"type": "String",
+									"example": "Apparent State of Overall Health"
+								},
+								"value_type_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"value_type_name": {
+									"type": "String",
+									"example": "Free Text"
+								},
+								"comments": {
+									"type": "String",
+									"example": "Patient history"
+								},
+								"patient_history_section_values": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"patient_history_section_uuid": {
+												"type": "Number",
+												"example": 1
+											},
+											"history_section_value_uuid": {
+												"type": "Number",
+												"example": 1
+											},
+											"history_section_value_name": {
+												"type": "String",
+												"example": "Patient history"
+											},
+											"comments": {
+												"type": "String",
+												"example": "Patient history"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				},
-				"paginationSize": {
-					"type": "Number",
-					"example": 10
+				"getDietMaster": {
+					"type": "object",
+					"properties": {
+						"pageNo": {
+							"type": "Number",
+							"example": 0
+						},
+						"paginationSize": {
+							"type": "Number",
+							"example": 10
+						},
+						"sortField": {
+							"type": "String",
+							"example": "uuid"
+						},
+						"sortOrder": {
+							"type": "String",
+							"example": "DESC"
+						},
+						"search": {
+							"type": "String",
+							"example": "%%%"
+						}
+					}
 				},
-				"sortField": {
-					"type": "String",
-					"example": "uuid"
-				},
-				"sortOrder": {
-					"type": "String",
-					"example": "DESC"
-				},
-				"search": {
-					"type": "String",
-					"example": "%%%"
-				}
-			}
-		},
-		"searchDietMaster": {
-			"type": "object",
-			"properties": {
-				"search": {
-					"type": "String",
-					"example": "%%%"
+				"searchDietMaster": {
+					"type": "object",
+					"properties": {
+						"search": {
+							"type": "String",
+							"example": "%%%"
+						}
+					}
 				}
 			}
 		}
