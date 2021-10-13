@@ -66,7 +66,7 @@ const patient_history = () => {
                 let patientHistoryArr = [];
                 for (let i = 0; i < patientHistorySectionValuesData.length; i++) {
                     const patientHistoryObj = {
-                        facility_uuid: 2,
+                        facility_uuid: patientHistorySectionValuesData[i].facility_uuid,
                         department_uuid: patientHistorySectionValuesData[i].department_uuid,
                         patient_uuid: patientHistorySectionValuesData[i].patient_uuid,
                         encounter_uuid: patientHistorySectionValuesData[i].encounter_uuid,
@@ -93,67 +93,82 @@ const patient_history = () => {
                     patientHistoryArr.push(patientHistoryObj)
                 }
 
-                let patientHistorySectionArr = [];
-                let patientHistorySectionValuesArr = [];
-                for (let i = 0; i < patientHistorySectionValuesData.length; i++) {
-                    const phSections = patientHistorySectionValuesData[i].patient_history_sections;
-                    for (let j = 0; j < phSections.length; j++) {
-                        const phSectionObj = {
-                            patient_history_uuid: phSections[j].patient_history_uuid,
-                            history_section_uuid: phSections[j].history_section_uuid,
-                            history_section_name: phSections[j].history_section_name,
-                            value_type_uuid: phSections[j].value_type_uuid,
-                            value_type_name: phSections[j].value_type_name,
-                            comments: phSections[j].comments,
-                            status: 1,
-                            is_active: 1,
-                            created_by: user_uuid,
-                            modified_by: user_uuid,
-                            created_date: new Date(),
-                            modified_date: new Date(),
-                            revision: 1
-                        }
-                        patientHistorySectionArr.push(phSectionObj);
-
-                        let phSecValues = phSections[j].patient_history_section_values;
-                        for (let k = 0; k < phSecValues.length; k++) {
-                            const phSecValuesObj = {
-                                patient_history_section_uuid: phSections[j].uuid,
-                                history_section_value_uuid: phSecValues[k].history_section_value_uuid,
-                                history_section_value_name: phSecValues[k].history_section_value_name,
-                                comments: phSecValues[k].comments,
-                                status: 1,
-                                is_active: 1,
-                                created_by: user_uuid,
-                                modified_by: user_uuid,
-                                created_date: new Date(),
-                                modified_date: new Date(),
-                                revision: 1
-                            }
-                            patientHistorySectionValuesArr.push(phSecValuesObj);
-                        }
-                    }
-                }
-
                 const patientHistoryCreatedData = await patient_history_tbl.bulkCreate(
                     patientHistoryArr,
                     { returning: true }
                 );
+
+
+                let patientHistorySectionArr = [];
+                for (let i = 0; i < patientHistorySectionValuesData.length; i++) {
+                    for (let j = 0; j < patientHistoryCreatedData.length; j++) {
+                        if (patientHistorySectionValuesData[i].facility_uuid = patientHistoryCreatedData[j].facility_uuid
+                            && patientHistorySectionValuesData[i].department_uuid == patientHistoryCreatedData[j].department_uuid
+                            && patientHistorySectionValuesData[i].patient_uuid == patientHistoryCreatedData[j].patient_uuid
+                            && patientHistorySectionValuesData[i].encounter_uuid == patientHistoryCreatedData[j].encounter_uuid
+                            && patientHistorySectionValuesData[i].encounter_type_uuid == patientHistoryCreatedData[j].encounter_type_uuid
+                            && patientHistorySectionValuesData[i].history_uuid == patientHistoryCreatedData[j].history_uuid) {
+                            const phSections = patientHistorySectionValuesData[i].patient_history_sections;
+                            for (let k = 0; k < phSections.length; k++) {
+                                const phSectionObj = {
+                                    patient_history_uuid: patientHistoryCreatedData[j].uuid,
+                                    history_section_uuid: phSections[k].history_section_uuid,
+                                    history_section_name: phSections[k].history_section_name,
+                                    value_type_uuid: phSections[k].value_type_uuid,
+                                    value_type_name: phSections[k].value_type_name,
+                                    comments: phSections[k].comments,
+                                    status: 1,
+                                    is_active: 1,
+                                    created_by: user_uuid,
+                                    modified_by: user_uuid,
+                                    created_date: new Date(),
+                                    modified_date: new Date(),
+                                    revision: 1
+                                }
+                                patientHistorySectionArr.push(phSectionObj);
+                            }
+                        }
+                    }
+                }
 
                 const patientHistorySectionCreatedData = await patient_history_section_tbl.bulkCreate(
                     patientHistorySectionArr,
                     { returning: true }
                 );
 
-                const patientHistorySectionValueCreatedData = await patient_history_section_value_tbl.bulkCreate(
-                    patientHistorySectionValuesArr,
-                    { returning: true }
-                );
+                let patientHistorySectionValueArr = [];
+                for (let i = 0; i < patientHistorySectionValuesData.length; i++) {
+                    for (let j = 0; j < patientHistoryCreatedData.length; j++) {
+                        if (patientHistorySectionValuesData[i].facility_uuid = patientHistoryCreatedData[j].facility_uuid
+                            && patientHistorySectionValuesData[i].department_uuid == patientHistoryCreatedData[j].department_uuid
+                            && patientHistorySectionValuesData[i].patient_uuid == patientHistoryCreatedData[j].patient_uuid
+                            && patientHistorySectionValuesData[i].encounter_uuid == patientHistoryCreatedData[j].encounter_uuid
+                            && patientHistorySectionValuesData[i].encounter_type_uuid == patientHistoryCreatedData[j].encounter_type_uuid
+                            && patientHistorySectionValuesData[i].history_uuid == patientHistoryCreatedData[j].history_uuid) {
+                            const phSections = patientHistorySectionValuesData[i].patient_history_sections;
+                            for (let k = 0; k < phSections.length; k++) {
+                                for (let l = 0; l < patientHistorySectionCreatedData.length; l++) {
+                                if (phSections[k].history_section_uuid == patientHistorySectionCreatedData[l].history_section_uuid &&
+                                    phSections[k].history_section_name == patientHistorySectionCreatedData[l].history_section_name &&
+                                    phSections[k].value_type_uuid == patientHistorySectionCreatedData[l].value_type_uuid) {
+                                            const element = phSections[k].patient_history_section_values;
+                                            patientHistorySectionValueArr.push(element)
+                                        }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // const patientHistorySectionValueCreatedData = await patient_history_section_value_tbl.bulkCreate(
+                //     patientHistorySectionValuesArr,
+                //     { returning: true }
+                // );
 
                 res.json({
-                    patientHistoryData: patientHistoryCreatedData,
-                    patientHistorySectionData: patientHistorySectionCreatedData,
-                    patientHistorySectionValueData: patientHistorySectionValueCreatedData
+                    // patientHistoryData: patientHistoryCreatedData,
+                    // patientHistorySectionData: patientHistorySectionCreatedData,
+                    patientHistorySectionValueData: patientHistorySectionValueArr
                 })
             } catch (ex) {
                 console.log(ex.message);
