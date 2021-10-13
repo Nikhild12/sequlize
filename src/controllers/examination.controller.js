@@ -157,7 +157,7 @@ const examinations = () => {
                     examination_section_values: []
                 }
                 for (let j = 0; j < examination_section_value.length; j++) {
-                    if (examination_section_concept[i].uuid === examination_section_value[j].examination_section_uuid) {
+                    if (examination_section[i].uuid === examination_section_value[j].examination_section_uuid) {
                         section_and_values_obj.examination_section_values.push(examination_section_value[j])
                     }
                 }
@@ -238,6 +238,7 @@ const examinations = () => {
                 });
 
         } catch (err) {
+            console.log("..>>======= ERROR ========>..",err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.OK)
