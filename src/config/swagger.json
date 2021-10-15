@@ -3116,6 +3116,39 @@
 				}
 			}
 		},
+		"/api/patient-chief-complaints/create_chief_complaints_section_and_section_value": {
+			"post": {
+				"description": "To create Patient chief Complaints, patient chief complaint section and section values",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "create_chief_complaints_section_and_section_value",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/create_chief_complaints_section_and_section_value"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"PatientChiefComplaints"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				}
+			}
+		},
 		"/api/patient-chief-complaints/getMockJson": {
 			"get": {
 				"description": "To get Patient chief Complaints",
@@ -11221,6 +11254,41 @@
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/createPatientExamination"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient Examination"
+				],
+				"responses": {
+					"200": {
+						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient_examination/create_exmination_section_and_section_values": {
+			"post": {
+				"description": "To create a patient examination, section and section values Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "create_exmination_section_and_section_values",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/create_exmination_section_and_section_values"
 						}
 					}
 				],
@@ -19988,6 +20056,110 @@
 				}
 			}
 		},
+		"create_exmination_section_and_section_values": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "Number",
+						"example": 12612
+					},
+					"department_uuid": {
+						"type": "Number",
+						"example": 27
+					},
+					"patient_uuid": {
+						"type": "Number",
+						"example": 96033
+					},
+					"encounter_uuid": {
+						"type": "Number",
+						"example": 71622
+					},
+					"encounter_doctor_uuid": {
+						"type": "Number",
+						"example": 71297
+					},
+					"patient_treatment_uuid": {
+						"type": "Number",
+						"example": 0
+					},
+					"treatment_kit_uuid": {
+						"type": "Number",
+						"example": 0
+					},
+					"encounter_type_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"consultation_uuid": {
+						"type": "Number",
+						"example": 0
+					},
+					"examination_category_uuid": {
+						"type": "Number",
+						"example": 2
+					},
+					"examination_sub_category_uuid": {
+						"type": "Number",
+						"example": 0
+					},
+					"examination_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"comments": {
+						"type": "String",
+						"example": ""
+					},
+					"patient_examination_sections": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"examination_section_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"examination_section_name": {
+									"type": "String",
+									"example": "Apparent State of Overall Health"
+								},
+								"value_type_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"value_type_name": {
+									"type": "String",
+									"example": "Free Text"
+								},
+								"patient_examination_section_values": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"examination_section_value_uuid": {
+												"type": "Number",
+												"example": 1
+											},
+											"examination_section_value_name": {
+												"type": "String",
+												"example": ""
+											},
+											"comments": {
+												"type": "String",
+												"example": ""
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"createPatientHistory": {
 			"type": "array",
 			"items": {
@@ -20177,40 +20349,156 @@
 							}
 						}
 					}
-				},
-				"getDietMaster": {
-					"type": "object",
-					"properties": {
-						"pageNo": {
-							"type": "Number",
-							"example": 0
-						},
-						"paginationSize": {
-							"type": "Number",
-							"example": 10
-						},
-						"sortField": {
-							"type": "String",
-							"example": "uuid"
-						},
-						"sortOrder": {
-							"type": "String",
-							"example": "DESC"
-						},
-						"search": {
-							"type": "String",
-							"example": "%%%"
+				}
+			}
+		},
+		"create_chief_complaints_section_and_section_value": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"facility_uuid": {
+						"type": "Number",
+						"example": 12612
+					},
+					"department_uuid": {
+						"type": "Number",
+						"example": 27
+					},
+					"patient_uuid": {
+						"type": "Number",
+						"example": 96033
+					},
+					"encounter_uuid": {
+						"type": "Number",
+						"example": 71622
+					},
+					"encounter_doctor_uuid": {
+						"type": "Number",
+						"example": 71297
+					},
+					"encounter_type_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"treatment_kit_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"patient_treatment_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"consultation_uuid": {
+						"type": "Number",
+						"example": 0
+					},
+					"chief_complaint_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"chief_complaint_duration": {
+						"type": "Number",
+						"example": 2
+					},
+					"chief_complaint_duration_period_uuid": {
+						"type": "Number",
+						"example": 1
+					},
+					"start_date": {
+						"type": "String",
+						"example": "2021-10-15"
+					},
+					"end_date": {
+						"type": "String",
+						"example": "2021-10-15"
+					},
+					"performed_date": {
+						"type": "String",
+						"example": "2021-10-15"
+					},
+					"comments": {
+						"type": "String",
+						"example": "Patient chief complaints"
+					},
+					"patient_chief_complaint_sections": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"chief_complaint_section_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"chief_complaint_section_name": {
+									"type": "String",
+									"example": "Apparent State of Overall Health"
+								},
+								"value_type_uuid": {
+									"type": "Number",
+									"example": 1
+								},
+								"value_type_name": {
+									"type": "String",
+									"example": "Free Text"
+								},
+								"patient_chief_complaint_section_values": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"chief_complaint_section_value_uuid": {
+												"type": "Number",
+												"example": 1
+											},
+											"chief_complaint_section_value_name": {
+												"type": "String",
+												"example": "chief_complaint_section_value_name"
+											},
+											"comments": {
+												"type": "String",
+												"example": "comments"
+											}
+										}
+									}
+								}
+							}
 						}
 					}
+				}
+			}
+		},
+		"getDietMaster": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "Number",
+					"example": 0
 				},
-				"searchDietMaster": {
-					"type": "object",
-					"properties": {
-						"search": {
-							"type": "String",
-							"example": "%%%"
-						}
-					}
+				"paginationSize": {
+					"type": "Number",
+					"example": 10
+				},
+				"sortField": {
+					"type": "String",
+					"example": "uuid"
+				},
+				"sortOrder": {
+					"type": "String",
+					"example": "DESC"
+				},
+				"search": {
+					"type": "String",
+					"example": "%%%"
+				}
+			}
+		},
+		"searchDietMaster": {
+			"type": "object",
+			"properties": {
+				"search": {
+					"type": "String",
+					"example": "%%%"
 				}
 			}
 		}
