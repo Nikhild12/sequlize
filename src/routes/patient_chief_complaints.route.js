@@ -19,5 +19,5 @@ PatientChiefCompRoutes.route("/getMockJson").get(
 PatientChiefCompRoutes.route("/get-prev-pat-cc-by-patientId").get(
   PatientChiefComplaints.getPreviousChiefComplaintsByPatientId
 );
-
+PatientChiefCompRoutes.route("/create_chief_complaints_section_and_section_value").post(  PatientChiefComplaints.create_chief_complaints_section_and_section_values);
 module.exports = PatientChiefCompRoutes;
