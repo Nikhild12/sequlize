@@ -55,6 +55,7 @@ const patient_history = () => {
         }
     }
 
+    //H30-44040 patient history, history section and section value insert api is done by vignesh k
     const _create_patient_history_section_and_section_values = async (req, res) => {
 
         const { user_uuid } = req.headers;
