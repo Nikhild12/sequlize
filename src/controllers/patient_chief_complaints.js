@@ -24,6 +24,8 @@ const chief_complaints_tbl = sequelizeDb.chief_complaints;
 const chief_complaints_duration_tbl =
   sequelizeDb.chief_complaint_duration_periods;
 const encounter_tbl = sequelizeDb.encounter;
+const patient_chief_complaints_section_tbl = sequelizeDb.patient_chief_complaint_sections;
+const patient_chief_complaints_section_value_tbl = sequelizeDb.patient_chief_complaint_section_values
 
 const emr_constants = require("../config/constants");
 
@@ -345,11 +347,158 @@ const PatientChiefComplaints = () => {
     }
   };
 
+  //H30-44040 patient chief complaints, chief complaints section and section value insert api is done by vignesh k
+  const _create_chief_complaints_section_and_section_values = async (req, res) => {
+
+    const { user_uuid } = req.headers;
+    const chiefComplaintsSectionValuesData = req.body;
+
+    if (user_uuid > 0 && chiefComplaintsSectionValuesData) {
+      try {
+
+        let patientChiefComplaintsArr = [];
+        for (let i = 0; i < chiefComplaintsSectionValuesData.length; i++) {
+          const patientChiefComplaints_obj = {
+            facility_uuid: chiefComplaintsSectionValuesData[i].facility_uuid,
+            department_uuid: chiefComplaintsSectionValuesData[i].department_uuid,
+            patient_uuid: chiefComplaintsSectionValuesData[i].patient_uuid,
+            encounter_uuid: chiefComplaintsSectionValuesData[i].encounter_uuid,
+            encounter_doctor_uuid: chiefComplaintsSectionValuesData[i].encounter_doctor_uuid,
+            treatment_kit_uuid: chiefComplaintsSectionValuesData[i].treatment_kit_uuid,
+            patient_treatment_uuid: chiefComplaintsSectionValuesData[i].patient_treatment_uuid,
+            encounter_type_uuid: chiefComplaintsSectionValuesData[i].encounter_type_uuid,
+            consultation_uuid: chiefComplaintsSectionValuesData[i].consultation_uuid,
+            chief_complaint_uuid: chiefComplaintsSectionValuesData[i].chief_complaint_uuid,
+            chief_complaint_duration: chiefComplaintsSectionValuesData[i].chief_complaint_duration,
+            chief_complaint_duration_period_uuid: chiefComplaintsSectionValuesData[i].chief_complaint_duration_period_uuid,
+            start_date: chiefComplaintsSectionValuesData[i].start_date,
+            end_date: chiefComplaintsSectionValuesData[i].end_date,
+            performed_date: chiefComplaintsSectionValuesData[i].performed_date,
+            performed_by: user_uuid,
+            comments: chiefComplaintsSectionValuesData[i].comments,
+            status: 1,
+            is_active: 1,
+            created_by: user_uuid,
+            modified_by: user_uuid,
+            created_date: new Date(),
+            modified_date: new Date(),
+            revision: 1
+          }
+          patientChiefComplaintsArr.push(patientChiefComplaints_obj);
+        }
+
+        const patientChiefComplaintCreatedData = await patient_chief_complaints_tbl.bulkCreate(
+          patientChiefComplaintsArr,
+          { returning: true }
+        );
+
+
+        let patientChiefComplaintsSectionArr = [];
+        let patientChiefComplaintsSectionValuesArr = [];
+        for (let i = 0; i < chiefComplaintsSectionValuesData.length; i++) {
+          for (let j = 0; j < patientChiefComplaintCreatedData.length; j++) {
+            if (
+              chiefComplaintsSectionValuesData[i].facility_uuid == patientChiefComplaintCreatedData[j].facility_uuid &&
+              chiefComplaintsSectionValuesData[i].department_uuid == patientChiefComplaintCreatedData[j].department_uuid &&
+              chiefComplaintsSectionValuesData[i].patient_uuid == patientChiefComplaintCreatedData[j].patient_uuid &&
+              chiefComplaintsSectionValuesData[i].encounter_uuid == patientChiefComplaintCreatedData[j].encounter_uuid &&
+              chiefComplaintsSectionValuesData[i].encounter_type_uuid == patientChiefComplaintCreatedData[j].encounter_type_uuid &&
+              chiefComplaintsSectionValuesData[i].chief_complaint_uuid == patientChiefComplaintCreatedData[j].chief_complaint_uuid) {
+              const p_cc_sections = chiefComplaintsSectionValuesData[i].patient_chief_complaint_sections;
+              for (let k = 0; k < p_cc_sections.length; k++) {
+                patientChiefComplaintsSectionValuesArr.push(p_cc_sections[k]);
+                const cc_sectionObj = {
+                  patient_chief_complaint_uuid: patientChiefComplaintCreatedData[j].uuid,
+                  chief_complaint_section_uuid: p_cc_sections[k].chief_complaint_section_uuid,
+                  chief_complaint_section_name: p_cc_sections[k].chief_complaint_section_name,
+                  value_type_uuid: p_cc_sections[k].value_type_uuid,
+                  value_type_name: p_cc_sections[k].value_type_name,
+                  comments: p_cc_sections[k].comments,
+                  status: 1,
+                  is_active: 1,
+                  created_by: user_uuid,
+                  modified_by: user_uuid,
+                  created_date: new Date(),
+                  modified_date: new Date(),
+                  revision: 1
+                }
+                patientChiefComplaintsSectionArr.push(cc_sectionObj);
+              }
+            }
+          }
+        }
+
+        const patientChiefComplaintSectionCreatedData = await patient_chief_complaints_section_tbl.bulkCreate(
+          patientChiefComplaintsSectionArr,
+          { returning: true }
+        );
+
+
+        let patientChiefComplaintSectionValuesArr_final = [];
+        for (let i = 0; i < patientChiefComplaintSectionCreatedData.length; i++) {
+          for (let j = 0; j < patientChiefComplaintsSectionValuesArr.length; j++) {
+            if (
+              patientChiefComplaintSectionCreatedData[i].chief_complaint_section_uuid == patientChiefComplaintsSectionValuesArr[j].chief_complaint_section_uuid &&
+              patientChiefComplaintSectionCreatedData[i].chief_complaint_section_name == patientChiefComplaintsSectionValuesArr[j].chief_complaint_section_name &&
+              patientChiefComplaintSectionCreatedData[i].value_type_uuid == patientChiefComplaintsSectionValuesArr[j].value_type_uuid
+            ) {
+              let cc_section_values = patientChiefComplaintsSectionValuesArr[j].patient_chief_complaint_section_values;
+              for (let k = 0; k < cc_section_values.length; k++) {
+                const ccSectionValuesObj = {
+                  patient_chief_complaint_section_uuid: patientChiefComplaintSectionCreatedData[i].uuid,
+                  chief_complaint_section_value_uuid: cc_section_values[k].chief_complaint_section_value_uuid,
+                  chief_complaint_section_value_name: cc_section_values[k].chief_complaint_section_value_name,
+                  status: 1,
+                  is_active: 1,
+                  created_by: user_uuid,
+                  modified_by: user_uuid,
+                  created_date: new Date(),
+                  modified_date: new Date(),
+                  revision: 1
+                }
+                patientChiefComplaintSectionValuesArr_final.push(ccSectionValuesObj);
+              }
+            }
+          }
+        }
+
+        const patientChiefComplaintSectionValueCreatedData = await patient_chief_complaints_section_value_tbl.bulkCreate(
+          patientChiefComplaintSectionValuesArr_final,
+          { returning: true }
+        );
+
+        if (patientChiefComplaintCreatedData &&
+          patientChiefComplaintSectionCreatedData &&
+          patientChiefComplaintSectionValueCreatedData) {
+          return res.status(200).send({
+            statusCode: 200,
+            message: "Patient chief complaints, Patient chief complaints sections and Patient chief complaints section values inserted successfully",
+            responseContents: {
+              patientChiefComplaintCreatedData: patientChiefComplaintCreatedData,
+              patientChiefComplaintSectionCreatedData: patientChiefComplaintSectionCreatedData,
+              patientChiefComplaintSectionValueCreatedData: patientChiefComplaintSectionValueCreatedData
+            }
+          });
+        }
+
+      } catch (ex) {
+        console.log(ex.message);
+        return res.status(400).send({ statusCode: 400, message: ex.message });
+      }
+    } else {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: "No Request Body Found" });
+    }
+  }
+
+
   return {
     createChiefComplaints: _createChiefComplaints,
     getPatientChiefComplaints: _getPatientChiefComplaints,
     getMobileMockAPI: _getMobileMockAPI,
-    getPreviousChiefComplaintsByPatientId: _getPreviousChiefComplaintsByPatientId
+    getPreviousChiefComplaintsByPatientId: _getPreviousChiefComplaintsByPatientId,
+    create_chief_complaints_section_and_section_values: _create_chief_complaints_section_and_section_values
   };
 };
 
