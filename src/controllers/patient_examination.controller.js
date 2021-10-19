@@ -11,7 +11,7 @@ const patient_examination_section_value_tbl = sequelizeDb.patient_examination_se
 
 const patient_examination = () => {
 
-    //H30-44040 examination history, history section and section value insert api is done by vignesh k
+    //H30-44040 patient examination, examination section and section value insert api is done by vignesh k
     const _create_patient_examination = async (req, res) => {
 
         const { user_uuid } = req.headers;
@@ -151,9 +151,149 @@ const patient_examination = () => {
         }
     }
 
+    //H30-44156 patient examination by visit done by vignesh k
+    const _get_patient_examination_by_visit = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const patientExaminationSearchValue = req.body;
+
+        if (user_uuid > 0 && patientExaminationSearchValue) {
+
+            try {
+                let findExQuery = {
+                    attributes: ['uuid', 'facility_uuid', 'department_uuid', 'patient_uuid',
+                        'encounter_uuid', 'encounter_doctor_uuid', 'patient_treatment_uuid', 'treatment_kit_uuid',
+                        'encounter_type_uuid', 'consultation_uuid', 'examination_uuid', 'examination_category_uuid',
+                        'examination_sub_category_uuid', 'comments'],
+                    where: {
+                        patient_uuid: patientExaminationSearchValue.patient_uuid,
+                        encounter_uuid: patientExaminationSearchValue.encounter_uuid,
+                        encounter_type_uuid: patientExaminationSearchValue.encounter_type_uuid,
+                        is_active: 1,
+                        status: 1
+                    }
+                }
+
+                const findExResponse = await patient_examination_tbl.findAndCountAll(findExQuery);
+                let patientExamination = findExResponse.rows;
+
+                let patient_examination_uuid = [];
+                for (let i = 0; i < patientExamination.length; i++) {
+                    patient_examination_uuid.push(patientExamination[i].uuid)
+                }
+
+                if (findExResponse.count === 0 || !patient_examination_uuid.length) {
+                    return res
+                        .status(200)
+                        .send({
+                            statusCode: 200,
+                            msg: "No data found!",
+                            req: patientExaminationSearchValue,
+                            responseContents: [],
+                            totalRecords: 0
+                        });
+                }
+
+                let findPExSectionQuery = {
+                    attributes: ['uuid', 'patient_examination_uuid', 'examination_section_uuid', 'examination_section_name',
+                        'value_type_uuid', 'value_type_name', 'comments'],
+                    where: {
+                        patient_examination_uuid: { [Op.in]: patient_examination_uuid },
+                        is_active: 1,
+                        status: 1
+                    }
+                }
+
+                const findPExSectionResponse = await patient_examination_section_tbl.findAndCountAll(findPExSectionQuery);
+                let patientExaminationSection = findPExSectionResponse.rows;
+
+                let patient_examination_section_uuid = [];
+                for (let i = 0; i < patientExaminationSection.length; i++) {
+                    patient_examination_section_uuid.push(patientExaminationSection[i].uuid)
+                }
+
+
+                let findPExSectionValuesQuery = {
+                    attributes: ['uuid', 'patient_examination_section_uuid', 'examination_section_value_uuid',
+                        'examination_section_value_name', 'comments'],
+                    where: {
+                        patient_examination_section_uuid: { [Op.in]: patient_examination_section_uuid },
+                        is_active: 1,
+                        status: 1
+                    }
+                }
+                const findPExSectionValuesResponse = await patient_examination_section_value_tbl.findAndCountAll(findPExSectionValuesQuery);
+                let patientExaminationSectionValues = findPExSectionValuesResponse.rows;
+
+                let examination_section_and_section_values = [];
+                for (let i = 0; i < patientExaminationSection.length; i++) {
+                    let ex_section_and_sec_values_obj = {
+                        uuid: patientExaminationSection[i].uuid,
+                        patient_examination_uuid: patientExaminationSection[i].patient_examination_uuid,
+                        examination_section_uuid: patientExaminationSection[i].examination_section_uuid,
+                        examination_section_name: patientExaminationSection[i].examination_section_name,
+                        value_type_uuid: patientExaminationSection[i].value_type_uuid,
+                        value_type_name: patientExaminationSection[i].value_type_name,
+                        comments: patientExaminationSection[i].comments,
+                        examination_section_values: []
+                    }
+                    for (let j = 0; j < patientExaminationSectionValues.length; j++) {
+                        if (patientExaminationSection[i].uuid === patientExaminationSectionValues[j].patient_examination_section_uuid) {
+                            ex_section_and_sec_values_obj.examination_section_values.push(patientExaminationSectionValues[j]);
+                        }
+                    }
+                    examination_section_and_section_values.push(ex_section_and_sec_values_obj);
+                }
+
+                let patient_ex_SV_arr = [];
+                for (let i = 0; i < patientExamination.length; i++) {
+                    const patient_examination_obj = {
+                        uuid: patientExamination[i].uuid,
+                        facility_uuid: patientExamination[i].facility_uuid,
+                        department_uuid: patientExamination[i].department_uuid,
+                        patient_uuid: patientExamination[i].patient_uuid,
+                        encounter_uuid: patientExamination[i].encounter_uuid,
+                        encounter_doctor_uuid: patientExamination[i].encounter_doctor_uuid,
+                        patient_treatment_uuid: patientExamination[i].patient_treatment_uuid,
+                        treatment_kit_uuid: patientExamination[i].treatment_kit_uuid,
+                        encounter_type_uuid: patientExamination[i].encounter_type_uuid,
+                        consultation_uuid: patientExamination[i].consultation_uuid,
+                        examination_uuid: patientExamination[i].examination_uuid,
+                        examination_category_uuid: patientExamination[i].examination_category_uuid,
+                        examination_sub_category_uuid: patientExamination[i].examination_sub_category_uuid,
+                        comments: patientExamination[i].comments,
+                        patient_examination_sections: []
+                    }
+                    for (let j = 0; j < examination_section_and_section_values.length; j++) {
+                        if (patientExamination[i].uuid === examination_section_and_section_values[j].patient_examination_uuid) {
+                            patient_examination_obj.patient_examination_sections.push(examination_section_and_section_values[j]);
+                        }
+                    }
+                    patient_ex_SV_arr.push(patient_examination_obj);
+                }
+
+                return res
+                    .status(200)
+                    .send({
+                        statusCode: 200,
+                        msg: "Patient Examination fetched successfully!",
+                        totalRecords: patient_ex_SV_arr.length,
+                        responseContents: patient_ex_SV_arr
+                    });
+
+            } catch (ex) {
+                console.log(ex.message);
+                return res.status(400).send({ statusCode: 400, message: ex.message });
+            }
+        } else {
+            return res
+                .status(400)
+                .send({ code: httpStatus[400], message: "No Request Body Found" });
+        }
+    }
 
     return {
-        create_patient_examination: _create_patient_examination
+        create_patient_examination: _create_patient_examination,
+        get_patient_examination_by_visit: _get_patient_examination_by_visit
     };
 
 }
