@@ -4852,6 +4852,44 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/diagnosis/getDiagnosisName": {
+			"post": {
+				"description": "Get Diagnosis name",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getDiagnosisName",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getDiagnosisName"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diagnosis"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/search"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/diagnosis/createDiagnosis": {
 			"post": {
 				"description": "Diagnosis Details Inserted Successfully",
@@ -14731,6 +14769,15 @@
 			"properties": {
 				"searchValue": {
 					"type": "string"
+				}
+			}
+		},
+		"getDiagnosisName": {
+			"type": "object",
+			"properties": {
+				"searchValue": {
+					"type": "string",
+					"example": "abc"
 				}
 			}
 		},

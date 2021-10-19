@@ -545,6 +545,61 @@ const diagnosisController = () => {
         }
 
     };
+
+
+
+    const _getDiagnosisName = async (req, res, next) => {
+        try {
+            let userId = req.headers.user_uuid;
+            let getsearch = req.body;
+
+            let findQuery = {
+                attributes: ['uuid', 'name', 'code', 'description'],
+                where: {
+                   name: {
+                   
+                    [Op.like]: `${getsearch.searchValue}%`
+                    
+                   },
+                   
+                    is_active: 1
+                },
+                raw: true
+            };
+
+            console.log(findQuery);
+
+            let findData = await diagnosisTbl.findAndCountAll(findQuery);
+
+            if (findData) {
+
+                return res
+
+                    .status(httpStatus.OK)
+                    .json({
+                        message: "success",
+                        statusCode: 200,
+                        statusCode: httpStatus.OK,
+                        msg: 'Diagnosis fetched successfully!',
+                        totalCount: findData.count,
+                       
+                        responseContents: findData.rows
+                    });
+            }
+
+        } catch (err) {
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    message: "error",
+                    errorMsg: errorMsg
+                });
+        }
+
+
+    };
+
     // --------------------------------------------return----------------------------------
     return {
         getDiagnosisFilter: _getDiagnosisFilter,
@@ -555,7 +610,8 @@ const diagnosisController = () => {
         deleteDiagnosis: _deleteDiagnosis,
         updateDiagnosisById: _updateDiagnosisById,
         getDaignosisById: _getDaignosisById,
-        getDaignosisByUUId: _getDaignosisByUUId
+        getDaignosisByUUId: _getDaignosisByUUId,
+        getDiagnosisName: _getDiagnosisName
 
     };
 };
