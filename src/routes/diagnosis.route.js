@@ -17,4 +17,6 @@ diagnosisRoutes.route("/updateDiagnosisById").post(diagnosisCtrl.updateDiagnosis
 diagnosisRoutes.route("/getDaignosisById").post(diagnosisCtrl.getDaignosisById);
 diagnosisRoutes.route("/getDaignosisByUUId").post(diagnosisCtrl.getDaignosisByUUId);
 
+diagnosisRoutes.route("/getDiagnosisName").post(diagnosisCtrl.getDiagnosisName);
+
 module.exports = diagnosisRoutes;

@@ -84,5 +84,11 @@ module.exports = function (sequelize, DataTypes) {
         ]
     }
     );
+    patient_history_section.associate = models => {
+        patient_history_section.belongsTo(models.patient_history_section_values, {
+            foreignKey: 'uuid',
+            targetKey: 'patient_history_section_uuid'
+        });
+    }
     return patient_history_section;
 };
