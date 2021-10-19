@@ -11273,6 +11273,41 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/patient_examination/getPatientExaminationByVisit": {
+			"post": {
+				"description": "To get patient examination by visits",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getPatientExaminationByVisit",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getPatientExaminationByVisit"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient Examination"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/patient_history/createPatientHistory": {
 			"post": {
 				"description": "To create a patient history, section and section values",
@@ -11302,6 +11337,41 @@
 				"responses": {
 					"200": {
 						"description": "Inserted Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+		"/api/patient_history/getPatientHistoryByVisit": {
+			"post": {
+				"description": "To get patient history by visit",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getPatientHistoryByVisit",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getPatientHistoryByVisit"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Patient History"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
 					}
 				},
 				"x-auth-type": "Application & Application User",
@@ -20301,6 +20371,40 @@
 				"search": {
 					"type": "String",
 					"example": "%%%"
+				}
+			}
+		},
+		"getPatientHistoryByVisit": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "Number",
+					"example": 96033
+				},
+				"encounter_uuid": {
+					"type": "Number",
+					"example": 71620
+				},
+				"encounter_type_uuid": {
+					"type": "Number",
+					"example": 1
+				}
+			}
+		},
+		"getPatientExaminationByVisit": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "Number",
+					"example": 96033
+				},
+				"encounter_uuid": {
+					"type": "Number",
+					"example": 71620
+				},
+				"encounter_type_uuid": {
+					"type": "Number",
+					"example": 1
 				}
 			}
 		}
