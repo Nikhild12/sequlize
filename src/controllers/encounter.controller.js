@@ -249,7 +249,6 @@ const Encounter = () => {
   const _getEncountersByPatientId = async (req, res) => {
     const { facility_uuid } = req.headers;
     let { patient_uuid } = req.query;
-    req.headers.authorization = 'Bearer e222c12c-e0d1-3b8b-acaa-4ca9431250e2';
     try {
       if (facility_uuid && patient_uuid) {
         const encounterData = await encounter_tbl.findAll(
