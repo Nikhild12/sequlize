@@ -11,7 +11,9 @@ EncounterRoutes.route("/create").post(Encounter.createPatientEncounter);
 EncounterRoutes.route("/getEncounterByDocAndPatientId").get(
   Encounter.getEncounterByDocAndPatientId
 );
-
+EncounterRoutes.route("/getEncountersByPatientId").get(
+  Encounter.getEncountersByPatientId
+);
 EncounterRoutes.route("/get-visit-history").get(
   Encounter.getVisitHistoryByPatientId
 );

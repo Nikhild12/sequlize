@@ -12,6 +12,8 @@ const emr_config = require('../config/config');
 
 const Op = Sequelize.Op;
 
+const requestApi = require('../requests/requests');
+
 // Sequelizer Import
 const sequelizeDb = require("../config/sequelize");
 
@@ -229,6 +231,51 @@ const Encounter = () => {
           code: httpStatus.OK,
           message: "Fetched Encounter Successfully",
           responseContents: encounterData,
+        });
+      } else {
+        return res.status(400).send({
+          code: httpStatus[400],
+          message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_PARAM} ${emr_constants.FOUND}`,
+        });
+      }
+    } catch (ex) {
+      console.log(ex);
+      return res
+        .status(400)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
+  const _getEncountersByPatientId = async (req, res) => {
+    const { facility_uuid } = req.headers;
+    let { patient_uuid } = req.query;
+    try {
+      if (facility_uuid && patient_uuid) {
+        const encounterData = await encounter_tbl.findAll(
+          getEncountersInfo(patient_uuid)
+        );
+
+        if (encounterData && encounterData.length > 0) {
+          var uniqueDoctor = [...new Set(encounterData.map(item => item.created_by))];
+          var uniqueDepartment = [...new Set(encounterData.map(item => item.department_uuid))];
+          const results = await requestApi.getResults('userProfile/getSpecificUsersByIds', req, { uuid: uniqueDoctor });
+          const deptresults = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
+          var dataresult = encounterData.reduce((acc, curr) => {
+            const index = results.responseContents.findIndex(item => item.uuid == curr.dataValues.created_by);
+            const deptindex = deptresults.responseContent.rows.findIndex(item => item.uuid == curr.dataValues.department_uuid);
+            if (index > -1) {
+              curr.dataValues.doctor_name = results.responseContents[index].first_name;
+              curr.dataValues.department_name = deptindex > -1 ? deptresults.responseContent.rows[deptindex].name : '';
+  
+              acc.push(curr);
+            }
+            return acc;
+          }, []);
+        }
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: "Fetched Encounter(s) Successfully",
+          responseContents: dataresult,
         });
       } else {
         return res.status(400).send({
@@ -1085,6 +1132,7 @@ const Encounter = () => {
   };
 
   return {
+    getEncountersByPatientId: _getEncountersByPatientId,
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
     commonVisitInformation: _commonVisitInformation,
     createPatientEncounter: _createPatientEncounter,
@@ -1106,6 +1154,26 @@ const Encounter = () => {
 };
 
 module.exports = Encounter();
+
+function getEncountersInfo(pId) {
+  return {
+    where: {
+      patient_uuid: pId,
+      is_active: emr_constants.IS_ACTIVE,
+      status: emr_constants.IS_ACTIVE,
+    },
+    include: [
+      {
+        model: encounter_type_tbl,
+        attributes: ["uuid", "code", "name"],
+        where: {
+          is_active: emr_constants.IS_ACTIVE,
+          status: emr_constants.IS_ACTIVE,
+        },
+      },
+    ],
+  };
+}
 
 function getEncounterQuery(pId, from_date, to_date) {
   return {

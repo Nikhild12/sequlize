@@ -3584,6 +3584,43 @@
 				}
 			}
 		},
+		"/api/encounter/getEncountersByPatientId": {
+			"get": {
+				"description": "To Get Patient Encounter(s)",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"type": "integer",
+						"required": true
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter(s)"
+					}
+				}
+			}
+		},
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
 				"description": "To get a Encounter for Patient",
