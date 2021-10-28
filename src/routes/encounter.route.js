@@ -8,16 +8,9 @@ const Encounter = require("../controllers/encounter.controller");
 const EncounterRoutes = express.Router();
 
 EncounterRoutes.route("/create").post(Encounter.createPatientEncounter);
-EncounterRoutes.route("/getEncounterByDocAndPatientId").get(
-  Encounter.getEncounterByDocAndPatientId
-);
-EncounterRoutes.route("/getEncountersByPatientId").get(
-  Encounter.getEncountersByPatientId
-);
-EncounterRoutes.route("/get-visit-history").get(
-  Encounter.getVisitHistoryByPatientId
-);
-
+EncounterRoutes.route("/getEncounterByDocAndPatientId").get( Encounter.getEncounterByDocAndPatientId );
+EncounterRoutes.route("/getEncountersByPatientId").post( Encounter.getEncountersByPatientId );
+EncounterRoutes.route("/get-visit-history").get( Encounter.getVisitHistoryByPatientId );
 EncounterRoutes.route("/getcommonvisitinfo").post(Encounter.commonVisitInformation);
 EncounterRoutes.route("/delete-by-id").put(Encounter.deleteEncounterById);
 EncounterRoutes.route("/updateECdischarge").put(Encounter.updateECdischarge);
