@@ -268,8 +268,10 @@ const Encounter = () => {
     }
 
     Object.assign(findQuery, {
+      attributes: ['uuid', 'department_uuid', 'encounter_type_uuid', 'encounter_date', 'created_by' ],
       where: {
         patient_uuid,
+        facility_uuid,
         is_active: emr_constants.IS_ACTIVE,
         status: emr_constants.IS_ACTIVE,
       },
@@ -284,26 +286,26 @@ const Encounter = () => {
         },
       ],
     });
-
-    console.log('findQuery::', findQuery);
+    // console.log('findQuery::', findQuery);
 
     try {
 
-      const encounterData = await encounter_tbl.findAll( getEncountersInfo(patient_uuid) );
+      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll( findQuery );
 
-      if (encounterData && encounterData.length > 0) {
-        const uniqueDoctor = [...new Set(encounterData.map(item => item.created_by))];
-        const uniqueDepartment = [...new Set(encounterData.map(item => item.department_uuid))];
-        const results = await requestApi.getResults('userProfile/getSpecificUsersByIds', req, { uuid: uniqueDoctor });
-        const deptresults = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
+      if (encounterDatas && encounterDatas.length > 0) {
+        const uniqueDoctor = [...new Set(encounterDatas.map(item => item.created_by))];
+        const uniqueDepartment = [...new Set(encounterDatas.map(item => item.department_uuid))];
+        const { responseContents: userResp } = await requestApi.getResults('userProfile/getSpecificUsersByIds', req, { uuid: uniqueDoctor });
+        const { responseContent: deptResp } = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
 
-        var dataresult = encounterData.reduce((acc, curr) => {
-          const index = results.responseContents.findIndex(item => item.uuid == curr.dataValues.created_by);
-          const deptindex = deptresults.responseContent.rows.findIndex(item => item.uuid == curr.dataValues.department_uuid);
+        var dataresult = encounterDatas.reduce((acc, curr) => {
+          const { dataValues: enconterObj } = curr; 
+          const index = userResp.findIndex(item => item.uuid == enconterObj.created_by);
+          const deptindex = deptResp.rows.findIndex(item => item.uuid == enconterObj.department_uuid);
 
           if (index > -1) {
-            curr.dataValues.doctor_name = results.responseContents[index].first_name;
-            curr.dataValues.department_name = deptindex > -1 ? deptresults.responseContent.rows[deptindex].name : '';
+            enconterObj.doctor_name = userResp[index].first_name;
+            enconterObj.department_name = deptindex > -1 ? deptResp.rows[deptindex].name : '';
 
             acc.push(curr);
           }
@@ -316,10 +318,11 @@ const Encounter = () => {
         code: httpStatus.OK,
         message: "Fetched Encounter(s) Successfully",
         responseContents: dataresult,
+        totalRecords: encounterCount
       });
 
     } catch (ex) {
-      console.log(ex.error);
+      console.log(ex);
       return res
         .status(400)
         .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
