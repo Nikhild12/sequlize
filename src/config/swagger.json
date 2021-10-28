@@ -3585,7 +3585,7 @@
 			}
 		},
 		"/api/encounter/getEncountersByPatientId": {
-			"get": {
+			"post": {
 				"description": "To Get Patient Encounter(s)",
 				"parameters": [
 					{
@@ -3595,16 +3595,18 @@
 						"type": "integer"
 					},
 					{
-						"in": "query",
-						"name": "patient_uuid",
+						"in": "header",
+						"name": "facility_uuid",
 						"required": true,
 						"type": "integer"
 					},
 					{
-						"in": "header",
-						"name": "facility_uuid",
-						"type": "integer",
-						"required": true
+						"in": "body",
+						"name": "getEncountersByPatientId",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getEncountersByPatientId"
+						}
 					}
 				],
 				"produces": [
@@ -13978,6 +13980,26 @@
 				"visit_date": {
 					"type": "string",
 					"example": "2021-04-29"
+				}
+			}
+		},
+		"getEncountersByPatientId": {
+			"type": "object",
+			"properties": {
+				"pageNo": {
+					"type": "integer"
+				},
+				"paginationSize": {
+					"type": "integer"
+				},
+				"sortField": {
+					"type": "string"
+				},
+				"sortOrder": {
+					"type": "string"
+				},
+				"patient_uuid": {
+					"type": "number"
 				}
 			}
 		},
