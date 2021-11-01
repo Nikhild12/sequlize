@@ -40,6 +40,9 @@ module.exports = (sequelize, DataTypes) => {
             im_name: {
                 type: DataTypes.STRING(255)
             },
+            im_product_type_uuid: {
+                type: DataTypes.INTEGER
+            },
             im_is_emar: {
                 type: DataTypes.BOOLEAN
             },
@@ -105,6 +108,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             tkd_duration: {
                 type: DataTypes.STRING(255)
+            },
+            tkd_dosage: {
+                type: DataTypes.INTEGER
             },
             tkd_strength: {
                 type: DataTypes.STRING(255)

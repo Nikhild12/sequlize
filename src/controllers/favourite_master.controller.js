@@ -86,6 +86,7 @@ const getFavouritesAttributes = [
   "df_code",
   "tsm_display_order",
   "tsmd_duration",
+  "tsmd_dosage",
   "tsm_favourite_type_uuid",
   "tsmd_test_master_uuid",
   "tsmd_profile_master_uuid",
@@ -104,6 +105,7 @@ const getFavouritesAttributes = [
   "d_description",
   "im_is_emar",
   "im_code",
+  "im_product_type_uuid",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",
@@ -164,6 +166,7 @@ const getTreatmentByIdInVWAtt = [
 let gedTreatmentKitDrug = [
   "im_code",
   "im_name",
+  "im_product_type_uuid",
   "im_strength",
   "tkd_item_master_uuid",
   "dr_code",
@@ -181,6 +184,7 @@ let gedTreatmentKitDrug = [
   "tkd_drug_instruction_uuid",
   "tkd_quantity",
   "tkd_duration",
+  "tkd_dosage",
   "im_is_emar",
   "im_can_calculate_frequency_qty",
   "store_uuid"
@@ -1070,8 +1074,10 @@ function getFavouritesInList(fetchedData) {
         drug_instruction_code: tD.di_code,
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
+        drug_dosage: tD.tsmd_dosage,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_code: tD.im_code,
+        drug_product_type_uuid: tD.im_product_type_uuid,
         drug_is_emar: tD.im_is_emar,
         drug_strength: tD.tsmd_strength,
         store_master_uuid: tD.si_store_master_uuid || 0,
@@ -1131,6 +1137,8 @@ function getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData) 
   return {
     drug_route_uuid: favouriteMasterReqData.drug_route_id,
     drug_frequency_uuid: favouriteMasterReqData.drug_frequency_id,
+    drug_product_type_uuid: favouriteMasterReqData.drug_product_type_uuid,
+    dosage: favouriteMasterReqData.drug_dosage,
     duration: favouriteMasterReqData.drug_duration,
     duration_period_uuid: favouriteMasterReqData.drug_period_id,
     drug_instruction_uuid: favouriteMasterReqData.drug_instruction_id,
@@ -1274,9 +1282,11 @@ function getDrugDetailsFromTreatment(drugArray) {
       // Drug Details
       drug_name: d.im_name,
       drug_code: d.im_code,
+      drug_product_type_uuid: d.im_product_type_uuid,
       drug_id: d.tkd_item_master_uuid,
       drug_quantity: d.tkd_quantity,
       drug_duration: d.tkd_duration,
+      drug_dosage: d.tkd_dosage,
 
       // Drug Route Details
       drug_route_name: d.dr_name,

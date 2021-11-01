@@ -70,6 +70,7 @@ const getTreatmentByIdInVWAtt = [
 let gedTreatmentKitDrug = [
     "im_code",
     "im_name",
+    "im_product_type_uuid",
     "im_is_emar",
     "im_strength",
     "tkd_item_master_uuid",
@@ -90,6 +91,7 @@ let gedTreatmentKitDrug = [
     "di_name",
     "tkd_drug_instruction_uuid",
     "tkd_quantity",
+    "tkd_dosage",
     "tkd_duration",
     "tkd_strength",
     "tkd_comments",
@@ -357,8 +359,10 @@ function getDrugDetailsFromTreatment(drugArray) {
             // Drug Details
             drug_name: d.im_name,
             drug_code: d.im_code,
+            drug_product_type_uuid: d.im_product_type_uuid,
             drug_id: d.tkd_item_master_uuid,
             drug_quantity: d.tkd_quantity,
+            drug_dosage: d.tkd_dosage,
             drug_duration: d.tkd_duration,
             drug_strength: d.tkd_strength,
             drug_comments: d.tkd_comments,
