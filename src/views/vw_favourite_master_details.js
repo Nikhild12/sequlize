@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       im_is_emar: {
         type: DataTypes.BOOLEAN
       },
+      im_product_type_uuid: {
+        type: DataTypes.INTEGER
+      },
       dr_uuid: {
         type: DataTypes.INTEGER
       },

@@ -101,6 +101,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
         allowNull: true
       },
+      im_product_type_uuid: {
+        type: DataTypes.INTEGER
+      },
       im_is_emar: {
         type: DataTypes.BOOLEAN
       },
