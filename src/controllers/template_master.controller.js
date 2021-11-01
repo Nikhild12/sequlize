@@ -805,6 +805,7 @@ function getTemplateData(fetchedData) {
           drug_instruction_code: tD.di_code,
 
           drug_duration: tD.tmd_duration,
+          drug_dosage: tD.tmd_dosage,
           store_id: tD.sm_uuid,
           store_code: tD.sm_store_code,
           store_name: tD.sm_store_name,
@@ -941,6 +942,7 @@ function getTemplateMasterDetailsWithUUID(
       (mD.diet_frequency_uuid = mD.diet_frequency_uuid),
       (mD.display_order = mD.display_order),
       (mD.duration = mD.drug_duration),
+      (mD.dosage = mD.drug_dosage),
       (mD.duration_period_uuid = mD.drug_period_uuid),
       (mD.drug_instruction_uuid = mD.drug_instruction_uuid),
       (mD.modified_by = user_uuid),
@@ -982,6 +984,7 @@ function getNewTemplateDetails(user_uuid, temp_master_details) {
           drug_route_uuid: tD.drug_route_uuid,
           drug_frequency_uuid: tD.drug_frequency_uuid,
           duration: tD.drug_duration,
+          dosage: tD.drug_dosage,
           diet_master_uuid: tD.diet_master_uuid,
           diet_category_uuid: tD.diet_category_uuid,
           diet_frequency_uuid: tD.diet_frequency_uuid,
@@ -1068,6 +1071,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
           drug_instruction_code: dD.di_code,
 
           drug_duration: dD.tmd_duration,
+          drug_dosage: dD.tmd_dosage,
           store_id: dD.sm_uuid,
           store_code: dD.sm_store_code,
           store_name: dD.sm_store_name,
