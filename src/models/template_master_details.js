@@ -173,6 +173,10 @@ module.exports = (sequelize, DataTypes) => {
                     min: 0
                 }
             },
+            dosage: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             duration: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

@@ -106,6 +106,9 @@ module.exports = (sequelize, DataTypes) => {
             tkd_duration: {
                 type: DataTypes.STRING(255)
             },
+            tkd_dosage: {
+                type: DataTypes.INTEGER
+            },
             tkd_strength: {
                 type: DataTypes.STRING(255)
             },

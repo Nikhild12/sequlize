@@ -86,6 +86,7 @@ const getFavouritesAttributes = [
   "df_code",
   "tsm_display_order",
   "tsmd_duration",
+  "tsmd_dosage",
   "tsm_favourite_type_uuid",
   "tsmd_test_master_uuid",
   "tsmd_profile_master_uuid",
@@ -181,6 +182,7 @@ let gedTreatmentKitDrug = [
   "tkd_drug_instruction_uuid",
   "tkd_quantity",
   "tkd_duration",
+  "tkd_dosage",
   "im_is_emar",
   "im_can_calculate_frequency_qty",
   "store_uuid"
@@ -1070,6 +1072,7 @@ function getFavouritesInList(fetchedData) {
         drug_instruction_code: tD.di_code,
         favourite_display_order: tD.tsm_display_order,
         drug_duration: tD.tsmd_duration,
+        drug_dosage: tD.tsmd_dosage,
         drug_active: tD.tsm_active[0] === 1 ? true : false,
         drug_code: tD.im_code,
         drug_is_emar: tD.im_is_emar,
@@ -1131,6 +1134,7 @@ function getFavouriteMasterDetailsUpdateData(user_uuid, favouriteMasterReqData) 
   return {
     drug_route_uuid: favouriteMasterReqData.drug_route_id,
     drug_frequency_uuid: favouriteMasterReqData.drug_frequency_id,
+    dosage: favouriteMasterReqData.drug_dosage,
     duration: favouriteMasterReqData.drug_duration,
     duration_period_uuid: favouriteMasterReqData.drug_period_id,
     drug_instruction_uuid: favouriteMasterReqData.drug_instruction_id,
@@ -1277,6 +1281,7 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_id: d.tkd_item_master_uuid,
       drug_quantity: d.tkd_quantity,
       drug_duration: d.tkd_duration,
+      drug_dosage: d.tkd_dosage,
 
       // Drug Route Details
       drug_route_name: d.dr_name,

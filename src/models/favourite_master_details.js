@@ -70,6 +70,10 @@ module.exports = (sequelize, DataTypes) => {
           notNull: true,
         },
       },
+      dosage: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       duration: {
         type: DataTypes.STRING(255),
         allowNull: true,

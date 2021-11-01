@@ -79,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
                 }
 
             },
+            dosage: {
+
+                type: DataTypes.INTEGER,
+                allowNull: false
+
+            },
             duration: {
 
                 type: DataTypes.STRING(255),
