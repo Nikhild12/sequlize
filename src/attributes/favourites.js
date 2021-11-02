@@ -44,6 +44,7 @@ const _getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_can_calculate_frequency_qty",
   "sm_uuid",
   "sm_store_code",
   "sm_store_name",

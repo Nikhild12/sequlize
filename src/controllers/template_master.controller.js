@@ -1058,6 +1058,7 @@ function getDrugsListForTemplate(fetchedData, template_id) {
           drug_route_name: dD.dr_code,
           drug_route_id: dD.dr_uuid,
           drug_is_emar: dD.im_is_emar,
+          drug_can_calculate_frequency_qty: dD.im_can_calculate_frequency_qty,
 
           drug_frequency_id: dD.df_uuid,
           drug_frequency_code: dD.df_code,
