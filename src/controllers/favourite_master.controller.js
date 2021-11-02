@@ -104,6 +104,7 @@ const getFavouritesAttributes = [
   "d_code",
   "d_description",
   "im_is_emar",
+  "im_can_calculate_frequency_qty",
   "im_code",
   "im_product_type_uuid",
   "sm_uuid",
@@ -1079,6 +1080,7 @@ function getFavouritesInList(fetchedData) {
         drug_code: tD.im_code,
         drug_product_type_uuid: tD.im_product_type_uuid,
         drug_is_emar: tD.im_is_emar,
+        drug_can_calculate_frequency_qty: tD.im_can_calculate_frequency_qty,
         drug_strength: tD.tsmd_strength,
         store_master_uuid: tD.si_store_master_uuid || 0,
 

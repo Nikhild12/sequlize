@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       im_is_emar: {
         type: DataTypes.BOOLEAN
       },
+      im_can_calculate_frequency_qty: {
+        type: DataTypes.BOOLEAN
+      },
       im_product_type_uuid: {
         type: DataTypes.INTEGER
       },
@@ -119,6 +122,9 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "1"
       },
       tsm_display_order: {
+        type: DataTypes.INTEGER
+      },
+      tsmd_dosage: {
         type: DataTypes.INTEGER
       },
       tsmd_duration: {
