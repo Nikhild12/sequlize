@@ -2,8 +2,7 @@ const uuidparse = require("uuid-parse");
 
 module.exports = (sequelize, DataTypes) => {
   const VW_TEMPLATE_MASTER_DETAILS = sequelize.define(
-    "vw_template_master_details",
-    {
+    "vw_template_master_details", {
       tm_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -26,15 +25,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       tm_first_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       tm_middle_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       tm_last_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       tm_template_type_uuid: {
         type: DataTypes.INTEGER,
@@ -75,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      tmd_dosage: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       tmd_duration: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -107,10 +110,11 @@ module.exports = (sequelize, DataTypes) => {
       im_is_emar: {
         type: DataTypes.BOOLEAN
       },
+      im_can_calculate_frequency_qty: {
+        type: DataTypes.BOOLEAN
+      },
       im_acive: {
         type: DataTypes.BOOLEAN
-        //allowNull: false
-        //values: ["0", "1"]
       },
       tmd_strength: {
         type: DataTypes.STRING(45),
@@ -185,60 +189,60 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       tm_created_by: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       tm_created_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       tm_modified_by: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       tm_modified_date: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       f_uuid: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       f_name: {
         type: DataTypes.STRING(100)
       },
       d_uuid: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       d_name: {
         type: DataTypes.STRING(100)
       },
       uct_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       uc_first_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       uc_middle_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       uc_last_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       umt_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       um_first_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       um_middle_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       um_last_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       si_store_master_uuid: {
         type: DataTypes.INTEGER
@@ -247,26 +251,25 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       si_is_active: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN
       },
       si_status: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN
       },
       vm_uuid: {
         type: DataTypes.INTEGER
       },
       vm_name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       },
       vm_is_active: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN
       },
       vm_status: {
         type: DataTypes.BOOLEAN,
       }
-    },
-    {
+    }, {
       timestamps: false
     }
   );
