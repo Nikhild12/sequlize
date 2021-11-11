@@ -83,11 +83,6 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
 }
 
 const Encounter = () => {
-  /**
-   *
-   * @param {*} req
-   * @param {*} res
-   */
 
    const _getEncounterDashboardPatientInfo = async (req, res, next) => {
     try {
@@ -382,11 +377,6 @@ const Encounter = () => {
   }
   // End -- H30-35488 - Need to track is_adult flag encounter wise Service to Service Call  -- Ashok //  
 
-  /**
-   *
-   * @param {*} req
-   * @param {*} res
-   */
   const _commonVisitInformation = async (req, res, next) => {
     try {
       let { patient_ids, visit_date, offset, itemsPerPage } = req.body;
@@ -443,11 +433,6 @@ const Encounter = () => {
     }
   }
 
-  /**
-   *
-   * @param {*} req
-   * @param {*} res
-   */
   // Backup taken by Elumalai
   const _createPatientEncounter_old = async (req, res) => {
 
@@ -1167,6 +1152,63 @@ const Encounter = () => {
     }
   };
 
+  const getEncountersByPatientIdsAndDate = async (req, res) => {
+    const { facility_uuid } = req.headers;
+
+    const searchData = req.body;
+
+    /* Validations */
+    if (Object.keys(searchData).length == 0) {
+      return utils.sendResponse(req, res, "BAD_REQUEST", "BAD_PARAMS");
+    }
+
+    let { patient_uuids, department_uuid, encounterDate } = searchData;
+
+    if ( !facility_uuid || !patient_uuids ) {
+      return res.status(400).send({
+        code: httpStatus[400],
+        message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
+      });
+    }
+
+    const encounterDateQuery = Sequelize.where(
+      Sequelize.fn('date', Sequelize.col('encounter_date')),
+      '=',
+      encounterDate
+    );
+
+    let findQuery = {
+      attributes: ['uuid', 'patient_uuid', 'encounter_date' ],
+      where: {
+        patient_uuid: {
+          [Op.in]: patient_uuids
+        },
+        encounterDateQuery,
+        facility_uuid,
+        department_uuid,
+        // is_active_encounter: emr_constants.IS_ACTIVE,
+      }
+    };
+
+    try {
+
+      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll( findQuery );
+
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Encounter(s) Successfully",
+        responseContents: encounterDatas,
+        totalRecords: encounterCount
+      });
+
+    } catch (ex) {
+      console.log(ex);
+      return res
+        .status(400)
+        .send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+    }
+  };
+
   return {
     getEncountersByPatientId: _getEncountersByPatientId,
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
@@ -1185,6 +1227,7 @@ const Encounter = () => {
     updateEcounterById: _updateEcounterById,
     getEncounterDashboardPatientCount: _getEncounterDashboardPatientCount,
     getEncounterDashboardPatientInfo: _getEncounterDashboardPatientInfo,
+    getEncountersByPatientIdsAndDate,
 
   };
 };
