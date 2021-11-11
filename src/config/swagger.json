@@ -3623,6 +3623,45 @@
 				}
 			}
 		},
+		"/api/encounter/getEncountersByPatientIdsAndDate": {
+			"post": {
+				"description": "To Get Patient Encounter(s) by patient ids",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getEncountersByPatientIdsAndDate",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getEncountersByPatientIdsAndDate"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter(s)"
+					}
+				}
+			}
+		},
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
 				"description": "To get a Encounter for Patient",
@@ -14000,6 +14039,23 @@
 				},
 				"patient_uuid": {
 					"type": "number"
+				}
+			}
+		},
+		"getEncountersByPatientIdsAndDate": {
+			"type": "object",
+			"properties": {
+				"patient_uuids": {
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				},
+				"department_uuid": {
+					"type": "string"
+				},
+				"encounterDate": {
+					"type": "string"
 				}
 			}
 		},
