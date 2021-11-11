@@ -14579,6 +14579,9 @@
 				"drug_frequency_id": {
 					"type": "integer"
 				},
+				"drug_dosage": {
+					"type": "integer"
+				},
 				"drug_duration": {
 					"type": "integer"
 				},
@@ -14604,6 +14607,9 @@
 				"diet_category_uuid": {
 					"type": "integer",
 					"example": 0
+				},
+				"strength": {
+					"type": "string"
 				},
 				"quantity": {
 					"type": "integer",
