@@ -305,8 +305,8 @@ const notesController = () => {
             }
             const patNotesData = await sectionCategoryEntriesTbl.findAndCountAll(findQuery);
             if (patNotesData.count == 0) {
-                return res.status(404).send({
-                    code: 404,
+                return res.status(200).send({
+                    code: 200,
                     message: emr_constants.NO_RECORD_FOUND
                 });
             }
