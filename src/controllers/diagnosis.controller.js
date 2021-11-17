@@ -7,6 +7,8 @@ const emr_const = require('../config/constants');
 const vw_uom_diagnosis = db.vw_uom_diagnosis;
 const diagnosisTbl = db.diagnosis;
 
+const diagnosis_icd_10Tbl = db.diagnosis_icd_10;
+
 const emr_utilites = require("../services/utility.service");
 
 // #Wild Card Search Changes - Diagnosis name/ code start with the characters By Elumalai
@@ -556,18 +558,18 @@ const diagnosisController = () => {
             let findQuery = {
                 attributes: ['uuid', 'name', 'code', 'description'],
                 where: {
-                   name: {
-                   
-                    [Op.like]: `${getsearch.searchValue}%`
-                    
-                   },
-                   
+                    name: {
+
+                        [Op.like]: `${getsearch.searchValue}%`
+
+                    },
+
                     is_active: 1
                 },
                 raw: true
             };
 
-            console.log(findQuery);
+            // console.log(findQuery);
 
             let findData = await diagnosisTbl.findAndCountAll(findQuery);
 
@@ -582,7 +584,7 @@ const diagnosisController = () => {
                         statusCode: httpStatus.OK,
                         msg: 'Diagnosis fetched successfully!',
                         totalCount: findData.count,
-                       
+
                         responseContents: findData.rows
                     });
             }
@@ -600,6 +602,61 @@ const diagnosisController = () => {
 
     };
 
+
+    const _getDiagnosisIcdName = async (req, res, next) => {
+        try {
+            let userId = req.headers.user_uuid;
+            let search = req.body;
+
+            let findQuery = {
+                attributes: ['uuid', 'name', 'code', 'description'],
+                where: {
+                    name: {
+
+                        [Op.like]: `${search.searchValue}%`
+
+                    },
+
+                    is_active: 1
+                },
+                raw: true
+            };
+
+            console.log(findQuery);
+
+            let findData = await diagnosis_icd_10Tbl.findAndCountAll(findQuery);
+
+            if (findData) {
+
+                return res
+
+                    .status(httpStatus.OK)
+                    .json({
+                        message: "success",
+                        statusCode: 200,
+                        statusCode: httpStatus.OK,
+                        msg: 'Diagnosis fetched successfully!',
+                        totalCount: findData.count,
+
+                        responseContents: findData.rows
+                    });
+            }
+            console.log(findData);
+        } catch (err) {
+            console.log("..>>== ERROR ==>..", err);
+            const errorMsg = err.errors ? err.errors[0].message : err.message;
+            return res
+                .status(httpStatus.INTERNAL_SERVER_ERROR)
+                .json({
+                    message: "error",
+                    errorMsg: errorMsg
+                });
+        }
+
+
+    };
+
+
     // --------------------------------------------return----------------------------------
     return {
         getDiagnosisFilter: _getDiagnosisFilter,
@@ -611,7 +668,8 @@ const diagnosisController = () => {
         updateDiagnosisById: _updateDiagnosisById,
         getDaignosisById: _getDaignosisById,
         getDaignosisByUUId: _getDaignosisByUUId,
-        getDiagnosisName: _getDiagnosisName
+        getDiagnosisName: _getDiagnosisName,
+        getDiagnosisIcdName: _getDiagnosisIcdName
 
     };
 };

@@ -214,5 +214,5 @@ module.exports = (sequelize, DataTypes) => {
     //     });
     // };
 
-    return diagnosis;
+    return diagnosis;  
 };
