@@ -84,7 +84,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
 
 const Encounter = () => {
 
-   const _getEncounterDashboardPatientInfo = async (req, res, next) => {
+  const _getEncounterDashboardPatientInfo = async (req, res, next) => {
     try {
       let PostData = req.body;
       let dataJson = {
@@ -95,10 +95,10 @@ const Encounter = () => {
         to_datetime: null
       };
 
-       
-      if( isNaN(PostData.encounter_type_id) || 
-        isNaN(PostData.facility_category_id)  || 
-        isNaN(PostData.gender_id) )   {
+
+      if (isNaN(PostData.encounter_type_id) ||
+        isNaN(PostData.facility_category_id) ||
+        isNaN(PostData.gender_id)) {
         return res.status(400).send({
           code: 400,
           message: " BAD Request..."
@@ -148,7 +148,7 @@ const Encounter = () => {
       });
     }
   }
- 
+
   const _getEncounterDashboardPatientCount = async (req, res, next) => {
     try {
       let PostData = req.body;
@@ -158,7 +158,7 @@ const Encounter = () => {
         to_datetime: null
       };
 
-      if( isNaN(PostData.encounter_type_id) )  {
+      if (isNaN(PostData.encounter_type_id)) {
         return res.status(400).send({
           code: 400,
           message: " BAD Request..."
@@ -255,7 +255,7 @@ const Encounter = () => {
     let { patient_uuid } = searchData;
     let findQuery = utils.getFindQuery(searchData);
 
-    if ( !facility_uuid || !patient_uuid ) {
+    if (!facility_uuid || !patient_uuid) {
       return res.status(400).send({
         code: httpStatus[400],
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
@@ -263,7 +263,7 @@ const Encounter = () => {
     }
 
     Object.assign(findQuery, {
-      attributes: ['uuid', 'department_uuid', 'encounter_type_uuid', 'encounter_date', 'created_by' ],
+      attributes: ['uuid', 'department_uuid', 'encounter_type_uuid', 'encounter_date', 'created_by'],
       where: {
         patient_uuid,
         facility_uuid,
@@ -285,7 +285,7 @@ const Encounter = () => {
 
     try {
 
-      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll( findQuery );
+      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll(findQuery);
 
       if (encounterDatas && encounterDatas.length > 0) {
         const uniqueDoctor = [...new Set(encounterDatas.map(item => item.created_by))];
@@ -294,7 +294,7 @@ const Encounter = () => {
         const { responseContent: deptResp } = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
 
         var dataresult = encounterDatas.reduce((acc, curr) => {
-          const { dataValues: enconterObj } = curr; 
+          const { dataValues: enconterObj } = curr;
           const index = userResp.findIndex(item => item.uuid == enconterObj.created_by);
           const deptindex = deptResp.rows.findIndex(item => item.uuid == enconterObj.department_uuid);
 
@@ -614,6 +614,20 @@ const Encounter = () => {
             enc_att.getEncounterUpdateAttributes(user_uuid),
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
+
+          //#40403 - Changes for Department Visit Type By Elumalai - Start
+          var deptVisit = await encounter_tbl.findAll({
+            where: {
+              facility_uuid: facility_uuid,
+              department_uuid: department_uuid,
+              patient_uuid: patient_uuid,
+              is_active: 1,
+              status: 1
+            },
+            required: false
+          });
+          //#40403 - Changes for Department Visit Type By Elumalai - End
+
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
 
           // Start -- H30-35488 - Need to track is_adult flag encounter wise  -- Ashok //          
@@ -669,17 +683,6 @@ const Encounter = () => {
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
         //#40403 - Changes for Department Visit Type By Elumalai - Start
-        const deptVisit = await encounter_tbl.findAll({
-          where: {
-            facility_uuid: facility_uuid,
-            department_uuid: department_uuid,
-            patient_uuid: patient_uuid,
-            is_active: 1,
-            status: 1
-          },
-          required: false
-        });
-
         if (deptVisit && deptVisit.length > 0) {
           encounterDoctor.dept_visit_type_uuid = 2;
         }
@@ -1164,7 +1167,7 @@ const Encounter = () => {
 
     let { patient_uuids, department_uuid, encounterDate } = searchData;
 
-    if ( !facility_uuid || !patient_uuids ) {
+    if (!facility_uuid || !patient_uuids) {
       return res.status(400).send({
         code: httpStatus[400],
         message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}`,
@@ -1178,7 +1181,7 @@ const Encounter = () => {
     );
 
     let findQuery = {
-      attributes: ['uuid', 'patient_uuid', 'encounter_date' ],
+      attributes: ['uuid', 'patient_uuid', 'encounter_date'],
       where: {
         patient_uuid: {
           [Op.in]: patient_uuids
@@ -1192,7 +1195,7 @@ const Encounter = () => {
 
     try {
 
-      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll( findQuery );
+      const { rows: encounterDatas, count: encounterCount } = await encounter_tbl.findAndCountAll(findQuery);
 
       return res.status(200).send({
         code: httpStatus.OK,
