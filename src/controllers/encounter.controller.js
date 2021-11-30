@@ -607,6 +607,54 @@ const Encounter = () => {
         }
 
         let createdEncounter;
+        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
+        req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
+        req.headers.facility_uuid = "12612";
+        const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facility_uuid: facility_uuid });
+        var sessionTypeId = 0;
+        if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
+          if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
+            && fdata.responseContents.Evn_op_start_time && fdata.responseContents.Evn_op_end_time) {
+            const date_ob = new Date();
+
+            // current hours
+            const hours = date_ob.getHours();
+
+            // current minutes
+            const minutes = date_ob.getMinutes();
+
+            // current seconds
+            // const seconds = date_ob.getSeconds();
+
+            const currenttime = hours + ':' + minutes + ':00';
+
+            // // OP Morning Start and End Time
+            // const op__morning_start1 = fdata.responseContents.mon_op_start_time.split(':');
+            // const op_morning_end1 = fdata.responseContents.mon_op_end_time.split(':');
+            // const date_opm_start = new Date();
+            // date_opm_start.setHours(op__morning_start1[0], op__morning_start1[1], 00);
+            // const date_opm_end = new Date();
+            // date_opm_end.setHours(op_morning_end1[0], op_morning_end1[1], 00);
+
+            // // OP Evening Start and End Time
+            // const op__evening_start1 = fdata.responseContents.mon_op_start_time.split(':');
+            // const op_evening_end1 = fdata.responseContents.mon_op_end_time.split(':');
+            // const date_op_evening_start = new Date();
+            // date_op_evening_start.setHours(op__evening_start1[0], op__evening_start1[1], 00);
+            // const date_op_evening_end = new Date();
+            // date_op_evening_end.setHours(op_evening_end1[0], op_evening_end1[1], 00);
+
+            if (currenttime >= fdata.responseContents.mon_op_start_time && currenttime <= fdata.responseContents.mon_op_end_time) {
+              sessionTypeId = 1; //Morning
+            } else if (currenttime >= fdata.responseContents.Evn_op_start_time && currenttime <= fdata.responseContents.Evn_op_end_time) {
+              sessionTypeId = 2; //Evening
+            } else {
+              sessionTypeId = 3; //Casualty
+            }
+          }
+        }
+        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - End
+        
         if (!is_enc_avail) {
 
           // closing all previous active encounters patient
@@ -626,7 +674,7 @@ const Encounter = () => {
             },
             required: false
           });
-          //#40403 - Changes for Department Visit Type By Elumalai - End
+          //#40403 - Changes for Department Visit Type By Elumalai - End     
 
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
 
@@ -687,6 +735,10 @@ const Encounter = () => {
           encounterDoctor.dept_visit_type_uuid = 2;
         }
         //#40403 - Changes for Department Visit Type By Elumalai - End
+
+        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
+        encounterDoctor.session_type_uuid = sessionTypeId;
+        //#40403 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - End
 
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
