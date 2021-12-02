@@ -608,9 +608,9 @@ const Encounter = () => {
 
         let createdEncounter;
         //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
-        req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
-        req.headers.facility_uuid = "12612";
-        const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facility_uuid: facility_uuid });
+        // req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
+        // req.headers.facility_uuid = "12612";
+        const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
         var sessionTypeId = 0;
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
           if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
