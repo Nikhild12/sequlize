@@ -3332,6 +3332,50 @@
 				}
 			}
 		},
+		"/api/emr-patient-vitals/getVitalsByPatientId": {
+			"post": {
+				"description": "To get a EMR Patient Vitals by patient uuid",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "department_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "facility_uuid",
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getVitalsByPatientId"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRPatientVitals"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				}
+			}
+		},
 		"/api/patient-chief-complaints/getByFilters": {
 			"get": {
 				"description": "To get Patient chief Complaints",
@@ -5006,8 +5050,6 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
-
-
 		"/api/diagnosis/createDiagnosis": {
 			"post": {
 				"description": "Diagnosis Details Inserted Successfully",
@@ -20622,6 +20664,18 @@
 				"encounter_type_uuid": {
 					"type": "Number",
 					"example": 1
+				}
+			}
+		},
+		"getVitalsByPatientId": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "array",
+					"items": {
+						"type": "Number",
+						"example": 108132
+					}
 				}
 			}
 		}
