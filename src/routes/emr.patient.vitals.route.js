@@ -28,6 +28,9 @@ emrPatientVitalRoute
 emrPatientVitalRoute
   .route("/getMockJson")
   .get(emrPatientVitalsController.getPatientVitalsMock);
+emrPatientVitalRoute
+  .route("/getVitalsByPatientId")
+  .post(emrPatientVitalsController.getVitalsByPatientUUID);
 
 // emrPatientVitalRoute.route('/delete').put(emrWorkflowController.deleteEMRWorkflow);
 // emrPatientVitalRoute.route('/getEMRWorkflowByUserId').get(emrWorkflowController.getEMRWorkFlowByUserId);

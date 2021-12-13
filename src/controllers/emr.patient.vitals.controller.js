@@ -41,7 +41,7 @@ const EMRPatientVitals = () => {
             "patient_uuid",
             "encounter_uuid",
             "encounter_type_uuid",
-            "vital_group_uuid", 
+            "vital_group_uuid",
             "vital_type_uuid",
             "vital_master_uuid",
             "vital_qualifier_uuid",
@@ -298,13 +298,60 @@ const EMRPatientVitals = () => {
     }
   };
 
+  const _getVitalsByPatientUUID = async (req, res) => {
+    const search_Id = req.body.patient_uuid;
+
+    if (!search_Id.length) {
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Kindly provide the required patient uuid!",
+        totalCount: 0,
+        responseContents: []
+      });
+    }
+
+    try {
+
+      let findQuery = {
+        where: {
+          is_active: emrConstants.IS_ACTIVE,
+          status: emrConstants.IS_ACTIVE
+        }
+      }
+
+      if (search_Id) {
+        findQuery.where = Object.assign(findQuery.where, {
+          patient_uuid: {
+            [Op.in]: search_Id
+          }
+        });
+      }
+
+      let getPatientVitals = await emr_patientvitals_Tbl.findAndCountAll(findQuery);
+
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched EMR Patient Vital Details Successfully",
+        query: findQuery,
+        totalCount: getPatientVitals.count,
+        responseContents: getPatientVitals.rows
+      });
+
+    } catch (ex) {
+      return res
+        .status(400)
+        .send({ code: httpStatus[400], message: ex.message });
+    }
+  };
+
   return {
     createPatientVital: _createPatientVital,
     getVitalsByTemplateID: _getVitalsByTemplateID,
     getPatientVitals: _getPatientVitals,
     getHistoryPatientVitals: _getHistoryPatientVitals,
     getPreviousPatientVitals: _getPreviousPatientVitals,
-    getPatientVitalsMock: _getPatientVitalsMock
+    getPatientVitalsMock: _getPatientVitalsMock,
+    getVitalsByPatientUUID: _getVitalsByPatientUUID
   };
 };
 
