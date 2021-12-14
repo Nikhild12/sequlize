@@ -76,6 +76,9 @@ module.exports = (sequelize, DataTypes) => {
             tkd_drug_frequency_uuid: {
                 type: DataTypes.INTEGER
             },
+            tkd_drug_frequency_in_take: {
+                type: DataTypes.STRING(45)
+            },
             dp_code: {
                 type: DataTypes.STRING(255)
             },
