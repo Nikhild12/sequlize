@@ -336,7 +336,7 @@ const EMRPatientVitals = () => {
 
       if (department_uuid) {
         findQuery.where = Object.assign(findQuery.where, {
-          patient_uuid: department_uuid
+          department_uuid: department_uuid
         });
       }
 
