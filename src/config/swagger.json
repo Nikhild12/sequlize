@@ -3343,13 +3343,13 @@
 						"type": "integer"
 					},
 					{
-						"in": "query",
+						"in": "header",
 						"name": "department_uuid",
 						"required": true,
 						"type": "integer"
 					},
 					{
-						"in": "query",
+						"in": "header",
 						"name": "facility_uuid",
 						"type": "integer"
 					},

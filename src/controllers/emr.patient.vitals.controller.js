@@ -300,6 +300,7 @@ const EMRPatientVitals = () => {
 
   const _getVitalsByPatientUUID = async (req, res) => {
     const search_Id = req.body.patient_uuid;
+    const { department_uuid, facility_uuid } = req.headers;
 
     if (!search_Id.length) {
       return res.status(200).send({
@@ -327,12 +328,23 @@ const EMRPatientVitals = () => {
         });
       }
 
+      if (facility_uuid) {
+        findQuery.where = Object.assign(findQuery.where, {
+          facility_uuid: facility_uuid
+        });
+      }
+
+      if (department_uuid) {
+        findQuery.where = Object.assign(findQuery.where, {
+          department_uuid: department_uuid
+        });
+      }
+
       let getPatientVitals = await emr_patientvitals_Tbl.findAndCountAll(findQuery);
 
       return res.status(200).send({
         code: httpStatus.OK,
         message: "Fetched EMR Patient Vital Details Successfully",
-        query: findQuery,
         totalCount: getPatientVitals.count,
         responseContents: getPatientVitals.rows
       });
