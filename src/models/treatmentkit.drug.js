@@ -128,6 +128,9 @@ module.exports = (sequelize, DataTypes) => {
             comments: {
                 type: DataTypes.STRING
             },
+            remarks: {
+                type: DataTypes.STRING(255)
+            },
             strength: {
                 type: DataTypes.STRING(255)
             },
