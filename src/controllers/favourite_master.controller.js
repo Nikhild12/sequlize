@@ -190,7 +190,8 @@ let gedTreatmentKitDrug = [
   "tkd_dosage",
   "im_is_emar",
   "im_can_calculate_frequency_qty",
-  "store_uuid"
+  "store_uuid",
+  "tkd_uuid"
 ];
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
 
@@ -1283,6 +1284,7 @@ function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
 function getDrugDetailsFromTreatment(drugArray) {
   return drugArray.map((d) => {
     return {
+      tkd_uuid: d.tkd_uuid,
       // Drug Details
       drug_name: d.im_name,
       drug_code: d.im_code,
