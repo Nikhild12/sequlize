@@ -178,6 +178,7 @@ let gedTreatmentKitDrug = [
   "df_display",
   "tkd_drug_frequency_uuid",
   "tkd_drug_frequency_in_take",
+  "tkd_drug_remarks",
   "dp_code",
   "dp_name",
   "tkd_duration_period_uuid",
@@ -1300,6 +1301,7 @@ function getDrugDetailsFromTreatment(drugArray) {
       drug_frequency_name: d.df_name,
       drug_frequency_id: d.tkd_drug_frequency_uuid,
       drug_frequency_in_take: d.tkd_drug_frequency_in_take,
+      drug_remarks: d.tkd_drug_remarks,
       drug_frequency_code: d.df_code,
       drug_frequency_display: d.df_display,
 
