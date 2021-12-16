@@ -155,11 +155,20 @@ const Encounter = () => {
       let PreviousChiefComplaints = await _getPastChiefComplaintsInfo(req, res, next);
       let PreviousDiagnosis = await _getPastDiagnosisInfo(req, res, next);
       let PreviousPrescription = await _getPreviousPrescriptionData(req, res, next); 
-      PreviousPrescription = [...PreviousPrescription.responseContents];
+      if (PreviousPrescription &&
+        PreviousPrescription.responseContents) {
+        PreviousPrescription = [...PreviousPrescription.responseContents];
+      }
       let PreviousLabDetails = await _getPreviousLabData(req, res, next); 
-      PreviousLabDetails = [...PreviousLabDetails.responseContents];
+      if(PreviousLabDetails && 
+        PreviousLabDetails.responseContents) {
+      PreviousLabDetails = [...PreviousLabDetails.responseContents]; 
+      }
       let PreviousRMISDetails = await _getPreviousRMISData(req, res, next); 
+      if(PreviousRMISDetails && 
+        PreviousRMISDetails.responseContents) {
       PreviousRMISDetails = [...PreviousRMISDetails.responseContents];
+      }
 
       let OldHistory = {
         PreviousChiefComplaints,
