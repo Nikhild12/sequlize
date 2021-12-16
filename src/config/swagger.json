@@ -3511,6 +3511,98 @@
 				}
 			}
 		},
+		"/api/encounter/getPastVisitInformation": {
+			"post": {
+				"description": "To get a Past Visit Information ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "getPastVisitInformation",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getPastVisitInformation"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
+					}
+				}
+			}
+		},
+		"/api/encounter/getPastHistoryInfo": {
+			"post": {
+				"description": "To get a Past Visit Information ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "getPastHistoryInfo",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getPastHistoryInfo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
+					}
+				}
+			}
+		},
 		"/api/encounter/getEncounterDashboardPatientInfo": {
 			"post": {
 				"description": "To get a Encounter Dashboard for Patient count ",
@@ -14055,6 +14147,24 @@
 				"to_datetime": {
 					"type": "string",
 					"example": "2021-06-24 23:59:59"
+				}
+			}
+		},
+		"getPastHistoryInfo": {
+			"type": "object",
+			"properties": {
+				"encounter_uuid": {
+					"type": "number",
+					"example": "12455"
+				}
+			}
+		},
+		"getPastVisitInformation": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "number",
+					"example": "12455"
 				}
 			}
 		},
