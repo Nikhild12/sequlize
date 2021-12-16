@@ -171,9 +171,7 @@ const notesController = () => {
                     profile_type_uuid: profile_type_uuid,
                     status: emr_constants.IS_ACTIVE,
                     is_active: emr_constants.IS_ACTIVE,
-                    entry_status: {
-                        [Op.in]: [emr_constants.IS_ACTIVE, emr_constants.ENTRY_STATUS]
-                    }
+                    entry_status: emr_constants.ENTRY_STATUS
                 },
                 include: [{
                     model: profilesTbl,
