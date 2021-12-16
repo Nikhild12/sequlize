@@ -87,7 +87,7 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
 const Encounter = () => {
 
 
-  const _getPastVisitInformation = async (req, res, next) => {
+  const _getOldVisitInformation = async (req, res, next) => {
     try{
 
       if(!(req.body.patient_uuid) || (req.body.patient_uuid) <= 0) {
@@ -143,7 +143,7 @@ const Encounter = () => {
 
   // Past History Info // 
 
-  const _getPastHistoryInfo = async (req, res, next) => {
+  const _getOldHistoryInfo = async (req, res, next) => {
     try{
       if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
         return res.status(500).send({
@@ -1555,8 +1555,8 @@ const Encounter = () => {
     getEncounterDashboardPatientCount: _getEncounterDashboardPatientCount,
     getEncounterDashboardPatientInfo: _getEncounterDashboardPatientInfo,
     getEncountersByPatientIdsAndDate,
-    getPastVisitInformation: _getPastVisitInformation,
-    getPastHistoryInfo: _getPastHistoryInfo,
+    getOldVisitInformation: _getOldVisitInformation,
+    getOldHistoryInfo: _getOldHistoryInfo,
 
   };
 };

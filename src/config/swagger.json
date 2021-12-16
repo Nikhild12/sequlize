@@ -3511,7 +3511,7 @@
 				}
 			}
 		},
-		"/api/encounter/getPastVisitInformation": {
+		"/api/encounter/getOldVisitInformation": {
 			"post": {
 				"description": "To get a Past Visit Information ",
 				"parameters": [
@@ -3536,10 +3536,10 @@
 					},
 					{
 						"in": "body",
-						"name": "getPastVisitInformation",
+						"name": "getOldVisitInformation",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/getPastVisitInformation"
+							"$ref": "#/definitions/getOldVisitInformation"
 						}
 					}
 				],
@@ -3557,7 +3557,7 @@
 				}
 			}
 		},
-		"/api/encounter/getPastHistoryInfo": {
+		"/api/encounter/getOldHistoryInfo": {
 			"post": {
 				"description": "To get a Past Visit Information ",
 				"parameters": [
@@ -3582,10 +3582,10 @@
 					},
 					{
 						"in": "body",
-						"name": "getPastHistoryInfo",
+						"name": "getOldHistoryInfo",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/getPastHistoryInfo"
+							"$ref": "#/definitions/getOldHistoryInfo"
 						}
 					}
 				],
@@ -14150,7 +14150,7 @@
 				}
 			}
 		},
-		"getPastHistoryInfo": {
+		"getOldHistoryInfo": {
 			"type": "object",
 			"properties": {
 				"encounter_uuid": {
@@ -14159,7 +14159,7 @@
 				}
 			}
 		},
-		"getPastVisitInformation": {
+		"getOldVisitInformation": {
 			"type": "object",
 			"properties": {
 				"patient_uuid": {
