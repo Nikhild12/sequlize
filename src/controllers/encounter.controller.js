@@ -152,25 +152,27 @@ const Encounter = () => {
           message: "Encounter Id is required..."
         });
       }
-      let PastChiefComplaints = await _getPastChiefComplaintsInfo(req, res, next);
-      let PastDiagnosis = await _getPastDiagnosisInfo(req, res, next);
-      let PastPrescription = await _getPreviousPrescriptionData(req, res, next); 
-      PastPrescription = [...PastPrescription.responseContents];
-      let PastLabDetails = await _getPreviousLabData(req, res, next); 
-      PastLabDetails = [...PastLabDetails.responseContents];
-      
+      let PreviousChiefComplaints = await _getPastChiefComplaintsInfo(req, res, next);
+      let PreviousDiagnosis = await _getPastDiagnosisInfo(req, res, next);
+      let PreviousPrescription = await _getPreviousPrescriptionData(req, res, next); 
+      PreviousPrescription = [...PreviousPrescription.responseContents];
+      let PreviousLabDetails = await _getPreviousLabData(req, res, next); 
+      PreviousLabDetails = [...PreviousLabDetails.responseContents];
+      let PreviousRMISDetails = await _getPreviousRMISData(req, res, next); 
+      PreviousRMISDetails = [...PreviousRMISDetails.responseContents];
 
-      let PastHistory = {
-        PastChiefComplaints,
-        PastDiagnosis,
-        PastPrescription,
-        PastLabDetails
+      let OldHistory = {
+        PreviousChiefComplaints,
+        PreviousDiagnosis,
+        PreviousPrescription,
+        PreviousLabDetails,
+        PreviousRMISDetails
       };
 
       return res.status(200).send({
         code: httpStatus.OK,
         message: "Fetched Encounter Successfully",
-        responseContents: PastHistory,
+        responseContents: OldHistory,
         totalRecords: 1
       });
     } catch (ex) {
@@ -292,7 +294,7 @@ const Encounter = () => {
         });
       }
       let options = {
-        uri: config.wso2LisUrl + 'patientworkorder/getPastLabDetails',
+        uri: config.wso2LisUrl + 'patientworkorder/getPreviousLabDetails',
         method: "POST",
         headers: {
           Authorization: req.headers.authorization,
@@ -304,10 +306,9 @@ const Encounter = () => {
         },
         json: true
       };
-      const prescription_details = await rp(options);
-      console.log(user_details);
-      if (prescription_details && prescription_details.responseContents) {
-        result = prescription_details.responseContents;
+      const lis_details = await rp(options);
+      if (lis_details && lis_details.responseContents) {
+        result = lis_details.responseContents;
       } else {
         result = {};
       }
@@ -317,6 +318,43 @@ const Encounter = () => {
       return ex;
     }
   }; 
+
+  const _getPreviousRMISData = async (req, res, next) => {
+    try {
+      let result = {};
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let options = {
+        uri: config.wso2RmisUrl + 'patientworkorder/getPreviousRMISDetails',
+        method: "POST",
+        headers: {
+          Authorization: req.headers.authorization,
+          user_uuid: req.headers.user_uuid,
+          facility_uuid: req.headers.facility_uuid
+        },
+        body: {
+          "encounter_uuid": req.body.encounter_uuid, 
+        },
+        json: true
+      };
+      const rims_details = await rp(options); 
+      if (rims_details && rims_details.responseContents) {
+        result = rims_details.responseContents;
+      } else {
+        result = {};
+      }
+      return result;
+
+    } catch (ex) {
+      return ex;
+    }
+  }; 
+  
 
   const _getEncounterDashboardPatientInfo = async (req, res, next) => {
     try {
