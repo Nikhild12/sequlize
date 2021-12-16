@@ -277,8 +277,7 @@ const Encounter = () => {
         },
         json: true
       };
-      const prescription_details = await rp(options);
-      console.log(user_details);
+      const prescription_details = await rp(options); 
       if (prescription_details && prescription_details.responseContents) {
         result = prescription_details.responseContents;
       } else {
