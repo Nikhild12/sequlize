@@ -1547,14 +1547,14 @@ const Encounter = () => {
   const getOutPatientDatas = async (req, res) => {
     try {
 
-      const { facility_uuid } = req.body;
-      if (facility_uuid.length < 0) {
+      const { facility_uuid, from_date, to_date } = req.body;
+      if (facility_uuid.length < 0 || !from_date || !to_date) {
         return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
           statusCode: httpStatus.UNPROCESSABLE_ENTITY,
-          error: 'facility_uuid is required'
+          error: 'facility_uuid, from_date, to_date is required'
         });
       }
-
+      const columnName = 'encounter_doctors.consultation_start_date';
       let findQuery = {
         raw: true,
         attributes: [
@@ -1575,15 +1575,40 @@ const Encounter = () => {
           {
             attributes: [],
             model: encounter_doctors_tbl,
-            as: 'encounter_doctors'
+            as: 'encounter_doctors',
+            // where: {
+            //   consultation_start_date: {
+            //     [Op.between]: [from_date, to_date]
+            //   }
+            // }
           }
         ],
         where: {
           facility_uuid,
-          encounter_type_uuid: 1
+          encounter_type_uuid: 1,
+          [columnName]: {
+            [Op.and]: [
+              Sequelize.where(
+                Sequelize.fn("date", Sequelize.col(`${columnName}`)),
+                ">=",
+                from_date
+              ),
+              Sequelize.where(
+                Sequelize.fn("date", Sequelize.col(`${columnName}`)),
+                "<=",
+                to_date
+              )
+            ]
+          }
         }
       };
 
+      function notOnlyALogger(msg){
+        console.log('hey, Im a single log');
+        //do whatever you need in here
+        console.log(msg);
+      }
+      findQuery.logging = notOnlyALogger;
       let data = await encounter_tbl.findAll(findQuery);
       if(data) {
         data = data[0];
@@ -1603,7 +1628,7 @@ const Encounter = () => {
         .json({
           status: "error",
           statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-          msg: 'Failed to get patient age count',
+          msg: 'Failed to get out patient datas',
           actualMsg: errorMsg
         });
     }
