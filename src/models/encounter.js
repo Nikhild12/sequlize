@@ -77,6 +77,12 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
+      is_adult: {
+        type: DataTypes.BOOLEAN
+      },
+      encounter_type_uuid: {
+        type: DataTypes.INTEGER
+      },
       encounter_date: {
         type: DataTypes.DATE,
         allowNull: true
