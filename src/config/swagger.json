@@ -3332,6 +3332,50 @@
 				}
 			}
 		},
+		"/api/emr-patient-vitals/getVitalsByPatientId": {
+			"post": {
+				"description": "To get a EMR Patient Vitals by patient uuid",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "department_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getVitalsByPatientId"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"EMRPatientVitals"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully"
+					}
+				}
+			}
+		},
 		"/api/patient-chief-complaints/getByFilters": {
 			"get": {
 				"description": "To get Patient chief Complaints",
@@ -3463,6 +3507,98 @@
 				"responses": {
 					"200": {
 						"description": "Successfully Inserted Encounter"
+					}
+				}
+			}
+		},
+		"/api/encounter/getOldVisitInformation": {
+			"post": {
+				"description": "To get a Past Visit Information ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "getOldVisitInformation",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getOldVisitInformation"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
+					}
+				}
+			}
+		},
+		"/api/encounter/getOldHistoryInfo": {
+			"post": {
+				"description": "To get a Past Visit Information ",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "authorization",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "getOldHistoryInfo",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getOldHistoryInfo"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Encounter"
 					}
 				}
 			}
@@ -5006,8 +5142,6 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
-
-
 		"/api/diagnosis/createDiagnosis": {
 			"post": {
 				"description": "Diagnosis Details Inserted Successfully",
@@ -14016,6 +14150,24 @@
 				}
 			}
 		},
+		"getOldHistoryInfo": {
+			"type": "object",
+			"properties": {
+				"encounter_uuid": {
+					"type": "number",
+					"example": "12455"
+				}
+			}
+		},
+		"getOldVisitInformation": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "number",
+					"example": "12455"
+				}
+			}
+		},
 		"getEncounterDashboardPatientInfo": {
 			"type": "object",
 			"properties": {
@@ -20622,6 +20774,18 @@
 				"encounter_type_uuid": {
 					"type": "Number",
 					"example": 1
+				}
+			}
+		},
+		"getVitalsByPatientId": {
+			"type": "object",
+			"properties": {
+				"patient_uuid": {
+					"type": "array",
+					"items": {
+						"type": "Number",
+						"example": 108132
+					}
 				}
 			}
 		}

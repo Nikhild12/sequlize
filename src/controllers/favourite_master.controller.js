@@ -177,6 +177,8 @@ let gedTreatmentKitDrug = [
   "df_name",
   "df_display",
   "tkd_drug_frequency_uuid",
+  "tkd_drug_frequency_in_take",
+  "tkd_drug_remarks",
   "dp_code",
   "dp_name",
   "tkd_duration_period_uuid",
@@ -188,7 +190,8 @@ let gedTreatmentKitDrug = [
   "tkd_dosage",
   "im_is_emar",
   "im_can_calculate_frequency_qty",
-  "store_uuid"
+  "store_uuid",
+  "tkd_uuid"
 ];
 gedTreatmentKitDrug = [...getTreatmentByIdInVWAtt, ...gedTreatmentKitDrug];
 
@@ -1281,6 +1284,7 @@ function getTreatmentFavouritesInHumanUnderstandable(treatFav) {
 function getDrugDetailsFromTreatment(drugArray) {
   return drugArray.map((d) => {
     return {
+      tkd_uuid: d.tkd_uuid,
       // Drug Details
       drug_name: d.im_name,
       drug_code: d.im_code,
@@ -1298,6 +1302,8 @@ function getDrugDetailsFromTreatment(drugArray) {
       // Drug Frequency Details
       drug_frequency_name: d.df_name,
       drug_frequency_id: d.tkd_drug_frequency_uuid,
+      drug_frequency_in_take: d.tkd_drug_frequency_in_take,
+      drug_remarks: d.tkd_drug_remarks,
       drug_frequency_code: d.df_code,
       drug_frequency_display: d.df_display,
 

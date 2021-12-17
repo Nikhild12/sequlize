@@ -41,6 +41,8 @@ const patient_age_details_tbl = sequelizeDb.patient_age_details;
 const config = require('../config/config');
 const utils = require('../helpers/utils');
 
+const appMasterData = require("../controllers/appMasterData");
+
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
   let encounterQuery = {
@@ -83,6 +85,284 @@ function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
 }
 
 const Encounter = () => {
+
+
+  const _getOldVisitInformation = async (req, res, next) => {
+    try{
+
+      if(!(req.body.patient_uuid) || (req.body.patient_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Patient Id is required..."
+        });
+      }
+
+      let dataJson = {
+        patient_uuid: req.body.patient_uuid 
+      };
+      let encsql = "";
+      encsql += "SELECT e.uuid as encounter_uuid,  e.encounter_date, ed.doctor_uuid ";
+      encsql += "FROM encounter e, encounter_doctors ed ";
+      encsql += "WHERE e.patient_uuid = :patient_uuid ";
+      encsql += "AND ed.encounter_uuid=e.uuid  ";
+      encsql += "AND e.encounter_type_uuid =1;  "; 
+      let encounterData = await sequelizeDb.sequelize.query(
+        encsql , { raw: true, replacements: dataJson, 
+          type: Sequelize.QueryTypes.SELECT });
+       
+      try {
+        let doctorIds = [...new Set(encounterData.map(e => e.doctor_uuid))];
+        const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+        const usersResponse = await appMasterData.getDoctorDetails(req.headers.user_uuid, Authorization, doctorIds);
+        let userinfo = {};
+        usersResponse.responseContents.forEach(euser => {
+          //let titlename = (euser.title && euser.title.name) ? euser.title.name : '';
+          userinfo[euser.uuid] = euser.first_name;
+        });
+        encounterData.forEach(e => {
+          e.doctor_name = userinfo[e.doctor_uuid] ?
+            userinfo[e.doctor_uuid] : null;
+          delete e.encounter_doctors;
+        });
+      } catch (ex) { }
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Encounter Successfully",
+        responseContents: encounterData,
+        totalRecords: encounterData.length
+      });
+    } catch (ex) {
+      return res.status(500).send({
+        statusCode: 500,
+        code: 500,
+        message: ex
+      });
+    }
+  }
+
+  // Past History Info // 
+
+  const _getOldHistoryInfo = async (req, res, next) => {
+    try{
+      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let PreviousChiefComplaints = await _getPastChiefComplaintsInfo(req, res, next);
+      let PreviousDiagnosis = await _getPastDiagnosisInfo(req, res, next);
+      let PreviousPrescription = await _getPreviousPrescriptionData(req, res, next); 
+      if (PreviousPrescription &&
+        PreviousPrescription.responseContents) {
+        PreviousPrescription = [...PreviousPrescription.responseContents];
+      }
+      let PreviousLabDetails = await _getPreviousLabData(req, res, next); 
+      if(PreviousLabDetails && 
+        PreviousLabDetails.responseContents) {
+      PreviousLabDetails = [...PreviousLabDetails.responseContents]; 
+      }
+      let PreviousRMISDetails = await _getPreviousRMISData(req, res, next); 
+      if(PreviousRMISDetails && 
+        PreviousRMISDetails.responseContents) {
+      PreviousRMISDetails = [...PreviousRMISDetails.responseContents];
+      }
+
+      let OldHistory = {
+        PreviousChiefComplaints,
+        PreviousDiagnosis,
+        PreviousPrescription,
+        PreviousLabDetails,
+        PreviousRMISDetails
+      };
+
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: "Fetched Encounter Successfully",
+        responseContents: OldHistory,
+        totalRecords: 1
+      });
+    } catch (ex) {
+      return res.status(500).send({
+        statusCode: 500,
+        code: 500,
+        message: ex
+      });
+    }
+  }
+
+  const _getPastChiefComplaintsInfo = async (req, res, next) => {
+    try{
+      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let dataJson = {
+        encounter_uuid: req.body.encounter_uuid 
+      };
+      let encsql = "";
+      encsql += " SELECT pc.uuid, pc.encounter_uuid , pc.performed_date, cc.name as description ";
+      encsql += " FROM patient_chief_complaints pc, chief_complaints cc ";
+      encsql += " WHERE pc.chief_complaint_uuid=cc.uuid ";
+      encsql += " AND pc.encounter_type_uuid=1 ";
+      encsql += " AND pc.encounter_uuid = :encounter_uuid "; 
+      let patientChiefComplaintsData = await sequelizeDb.sequelize.query(
+        encsql, {
+          raw: true, replacements: dataJson,
+        type: Sequelize.QueryTypes.SELECT
+      });  
+      return patientChiefComplaintsData;
+
+    } catch (ex) {
+      return  ex;
+    }
+  }
+  
+  const _getPastDiagnosisInfo = async (req, res, next) => {
+    try{
+      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let dataJson = {
+        encounter_uuid: req.body.encounter_uuid 
+      };
+      let encsql = "";
+      encsql += " SELECT pd.uuid, pd.encounter_uuid, pd.performed_date,  d.name as description  ";
+      encsql += " FROM patient_diagnosis pd, diagnosis d ";
+      encsql += " WHERE pd.diagnosis_uuid=d.uuid ";
+      encsql += " AND pd.encounter_type_uuid=1 ";
+      encsql += " AND pd.encounter_uuid = :encounter_uuid "; 
+      let patientDiagnosisData = await sequelizeDb.sequelize.query(
+        encsql, {
+          raw: true, replacements: dataJson,
+        type: Sequelize.QueryTypes.SELECT
+      });
+      return patientDiagnosisData;
+    } catch (ex) {
+      return ex;
+    }
+  }
+
+  // Past History Info // 
+
+  const _getPreviousPrescriptionData = async (req, res, next) => {
+    try {
+      let result = {};
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let options = {
+        uri: config.wso2InvUrl + 'prescriptions/getPastPrescription',
+        method: "POST",
+        headers: {
+          Authorization: req.headers.authorization,
+          user_uuid: req.headers.user_uuid,
+          facility_uuid: req.headers.facility_uuid
+        },
+        body: {
+          "encounter_uuid": req.body.encounter_uuid, 
+        },
+        json: true
+      };
+      const prescription_details = await rp(options); 
+      if (prescription_details && prescription_details.responseContents) {
+        result = prescription_details.responseContents;
+      } else {
+        result = {};
+      }
+      return result;
+
+    } catch (ex) {
+      return ex;
+    }
+
+  };
+
+  const _getPreviousLabData = async (req, res, next) => {
+    try {
+      let result = {};
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let options = {
+        uri: config.wso2LisUrl + 'patientworkorder/getPreviousLabDetails',
+        method: "POST",
+        headers: {
+          Authorization: req.headers.authorization,
+          user_uuid: req.headers.user_uuid,
+          facility_uuid: req.headers.facility_uuid
+        },
+        body: {
+          "encounter_uuid": req.body.encounter_uuid, 
+        },
+        json: true
+      };
+      const lis_details = await rp(options);
+      if (lis_details && lis_details.responseContents) {
+        result = lis_details.responseContents;
+      } else {
+        result = {};
+      }
+      return result;
+
+    } catch (ex) {
+      return ex;
+    }
+  }; 
+
+  const _getPreviousRMISData = async (req, res, next) => {
+    try {
+      let result = {};
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+        return res.status(500).send({
+          statusCode: 500,
+          code: 500,
+          message: "Encounter Id is required..."
+        });
+      }
+      let options = {
+        uri: config.wso2RmisUrl + 'patientworkorder/getPreviousRMISDetails',
+        method: "POST",
+        headers: {
+          Authorization: req.headers.authorization,
+          user_uuid: req.headers.user_uuid,
+          facility_uuid: req.headers.facility_uuid
+        },
+        body: {
+          "encounter_uuid": req.body.encounter_uuid, 
+        },
+        json: true
+      };
+      const rims_details = await rp(options); 
+      if (rims_details && rims_details.responseContents) {
+        result = rims_details.responseContents;
+      } else {
+        result = {};
+      }
+      return result;
+
+    } catch (ex) {
+      return ex;
+    }
+  }; 
+  
 
   const _getEncounterDashboardPatientInfo = async (req, res, next) => {
     try {
@@ -608,9 +888,9 @@ const Encounter = () => {
 
         let createdEncounter;
         //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
-        req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
-        req.headers.facility_uuid = "12612";
-        const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facility_uuid: facility_uuid });
+        // req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
+        // req.headers.facility_uuid = "12612";
+        const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
         var sessionTypeId = 0;
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
           if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
@@ -1349,6 +1629,9 @@ const Encounter = () => {
     getEncounterDashboardPatientInfo: _getEncounterDashboardPatientInfo,
     getEncountersByPatientIdsAndDate,
     getOutPatientDatas,
+    getOldVisitInformation: _getOldVisitInformation,
+    getOldHistoryInfo: _getOldHistoryInfo,
+
   };
 };
 

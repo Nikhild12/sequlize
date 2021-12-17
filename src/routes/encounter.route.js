@@ -26,5 +26,7 @@ EncounterRoutes.route("/getEncounterDashboardPatientCount").post(Encounter.getEn
 EncounterRoutes.route("/getEncounterDashboardPatientInfo").post(Encounter.getEncounterDashboardPatientInfo);
 EncounterRoutes.route("/getEncountersByPatientIdsAndDate").post(Encounter.getEncountersByPatientIdsAndDate);
 EncounterRoutes.route("/getOutPatientDatas").post(Encounter.getOutPatientDatas);
+EncounterRoutes.route("/getOldVisitInformation").post(Encounter.getOldVisitInformation);
+EncounterRoutes.route("/getOldHistoryInfo").post(Encounter.getOldHistoryInfo);
 
 module.exports = EncounterRoutes;
