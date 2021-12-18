@@ -3798,6 +3798,45 @@
 				}
 			}
 		},
+		"/api/encounter/getOutPatientDatas": {
+			"post": {
+				"description": "To Get Out Patient Data(s) by facility id",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getOutPatientDatas",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getOutPatientDatas"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Out patient data(s)"
+					}
+				}
+			}
+		},
 		"/api/encounter/getEncounterByDocAndPatientId": {
 			"get": {
 				"description": "To get a Encounter for Patient",
@@ -14247,6 +14286,20 @@
 					"type": "string"
 				},
 				"encounterDate": {
+					"type": "string"
+				}
+			}
+		},
+		"getOutPatientDatas": {
+			"type": "object",
+			"properties": {
+				"facility_uuid": {
+					"type": "number"
+				},
+				"from_date": {
+					"type": "string"
+				},
+				"to_date": {
 					"type": "string"
 				}
 			}
