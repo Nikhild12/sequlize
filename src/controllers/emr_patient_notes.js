@@ -1580,11 +1580,11 @@ const notesController = () => {
                 user_uuid,
                 facility_uuid
             } = req.headers;
-            console.log('req.headers =====>', JSON.stringify(req.headers));
-            console.log('req.headers.Authorization=====>', req.headers.Authorization);
-            console.log('req.headers.authorization=====>', req.headers.authorization);
-            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
-            console.log('Authorization=====>', Authorization);
+            //console.log('req.headers =====>', JSON.stringify(req.headers));
+            //console.log('req.headers.Authorization=====>', req.headers.Authorization);
+            //console.log('req.headers.authorization=====>', req.headers.authorization);
+            //const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            //console.log('Authorization=====>', Authorization);
             let findQuery = {
                 include: [{
                     model: profilesTbl,
@@ -1680,8 +1680,9 @@ const notesController = () => {
                 }
                 */
             }
+            //console.log('finalData', finalData);
             return res.status(200).send({
-                code: httpStatus.OK,
+                statusCode: httpStatus.OK,
                 responseContent: finalData
             });
         } catch (ex) {
