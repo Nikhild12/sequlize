@@ -10878,6 +10878,57 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/getReviewNotes1": {
+			"get": {
+				"summary": "To get a emr patient op notes by patient Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/emr-notes/getConsultations": {
 			"get": {
 				"summary": "To get Consultation List of the Patient Visit",
