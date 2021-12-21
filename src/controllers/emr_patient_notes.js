@@ -1544,7 +1544,6 @@ const notesController = () => {
         } else
             return false;
     };
-
     const getFacilityDetails = async (req) => {
         try {
             const getFacilityUrl = 'facility/getFacilityById';
@@ -1568,6 +1567,129 @@ const notesController = () => {
                 status: false,
                 message: errorMsg
             };
+        }
+    };
+
+    const _getReviewNotes1 = async (req, res) => {
+        try {
+            const {
+                patient_uuid,
+                encounter_uuid
+            } = req.query;
+            const {
+                user_uuid,
+                facility_uuid
+            } = req.headers;
+            console.log('req.headers =====>', JSON.stringify(req.headers));
+            console.log('req.headers.Authorization=====>', req.headers.Authorization);
+            console.log('req.headers.authorization=====>', req.headers.authorization);
+            const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
+            console.log('Authorization=====>', Authorization);
+            let findQuery = {
+                include: [{
+                    model: profilesTbl,
+                    required: false
+                },
+                {
+                    model: conceptsTbl,
+                    required: false
+                },
+                {
+                    model: categoriesTbl,
+                    required: false
+                },
+                {
+                    model: profilesTypesTbl,
+                    required: false
+                },
+                {
+                    model: sectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoriesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptsTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValuesTbl,
+                    required: false
+                },
+                {
+                    model: profileSectionCategoryConceptValueTermsTbl,
+                    required: false,
+                    include: [{
+                        model: conceptValueTermsTbl,
+                        required: false,
+                        attributes: ['uuid', 'code', 'name']
+                    }]
+                }
+                ],
+                order: [
+                    [profileSectionCategoriesTbl, 'display_order', 'ASC']
+                ],
+                where: {
+                    patient_uuid: patient_uuid,
+                    encounter_uuid: encounter_uuid,
+                    activity_uuid: 0,
+                    status: emr_constants.IS_ACTIVE,
+                    is_active: emr_constants.IS_ACTIVE
+                }
+            };
+            const patNotesData = await sectionCategoryEntriesTbl.findAll(findQuery);
+            if (!patNotesData) {
+                return res.status(404).send({
+                    code: 404,
+                    message: emr_constants.NO_RECORD_FOUND
+                });
+            }
+            let finalData = [];
+            //let i = 0;
+            for (let e of patNotesData) {
+                finalData.push(e);
+                /*
+                let data;
+                if (e.activity_uuid) {
+                    const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
+                    if (actCode && actCode.name) {
+                        e.temp = [];
+                        e.user_uuid = user_uuid;
+                        e.Authorization = Authorization;
+                        e.facility_uuid = facility_uuid; 
+                        data = await getWidgetData(actCode.name, e, consultation_uuid);
+                        finalData.push(data);
+                        console.log(finalData);
+                        // # Added for Nurse Desk IP Case Sheet Review Notes
+                        if (isNurseCS) {
+                            finalData[i].dataValues.activity_code = actCode.code;
+                            finalData[i].dataValues.activity_name = actCode.name;
+                        }
+                    }
+                } else {
+                    finalData.push(e);
+                }
+                if (isNurseCS) {
+                    i++;
+                }
+                */
+            }
+            return res.status(200).send({
+                code: httpStatus.OK,
+                responseContent: finalData
+            });
+        } catch (ex) {
+            console.log(ex);
+            return res.status(400).send({
+                code: httpStatus.BAD_REQUEST,
+                message: ex
+            });
         }
     };
 
@@ -1642,7 +1764,8 @@ const notesController = () => {
         print_previous_opnotes: _print_previous_opnotes,
         addConsultations: _addConsultations,
         updateConsultations: _updateConsultations,
-        getConsultations: _getConsultations
+        getConsultations: _getConsultations,
+        getReviewNotes1: _getReviewNotes1
     };
 };
 
