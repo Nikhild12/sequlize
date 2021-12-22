@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
       is_adult: {
         type: DataTypes.BOOLEAN
       },
-      encounter_type_uuid: {
+      gender_uuid: {
         type: DataTypes.INTEGER
       },
       encounter_date: {
