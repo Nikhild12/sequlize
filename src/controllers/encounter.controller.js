@@ -1558,6 +1558,7 @@ const Encounter = () => {
       let findQuery = {
         raw: true,
         attributes: [
+          // [Sequelize.col('encounter_doctors.department_uuid'), 'departmentUuid']
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_child_male'],
@@ -1573,19 +1574,15 @@ const Encounter = () => {
         ],
         include: [
           {
-            attributes: [],
+            attributes: ['department_uuid'],
             model: encounter_doctors_tbl,
-            as: 'encounter_doctors',
-            // where: {
-            //   consultation_start_date: {
-            //     [Op.between]: [from_date, to_date]
-            //   }
-            // }
+            as: 'encounter_doctors'
           }
         ],
         where: {
           facility_uuid,
           encounter_type_uuid: 1,
+          //date between filter
           [columnName]: {
             [Op.and]: [
               Sequelize.where(
@@ -1600,7 +1597,8 @@ const Encounter = () => {
               )
             ]
           }
-        }
+        },
+        group: 'encounter_doctors.department_uuid'
       };
 
       function notOnlyALogger(msg){
@@ -1611,8 +1609,25 @@ const Encounter = () => {
       findQuery.logging = notOnlyALogger;
       let data = await encounter_tbl.findAll(findQuery);
       if(data) {
-        data = data[0];
-        data.total_patients = (parseFloat( data.total_new_patients ) + parseFloat( data.total_old_patients )).toString();
+        data.forEach(ele => {
+          ele.departmentUuid = ele['encounter_doctors.department_uuid'];
+          ele.total_patients = (parseFloat( ele.total_new_patients ) + parseFloat( ele.total_old_patients )).toString();
+          delete ele['encounter_doctors.department_uuid'];
+        });
+        // data = data[0];
+        // data.total_patients = (parseFloat( data.total_new_patients ) + parseFloat( data.total_old_patients )).toString();
+
+        const uniqueDepartment = [...new Set(data.map(item => item.departmentUuid))];
+        const { responseContent: deptResp } = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
+        if(deptResp) {
+
+          data.forEach(ele => {
+            const deptindex = deptResp.rows.findIndex(item => item.uuid == ele.departmentUuid);
+            if (deptindex > -1) {
+              ele.departmentName = deptResp.rows[deptindex].name;
+            }
+          });
+        }
       }
 
       return res.send({
