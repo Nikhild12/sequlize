@@ -169,7 +169,7 @@ const clinical_notes = () => {
                         where: { c_patient_uuid: patient_uuid, c_encounter_uuid: encounter_uuid, c_is_active: 1, c_status: 1 }
                     },
                 );
-                return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
+                return res.status(200).send({ statusCode: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
             }
             else {
                 return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
