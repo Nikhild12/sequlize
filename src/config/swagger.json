@@ -10697,6 +10697,43 @@
 				}
 			}
 		},
+		"/api/clinical/getClinicalNotesByVisitId": {
+			"get": {
+				"summary": "To Get All Clinical Note Details By Visit",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Clinical Notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Get All Clinical Note Details By Visit"
+					}
+				}
+			}
+		},
 		"/api/profiles/getAllProfileTypes": {
 			"get": {
 				"summary": "To get all the profiletype Details ",
