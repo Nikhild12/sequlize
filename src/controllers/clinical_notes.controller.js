@@ -145,6 +145,30 @@ const clinical_notes = () => {
                         where: { c_patient_uuid: patient_uuid, c_is_active: 1, c_status: 1 }
                     },
                 );
+                return res.status(200).send({ statusCode: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: emr_constants.FETCHD_PROFILES_FAIL });
+            }
+        } catch (ex) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
+        }
+    };
+
+    const _getClinicalNotesByVisitId = async (req, res) => {
+
+        const { user_uuid } = req.headers;
+        const { patient_uuid } = req.query;
+        const { encounter_uuid } = req.query;
+        try {
+            if (user_uuid) {
+                const notesData = await vwClinicalNotesTbl.findAll(
+                    {
+                        attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+                        order: [['c_uuid', 'DESC']],
+                        where: { c_patient_uuid: patient_uuid, c_encounter_uuid: encounter_uuid, c_is_active: 1, c_status: 1 }
+                    },
+                );
                 return res.status(200).send({ code: httpStatus.OK, message: emr_constants.FETCHD_PROFILES_SUCCESSFULLY, responseContents: notesData });
             }
             else {
@@ -160,7 +184,8 @@ const clinical_notes = () => {
         getClinicalNotesDetailsById: _getClinicalNotesDetailsById,
         deleteClinicalNotes: _deleteClinicalNotes,
         updateClinicalNotes: _updateClinicalNotes,
-        getAllClinicalNotesDetails: _getAllClinicalNotesDetails
+        getAllClinicalNotesDetails: _getAllClinicalNotesDetails,
+        getClinicalNotesByVisitId: _getClinicalNotesByVisitId
 
     };
 };

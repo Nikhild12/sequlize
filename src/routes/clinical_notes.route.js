@@ -12,7 +12,6 @@ clinicalNotesRoute.route('/delete').put(clinicalNotesController.deleteClinicalNo
 clinicalNotesRoute.route('/getById').get(clinicalNotesController.getClinicalNotesDetailsById);
 clinicalNotesRoute.route('/update').put(clinicalNotesController.updateClinicalNotes);
 clinicalNotesRoute.route('/getAll').get(clinicalNotesController.getAllClinicalNotesDetails);
-
-
+clinicalNotesRoute.route('/getClinicalNotesByVisitId').get(clinicalNotesController.getClinicalNotesByVisitId);
 
 module.exports = clinicalNotesRoute;
