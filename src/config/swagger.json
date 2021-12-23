@@ -3800,7 +3800,7 @@
 		},
 		"/api/encounter/getOutPatientDatas": {
 			"post": {
-				"description": "To Get Out Patient Data(s) by facility id",
+				"description": "To Get Out Patient Data(s) By Facility",
 				"parameters": [
 					{
 						"in": "header",
@@ -3820,6 +3820,45 @@
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/getOutPatientDatas"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Encounter"
+				],
+				"responses": {
+					"200": {
+						"description": "Successfully Fetched Out patient data(s)"
+					}
+				}
+			}
+		},
+		"/api/encounter/getOutPatientSessionDatas": {
+			"post": {
+				"description": "To Get Out Patient Session Data(s) By Facility",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "getOutPatientSessionDatas",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getOutPatientSessionDatas"
 						}
 					}
 				],
@@ -10878,6 +10917,57 @@
 				"x-throttling-tier": "Unlimited"
 			}
 		},
+		"/api/emr-notes/getReviewNotes1": {
+			"get": {
+				"summary": "To get a emr patient op notes by patient Data",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "patient_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "query",
+						"name": "encounter_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Emr-notes"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetch Successfully"
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
 		"/api/emr-notes/getConsultations": {
 			"get": {
 				"summary": "To get Consultation List of the Patient Visit",
@@ -14291,6 +14381,20 @@
 			}
 		},
 		"getOutPatientDatas": {
+			"type": "object",
+			"properties": {
+				"facility_uuid": {
+					"type": "number"
+				},
+				"from_date": {
+					"type": "string"
+				},
+				"to_date": {
+					"type": "string"
+				}
+			}
+		},
+		"getOutPatientSessionDatas": {
 			"type": "object",
 			"properties": {
 				"facility_uuid": {
