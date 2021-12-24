@@ -1546,7 +1546,6 @@ const Encounter = () => {
 
   const getOutPatientDatas = async (req, res) => {
     try {
-
       const { facility_uuid, from_date, to_date } = req.body;
       if (facility_uuid.length < 0 || !from_date || !to_date) {
         return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
@@ -1558,7 +1557,6 @@ const Encounter = () => {
       let findQuery = {
         raw: true,
         attributes: [
-          // [Sequelize.col('encounter_doctors.department_uuid'), 'departmentUuid']
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_adult_transgender'],
@@ -1593,7 +1591,6 @@ const Encounter = () => {
         where: {
           facility_uuid,
           encounter_type_uuid: 1,
-          //date between filter
           [columnName]: {
             [Op.and]: [
               Sequelize.where(
@@ -1614,7 +1611,6 @@ const Encounter = () => {
 
       function notOnlyALogger(msg){
         console.log('hey, Im a single log');
-        //do whatever you need in here
         console.log(msg);
       }
       findQuery.logging = notOnlyALogger;
@@ -1625,8 +1621,6 @@ const Encounter = () => {
           ele.total_patients = (parseFloat( ele.total_new_patients ) + parseFloat( ele.total_old_patients )).toString();
           delete ele['encounter_doctors.department_uuid'];
         });
-        // data = data[0];
-        // data.total_patients = (parseFloat( data.total_new_patients ) + parseFloat( data.total_old_patients )).toString();
 
         const uniqueDepartment = [...new Set(data.map(item => item.departmentUuid))];
         const { responseContent: deptResp } = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
