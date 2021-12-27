@@ -13202,6 +13202,13 @@
 					"department_uuid": {
 						"type": "number"
 					},
+					"gender_uuid": {
+						"type": "number"
+					},
+					"is_adult": {
+						"type": "boolean",
+						"example": true
+					},
 					"patient_uuid": {
 						"type": "number"
 					},
