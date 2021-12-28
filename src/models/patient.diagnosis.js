@@ -13,6 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       facility_uuid: {
         type: DataTypes.INTEGER
       },
+      //Bhaskar H30-46277 - APi Chnages for Diagnosis Count Report
+      gender_uuid: {
+        type: DataTypes.INTEGER
+      },
+      is_adult: {
+        type: DataTypes.BOOLEAN,
+        values: ["0", "1"],
+        defaultValue: "1"
+      },
+      //Bhaskar H30-46277 - APi Chnages for Diagnosis Count Report
       department_uuid: {
         type: DataTypes.INTEGER
       },
