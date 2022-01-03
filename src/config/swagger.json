@@ -1796,6 +1796,91 @@
             "x-throttling-tier":"Unlimited"
          }
       },
+
+
+
+
+		"/api/Dep_Diagnosis_count/depDiagnosis": {
+			"get": {
+				"summary": "To get all the user Details ",
+				"parameters": [{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+
+
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				
+				
+
+
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diagnosis Wise Count"
+				],
+				"responses": {
+					"200": {
+						"description": "get All Diagnosis Wise Count Details"
+					}
+				}
+			}
+		},
+
+
+
+      "/api/Dep_Diagnosis_count/docDiagnosis": {
+			"get": {
+				"summary": "To get all the user Details ",
+				"parameters": [{
+						"in": "header",
+						"name": "facility_uuid",
+						"required": true,
+						"type": "integer"
+					},
+
+
+					{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					}
+				
+				
+
+
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diagnosis Wise Count"
+				],
+				"responses": {
+					"200": {
+						"description": "get All Diagnosis Wise Count Details"
+					}
+				}
+			}
+		},
+
+
+
+
+
+
       "/api/immunizations/searchimmuization":{
          "post":{
             "description":"Fetch Successfully",
