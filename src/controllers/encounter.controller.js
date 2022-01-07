@@ -1654,6 +1654,7 @@ const Encounter = () => {
     }
   }
 
+  //H30-46645 - Registration Reports - OP Census Report - Casualty Session Type New and Old Patient Count Issues Fixed
   const getOutPatientSessionDatas = async (req, res) => {
     try {
 
@@ -1686,10 +1687,10 @@ const Encounter = () => {
           
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_female'],
-          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_total'],
+          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_female'],
-          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_total'],
+          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_total'],
           
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_adult_male'],
@@ -1710,10 +1711,10 @@ const Encounter = () => {
           
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_female'],
-          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_total'],
+          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_child_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_child_female'],
-          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_child_total'],
+          [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_total'],
         ],
         include: [
