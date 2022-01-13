@@ -30,7 +30,53 @@
       "application/file"
    ],
    "paths":{
-      "/api/glass_prescription/create":{
+      "/api/patientemrcensus/addEMRCensusCount": {
+         "post": {
+            "description": "To Create patients emr census ",
+            "parameters": [
+               {
+                  "in": "body",
+                  "name": "Census",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/addEMRCensusCount"
+                  }
+               },
+               {
+                  "name": "user_uuid",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "responses": {
+               "200": {
+                  "description": "successful operation",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "tags": [
+               "EMR_Census"
+            ],
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      }
+
+   "/api/glass_prescription/create":{
          "post":{
             "description":"Inserted Successfully",
             "operationId":"createglassprescription",
@@ -12176,6 +12222,71 @@
       }
    },
    "definitions":{
+      "addEMRCensusCount":{
+         "type": "object",
+         "properties": {
+            "facility_uuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "patient_uuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "patient_pin_no": {
+               "type": "string",
+               "example": "1"
+            },
+            "gender_uuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "is_adult": {
+               "type": "string",
+               "example": "1"
+            },
+            "registration_date": {
+               "type": "date",
+               "example": "2022-01-11"
+            },
+	         "encounter_uuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "encounter_doctor_uuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "encounter_department_uuid": {
+              "type": "string",
+               "example": "1"  
+            },
+            "encounter_type_uuid": {
+              "type": "string",
+               "example": "1"
+            },
+            "encounter_visit_type_uuid": {
+              "type": "string",
+               "example": "1"
+            },
+            "encounter_date": {
+               "type": "date",
+               "example": "2022-01-11"
+            },
+            "encounter_session_uuid": {
+              "type": "string",
+               "example": "1"
+            },
+            "is_prescribed": {
+               "type": "string",
+               "example": "1"
+            },
+            "created_by": {
+               "type": "string",
+               "example": "1"
+            }
+         }
+      },
       "emrflowuser":{
          "type":"object",
          "properties":{
