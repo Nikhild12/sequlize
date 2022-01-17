@@ -38,6 +38,7 @@ const utilityService = require("../services/utility.service");
 const encounterBlockChain = require('../blockChain/encounter.blockchain');
 
 const patient_age_details_tbl = sequelizeDb.patient_age_details;
+const emr_census_count_tbl = sequelizeDb.emr_census_count;
 const config = require('../config/config');
 const utils = require('../helpers/utils');
 
@@ -866,8 +867,6 @@ const Encounter = () => {
           .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
       }
       try {
-
-        // Assigning
         encounter = enc_att.assignDefaultValuesToEncounter(encounter, user_uuid);
         encounterDoctor = enc_att.assignDefaultValuesToEncounterDoctor(encounterDoctor, encounter, user_uuid);
 
@@ -887,7 +886,7 @@ const Encounter = () => {
         }
 
         let createdEncounter;
-        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
+        /* #H30-45561 - EMR - Encounter - Getting Session Type Based on the Facility Configuration By Elumalai - Start */
         // req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
         // req.headers.facility_uuid = "12612";
         const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
@@ -903,27 +902,7 @@ const Encounter = () => {
             // current minutes
             const minutes = date_ob.getMinutes();
 
-            // current seconds
-            // const seconds = date_ob.getSeconds();
-
             const currenttime = hours + ':' + minutes + ':00';
-
-            // // OP Morning Start and End Time
-            // const op__morning_start1 = fdata.responseContents.mon_op_start_time.split(':');
-            // const op_morning_end1 = fdata.responseContents.mon_op_end_time.split(':');
-            // const date_opm_start = new Date();
-            // date_opm_start.setHours(op__morning_start1[0], op__morning_start1[1], 00);
-            // const date_opm_end = new Date();
-            // date_opm_end.setHours(op_morning_end1[0], op_morning_end1[1], 00);
-
-            // // OP Evening Start and End Time
-            // const op__evening_start1 = fdata.responseContents.mon_op_start_time.split(':');
-            // const op_evening_end1 = fdata.responseContents.mon_op_end_time.split(':');
-            // const date_op_evening_start = new Date();
-            // date_op_evening_start.setHours(op__evening_start1[0], op__evening_start1[1], 00);
-            // const date_op_evening_end = new Date();
-            // date_op_evening_end.setHours(op_evening_end1[0], op_evening_end1[1], 00);
-
             if (currenttime >= fdata.responseContents.mon_op_start_time && currenttime <= fdata.responseContents.mon_op_end_time) {
               sessionTypeId = 1; //Morning
             } else if (currenttime >= fdata.responseContents.Evn_op_start_time && currenttime <= fdata.responseContents.Evn_op_end_time) {
@@ -933,17 +912,16 @@ const Encounter = () => {
             }
           }
         }
-        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - End
+        /* #H30-45561 - EMR - Encounter - Getting Session Type Based on the Facility Configuration By Elumalai - End */
         
         if (!is_enc_avail) {
-
-          // closing all previous active encounters patient
-          const encounterUpdate = await encounter_tbl.update(
+          /* Closing all previous active encounters for this patient */
+          await encounter_tbl.update(
             enc_att.getEncounterUpdateAttributes(user_uuid),
             enc_att.getEncounterUpdateQuery(patient_uuid, facility_uuid, encounter_type_uuid)
           );
 
-          //#40403 - Changes for Department Visit Type By Elumalai - Start
+          /* #H30-40403 - Changes for Department Visit Type By Elumalai - Start */
           var deptVisit = await encounter_tbl.findAll({
             where: {
               facility_uuid: facility_uuid,
@@ -954,11 +932,11 @@ const Encounter = () => {
             },
             required: false
           });
-          //#40403 - Changes for Department Visit Type By Elumalai - End     
+          /* #H30-40403 - Changes for Department Visit Type By Elumalai - End */   
 
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
 
-          // Start -- H30-35488 - Need to track is_adult flag encounter wise  -- Ashok //          
+          /* Start - #H30-35488 : Need to track is_adult flag encounter wise - Ashok */
           const patient_age_details_already_exist = await patient_age_details_tbl.count({
             where: {
               encounter_uuid: createdEncounter.uuid
@@ -1002,25 +980,49 @@ const Encounter = () => {
               await patient_age_details_tbl.create(patient_age_details_data, { returning: true, });
             }
           }
-          // End -- H30-35488 -- Ashok //
+          /* End - #H30-35488 : Need to track is_adult flag encounter wise - Ashok */
 
         }
         const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
         encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
-        // checking for Primary Doctor
+        /* Checking for Primary Doctor */
         encounterDoctor.is_primary_doctor = !is_enc_avail ? emr_constants.IS_ACTIVE : emr_constants.IS_IN_ACTIVE;
 
-        //#40403 - Changes for Department Visit Type By Elumalai - Start
+        /* #H30-40403 - Changes for Department Visit Type By Elumalai - Start */
         if (deptVisit && deptVisit.length > 0) {
           encounterDoctor.dept_visit_type_uuid = 2;
         }
-        //#40403 - Changes for Department Visit Type By Elumalai - End
+        /* #H30-40403 - Changes for Department Visit Type By Elumalai - End */
 
-        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
+        /* #H30-45561 - EMR - Encounter - Assigning Session Type Based on the Facility Configuration By Elumalai - Start */
         encounterDoctor.session_type_uuid = sessionTypeId;
-        //#40403 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - End
+        /* #H30-45561 - EMR - Encounter - Assigning Session Type Based on the Facility Configuration By Elumalai - End */
 
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
+        /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
+        let emr_census_data = {
+          facility_uuid: createdEncounter.facility_uuid,
+          patient_uuid: createdEncounter.patient_uuid,
+          patient_pin_no: '',
+          gender_uuid: 1,
+          is_adult: 1,
+          registration_date: createdEncounter.created_date,
+          encounter_uuid: createdEncounter.uuid,
+          encounter_doctor_uuid: encounterDoctor.doctor_uuid,
+          encounter_department_uuid: encounterDoctor.department_uuid,
+          encounter_type_uuid: createdEncounter.encounter_type_uuid,
+          encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+          encounter_date: createdEncounter.created_date,
+          encounter_session_uuid: encounterDoctor.session_type_uuid,
+          is_prescribed: 1,
+          is_active: 1,
+          created_by: createdEncounter.created_by,
+          created_date: createdEncounter.created_date,
+          modified_by: createdEncounter.created_by,
+          modified_date: createdEncounter.created_date
+        };
+        await emr_census_count_tbl.create(emr_census_data, { returning: true, });
+        /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);

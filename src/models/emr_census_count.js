@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             is_prescribed: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: 1
+                defaultValue: 0
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
@@ -65,17 +65,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             modified_by: {
                 type: DataTypes.INTEGER(11).UNSIGNED
-            },
+            }
         }, {
             createdAt: 'created_date',
             updatedAt: 'modified_date',
-            tableName: "op_census_count",
+            tableName: "emr_census_count",
             indexes: [{
                 fields: ["uuid"]
             }],
             defaultScope: {
                 where: {
-                    is_active: 1,
+                    is_active: 1
                 }
             }
         }

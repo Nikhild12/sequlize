@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const mysql_pool = require('../mysql_db/mySqlpool');
+//const mysql_pool = require('../mysql_db/mySqlpool');
 
 
 const depDiagnosis_Controller = () => {

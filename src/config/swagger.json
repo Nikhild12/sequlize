@@ -74,8 +74,8 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
-      }
-
+      },
+      
    "/api/glass_prescription/create":{
          "post":{
             "description":"Inserted Successfully",
