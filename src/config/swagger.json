@@ -14532,6 +14532,12 @@
                   },
                   "department_uuid":{
                      "type":"number"
+                  },
+                  "gender_uuid":{
+                     "type":"number"
+                  },
+                  "is_adult":{
+                     "type":"number"
                   }
                }
             },
