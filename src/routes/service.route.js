@@ -147,7 +147,7 @@ const dietKitchenRoutes = require('./diet_kitchen.route');
 
 const depDiagnosiscountRoutes = require('./depDiagnosiscount.route');
 
-//const patientemrcensusRoutes = require('./patientemrcensus.route');
+const patientemrcensusRoutes = require('./patientemrcensus.route');
 
 // EMR Work Flow Settings Routes
 
@@ -341,7 +341,7 @@ serviceRouter.use("/diet_kitchen", dietKitchenRoutes);
 
 //  route config for patient emr census controller
 // Bhaskar H30-46770 - New API for Emr census Count Entry
-//router.use('/patientemrcensus', patientemrcensusRoutes); 
+serviceRouter.use('/patientemrcensus', patientemrcensusRoutes); 
 // Bhaskar H30-46770 - New API for Emr census Count Entry
 
 module.exports = serviceRouter;

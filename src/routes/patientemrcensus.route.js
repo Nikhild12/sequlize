@@ -6,6 +6,6 @@ const router = express.Router(); // eslint-disable-line new-cap
  * end points for emr census controller
  */
 router.route("/addEMRCensusCount").post(patientEmrCensusCtrl.addEMRCensusCount);
-
+router.route("/getOPDepartmentWisePatCount").post(patientEmrCensusCtrl.getOPDepartmentWisePatCount);
 module.exports = router;
 // Bhaskar H30-46770 - New API for Emr census Count Entry
