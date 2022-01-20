@@ -142,11 +142,6 @@ const patientHistoryRoutes = require('./patient_history.route');
 // Diet Kitchen routes
 const dietKitchenRoutes = require('./diet_kitchen.route');
 
-
-
-
-const depDiagnosiscountRoutes = require('./depDiagnosiscount.route');
-
 const patientemrcensusRoutes = require('./patientemrcensus.route');
 
 // EMR Work Flow Settings Routes
