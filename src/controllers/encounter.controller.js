@@ -25,6 +25,7 @@ const enc_att = require("../attributes/encounter.attributes");
 
 const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
+const emrCensus_tbl = sequelizeDb.emr_census_count;
 const encounter_type_tbl = sequelizeDb.encounter_type;
 const vw_patientdoc = sequelizeDb.vw_patient_doctor_details;
 const vw_encounterDetailsTbl = sequelizeDb.vw_emr_encounter_details;
@@ -1777,6 +1778,43 @@ const Encounter = () => {
     }
   }
 
+  const _updateEmrCensusByEncounterId = async (req, res) => {
+    try {
+      const postData = req.body;
+      let dataJson = {};
+
+      if (postData.encounter_uuid && /\S/.test(postData.encounter_uuid)) {
+        dataJson.is_prescribed = postData.is_prescribed;
+      } else {
+        return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+          status: 'error',
+          statusCode: httpStatus.UNPROCESSABLE_ENTITY,
+          msg: 'Failed to update is_prescribed'
+        })
+      }
+      let data = await emrCensus_tbl.update(dataJson, {
+        where: {
+          encounter_uuid: postData.encounter_uuid
+        }
+      });
+
+      return res.status(httpStatus.OK).json({
+        status: 'success',
+        statusCode: httpStatus.OK,
+        msg: 'Encounter Is Prescribed request updated successfully',
+        responseContents: data
+      })
+    } catch (err) {
+      let errorMsg = err.errors ? err.errors[0].message : err.message;
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+        msg: 'Failed to update Is Prescribed Request',
+        actual: errorMsg
+      })
+    }
+  };
+
   return {
     getEncountersByPatientId: _getEncountersByPatientId,
     getEncounterByDocAndPatientId: _getEncounterByDocAndPatientId,
@@ -1800,6 +1838,7 @@ const Encounter = () => {
     getOutPatientSessionDatas,
     getOldVisitInformation: _getOldVisitInformation,
     getOldHistoryInfo: _getOldHistoryInfo,
+    updateEmrCensusByEncounterId: _updateEmrCensusByEncounterId
 
   };
 };
