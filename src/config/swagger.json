@@ -12246,6 +12246,41 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/encounter/updateEmrCensusByEncounterId": {
+         "post": {
+            "description": "To Update a Encounter For Patient",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "updateEmrCensusByEncounterId",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/updateEmrCensusByEncounterId"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Encounter"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Successfully Updated Encounter"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/patientemrcensus/getDoctorWisePatCount": {
          "post": {
             "description": "Get doctor wise patient count ",
@@ -21439,6 +21474,19 @@
             "toDate": {
                "type": "date",
                "example": "2022-01-11"
+            }
+         }
+      },
+      "updateEmrCensusByEncounterId": {
+         "type": "object",
+         "properties": {
+            "encounter_uuid": {
+               "type": "number",
+               "example": 0
+            },
+            "is_prescribed": {
+               "type": "number",
+               "example": 0
             }
          }
       },

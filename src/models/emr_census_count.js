@@ -53,8 +53,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER(11).UNSIGNED
             },
             is_prescribed: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: 0
+                type: DataTypes.INTEGER(11).UNSIGNED
             },
             is_active: {
                 type: DataTypes.BOOLEAN,
