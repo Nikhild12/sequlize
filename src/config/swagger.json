@@ -1816,9 +1816,22 @@
 						"name": "user_uuid",
 						"required": true,
 						"type": "integer"
-					}
+					},
+				
+
+               {
+						"in": "header",
+						"name": "department_uuid",
+						"required": true,
+						"type": "integer"
+					},
 				
 				
+               {
+                  "in":"header",
+                  "name":"authorization",
+                  "type":"string"
+               }
 
 
 				],
@@ -1843,21 +1856,33 @@
 			"get": {
 				"summary": "To get all the user Details ",
 				"parameters": [{
-						"in": "header",
-						"name": "facility_uuid",
-						"required": true,
-						"type": "integer"
-					},
+               "in": "header",
+               "name": "facility_uuid",
+               "required": true,
+               "type": "integer"
+            },
 
 
-					{
-						"in": "header",
-						"name": "user_uuid",
-						"required": true,
-						"type": "integer"
-					}
-				
-				
+            {
+               "in": "header",
+               "name": "user_uuid",
+               "required": true,
+               "type": "integer"
+            },
+         
+            {
+               "in": "header",
+               "name": "department_uuid",
+               "required": true,
+               "type": "integer"
+            },
+         
+            {
+               "in":"header",
+               "name":"authorization",
+               "type":"string"
+            }
+
 
 
 				],
