@@ -165,6 +165,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: true
       },
+      admission_request_uuid: { /*H30-46971Adding new columns in patient referral table (admission_request_uuid) By Elumalai-*/
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0
+      },
       is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: 1,

@@ -29,5 +29,6 @@ EncounterRoutes.route("/getOutPatientDatas").post(Encounter.getOutPatientDatas);
 EncounterRoutes.route("/getOutPatientSessionDatas").post(Encounter.getOutPatientSessionDatas);
 EncounterRoutes.route("/getOldVisitInformation").post(Encounter.getOldVisitInformation);
 EncounterRoutes.route("/getOldHistoryInfo").post(Encounter.getOldHistoryInfo);
+EncounterRoutes.route("/updateEmrCensusByEncounterId").post(Encounter.updateEmrCensusByEncounterId);
 
 module.exports = EncounterRoutes;
