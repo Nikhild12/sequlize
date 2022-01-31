@@ -1457,6 +1457,10 @@ const Encounter = () => {
 
       if (postData.admission_uuid && /\S/.test(postData.admission_uuid)) {
         dataJson.admission_uuid = postData.admission_uuid;
+        /**H30-47055 - IP Admission - Provisional Discharge By Elumalai Govindan */
+        if (postData.hasOwnProperty('is_active_encounter')) {
+          dataJson.is_active_encounter = postData.is_active_encounter;
+        }
       } else {
         return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
           status: 'error',
