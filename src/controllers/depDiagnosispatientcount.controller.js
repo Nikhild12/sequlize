@@ -14,7 +14,7 @@ const depDiagnosis_Controller = () => {
     const view_depDiagnosis = async (req, res) => {
         try {
             let facility_uuid = req.headers.facility_uuid;
-            let dep_filter = req.headers.department_uuid;
+            let dep_filter = req.body.department_uuid;
 
             const selectCountQuery = ` select pd.department_uuid,d.name as diagnosis, count(distinct patient_uuid) as patient_count from patient_diagnosis pd join diagnosis d on pd.diagnosis_uuid =d.uuid where pd.facility_uuid=? and pd.department_uuid =? group by pd.department_uuid,d.name order by pd.department_uuid,d.name `;
 
@@ -96,7 +96,7 @@ const depDiagnosis_Controller = () => {
     const view_docDiagnosis = async (req, res) => {
         try {
             let facility_uuid = req.headers.facility_uuid;
-            let dep_filter = req.headers.department_uuid;
+            let dep_filter = req.body.department_uuid;
 
            let doc_uuid = req.headers.user_uuid;
 
