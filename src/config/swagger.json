@@ -1842,7 +1842,7 @@
          }
       },
       "/api/Dep_Diagnosis_count/depDiagnosis": {
-         "get": {
+         "post": {
             "summary": "To get all the user Details ",
             "parameters": [
                {
@@ -1856,7 +1856,26 @@
                   "name": "user_uuid",
                   "required": true,
                   "type": "integer"
+               },
+
+
+               {
+                  "in": "header",
+                  "name": "authorization",
+                  "required": true,
+                  "type": "string"
+               },
+
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/depDiagnosisbody"
+                  }
                }
+
+
             ],
             "produces": [
                "application/json",
@@ -1873,7 +1892,7 @@
          }
       },
       "/api/Dep_Diagnosis_count/docDiagnosis": {
-         "get": {
+         "post": {
             "summary": "To get all the user Details ",
             "parameters": [
                {
@@ -1887,7 +1906,25 @@
                   "name": "user_uuid",
                   "required": true,
                   "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "authorization",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody"
+                  }
                }
+
+
+
+
             ],
             "produces": [
                "application/json",
@@ -13673,38 +13710,40 @@
             }
          }
       },
-      "addimmunization": {
+      "depDiagnosisbody": {
          "type": "object",
          "properties": {
-            "name": {
-               "type": "string"
-            },
-            "description": {
-               "type": "string"
-            },
-            "route_uuid": {
+          
+            "department_uuid": {
                "type": "integer"
-            },
-            "frequency_uuid": {
-               "type": "integer"
-            },
-            "duration": {
-               "type": "integer"
-            },
-            "period_uuid": {
-               "type": "integer"
-            },
-            "instruction": {
-               "type": "string"
-            },
-            "schedule_flag_uuid": {
-               "type": "integer"
-            },
-            "is_active": {
-               "type": "boolean"
             }
+
+           
          }
       },
+
+
+      "docDiagnosisbody": {
+         "type": "object",
+         "properties": {
+          
+            "department_uuid": {
+               "type": "integer"
+            }
+
+           
+         }
+      },
+
+
+
+
+
+
+
+
+
+
       "getimmunizationReq": {
          "type": "object",
          "properties": {
