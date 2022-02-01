@@ -109,7 +109,7 @@ from patient_diagnosis pd
 join diagnosis d on pd.diagnosis_uuid =d.uuid
 join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
 where pd.facility_uuid=?  and doctor_uuid=? and pd.department_uuid=?
-group by pd.encounter_doctor_uuid,d.name 
+group by doctor_uuid,d.name 
 
 order by doctor_uuid,d.name
        `
