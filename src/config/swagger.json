@@ -13716,7 +13716,16 @@
           
             "department_uuid": {
                "type": "integer"
-            }
+            },
+            "fromdate":
+               {
+				"type": "string"
+				},
+
+				"todate":
+				{
+				 "type": "string"
+				 }
 
            
          }
@@ -13729,7 +13738,18 @@
           
             "department_uuid": {
                "type": "integer"
-            }
+            },
+            "fromdate":
+               {
+				"type": "string"
+				},
+
+				"todate":
+				{
+				 "type": "string"
+				 }
+
+
 
            
          }
