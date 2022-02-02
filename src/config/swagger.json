@@ -14753,6 +14753,24 @@
                   },
                   "is_adult": {
                      "type": "number"
+                  },
+                  "patient_pin_no": {
+                     "type": "string"
+                  },
+                  "patient_name": {
+                     "type": "string"
+                  },
+                  "age": {
+                     "type": "number"
+                  },
+                  "mobile": {
+                     "type": "string"
+                  },
+                  "registration_date": {
+                     "type": "string"
+                  },
+                  "registered_session_uuid": {
+                     "type": "number"
                   }
                }
             },

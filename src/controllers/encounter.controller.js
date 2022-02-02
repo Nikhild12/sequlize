@@ -26,23 +26,19 @@ const enc_att = require("../attributes/encounter.attributes");
 const encounter_tbl = sequelizeDb.encounter;
 const encounter_doctors_tbl = sequelizeDb.encounter_doctors;
 const emrCensus_tbl = sequelizeDb.emr_census_count;
+const op_emr_census_count_tbl = sequelizeDb.op_emr_census_count;
+const patient_age_details_tbl = sequelizeDb.patient_age_details;
 const encounter_type_tbl = sequelizeDb.encounter_type;
 const vw_patientdoc = sequelizeDb.vw_patient_doctor_details;
 const vw_encounterDetailsTbl = sequelizeDb.vw_emr_encounter_details;
 const vw_latest_encounter = sequelizeDb.vw_latest_encounter;
 
 const emr_constants = require("../config/constants");
-
 const emr_mock_json = require("../config/emr_mock_json");
 const utilityService = require("../services/utility.service");
-
 const encounterBlockChain = require('../blockChain/encounter.blockchain');
-
-const patient_age_details_tbl = sequelizeDb.patient_age_details;
-const emr_census_count_tbl = sequelizeDb.emr_census_count;
 const config = require('../config/config');
 const utils = require('../helpers/utils');
-
 const appMasterData = require("../controllers/appMasterData");
 
 // Query
@@ -1001,6 +997,7 @@ const Encounter = () => {
 
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
+        /*
         let emr_census_data = {
           facility_uuid: createdEncounter.facility_uuid,
           patient_uuid: createdEncounter.patient_uuid,
@@ -1022,7 +1019,83 @@ const Encounter = () => {
           modified_by: createdEncounter.created_by,
           modified_date: createdEncounter.created_date
         };
-        await emr_census_count_tbl.create(emr_census_data, { returning: true, });
+        await emrCensus_tbl.create(emr_census_data, { returning: true, });
+        */
+        let op_emr_census_data, is_reg_avail;
+        op_emr_census_data = await getPatientRegDetails(createdEncounter.facility_uuid, encounterDoctor.department_uuid, createdEncounter.patient_uuid, createdEncounter.created_date);
+        is_reg_avail = op_emr_census_data && op_emr_census_data.length > 0;
+        if (is_reg_avail) {
+          if (op_emr_census_data[0].encounter_uuid === 0) {
+            op_emr_census_count_tbl.update(
+              { 
+                  encounter_uuid: createdEncounter.uuid,
+                  encounter_doctor_uuid: encounterDoctor.doctor_uuid,
+                  encounter_department_uuid: encounterDoctor.department_uuid,
+                  encounter_type_uuid: createdEncounter.encounter_type_uuid,
+                  encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+                  encounter_date: createdEncounter.created_date,
+                  encounter_session_uuid: encounterDoctor.session_type_uuid
+              },
+              { where: { uuid: op_emr_census_data[0].uuid } }
+            )
+          } else {
+            let emr_census_data = {
+              facility_uuid: createdEncounter.facility_uuid,
+              department_uuid: encounterDoctor.department_uuid,
+              patient_uuid: createdEncounter.patient_uuid,
+              patient_pin_no: encounter.patient_pin_no,
+              patient_name: encounter.patient_name,
+              age: encounter.age,
+              mobile: encounter.mobile,
+              gender_uuid: createdEncounter.gender_uuid,
+              is_adult: createdEncounter.is_adult,
+              registration_date: encounter.registration_date,
+              registered_session_uuid: encounter.registered_session_uuid,
+              encounter_uuid: createdEncounter.uuid,
+              encounter_doctor_uuid: encounterDoctor.doctor_uuid,
+              encounter_department_uuid: encounterDoctor.department_uuid,
+              encounter_type_uuid: createdEncounter.encounter_type_uuid,
+              encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+              encounter_date: createdEncounter.created_date,
+              encounter_session_uuid: encounterDoctor.session_type_uuid,
+              is_prescribed: 0,
+              is_active: 1,
+              created_by: createdEncounter.created_by,
+              created_date: createdEncounter.created_date,
+              modified_by: createdEncounter.created_by,
+              modified_date: createdEncounter.created_date
+            };
+            await op_emr_census_count_tbl.create(emr_census_data, { returning: true, });
+          }
+        } else {
+          let emr_census_data = {
+            facility_uuid: createdEncounter.facility_uuid,
+            department_uuid: encounterDoctor.department_uuid,
+            patient_uuid: createdEncounter.patient_uuid,
+            patient_pin_no: encounter.patient_pin_no,
+            patient_name: encounter.patient_name,
+            age: encounter.age,
+            mobile: encounter.mobile,
+            gender_uuid: createdEncounter.gender_uuid,
+            is_adult: createdEncounter.is_adult,
+            registration_date: encounter.registration_date,
+            registered_session_uuid: encounter.registered_session_uuid,
+            encounter_uuid: createdEncounter.uuid,
+            encounter_doctor_uuid: encounterDoctor.doctor_uuid,
+            encounter_department_uuid: encounterDoctor.department_uuid,
+            encounter_type_uuid: createdEncounter.encounter_type_uuid,
+            encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+            encounter_date: createdEncounter.created_date,
+            encounter_session_uuid: encounterDoctor.session_type_uuid,
+            is_prescribed: 0,
+            is_active: 1,
+            created_by: createdEncounter.created_by,
+            created_date: createdEncounter.created_date,
+            modified_by: createdEncounter.created_by,
+            modified_date: createdEncounter.created_date
+          };
+          await op_emr_census_count_tbl.create(emr_census_data, { returning: true, });
+        }
         /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
@@ -1931,6 +2004,27 @@ async function getEncounterQueryByPatientId(pId, etypeId, fId) {
     ];
   }
   return encounter_tbl.findAll(query);
+}
+
+async function getPatientRegDetails(FacilityId, DepartmentId, PatientId, RegDate) {
+  let query = {
+    order: [["uuid", "desc"]],
+    where: {
+      facility_uuid: FacilityId,
+      department_uuid: DepartmentId,
+      patient_uuid: PatientId,
+      registration_date:  {
+        [Op.and]: [
+          Sequelize.where(
+            Sequelize.fn("date", Sequelize.col("registration_date")),
+            "=",
+            moment(RegDate).format("YYYY-MM-DD")
+          )
+        ]
+      }
+    }
+  };
+  return op_emr_census_count_tbl.findAll(query);
 }
 
 async function getEncounterDoctorsQueryByPatientId(enId, dId, deptId) {
