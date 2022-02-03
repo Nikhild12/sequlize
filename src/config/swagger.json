@@ -12462,6 +12462,56 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/patientopemrcensus/getSessionWisePatCount": {
+         "post": {
+            "description": "To get department wise patient count ",
+            "parameters": [
+               {
+                  "in": "body",
+                  "name": "Department wise count",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/getSessionWisePatCount"
+                  }
+               },
+               {
+                  "name": "user_uuid",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "in": "header",
+                  "name": "authorization",
+                  "type": "string"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "responses": {
+               "200": {
+                  "description": "successful operation",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "tags": [
+               "OP_EMR_Census"
+            ],
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
@@ -21748,6 +21798,23 @@
          }
       },
       "getDepartmentWisePatCount": {
+         "type": "object",
+         "properties": {
+            "facilityUuid": {
+               "type": "string",
+               "example": "1"
+            },
+            "fromDate": {
+               "type": "date",
+               "example": "2022-01-11"
+            },
+            "toDate": {
+               "type": "date",
+               "example": "2022-01-11"
+            }
+         }
+      },
+      "getSessionWisePatCount": {
          "type": "object",
          "properties": {
             "facilityUuid": {

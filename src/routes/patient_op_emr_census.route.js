@@ -7,4 +7,5 @@ const router = express.Router(); // eslint-disable-line new-cap
  */
 router.route("/addOPEMRCensusCount").post(patientOPEmrCensusCtrl.addOPEMRCensusCount);
 router.route("/getDepartmentWisePatCount").post(patientOPEmrCensusCtrl.getDepartmentWisePatCount);
+router.route("/getSessionWisePatCount").post(patientOPEmrCensusCtrl.getSessionWisePatCount);
 module.exports = router;
