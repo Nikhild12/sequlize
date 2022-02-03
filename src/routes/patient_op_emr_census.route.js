@@ -6,4 +6,5 @@ const router = express.Router(); // eslint-disable-line new-cap
  * end points for emr census controller
  */
 router.route("/addOPEMRCensusCount").post(patientOPEmrCensusCtrl.addOPEMRCensusCount);
+router.route("/getDepartmentWisePatCount").post(patientOPEmrCensusCtrl.getDepartmentWisePatCount);
 module.exports = router;
