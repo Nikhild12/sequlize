@@ -1,4 +1,3 @@
-
 const db = require("../config/sequelize");
 const Sequelize = db.Sequelize;
 
@@ -214,8 +213,8 @@ async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid) {
 }
 
 async function getDepartments(user_uuid, Authorization, departmentIds) {
-  const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
-  // const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
+  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
+  const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
 
   let options = {
     uri: url,
