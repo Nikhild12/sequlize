@@ -95,6 +95,7 @@ let gedTreatmentKitDrug = [
     "tkd_quantity",
     "tkd_dosage",
     "tkd_duration",
+    "tkd_dosage",
     "tkd_strength",
     "tkd_comments",
     "tkd_uuid",
@@ -347,7 +348,6 @@ module.exports = {
     getTreatmentFavouritesInHumanUnderstandable: _getTreatmentFavouritesInHumanUnderstandable,
     updateDrug: _updateDrug,
     updateDiagnosis: _updateDiagnosis,
-    updateDiagnosis: _updateDiagnosis,
     updateChiefComplaints: _updateChiefComplaints,
     updateLab: _updateLab,
     updateRadiolgy: _updateRadiolgy,
@@ -378,7 +378,6 @@ function getDrugDetailsFromTreatment(drugArray) {
             drug_frequency_id: d.tkd_drug_frequency_uuid,
             drug_frequency_in_take: d.tkd_drug_frequency_in_take,
             drug_remarks: d.tkd_drug_remarks,
-
             drug_frequency_code: d.df_code,
             drug_frequency_display: d.df_display,
 

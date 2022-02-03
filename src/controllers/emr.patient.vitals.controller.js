@@ -298,6 +298,7 @@ const EMRPatientVitals = () => {
     }
   };
 
+  /**H30-45320 - get vitals by patient uuid service call api done by vignesh */
   const _getVitalsByPatientUUID = async (req, res) => {
     const search_Id = req.body.patient_uuid;
     const { department_uuid, facility_uuid } = req.headers;

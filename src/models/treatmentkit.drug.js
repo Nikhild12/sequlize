@@ -73,6 +73,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
+            frequency_in_take: {
+                type: DataTypes.STRING(45),
+                allowNull: true
+            },
+            dosage: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             duration: {
                 type: DataTypes.STRING(255),
                 allowNull: true

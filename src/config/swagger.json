@@ -13793,27 +13793,12 @@
                {
 				"type": "string"
 				},
-
 				"todate":
 				{
 				 "type": "string"
 				 }
-
-
-
-           
          }
       },
-
-
-
-
-
-
-
-
-
-
       "getimmunizationReq": {
          "type": "object",
          "properties": {

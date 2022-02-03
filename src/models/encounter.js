@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
-
       department_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -41,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
             msg: emr_constants.GetMinimumMessage("department_uuid")
           }
         }
+      },
+      is_adult: {
+        type: DataTypes.BOOLEAN
+      },
+      gender_uuid: {
+        type: DataTypes.INTEGER
       },
       encounter_type_uuid: {
         type: DataTypes.INTEGER,
