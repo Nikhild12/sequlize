@@ -126,27 +126,19 @@ const patientOPEmrCensusController = () => {
       const sessionCountDetails = await getSessionWiseCountDetails(fromDate, toDate, facilityUuid);
 
       let finalData = [];
+      finalData.push(sessionCountDetails);
+      /*
       for (let e of sessionCountDetails) {
         if (e.departmentId) {
-          /**
-           * Get department name using department id
-           * This call the App master service and fetch the department name
-           */
           const departmentName = await getDepartments(user_uuid, Authorization, e.departmentId);
           if (departmentName) {
-            /**
-             * Create new object and push into the final array
-             */
             finalData.push({ ...e, department_name: departmentName });
           }
         } else {
-          /**
-             * false return exsiting object
-             */
           finalData.push(e);
         }
       }
-
+      */
       return res.send({
         statusCode: 200,
         responseContent: finalData
@@ -239,7 +231,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
   /**
    * The below query is used to fetch the department wise patient count details
    */
-  let item_details_query = "SELECT   oecc.encounter_department_uuid AS departmentId," +
+  let item_details_query = "SELECT" +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_new_adult_male," +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_adult_female," +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) + " +
@@ -303,7 +295,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
   if (facilityUuid !== null && facilityUuid > 0)
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
-  item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
+  //item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
 
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
