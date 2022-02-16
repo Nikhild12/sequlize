@@ -76,6 +76,7 @@ const PatientDiagnsis = () => {
         if (encounter_type_uuid === 1) {
           const encounter_uuid = [...new Set(patientsDiagnosisData.map((pD) => pD.encounter_uuid))][0];
           const department_uuid = [...new Set(patientsDiagnosisData.map((pD) => pD.department_uuid))][0];
+          const consultation_uuid = [...new Set(patientsDiagnosisData.map((pD) => pD.consultation_uuid))][0];
           const diagnosisIDs = patientsDiagnosisData.map((pD) => pD.diagnosis_uuid);
 
           if (encounter_uuid && department_uuid && diagnosisIDs.length > 0) {
@@ -84,7 +85,8 @@ const PatientDiagnsis = () => {
                 diagnosis_uuid: { [Op.in]: diagnosisIDs },
                 encounter_uuid,
                 facility_uuid,
-                department_uuid
+                department_uuid,
+                consultation_uuid
               }
             });
 
