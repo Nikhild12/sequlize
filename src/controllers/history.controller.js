@@ -14,6 +14,9 @@ const history_category_tbl = sequelizeDb.history_category;
 const history_sub_category_tbl = sequelizeDb.history_sub_category;
 const value_type_tbl = sequelizeDb.value_types;
 
+// EMR Constants Import
+const emr_constants = require('../config/constants');
+
 const historys = () => {
     //H30-43597 get history and their section,concept and values by code or name and their category api done by Vignesh K
     const _getHistoryAndSectionsByNameorCode = async (req, res) => {
@@ -303,10 +306,86 @@ const historys = () => {
                 });
         }
     };
+/**
+ * H30-47434-Saju-Migrate history master api from JAVA to NODE
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+    const createHistory = async (req, res) => {
+        const { user_uuid } = req.headers;
+        let historyMasterDetails = req.body;
 
+        if (user_uuid && historyMasterDetails) {
+            try {
+                const historyMasterDetailsObj = await createHistoryMasterObject(historyMasterDetails, user_uuid);
+
+                const createdHistory = await history_tbl.create(historyMasterDetailsObj, { returing: true });
+                if (createdHistory && createdHistory.uuid > 0) {
+                    let historySections = [];
+                    for (let e of historyMasterDetails.historySectionList) {
+                        let reqObj = {
+                            section_name: e.sectionName,
+                            value_type_uuid: e.valueTypeUuid,
+                            display_order: e.displayOrder,
+                            is_mandatory: e.isMandatory,
+                            revision: e.revision,
+                            created_by: user_uuid,
+                            is_active: 1,
+                            created_date: new Date(),
+                            history_uuid: createdHistory.uuid
+                        };
+                        let historySectionsObject = await history_section_tbl.create(reqObj, { returing: true });
+                        if (historySectionsObject && historySectionsObject.uuid) {
+                            const historySectionsValueObject = await createHistoryMasterSectionsValueObject(e.historySectionValueList, user_uuid, historySectionsObject.uuid);
+                            const historySectionsValue = await history_section_values_tbl.bulkCreate(historySectionsValueObject, { returing: true });
+                            historySections.push({ ...e, historySectionValueList: historySectionsValue });
+                        }
+
+                    }
+                    historyMasterDetails.uuid = createdHistory.uuid;
+                    historyMasterDetails.historySectionList = historySections;
+                }
+
+                return res.status(200).send({ code: httpStatus.OK, message: "History master details added success fully", responseContents: historyMasterDetails });
+            } catch (ex) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+//H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
-        getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode
+        getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode,
+        createHistory
     };
 };
 
 module.exports = historys();
+//H30-47434-Saju-Migrate history master api from JAVA to NODE
+const createHistoryMasterObject = (historyMasterDetails, user_uuid) => {
+    historyMasterDetails.created_by = user_uuid;
+    historyMasterDetails.is_active = 1;
+    historyMasterDetails.created_date = new Date();
+
+    return historyMasterDetails;
+}
+
+const createHistoryMasterSectionsValueObject = (historySectionValueList, user_uuid, historySectionsUuid) => {
+    let finalData = [];
+    for (let e of historySectionValueList) {
+        finalData.push({
+            ...e,
+            value_name: e.valueName,
+            display_order: e.displayOrder,
+            is_default: e.isDefault,
+            created_by: user_uuid,
+            is_active: 1,
+            created_date: new Date(),
+            history_section_uuid: historySectionsUuid
+        });
+    }
+    return finalData;
+}
+//H30-47434-Saju-Migrate history master api from JAVA to NODE

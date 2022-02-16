@@ -1857,15 +1857,12 @@
                   "required": true,
                   "type": "integer"
                },
-
-
                {
                   "in": "header",
                   "name": "authorization",
                   "required": true,
                   "type": "string"
                },
-
                {
                   "in": "body",
                   "name": "add",
@@ -1874,8 +1871,6 @@
                      "$ref": "#/definitions/depDiagnosisbody"
                   }
                }
-
-
             ],
             "produces": [
                "application/json",
@@ -1921,10 +1916,6 @@
                      "$ref": "#/definitions/docDiagnosisbody"
                   }
                }
-
-
-
-
             ],
             "produces": [
                "application/json",
@@ -12512,6 +12503,47 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/history/createOrUpdateHistory": {
+         "post": {
+            "description": "To create or history ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "History master value",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/historyMasterDetails"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "History master details saved Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "400": {
+                  "description": "Failed to save master details"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
@@ -13813,40 +13845,29 @@
       "depDiagnosisbody": {
          "type": "object",
          "properties": {
-          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-
-				"todate":
-				{
-				 "type": "string"
-				 }
-
-           
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
-
-
       "docDiagnosisbody": {
          "type": "object",
          "properties": {
-          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-				"todate":
-				{
-				 "type": "string"
-				 }
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
       "getimmunizationReq": {
@@ -21714,7 +21735,7 @@
             }
          }
       },
-      "addOPEMRCensusCount":{
+      "addOPEMRCensusCount": {
          "type": "object",
          "properties": {
             "facility_uuid": {
@@ -21828,6 +21849,180 @@
             "toDate": {
                "type": "date",
                "example": "2022-01-11"
+            }
+         }
+      },
+      "historyMasterDetails": {
+         "type": "object",
+         "properties": {
+            "code": {
+               "type": "string"
+            },
+            "comments": {
+               "type": "string"
+            },
+            "createdBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "createdDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "departmentUuid": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "description": {
+               "type": "string"
+            },
+            "historyCategoryUuid": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "historySectionList": {
+               "type": "array",
+               "items": {
+                  "$ref": "#/definitions/HistorySection"
+               }
+            },
+            "historySubCategoryUuid": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "isDefault": {
+               "type": "boolean"
+            },
+            "modifiedBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "modifiedDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "name": {
+               "type": "string"
+            },
+            "revision": {
+               "type": "integer",
+               "format": "int32"
+            },
+            "status": {
+               "type": "boolean"
+            },
+            "uuid": {
+               "type": "integer",
+               "format": "int64"
+            }
+         }
+      },
+      "HistorySection": {
+         "type": "object",
+         "properties": {
+            "createdBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "createdDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "displayOrder": {
+               "type": "integer",
+               "format": "int32"
+            },
+            "history": {
+               "$ref": "#/definitions/History"
+            },
+            "historySectionValueList": {
+               "type": "array",
+               "items": {
+                  "$ref": "#/definitions/HistorySectionValue"
+               }
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "isMandatory": {
+               "type": "boolean"
+            },
+            "modifiedBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "modifiedDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "revision": {
+               "type": "integer",
+               "format": "int32"
+            },
+            "sectionName": {
+               "type": "string"
+            },
+            "status": {
+               "type": "boolean"
+            },
+            "uuid": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "valueTypeUuid": {
+               "type": "integer",
+               "format": "int64"
+            }
+         }
+      },
+      "HistorySectionValue": {
+         "type": "object",
+         "properties": {
+            "createdBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "createdDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "displayOrder": {
+               "type": "integer",
+               "format": "int32"
+            },
+            "historySection": {
+               "$ref": "#/definitions/HistorySection"
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "isDefault": {
+               "type": "boolean"
+            },
+            "modifiedBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "modifiedDate": {
+               "type": "string",
+               "format": "date-time"
+            },
+            "revision": {
+               "type": "integer",
+               "format": "int32"
+            },
+            "status": {
+               "type": "boolean"
+            },
+            "uuid": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "valueName": {
+               "type": "string"
             }
          }
       }
