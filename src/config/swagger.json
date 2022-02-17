@@ -12663,7 +12663,7 @@
       },
       "/api/history/createHistory": {
          "post": {
-            "description": "To create or history ",
+            "description": "To create history ",
             "parameters": [
                {
                   "in": "header",
@@ -12696,6 +12696,47 @@
                },
                "400": {
                   "description": "Failed to save master details"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/createExamination": {
+         "post": {
+            "description": "To create examination",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "Examination master value",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/Examination"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Examination  master details saved Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "400": {
+                  "description": "Failed to save examination details"
                }
             },
             "x-auth-type": "Application & Application User",
@@ -22111,19 +22152,16 @@
                "type": "string"
             },
             "createdBy": {
-               "type": "integer",
-               "format": "int64"
+               "type": "integer"
             },
             "departmentUuid": {
-               "type": "integer",
-               "format": "int64"
+               "type": "integer"
             },
             "description": {
                "type": "string"
             },
             "historyCategoryUuid": {
-               "type": "integer",
-               "format": "int64"
+               "type": "integer"
             },
             "historySectionList": {
                "type": "array",
@@ -22132,8 +22170,7 @@
                }
             },
             "historySubCategoryUuid": {
-               "type": "integer",
-               "format": "int64"
+               "type": "integer"
             },
             "isActive": {
                "type": "boolean"
@@ -22145,8 +22182,7 @@
                "type": "string"
             },
             "revision": {
-               "type": "integer",
-               "format": "int32"
+               "type": "integer"
             },
             "status": {
                "type": "boolean"
@@ -22157,12 +22193,10 @@
          "type": "object",
          "properties": {
             "createdBy": {
-               "type": "integer",
-               "format": "int64"
+               "type": "integer"
             },
             "displayOrder": {
-               "type": "integer",
-               "format": "int32"
+               "type": "integer"
             },
             "history": {
                "$ref": "#/definitions/History"
@@ -22180,8 +22214,7 @@
                "type": "boolean"
             },
             "revision": {
-               "type": "integer",
-               "format": "int32"
+               "type": "integer"
             },
             "sectionName": {
                "type": "string"
@@ -22203,8 +22236,7 @@
                "format": "int64"
             },
             "displayOrder": {
-               "type": "integer",
-               "format": "int32"
+               "type": "integer"
             },
             "historySection": {
                "$ref": "#/definitions/HistorySection"
@@ -22216,8 +22248,7 @@
                "type": "boolean"
             },
             "revision": {
-               "type": "integer",
-               "format": "int32"
+               "type": "integer"
             },
             "status": {
                "type": "boolean"
@@ -22226,6 +22257,118 @@
                "type": "string"
             }
          }
+      },
+      "Examination": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "integer"
+          },
+          "departmentUuid": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "examinationCategoryUuid": {
+            "type": "integer"
+          },
+          "examinationSectionList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ExaminationSection"
+            }
+          },
+          "examinationSubCategoryUuid": {
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExaminationSection": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "integer"
+          },
+          "displayOrder": {
+            "type": "integer"
+          },
+          "examination": {
+            "$ref": "#/definitions/Examination"
+          },
+          "examinationSectionValueList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ExaminationSectionValue"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isMandatory": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "sectionName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "valueTypeUuid": {
+            "type": "integer"
+          }
+        }
+      },
+      "ExaminationSectionValue": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "displayOrder": {
+            "type": "integer"
+          },
+          "examinationSection": {
+            "$ref": "#/definitions/ExaminationSection"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "valueName": {
+            "type": "string"
+          }
+        }
       }
    }
 }

@@ -251,9 +251,89 @@ const examinations = () => {
         }
     };
 
+    /**
+ * H30-47434-Saju-Migrate history master api from JAVA to NODE
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+    const createExamination = async (req, res) => {
+        const { user_uuid } = req.headers;
+        let examinationMasterDetails = req.body;
+
+        if (user_uuid && examinationMasterDetails) {
+            try {
+                const examinationMasterDetailsObj = await createExaminationMasterObject(examinationMasterDetails, user_uuid);
+
+                const createdExamination = await examination_tbl.create(examinationMasterDetailsObj, { returing: true });
+                if (createdExamination && createdExamination.uuid > 0) {
+                    let examinationSections = [];
+                    for (let e of examinationMasterDetails.examinationSectionList) {
+                        let reqObj = {
+                            section_name: e.sectionName,
+                            value_type_uuid: e.valueTypeUuid,
+                            display_order: e.displayOrder,
+                            is_mandatory: e.isMandatory,
+                            revision: e.revision,
+                            created_by: user_uuid,
+                            is_active: 1,
+                            created_date: new Date(),
+                            examination_uuid: createdExamination.uuid
+                        };
+                        let examinationSectionsObject = await examination_section_tbl.create(reqObj, { returing: true });
+                        if (examinationSectionsObject && examinationSectionsObject.uuid) {
+                            const examinationSectionsValueObject = await createExaminationMasterSectionsValueObject(e.examinationSectionValueList, user_uuid, examinationSectionsObject.uuid);
+                            const examinationSectionsValue = await examination_section_values_tbl.bulkCreate(examinationSectionsValueObject, { returing: true });
+                            examinationSections.push({ ...e, examinationSectionValueList: examinationSectionsValue });
+                        }
+                    }
+                    examinationMasterDetails.uuid = createdExamination.uuid;
+                    examinationMasterDetails.ExaminationSectionList = examinationSections;
+                }
+                return res.status(200).send({ code: httpStatus.OK, message: "Examination master details added success fully", responseContents: examinationMasterDetails });
+            } catch (ex) {
+                console.log('Check Error --->',ex)
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+//H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
-        getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode
+        getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
+        createExamination
     };
 };
 
 module.exports = examinations();
+
+//H30-47434-Saju-Migrate history master api from JAVA to NODE
+const createExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
+    examinationMasterDetails.created_by = user_uuid;
+    examinationMasterDetails.is_active = 1;
+    examinationMasterDetails.created_date = new Date();
+    examinationMasterDetails.department_uuid = examinationMasterDetails.departmentUuid;
+    examinationMasterDetails.examination_category_uuid = examinationMasterDetails.examinationCategoryUuid;
+    examinationMasterDetails.examination_sub_category_uuid = examinationMasterDetails.examinationSubCategoryUuid;
+
+    return examinationMasterDetails;
+}
+
+const createExaminationMasterSectionsValueObject = (examinationSectionValueList, user_uuid, examinationSectionsUuid) => {
+    let finalData = [];
+    for (let e of examinationSectionValueList) {
+        finalData.push({
+            ...e,
+            value_name: e.valueName,
+            display_order: e.displayOrder,
+            is_default: e.isDefault,
+            created_by: user_uuid,
+            is_active: 1,
+            created_date: new Date(),
+            examination_section_uuid: examinationSectionsUuid
+        });
+    }
+    return finalData;
+}
+//H30-47434-Saju-Migrate history master api from JAVA to NODE
