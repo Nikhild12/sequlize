@@ -8,5 +8,6 @@ const examination = require('../controllers/examination.controller');
 const examinationRoutes = express.Router();
 
 examinationRoutes.route('/getExaminationAndSectionsByNameorCode').post(examination.getExaminationAndSectionsByNameorCode);
+examinationRoutes.route('/createExamination').post(examination.createExamination); //H30-47434-Saju-Migrate history master api from JAVA to NODE
 
 module.exports = examinationRoutes;
