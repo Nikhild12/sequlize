@@ -368,6 +368,9 @@ const createHistoryMasterObject = (historyMasterDetails, user_uuid) => {
     historyMasterDetails.created_by = user_uuid;
     historyMasterDetails.is_active = 1;
     historyMasterDetails.created_date = new Date();
+    historyMasterDetails.department_uuid = historyMasterDetails.departmentUuid;
+    historyMasterDetails.history_category_uuid = historyMasterDetails.historyCategoryUuid;
+    historyMasterDetails.history_sub_category_uuid = historyMasterDetails.historySubCategoryUuid;
 
     return historyMasterDetails;
 }

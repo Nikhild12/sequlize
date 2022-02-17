@@ -8,6 +8,6 @@ const history = require('../controllers/history.controller');
 const historyRoutes = express.Router();
 
 historyRoutes.route('/getHistoryAndSectionsByNameorCode').post(history.getHistoryAndSectionsByNameorCode);
-historyRoutes.route('/createOrUpdateHistory').post(history.createHistory);  //H30-47434-Saju-Migrate history master api from JAVA to NODE
+historyRoutes.route('/createHistory').post(history.createHistory);  //H30-47434-Saju-Migrate history master api from JAVA to NODE
 
 module.exports = historyRoutes;
