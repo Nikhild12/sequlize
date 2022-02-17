@@ -22114,10 +22114,6 @@
                "type": "integer",
                "format": "int64"
             },
-            "createdDate": {
-               "type": "string",
-               "format": "date-time"
-            },
             "departmentUuid": {
                "type": "integer",
                "format": "int64"
@@ -22145,14 +22141,6 @@
             "isDefault": {
                "type": "boolean"
             },
-            "modifiedBy": {
-               "type": "integer",
-               "format": "int64"
-            },
-            "modifiedDate": {
-               "type": "string",
-               "format": "date-time"
-            },
             "name": {
                "type": "string"
             },
@@ -22162,10 +22150,6 @@
             },
             "status": {
                "type": "boolean"
-            },
-            "uuid": {
-               "type": "integer",
-               "format": "int64"
             }
          }
       },
@@ -22175,10 +22159,6 @@
             "createdBy": {
                "type": "integer",
                "format": "int64"
-            },
-            "createdDate": {
-               "type": "string",
-               "format": "date-time"
             },
             "displayOrder": {
                "type": "integer",
@@ -22199,14 +22179,6 @@
             "isMandatory": {
                "type": "boolean"
             },
-            "modifiedBy": {
-               "type": "integer",
-               "format": "int64"
-            },
-            "modifiedDate": {
-               "type": "string",
-               "format": "date-time"
-            },
             "revision": {
                "type": "integer",
                "format": "int32"
@@ -22216,10 +22188,6 @@
             },
             "status": {
                "type": "boolean"
-            },
-            "uuid": {
-               "type": "integer",
-               "format": "int64"
             },
             "valueTypeUuid": {
                "type": "integer",
@@ -22234,10 +22202,6 @@
                "type": "integer",
                "format": "int64"
             },
-            "createdDate": {
-               "type": "string",
-               "format": "date-time"
-            },
             "displayOrder": {
                "type": "integer",
                "format": "int32"
@@ -22251,24 +22215,12 @@
             "isDefault": {
                "type": "boolean"
             },
-            "modifiedBy": {
-               "type": "integer",
-               "format": "int64"
-            },
-            "modifiedDate": {
-               "type": "string",
-               "format": "date-time"
-            },
             "revision": {
                "type": "integer",
                "format": "int32"
             },
             "status": {
                "type": "boolean"
-            },
-            "uuid": {
-               "type": "integer",
-               "format": "int64"
             },
             "valueName": {
                "type": "string"
