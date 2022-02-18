@@ -76,11 +76,11 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    examination_section.associate = models => {
-        examination_section.belongsTo(models.examination_section_concepts, {
-            foreignKey: 'uuid',
-            targetKey: 'examination_section_uuid'
-        });
-    }
+    // examination_section.associate = models => {
+    //     examination_section.belongsTo(models.examination_section_concepts, {
+    //         foreignKey: 'uuid',
+    //         targetKey: 'examination_section_uuid'
+    //     });
+    // }
     return examination_section;
 };

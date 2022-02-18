@@ -12865,7 +12865,8 @@
                },
                {
                   "in": "query",
-                  "name": "examinationUuid",
+                  "name": "historyUuid",
+                  "required": true,
                   "type": "integer"
                }
             ],
@@ -12896,7 +12897,7 @@
       },
       "/api/examination/getExaminationByUuid": {
          "get": {
-            "description": "To get history by uuid",
+            "description": "To get examination by uuid",
             "parameters": [
                {
                   "in": "header",
@@ -12906,8 +12907,97 @@
                },
                {
                   "in": "query",
-                  "name": "context_uuid",
+                  "name": "examinationUuid",
+                  "required": true,
                   "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/history/hitoryList": {
+         "post": {
+            "description": "To get history list",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "Search Request",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/searchRequest"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/examinationList": {
+         "post": {
+            "description": "To get examination list",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "Search Request",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/searchRequest"
+                  }
                }
             ],
             "produces": [
@@ -22509,6 +22599,35 @@
             },
             "valueName": {
                "type": "string"
+            }
+         }
+      },
+      "searchRequest": {
+         "type": "object",
+         "properties": {
+            "search": {
+               "type": "string",
+               "example": ""
+            },
+            "page": {
+               "type": "integer",
+               "example": 0
+            },
+            "pageSize": {
+               "type": "integer",
+               "example": 10
+            },
+            "sortField": {
+               "type": "string",
+               "example": "modified_date"
+            },
+            "sortOrder": {
+               "type": "string",
+               "example": "ASC"
+            },
+            "status": {
+               "type": "integer",
+               "example": 1
             }
          }
       }

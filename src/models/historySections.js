@@ -76,15 +76,15 @@ module.exports = function (sequelize, DataTypes) {
             ]
         }
     );
-    history_section.associate = models => {
-        history_section.belongsTo(models.history_section_concepts, {
-            foreignKey: 'uuid',
-            targetKey: 'history_section_uuid'
-        });
-        history_section.hasMany(models.history_section_values, {
-            foreignKey: 'uuid',
-            targetKey: 'history_section_uuid'
-        });
-    }
+    // history_section.associate = models => {
+    //     history_section.belongsTo(models.history_section_concepts, {
+    //         foreignKey: 'uuid',
+    //         targetKey: 'history_section_uuid'
+    //     });
+    //     history_section.hasMany(models.history_section_values, {
+    //         foreignKey: 'uuid',
+    //         targetKey: 'history_section_uuid'
+    //     });
+    // }
     return history_section;
 };

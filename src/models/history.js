@@ -94,8 +94,12 @@ module.exports = (sequelize, DataTypes) => {
     );
     history.associate = models => {
         history.hasMany(models.history_sections, {
-            foreignKey: 'uuid',
+            foreignKey: 'history_uuid',
             targetKey: 'history_uuid'
+        });
+        models.history_sections.hasMany(models.history_section_values, {
+            foreignKey: 'history_section_uuid',
+            targetKey: 'history_section_uuid'
         });
     }
 
