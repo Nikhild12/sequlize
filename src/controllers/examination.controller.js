@@ -238,7 +238,7 @@ const examinations = () => {
                 });
 
         } catch (err) {
-            console.log("..>>======= ERROR ========>..",err);
+            console.log("..>>======= ERROR ========>..", err);
             const errorMsg = err.errors ? err.errors[0].message : err.message;
             return res
                 .status(httpStatus.OK)
@@ -292,17 +292,63 @@ const examinations = () => {
                 }
                 return res.status(200).send({ code: httpStatus.OK, message: "Examination master details added success fully", responseContents: examinationMasterDetails });
             } catch (ex) {
-                console.log('Check Error --->',ex)
+                console.log('Check Error --->', ex)
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             }
         } else {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
     }
-//H30-47434-Saju-Migrate history master api from JAVA to NODE
+    
+    const getAllActiveCategory = async (req, res) => {
+        try {
+            const categoryDetails = await examination_category_tbl.findAll({
+                where: {
+                    is_active: 1
+                },
+                order: [['name', 'ASC']]
+            });
+            return res.send({
+                statusCode: 200,
+                responseContent: categoryDetails
+            });
+
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+
+    const getAllActiveSubCategory = async (req, res) => {
+        try {
+            const subCategoryDetails = await examination_sub_category_tbl.findAll({
+                where: {
+                    is_active: 1
+                },
+                order: [['name', 'ASC']]
+            });
+            return res.send({
+                statusCode: 200,
+                responseContent: subCategoryDetails
+            });
+
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+    //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
-        createExamination
+        createExamination,
+        getAllActiveCategory,
+        getAllActiveSubCategory
     };
 };
 

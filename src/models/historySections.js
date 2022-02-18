@@ -81,6 +81,10 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: 'uuid',
             targetKey: 'history_section_uuid'
         });
+        history_section.hasMany(models.history_section_values, {
+            foreignKey: 'uuid',
+            targetKey: 'history_section_uuid'
+        });
     }
     return history_section;
 };

@@ -93,7 +93,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
     history.associate = models => {
-        history.belongsTo(models.history_sections, {
+        history.hasMany(models.history_sections, {
             foreignKey: 'uuid',
             targetKey: 'history_uuid'
         });
