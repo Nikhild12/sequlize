@@ -88,10 +88,15 @@ module.exports = (sequelize, DataTypes) => {
             ]
         }
     );
+
     examinations.associate = models => {
-        examinations.belongsTo(models.examination_sections, {
-            foreignKey: 'uuid',
+        examinations.hasMany(models.examination_sections, {
+            foreignKey: 'examination_uuid',
             targetKey: 'examination_uuid'
+        });
+        models.examination_sections.hasMany(models.examination_section_values, {
+            foreignKey: 'examination_section_uuid',
+            targetKey: 'examination_section_uuid'
         });
     }
 

@@ -12865,7 +12865,8 @@
                },
                {
                   "in": "query",
-                  "name": "examinationUuid",
+                  "name": "historyUuid",
+                  "required": true,
                   "type": "integer"
                }
             ],
@@ -12896,7 +12897,7 @@
       },
       "/api/examination/getExaminationByUuid": {
          "get": {
-            "description": "To get history by uuid",
+            "description": "To get examination by uuid",
             "parameters": [
                {
                   "in": "header",
@@ -12906,7 +12907,8 @@
                },
                {
                   "in": "query",
-                  "name": "context_uuid",
+                  "name": "examinationUuid",
+                  "required": true,
                   "type": "integer"
                }
             ],

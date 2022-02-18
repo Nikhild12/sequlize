@@ -8,7 +8,7 @@ const Op = Sequelize.Op;
 const history_tbl = sequelizeDb.historys;
 const history_section_tbl = sequelizeDb.history_sections;
 const history_section_values_tbl = sequelizeDb.history_section_values;
-// const history_section_concept_tbl = sequelizeDb.history_section_concepts;
+const history_section_concept_tbl = sequelizeDb.history_section_concepts;
 // const history_section_concept_value_tbl = sequelizeDb.history_section_concept_values;
 const history_category_tbl = sequelizeDb.history_category;
 const history_sub_category_tbl = sequelizeDb.history_sub_category;
@@ -401,9 +401,10 @@ const historys = () => {
     }
 
     const getHistoryByUuid = async (req, res) => {
-        const { examinationUuid } = req.query;
+        const { historyUuid } = req.query;
+        
         try {
-            let historyDetails = await history_tbl.findAll({
+            let historyDetails = await history_tbl.findOne({
                 include: [
                     {
                         model: history_section_tbl,
@@ -418,39 +419,10 @@ const historys = () => {
                     }
                 ],
                 where: {
-                    uuid: examinationUuid
+                    uuid: historyUuid
                 }
             });
 
-            // var result = historyDetails.filter(function(e, i) {
-            //     return e.history_uuid == examinationUuid
-            //   })
-              
-
-            /* let historySectionDetails = await history_section_tbl.findAll({
-                 where: {
-                     history_uuid: examinationUuid
-                 }
-             });
-             let historySections = [];
-             if (historySectionDetails) {
- 
-                 for (let e of historySectionDetails) {
-                     if (e.uuid > 0) {
-                         let historySectionsValue = await history_section_values_tbl.findAll({
-                             where: {
-                                 history_section_uuid: e.uuid
-                             }
-                         })
-                         let obj = e.dataValues
- 
-                         historySections.push({ ...obj, historySectionValueList: historySectionsValue });
-                     }
-                 }
- 
-                 historyDetails.historySections =historySections
-                 
-             }*/
             return res.send({
                 statusCode: 200,
                 responseContent: historyDetails
@@ -463,6 +435,7 @@ const historys = () => {
             });
         }
     }
+
     //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode,

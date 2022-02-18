@@ -343,12 +343,49 @@ const examinations = () => {
             });
         }
     }
+
+    const getExaminationByUuid = async (req, res) => {
+        const { examinationUuid } = req.query;
+        
+        try {
+            let examinationDetails = await examination_tbl.findOne({
+                include: [
+                    {
+                        model: examination_section_tbl,
+                        required: false,
+                        include: [
+                            {
+                                model: examination_section_values_tbl,
+                                required: false
+                            }
+                        ],
+
+                    }
+                ],
+                where: {
+                    uuid: examinationUuid
+                }
+            });
+
+            return res.send({
+                statusCode: 200,
+                responseContent: examinationDetails
+            });
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
     //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
         createExamination,
         getAllActiveCategory,
-        getAllActiveSubCategory
+        getAllActiveSubCategory,
+        getExaminationByUuid
     };
 };
 
