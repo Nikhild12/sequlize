@@ -14,6 +14,7 @@ const examination_category_tbl = sequelizeDb.examination_category;
 const examination_sub_category_tbl = sequelizeDb.examination_sub_category;
 const value_type_tbl = sequelizeDb.value_types;
 
+const emr_utilities = require("../services/utility.service");
 
 const examinations = () => {
     //H30-43597 get examination and their section,concept and values by code or name and their category api done by Vignesh K
@@ -379,13 +380,34 @@ const examinations = () => {
             });
         }
     }
+
+    const getExaminationList = async (req, res) => {
+        const { search, page, pageSize, sortBy, orderBy, status } = req.body;
+
+        try {
+            const examinationDetailsLst = await getExaminationDetailsLst(search, page, pageSize, sortBy, orderBy, status);
+
+            return res.send({
+                statusCode: 200,
+                responseContent: examinationDetailsLst
+            });
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+
     //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
         createExamination,
         getAllActiveCategory,
         getAllActiveSubCategory,
-        getExaminationByUuid
+        getExaminationByUuid,
+        getExaminationList
     };
 };
 
@@ -418,5 +440,33 @@ const createExaminationMasterSectionsValueObject = (examinationSectionValueList,
         });
     }
     return finalData;
+}
+
+async function getExaminationDetailsLst(search, page, pageSize, sortField, sortOrder, status) {
+
+    let history_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
+        " (SELECT NAME FROM examination_category category WHERE category.uuid=h.examination_category_uuid) AS categoryName," +
+        " (SELECT NAME FROM examination_sub_category subCategory WHERE subCategory.uuid=h.examination_sub_category_uuid) AS categorySubName " +
+        " FROM examinations h WHERE h.status = " + status;
+    if (search != null && !emr_utilities.isEmpty(search)) {
+
+        history_details_query = history_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+            " (h.examination_category_uuid in (select uuid from examination_category where name like '%" + search + "%')) OR " +
+            " (h.examination_sub_category_uuid in (select uuid from examination_sub_category where name like '%" + search + "%'))) ";
+    }
+
+    if (sortField && sortField != "" && sortOrder && sortOrder != "") {
+        history_details_query = history_details_query + " order by h." + sortField + " " + sortOrder;
+    }
+
+    page = page ? page : 1;
+    const itemsPerPage = pageSize ? pageSize : 10;
+    const offset = (page - 1) * itemsPerPage;
+    history_details_query = history_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
+    console.log(history_details_query)
+    const history_details = await sequelizeDb.sequelize.query(history_details_query, {
+        type: Sequelize.QueryTypes.SELECT
+    });
+    return history_details;
 }
 //H30-47434-Saju-Migrate history master api from JAVA to NODE

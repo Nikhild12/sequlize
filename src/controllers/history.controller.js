@@ -8,7 +8,7 @@ const Op = Sequelize.Op;
 const history_tbl = sequelizeDb.historys;
 const history_section_tbl = sequelizeDb.history_sections;
 const history_section_values_tbl = sequelizeDb.history_section_values;
-const history_section_concept_tbl = sequelizeDb.history_section_concepts;
+// const history_section_concept_tbl = sequelizeDb.history_section_concepts;
 // const history_section_concept_value_tbl = sequelizeDb.history_section_concept_values;
 const history_category_tbl = sequelizeDb.history_category;
 const history_sub_category_tbl = sequelizeDb.history_sub_category;
@@ -16,6 +16,7 @@ const value_type_tbl = sequelizeDb.value_types;
 
 // EMR Constants Import
 const emr_constants = require('../config/constants');
+const emr_utilities = require("../services/utility.service");
 
 const historys = () => {
     //H30-43597 get history and their section,concept and values by code or name and their category api done by Vignesh K
@@ -402,7 +403,7 @@ const historys = () => {
 
     const getHistoryByUuid = async (req, res) => {
         const { historyUuid } = req.query;
-        
+
         try {
             let historyDetails = await history_tbl.findOne({
                 include: [
@@ -436,13 +437,33 @@ const historys = () => {
         }
     }
 
+    const getHitoryList = async (req, res) => {
+        const { search, page, pageSize, sortBy, orderBy, status } = req.body;
+
+        try {
+            const historyDetailsLst = await getHistoryDetailsLst(search, page, pageSize, sortBy, orderBy, status);
+
+            return res.send({
+                statusCode: 200,
+                responseContent: historyDetailsLst
+            });
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+
     //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode,
         createHistory,
         getAllActiveCategory,
         getAllActiveSubCategory,
-        getHistoryByUuid
+        getHistoryByUuid,
+        getHitoryList
     };
 };
 
@@ -474,5 +495,33 @@ const createHistoryMasterSectionsValueObject = (historySectionValueList, user_uu
         });
     }
     return finalData;
+}
+
+async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder, status) {
+
+    let history_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
+        " (SELECT NAME FROM history_category category WHERE category.uuid=h.history_category_uuid) AS categoryName," +
+        " (SELECT NAME FROM history_sub_category subCategory WHERE subCategory.uuid=h.history_sub_category_uuid) AS categorySubName " +
+        " FROM historys h WHERE h.status = " + status;
+    if (search != null && !emr_utilities.isEmpty(search)) {
+
+        history_details_query = history_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+            " (h.history_category_uuid in (select uuid from history_category where name like '%" + search + "%')) OR " +
+            " (h.history_sub_category_uuid in (select uuid from history_sub_category where name like '%" + search + "%'))) ";
+    }
+
+    if (sortField && sortField != "" && sortOrder && sortOrder != "") {
+        history_details_query = history_details_query + " order by h." + sortField + " " + sortOrder;
+    }
+
+    page = page ? page : 1;
+    const itemsPerPage = pageSize ? pageSize : 10;
+    const offset = (page - 1) * itemsPerPage;
+    history_details_query = history_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
+    console.log(history_details_query)
+    const history_details = await sequelizeDb.sequelize.query(history_details_query, {
+        type: Sequelize.QueryTypes.SELECT
+    });
+    return history_details;
 }
 //H30-47434-Saju-Migrate history master api from JAVA to NODE
