@@ -1841,9 +1841,6 @@
             "x-throttling-tier": "Unlimited"
          }
       },
-     
-
-
       "/api/Dep_Diagnosis_count/depDiagnosis": {
          "post": {
             "summary": "To get all the user Details ",
@@ -1933,161 +1930,130 @@
                }
             }
          }
-   
-
-
-
-
-
-   },
-   "/api/Dep_Diagnosis_count/docDiagnosisGenderWise": {
-      "post": {
-         "summary": "To get all the user Details ",
-         "parameters": [
-            {
-               "in": "header",
-               "name": "facility_uuid",
-               "required": true,
-               "type": "integer"
-            },
-            {
-               "in": "header",
-               "name": "user_uuid",
-               "required": true,
-               "type": "integer"
-            },
-            {
-               "in": "header",
-               "name": "authorization",
-               "required": true,
-               "type": "string"
-            },
-            {
-               "in": "body",
-               "name": "add",
-               "required": true,
-               "schema": {
-                  "$ref": "#/definitions/docDiagnosisbody1"
+      },
+      "/api/Dep_Diagnosis_count/docDiagnosisGenderWise": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "authorization",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody1"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
                }
             }
-
-
-
-
-         ],
-         "produces": [
-            "application/json",
-            "application/xml"
-         ],
-         "tags": [
-            "Diagnosis Wise Count"
-         ],
-         "responses": {
-            "200": {
-               "description": "get All Diagnosis Wise Count Details"
-            }
          }
-      }
-   },
-
-
-
-   "/api/Dep_Diagnosis_count/view_docDiagnosisVisitwise": {
-      "post": {
-         "summary": "To get all the user Details ",
-         "parameters": [
-            {
-               "in": "header",
-               "name": "facility_uuid",
-               "required": true,
-               "type": "integer"
-            },
-            {
-               "in": "header",
-               "name": "user_uuid",
-               "required": true,
-               "type": "integer"
-            },
-           
-            {
-               "in": "body",
-               "name": "add",
-               "required": true,
-               "schema": {
-                  "$ref": "#/definitions/docDiagnosisbody2"
+      },
+      "/api/Dep_Diagnosis_count/view_docDiagnosisVisitwise": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody2"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
                }
             }
-
-
-
-
-         ],
-         "produces": [
-            "application/json",
-            "application/xml"
-         ],
-         "tags": [
-            "Diagnosis Wise Count"
-         ],
-         "responses": {
-            "200": {
-               "description": "get All Diagnosis Wise Count Details"
-            }
          }
-      }
-   },
-
-
-
-   "/api/Dep_Diagnosis_count/view_docDiagnosiscount": {
-      "post": {
-         "summary": "To get all the user Details ",
-         "parameters": [
-            {
-               "in": "header",
-               "name": "facility_uuid",
-               "required": true,
-               "type": "integer"
-            },
-            {
-               "in": "header",
-               "name": "user_uuid",
-               "required": true,
-               "type": "integer"
-            },
-           
-            {
-               "in": "body",
-               "name": "add",
-               "required": true,
-               "schema": {
-                  "$ref": "#/definitions/docDiagnosisbody3"
+      },
+      "/api/Dep_Diagnosis_count/view_docDiagnosiscount": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody3"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
                }
             }
-
-
-
-
-         ],
-         "produces": [
-            "application/json",
-            "application/xml"
-         ],
-         "tags": [
-            "Diagnosis Wise Count"
-         ],
-         "responses": {
-            "200": {
-               "description": "get All Diagnosis Wise Count Details"
-            }
          }
-      }
-   },
-
-
-
-
-
+      },
       "/api/immunizations/searchimmuization": {
          "post": {
             "description": "Fetch Successfully",
@@ -12742,6 +12708,232 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/history/getAllActiveCategory": {
+         "get": {
+            "description": "To get all active category",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/history/getAllActiveSubCategory": {
+         "get": {
+            "description": "To get all active sub category",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/getAllActiveCategory": {
+         "get": {
+            "description": "To get all active category",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/getAllActiveSubCategory": {
+         "get": {
+            "description": "To get all active sub category",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/history/getHistoryByUuid": {
+         "get": {
+            "description": "To get history by uuid",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "query",
+                  "name": "examinationUuid",
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/getExaminationByUuid": {
+         "get": {
+            "description": "To get history by uuid",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "query",
+                  "name": "context_uuid",
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Fetched Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
@@ -14040,9 +14232,6 @@
             }
          }
       },
-    
-
-
       "depDiagnosisbody": {
          "type": "object",
          "properties": {
@@ -14063,103 +14252,56 @@
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-
-				"todate":
-				{
-				 "type": "string"
-				 }
-
-
-
-           
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
-
-
-
       "docDiagnosisbody1": {
          "type": "object",
          "properties": {
-          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-
-				"todate":
-				{
-				 "type": "string"
-				 }
-
-
-
-           
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
-
-
       "docDiagnosisbody2": {
          "type": "object",
          "properties": {
-          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-
-				"todate":
-				{
-				 "type": "string"
-				 }
-
-
-
-           
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
-
-
       "docDiagnosisbody3": {
          "type": "object",
          "properties": {
-          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate":
-               {
-				"type": "string"
-				},
-
-				"todate":
-				{
-				 "type": "string"
-				 }
-
-
-
-           
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
          }
       },
-
-
-
-
-
-
-
-
-
       "getimmunizationReq": {
          "type": "object",
          "properties": {
@@ -22259,116 +22401,116 @@
          }
       },
       "Examination": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "comments": {
-            "type": "string"
-          },
-          "createdBy": {
-            "type": "integer"
-          },
-          "departmentUuid": {
-            "type": "integer"
-          },
-          "description": {
-            "type": "string"
-          },
-          "examinationCategoryUuid": {
-            "type": "integer"
-          },
-          "examinationSectionList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/ExaminationSection"
+         "type": "object",
+         "properties": {
+            "code": {
+               "type": "string"
+            },
+            "comments": {
+               "type": "string"
+            },
+            "createdBy": {
+               "type": "integer"
+            },
+            "departmentUuid": {
+               "type": "integer"
+            },
+            "description": {
+               "type": "string"
+            },
+            "examinationCategoryUuid": {
+               "type": "integer"
+            },
+            "examinationSectionList": {
+               "type": "array",
+               "items": {
+                  "$ref": "#/definitions/ExaminationSection"
+               }
+            },
+            "examinationSubCategoryUuid": {
+               "type": "integer"
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "name": {
+               "type": "string"
+            },
+            "revision": {
+               "type": "integer"
+            },
+            "status": {
+               "type": "boolean"
             }
-          },
-          "examinationSubCategoryUuid": {
-            "type": "integer"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "name": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "boolean"
-          }
-        }
+         }
       },
       "ExaminationSection": {
-        "type": "object",
-        "properties": {
-          "createdBy": {
-            "type": "integer"
-          },
-          "displayOrder": {
-            "type": "integer"
-          },
-          "examination": {
-            "$ref": "#/definitions/Examination"
-          },
-          "examinationSectionValueList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/ExaminationSectionValue"
+         "type": "object",
+         "properties": {
+            "createdBy": {
+               "type": "integer"
+            },
+            "displayOrder": {
+               "type": "integer"
+            },
+            "examination": {
+               "$ref": "#/definitions/Examination"
+            },
+            "examinationSectionValueList": {
+               "type": "array",
+               "items": {
+                  "$ref": "#/definitions/ExaminationSectionValue"
+               }
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "isMandatory": {
+               "type": "boolean"
+            },
+            "revision": {
+               "type": "integer"
+            },
+            "sectionName": {
+               "type": "string"
+            },
+            "status": {
+               "type": "boolean"
+            },
+            "valueTypeUuid": {
+               "type": "integer"
             }
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "isMandatory": {
-            "type": "boolean"
-          },
-          "revision": {
-            "type": "integer"
-          },
-          "sectionName": {
-            "type": "string"
-          },
-          "status": {
-            "type": "boolean"
-          },
-          "valueTypeUuid": {
-            "type": "integer"
-          }
-        }
+         }
       },
       "ExaminationSectionValue": {
-        "type": "object",
-        "properties": {
-          "createdBy": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "displayOrder": {
-            "type": "integer"
-          },
-          "examinationSection": {
-            "$ref": "#/definitions/ExaminationSection"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "isDefault": {
-            "type": "boolean"
-          },
-          "revision": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "boolean"
-          },
-          "valueName": {
-            "type": "string"
-          }
-        }
+         "type": "object",
+         "properties": {
+            "createdBy": {
+               "type": "integer",
+               "format": "int64"
+            },
+            "displayOrder": {
+               "type": "integer"
+            },
+            "examinationSection": {
+               "$ref": "#/definitions/ExaminationSection"
+            },
+            "isActive": {
+               "type": "boolean"
+            },
+            "isDefault": {
+               "type": "boolean"
+            },
+            "revision": {
+               "type": "integer"
+            },
+            "status": {
+               "type": "boolean"
+            },
+            "valueName": {
+               "type": "string"
+            }
+         }
       }
    }
 }

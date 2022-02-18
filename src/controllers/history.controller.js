@@ -306,12 +306,12 @@ const historys = () => {
                 });
         }
     };
-/**
- * H30-47434-Saju-Migrate history master api from JAVA to NODE
- * @param {*} req 
- * @param {*} res 
- * @returns 
- */
+    /**
+     * H30-47434-Saju-Migrate history master api from JAVA to NODE
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     const createHistory = async (req, res) => {
         const { user_uuid } = req.headers;
         let historyMasterDetails = req.body;
@@ -355,10 +355,121 @@ const historys = () => {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
     }
-//H30-47434-Saju-Migrate history master api from JAVA to NODE
+
+    const getAllActiveCategory = async (req, res) => {
+        try {
+            const categoryDetails = await history_category_tbl.findAll({
+                where: {
+                    is_active: 1
+                },
+                order: [['name', 'ASC']]
+            });
+            return res.send({
+                statusCode: 200,
+                responseContent: categoryDetails
+            });
+
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+
+    const getAllActiveSubCategory = async (req, res) => {
+        try {
+            const subCategoryDetails = await history_sub_category_tbl.findAll({
+                where: {
+                    is_active: 1
+                },
+                order: [['name', 'ASC']]
+            });
+            return res.send({
+                statusCode: 200,
+                responseContent: subCategoryDetails
+            });
+
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+
+    const getHistoryByUuid = async (req, res) => {
+        const { examinationUuid } = req.query;
+        try {
+            let historyDetails = await history_tbl.findAll({
+                include: [
+                    {
+                        model: history_section_tbl,
+                        required: false,
+                        include: [
+                            {
+                                model: history_section_values_tbl,
+                                required: false
+                            }
+                        ],
+
+                    }
+                ],
+                where: {
+                    uuid: examinationUuid
+                }
+            });
+
+            // var result = historyDetails.filter(function(e, i) {
+            //     return e.history_uuid == examinationUuid
+            //   })
+              
+
+            /* let historySectionDetails = await history_section_tbl.findAll({
+                 where: {
+                     history_uuid: examinationUuid
+                 }
+             });
+             let historySections = [];
+             if (historySectionDetails) {
+ 
+                 for (let e of historySectionDetails) {
+                     if (e.uuid > 0) {
+                         let historySectionsValue = await history_section_values_tbl.findAll({
+                             where: {
+                                 history_section_uuid: e.uuid
+                             }
+                         })
+                         let obj = e.dataValues
+ 
+                         historySections.push({ ...obj, historySectionValueList: historySectionsValue });
+                     }
+                 }
+ 
+                 historyDetails.historySections =historySections
+                 
+             }*/
+            return res.send({
+                statusCode: 200,
+                responseContent: historyDetails
+            });
+        } catch (error) {
+            console.log('\n error...', error);
+            return res.status(500).send({
+                statusCode: 500,
+                error
+            });
+        }
+    }
+    //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode,
-        createHistory
+        createHistory,
+        getAllActiveCategory,
+        getAllActiveSubCategory,
+        getHistoryByUuid
     };
 };
 
