@@ -400,14 +400,97 @@ const examinations = () => {
         }
     }
 
-    //H30-47434-Saju-Migrate history master api from JAVA to NODE
+    const updateExamination = async (req, res) => {
+        const { user_uuid } = req.headers;
+        let examinationMasterDetails = req.body;
+
+        if (user_uuid && examinationMasterDetails) {
+            try {
+                const examinationMasterDetailsObj = await updateExaminationMasterObject(examinationMasterDetails, user_uuid);
+
+                const updateExamination = await examination_tbl.update(
+                    examinationMasterDetailsObj,
+                    {
+                        where: {
+                            uuid: examinationMasterDetails.uuid
+                        }
+                    },
+                    { returning: true }
+                );
+
+                if (updateExamination && examinationMasterDetails.uuid > 0) {
+                    let examinationSections = [];
+                    for (let e of examinationMasterDetails.examinationSectionList) {
+                        let reqObj = {
+                            section_name: e.sectionName,
+                            value_type_uuid: e.valueTypeUuid,
+                            display_order: e.displayOrder,
+                            is_mandatory: e.isMandatory,
+                            revision: e.revision,
+                            modified_by: user_uuid,
+                            is_active: e.isActive,
+                            modified_date: new Date(),
+                            examination_uuid: examinationMasterDetails.uuid
+                        };
+                        let examinationSectionsObject = await examination_section_tbl.update(
+                            reqObj,
+                            {
+                                where: {
+                                    uuid: e.uuid
+                                }
+                            },
+                            { returning: true }
+                        );
+
+                        if (examinationSectionsObject && e.uuid) {
+                            let examinationSectionsValue = [];
+                            for (let f of e.examinationSectionValueList) {
+                                let reqSectionValueObj = {
+                                    ...f,
+                                    value_name: f.valueName,
+                                    display_order: f.displayOrder,
+                                    is_default: f.isDefault,
+                                    is_active: f.isActive,
+                                    modified_by: user_uuid,
+                                    modified_date: new Date(),
+                                    examination_section_uuid: e.uuid
+                                };
+                                let examinationSectionsObject = await examination_section_values_tbl.update(
+                                    reqSectionValueObj,
+                                    {
+                                        where: {
+                                            uuid: f.uuid
+                                        }
+                                    },
+                                    { returning: true }
+                                );
+                                examinationSectionsValue.push(reqSectionValueObj)
+                            }
+                            examinationSections.push({ ...e, examinationSectionValueList: examinationSectionsValue });
+                        }
+                    }
+                    examinationMasterDetails.uuid = updateExamination.uuid;
+                    examinationMasterDetails.examinationSectionList = examinationSections;
+                }
+
+                return res.status(200).send({ code: httpStatus.OK, message: "Examination master details updated success fully", responseContents: examinationMasterDetails });
+            } catch (ex) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+
+    //H30-47434-Saju-Migrate examination master api from JAVA to NODE
     return {
         getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
         createExamination,
         getAllActiveCategory,
         getAllActiveSubCategory,
         getExaminationByUuid,
-        getExaminationList
+        getExaminationList,
+        updateExamination
     };
 };
 
@@ -468,5 +551,16 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
         type: Sequelize.QueryTypes.SELECT
     });
     return history_details;
+}
+
+const updateExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
+    examinationMasterDetails.modified_by = user_uuid;
+    examinationMasterDetails.is_active = 1;
+    examinationMasterDetails.modified_date = new Date();
+    examinationMasterDetails.department_uuid = examinationMasterDetails.departmentUuid;
+    examinationMasterDetails.examination_category_uuid = examinationMasterDetails.examinationCategoryUuid;
+    examinationMasterDetails.examination_sub_category_uuid = examinationMasterDetails.examinationSubCategoryUuid;
+
+    return examinationMasterDetails;
 }
 //H30-47434-Saju-Migrate history master api from JAVA to NODE

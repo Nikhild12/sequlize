@@ -13,5 +13,6 @@ examinationRoutes.route('/getAllActiveCategory').get(examination.getAllActiveCat
 examinationRoutes.route('/getAllActiveSubCategory').get(examination.getAllActiveSubCategory);  //H30-47434-Saju-Migrate get category api from JAVA to NODE
 examinationRoutes.route('/getExaminationByUuid').get(examination.getExaminationByUuid);  //H30-47434-Saju-Migrate get examination by uuid api from JAVA to NODE
 examinationRoutes.route('/examinationList').post(examination.getExaminationList);  //H30-47434-Saju-Migrate get history list api from JAVA to NODE
+examinationRoutes.route('/updateExamination').post(examination.updateExamination); //H30-47434-Saju-Migrate history master api from JAVA to NODE
 
 module.exports = examinationRoutes;

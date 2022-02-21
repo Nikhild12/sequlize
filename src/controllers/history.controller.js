@@ -456,6 +456,88 @@ const historys = () => {
         }
     }
 
+    const updateHistory = async (req, res) => {
+        const { user_uuid } = req.headers;
+        let historyMasterDetails = req.body;
+
+        if (user_uuid && historyMasterDetails) {
+            try {
+                const historyMasterDetailsObj = await updateHistoryMasterObject(historyMasterDetails, user_uuid);
+
+                const updateHistory = await history_tbl.update(
+                    historyMasterDetailsObj,
+                    {
+                        where: {
+                            uuid: historyMasterDetails.uuid
+                        }
+                    },
+                    { returning: true }
+                );
+
+                if (updateHistory && historyMasterDetails.uuid > 0) {
+                    let historySections = [];
+                    for (let e of historyMasterDetails.historySectionList) {
+                        let reqObj = {
+                            section_name: e.sectionName,
+                            value_type_uuid: e.valueTypeUuid,
+                            display_order: e.displayOrder,
+                            is_mandatory: e.isMandatory,
+                            revision: e.revision,
+                            modified_by: user_uuid,
+                            is_active: e.isActive,
+                            modified_date: new Date(),
+                            history_uuid: historyMasterDetails.uuid
+                        };
+                        let historySectionsObject = await history_section_tbl.update(
+                            reqObj,
+                            {
+                                where: {
+                                    uuid: e.uuid
+                                }
+                            },
+                            { returning: true }
+                        );
+
+                        if (historySectionsObject && e.uuid) {
+                            let historySectionsValue = [];
+                            for (let f of e.historySectionValueList) {
+                                let reqSectionValueObj = {
+                                    ...f,
+                                    value_name: f.valueName,
+                                    display_order: f.displayOrder,
+                                    is_default: f.isDefault,
+                                    is_active: f.isActive,
+                                    modified_by: user_uuid,
+                                    modified_date: new Date(),
+                                    history_section_uuid: e.uuid
+                                };
+                                let historySectionsObject = await history_section_values_tbl.update(
+                                    reqSectionValueObj,
+                                    {
+                                        where: {
+                                            uuid: f.uuid
+                                        }
+                                    },
+                                    { returning: true }
+                                );
+                                historySectionsValue.push(reqSectionValueObj)
+                            }
+                            historySections.push({ ...e, historySectionValueList: historySectionsValue });
+                        }
+                    }
+                    historyMasterDetails.uuid = updateHistory.uuid;
+                    historyMasterDetails.historySectionList = historySections;
+                }
+
+                return res.status(200).send({ code: httpStatus.OK, message: "History master details updated success fully", responseContents: historyMasterDetails });
+            } catch (ex) {
+                return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+            }
+        } else {
+            return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+
     //H30-47434-Saju-Migrate history master api from JAVA to NODE
     return {
         getHistoryAndSectionsByNameorCode: _getHistoryAndSectionsByNameorCode,
@@ -463,7 +545,8 @@ const historys = () => {
         getAllActiveCategory,
         getAllActiveSubCategory,
         getHistoryByUuid,
-        getHitoryList
+        getHitoryList,
+        updateHistory
     };
 };
 
@@ -524,4 +607,16 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
     });
     return history_details;
 }
+
+const updateHistoryMasterObject = (historyMasterDetails, user_uuid) => {
+    historyMasterDetails.modified_by = user_uuid;
+    historyMasterDetails.modified_date = new Date();
+    historyMasterDetails.is_active = historyMasterDetails.isActive;
+    historyMasterDetails.department_uuid = historyMasterDetails.departmentUuid;
+    historyMasterDetails.history_category_uuid = historyMasterDetails.historyCategoryUuid;
+    historyMasterDetails.history_sub_category_uuid = historyMasterDetails.historySubCategoryUuid;
+
+    return historyMasterDetails;
+}
+
 //H30-47434-Saju-Migrate history master api from JAVA to NODE

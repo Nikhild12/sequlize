@@ -13024,6 +13024,88 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/history/updateHistory": {
+         "post": {
+            "description": "To update history ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "History master value",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/historyMasterDetails"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "History master details updated Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "400": {
+                  "description": "Failed to update master details"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/updateExamination": {
+         "post": {
+            "description": "To update examination",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "Examination master value",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/Examination"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Examination  master details updated Successfully",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "400": {
+                  "description": "Failed to update examination details"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
@@ -22418,6 +22500,9 @@
             },
             "status": {
                "type": "boolean"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
@@ -22457,6 +22542,9 @@
             "valueTypeUuid": {
                "type": "integer",
                "format": "int64"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
@@ -22487,6 +22575,9 @@
             },
             "valueName": {
                "type": "string"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
@@ -22531,6 +22622,9 @@
             },
             "status": {
                "type": "boolean"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
@@ -22569,6 +22663,9 @@
             },
             "valueTypeUuid": {
                "type": "integer"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
@@ -22599,6 +22696,9 @@
             },
             "valueName": {
                "type": "string"
+            },
+            "uuid": {
+               "type": "integer"
             }
          }
       },
