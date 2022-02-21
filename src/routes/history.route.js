@@ -13,5 +13,6 @@ historyRoutes.route('/getAllActiveCategory').get(history.getAllActiveCategory); 
 historyRoutes.route('/getAllActiveSubCategory').get(history.getAllActiveSubCategory);  //H30-47434-Saju-Migrate get category api from JAVA to NODE
 historyRoutes.route('/getHistoryByUuid').get(history.getHistoryByUuid);  //H30-47434-Saju-Migrate get history by uuid api from JAVA to NODE
 historyRoutes.route('/hitoryList').post(history.getHitoryList);  //H30-47434-Saju-Migrate get history list api from JAVA to NODE
+historyRoutes.route('/updateHistory').post(history.updateHistory);  //H30-47434-Saju-Migrate history master api from JAVA to NODE
 
 module.exports = historyRoutes;
