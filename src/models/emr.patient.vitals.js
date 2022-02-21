@@ -214,6 +214,10 @@ module.exports = (sequelize, DataTypes) => {
           min: 0
         }
       },
+      display_order: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       comments: {
         type: DataTypes.STRING(500),
         allowNull: true
