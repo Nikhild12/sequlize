@@ -995,10 +995,6 @@ const Encounter = () => {
         encounterDoctor.session_type_uuid = sessionTypeId;
         /* #H30-45561 - EMR - Encounter - Assigning Session Type Based on the Facility Configuration By Elumalai - End */
 
-        //#H30-45561 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - Start
-        encounterDoctor.session_type_uuid = sessionTypeId;
-        //#40403 - EMR - Encounter - Session Type Generation Based on the Facility Configuration By Elumalai - End
-
         const createdEncounterDoctorData = await encounter_doctors_tbl.create(encounterDoctor, { returning: true });
         /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
         /*
@@ -1100,7 +1096,7 @@ const Encounter = () => {
           };
           await op_emr_census_count_tbl.create(emr_census_data, { returning: true, });
         }
-        /* Sreeni - Inserting Census Data into EMR Census Table - Started Here */
+        /* Sreeni - Inserting Census Data into EMR Census Table - Ended Here */
         encounterDoctor.uuid = createdEncounterDoctorData.uuid;
         if (emr_config.isBlockChain === 'ON' && emr_config.blockChainURL) {
           encounterBlockChain.createEncounterBlockChain(encounter, encounterDoctor);
