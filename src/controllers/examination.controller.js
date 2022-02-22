@@ -357,10 +357,16 @@ const examinations = () => {
                     {
                         model: examination_section_tbl,
                         required: false,
+                        where: {
+                            status: true
+                        },
                         include: [
                             {
                                 model: examination_section_values_tbl,
-                                required: false
+                                required: false,
+                                where: {
+                                    status: true
+                                }
                             }
                         ],
 
