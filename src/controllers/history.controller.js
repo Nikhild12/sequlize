@@ -454,7 +454,8 @@ const historys = () => {
 
             return res.send({
                 statusCode: 200,
-                responseContent: historyDetailsLst
+                responseContent: historyDetailsLst.history_details,
+                totalRecords: historyDetailsLst.totalRecords[0].totalRecordsCount
             });
         } catch (error) {
             console.log('\n error...', error);
@@ -637,11 +638,16 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
         " (SELECT NAME FROM history_sub_category subCategory WHERE subCategory.uuid=h.history_sub_category_uuid) AS categorySubName, " +
         " h.modified_date AS modifiedDate " +
         " FROM historys h WHERE h.status = " + status;
+
+    let count_query = "SELECT COUNT(*) as totalRecordsCount from historys h where h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
 
-        history_details_query = history_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+        count_query = " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
             " (h.history_category_uuid in (select uuid from history_category where name like '%" + search + "%')) OR " +
             " (h.history_sub_category_uuid in (select uuid from history_sub_category where name like '%" + search + "%'))) ";
+
+        history_details_query = history_details_query + "" + searchCondition;
+        count_query = count_query + "" + searchCondition;
     }
 
     if (sortField && sortField != "" && sortOrder && sortOrder != "") {
@@ -656,7 +662,16 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
     const history_details = await sequelizeDb.sequelize.query(history_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
-    return history_details;
+
+    const totalRecords = await sequelizeDb.sequelize.query(count_query, {
+        type: Sequelize.QueryTypes.SELECT
+    });
+
+    const returnResp = {
+        history_details: history_details,
+        totalRecords: totalRecords
+    }
+    return returnResp;
 }
 
 const updateHistoryMasterObject = (historyMasterDetails, user_uuid) => {
