@@ -2,7 +2,7 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
 
-var Sequelize = require("sequelize");
+var Sequelize = require("sequelize"); 
 var Op = Sequelize.Op;
 const sequelizeDb = require("../config/sequelize");
 
@@ -47,7 +47,8 @@ const EMRPatientVitals = () => {
             "vital_qualifier_uuid",
             "vital_value_type_uuid",
             "vital_uom_uuid",
-            "patient_vital_status_uuid"
+            "patient_vital_status_uuid",
+            "display_order"
           ]);
           if (!body_details_validation_result.status) {
             return res

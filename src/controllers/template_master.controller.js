@@ -786,6 +786,8 @@ function getTemplateData(fetchedData) {
           drug_code: tD.im_code,
           drug_id: tD.im_uuid,
           drug_product_type_uuid: tD.im_product_type_uuid,
+          drug_is_emar: tD.im_is_emar,
+          drug_can_calculate_frequency_qty: dD.im_can_calculate_frequency_qty,
 
           drug_route_name: tD.dr_code,
           drug_route_id: tD.dr_uuid,
