@@ -296,7 +296,6 @@ const examinations = () => {
                 }
                 return res.status(200).send({ code: httpStatus.OK, message: "Examination master details added success fully", responseContents: examinationMasterDetails });
             } catch (ex) {
-                console.log('Check Error --->', ex)
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             }
         } else {
@@ -398,7 +397,8 @@ const examinations = () => {
 
             return res.send({
                 statusCode: 200,
-                responseContent: examinationDetailsLst
+                responseContent: examinationDetailsLst.examination_details,
+                totalRecords: examinationDetailsLst.totalRecords[0].totalRecordsCount
             });
         } catch (error) {
             console.log('\n error...', error);
@@ -586,11 +586,16 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
         " (SELECT NAME FROM examination_sub_category subCategory WHERE subCategory.uuid=h.examination_sub_category_uuid) AS categorySubName, " +
         " h.modified_date AS modifiedDate " +
         " FROM examinations h WHERE h.status = " + status;
+
+    let count_query = "SELECT COUNT(*) as totalRecordsCount from examinations h where h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
 
-        examination_details_query = examination_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+        const searchCondition = " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
             " (h.examination_category_uuid in (select uuid from examination_category where name like '%" + search + "%')) OR " +
             " (h.examination_sub_category_uuid in (select uuid from examination_sub_category where name like '%" + search + "%'))) ";
+
+        examination_details_query = examination_details_query + "" + searchCondition;
+        count_query = count_query + "" + searchCondition;
     }
 
     if (sortField && sortField != "" && sortOrder && sortOrder != "") {
@@ -602,10 +607,20 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
     const offset = (page - 1) * itemsPerPage;
     examination_details_query = examination_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
 
-    const history_details = await sequelizeDb.sequelize.query(examination_details_query, {
+    const examination_details = await sequelizeDb.sequelize.query(examination_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
-    return history_details;
+
+    const totalRecords = await sequelizeDb.sequelize.query(count_query, {
+        type: Sequelize.QueryTypes.SELECT
+    });
+
+    const returnResp = {
+        examination_details: examination_details,
+        totalRecords: totalRecords
+    }
+
+    return returnResp;
 }
 
 const updateExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
