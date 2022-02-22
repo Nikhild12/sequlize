@@ -413,10 +413,16 @@ const historys = () => {
                     {
                         model: history_section_tbl,
                         required: false,
+                        where: {
+                            status: true
+                        },
                         include: [
                             {
                                 model: history_section_values_tbl,
-                                required: false
+                                required: false,
+                                where: {
+                                    status: true
+                                }
                             }
                         ],
 
