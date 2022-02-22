@@ -333,6 +333,7 @@ const historys = () => {
                             revision: e.revision,
                             created_by: user_uuid,
                             is_active: e.isActive,
+                            status: e.status,
                             created_date: new Date(),
                             modified_by: user_uuid,
                             modified_date: new Date(),
@@ -440,10 +441,10 @@ const historys = () => {
     }
 
     const getHitoryList = async (req, res) => {
-        const { search, page, pageSize, sortBy, orderBy, status } = req.body;
+        const { search, page, pageSize, sortField, sortOrder, status } = req.body;
 
         try {
-            const historyDetailsLst = await getHistoryDetailsLst(search, page, pageSize, sortBy, orderBy, status);
+            const historyDetailsLst = await getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder, status);
 
             return res.send({
                 statusCode: 200,
@@ -485,6 +486,7 @@ const historys = () => {
                             revision: e.revision,
                             modified_by: user_uuid,
                             is_active: e.isActive,
+                            status: e.status,
                             modified_date: new Date(),
                             history_uuid: historyMasterDetails.uuid
                         };
@@ -503,6 +505,7 @@ const historys = () => {
                             reqObj.created_by = user_uuid;
                             reqObj.created_date = new Date();
                             historySectionsObject = await history_section_tbl.create(reqObj, { returing: true });
+                            e.uuid = historySectionsObject.uuid;
                         }
 
                         if (historySectionsObject && e.uuid) {
@@ -514,6 +517,7 @@ const historys = () => {
                                     display_order: f.displayOrder,
                                     is_default: f.isDefault,
                                     is_active: f.isActive,
+                                    status: f.status,
                                     modified_by: user_uuid,
                                     modified_date: new Date(),
                                     history_section_uuid: e.uuid
@@ -544,10 +548,30 @@ const historys = () => {
                 }
                 return res.status(200).send({ code: httpStatus.OK, message: "History master details updated success fully", responseContents: historyMasterDetails });
             } catch (ex) {
+                console.log('Error----->', ex)
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             }
         } else {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
+        }
+    }
+
+    const deleteHistory = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { historyUuid } = req.query;
+        try {
+            await history_tbl.update({
+                modified_by: user_uuid,
+                modified_date: new Date(),
+                status: false
+            }, {
+                where: {
+                    uuid: historyUuid
+                }
+            });
+            return res.status(200).send({ code: httpStatus.OK, message: "History master deleted success fully", responseContents: "History master deleted success fully" });
+        } catch (ex) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
         }
     }
 
@@ -559,7 +583,8 @@ const historys = () => {
         getAllActiveSubCategory,
         getHistoryByUuid,
         getHitoryList,
-        updateHistory
+        updateHistory,
+        deleteHistory
     };
 };
 
@@ -589,6 +614,7 @@ const createHistoryMasterSectionsValueObject = (historySectionValueList, user_uu
             is_default: e.isDefault,
             created_by: user_uuid,
             is_active: e.isActive,
+            status: e.status,
             created_date: new Date(),
             modified_by: user_uuid,
             modified_date: new Date(),
@@ -602,7 +628,8 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
 
     let history_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
         " (SELECT NAME FROM history_category category WHERE category.uuid=h.history_category_uuid) AS categoryName," +
-        " (SELECT NAME FROM history_sub_category subCategory WHERE subCategory.uuid=h.history_sub_category_uuid) AS categorySubName " +
+        " (SELECT NAME FROM history_sub_category subCategory WHERE subCategory.uuid=h.history_sub_category_uuid) AS categorySubName, " +
+        " h.modified_date AS modifiedDate " +
         " FROM historys h WHERE h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
 
@@ -619,7 +646,7 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
     const itemsPerPage = pageSize ? pageSize : 10;
     const offset = (page - 1) * itemsPerPage;
     history_details_query = history_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
-    console.log(history_details_query)
+
     const history_details = await sequelizeDb.sequelize.query(history_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
