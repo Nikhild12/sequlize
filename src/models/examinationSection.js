@@ -24,6 +24,10 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
                 defaultValue: 0,
             },
+            is_mandatory: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1

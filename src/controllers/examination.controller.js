@@ -277,8 +277,10 @@ const examinations = () => {
                             is_mandatory: e.isMandatory,
                             revision: e.revision,
                             created_by: user_uuid,
-                            is_active: 1,
+                            is_active: e.isActive,
                             created_date: new Date(),
+                            modified_by: user_uuid,
+                            modified_date: new Date(),
                             examination_uuid: createdExamination.uuid
                         };
                         let examinationSectionsObject = await examination_section_tbl.create(reqObj, { returing: true });
@@ -432,15 +434,23 @@ const examinations = () => {
                             modified_date: new Date(),
                             examination_uuid: examinationMasterDetails.uuid
                         };
-                        let examinationSectionsObject = await examination_section_tbl.update(
-                            reqObj,
-                            {
-                                where: {
-                                    uuid: e.uuid
-                                }
-                            },
-                            { returning: true }
-                        );
+
+                        let examinationSectionsObject = "";
+                        if (e.uuid && e.uuid > 0) {
+                            examinationSectionsObject = await examination_section_tbl.update(
+                                reqObj,
+                                {
+                                    where: {
+                                        uuid: e.uuid
+                                    }
+                                },
+                                { returning: true }
+                            );
+                        } else {
+                            reqObj.created_by = user_uuid;
+                            reqObj.created_date = new Date();
+                            examinationSectionsObject = await examination_section_tbl.create(reqObj, { returing: true });
+                        }
 
                         if (examinationSectionsObject && e.uuid) {
                             let examinationSectionsValue = [];
@@ -455,15 +465,23 @@ const examinations = () => {
                                     modified_date: new Date(),
                                     examination_section_uuid: e.uuid
                                 };
-                                let examinationSectionsObject = await examination_section_values_tbl.update(
-                                    reqSectionValueObj,
-                                    {
-                                        where: {
-                                            uuid: f.uuid
-                                        }
-                                    },
-                                    { returning: true }
-                                );
+                                
+                                let examinationSectionsObject = ""
+                                if (f.uuid && f.uuid > 0) {
+                                    examinationSectionsObject = await examination_section_values_tbl.update(
+                                        reqSectionValueObj,
+                                        {
+                                            where: {
+                                                uuid: f.uuid
+                                            }
+                                        },
+                                        { returning: true }
+                                    );
+                                } else {
+                                    reqSectionValueObj.created_by = user_uuid;
+                                    reqSectionValueObj.created_date = new Date();
+                                    historySectionsObject = await examination_section_values_tbl.create(reqSectionValueObj, { returing: true });
+                                }
                                 examinationSectionsValue.push(reqSectionValueObj)
                             }
                             examinationSections.push({ ...e, examinationSectionValueList: examinationSectionsValue });
@@ -499,8 +517,11 @@ module.exports = examinations();
 //H30-47434-Saju-Migrate history master api from JAVA to NODE
 const createExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
     examinationMasterDetails.created_by = user_uuid;
-    examinationMasterDetails.is_active = 1;
+    examinationMasterDetails.is_active = examinationMasterDetails.isActive;
+    examinationMasterDetails.is_default = examinationMasterDetails.isDefault;
     examinationMasterDetails.created_date = new Date();
+    examinationMasterDetails.modified_by = user_uuid;
+    examinationMasterDetails.modified_date = new Date();
     examinationMasterDetails.department_uuid = examinationMasterDetails.departmentUuid;
     examinationMasterDetails.examination_category_uuid = examinationMasterDetails.examinationCategoryUuid;
     examinationMasterDetails.examination_sub_category_uuid = examinationMasterDetails.examinationSubCategoryUuid;
@@ -519,6 +540,8 @@ const createExaminationMasterSectionsValueObject = (examinationSectionValueList,
             created_by: user_uuid,
             is_active: 1,
             created_date: new Date(),
+            modified_by: user_uuid,
+            modified_date: new Date(),
             examination_section_uuid: examinationSectionsUuid
         });
     }
@@ -555,7 +578,8 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
 
 const updateExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
     examinationMasterDetails.modified_by = user_uuid;
-    examinationMasterDetails.is_active = 1;
+    examinationMasterDetails.is_default = examinationMasterDetails.isDefault;
+    examinationMasterDetails.is_active = examinationMasterDetails.isActive;
     examinationMasterDetails.modified_date = new Date();
     examinationMasterDetails.department_uuid = examinationMasterDetails.departmentUuid;
     examinationMasterDetails.examination_category_uuid = examinationMasterDetails.examinationCategoryUuid;

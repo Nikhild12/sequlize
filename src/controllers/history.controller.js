@@ -332,8 +332,10 @@ const historys = () => {
                             is_mandatory: e.isMandatory,
                             revision: e.revision,
                             created_by: user_uuid,
-                            is_active: 1,
+                            is_active: e.isActive,
                             created_date: new Date(),
+                            modified_by: user_uuid,
+                            modified_date: new Date(),
                             history_uuid: createdHistory.uuid
                         };
                         let historySectionsObject = await history_section_tbl.create(reqObj, { returing: true });
@@ -463,7 +465,6 @@ const historys = () => {
         if (user_uuid && historyMasterDetails) {
             try {
                 const historyMasterDetailsObj = await updateHistoryMasterObject(historyMasterDetails, user_uuid);
-
                 const updateHistory = await history_tbl.update(
                     historyMasterDetailsObj,
                     {
@@ -473,7 +474,6 @@ const historys = () => {
                     },
                     { returning: true }
                 );
-
                 if (updateHistory && historyMasterDetails.uuid > 0) {
                     let historySections = [];
                     for (let e of historyMasterDetails.historySectionList) {
@@ -488,15 +488,22 @@ const historys = () => {
                             modified_date: new Date(),
                             history_uuid: historyMasterDetails.uuid
                         };
-                        let historySectionsObject = await history_section_tbl.update(
-                            reqObj,
-                            {
-                                where: {
-                                    uuid: e.uuid
-                                }
-                            },
-                            { returning: true }
-                        );
+                        let historySectionsObject = "";
+                        if (e.uuid && e.uuid > 0) {
+                            historySectionsObject = await history_section_tbl.update(
+                                reqObj,
+                                {
+                                    where: {
+                                        uuid: e.uuid
+                                    }
+                                },
+                                { returning: true }
+                            );
+                        } else {
+                            reqObj.created_by = user_uuid;
+                            reqObj.created_date = new Date();
+                            historySectionsObject = await history_section_tbl.create(reqObj, { returing: true });
+                        }
 
                         if (historySectionsObject && e.uuid) {
                             let historySectionsValue = [];
@@ -511,15 +518,22 @@ const historys = () => {
                                     modified_date: new Date(),
                                     history_section_uuid: e.uuid
                                 };
-                                let historySectionsObject = await history_section_values_tbl.update(
-                                    reqSectionValueObj,
-                                    {
-                                        where: {
-                                            uuid: f.uuid
-                                        }
-                                    },
-                                    { returning: true }
-                                );
+                                let historySectionsObject = ""
+                                if (f.uuid && f.uuid > 0) {
+                                    historySectionsObject = await history_section_values_tbl.update(
+                                        reqSectionValueObj,
+                                        {
+                                            where: {
+                                                uuid: f.uuid
+                                            }
+                                        },
+                                        { returning: true }
+                                    );
+                                } else {
+                                    reqSectionValueObj.created_by = user_uuid;
+                                    reqSectionValueObj.created_date = new Date();
+                                    historySectionsObject = await history_section_values_tbl.create(reqSectionValueObj, { returing: true });
+                                }
                                 historySectionsValue.push(reqSectionValueObj)
                             }
                             historySections.push({ ...e, historySectionValueList: historySectionsValue });
@@ -528,7 +542,6 @@ const historys = () => {
                     historyMasterDetails.uuid = updateHistory.uuid;
                     historyMasterDetails.historySectionList = historySections;
                 }
-
                 return res.status(200).send({ code: httpStatus.OK, message: "History master details updated success fully", responseContents: historyMasterDetails });
             } catch (ex) {
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
@@ -554,8 +567,11 @@ module.exports = historys();
 //H30-47434-Saju-Migrate history master api from JAVA to NODE
 const createHistoryMasterObject = (historyMasterDetails, user_uuid) => {
     historyMasterDetails.created_by = user_uuid;
-    historyMasterDetails.is_active = 1;
+    historyMasterDetails.is_active = historyMasterDetails.isActive;
+    historyMasterDetails.is_default = historyMasterDetails.isDefault;
     historyMasterDetails.created_date = new Date();
+    historyMasterDetails.modified_by = user_uuid;
+    historyMasterDetails.modified_date = new Date();
     historyMasterDetails.department_uuid = historyMasterDetails.departmentUuid;
     historyMasterDetails.history_category_uuid = historyMasterDetails.historyCategoryUuid;
     historyMasterDetails.history_sub_category_uuid = historyMasterDetails.historySubCategoryUuid;
@@ -572,8 +588,10 @@ const createHistoryMasterSectionsValueObject = (historySectionValueList, user_uu
             display_order: e.displayOrder,
             is_default: e.isDefault,
             created_by: user_uuid,
-            is_active: 1,
+            is_active: e.isActive,
             created_date: new Date(),
+            modified_by: user_uuid,
+            modified_date: new Date(),
             history_section_uuid: historySectionsUuid
         });
     }
@@ -611,6 +629,7 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
 const updateHistoryMasterObject = (historyMasterDetails, user_uuid) => {
     historyMasterDetails.modified_by = user_uuid;
     historyMasterDetails.modified_date = new Date();
+    historyMasterDetails.is_default = historyMasterDetails.isDefault;
     historyMasterDetails.is_active = historyMasterDetails.isActive;
     historyMasterDetails.department_uuid = historyMasterDetails.departmentUuid;
     historyMasterDetails.history_category_uuid = historyMasterDetails.historyCategoryUuid;
