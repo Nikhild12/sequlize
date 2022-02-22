@@ -583,7 +583,7 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
 
     let examination_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
         " (SELECT NAME FROM examination_category category WHERE category.uuid=h.examination_category_uuid) AS categoryName," +
-        " (SELECT NAME FROM examination_sub_category subCategory WHERE subCategory.uuid=h.examination_sub_category_uuid) AS categorySubName " +
+        " (SELECT NAME FROM examination_sub_category subCategory WHERE subCategory.uuid=h.examination_sub_category_uuid) AS categorySubName, " +
         " h.modified_date AS modifiedDate " +
         " FROM examinations h WHERE h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
