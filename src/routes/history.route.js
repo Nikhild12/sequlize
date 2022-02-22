@@ -14,5 +14,6 @@ historyRoutes.route('/getAllActiveSubCategory').get(history.getAllActiveSubCateg
 historyRoutes.route('/getHistoryByUuid').get(history.getHistoryByUuid);  //H30-47434-Saju-Migrate get history by uuid api from JAVA to NODE
 historyRoutes.route('/hitoryList').post(history.getHitoryList);  //H30-47434-Saju-Migrate get history list api from JAVA to NODE
 historyRoutes.route('/updateHistory').post(history.updateHistory);  //H30-47434-Saju-Migrate history master api from JAVA to NODE
+historyRoutes.route('/deleteHistory').post(history.deleteHistory);  //H30-47434-Saju-Migrate history master api from JAVA to NODE
 
 module.exports = historyRoutes;

@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
             comments: {
                 type: DataTypes.TEXT
             },
+            is_default: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 1
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1

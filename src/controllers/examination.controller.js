@@ -278,6 +278,7 @@ const examinations = () => {
                             revision: e.revision,
                             created_by: user_uuid,
                             is_active: e.isActive,
+                            status: e.status,
                             created_date: new Date(),
                             modified_by: user_uuid,
                             modified_date: new Date(),
@@ -302,7 +303,7 @@ const examinations = () => {
             return res.status(400).send({ code: httpStatus.UNAUTHORIZED, message: `${emr_constants.NO} ${emr_constants.NO_USER_ID} ${emr_constants.OR} ${emr_constants.NO_REQUEST_BODY} ${emr_constants.FOUND}` });
         }
     }
-    
+
     const getAllActiveCategory = async (req, res) => {
         try {
             const categoryDetails = await examination_category_tbl.findAll({
@@ -349,7 +350,7 @@ const examinations = () => {
 
     const getExaminationByUuid = async (req, res) => {
         const { examinationUuid } = req.query;
-        
+
         try {
             let examinationDetails = await examination_tbl.findOne({
                 include: [
@@ -384,10 +385,10 @@ const examinations = () => {
     }
 
     const getExaminationList = async (req, res) => {
-        const { search, page, pageSize, sortBy, orderBy, status } = req.body;
+        const { search, page, pageSize, sortField, sortOrder, status } = req.body;
 
         try {
-            const examinationDetailsLst = await getExaminationDetailsLst(search, page, pageSize, sortBy, orderBy, status);
+            const examinationDetailsLst = await getExaminationDetailsLst(search, page, pageSize, sortField, sortOrder, status);
 
             return res.send({
                 statusCode: 200,
@@ -431,6 +432,7 @@ const examinations = () => {
                             revision: e.revision,
                             modified_by: user_uuid,
                             is_active: e.isActive,
+                            status: e.status,
                             modified_date: new Date(),
                             examination_uuid: examinationMasterDetails.uuid
                         };
@@ -450,6 +452,7 @@ const examinations = () => {
                             reqObj.created_by = user_uuid;
                             reqObj.created_date = new Date();
                             examinationSectionsObject = await examination_section_tbl.create(reqObj, { returing: true });
+                            e.uuid = examinationSectionsObject.uuid;
                         }
 
                         if (examinationSectionsObject && e.uuid) {
@@ -461,11 +464,12 @@ const examinations = () => {
                                     display_order: f.displayOrder,
                                     is_default: f.isDefault,
                                     is_active: f.isActive,
+                                    status: f.status,
                                     modified_by: user_uuid,
                                     modified_date: new Date(),
                                     examination_section_uuid: e.uuid
                                 };
-                                
+
                                 let examinationSectionsObject = ""
                                 if (f.uuid && f.uuid > 0) {
                                     examinationSectionsObject = await examination_section_values_tbl.update(
@@ -480,7 +484,7 @@ const examinations = () => {
                                 } else {
                                     reqSectionValueObj.created_by = user_uuid;
                                     reqSectionValueObj.created_date = new Date();
-                                    historySectionsObject = await examination_section_values_tbl.create(reqSectionValueObj, { returing: true });
+                                    examinationSectionsObject = await examination_section_values_tbl.create(reqSectionValueObj, { returing: true });
                                 }
                                 examinationSectionsValue.push(reqSectionValueObj)
                             }
@@ -500,6 +504,25 @@ const examinations = () => {
         }
     }
 
+    const deleteExamination = async (req, res) => {
+        const { user_uuid } = req.headers;
+        const { examinationUuid } = req.query;
+        try {
+            await examination_tbl.update({
+                modified_by: user_uuid,
+                modified_date: new Date(),
+                status: false
+            }, {
+                where: {
+                    uuid: examinationUuid
+                }
+            });
+            return res.status(200).send({ code: httpStatus.OK, message: "Examination master deleted success fully", responseContents: "Examination master deleted success fully" });
+        } catch (ex) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+        }
+    }
+
     //H30-47434-Saju-Migrate examination master api from JAVA to NODE
     return {
         getExaminationAndSectionsByNameorCode: _getExaminationAndSectionsByNameorCode,
@@ -508,13 +531,14 @@ const examinations = () => {
         getAllActiveSubCategory,
         getExaminationByUuid,
         getExaminationList,
-        updateExamination
+        updateExamination,
+        deleteExamination
     };
 };
 
 module.exports = examinations();
 
-//H30-47434-Saju-Migrate history master api from JAVA to NODE
+//H30-47434-Saju-Migrate examination master api from JAVA to NODE
 const createExaminationMasterObject = (examinationMasterDetails, user_uuid) => {
     examinationMasterDetails.created_by = user_uuid;
     examinationMasterDetails.is_active = examinationMasterDetails.isActive;
@@ -538,7 +562,8 @@ const createExaminationMasterSectionsValueObject = (examinationSectionValueList,
             display_order: e.displayOrder,
             is_default: e.isDefault,
             created_by: user_uuid,
-            is_active: 1,
+            is_active: e.isActive,
+            status: e.status,
             created_date: new Date(),
             modified_by: user_uuid,
             modified_date: new Date(),
@@ -550,27 +575,28 @@ const createExaminationMasterSectionsValueObject = (examinationSectionValueList,
 
 async function getExaminationDetailsLst(search, page, pageSize, sortField, sortOrder, status) {
 
-    let history_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
+    let examination_details_query = "SELECT h.uuid, h.code,h.name,IF(h.is_active=b'1', TRUE, FALSE) AS isActive," +
         " (SELECT NAME FROM examination_category category WHERE category.uuid=h.examination_category_uuid) AS categoryName," +
         " (SELECT NAME FROM examination_sub_category subCategory WHERE subCategory.uuid=h.examination_sub_category_uuid) AS categorySubName " +
+        " h.modified_date AS modifiedDate " +
         " FROM examinations h WHERE h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
 
-        history_details_query = history_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+        examination_details_query = examination_details_query + " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
             " (h.examination_category_uuid in (select uuid from examination_category where name like '%" + search + "%')) OR " +
             " (h.examination_sub_category_uuid in (select uuid from examination_sub_category where name like '%" + search + "%'))) ";
     }
 
     if (sortField && sortField != "" && sortOrder && sortOrder != "") {
-        history_details_query = history_details_query + " order by h." + sortField + " " + sortOrder;
+        examination_details_query = examination_details_query + " order by h." + sortField + " " + sortOrder;
     }
 
     page = page ? page : 1;
     const itemsPerPage = pageSize ? pageSize : 10;
     const offset = (page - 1) * itemsPerPage;
-    history_details_query = history_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
-    console.log(history_details_query)
-    const history_details = await sequelizeDb.sequelize.query(history_details_query, {
+    examination_details_query = examination_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
+
+    const history_details = await sequelizeDb.sequelize.query(examination_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
     return history_details;

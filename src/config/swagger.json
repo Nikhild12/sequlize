@@ -13106,6 +13106,84 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/history/deleteHistory": {
+         "post": {
+            "summary": "To delete the history master By Given Id",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "query",
+                  "name": "historyUuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "History Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Delete the history master Successfully"
+               },
+               "400": {
+                  "description": "Bad Request"
+               },
+               "500": {
+                  "description": "Internal Server Error"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
+      "/api/examination/deleteExamination": {
+         "post": {
+            "summary": "To delete the Examination Master By Given Id",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "query",
+                  "name": "examinationUuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Examination Master"
+            ],
+            "responses": {
+               "200": {
+                  "description": "Delete the examination Master Successfully"
+               },
+               "400": {
+                  "description": "Bad Request"
+               },
+               "500": {
+                  "description": "Internal Server Error"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
