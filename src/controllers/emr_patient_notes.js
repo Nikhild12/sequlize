@@ -182,6 +182,7 @@ const notesController = () => {
             let rowsData = getOPNotesByPId.rows;
             if (rowsData != null && rowsData.length > 0) {
                 /**Get department name */
+                /*
                 let departmentIds = [...new Set(rowsData.map(e => e.profile && e.profile.department_uuid ? e.profile.department_uuid : 0))];
                 const departmentsResponse = await appMasterData.getDepartments(user_uuid, Authorization, departmentIds);
                 if (departmentsResponse) {
@@ -196,8 +197,10 @@ const notesController = () => {
                         e.dataValues.department_name = (data[department_uuid] ? data[department_uuid] : null);
                     });
                 }
+                */
                 /**Get user name */
                 /**Fetching user details from app master API */
+                /*
                 let doctorIds = [...new Set(rowsData.map(e => e.created_by))];
                 const doctorResponse = await appMasterData.getDoctorDetails(user_uuid, Authorization, doctorIds);
                 if (doctorResponse && doctorResponse.responseContents) {
@@ -214,6 +217,7 @@ const notesController = () => {
                         e.dataValues.created_user_name = (newData[created_by] ? newData[created_by] : null);
                     });
                 }
+                */
                 // Code and Message for Response
                 const code = emr_utility.getResponseCodeForSuccessRequest(rowsData);
                 const message = emr_utility.getResponseMessageForSuccessRequest(code, 'ppnd');
@@ -469,7 +473,7 @@ const notesController = () => {
                         e.temp = [];
                         e.user_uuid = user_uuid;
                         e.Authorization = Authorization;
-                        e.facility_uuid = facility_uuid; 
+                        e.facility_uuid = facility_uuid;
                         data = await getWidgetData(actCode.name, e, consultation_uuid);
                         finalData.push(data);
                         console.log(finalData);

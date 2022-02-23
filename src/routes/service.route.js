@@ -19,6 +19,7 @@ const chiefComplaintsRoutes = require("./chiefComplaints.route");
 const immunizationsRoutes = require("./immunizations.route");
 const immunizationScheduleRoutes = require("./immunizationSchedule.route");
 const vitalMasterRoutes = require("./vital_master_route");
+const vitalMasterUOMRoutes = require("./vital_master_uoms.route");
 const vitallonicRoutes = require("./vital_loinc.route");
 const dischargeSummaryRoute = require("./discharge.summary.settings.route");
 
@@ -195,6 +196,9 @@ serviceRouter.use("/proceduresNoteTemplate", procedureNoteTemplatesRoutes);
 serviceRouter.use("/vitalMaster", vitalMasterRoutes);
 serviceRouter.use("/vitalLonic", vitallonicRoutes);
 serviceRouter.use("/notetemplate", notetemplateRoutes);
+
+// Vital Master UOM Routes
+serviceRouter.use("/vitalMasterUOM", vitalMasterUOMRoutes);
 
 // Diagnosis Routes
 serviceRouter.use("/diagnosis", diagnosisRoutes);
