@@ -13184,7 +13184,144 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
-      }
+      },
+		"/api/vitalMasterUOM/addvitaluoms": {
+			"post": {
+				"description": "To create Vital UOM",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "addvitaluoms",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/addvitaluoms"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "number"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"vital_master_uoms"
+				]
+			}
+		},
+		"/api/vitalMasterUOM/getuomsbyvitalid": {
+			"post": {
+				"description": "Fetch Vital UOMs By Id",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getuomsbyvitalid",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getuomsbyvitalid"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization user_uuid",
+						"required": true,
+						"type": "number"
+					},
+					{
+						"name": "facility_uuid",
+						"in": "header",
+						"description": "an authorization facility_uuid",
+						"required": true,
+						"type": "number"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": "Fetch Vital UOMs By Id.",
+				"tags": [
+					"vital_master_uoms"
+				]
+			}
+		},
+		"/api/vitalMasterUOM/deletevitaluoms": {
+			"post": {
+				"description": "To Delete Mapped UOM From Vital",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/deletevitaluoms"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "number"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"vital_master_uoms"
+				]
+			}
+		}
    },
    "definitions": {
       "addEMRCensusCount": {
@@ -22826,6 +22963,43 @@
                "example": 1
             }
          }
-      }
+      },
+		"addvitaluoms": {
+			"type": "object",
+			"properties": {
+				"facility_uuid": {
+					"type": "number"
+				},
+				"vital_master_uuid": {
+					"type": "number"
+				},
+				"emr_uom_uuid": {
+					"type": "number"
+				},
+				"vital_value_type_uuid": {
+					"type": "number"
+				},
+				"is_active": {
+					"type": "boolean"
+				}
+			}
+		},
+		"getuomsbyvitalid": {
+			"type": "object",
+			"properties": {
+				"Id": {
+					"type": "number",
+					"example": 1
+				}
+			}
+		},
+		"deletevitaluoms": {
+			"type": "object",
+			"properties": {
+				"Id": {
+					"type": "number"
+				}
+			}
+		}
    }
 }
