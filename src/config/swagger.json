@@ -14482,20 +14482,38 @@
             }
          }
       },
+  
       "depDiagnosisbody": {
          "type": "object",
          "properties": {
+          
             "department_uuid": {
                "type": "integer"
             },
-            "fromdate": {
-               "type": "string"
-            },
-            "todate": {
-               "type": "string"
-            }
+            "fromdate":
+               {
+				"type": "string"
+				},
+
+				"todate":
+				{
+				 "type": "string"
+				 },
+             "visit_type":
+             {
+              "type": "integer"
+              }
+
+           
          }
       },
+
+
+
+
+
+
+
       "docDiagnosisbody": {
          "type": "object",
          "properties": {

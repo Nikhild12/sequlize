@@ -27,16 +27,20 @@ if (req.body.department_uuid>0 )
 
             let fromdate =req.body.fromdate;
                let todate=req.body.todate;
+               let visit_type=req.body.visit_type;
 
 
+            const selectCountQuery = `select pd.department_uuid,d.name as diagnosis,count(distinct patient_uuid) as patient_count
+             from patient_diagnosis pd 
+             join diagnosis d on pd.diagnosis_uuid =d.uuid 
+             join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
+             
+             where pd.facility_uuid=? 
+             and pd.department_uuid =? and date(pd.created_date) >= ? and date(pd.created_date) <=? and visit_type_uuid=? and ed.visit_type_uuid=?
+             group by pd.department_uuid,d.name order by date(pd.created_date),pd.department_uuid,d.name`;
 
-            const selectCountQuery = `select pd.department_uuid,d.name as diagnosis, count(distinct patient_uuid) as patient_count
-             from patient_diagnosis pd join diagnosis d on pd.diagnosis_uuid =d.uuid where pd.facility_uuid=? 
-            and pd.department_uuid =? and date(pd.created_date) >= ? and date(pd.created_date) <=?
-           group by pd.department_uuid,d.name order by date(pd.created_date),pd.department_uuid,d.name`;
 
-
-            mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,dep_filter,fromdate,todate], async (err, results, fields) => {
+            mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,dep_filter,fromdate,todate,visit_type], async (err, results, fields) => {
                 try {
                     const depIds = results && results.length > 0 ? results.reduce((acc, cur) => {
                         acc.push(cur.department_uuid);
@@ -143,18 +147,23 @@ if (req.body.department_uuid>0 )
 
             let fromdate =req.body.fromdate;
                let todate=req.body.todate;
+               let visit_type=req.body.visit_type;
 
 
 
             const selectCountQuery = `select d.name as diagnosis, count(distinct patient_uuid) as patient_count 
+ 
 from patient_diagnosis pd 
+
 join diagnosis d on pd.diagnosis_uuid =d.uuid 
+join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
+
 where pd.facility_uuid=?
-AND date(pd.created_date) >= ? and date(pd.created_date) <=?
-GROUP BY d.name  `;
+AND date(pd.created_date) >= ? and date(pd.created_date) <=?  and ed.visit_type_uuid=?
+GROUP BY d.name  `
 
 
-            mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,fromdate,todate], async (err, results, fields) => {
+            mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,fromdate,todate,visit_type], async (err, results, fields) => {
                 try {
                     const depIds = results && results.length > 0 ? results.reduce((acc, cur) => {
                         acc.push(cur.department_uuid);
@@ -237,7 +246,6 @@ GROUP BY d.name  `;
     const view_docDiagnosis = async (req, res) => {
 
         if (req.body.department_uuid>0 )
-
 
 {
 
