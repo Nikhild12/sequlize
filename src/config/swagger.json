@@ -14498,11 +14498,7 @@
 				"todate":
 				{
 				 "type": "string"
-				 },
-             "visit_type":
-             {
-              "type": "integer"
-              }
+				 }
 
            
          }
@@ -14539,7 +14535,21 @@
             },
             "todate": {
                "type": "string"
-            }
+            },
+
+            "visit_type":
+             {
+              "type": "integer"
+              }
+
+
+
+
+
+
+
+
+
          }
       },
       "docDiagnosisbody2": {
@@ -14567,7 +14577,15 @@
             },
             "todate": {
                "type": "string"
-            }
+            },
+            "visit_type":
+             {
+              "type": "integer"
+              }
+
+
+
+
          }
       },
       "getimmunizationReq": {
