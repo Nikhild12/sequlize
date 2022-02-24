@@ -413,7 +413,9 @@ const vitalMasterUOMController = () => {
                     }
             ],
                 where: {
-                    vital_master_uuid: postData.Id
+                    vital_master_uuid: postData.Id,
+                    status: true,
+                    is_active: true
                 }
             });
 
