@@ -10,6 +10,8 @@ router.route('/docDiagnosis').post(depDiagnosisCtrl.view_docDiagnosis);
 router.route('/docDiagnosisGenderWise').post(depDiagnosisCtrl.view_docDiagnosisGengerwise);
 router.route('/view_docDiagnosisVisitwise').post(depDiagnosisCtrl.view_docDiagnosisVisitwise);
 router.route('/view_docDiagnosiscount').post(depDiagnosisCtrl.view_docDiagnosiscount);
+router.route('/view_docwisepatcount').post(depDiagnosisCtrl.view_docwisepatientcount);
+
 
 
 

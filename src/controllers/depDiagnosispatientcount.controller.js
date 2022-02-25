@@ -1015,13 +1015,191 @@ res
 
 }
 
+
+
+
+const  view_docwisepatientcount = async (req, res) => {
+
+    if (req.body.department_uuid>0 )
+
+
+{
+
+  try {
+        let facility_uuid = req.headers.facility_uuid;
+        let dep_filter = req.body.department_uuid;
+        let fromdate =req.body.fromdate;
+           let todate=req.body.todate;
+           let department_uuid1=req.body.department_uuid;
+           let visit_type=req.body.visit_type;
+
+
+       let doc_uuid = req.headers.user_uuid;
+
+        const selectCountQuery = `
+ 
+        select doctor_uuid,
+        count(distinct pd.patient_uuid) as patient_count
+        
+        from patient_diagnosis pd
+        join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
+         where  pd.department_uuid =? and pd.facility_uuid=?  and doctor_uuid=?  
+         and date(ed.created_date) >= ? and date(ed.created_date) <=? and ed.visit_type_uuid=?
+        
+         group by doctor_uuid 
+        
+        order by date(ed.created_date),doctor_uuid     
+                       
+           
+   `
+   mysql_pool.mySql_connection.query(selectCountQuery, [department_uuid1,facility_uuid,doc_uuid,fromdate,todate,visit_type], async (err, results, fields) => {
+    try {
+     
+
+        if (err) {
+            res
+                .status(400)
+                .send({
+                    code: httpStatus.BAD_REQUEST,
+                    message: 'Failed to get data!',
+                    error: err
+                });
+        }
+        else {
+            if (!results[0]) {
+                res
+                    .status(200)
+                    .send({
+                        code: httpStatus.OK,
+                        message: 'No respective  data were found!',
+                        responseContent: []
+                    });
+            }
+            else {
+               
+                res
+                    .status(200)
+                    .send({
+                        code: httpStatus.OK,
+                        message: 'Data fetched successfully!',
+                        responseContent: results
+                    });
+            }
+        }
+    } catch (error) {
+        res
+            .status(400)
+            .send({ message: error.message, error: error })
+    }
+});
+} catch (error) {
+res
+    .status(400)
+    .send({ message: error.message, error: error });
+}
+
+
+}
+
+
+else 
+
+{
+
+try {
+    let facility_uuid = req.headers.facility_uuid;
+    let fromdate =req.body.fromdate;
+       let todate=req.body.todate;
+       let visit_type=req.body.visit_type;
+
+   let doc_uuid = req.headers.user_uuid;
+
+    const selectCountQuery = `
+
+    select doctor_uuid,
+    count(distinct pd.patient_uuid) as patient_count
+    
+    from patient_diagnosis pd
+    join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
+     where  pd.facility_uuid=?  and doctor_uuid=?  
+     and date(ed.created_date) >= ? and date(ed.created_date) <=? and ed.visit_type_uuid=?
+    
+     group by doctor_uuid 
+    
+    order by date(ed.created_date),doctor_uuid     
+    
+`
+mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,doc_uuid,fromdate,todate,visit_type], async (err, results, fields) => {
+try {
+   
+
+    if (err) {
+        res
+            .status(400)
+            .send({
+                code: httpStatus.BAD_REQUEST,
+                message: 'Failed to get data!',
+                error: err
+            });
+    }
+    else {
+        if (!results[0]) {
+            res
+                .status(200)
+                .send({
+                    code: httpStatus.OK,
+                    message: 'No respective  data were found!',
+                    responseContent: []
+                });
+        }
+        else {
+       
+
+            res
+                .status(200)
+                .send({
+                    code: httpStatus.OK,
+                    message: 'Data fetched successfully!',
+                    responseContent: results
+                });
+        }
+    }
+} catch (error) {
+    res
+        .status(400)
+        .send({ message: error.message, error: error })
+}
+});
+} catch (error) {
+res
+.status(400)
+.send({ message: error.message, error: error });
+}
+
+
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
     return {
 
         view_depDiagnosis,
         view_docDiagnosis,
         view_docDiagnosisGengerwise,
         view_docDiagnosisVisitwise,
-        view_docDiagnosiscount
+        view_docDiagnosiscount,
+        view_docwisepatientcount
 
     }
 

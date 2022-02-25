@@ -1976,45 +1976,7 @@
             }
          }
       },
-      "/api/Dep_Diagnosis_count/view_docDiagnosisVisitwise": {
-         "post": {
-            "summary": "To get all the user Details ",
-            "parameters": [
-               {
-                  "in": "header",
-                  "name": "facility_uuid",
-                  "required": true,
-                  "type": "integer"
-               },
-               {
-                  "in": "header",
-                  "name": "user_uuid",
-                  "required": true,
-                  "type": "integer"
-               },
-               {
-                  "in": "body",
-                  "name": "add",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/docDiagnosisbody2"
-                  }
-               }
-            ],
-            "produces": [
-               "application/json",
-               "application/xml"
-            ],
-            "tags": [
-               "Diagnosis Wise Count"
-            ],
-            "responses": {
-               "200": {
-                  "description": "get All Diagnosis Wise Count Details"
-               }
-            }
-         }
-      },
+   
       "/api/Dep_Diagnosis_count/view_docDiagnosiscount": {
          "post": {
             "summary": "To get all the user Details ",
@@ -2054,6 +2016,151 @@
             }
          }
       },
+
+
+
+
+
+
+
+      "/api/Dep_Diagnosis_count/docDiagnosisGenderWise": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "authorization",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody1"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
+               }
+            }
+         }
+      },
+      "/api/Dep_Diagnosis_count/view_docDiagnosisVisitwise": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody2"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
+               }
+            }
+         }
+      },
+      "/api/Dep_Diagnosis_count/view_docwisepatcount": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/docDiagnosisbody3"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Diagnosis Wise Count"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get All Diagnosis Wise Count Details"
+               }
+            }
+         }
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       "/api/immunizations/searchimmuization": {
          "post": {
             "description": "Fetch Successfully",
