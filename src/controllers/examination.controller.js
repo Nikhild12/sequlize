@@ -390,10 +390,10 @@ const examinations = () => {
     }
 
     const getExaminationList = async (req, res) => {
-        const { search, page, pageSize, sortField, sortOrder, status } = req.body;
+        const { search, pageNo, pageSize, sortField, sortOrder, status } = req.body;
 
         try {
-            const examinationDetailsLst = await getExaminationDetailsLst(search, page, pageSize, sortField, sortOrder, status);
+            const examinationDetailsLst = await getExaminationDetailsLst(search, pageNo, pageSize, sortField, sortOrder, status);
 
             return res.send({
                 statusCode: 200,
@@ -605,7 +605,7 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
     page = page ? page : 1;
     const itemsPerPage = pageSize ? pageSize : 10;
     const offset = (page - 1) * itemsPerPage;
-    examination_details_query = examination_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
+    examination_details_query = examination_details_query + " LIMIT " + offset + " , " + itemsPerPage;
 
     const examination_details = await sequelizeDb.sequelize.query(examination_details_query, {
         type: Sequelize.QueryTypes.SELECT
