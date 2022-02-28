@@ -447,10 +447,10 @@ const historys = () => {
     }
 
     const getHitoryList = async (req, res) => {
-        const { search, page, pageSize, sortField, sortOrder, status } = req.body;
+        const { search, pageNo, pageSize, sortField, sortOrder, status } = req.body;
 
         try {
-            const historyDetailsLst = await getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder, status);
+            const historyDetailsLst = await getHistoryDetailsLst(search, pageNo, pageSize, sortField, sortOrder, status);
 
             return res.send({
                 statusCode: 200,
@@ -642,7 +642,7 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
     let count_query = "SELECT COUNT(*) as totalRecordsCount from historys h where h.status = " + status;
     if (search != null && !emr_utilities.isEmpty(search)) {
 
-        count_query = " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
+        searchCondition = " AND (upper(code) like '%" + search + "%' OR upper(name) like '%" + search + "%' OR " +
             " (h.history_category_uuid in (select uuid from history_category where name like '%" + search + "%')) OR " +
             " (h.history_sub_category_uuid in (select uuid from history_sub_category where name like '%" + search + "%'))) ";
 
@@ -656,9 +656,10 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
 
     page = page ? page : 1;
     const itemsPerPage = pageSize ? pageSize : 10;
-    const offset = (page - 1) * itemsPerPage;
-    history_details_query = history_details_query + " LIMIT " + itemsPerPage + " OFFSET " + offset;
-
+    const offset = (page * itemsPerPage);
+    
+    history_details_query = history_details_query + " LIMIT " + offset + " , " + itemsPerPage;
+console.log(history_details_query)
     const history_details = await sequelizeDb.sequelize.query(history_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
