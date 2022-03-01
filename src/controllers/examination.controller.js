@@ -602,9 +602,18 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
         examination_details_query = examination_details_query + " order by h." + sortField + " " + sortOrder;
     }
 
-    page = page ? page : 1;
+    let pageNo = 0;
+    if (page) {
+        let temp = parseInt(page);
+
+        if (temp && (temp != NaN)) {
+            pageNo = temp;
+        }
+    }
+
     const itemsPerPage = pageSize ? pageSize : 10;
-    const offset = (page - 1) * itemsPerPage;
+    const offset = (pageNo * itemsPerPage);
+    
     examination_details_query = examination_details_query + " LIMIT " + offset + " , " + itemsPerPage;
 
     const examination_details = await sequelizeDb.sequelize.query(examination_details_query, {

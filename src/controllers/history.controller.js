@@ -448,7 +448,6 @@ const historys = () => {
 
     const getHitoryList = async (req, res) => {
         const { search, pageNo, pageSize, sortField, sortOrder, status } = req.body;
-
         try {
             const historyDetailsLst = await getHistoryDetailsLst(search, pageNo, pageSize, sortField, sortOrder, status);
 
@@ -653,13 +652,20 @@ async function getHistoryDetailsLst(search, page, pageSize, sortField, sortOrder
     if (sortField && sortField != "" && sortOrder && sortOrder != "") {
         history_details_query = history_details_query + " order by h." + sortField + " " + sortOrder;
     }
+    let pageNo = 0;
+    if (page) {
+        let temp = parseInt(page);
 
-    page = page ? page : 1;
+        if (temp && (temp != NaN)) {
+            pageNo = temp;
+        }
+    }
+
     const itemsPerPage = pageSize ? pageSize : 10;
-    const offset = (page * itemsPerPage);
-    
+    const offset = (pageNo * itemsPerPage);
+
     history_details_query = history_details_query + " LIMIT " + offset + " , " + itemsPerPage;
-console.log(history_details_query)
+
     const history_details = await sequelizeDb.sequelize.query(history_details_query, {
         type: Sequelize.QueryTypes.SELECT
     });
