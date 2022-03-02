@@ -28,6 +28,10 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 0
             },
+            is_multiple: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: 1
