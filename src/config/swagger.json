@@ -22888,6 +22888,9 @@
             "isMandatory": {
                "type": "boolean"
             },
+            "isMultiple": {
+               "type": "boolean"
+            },
             "revision": {
                "type": "integer"
             },
@@ -23008,6 +23011,9 @@
                "type": "boolean"
             },
             "isMandatory": {
+               "type": "boolean"
+            },
+            "isMultiple": {
                "type": "boolean"
             },
             "revision": {

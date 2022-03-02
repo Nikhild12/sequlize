@@ -330,6 +330,7 @@ const historys = () => {
                             value_type_uuid: e.valueTypeUuid,
                             display_order: e.displayOrder,
                             is_mandatory: e.isMandatory,
+                            is_multiple: e.isMultiple,
                             revision: e.revision,
                             created_by: user_uuid,
                             is_active: e.isActive,
@@ -489,6 +490,7 @@ const historys = () => {
                             value_type_uuid: e.valueTypeUuid,
                             display_order: e.displayOrder,
                             is_mandatory: e.isMandatory,
+                            is_multiple: e.isMultiple,
                             revision: e.revision,
                             modified_by: user_uuid,
                             is_active: e.isActive,
@@ -554,7 +556,6 @@ const historys = () => {
                 }
                 return res.status(200).send({ code: httpStatus.OK, message: "History master details updated success fully", responseContents: historyMasterDetails });
             } catch (ex) {
-                console.log('Error----->', ex)
                 return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
             }
         } else {

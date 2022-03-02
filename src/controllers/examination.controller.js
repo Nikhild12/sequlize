@@ -261,11 +261,9 @@ const examinations = () => {
     const createExamination = async (req, res) => {
         const { user_uuid } = req.headers;
         let examinationMasterDetails = req.body;
-
         if (user_uuid && examinationMasterDetails) {
             try {
                 const examinationMasterDetailsObj = await createExaminationMasterObject(examinationMasterDetails, user_uuid);
-
                 const createdExamination = await examination_tbl.create(examinationMasterDetailsObj, { returing: true });
                 if (createdExamination && createdExamination.uuid > 0) {
                     let examinationSections = [];
@@ -275,6 +273,7 @@ const examinations = () => {
                             value_type_uuid: e.valueTypeUuid,
                             display_order: e.displayOrder,
                             is_mandatory: e.isMandatory,
+                            is_multiple: e.isMultiple,
                             revision: e.revision,
                             created_by: user_uuid,
                             is_active: e.isActive,
@@ -435,6 +434,7 @@ const examinations = () => {
                             value_type_uuid: e.valueTypeUuid,
                             display_order: e.displayOrder,
                             is_mandatory: e.isMandatory,
+                            is_multiple: e.isMultiple,
                             revision: e.revision,
                             modified_by: user_uuid,
                             is_active: e.isActive,
@@ -613,7 +613,7 @@ async function getExaminationDetailsLst(search, page, pageSize, sortField, sortO
 
     const itemsPerPage = pageSize ? pageSize : 10;
     const offset = (pageNo * itemsPerPage);
-    
+
     examination_details_query = examination_details_query + " LIMIT " + offset + " , " + itemsPerPage;
 
     const examination_details = await sequelizeDb.sequelize.query(examination_details_query, {
