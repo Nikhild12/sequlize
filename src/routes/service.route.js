@@ -143,6 +143,9 @@ const patientHistoryRoutes = require('./patient_history.route');
 // Diet Kitchen routes
 const dietKitchenRoutes = require('./diet_kitchen.route');
 
+const getSpecificPatientVitalRoutes = require('./getSpecficPatVital.route');
+
+
 
 
 
@@ -155,6 +158,10 @@ const patientopemrcensusRoutes = require('./patient_op_emr_census.route');
 // EMR Work Flow Settings Routes
 
 serviceRouter.use("/Dep_Diagnosis_count", depDiagnosiscountRoutes);
+
+serviceRouter.use("/getSpecPatientVital", getSpecificPatientVitalRoutes);
+
+
 
 
 serviceRouter.use("/emr-workflow-settings", emrWorkflowRouter);
