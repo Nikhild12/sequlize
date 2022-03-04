@@ -1886,6 +1886,61 @@
             }
          }
       },
+
+
+
+
+
+
+      "/api/getSpecPatientVital/getSpecificVital": {
+         "post": {
+            "summary": "To get all the user Details ",
+            "parameters": [
+            
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+              
+               {
+                  "in": "body",
+                  "name": "add",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/getSpecificVitalbody"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Patient Vitals"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get specific vital details"
+               }
+            }
+         }
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       "/api/Dep_Diagnosis_count/docDiagnosis": {
          "post": {
             "summary": "To get all the user Details ",
@@ -14747,6 +14802,29 @@
            
          }
       },
+
+
+
+
+      "getSpecificVitalbody": {
+         "type": "object",
+         "properties": {
+          
+            "patient_uuid": {
+               "type": "integer"
+            },
+
+
+            "vital_uuid": {
+               "type": "integer"
+            }
+         
+           
+         }
+      },
+
+
+
 
 
 
