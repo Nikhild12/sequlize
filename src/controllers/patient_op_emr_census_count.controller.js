@@ -54,7 +54,8 @@ const patientOPEmrCensusController = () => {
       const {
         fromDate,
         toDate,
-        facilityUuid
+        facilityUuid,
+        departmentUuid //H30-47957-Saju-Get outpatient department wise api issue and add new filter condition
       } = req.body;
       const {
         user_uuid
@@ -64,7 +65,7 @@ const patientOPEmrCensusController = () => {
       /**
        * Get department wise count
        */
-      const departmentCountDetails = await getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid);
+      const departmentCountDetails = await getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid,departmentUuid);
 
       let finalData = [];
       for (let e of departmentCountDetails) {
@@ -163,7 +164,7 @@ const patientOPEmrCensusController = () => {
 
 module.exports = patientOPEmrCensusController();
 
-async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid) {
+async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid,departmentUuid) {
   /**
    * The below query is used to fetch the department wise patient count details
    */
@@ -188,14 +189,19 @@ async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid) {
     " SUM(CASE WHEN oecc.encounter_visit_type_uuid = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_patients," +
     " oecc.encounter_department_uuid AS departmentId " +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' AND oecc.encounter_type_uuid = 1 ";
+    " WHERE oecc.encounter_type_uuid = 1 ";
 
   /**
    * The below conditions are used validate the null values
    */
+   if (fromDate && toDate)
+   item_details_query = item_details_query + " AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
   if (facilityUuid !== null && facilityUuid > 0)
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
+  if (departmentUuid !== null && departmentUuid > 0)
+    item_details_query = item_details_query +
+      " AND oecc.encounter_department_uuid = " + departmentUuid;
   item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
 
   const item_details = await db.sequelize.query(item_details_query, {

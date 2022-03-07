@@ -22971,6 +22971,10 @@
             "toDate": {
                "type": "date",
                "example": "2022-01-11"
+            },
+            "departmentUuid": {
+               "type": "string",
+               "example": "1"
             }
          }
       },
