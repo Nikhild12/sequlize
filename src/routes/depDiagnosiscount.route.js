@@ -13,6 +13,9 @@ router.route('/view_docDiagnosiscount').post(depDiagnosisCtrl.view_docDiagnosisc
 router.route('/view_docwisepatcount').post(depDiagnosisCtrl.view_docwisepatientcount);
 
 
+router.route('/docDiagnosisGenderWiseOP').post(depDiagnosisCtrl.view_docDiagnosisGengerwiseOP);
+router.route('/view_docDiagnosiscount_op').post(depDiagnosisCtrl.view_docDiagnosiscountop);
+router.route('/view_docwisepatcountOP').post(depDiagnosisCtrl.view_docwisepatientcountop);
 
 
 
