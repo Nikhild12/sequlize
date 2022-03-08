@@ -1,79 +1,49 @@
-const httpStatus = require('http-status');
-const mysql_pool = require('../mysql_db/mySqlpool');
+// Package Import
+const httpStatus = require("http-status");
 
+// Sequelizer Import
+const sequelizeDb = require('../config/sequelize');
 
+// Initialize Encounter
+const vital_tbl = sequelizeDb.patient_vitals;
+
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 const getPatientVitals_Controller = () => {
-
+    
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     */
 
     const view_patVitals = async (req, res) => {
-
-let user_uuid= req.headers.user_uuid;
-let vital_uuid= req.body.vital_uuid;
-
-let patient_uuid =req.body.patient_uuid;
-
-
-
+        const { user_uuid } = req.headers;
+        const searchData = req.body;
         try {
-
-          const selectCountQuery = `
-            
-            select * from patient_vitals pv
-join vital_masters vm on vm.uuid =pv.vital_master_uuid 
-
-where patient_uuid =?  and vm.uuid=?     
-
-
-            `
-          mysql_pool.mySql_connection.query(selectCountQuery, [patient_uuid,vital_uuid], async (err, results, fields) => {
-                try {
-                  
-        
-                    if (err) {
-                        res
-                            .status(400)
-                            .send({
-                                code: httpStatus.BAD_REQUEST,
-                                message: 'Failed to get data!',
-                                error: err
-                            });
-                    }
-                    else {
-                        if (!results[0]) {
-                            res
-                                .status(200)
-                                .send({
-                                    code: httpStatus.OK,
-                                    message: 'No respective  data were found!',
-                                    responseContent: []
-                                });
+            if (user_uuid) {
+                const notesData = await vital_tbl.findAll(
+                    {
+                        attributes: { exclude: [ "createdAt", "updatedAt"] },
+                        order: [['uuid', 'DESC']],
+                        where:{
+                            
+                            vital_master_uuid: { [Op.in]: searchData.vital_uuid },
+                            patient_uuid: { [Op.in]: searchData.patient_uuid },
                         }
-                        else {
-                   
-                            res
-                                .status(200)
-                                .send({
-                                    code: httpStatus.OK,
-                                    message: 'Data fetched successfully!',
-                                    responseContent: data
-                                });
-                        }
-                    }
-                } catch (error) {
-                    res
-                        .status(400)
-                        .send({ message: error.message, error: error })
-                }
-            });
-        } catch (error) {
-            res
-                .status(400)
-                .send({ message: error.message, error: error });
+                    },
+                );
+                return res.status(200).send({ statusCode: httpStatus.OK, message:"OK", responseContents: notesData });
+            }
+            else {
+                return res.status(422).send({ code: httpStatus[400], message: "Failed" });
+            }
+        } catch (ex) {
+            return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex.message });
         }
+    };
 
-
-    }
 
 
 
@@ -81,30 +51,15 @@ where patient_uuid =?  and vm.uuid=?
     return {
 
         view_patVitals
-    
+
 
     }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
 
 module.exports = getPatientVitals_Controller();
