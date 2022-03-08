@@ -14925,6 +14925,31 @@
 
 
 
+      "docDiagnosisbody1OP": {
+         "type": "object",
+         "properties": {
+            "department_uuid": {
+               "type": "integer"
+            },
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            },
+            "visit_type":
+            {
+             "type": "integer"
+             }
+   
+           
+   
+         }
+      },
+
+
+
+
 
 
 
