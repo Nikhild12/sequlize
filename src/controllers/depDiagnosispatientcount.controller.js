@@ -461,7 +461,7 @@ const view_docDiagnosisGengerwise = async (req, res) => {
 
         const selectCountQuery = `
  
-
+select
         d.name as diagnosis,
 
         SUM(CASE WHEN (e.gender_uuid=1  AND e.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Male_Count",
