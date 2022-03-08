@@ -1135,6 +1135,7 @@ function getFavouriteMasterUpdateData(user_uuid, favouriteMasterReqData) {
     modified_by: user_uuid,
     modified_date: new Date(),
     is_active: favouriteMasterReqData.is_active,
+    status: favouriteMasterReqData.is_active
   };
 }
 
