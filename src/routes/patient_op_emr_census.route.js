@@ -8,4 +8,6 @@ const router = express.Router(); // eslint-disable-line new-cap
 router.route("/addOPEMRCensusCount").post(patientOPEmrCensusCtrl.addOPEMRCensusCount);
 router.route("/getDepartmentWisePatCount").post(patientOPEmrCensusCtrl.getDepartmentWisePatCount);
 router.route("/getSessionWisePatCount").post(patientOPEmrCensusCtrl.getSessionWisePatCount);
+router.route("/getDayWisePatientList").post(patientOPEmrCensusCtrl.getDayWisePatientList);//H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
+router.route("/getDayWisePatientCount").post(patientOPEmrCensusCtrl.getDayWisePatientCount);//H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
 module.exports = router;
