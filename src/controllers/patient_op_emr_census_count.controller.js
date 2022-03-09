@@ -65,7 +65,7 @@ const patientOPEmrCensusController = () => {
       /**
        * Get department wise count
        */
-      const departmentCountDetails = await getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid,departmentUuid);
+      const departmentCountDetails = await getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid, departmentUuid);
 
       let finalData = [];
       for (let e of departmentCountDetails) {
@@ -154,17 +154,84 @@ const patientOPEmrCensusController = () => {
     }
   }
 
+  //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
+  const getDayWisePatientList = async (req, res) => {
+    try {
+      /**
+         * Request body
+         */
+      const {
+        fromDate,
+        toDate,
+        department_Id,
+        institutioncategory_Id,
+        institution_Id
+      } = req.body;
+
+      /**
+       * Get session wise count
+       */
+      const dayWisePatientDetails = await getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id);
+
+      return res.send({
+        statusCode: 200,
+        responseContent: dayWisePatientDetails
+      });
+
+    } catch (error) {
+      console.log('\n error...', error);
+      return res.status(500).send({
+        statusCode: 500,
+        error
+      });
+    }
+  }
+
+  const getDayWisePatientCount = async (req, res) => {
+    try {
+      /**
+         * Request body
+         */
+      const {
+        fromDate,
+        toDate,
+        department_Id,
+        institutioncategory_Id,
+        institution_Id
+      } = req.body;
+
+      /**
+       * Get session wise count
+       */
+      const dayWisePatientCountDetails = await getDayWisePatientCountDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id);
+
+      return res.send({
+        statusCode: 200,
+        responseContent: dayWisePatientCountDetails
+      });
+
+    } catch (error) {
+      console.log('\n error...', error);
+      return res.status(500).send({
+        statusCode: 500,
+        error
+      });
+    }
+  }
+  //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
   // --------------------------------------------return----------------------------------
   return {
     addOPEMRCensusCount,
     getDepartmentWisePatCount,
-    getSessionWisePatCount
+    getSessionWisePatCount,
+    getDayWisePatientList,
+    getDayWisePatientCount
   };
 };
 
 module.exports = patientOPEmrCensusController();
 
-async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid,departmentUuid) {
+async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid, departmentUuid) {
   /**
    * The below query is used to fetch the department wise patient count details
    */
@@ -194,8 +261,8 @@ async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid,depa
   /**
    * The below conditions are used validate the null values
    */
-   if (fromDate && toDate)
-   item_details_query = item_details_query + " AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+  if (fromDate && toDate)
+    item_details_query = item_details_query + " AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
   if (facilityUuid !== null && facilityUuid > 0)
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
@@ -308,3 +375,60 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
   });
   return item_details;
 }
+
+//H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
+async function getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id) {
+  /**
+   * The below query is used to fetch the day wise patient details
+   */
+  let item_details_query = "SELECT oecc.facility_name,oecc.facility_type_name,oecc.registration_date,oecc.patient_pin_no,oecc.patient_name,oecc.age," +
+    " oecc.gender_uuid,oecc.visit_type_name,oecc.registered_session_name,oecc.encounter_session_name,oecc.department_name,oecc.mobile " +
+    " FROM op_emr_census_count oecc " +
+    " WHERE oecc.is_active = 1 ";
+  if (department_Id && department_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.department_uuid IN(" + department_Id + ")";
+  if (institutioncategory_Id && institutioncategory_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institutioncategory_Id + ")";
+  if (institution_Id && institution_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institution_Id + ")";
+  if (fromDate && toDate)
+    item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+
+  const item_details = await db.sequelize.query(item_details_query, {
+    type: Sequelize.QueryTypes.SELECT
+  });
+  return item_details;
+}
+
+async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id) {
+  /**
+   * The below query is used to fetch the day wise patient details
+   */
+  let item_details_query = " SELECT SUM(CASE WHEN oecc.is_adult = 1 THEN 1 ELSE 0 END) AS total_adult, " +
+    " SUM(CASE WHEN oecc.is_adult = 0 THEN 1 ELSE 0 END) AS total_child," +
+    " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.encounter_visit_type_uuid = 1 THEN 1 ELSE 0 END) AS total_new_adult, " +
+    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 1 THEN 1 ELSE 0 END) AS total_new_child," +
+    " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_adult, " +
+    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_child," +
+    " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS adult_total_male,  " +
+    " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS adult_total_female,  " +
+    " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS adult_total_tg, " +
+    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS child_total_male,  " +
+    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS child_total_female" +
+    " FROM op_emr_census_count oecc " +
+    " WHERE oecc.is_active = 1 ";
+  if (department_Id && department_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.department_uuid IN(" + department_Id + ")";
+  if (institutioncategory_Id && institutioncategory_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institutioncategory_Id + ")";
+  if (institution_Id && institution_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institution_Id + ")";
+  if (fromDate && toDate)
+    item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+
+  const item_details = await db.sequelize.query(item_details_query, {
+    type: Sequelize.QueryTypes.SELECT
+  });
+  return item_details;
+}
+//H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
