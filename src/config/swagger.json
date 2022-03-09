@@ -19904,6 +19904,10 @@
                "type": "integer",
                "example": 1
             },
+            "consultation_uuid": {
+               "type": "integer",
+               "example": 1
+            },
             "referred_date": {
                "type": "string",
                "example": "enter some date"
