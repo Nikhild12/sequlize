@@ -948,6 +948,10 @@ res
 
 const  view_docDiagnosiscountop = async (req, res) => {
 
+    if(req.headers.user_uuid)
+
+    {
+
     if (req.body.department_uuid>0 )
 {
   try {
@@ -1029,7 +1033,7 @@ try {
     let facility_uuid = req.headers.facility_uuid;
     let fromdate =req.body.fromdate;
        let todate=req.body.todate;
-       let doc_uuid = req.headers.user_uuid;
+       let doc_uuid = req.body.doc_uuid;
 
 
     const selectCountQuery = `
@@ -1096,13 +1100,17 @@ res
 }
 
 }
-
+}
 
 
 
 
 
 const view_docDiagnosisGengerwiseOP = async (req, res) => {
+
+    if(req.headers.user_uuid)
+{
+    
 
     if (req.body.department_uuid>0 )
 
@@ -1115,8 +1123,7 @@ const view_docDiagnosisGengerwiseOP = async (req, res) => {
         let fromdate =req.body.fromdate;
            let todate=req.body.todate;
 
-
-       let doc_uuid = req.headers.user_uuid;
+       let doc_uuid = req.body.doc_uuid;
 
         const selectCountQuery = `
  
@@ -1228,7 +1235,7 @@ try {
     let facility_uuid = req.headers.facility_uuid;
     let fromdate =req.body.fromdate;
     let todate=req.body.todate;
-    let doc_uuid = req.headers.user_uuid;
+    let doc_uuid = req.body.doc_uuid;
 
 
     const selectCountQuery = `
@@ -1339,7 +1346,7 @@ res
 }
 
 }
-
+}
 
 
 
@@ -1368,6 +1375,8 @@ const  view_docwisepatientcount = async (req, res) => {
         count(distinct pd.patient_uuid) as patient_count
         
         from patient_diagnosis pd
+        join encounter e on e.uuid=pd.encounter_uuid
+
         join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
          where  pd.department_uuid =? and pd.facility_uuid=?    
          and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=?
@@ -1442,9 +1451,11 @@ try {
     count(distinct pd.patient_uuid) as patient_count
     
     from patient_diagnosis pd
+    join encounter e on e.uuid=pd.encounter_uuid
+
     join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
      where  pd.facility_uuid=?  
-     and date(ed.created_date) >= ? and date(ed.created_date) <=? and ed.visit_type_uuid=?
+     and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=?
     
     
 `
@@ -1505,7 +1516,13 @@ res
 
 const  view_docwisepatientcountop = async (req, res) => {
 
+    if(req.headers.user_uuid)
+    {
+
+
     if (req.body.department_uuid>0 )
+
+
 
 
 {
@@ -1519,7 +1536,7 @@ const  view_docwisepatientcountop = async (req, res) => {
            let visit_type=req.body.visit_type;
 
 
-       let doc_uuid = req.headers.user_uuid;
+       let doc_uuid = req.body.doc_uuid;
 
         const selectCountQuery = `
  
@@ -1527,6 +1544,8 @@ const  view_docwisepatientcountop = async (req, res) => {
         count(distinct pd.patient_uuid) as patient_count
         
         from patient_diagnosis pd
+        join encounter e on e.uuid=pd.encounter_uuid
+
         join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
          where  pd.department_uuid =? and pd.facility_uuid=?  and doctor_uuid=?  
          and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=1
@@ -1597,7 +1616,7 @@ try {
        let todate=req.body.todate;
        let visit_type=req.body.visit_type;
 
-   let doc_uuid = req.headers.user_uuid;
+   let doc_uuid = req.body.doc_uuid;
 
     const selectCountQuery = `
 
@@ -1605,6 +1624,8 @@ try {
     count(distinct pd.patient_uuid) as patient_count
     
     from patient_diagnosis pd
+    join encounter e on e.uuid=pd.encounter_uuid
+
     join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
      where  pd.facility_uuid=?  and doctor_uuid=?  
      and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=1
@@ -1668,7 +1689,7 @@ res
 }
 
 
-
+}
 
 
 
@@ -1709,6 +1730,9 @@ res
 
 
 
+
+
 }
+
 
 module.exports = depDiagnosis_Controller();
