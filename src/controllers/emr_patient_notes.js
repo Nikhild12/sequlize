@@ -14,14 +14,13 @@ const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
 const _ = require('lodash');
 // Patient notes
-const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
+//const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const vw_patientVitalsTbl = db.vw_patient_vitals;
 const vw_consultation_detailsTbl = db.vw_consultation_details;
-const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const clinical_notesTbl = db.clinical_notes;
-const patient_referralTbl = db.patient_referral;
+const patient_referralTbl = db.vw_patient_referral_history;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
 const consultationsTbl = db.consultations;
