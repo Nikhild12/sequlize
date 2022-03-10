@@ -389,14 +389,14 @@ async function getDayWisePatientDetails(fromDate, toDate, department_Id, institu
   if (department_Id && department_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.department_uuid IN(" + department_Id + ")";
   if (institutioncategory_Id && institutioncategory_Id.length > 0)
-    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institutioncategory_Id + ")";
+    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institutioncategory_Id + ")";
   if (institution_Id && institution_Id.length > 0)
-    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institution_Id + ")";
+    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institution_Id + ")";
   if (institutiontype_Id && institutiontype_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.facility_type_uuid IN (" + institutiontype_Id + ")";
   if (fromDate && toDate)
     item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
-
+console.log(item_details_query)
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
   });
@@ -423,9 +423,9 @@ async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, in
   if (department_Id && department_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.department_uuid IN(" + department_Id + ")";
   if (institutioncategory_Id && institutioncategory_Id.length > 0)
-    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institutioncategory_Id + ")";
+    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institutioncategory_Id + ")";
   if (institution_Id && institution_Id.length > 0)
-    item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institution_Id + ")";
+    item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institution_Id + ")";
   if (fromDate && toDate)
     item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
