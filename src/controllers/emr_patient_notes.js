@@ -21,6 +21,7 @@ const vw_consultation_detailsTbl = db.vw_consultation_details;
 const vw_patient_doctor_detailsTbl = db.vw_patient_doctor_details;
 const vw_patientCheifTbl = db.vw_patient_cheif_complaints;
 const clinical_notesTbl = db.clinical_notes;
+const patient_referralTbl = db.patient_referral;
 const patient_diagnosisTbl = db.patient_diagnosis;
 const diagnosisTbl = db.diagnosis;
 const consultationsTbl = db.consultations;
@@ -1271,8 +1272,10 @@ const notesController = () => {
                 return getDiagnosisResult(result, consultation_uuid);
             case "Clinical Notes":
                 return getClinicalNotesResult(result, consultation_uuid);
+            case "Admission / Referrals":
+                return getReferralResult(result, consultation_uuid);
             default:
-                let templateDetails = result;
+                let templateDetails = result; 
                 return {
                     templateDetails
                 };
@@ -1470,6 +1473,20 @@ const notesController = () => {
         });
         if (note_details) {
             result.dataValues.details = note_details;
+            return result;
+        } else
+            return false;
+    };
+    const getReferralResult = async (result, consultation_uuid) => {
+        const referral_details = await patient_referralTbl.findAll({
+            where: {
+                patient_uuid: result.patient_uuid,
+                consultation_uuid: consultation_uuid,
+                encounter_uuid: result.encounter_uuid
+            }
+        });
+        if (referral_details) {
+            result.dataValues.details = referral_details;
             return result;
         } else
             return false;
