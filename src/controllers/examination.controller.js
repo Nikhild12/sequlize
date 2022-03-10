@@ -82,7 +82,7 @@ const examinations = () => {
 
             let findQueryExaminationSection = {
                 required: false,
-                attributes: ['uuid', 'examination_uuid', 'value_type_uuid', 'section_name', 'display_order'],
+                attributes: ['uuid', 'examination_uuid', 'value_type_uuid', 'section_name', 'display_order', 'is_mandatory', 'is_multiple'],
                 where: {
                     examination_uuid: { [Op.or]: examination_uuid },
                     is_active: 1,
