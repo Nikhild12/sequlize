@@ -131,13 +131,13 @@ const Referral_History = () => {
       facility_uuid,
       department_uuid,
       // encounter_uuid,
-      referal_reason_uuid,
+      referal_reason,
       referral_comments,
       dateTime
     } = req.body;
 
     try {
-      if (!referal_reason_uuid && !referral_comments) {
+      if (!referal_reason && !referral_comments) {
         return res.status(422).send({
           statusCode: 422,
           message: 'Either referal reason or referral comments is mandatory'

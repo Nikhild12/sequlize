@@ -118,7 +118,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       },
       comments: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(500),
         allowNull: true
       },
       referral_type_uuid: {
@@ -158,9 +158,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         }
       },
-      referal_reason_uuid: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+      referal_reason: {
+        type: DataTypes.STRING(500),
+        allowNull: true
       },
       is_reviewed: {
         type: DataTypes.BOOLEAN,
