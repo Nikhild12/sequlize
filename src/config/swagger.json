@@ -22977,9 +22977,26 @@
                "type": "string",
                "example": "1"
             },
+            "facility_name": {
+               "type": "string"
+            },
+            "facility_type_uuid": {
+                "type": "string",
+                "example": "1"
+            },
+            "facility_type_name": {
+                "type": "string"
+            },
+            "facility_category_uuid": {
+                "type": "string",
+                "example": "1"
+            },
             "department_uuid": {
                "type": "string",
                "example": "1"
+            },
+            "department_name": {
+               "type": "string"
             },
             "patient_uuid": {
                "type": "string",
@@ -22995,6 +23012,10 @@
             "age": {
                "type": "string",
                "example": "1"
+            },
+            "period_uuid": {
+                "type": "string",
+                "example":"1"
             },
             "mobile": {
                "type": "string"
@@ -23014,6 +23035,9 @@
             "registered_session_uuid": {
                "type": "string",
                "example": "1"
+            },
+            "registered_session_name": {
+               "type": "string"
             },
             "encounter_uuid": {
                "type": "string",
@@ -23035,6 +23059,9 @@
                "type": "string",
                "example": "1"
             },
+            "visit_type_name": {
+               "type": "string"
+            },
             "encounter_date": {
                "type": "date",
                "example": "2022-01-11"
@@ -23042,6 +23069,9 @@
             "encounter_session_uuid": {
                "type": "string",
                "example": "1"
+            },
+            "encounter_session_name": {
+               "type": "string"
             },
             "is_prescribed": {
                "type": "string",
@@ -23448,6 +23478,17 @@
                   "type": "integer",
                   "properties": {
                      "institution_Id": {
+                        "type": "integer"
+                     }
+                  }
+               }
+            },
+            "institutiontype_Id": {
+               "type": "array",
+               "items": {
+                  "type": "integer",
+                  "properties": {
+                     "institutiontype_Id": {
                         "type": "integer"
                      }
                   }

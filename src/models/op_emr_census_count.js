@@ -14,8 +14,23 @@ module.exports = (sequelize, DataTypes) => {
             facility_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
             },
+            facility_name: {
+                type: DataTypes.STRING(45)
+            },
+            facility_type_uuid: {
+                type: DataTypes.INTEGER(11).UNSIGNED
+            },
+            facility_type_name: {
+                type: DataTypes.STRING(45)
+            },
+            facility_category_uuid: {
+                type: DataTypes.INTEGER(11).UNSIGNED
+            },
             department_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
+            },
+            department_name: {
+                type: DataTypes.STRING(45)
             },
             patient_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
@@ -27,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(100)
             },
             age: {
+                type: DataTypes.INTEGER(3)
+            },
+            period_uuid: {
                 type: DataTypes.INTEGER(3)
             },
             mobile: {
@@ -45,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
             registered_session_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
             },
+            registered_session_name: {
+                type: DataTypes.STRING(15)
+            },
             encounter_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
             },
@@ -60,11 +81,17 @@ module.exports = (sequelize, DataTypes) => {
             encounter_visit_type_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
             },
+            visit_type_name: {
+                type: DataTypes.STRING(15)
+            },
             encounter_date: {
                 type: DataTypes.DATE
             },
             encounter_session_uuid: {
                 type: DataTypes.INTEGER(11).UNSIGNED
+            },
+            encounter_session_name: {
+                type: DataTypes.STRING(15)
             },
             is_prescribed: {
                 type: DataTypes.INTEGER(11).UNSIGNED

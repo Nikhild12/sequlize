@@ -165,13 +165,14 @@ const patientOPEmrCensusController = () => {
         toDate,
         department_Id,
         institutioncategory_Id,
-        institution_Id
+        institution_Id,
+        institutiontype_Id
       } = req.body;
 
       /**
        * Get session wise count
        */
-      const dayWisePatientDetails = await getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id);
+      const dayWisePatientDetails = await getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id, institutiontype_Id);
 
       return res.send({
         statusCode: 200,
@@ -377,12 +378,12 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
 }
 
 //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
-async function getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id) {
+async function getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id, institutiontype_Id) {
   /**
    * The below query is used to fetch the day wise patient details
    */
   let item_details_query = "SELECT oecc.facility_name,oecc.facility_type_name,oecc.registration_date,oecc.patient_pin_no,oecc.patient_name,oecc.age," +
-    " oecc.gender_uuid,oecc.visit_type_name,oecc.registered_session_name,oecc.encounter_session_name,oecc.department_name,oecc.mobile " +
+    " oecc.period_uuid,oecc.gender_uuid,oecc.visit_type_name,oecc.registered_session_name,oecc.encounter_session_name,oecc.department_name,oecc.mobile " +
     " FROM op_emr_census_count oecc " +
     " WHERE oecc.is_active = 1 ";
   if (department_Id && department_Id.length > 0)
@@ -391,6 +392,8 @@ async function getDayWisePatientDetails(fromDate, toDate, department_Id, institu
     item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institutioncategory_Id + ")";
   if (institution_Id && institution_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.facility_category_uuid IN (" + institution_Id + ")";
+  if (institutiontype_Id && institutiontype_Id.length > 0)
+    item_details_query = item_details_query + " AND oecc.facility_type_uuid IN (" + institutiontype_Id + ")";
   if (fromDate && toDate)
     item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
