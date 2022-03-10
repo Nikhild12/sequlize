@@ -13,7 +13,6 @@ const config = require('../config/config');
 const emr_utility = require('../services/utility.service');
 const rp = require("request-promise");
 const _ = require('lodash');
-// Patient notes
 //const patNotesAtt = require('../attributes/patient_previous_notes_attributes');
 const sectionCategoryEntriesTbl = db.section_category_entries;
 const vw_patientVitalsTbl = db.vw_patient_vitals;
@@ -52,12 +51,11 @@ const {
     CHECKBOXWITHTEXT,
     BTNTXTWITHDROPDOWN
 } = emr_constants.VALUE_TYPES;
-const appMasterData = require("../controllers/appMasterData");
 
-const consultations = require("../models/consultations");
+const appMasterData = require("../controllers/appMasterData");
+//const consultations = require("../models/consultations");
 
 const notesController = () => {
-
     /**
      * OPNotes main template save
      * @param {*} req
@@ -502,28 +500,6 @@ const notesController = () => {
             });
         }
     };
-    // getfilternotes(value) {
-    //     console.log(value, 'va;ue');
-
-    //     if (this.filteredrivewnotes.length === 0 && value.activity_uuid === 0) {
-    //     this.filteredrivewnotes.push(value);
-    //     } else if (value.activity_uuid !== 0) {
-    //     this.filteredrivewnotes.push(value);
-    //     } else {
-    //     const obj = this.filteredrivewnotes.find((data: any) => {
-    //     return data.section_uuid === value.section_uuid;
-    //     });
-    //     obj ? null : this.filteredrivewnotes.push(value);
-    //     }
-    //     this.filteredrivewnotes = this.filteredrivewnotes.sort((a, b) => {
-    //     return this.emrworkflow.map(headerTabmenuId => headerTabmenuId.activity_id).indexOf(a.activity_uuid) -
-    //     this.emrworkflow.map(headerTabmenuId => headerTabmenuId.activity_id).indexOf(b.activity_uuid);
-    //     });
-    //     // tslint:disable-next-line: max-line-length
-    //     this.filteredrivewnotes.sort((a, b) => a.profile_section.display_order < b.profile_section.display_order ? -1 : a.profile_section.display_order > b.profile_section.display_order ? 1 : 0)
-    //     console.log(this.filteredrivewnotes, 'this.filteredrivewnotes');
-
-    //     }
     const _print_previous_opnotes = async (req, res) => {
         try {
             const {
@@ -1304,7 +1280,6 @@ const notesController = () => {
         else
             return false;
     };
-
     const getLabResult = async (result, consultation_uuid, printFlag) => {
         console.log('patientorders/getLatestRecords Authorization=======>', result.Authorization);
         console.log('patientorders/getLatestRecords user_uuid ==========>', result.user_uuid);
@@ -1479,10 +1454,16 @@ const notesController = () => {
     const getReferralResult = async (result, consultation_uuid) => {
         const referral_details = await patient_referralTbl.findAll({
             where: {
-                patient_uuid: result.patient_uuid,
-                consultation_uuid: consultation_uuid,
-                encounter_uuid: result.encounter_uuid
-            }
+                pr_patient_uuid: result.patient_uuid,
+                pr_encounter_uuid: result.encounter_uuid,
+                pr_consultation_uuid: consultation_uuid
+            },
+            order: [
+                ['pr_referral_date', 'DESC']
+            ],
+            attributes: {
+                "exclude": ['id', 'createdAt', 'updatedAt']
+            },
         });
         if (referral_details) {
             result.dataValues.details = referral_details;
@@ -1589,7 +1570,6 @@ const notesController = () => {
             };
         }
     };
-
     const _getReviewNotes1 = async (req, res) => {
         try {
             const {
@@ -1713,7 +1693,6 @@ const notesController = () => {
             });
         }
     };
-
     const getResultsInObject = async (url, req, data) => {
         try {
             const _url = config.wso2AppUrl + url;
