@@ -85,7 +85,7 @@ const historys = () => {
 
             let findQueryHCSection = {
                 required: false,
-                attributes: ['uuid', 'history_uuid', 'section_name', 'value_type_uuid', 'display_order'],
+                attributes: ['uuid', 'history_uuid', 'section_name', 'value_type_uuid', 'display_order', 'is_mandatory', 'is_multiple'],
                 where: {
                     history_uuid: { [Op.or]: hc_uuid },
                     is_active: 1,
