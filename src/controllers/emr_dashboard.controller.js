@@ -1053,7 +1053,7 @@ async function getconstoday(cons_dash_new, user_uuid, depertment_Id, from_date, 
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            // pv_is_last_visit:1,
             ed_consultation_start_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
