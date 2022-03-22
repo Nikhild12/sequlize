@@ -587,7 +587,7 @@ const notesController = () => {
                     });
                 }
                 let finalData = [];
-                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = [];
+                let labArr = radArr = invArr = vitArr = cheifArr = presArr = bbArr = diaArr = admrefArr = [];
                 let sample = [];
                 const printFlag = true;
                 for (let e of patNotesData) {
@@ -595,7 +595,10 @@ const notesController = () => {
                     if (e.activity_uuid) {
                         const actCode = await getActivityCode(e.activity_uuid, user_uuid, Authorization);
                         if (actCode && actCode.name) {
-                            printObj[actCode.name.replace(/\s/g, '')] = true;
+                            //printObj[actCode.name.replace(/\s/g, '')] = true;
+                            printObj[actCode.name.replace(/[^a-zA-Z]/g, "")] = true;
+                            //console.log(str.replace(/[^a-zA-Z ]/g, ""));
+
                             e.temp = [];
                             e.user_uuid = user_uuid;
                             e.Authorization = Authorization;
@@ -616,6 +619,7 @@ const notesController = () => {
                 let diaCheck = false;
                 let bbCheck = false;
                 let presCheck = false;
+                let admrefCheck = false;
 
 
                 if (printObj.Lab || printObj.Radiology || printObj.Investigation) {
@@ -738,6 +742,19 @@ const notesController = () => {
                         }
                     });
                 }
+                if (printObj.AdmissionReferrals) {
+                    finalData.forEach(e => {
+                        if (e && e.dataValues && e.dataValues.details) {
+                            if (e.activity_uuid == 60 && admrefCheck == false) {
+                                admrefArr = [...admrefArr, ...e.dataValues.details];
+                                admrefCheck = true;
+                            }
+                        } else {
+                            admrefArr = admrefArr;
+                        }
+
+                    });
+                }
                 let patientObj;
                 if (finalData && finalData[0] && finalData[0].vw_consultation_detail) {
                     patientObj = {
@@ -766,6 +783,22 @@ const notesController = () => {
                 printObj.presResult = presArr;
                 printObj.bbResult = bbArr;
                 printObj.diaResult = diaArr;
+                printObj.refResult = [];
+                printObj.admResult = [];
+
+                printObj.Referral = false;
+                printObj.Admission = false;
+
+                for (let ar of admrefArr) {
+                    if (ar.pr_referral_type_uuid == 1) {
+                        printObj.refResult.push(ar);
+                        printObj.Referral = true;
+                    } else if (ar.pr_referral_type_uuid == 2) {
+                        printObj.admResult.push(ar);
+                        printObj.Admission = true;
+                    }
+                }
+                //printObj.admrefResult = admrefArr;
 
                 printObj.details = finalData;
                 let checkSectionName = false;

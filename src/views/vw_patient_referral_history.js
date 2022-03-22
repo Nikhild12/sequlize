@@ -161,6 +161,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: true
       },
+      pr_referal_reason: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+      },
     }, {
       freezeTableName: true
     }
