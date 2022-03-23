@@ -95,18 +95,7 @@ module.exports = (sequelize, DataTypes) => {
       consultation_uuid: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-          notNull: {
-            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
-          },
-          notEmpty: {
-            msg: emr_constants.GetpleaseProvideMsg('consultation_uuid')
-          },
-          min: {
-            args: 1,
-            msg: emr_constants.GetZeroValidationMessage('consultation_uuid')
-          }
-        }
+        defaultValue: 0
       },
       referred_by: {
         type: DataTypes.INTEGER,
