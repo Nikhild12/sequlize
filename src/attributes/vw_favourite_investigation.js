@@ -85,9 +85,20 @@ const _getFavouriteInvestigationQuery = (user_id, fav_type_id, dId, fId, labId =
     fm_userid: user_id,
     [searchKey]: searchValue,
     fa_uuid: fId,
-    ivtm_uuid: neQuery,
-    ivtm_is_active: emr_constants.IS_ACTIVE,
-    ivtm_status: emr_constants.IS_ACTIVE
+    // ivtm_uuid: neQuery,
+    [Op.or]: [
+      {
+        ivtm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        ivtm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+      },
+      {
+        ivpm_status: { [Op.eq]: emr_constants.IS_ACTIVE },
+        ivpm_is_active: { [Op.eq]: emr_constants.IS_ACTIVE },
+      },
+    ]
+
+    //ivtm_is_active: emr_constants.IS_ACTIVE,
+    //ivtm_status: emr_constants.IS_ACTIVE
   };
 };
 
