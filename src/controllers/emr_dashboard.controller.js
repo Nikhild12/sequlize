@@ -743,7 +743,7 @@ async function getconsbybydate(cons_dash_new, user_uuid, depertment_Id, from_dat
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             ed_consultation_start_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
@@ -779,7 +779,7 @@ async function getconsbyAll(cons_dash_new, user_uuid, depertment_Id, session, ge
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             g_uuid: gender,
             ed_consultation_start_date: {
@@ -815,7 +815,7 @@ async function getconsbysessiondate(cons_dash_new, user_uuid, depertment_Id, ses
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -852,7 +852,7 @@ async function getconsbygendertoday(cons_dash_new, user_uuid, depertment_Id, gen
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             g_uuid: gender,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -886,7 +886,7 @@ async function getconsbygenderdate(cons_dash_new, user_uuid, depertment_Id, gend
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             g_uuid: gender,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -1015,7 +1015,7 @@ async function getconsbytoday(cons_dash_new, user_uuid, depertment_Id, from_date
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             ed_consultation_start_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
@@ -1053,7 +1053,7 @@ async function getconstoday(cons_dash_new, user_uuid, depertment_Id, from_date, 
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            // pv_is_last_visit:1,
             ed_consultation_start_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(from_date).format('YYYY-MM-DD')),
@@ -1436,7 +1436,7 @@ async function getconsgraphbydate(cons_dash_new, user_uuid, depertment_Id, start
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             ed_consultation_start_date: {
                 [Op.and]: [
                     Sequelize.where(Sequelize.fn('date', Sequelize.col('ed_consultation_start_date')), '>=', moment(startDate).format('YYYY-MM-DD')),
@@ -1549,7 +1549,7 @@ async function getconstodayAll(cons_dash_new, user_uuid, depertment_Id, from_dat
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             g_uuid: gender,
             ed_consultation_start_date: {
@@ -1653,7 +1653,7 @@ async function getconsgraphbydateAll(cons_dash_new, user_uuid, depertment_Id, st
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             g_uuid: gender,
             ed_consultation_start_date: {
@@ -1718,7 +1718,7 @@ async function getconsgraphbysessiondateAll(cons_dash_new, user_uuid, depertment
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -1783,7 +1783,7 @@ async function getconsbysessiondatetoday(cons_dash_new, user_uuid, depertment_Id
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -1820,7 +1820,7 @@ async function getconssessiondatetoday(cons_dash_new, user_uuid, depertment_Id, 
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             s_uuid: session,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -1856,7 +1856,7 @@ async function getconsgraphbygenderdateAll(cons_dash_new, user_uuid, depertment_
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
             en_facility_uuid: facility_uuid,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             g_uuid: gender,
             ed_consultation_start_date: {
                 [Op.and]: [
@@ -1920,7 +1920,7 @@ async function getconsbygenderdatetoday(cons_dash_new, user_uuid, depertment_Id,
             ed_status: 1,
             ed_is_active: 1,
             ed_department_uuid: depertment_Id,
-            pv_is_last_visit:1,
+            //pv_is_last_visit:1,
             en_facility_uuid: facility_uuid,
             g_uuid: gender,
             ed_consultation_start_date: {

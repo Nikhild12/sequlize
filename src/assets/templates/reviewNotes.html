@@ -161,7 +161,6 @@
 
      
         {{#if headerObj.Vitals}}
-
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -189,8 +188,8 @@
             </table>
         </div>
         {{/if}}
-        {{#if headerObj.Prescriptions}}
 
+        {{#if headerObj.Prescriptions}}
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -230,6 +229,7 @@
             </table>
         </div>
         {{/if}}
+
         {{#if headerObj.ChiefComplaints}}
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
@@ -259,6 +259,7 @@
             </table>
         </div>
         {{/if}}
+
         {{#if headerObj.Lab}}
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
@@ -289,6 +290,7 @@
             </table>
         </div>
         {{/if}}
+
         {{#if headerObj.Radiology}}
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
@@ -321,7 +323,6 @@
         {{/if}}
 
         {{#if headerObj.Investigation}}
-
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -351,8 +352,8 @@
             </table>
         </div>
         {{/if}}
-        {{#if headerObj.BloodRequests}}
 
+        {{#if headerObj.BloodRequests}}
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -385,7 +386,6 @@
         {{/if}}
 
         {{#if headerObj.Diagnosis}}
-
         <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
             <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
                 style="width:100%; float:left; text-align: left;">
@@ -407,6 +407,70 @@
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{code}}</td>
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{name}}</td>
                         <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dia_type}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        {{/if}}
+
+        {{#if headerObj.Referral}}
+        <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
+            <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
+                style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
+                        <th colspan="5">Referrals</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred To Facility</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred To Department</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred By</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referral Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each headerObj.refResult}}
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">{{inc @index}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.rf_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.rd_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">
+                            {{dataValues.ti_name}} {{dataValues.u_first_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.pr_referal_reason}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        {{/if}}
+
+        {{#if headerObj.Admission}}
+        <div class='first_tbl' style="width: 100%; float: left; padding: 10px 0;">
+            <table borderspacing='1' border="1" borderwidth="1" bordercolor="#ccc" cellpadding='3' cellspacing='0'
+                style="width:100%; float:left; text-align: left;">
+                <thead>
+                    <tr style="background-color:#ccc; text-align: left; font-size: 12px;">
+                        <th colspan="5">Admission</th>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="width: 50px; text-align: center; border-bottom: 0;border-left: 0;">S.No</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred To Facility</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred To Department</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referred By</th>
+                        <th style="border-bottom: 0;border-left: 0; border-left: 0;">Referral Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each headerObj.admResult}}
+                    <tr>
+                        <td style="text-align: center; border-bottom: 0;border-left: 0;">{{inc @index}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.rf_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.rd_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">
+                            {{dataValues.ti_name}} {{dataValues.u_first_name}}</td>
+                        <td style="border-bottom: 0;border-left: 0; border-left: 0;">{{dataValues.pr_referal_reason}}</td>
                     </tr>
                     {{/each}}
                 </tbody>

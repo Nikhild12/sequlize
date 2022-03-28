@@ -188,6 +188,8 @@ const historys = () => {
                     section_name: hC_section[i].section_name,
                     value_type_uuid: hC_section[i].value_type_uuid,
                     display_order: hC_section[i].display_order,
+                    is_mandatory: hC_section[i].is_mandatory,
+                    is_multiple: hC_section[i].is_multiple,
                     history_section_value: []
                 };
                 for (let j = 0; j < hC_section_value.length; j++) {
@@ -206,6 +208,8 @@ const historys = () => {
                     section_name: concept_and_values_with_no_vt[i].section_name,
                     value_type_uuid: concept_and_values_with_no_vt[i].value_type_uuid,
                     display_order: concept_and_values_with_no_vt[i].display_order,
+                    is_mandatory: concept_and_values_with_no_vt[i].is_mandatory,
+                    is_multiple: concept_and_values_with_no_vt[i].is_multiple,
                     value_type_name: '',
                     value_type_code: '',
                     history_section_value: concept_and_values_with_no_vt[i].history_section_value

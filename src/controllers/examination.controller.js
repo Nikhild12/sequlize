@@ -155,6 +155,8 @@ const examinations = () => {
                     value_type_uuid: examination_section[i].value_type_uuid,
                     section_name: examination_section[i].section_name,
                     display_order: examination_section[i].display_order,
+                    is_mandatory: examination_section[i].is_mandatory,
+                    is_multiple: examination_section[i].is_multiple,
                     examination_section_values: []
                 }
                 for (let j = 0; j < examination_section_value.length; j++) {
@@ -173,6 +175,8 @@ const examinations = () => {
                     section_name: examination_section_values_with_no_vt[i].section_name,
                     value_type_uuid: examination_section_values_with_no_vt[i].value_type_uuid,
                     display_order: examination_section_values_with_no_vt[i].display_order,
+                    is_mandatory: examination_section_values_with_no_vt[i].is_mandatory,
+                    is_multiple: examination_section_values_with_no_vt[i].is_multiple,
                     value_type_name: '',
                     value_type_code: '',
                     examination_section_value: examination_section_values_with_no_vt[i].examination_section_values

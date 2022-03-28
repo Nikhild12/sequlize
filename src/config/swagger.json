@@ -1928,6 +1928,112 @@
             "x-throttling-tier":"Unlimited"
          }
       },
+
+
+      "/api/speciality_wise_refer_out/OUT":{
+         "post":{
+            "summary":"To get all the user Details ",
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"facility_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"user_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"authorization",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "in":"body",
+                  "name":"add",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/docDiagnosisbody"
+                  }
+               }
+            ],
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "tags":[
+               "Patient Referrel"
+            ],
+            "responses":{
+               "200":{
+                  "description":"get All Diagnosis Wise Count Details"
+               }
+            },
+            "x-auth-type":"Application & Application User",
+            "x-throttling-tier":"Unlimited"
+         }
+      },
+
+
+
+
+      "/api/speciality_wise_refer_out/IN":{
+         "post":{
+            "summary":"To get all the user Details ",
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"facility_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"user_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"authorization",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "in":"body",
+                  "name":"add",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/docDiagnosisbody"
+                  }
+               }
+            ],
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "tags":[
+               "Patient Referrel"
+            ],
+            "responses":{
+               "200":{
+                  "description":"get All Diagnosis Wise Count Details"
+               }
+            },
+            "x-auth-type":"Application & Application User",
+            "x-throttling-tier":"Unlimited"
+         }
+      },
+
+
+
+
+
+
       "/api/Dep_Diagnosis_count/docDiagnosis":{
          "post":{
             "summary":"To get all the user Details ",
