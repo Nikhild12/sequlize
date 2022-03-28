@@ -175,6 +175,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 0
       },
+      //H30-48488 Bhaskar - 28th Mar 22 - API Change for Community Name Added in Patient Referral//
+      community_name: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+      },
+      //H30-48488 Bhaskar - 28th Mar 22 - API Change for Community Name Added in Patient Referral//
       is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: 1,
