@@ -309,46 +309,52 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
   let item_details_query = "SELECT" +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_new_adult_male," +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_adult_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS morning_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS morning_new_adult_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_new_child_male, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_child_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_child_total," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' THEN 1 ELSE 0 END) AS morning_new_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 THEN 1 ELSE 0 END)AS morning_new_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'NEW' THEN 1 ELSE 0 END) AS morning_new_total,   " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_new_adult_male," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_adult_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS evening_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS evening_new_adult_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_new_child_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_child_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_child_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS evening_new_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'NEW' THEN 1 ELSE 0 END) AS evening_new_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_new_adult_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_adult_total," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_new_child_male," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS casualty_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS casualty_new_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_new_child_male, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_child_female," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 1 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_new_child_total," +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'NEW' THEN 1 ELSE 0 END) AS casualty_new_total, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_old_adult_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_adult_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_old_adult_male," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS morning_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS morning_old_adult_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_old_child_male, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_child_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_child_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS morning_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND UPPER(oecc.visit_type_name) = 'OLD' THEN 1 ELSE 0 END) AS morning_old_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_old_adult_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS evening_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS evening_old_adult_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_old_child_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_child_female," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_child_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_child_female, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS evening_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND UPPER(oecc.visit_type_name) = 'OLD' THEN 1 ELSE 0 END) AS evening_old_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_old_adult_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_adult_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_adult_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS casualty_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS casualty_old_adult_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_old_child_male, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_child_female, " +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) +  SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_child_total," +
-    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' THEN 1 ELSE 0 END) AS casualty_old_total " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_child_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' THEN 1 ELSE 0 END) AS casualty_old_total" +
     " FROM op_emr_census_count AS oecc " +
     " WHERE DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
 
