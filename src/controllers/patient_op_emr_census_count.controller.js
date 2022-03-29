@@ -57,9 +57,7 @@ const patientOPEmrCensusController = () => {
         facilityUuid,
         departmentUuid //H30-47957-Saju-Get outpatient department wise api issue and add new filter condition
       } = req.body;
-      const {
-        user_uuid
-      } = req.headers;
+
       let Authorization;
       Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
       /**
@@ -67,31 +65,9 @@ const patientOPEmrCensusController = () => {
        */
       const departmentCountDetails = await getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid, departmentUuid);
 
-      let finalData = [];
-      for (let e of departmentCountDetails) {
-        if (e.departmentId) {
-          /**
-           * Get department name using department id
-           * This call the App master service and fetch the department name
-           */
-          const departmentName = await getDepartments(user_uuid, Authorization, e.departmentId);
-          if (departmentName) {
-            /**
-             * Create new object and push into the final array
-             */
-            finalData.push({ ...e, department_name: departmentName });
-          }
-        } else {
-          /**
-             * false return exsiting object
-             */
-          finalData.push(e);
-        }
-      }
-
       return res.send({
         statusCode: 200,
-        responseContent: finalData
+        responseContent: departmentCountDetails
       });
 
     } catch (error) {
@@ -116,9 +92,7 @@ const patientOPEmrCensusController = () => {
         toDate,
         facilityUuid
       } = req.body;
-      const {
-        user_uuid
-      } = req.headers;
+      
       let Authorization;
       Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
       /**
@@ -255,50 +229,27 @@ async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid, dep
     " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS old_child_total," +
     " SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_patients," +
     " SUM(CASE WHEN oecc.encounter_visit_type_uuid = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_patients," +
-    " oecc.encounter_department_uuid AS departmentId " +
+    " oecc.department_uuid AS departmentId,oecc.department_name AS department_name " +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE oecc.encounter_type_uuid = 1 ";
+    " WHERE oecc.encounter_type_uuid != 2 ";
 
   /**
    * The below conditions are used validate the null values
    */
   if (fromDate && toDate)
-    item_details_query = item_details_query + " AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+    item_details_query = item_details_query + " AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
   if (facilityUuid !== null && facilityUuid > 0)
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
   if (departmentUuid !== null && departmentUuid > 0)
     item_details_query = item_details_query +
-      " AND oecc.encounter_department_uuid = " + departmentUuid;
-  item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
+      " AND oecc.department_uuid = " + departmentUuid;
+  item_details_query = item_details_query + " GROUP BY oecc.department_name";
 
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
   });
   return item_details;
-}
-
-async function getDepartments(user_uuid, Authorization, departmentIds) {
-  // const url = 'https://qahmisgateway.oasyshealth.co/DEVAppmaster/v1/api/department/getSpecificDepartmentsByIds';
-  const url = config.wso2AppUrl + 'department/getSpecificDepartmentsByIds';
-
-  let options = {
-    uri: url,
-    method: 'POST',
-    headers: {
-      Authorization: Authorization,
-      user_uuid: user_uuid,
-      'Content-Type': 'application/json'
-    },
-    body: {
-      "uuid": [departmentIds]
-    },
-    json: true
-  };
-  const departmentData = await rp(options);
-  if (departmentData) {
-    return departmentData.responseContent.rows[0].name;
-  }
 }
 
 async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
@@ -356,7 +307,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND UPPER(oecc.visit_type_name) = 'OLD' THEN 1 ELSE 0 END) AS casualty_old_total" +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
+    " WHERE  oecc.encounter_type_uuid != 2 AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
 
   /**
    * The below conditions are used validate the null values
