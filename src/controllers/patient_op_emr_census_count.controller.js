@@ -357,7 +357,7 @@ async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, in
   let item_details_query = " SELECT SUM(CASE WHEN oecc.is_adult = 1 THEN 1 ELSE 0 END) AS total_adult, " +
     " SUM(CASE WHEN oecc.is_adult = 0 THEN 1 ELSE 0 END) AS total_child," +
     " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS total_new_adult, " +
-    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 1 THEN 1 ELSE 0 END) AS total_new_child," +
+    " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS total_new_child," +
     " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_adult, " +
     " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_child," +
     " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS adult_total_male,  " +
