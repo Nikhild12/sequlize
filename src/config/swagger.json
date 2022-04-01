@@ -9896,6 +9896,46 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/treatment-kit/getTreatmentKits": {
+         "post": {
+            "description": "To get List of treatmentkit details",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "List of  patient treatmentkit details ",
+                  "schema": {
+                     "$ref": "#/definitions/allTreatmentKit"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "TreatmentKit"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get Successfully"
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/treatment-kit/autoSearch": {
          "post": {
             "description": "To get list of TreatmentKits based on search",
