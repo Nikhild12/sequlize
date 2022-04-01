@@ -4,7 +4,8 @@ const config = require('../config/config');
 
 const rp = require("request-promise");
 
-
+const db = require("../config/sequelize");
+var Sequelize = require('sequelize');
 const requestApi = require('../requests/requests');
 const clinical_notesController = require('./clinical_notes.controller');
 
@@ -437,190 +438,74 @@ res
 }
 
 
-
-
-
-
-
-
+//-------------H30-48481
 const view_docDiagnosisGengerwise = async (req, res) => {
+    try {
+        const { facility_uuid } = req.headers;
+        const { fromdate, todate, visit_type, dep_filter } = req.body;
 
-    if (req.body.department_uuid>0 )
+        const date_query = fromdate && todate ? ` DATE(ed.created_date) BETWEEN  '${fromdate}' AND '${todate}' ` : ' ';
+        const facility_id_query = facility_uuid ? ` AND pd.facility_uuid = ${facility_uuid} ` : ' ';
+        const dep_filter_query = dep_filter && dep_filter > 0 ? ` AND pd.department_uuid = ${dep_filter} ` : ' ';
+        const encounter_type_query = visit_type ? ` AND e.encounter_type_uuid = ${visit_type} ` : ' ';
 
-
-{
-
-  try {
-        let facility_uuid = req.headers.facility_uuid;
-        let dep_filter = req.body.department_uuid;
-        let fromdate =req.body.fromdate;
-           let todate=req.body.todate;
-           let visit_type=req.body.visit_type;
-
-
-
-        const selectCountQuery = `
- 
-select
+        const selectCountQuery = `select
         d.name as diagnosis,
-
-        SUM(CASE WHEN (e.gender_uuid=1  AND e.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Male_Count",
-        SUM(CASE WHEN (e.gender_uuid=2  AND e.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Female_Count",
-        SUM(CASE WHEN (e.gender_uuid=3  AND e.is_adult=1) THEN 1 ELSE 0 END) AS 'Adult_TG_Count',
-        SUM(CASE WHEN (e.gender_uuid=1  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Male_Count",
-        SUM(CASE WHEN (e.gender_uuid=2  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Female_Count",
-        SUM(CASE WHEN (e.gender_uuid=3  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_TG_Count",
-
-        SUM(CASE WHEN (e.gender_uuid in(1,2,3)) THEN 1 ELSE 0 END) AS "Total_Count"
-        
-        from 
-        patient_diagnosis pd
+        SUM(CASE WHEN (pd.gender_uuid=1  AND pd.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Male_Count",
+         SUM(CASE WHEN (pd.gender_uuid=2  AND pd.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Female_Count",
+         SUM(CASE WHEN (pd.gender_uuid=3  AND pd.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_TG_Count",
+         SUM(CASE WHEN (pd.gender_uuid=1  AND pd.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Male_Count",
+         SUM(CASE WHEN (pd.gender_uuid=2  AND pd.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Female_Count",
+         SUM(CASE WHEN (pd.gender_uuid=3  AND pd.is_adult=0) THEN 1 ELSE 0 END) AS "Child_TG_Count",
+ 
+         SUM(CASE WHEN (pd.gender_uuid in(1,2,3)) THEN 1 ELSE 0 END) AS "Total_Count"
+        from patient_diagnosis pd
         join encounter e on e.uuid=pd.encounter_uuid
         join diagnosis d on pd.diagnosis_uuid =d.uuid
         join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
-         where pd.facility_uuid=?   and pd.department_uuid=? 
-        and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=?
-        group by d.name 
-        order by d.name
-        
-   `
-   mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,dep_filter,fromdate,todate,visit_type], async (err, results, fields) => {
-    try {
-        
+        where `+ date_query + facility_id_query + dep_filter_query + encounter_type_query +
+            `group by d.name 
+        order by d.name `;
 
-        if (err) {
-            res
-                .status(400)
-                .send({
-                    code: httpStatus.BAD_REQUEST,
-                    message: 'Failed to get data!',
-                    error: err
+        console.log(selectCountQuery);
+
+        db.sequelize.query(selectCountQuery, {
+            type: Sequelize.QueryTypes.SELECT
+        }).then(async results => {
+            return res
+                .status(httpStatus.OK)
+                .json({
+                    code: 200,
+                    message: "Data fetched successfully!",
+                    responseContent: (results && results.length > 0) ? results : []
                 });
-        }
-        else {
-            if (!results[0]) {
-                res
-                    .status(200)
-                    .send({
-                        code: httpStatus.OK,
-                        message: 'No respective  data were found!',
-                        responseContent: []
-                    });
+        }).catch((err) => {
+            let message = err.message;
+            if (message && message.includes('Cannot read property')) {
+                return res.json({
+                    code: 200,
+                    responseContent: [],
+                });
             }
             else {
-       
-
-                res
-                    .status(200)
-                    .send({
-                        code: httpStatus.OK,
-                        message: 'Data fetched successfully!',
-                        responseContent: results
-                    });
+                return res.json({
+                    code: 500,
+                    message: err.message,
+                });
             }
-        }
+        });
+
     } catch (error) {
         res
             .status(400)
-            .send({ message: error.message, error: error })
+            .send({ message: error.message, error: error });
     }
-});
-} catch (error) {
-res
-    .status(400)
-    .send({ message: error.message, error: error });
-}
-
 
 }
 
 
-else 
+//-------------H30-48481
 
-{
-
-try {
-    let facility_uuid = req.headers.facility_uuid;
-    let fromdate =req.body.fromdate;
-    let todate=req.body.todate;
-    let visit_type=req.body.visit_type;
-
-
-    const selectCountQuery = `
-
-   
-    select d.name as diagnosis,
-
-    SUM(CASE WHEN (e.gender_uuid=1  AND e.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Male_Count",
-    SUM(CASE WHEN (e.gender_uuid=2  AND e.is_adult=1) THEN 1 ELSE 0 END) AS "Adult_Female_Count",
-    SUM(CASE WHEN (e.gender_uuid=3  AND e.is_adult=1) THEN 1 ELSE 0 END) AS 'Adult_TG_Count',
-    SUM(CASE WHEN (e.gender_uuid=1  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Male_Count",
-    SUM(CASE WHEN (e.gender_uuid=2  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_Female_Count",
-    SUM(CASE WHEN (e.gender_uuid=3  AND e.is_adult=0) THEN 1 ELSE 0 END) AS "Child_TG_Count",
-
-    SUM(CASE WHEN (e.gender_uuid in(1,2,3)) THEN 1 ELSE 0 END) AS "Total_Count"
-    
-    from 
-    patient_diagnosis pd
-    join encounter e on e.uuid=pd.encounter_uuid
-    join diagnosis d on pd.diagnosis_uuid =d.uuid
-    join encounter_doctors ed on ed.uuid =pd.encounter_doctor_uuid
-     where  pd.facility_uuid=?    
-    and date(ed.created_date) >= ? and date(ed.created_date) <=? and e.encounter_type_uuid=?
-    group by d.name 
-    order by d.name
-`
-mysql_pool.mySql_connection.query(selectCountQuery, [facility_uuid,fromdate,todate,visit_type], async (err, results, fields) => {
-try {
-
-    if (err) {
-        res
-            .status(400)
-            .send({
-                code: httpStatus.BAD_REQUEST,
-                message: 'Failed to get data!',
-                error: err
-            });
-    }
-    else {
-        if (!results[0]) {
-            res
-                .status(200)
-                .send({
-                    code: httpStatus.OK,
-                    message: 'No respective  data were found!',
-                    responseContent: []
-                });
-        }
-        else {
-    
-
-            res
-                .status(200)
-                .send({
-                    code: httpStatus.OK,
-                    message: 'Data fetched successfully!',
-                    responseContent: results
-                });
-        }
-    }
-} catch (error) {
-    res
-        .status(400)
-        .send({ message: error.message, error: error })
-}
-});
-} catch (error) {
-res
-.status(400)
-.send({ message: error.message, error: error });
-}
-
-
-
-}
-
-}
 
 
 
