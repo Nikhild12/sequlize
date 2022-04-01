@@ -67,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
             tk_facility_uuid:{
                 type: DataTypes.INTEGER,
             },
+            tk_department_uuid:{
+                type: DataTypes.INTEGER,
+            },
+            tk_user_uuid:{
+                type: DataTypes.INTEGER,
+            },
             f_code: {
                 type: DataTypes.STRING,
             },
