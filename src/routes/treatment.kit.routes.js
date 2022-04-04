@@ -11,6 +11,7 @@ treatmentKitRoute.route('/create').post(treatmentKitController.createTreatmentKi
 treatmentKitRoute.route('/getByFilters').get(treatmentKitController.getTreatmentKitByFilters);
 treatmentKitRoute.route('/autoSearch').post(treatmentKitController.getTreatmentKitByFilters);
 treatmentKitRoute.route('/getAll').post(treatmentKitController.getAllTreatmentKit);
+treatmentKitRoute.route('/getTreatmentKits').post(treatmentKitController.getTreatmentKits);
 treatmentKitRoute.route('/delete').delete(treatmentKitController.deleteTreatmentKit);
 treatmentKitRoute.route('/get-by-id').get(treatmentKitController.getTreatmentKitById);
 treatmentKitRoute.route('/update').put(treatmentKitController.updateTreatmentKitById);
