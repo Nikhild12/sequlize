@@ -20,7 +20,12 @@ const patientOPEmrCensusController = () => {
         /**
          * Bind the field values
          */
+        //H30-48737-Saju-Add new logic for new or old visit type in add op emr census count api
         bodyPostData = { ...req.body };
+        const checkVisitType = await checkNewOrOld(bodyPostData.patient_uuid, bodyPostData.department_uuid);
+
+        bodyPostData["visit_type_name"] = checkVisitType && checkVisitType[0]?.patient_uuid ? 'Old' : 'New';
+        bodyPostData["encounter_visit_type_uuid"] = checkVisitType && checkVisitType[0]?.patient_uuid ? 2 : 1;
         bodyPostData["modified_by"] = bodyPostData.created_by;
         /**
          * Insert the value into op emr census count table
@@ -92,7 +97,7 @@ const patientOPEmrCensusController = () => {
         toDate,
         facilityUuid
       } = req.body;
-      
+
       let Authorization;
       Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
       /**
@@ -382,3 +387,14 @@ async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, in
   return item_details;
 }
 //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
+
+async function checkNewOrOld(patient_uuid, department_uuid) {
+
+  let _query = "SELECT * FROM op_emr_census_count oecc WHERE oecc.patient_uuid =" + patient_uuid + " AND department_uuid = " + department_uuid + " LIMIT 1 ";
+
+  const item_details = await db.sequelize.query(_query, {
+    type: Sequelize.QueryTypes.SELECT
+  });
+
+  return item_details;
+}
