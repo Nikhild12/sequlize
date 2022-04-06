@@ -23,9 +23,9 @@ const patientOPEmrCensusController = () => {
         //H30-48737-Saju-Add new logic for new or old visit type in add op emr census count api
         bodyPostData = { ...req.body };
         const checkVisitType = await checkNewOrOld(bodyPostData.patient_uuid, bodyPostData.department_uuid);
-
-        bodyPostData["visit_type_name"] = checkVisitType && checkVisitType[0]?.patient_uuid ? 'Old' : 'New';
-        bodyPostData["encounter_visit_type_uuid"] = checkVisitType && checkVisitType[0]?.patient_uuid ? 2 : 1;
+        //H30-48736-Saju-Issue fix
+        bodyPostData["visit_type_name"] = checkVisitType && checkVisitType.length > 0 && checkVisitType[0].patient_uuid ? 'Old' : 'New';
+        bodyPostData["encounter_visit_type_uuid"] = checkVisitType && checkVisitType.length > 0 && checkVisitType[0].patient_uuid ? 2 : 1;
         bodyPostData["modified_by"] = bodyPostData.created_by;
         /**
          * Insert the value into op emr census count table
