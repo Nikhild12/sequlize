@@ -149,6 +149,7 @@ const getSpecificPatientVitalRoutes = require('./getSpecficPatVital.route');
 const getSpecilaitywisereferRoutes = require('./specialitywisepatRefer.route');
 
 
+const getCommunitywisereferRoutes = require('./communityWiseRefer.route');
 
 
 
@@ -164,6 +165,9 @@ const patientopemrcensusRoutes = require('./patient_op_emr_census.route');
 serviceRouter.use("/Dep_Diagnosis_count", depDiagnosiscountRoutes);
 
 serviceRouter.use("/speciality_wise_refer_out", getSpecilaitywisereferRoutes);
+
+serviceRouter.use("/community_wise_refer_report", getCommunitywisereferRoutes);
+
 
 
 serviceRouter.use("/getSpecPatientVital", getSpecificPatientVitalRoutes);
