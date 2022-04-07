@@ -5867,6 +5867,80 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/diagnosisNew/searchData": {
+			"post": {
+				"description": "To search a DiagnosisData by name",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "searchValue",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/search"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diagnosis"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/search"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
+      "/api/diagnosisNew/searchIcdData": {
+			"post": {
+				"description": "To search a DiagnosisIcdData by name",
+				"parameters": [{
+						"in": "header",
+						"name": "user_uuid",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"in": "body",
+						"name": "searchValue",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/search"
+						}
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"tags": [
+					"Diagnosis"
+				],
+				"responses": {
+					"200": {
+						"description": "Fetched Successfully",
+						"schema": {
+							"$ref": "#/definitions/search"
+						}
+					}
+				},
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
       "/api/diagnosis/getDiagnosisName": {
          "post": {
             "description": "Get Diagnosis name",
