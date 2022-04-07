@@ -9,7 +9,7 @@ const Op = Sequelize.Op;
 
 const specialitywiseRefer_Controller = () => {
 
-    const specilalityReferout = async (req, res) => {
+    const specilalityReferin = async (req, res) => {
         try {
 
             let facility_uuid = req.headers.facility_uuid;
@@ -97,7 +97,7 @@ const specialitywiseRefer_Controller = () => {
         }
     }
 
-    const specilalityReferin = async (req, res) => {
+    const specilalityReferout = async (req, res) => {
         try {
 
             let facility_uuid = req.headers.facility_uuid;
