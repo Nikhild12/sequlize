@@ -664,8 +664,12 @@ const TreatMent_Kit = () => {
         if (getsearch.share == 1) {
           findQuery.where['tk_department_uuid'] = departmentId;
           findQuery.where['tk_user_uuid'] = userId;
+          findQuery.where['tk_share_uuid'] = getsearch.share;          
         } else if (getsearch.share == 2) {
           findQuery.where['tk_department_uuid'] = departmentId;
+          findQuery.where['tk_share_uuid'] = getsearch.share;
+        } else if (getsearch.share == 3) {
+          findQuery.where['tk_share_uuid'] = getsearch.share;
         }
       }
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
