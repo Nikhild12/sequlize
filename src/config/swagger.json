@@ -129,6 +129,53 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/facilitydetails/getFacilityUsageDetails": {
+			"post": {
+				"description": "GET Facility Usage details",
+				"operationId": "getfacilityusagedetails",
+				"parameters": [
+					{
+						"in": "body",
+						"name": "getfacilityusagedetails",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/getfacilityusagedetails"
+						}
+					},
+					{
+						"name": "user_uuid",
+						"in": "header",
+						"description": "an authorization header",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json",
+					"application/xml"
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "object"
+						}
+					},
+					"403": {
+						"description": "You do not have necessary permissions for the resource",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"summary": " Get Facility Usage details by Dates",
+				"tags": [
+					"Facility Usage details "
+				],
+				"x-auth-type": "Application & Application User",
+				"x-throttling-tier": "Unlimited"
+			}
+		},
       "/api/glass_prescription/get": {
          "post": {
             "description": "Fetch",
@@ -22678,6 +22725,20 @@
             }
          }
       },
+      "getfacilityusagedetails": {
+			"type": "object",
+			"properties": { 
+				"fromDate": {
+					"type": "string"
+				},
+				"toDate": {
+					"type": "string"
+				},
+				"facility_uuid": {
+					"type": "number"
+				}
+			}
+		},
       "getglassprescription": {
          "type": "object",
          "properties": {

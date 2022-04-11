@@ -23,6 +23,7 @@ const vitalMasterUOMRoutes = require("./vital_master_uoms.route");
 const vitallonicRoutes = require("./vital_loinc.route");
 const dischargeSummaryRoute = require("./discharge.summary.settings.route");
 
+const facilityUsageDetailsRouter = require("./facility_usage_details.route"); // H30-48834- Api facility usage details (khurshid)
 const diagnosisSearchRoutes = require('./diagnosis_search.route');  // H30-48750 Api for diagnosis search (khurshid)
 const diagnosisRoutes = require("./diagnosis.route");
 const diagnosisVersionRoutes = require("./diagnosis_version.route");
@@ -218,6 +219,7 @@ serviceRouter.use("/notetemplate", notetemplateRoutes);
 // Vital Master UOM Routes
 serviceRouter.use("/vitalMasterUOM", vitalMasterUOMRoutes);
 
+serviceRouter.use("/facilitydetails", facilityUsageDetailsRouter); // H30-48834 Api for facility usage details (khurshid)
 // Diagnosis Routes
 serviceRouter.use("/diagnosisNew", diagnosisSearchRoutes); // H30-48750 Api for diagnosis search (khurshid)
 serviceRouter.use("/diagnosis", diagnosisRoutes);
