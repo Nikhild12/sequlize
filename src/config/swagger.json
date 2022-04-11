@@ -2079,6 +2079,98 @@
 
 
 
+      "/api/community_wise_refer_report/IN":{
+         "post":{
+            "summary":"To get all the community wise patient count ",
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"facility_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"user_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+              
+               {
+                  "in":"body",
+                  "name":"add",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/communitywiseReferencebody"
+                  }
+               }
+            ],
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "tags":[
+               "Patient Referrel"
+            ],
+            "responses":{
+               "200":{
+                  "description":"get All Community Wise patient Count Details"
+               }
+            },
+            "x-auth-type":"Application & Application User",
+            "x-throttling-tier":"Unlimited"
+         }
+      },
+
+
+
+
+
+
+      "/api/community_wise_refer_report/OUT":{
+         "post":{
+            "summary":"To get all the community wise patient count ",
+            "parameters":[
+               {
+                  "in":"header",
+                  "name":"facility_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "in":"header",
+                  "name":"user_uuid",
+                  "required":true,
+                  "type":"integer"
+               },
+              
+               {
+                  "in":"body",
+                  "name":"add",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/communitywiseReferencebody"
+                  }
+               }
+            ],
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "tags":[
+               "Patient Referrel"
+            ],
+            "responses":{
+               "200":{
+                  "description":"get All Community Wise patient Count Details"
+               }
+            },
+            "x-auth-type":"Application & Application User",
+            "x-throttling-tier":"Unlimited"
+         }
+      },
+
+
 
 
       "/api/Dep_Diagnosis_count/docDiagnosis":{
@@ -15272,6 +15364,22 @@
    
          }
       },
+
+      "communitywiseReferencebody": {
+         "type": "object",
+         "properties": {
+          
+            "fromdate": {
+               "type": "string"
+            },
+            "todate": {
+               "type": "string"
+            }
+         }
+      },
+
+
+
 
       "docDiagnosisbody": {
          "type": "object",
