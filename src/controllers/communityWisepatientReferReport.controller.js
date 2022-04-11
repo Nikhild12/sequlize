@@ -16,15 +16,46 @@ const communityywiseRefer_Controller = () => {
             const facility_id_query = facility_uuid ? ` and pr.facility_uuid = ${facility_uuid} ` : ' ';
            
 
-            const selectCountQuery = `select community_name,sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_male',sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_female',sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_transgender',sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) 'new_adult_total',sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_male',sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_female',
-            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_transgender',sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_total',sum(CASE WHEN ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'total_new_patients',sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_male',sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_female',sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_transgender',
-              sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as'old_adult_total',sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_male',sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_female',
-             sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_transgender',sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_total',sum(CASE WHEN ed.visit_type_uuid = 2 THEN 1 ELSE 0 END ) as 'total_old_patients'
+            const selectCountQuery = `select CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END AS community_name,sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_male',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_female',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_transgender',
+            sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) 'new_adult_total',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_male',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_female',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_transgender',
+            sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_total',
+            
+            sum(CASE WHEN  gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_male',
+            sum(CASE WHEN  gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_female',
+            sum(CASE WHEN  gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_transgender',
+            sum(CASE WHEN ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'total_new_patients',
+            
+            
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_male',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_female',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_transgender',
+            sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as'old_adult_total',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_male',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_female',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_transgender',
+            sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_total',
+            
+            
+            
+            sum(CASE WHEN  gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_male',
+            sum(CASE WHEN  gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_female',
+            sum(CASE WHEN  gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_transgender',
+            
+            sum(CASE WHEN ed.visit_type_uuid = 2 THEN 1 ELSE 0 END ) as 'total_old_patients',
+            sum(CASE WHEN ed.visit_type_uuid in (1,2) THEN 1 ELSE 0 END ) as 'total_patients'
+            
+            
+            
             from encounter e join patient_referral pr on pr.encounter_uuid=e.uuid join encounter_doctors ed on ed.encounter_uuid=e.uuid where `+ date_query + facility_id_query+
                 ` and referral_type_uuid=2
                 
-                group by community_name 
-                order by community_name asc `;
+                group by CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END 
+                order by CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END asc `;
 
             console.log(selectCountQuery);
 
@@ -71,15 +102,46 @@ const communityywiseRefer_Controller = () => {
             const facility_id_query = facility_uuid ? ` and pr.facility_uuid = ${facility_uuid} ` : ' ';
            
 
-            const selectCountQuery = `select community_name,sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_male',sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_female',sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_transgender',sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) 'new_adult_total',sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_male',sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_female',
-            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_transgender',sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_total',sum(CASE WHEN ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'total_new_patients',sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_male',sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_female',sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_transgender',
-              sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as'old_adult_total',sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_male',sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_female',
-             sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_transgender',sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_total',sum(CASE WHEN ed.visit_type_uuid = 2 THEN 1 ELSE 0 END ) as 'total_old_patients'
+            const selectCountQuery = ` select CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END AS community_name,sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_male',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_female',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_adult_transgender',
+            sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) 'new_adult_total',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_male',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_female',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_transgender',
+            sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_child_total',
+            
+            sum(CASE WHEN  gender_uuid = 1 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_male',
+            sum(CASE WHEN  gender_uuid = 2 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_female',
+            sum(CASE WHEN  gender_uuid = 3 AND ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'new_transgender',
+            sum(CASE WHEN ed.visit_type_uuid = 1 THEN 1 ELSE 0 END) as 'total_new_patients',
+            
+            
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_male',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_female',
+            sum(CASE WHEN is_adult = 1 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END)as 'old_adult_transgender',
+            sum(CASE WHEN is_adult = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as'old_adult_total',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_male',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_female',
+            sum(CASE WHEN is_adult = 0 AND gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_transgender',
+            sum(CASE WHEN is_adult = 0 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_child_total',
+            
+            
+            
+            sum(CASE WHEN  gender_uuid = 1 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_male',
+            sum(CASE WHEN  gender_uuid = 2 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_female',
+            sum(CASE WHEN  gender_uuid = 3 AND ed.visit_type_uuid = 2 THEN 1 ELSE 0 END) as 'old_transgender',
+            
+            sum(CASE WHEN ed.visit_type_uuid = 2 THEN 1 ELSE 0 END ) as 'total_old_patients',
+            sum(CASE WHEN ed.visit_type_uuid in (1,2) THEN 1 ELSE 0 END ) as 'total_patients'
+            
+            
+            
             from encounter e join patient_referral pr on pr.encounter_uuid=e.uuid join encounter_doctors ed on ed.encounter_uuid=e.uuid where `+ date_query + facility_id_query+
                 ` and referral_type_uuid=1
                 
-                group by community_name 
-                order by community_name asc `;
+                group by CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END 
+                order by CASE WHEN community_name IN ('SC','ST','Scheduled Caste','Scheduled Tribe') THEN community_name ELSE 'OTHERS' END asc `;
 
             console.log(selectCountQuery);
 
