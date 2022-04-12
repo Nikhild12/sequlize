@@ -888,6 +888,8 @@ const Encounter = () => {
         // req.headers.facility_uuid = "12612";
         const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
         var sessionTypeId = 0;
+        var sessionName = '';
+        var visitTypeName = '';
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
           if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
             && fdata.responseContents.Evn_op_start_time && fdata.responseContents.Evn_op_end_time) {
@@ -902,10 +904,13 @@ const Encounter = () => {
             const currenttime = hours + ':' + minutes + ':00';
             if (currenttime >= fdata.responseContents.mon_op_start_time && currenttime <= fdata.responseContents.mon_op_end_time) {
               sessionTypeId = 1; //Morning
+              sessionName = 'Morning';
             } else if (currenttime >= fdata.responseContents.Evn_op_start_time && currenttime <= fdata.responseContents.Evn_op_end_time) {
               sessionTypeId = 2; //Evening
+              sessionName = 'Evening';
             } else {
               sessionTypeId = 3; //Casualty
+              sessionName = 'Casualty';
             }
           }
         }
@@ -988,6 +993,10 @@ const Encounter = () => {
         /* #H30-40403 - Changes for Department Visit Type By Elumalai - Start */
         if (deptVisit && deptVisit.length > 0) {
           encounterDoctor.dept_visit_type_uuid = 2;
+          visitTypeName = 'Old'; 
+        } else {
+          encounterDoctor.dept_visit_type_uuid = 1;
+          visitTypeName = 'New';
         }
         /* #H30-40403 - Changes for Department Visit Type By Elumalai - End */
 
@@ -1033,8 +1042,10 @@ const Encounter = () => {
                   encounter_department_uuid: encounterDoctor.department_uuid,
                   encounter_type_uuid: createdEncounter.encounter_type_uuid,
                   encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+                  visit_type_name: visitTypeName,
                   encounter_date: createdEncounter.created_date,
-                  encounter_session_uuid: encounterDoctor.session_type_uuid
+                  encounter_session_uuid: encounterDoctor.session_type_uuid,
+                  encounter_session_name: sessionName
               },
               { where: { uuid: op_emr_census_data[0].uuid } }
             )
@@ -1051,13 +1062,16 @@ const Encounter = () => {
               is_adult: createdEncounter.is_adult,
               registration_date: encounter.registration_date,
               registered_session_uuid: encounter.registered_session_uuid,
+              registered_session_name: sessionName,
               encounter_uuid: createdEncounter.uuid,
               encounter_doctor_uuid: encounterDoctor.doctor_uuid,
               encounter_department_uuid: encounterDoctor.department_uuid,
               encounter_type_uuid: createdEncounter.encounter_type_uuid,
               encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+              visit_type_name: visitTypeName,
               encounter_date: createdEncounter.created_date,
               encounter_session_uuid: encounterDoctor.session_type_uuid,
+              encounter_session_name: sessionName,
               is_prescribed: 0,
               is_active: 1,
               created_by: createdEncounter.created_by,
