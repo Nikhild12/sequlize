@@ -889,7 +889,6 @@ const Encounter = () => {
         const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
         var sessionTypeId = 0;
         var sessionName = '';
-        var visitTypeName = '';
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
           if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
             && fdata.responseContents.Evn_op_start_time && fdata.responseContents.Evn_op_end_time) {
@@ -1054,11 +1053,17 @@ const Encounter = () => {
           } else {
             let emr_census_data = {
               facility_uuid: createdEncounter.facility_uuid,
+              facility_name: createdEncounter.facility_name,
+              facility_type_uuid: createdEncounter.facility_type_uuid,
+              facility_type_name: createdEncounter.facility_type_name,
+              facility_category_uuid: createdEncounter.facility_category_uuid,
               department_uuid: encounterDoctor.department_uuid,
+              department_name: createdEncounter.department_name,
               patient_uuid: createdEncounter.patient_uuid,
               patient_pin_no: encounter.patient_pin_no,
               patient_name: encounter.patient_name,
               age: encounter.age,
+              period_uuid: createdEncounter.period_uuid,
               mobile: encounter.mobile,
               gender_uuid: createdEncounter.gender_uuid,
               is_adult: createdEncounter.is_adult,
