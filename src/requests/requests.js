@@ -3,13 +3,13 @@ const config = require('../config/config');
 const getResults = async (url, req, data) => {
     try {
         const _url = config.wso2AppUrl + url;
-        const { user_uuid, facility_uuid, authorization } = req.headers;
+        const { user_uuid, facility_uuid, Authorization } = req.headers;
         let options = {
             uri: _url,
             headers: {
                 user_uuid,
                 facility_uuid,
-                Authorization: authorization
+                Authorization: Authorization
             },
             method: "POST",
             json: true // Automatically parses the JSON string in the response
