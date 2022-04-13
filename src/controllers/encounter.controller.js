@@ -889,6 +889,7 @@ const Encounter = () => {
         req.headers.facility_uuid = "19";
         */
         const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
+        console.log('fdata logging' , fdata);
         var sessionTypeId = 0;
         var sessionName = '';
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
