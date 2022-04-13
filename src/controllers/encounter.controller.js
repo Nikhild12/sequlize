@@ -982,7 +982,6 @@ const Encounter = () => {
             }
           }
           /* End - #H30-35488 : Need to track is_adult flag encounter wise - Ashok */
-
         }
         const encounterId = is_enc_avail && !is_enc_doc_avail ? encounterData[0].uuid : createdEncounter.uuid;
         encounter.uuid = encounterDoctor.encounter_uuid = encounterId;
@@ -1053,17 +1052,17 @@ const Encounter = () => {
           } else {
             let emr_census_data = {
               facility_uuid: createdEncounter.facility_uuid,
-              facility_name: createdEncounter.facility_name,
-              facility_type_uuid: createdEncounter.facility_type_uuid,
-              facility_type_name: createdEncounter.facility_type_name,
-              facility_category_uuid: createdEncounter.facility_category_uuid,
+              facility_name: encounter.facility_name,
+              facility_type_uuid: encounter.facility_type_uuid,
+              facility_type_name: encounter.facility_type_name,
+              facility_category_uuid: encounter.facility_category_uuid,
               department_uuid: encounterDoctor.department_uuid,
-              department_name: createdEncounter.department_name,
+              department_name: encounter.department_name,
               patient_uuid: createdEncounter.patient_uuid,
               patient_pin_no: encounter.patient_pin_no,
               patient_name: encounter.patient_name,
               age: encounter.age,
-              period_uuid: createdEncounter.period_uuid,
+              period_uuid: encounter.period_uuid,
               mobile: encounter.mobile,
               gender_uuid: createdEncounter.gender_uuid,
               is_adult: createdEncounter.is_adult,
@@ -1091,23 +1090,33 @@ const Encounter = () => {
         } else {
           let emr_census_data = {
             facility_uuid: createdEncounter.facility_uuid,
+            facility_name: encounter.facility_name,
+            facility_type_uuid: encounter.facility_type_uuid,
+            facility_type_name: encounter.facility_type_name,
+            facility_category_uuid: encounter.facility_category_uuid,
             department_uuid: encounterDoctor.department_uuid,
+            department_name: encounter.department_name,
             patient_uuid: createdEncounter.patient_uuid,
             patient_pin_no: encounter.patient_pin_no,
             patient_name: encounter.patient_name,
             age: encounter.age,
+            period_uuid: encounter.period_uuid,
             mobile: encounter.mobile,
             gender_uuid: createdEncounter.gender_uuid,
             is_adult: createdEncounter.is_adult,
             registration_date: encounter.registration_date,
-            registered_session_uuid: encounter.registered_session_uuid,
+            //registered_session_uuid: encounter.registered_session_uuid,
+            registered_session_uuid: encounterDoctor.session_type_uuid,
+            registered_session_name: encounterDoctor.registered_session_name,
             encounter_uuid: createdEncounter.uuid,
             encounter_doctor_uuid: encounterDoctor.doctor_uuid,
             encounter_department_uuid: encounterDoctor.department_uuid,
             encounter_type_uuid: createdEncounter.encounter_type_uuid,
             encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+            visit_type_name: encounterDoctor.visit_type_name,
             encounter_date: createdEncounter.created_date,
             encounter_session_uuid: encounterDoctor.session_type_uuid,
+            encounter_session_name: encounterDoctor.encounter_session_name,
             is_prescribed: 0,
             is_active: 1,
             created_by: createdEncounter.created_by,
