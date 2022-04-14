@@ -888,38 +888,54 @@ const Encounter = () => {
         req.headers.authorization = "Bearer 40a0d4ff-402d-335b-b4c5-323d474b5e6b";
         req.headers.facility_uuid = "19";
         */
+        /*
         const fdata = await requestApi.getResults('facilitySettings/getFacilitySettingByFId', req, { facilityId: facility_uuid });
-        console.log('fdata logging' , fdata);
         var sessionTypeId = 0;
         var sessionName = '';
         if (fdata && fdata.statusCode == 200 && fdata.responseContents && Object.keys(fdata.responseContents).length > 0) {
           if (fdata.responseContents.mon_op_start_time && fdata.responseContents.mon_op_end_time
             && fdata.responseContents.Evn_op_start_time && fdata.responseContents.Evn_op_end_time) {
             const date_ob = new Date();
-
-            // current hours
             let hours = date_ob.getHours();
             if (hours < 10) {
               hours = '0'+hours;
             }
-
-            // current minutes
             const minutes = date_ob.getMinutes();
-
             const currenttime = hours + ':' + minutes + ':00';
             if (currenttime >= fdata.responseContents.mon_op_start_time && currenttime <= fdata.responseContents.mon_op_end_time) {
-              sessionTypeId = 1; //Morning
+              sessionTypeId = 1;
               sessionName = 'Morning';
             } else if (currenttime >= fdata.responseContents.Evn_op_start_time && currenttime <= fdata.responseContents.Evn_op_end_time) {
-              sessionTypeId = 2; //Evening
+              sessionTypeId = 2;
               sessionName = 'Evening';
             } else {
-              sessionTypeId = 3; //Casualty
+              sessionTypeId = 3;
               sessionName = 'Casualty';
             }
           }
         }
+        */
         /* #H30-45561 - EMR - Encounter - Getting Session Type Based on the Facility Configuration By Elumalai - End */
+
+        /* Getting Session Type Based on Fixed Intervals - Start */
+        const date_ob = new Date(); // Current Date
+        let hours = date_ob.getHours(); // Current Hours
+        if (hours < 10) {
+          hours = '0'+hours;
+        }
+        let minutes = date_ob.getMinutes(); // Current Minutes
+        let currenttime = hours + ':' + minutes + ':00';
+        if (currenttime >= '07:00:00' && currenttime < '13:00:00') {
+          sessionTypeId = 1; //Morning
+          sessionName = 'Morning';
+        } else if (currenttime >= '13:00:00' && currenttime < '18:00:00') {
+          sessionTypeId = 2; //Evening
+          sessionName = 'Evening';
+        } else {
+          sessionTypeId = 3; //Casualty
+          sessionName = 'Casualty';
+        }
+        /* Getting Session Type Based on Fixed Intervals - End */
         
         if (!is_enc_avail) {
           /* Closing all previous active encounters for this patient */
