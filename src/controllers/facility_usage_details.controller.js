@@ -40,7 +40,7 @@ let fetchQuery = "SELECT SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 
 " SUM(CASE WHEN oecc.is_adult = 0 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS old_child_total," + 
 " SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_old_patients," + 
 " SUM(CASE WHEN oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) + SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_patients," + 
-" oecc.facility_uuid AS facility_uuid,oecc.facility_name AS facility_name" +  
+" oecc.facility_uuid AS facility_uuid,oecc.facility_name AS facility_name,oecc.facility_type_name" +  //H30-48821-Saju-Institution Wise performance Reports
 " FROM op_emr_census_count AS oecc" + 
 " WHERE oecc.encounter_type_uuid != 2  AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'" +
 " AND oecc.facility_uuid IN(facility_uuid)"  +
