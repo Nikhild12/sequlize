@@ -920,18 +920,22 @@ const Encounter = () => {
         /* Getting Session Type Based on Fixed Intervals - Start */
         const date_ob = new Date(); // Current Date
         let hours = date_ob.getHours(); // Current Hours
+        /*
         if (hours < 10) {
           hours = '0'+hours;
         }
+        */
+        /*
         let minutes = date_ob.getMinutes(); // Current Minutes
         if (minutes < 10) {
           minutes = '0'+minutes;
         }
-        let currenttime = hours + ':' + minutes + ':00';
-        if (currenttime >= '07:00:00' && currenttime < '13:00:00') {
+        */
+        let currenttime = hours;
+        if (currenttime >= 7 && currenttime < 13) {
           sessionTypeId = 1; //Morning
           sessionName = 'Morning';
-        } else if (currenttime >= '13:00:00' && currenttime < '18:00:00') {
+        } else if (currenttime >= 13 && currenttime < 18) {
           sessionTypeId = 2; //Evening
           sessionName = 'Evening';
         } else {
