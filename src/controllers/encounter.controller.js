@@ -924,6 +924,9 @@ const Encounter = () => {
           hours = '0'+hours;
         }
         let minutes = date_ob.getMinutes(); // Current Minutes
+        if (minutes < 10) {
+          minutes = '0'+minutes;
+        }
         let currenttime = hours + ':' + minutes + ':00';
         if (currenttime >= '07:00:00' && currenttime < '13:00:00') {
           sessionTypeId = 1; //Morning
