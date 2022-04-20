@@ -12,6 +12,7 @@ const opEmrCensus_tbl = db.op_emr_census_count;
 const patientOPEmrCensusController = () => {
   /* saving op emr census count */
   const addOPEMRCensusCount = async (req, res) => {
+    let checkVisitType = [];
     try {
 
       let bodyPostData = {};
@@ -22,22 +23,23 @@ const patientOPEmrCensusController = () => {
          */
         //H30-48737-Saju-Add new logic for new or old visit type in add op emr census count api
         bodyPostData = { ...req.body };
-        const checkVisitType = await checkNewOrOld(bodyPostData.patient_uuid, bodyPostData.department_uuid);
+        checkVisitType = await checkNewOrOld(bodyPostData.patient_uuid, bodyPostData.department_uuid, bodyPostData.facility_uuid);
         //H30-48736-Saju-Issue fix
-        bodyPostData["visit_type_name"] = checkVisitType && checkVisitType.length > 0 && checkVisitType[0].patient_uuid ? 'Old' : 'New';
-        bodyPostData["encounter_visit_type_uuid"] = checkVisitType && checkVisitType.length > 0 && checkVisitType[0].patient_uuid ? 2 : 1;
-        bodyPostData["modified_by"] = bodyPostData.created_by;
-        /**
-         * Insert the value into op emr census count table
-         */
-        opEmrCensusRes = await opEmrCensus_tbl.create(bodyPostData, {
-          returning: true
-        });
+        if (checkVisitType && checkVisitType.length == 0) {
+          bodyPostData["visit_type_name"] = 'New';
+          bodyPostData["encounter_visit_type_uuid"] = 1;
+          bodyPostData["modified_by"] = bodyPostData.created_by;
+          /**
+           * Insert the value into op emr census count table
+           */
+          opEmrCensusRes = await opEmrCensus_tbl.create(bodyPostData, {
+            returning: true
+          });
+        }
       }
-
       return res.send({
         statusCode: 200,
-        responseContent: opEmrCensusRes
+        responseContent: checkVisitType && checkVisitType.length > 0 ? 'Patient already exsit' : opEmrCensusRes
       });
     } catch (error) {
       console.log('\n error...', error);
@@ -388,9 +390,11 @@ async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, in
 }
 //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
 
-async function checkNewOrOld(patient_uuid, department_uuid) {
+async function checkNewOrOld(patient_uuid, department_uuid, facility_uuid) {
 
-  let _query = "SELECT * FROM op_emr_census_count oecc WHERE oecc.patient_uuid =" + patient_uuid + " AND department_uuid = " + department_uuid + " LIMIT 1 ";
+  let _query = "SELECT * FROM op_emr_census_count oecc WHERE oecc.patient_uuid =" + patient_uuid
+    + " AND department_uuid = " + department_uuid
+    + " AND facility_uuid = " + facility_uuid + " LIMIT 1 ";
 
   const item_details = await db.sequelize.query(_query, {
     type: Sequelize.QueryTypes.SELECT
