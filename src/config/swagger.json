@@ -14001,6 +14001,43 @@
             "x-auth-type": "Application & Application User",
             "x-throttling-tier": "Unlimited"
          }
+      },
+      "/api/patientopemrcensus/getTotalRegCount": {
+         "get": {
+            "description": "To get total patient count ",
+            "parameters": [
+               {
+                  "name": "user_uuid",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "responses": {
+               "200": {
+                  "description": "successful operation",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "tags": [
+               "OP_EMR_Census"
+            ],
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
       }
    },
    "definitions": {
