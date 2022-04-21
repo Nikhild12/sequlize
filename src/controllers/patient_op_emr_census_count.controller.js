@@ -201,13 +201,38 @@ const patientOPEmrCensusController = () => {
     }
   }
   //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
+
+  //H30-49098-Saju-Create new api for get patient total registration count
+  const getTotalRegCount = async (req, res) => {
+
+    try {
+      const _query = "SELECT COUNT(c.uuid) AS reg_tot_count FROM op_emr_census_count c";
+      const regCount = await db.sequelize.query(_query, {
+        type: Sequelize.QueryTypes.SELECT
+      });
+
+      return res.send({
+        statusCode: 200,
+        responseContent: regCount ? regCount[0] : 0
+      });
+    }
+    catch (err) {
+      return res.json({
+        statusCode: 500,
+        message: err.message,
+      });
+    }
+  };
+  //H30-49098-Saju-Create new api for get patient total registration count
+
   // --------------------------------------------return----------------------------------
   return {
     addOPEMRCensusCount,
     getDepartmentWisePatCount,
     getSessionWisePatCount,
     getDayWisePatientList,
-    getDayWisePatientCount
+    getDayWisePatientCount,
+    getTotalRegCount
   };
 };
 
