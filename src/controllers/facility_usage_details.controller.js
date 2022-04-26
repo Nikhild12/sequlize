@@ -19,8 +19,6 @@ const facilityUsageDetailsController = () => {
     try {
       const { fromDate, toDate, facility_uuid } = req.body;
 
-
-
 let fetchQuery = "SELECT SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS new_adult_male," + 
 " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS new_adult_female," +
 " SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS new_adult_transgender," + 
@@ -42,9 +40,12 @@ let fetchQuery = "SELECT SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 
 " SUM(CASE WHEN oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) + SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_patients," + 
 " oecc.facility_uuid AS facility_uuid,oecc.facility_name AS facility_name,oecc.facility_type_name" +  //H30-48821-Saju-Institution Wise performance Reports
 " FROM op_emr_census_count AS oecc" + 
-" WHERE oecc.encounter_type_uuid != 2  AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'" +
-" AND oecc.facility_uuid IN(facility_uuid)"  +
-" GROUP BY oecc.facility_uuid";
+" WHERE oecc.encounter_type_uuid != 2  AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+
+if(facility_uuid && facility_uuid > 0) {
+  fetchQuery = fetchQuery + ` AND oecc.facility_uuid IN (${facility_uuid})`
+}
+fetchQuery = fetchQuery + " GROUP BY oecc.facility_uuid";
 
       const item_details = await db.sequelize.query(fetchQuery, {
         type: Sequelize.QueryTypes.SELECT,
