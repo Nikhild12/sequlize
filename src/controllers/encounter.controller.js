@@ -86,9 +86,9 @@ const Encounter = () => {
 
 
   const _getOldVisitInformation = async (req, res, next) => {
-    try{
+    try {
 
-      if(!(req.body.patient_uuid) || (req.body.patient_uuid) <= 0) {
+      if (!(req.body.patient_uuid) || (req.body.patient_uuid) <= 0) {
         return res.status(500).send({
           statusCode: 500,
           code: 500,
@@ -97,18 +97,20 @@ const Encounter = () => {
       }
 
       let dataJson = {
-        patient_uuid: req.body.patient_uuid 
+        patient_uuid: req.body.patient_uuid
       };
       let encsql = "";
       encsql += "SELECT e.uuid as encounter_uuid,  e.encounter_date, ed.doctor_uuid ";
       encsql += "FROM encounter e, encounter_doctors ed ";
       encsql += "WHERE e.patient_uuid = :patient_uuid ";
       encsql += "AND ed.encounter_uuid=e.uuid  ";
-      encsql += "AND e.encounter_type_uuid =1;  "; 
+      encsql += "AND e.encounter_type_uuid =1;  ";
       let encounterData = await sequelizeDb.sequelize.query(
-        encsql , { raw: true, replacements: dataJson, 
-          type: Sequelize.QueryTypes.SELECT });
-       
+        encsql, {
+        raw: true, replacements: dataJson,
+        type: Sequelize.QueryTypes.SELECT
+      });
+
       try {
         let doctorIds = [...new Set(encounterData.map(e => e.doctor_uuid))];
         const Authorization = req.headers.Authorization ? req.headers.Authorization : (req.headers.authorization ? req.headers.authorization : 0);
@@ -142,8 +144,8 @@ const Encounter = () => {
   // Past History Info // 
 
   const _getOldHistoryInfo = async (req, res, next) => {
-    try{
-      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+    try {
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
         return res.status(500).send({
           statusCode: 500,
           code: 500,
@@ -152,20 +154,20 @@ const Encounter = () => {
       }
       let PreviousChiefComplaints = await _getPastChiefComplaintsInfo(req, res, next);
       let PreviousDiagnosis = await _getPastDiagnosisInfo(req, res, next);
-      let PreviousPrescription = await _getPreviousPrescriptionData(req, res, next); 
+      let PreviousPrescription = await _getPreviousPrescriptionData(req, res, next);
       if (PreviousPrescription &&
         PreviousPrescription.responseContents) {
         PreviousPrescription = [...PreviousPrescription.responseContents];
       }
-      let PreviousLabDetails = await _getPreviousLabData(req, res, next); 
-      if(PreviousLabDetails && 
+      let PreviousLabDetails = await _getPreviousLabData(req, res, next);
+      if (PreviousLabDetails &&
         PreviousLabDetails.responseContents) {
-      PreviousLabDetails = [...PreviousLabDetails.responseContents]; 
+        PreviousLabDetails = [...PreviousLabDetails.responseContents];
       }
-      let PreviousRMISDetails = await _getPreviousRMISData(req, res, next); 
-      if(PreviousRMISDetails && 
+      let PreviousRMISDetails = await _getPreviousRMISData(req, res, next);
+      if (PreviousRMISDetails &&
         PreviousRMISDetails.responseContents) {
-      PreviousRMISDetails = [...PreviousRMISDetails.responseContents];
+        PreviousRMISDetails = [...PreviousRMISDetails.responseContents];
       }
 
       let OldHistory = {
@@ -192,8 +194,8 @@ const Encounter = () => {
   }
 
   const _getPastChiefComplaintsInfo = async (req, res, next) => {
-    try{
-      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+    try {
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
         return res.status(500).send({
           statusCode: 500,
           code: 500,
@@ -201,29 +203,29 @@ const Encounter = () => {
         });
       }
       let dataJson = {
-        encounter_uuid: req.body.encounter_uuid 
+        encounter_uuid: req.body.encounter_uuid
       };
       let encsql = "";
       encsql += " SELECT pc.uuid, pc.encounter_uuid , pc.performed_date, cc.name as description ";
       encsql += " FROM patient_chief_complaints pc, chief_complaints cc ";
       encsql += " WHERE pc.chief_complaint_uuid=cc.uuid ";
       encsql += " AND pc.encounter_type_uuid=1 ";
-      encsql += " AND pc.encounter_uuid = :encounter_uuid "; 
+      encsql += " AND pc.encounter_uuid = :encounter_uuid ";
       let patientChiefComplaintsData = await sequelizeDb.sequelize.query(
         encsql, {
-          raw: true, replacements: dataJson,
+        raw: true, replacements: dataJson,
         type: Sequelize.QueryTypes.SELECT
-      });  
+      });
       return patientChiefComplaintsData;
 
     } catch (ex) {
-      return  ex;
+      return ex;
     }
   }
-  
+
   const _getPastDiagnosisInfo = async (req, res, next) => {
-    try{
-      if(!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
+    try {
+      if (!(req.body.encounter_uuid) || (req.body.encounter_uuid) <= 0) {
         return res.status(500).send({
           statusCode: 500,
           code: 500,
@@ -231,17 +233,17 @@ const Encounter = () => {
         });
       }
       let dataJson = {
-        encounter_uuid: req.body.encounter_uuid 
+        encounter_uuid: req.body.encounter_uuid
       };
       let encsql = "";
       encsql += " SELECT pd.uuid, pd.encounter_uuid, pd.performed_date,  d.name as description  ";
       encsql += " FROM patient_diagnosis pd, diagnosis d ";
       encsql += " WHERE pd.diagnosis_uuid=d.uuid ";
       encsql += " AND pd.encounter_type_uuid=1 ";
-      encsql += " AND pd.encounter_uuid = :encounter_uuid "; 
+      encsql += " AND pd.encounter_uuid = :encounter_uuid ";
       let patientDiagnosisData = await sequelizeDb.sequelize.query(
         encsql, {
-          raw: true, replacements: dataJson,
+        raw: true, replacements: dataJson,
         type: Sequelize.QueryTypes.SELECT
       });
       return patientDiagnosisData;
@@ -271,11 +273,11 @@ const Encounter = () => {
           facility_uuid: req.headers.facility_uuid
         },
         body: {
-          "encounter_uuid": req.body.encounter_uuid, 
+          "encounter_uuid": req.body.encounter_uuid,
         },
         json: true
       };
-      const prescription_details = await rp(options); 
+      const prescription_details = await rp(options);
       if (prescription_details && prescription_details.responseContents) {
         result = prescription_details.responseContents;
       } else {
@@ -308,7 +310,7 @@ const Encounter = () => {
           facility_uuid: req.headers.facility_uuid
         },
         body: {
-          "encounter_uuid": req.body.encounter_uuid, 
+          "encounter_uuid": req.body.encounter_uuid,
         },
         json: true
       };
@@ -323,7 +325,7 @@ const Encounter = () => {
     } catch (ex) {
       return ex;
     }
-  }; 
+  };
 
   const _getPreviousRMISData = async (req, res, next) => {
     try {
@@ -344,11 +346,11 @@ const Encounter = () => {
           facility_uuid: req.headers.facility_uuid
         },
         body: {
-          "encounter_uuid": req.body.encounter_uuid, 
+          "encounter_uuid": req.body.encounter_uuid,
         },
         json: true
       };
-      const rims_details = await rp(options); 
+      const rims_details = await rp(options);
       if (rims_details && rims_details.responseContents) {
         result = rims_details.responseContents;
       } else {
@@ -359,8 +361,8 @@ const Encounter = () => {
     } catch (ex) {
       return ex;
     }
-  }; 
-  
+  };
+
 
   const _getEncounterDashboardPatientInfo = async (req, res, next) => {
     try {
@@ -864,7 +866,7 @@ const Encounter = () => {
           .send(getSendResponseObject(httpStatus[400], `${emr_constants.PLEASE_PROVIDE} ${emr_constants.START_DATE} ${emr_constants.OR} ${emr_constants.END_DATE}`));
       }
       try {
-        encounter = enc_att.assignDefaultValuesToEncounter(encounter, user_uuid); 
+        encounter = enc_att.assignDefaultValuesToEncounter(encounter, user_uuid);
         encounterDoctor = enc_att.assignDefaultValuesToEncounterDoctor(encounterDoctor, encounter, user_uuid);
 
         let encounterDoctorData, encounterData, is_enc_avail, is_enc_doc_avail;
@@ -943,7 +945,7 @@ const Encounter = () => {
           sessionName = 'Casualty';
         }
         /* Getting Session Type Based on Fixed Intervals - End */
-        
+
         if (!is_enc_avail) {
           /* Closing all previous active encounters for this patient */
           await encounter_tbl.update(
@@ -962,7 +964,15 @@ const Encounter = () => {
             },
             required: false
           });
-          /* #H30-40403 - Changes for Department Visit Type By Elumalai - End */   
+          /* #H30-40403 - Changes for Department Visit Type By Elumalai - End */
+
+          /**H30-49153 - EMR - OP Referal Out Speciality Wise  By Elumalai - Start*/
+          if (encounter.is_adult === '1') {
+            encounter.is_adult == 1
+          } else if (encounter.is_adult === '0') {
+            encounter.is_adult == 0
+          }
+          /**H30-49153 - EMR - OP Referal Out Speciality Wise  By Elumalai - End*/
 
           createdEncounter = await encounter_tbl.create(encounter, { returning: true, });
 
@@ -1020,7 +1030,7 @@ const Encounter = () => {
         /* #H30-40403 - Changes for Department Visit Type By Elumalai - Start */
         if (deptVisit && deptVisit.length > 0) {
           encounterDoctor.dept_visit_type_uuid = 2;
-          encounterDoctor.visit_type_name = 'Old'; 
+          encounterDoctor.visit_type_name = 'Old';
         } else {
           encounterDoctor.dept_visit_type_uuid = 1;
           encounterDoctor.visit_type_name = 'New';
@@ -1065,16 +1075,16 @@ const Encounter = () => {
         if (is_reg_avail) {
           if (op_emr_census_data[0].encounter_uuid === 0) {
             op_emr_census_count_tbl.update(
-              { 
-                  encounter_uuid: createdEncounter.uuid,
-                  encounter_doctor_uuid: encounterDoctor.doctor_uuid,
-                  encounter_department_uuid: encounterDoctor.department_uuid,
-                  encounter_type_uuid: createdEncounter.encounter_type_uuid,
-                  encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
-                  visit_type_name: encounterDoctor.visit_type_name,
-                  encounter_date: createdEncounter.created_date,
-                  encounter_session_uuid: encounterDoctor.session_type_uuid,
-                  encounter_session_name: encounterDoctor.encounter_session_name
+              {
+                encounter_uuid: createdEncounter.uuid,
+                encounter_doctor_uuid: encounterDoctor.doctor_uuid,
+                encounter_department_uuid: encounterDoctor.department_uuid,
+                encounter_type_uuid: createdEncounter.encounter_type_uuid,
+                encounter_visit_type_uuid: encounterDoctor.dept_visit_type_uuid,
+                visit_type_name: encounterDoctor.visit_type_name,
+                encounter_date: createdEncounter.created_date,
+                encounter_session_uuid: encounterDoctor.session_type_uuid,
+                encounter_session_name: encounterDoctor.encounter_session_name
               },
               { where: { uuid: op_emr_census_data[0].uuid } }
             )
@@ -1705,7 +1715,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_child_transgender'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'new_child_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'total_new_patients'],
 
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'old_adult_male'],
@@ -1748,22 +1758,22 @@ const Encounter = () => {
         group: 'encounter_doctors.department_uuid'
       };
 
-      function notOnlyALogger(msg){
+      function notOnlyALogger(msg) {
         console.log('hey, Im a single log');
         console.log(msg);
       }
       findQuery.logging = notOnlyALogger;
       let data = await encounter_tbl.findAll(findQuery);
-      if(data) {
+      if (data) {
         data.forEach(ele => {
           ele.departmentUuid = ele['encounter_doctors.department_uuid'];
-          ele.total_patients = (parseFloat( ele.total_new_patients ) + parseFloat( ele.total_old_patients )).toString();
+          ele.total_patients = (parseFloat(ele.total_new_patients) + parseFloat(ele.total_old_patients)).toString();
           delete ele['encounter_doctors.department_uuid'];
         });
 
         const uniqueDepartment = [...new Set(data.map(item => item.departmentUuid))];
         const { responseContent: deptResp } = await requestApi.getResults('department/getSpecificDepartmentsByIds', req, { uuid: uniqueDepartment });
-        if(deptResp) {
+        if (deptResp) {
 
           data.forEach(ele => {
             const deptindex = deptResp.rows.findIndex(item => item.uuid == ele.departmentUuid);
@@ -1815,7 +1825,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'morning_new_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'morning_new_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'morning_new_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_adult_total'],
@@ -1823,7 +1833,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'evening_new_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_adult_total'],
@@ -1831,7 +1841,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 1 THEN 1 ELSE 0 END')), 'casualty_new_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_adult_total'],
@@ -1839,7 +1849,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 1 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'morning_old_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_adult_total'],
@@ -1847,7 +1857,7 @@ const Encounter = () => {
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_child_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 0 AND `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_child_total'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `encounter_doctors`.`session_type_uuid` = 2 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'evening_old_total'],
-          
+
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_male'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `gender_uuid` = 2 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_female'],
           [Sequelize.fn('SUM', Sequelize.literal('CASE WHEN `is_adult` = 1 AND `encounter_doctors`.`session_type_uuid` = 3 AND `encounter_doctors`.`dept_visit_type_uuid` = 2 THEN 1 ELSE 0 END')), 'casualty_old_adult_total'],
@@ -1883,16 +1893,16 @@ const Encounter = () => {
         }
       };
 
-      function notOnlyALogger(msg){
+      function notOnlyALogger(msg) {
         console.log('hey, Im a single log');
         //do whatever you need in here
         console.log(msg);
       }
       findQuery.logging = notOnlyALogger;
       let data = await encounter_tbl.findAll(findQuery);
-      if(data) {
+      if (data) {
         data = data[0];
-        data.total_patients = (parseFloat( data.morning_new_total ) + parseFloat( data.evening_new_total ) + parseFloat( data.casualty_new_total ) + parseFloat( data.morning_old_total ) + parseFloat( data.evening_old_total ) + parseFloat( data.casualty_old_total )).toString();
+        data.total_patients = (parseFloat(data.morning_new_total) + parseFloat(data.evening_new_total) + parseFloat(data.casualty_new_total) + parseFloat(data.morning_old_total) + parseFloat(data.evening_old_total) + parseFloat(data.casualty_old_total)).toString();
       }
 
       return res.send({
@@ -2072,7 +2082,7 @@ async function getPatientRegDetails(FacilityId, DepartmentId, PatientId, RegDate
       facility_uuid: FacilityId,
       department_uuid: DepartmentId,
       patient_uuid: PatientId,
-      registration_date:  {
+      registration_date: {
         [Op.and]: [
           Sequelize.where(
             Sequelize.fn("date", Sequelize.col("registration_date")),
