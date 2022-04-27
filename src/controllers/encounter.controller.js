@@ -968,9 +968,9 @@ const Encounter = () => {
 
           /**H30-49153 - EMR - OP Referal Out Speciality Wise  By Elumalai - Start*/
           if (encounter.is_adult === '1') {
-            encounter.is_adult == 1
+            encounter.is_adult = 1;
           } else if (encounter.is_adult === '0') {
-            encounter.is_adult == 0
+            encounter.is_adult = 0;
           }
           /**H30-49153 - EMR - OP Referal Out Speciality Wise  By Elumalai - End*/
 
