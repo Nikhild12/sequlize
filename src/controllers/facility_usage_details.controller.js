@@ -40,7 +40,7 @@ let fetchQuery = "SELECT SUM(CASE WHEN oecc.is_adult = 1 AND oecc.gender_uuid = 
 " SUM(CASE WHEN oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) + SUM(CASE WHEN oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS total_patients," + 
 " oecc.facility_uuid AS facility_uuid,oecc.facility_name AS facility_name,oecc.facility_type_name" +  //H30-48821-Saju-Institution Wise performance Reports
 " FROM op_emr_census_count AS oecc" + 
-" WHERE oecc.encounter_type_uuid != 2  AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+" WHERE oecc.encounter_type_uuid != 2 AND oecc.facility_type_uuid != 0  AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";   // H30-49285- Khurshid--- Institution wise performance report issue
 
 if(facility_uuid && facility_uuid > 0) {
   fetchQuery = fetchQuery + ` AND oecc.facility_uuid IN (${facility_uuid})`
