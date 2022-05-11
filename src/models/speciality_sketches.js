@@ -51,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 1,
         },
+        //H30-49589-Saju-Speciality sketch api changes
+        url: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         is_active: {
             type: DataTypes.BOOLEAN,
             defaultValue: 1
