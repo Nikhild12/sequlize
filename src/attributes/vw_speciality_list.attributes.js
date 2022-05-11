@@ -25,7 +25,8 @@ const _getSpecialityListAttributes = [
     "modified_user_name",
     "created_title_name",
     "modified_title_name",
-    "d_name"
+    "d_name",
+    "ss_url" //H30-49589-Saju-Speciality sketch api changes
 ];
 
 const _getSpecialityListById = (id = 0) => {
@@ -64,6 +65,7 @@ const _getSpecialityResponse = (record = []) => {
             created_title_name: element.created_title_name,
             modified_title_name: element.modified_title_name,
             department_name: element.d_name,
+            url: element.ss_url, //H30-49589-Saju-Speciality sketch api changes
             speciality_sketch_details: record.map((r) => {
                 return {
                     speciality_sketch_uuid: r.ssd_speciality_sketch_uuid,
