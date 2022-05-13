@@ -122,6 +122,12 @@ const MyPatientListController = () => {
 
       const { facility_uuid, user_uuid, authorization } = req.headers;
 
+      if (!doctor_id) {
+        return res.send({ status: 'error', statusCode: 422, message: 'Doctor Id required' })
+      }
+      if (!departmentId) {
+        return res.send({ status: 'error', statusCode: 422, message: 'Department Id required' })
+      }
       let isFromDateValid, isToDateValid, defFromDate, defToDate;
       let offset;
 
@@ -136,7 +142,7 @@ const MyPatientListController = () => {
       isToDateValid = emr_utility.checkDateValid(to_date);
 
       if (!isFromDateValid || !isToDateValid) {
-        return res.send({ status: 'error', statusCode: 422 })
+        return res.send({ status: 'error', statusCode: 422, message: 'Date not valid' })
       }
 
       let qry = 'SELECT oecc.encounter_department_uuid, d.name AS diagnosis_name, oecc.encounter_doctor_uuid, pd.encounter_uuid, oecc.patient_uuid, oecc.patient_pin_no, oecc.patient_name, oecc.age, oecc.gender_uuid, oecc.mobile, oecc.encounter_date FROM encounter_doctors ed JOIN op_emr_census_count oecc ON ed.doctor_uuid = oecc.encounter_doctor_uuid JOIN patient_diagnosis pd ON ed.patient_uuid = pd.patient_uuid JOIN diagnosis d ON pd.diagnosis_uuid = d.uuid WHERE pd.diagnosis_uuid IS NOT NULL ';

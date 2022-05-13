@@ -786,6 +786,11 @@
                },
                {
                   "in": "formData",
+                  "name": "url",
+                  "type": "string"
+               },
+               {
+                  "in": "formData",
                   "name": "file",
                   "required": true,
                   "type": "file"
@@ -891,6 +896,11 @@
                {
                   "in": "formData",
                   "name": "delete",
+                  "type": "string"
+               },
+               {
+                  "in": "formData",
+                  "name": "url",
                   "type": "string"
                }
             ],

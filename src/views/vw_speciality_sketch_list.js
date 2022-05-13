@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
             ss_revision: {
                 type: DataTypes.INTEGER
             },
+            //H30-49589-Saju-Speciality sketch api changes
+            ss_url: {
+                type: DataTypes.STRING
+            },
             ss_created_by: {
                 type: DataTypes.INTEGER
             },
