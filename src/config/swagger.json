@@ -8318,6 +8318,43 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/my-patient-list/getMyPatientListNew": {
+         "post": {
+            "summary": "Get List of my patient for the doctor",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "body",
+                  "name": "mypatientlistnew",
+                  "schema": {
+                     "$ref": "#/definitions/getPatientListDetails"
+                  }
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "MyPatientList"
+            ],
+            "responses": {
+               "200": {
+                  "description": "sucessful operation",
+                  "schema": {
+                     "$ref": "#/definitions/getMyPatientListDetails"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/family-history/create": {
          "post": {
             "description": "To Create a family history",

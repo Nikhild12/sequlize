@@ -21,7 +21,7 @@ const myPatientlistAttributes = require("../attributes/my_patient_list");
 const MyPatientListController = () => {
   const _getMyPatientListByFilters = async (req, res) => {
     const { user_uuid } = req.headers;
-    let { departmentId, from_date, to_date, doctor_id,pa_pin,pd_mobile } = req.body;
+    let { departmentId, from_date, to_date, doctor_id, pa_pin, pd_mobile } = req.body;
     let { pageNo, paginationSize, sortOrder, sortField } = req.body;
     const rBody = req.body;
     let offset;
@@ -64,11 +64,11 @@ const MyPatientListController = () => {
 
         mypatientListQuery.where.ec_doctor_uuid = +(doctor_id);
         mypatientListQuery.where.d_uuid = +(departmentId);
-        if(user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pd_mobile ){
+        if (user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pd_mobile) {
           mypatientListQuery.where.pd_mobile = +(pd_mobile);
-        }else if(user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pa_pin){
+        } else if (user_uuid && isFromDateValid && isToDateValid && doctor_id && departmentId && pa_pin) {
           mypatientListQuery.where.pa_pin = +(pa_pin);
-        }else {
+        } else {
 
         }
         mypatientListQuery.where = getSearchValue(rBody, mypatientListQuery.where);
@@ -105,8 +105,100 @@ const MyPatientListController = () => {
     }
   };
 
+  /**H30-49671 - OP EMR - My Patient List - Elumalai Govindan - Start */
+  const _getMyOPPatientList = async (req, res) => {
+    try {
+      let {
+        departmentId,
+        doctor_id,
+        from_date,
+        pageNo,
+        paginationSize,
+        to_date,
+        pd_mobile,
+        pd_pin,
+        p_old_pin
+      } = req.body
+
+      const { facility_uuid, user_uuid, authorization } = req.headers;
+
+      if (!doctor_id) {
+        return res.send({ status: 'error', statusCode: 422, message: 'Doctor Id required' })
+      }
+      if (!departmentId) {
+        return res.send({ status: 'error', statusCode: 422, message: 'Department Id required' })
+      }
+      let isFromDateValid, isToDateValid, defFromDate, defToDate;
+      let offset;
+
+      pageNo = pageNo && !isNaN(+(pageNo)) ? pageNo : 0;
+      paginationSize = paginationSize && !isNaN(+(paginationSize)) ? paginationSize : 10;
+      offset = pageNo * paginationSize;
+
+      defFromDate = emr_utility.indiaTz(from_date).format('YYYY-MM-DD');
+      isFromDateValid = emr_utility.checkDateValid(from_date);
+
+      defToDate = emr_utility.indiaTz(to_date).format('YYYY-MM-DD');
+      isToDateValid = emr_utility.checkDateValid(to_date);
+
+      if (!isFromDateValid || !isToDateValid) {
+        return res.send({ status: 'error', statusCode: 422, message: 'Date not valid' })
+      }
+
+      let qry = 'SELECT oecc.encounter_department_uuid, d.name AS diagnosis_name, oecc.encounter_doctor_uuid, pd.encounter_uuid, oecc.patient_uuid, oecc.patient_pin_no, oecc.patient_name, oecc.age, oecc.gender_uuid, oecc.mobile, oecc.encounter_date FROM encounter_doctors ed JOIN op_emr_census_count oecc ON ed.doctor_uuid = oecc.encounter_doctor_uuid JOIN patient_diagnosis pd ON ed.patient_uuid = pd.patient_uuid JOIN diagnosis d ON pd.diagnosis_uuid = d.uuid WHERE pd.diagnosis_uuid IS NOT NULL ';
+
+      if (pd_mobile) {
+        qry += ' AND oecc.mobile=:pd_mobile '
+      } else if (pd_pin) {
+        qry += ' AND oecc.patient_pin_no=:pd_pin '
+      }
+
+      if (doctor_id) {
+        qry += ' AND oecc.encounter_doctor_uuid=:doctor_id '
+      }
+
+      if (departmentId) {
+        qry += ' AND oecc.encounter_department_uuid=:departmentId '
+      }
+
+      if (facility_uuid) {
+        qry += ' AND oecc.facility_uuid=:facility_uuid ';
+      }
+
+      if (from_date && to_date) {
+        qry += ' AND oecc.encounter_date BETWEEN :fromDate AND :toDate'
+      }
+
+      qry += ' ORDER BY oecc.encounter_date DESC LIMIT ' + offset + ', ' + paginationSize
+
+      const dataJson = {
+        facility_uuid: facility_uuid,
+        fromDate: defFromDate,
+        toDate: defToDate,
+        pd_pin: pd_pin,
+        doctor_id: doctor_id,
+        departmentId: departmentId
+      }
+
+      const myPatientList = await sequelizeDb.sequelize.query(qry, { replacements: dataJson, type: Sequelize.QueryTypes.SELECT });
+
+      return res.status(200).send({
+        code: httpStatus.OK,
+        message: myPatientList && myPatientList.length > 0 ? emr_constants.MY_PATIENT_LIST : emr_constants.NO_RECORD_FOUND,
+        responseContents: myPatientList ? myPatientList : [],
+        responseLength: myPatientList ? myPatientList.length : 0,
+        totalRecords: myPatientList ? myPatientList.count : 0
+      });
+
+    } catch (ex) {
+      return res
+        .status(400).send({ code: httpStatus.INTERNAL_SERVER_ERROR, message: ex.message });
+    }
+  }
+  /**H30-49671 - OP EMR - My Patient List - Elumalai Govindan - End */
   return {
-    getMyPatientListByFilters: _getMyPatientListByFilters
+    getMyPatientListByFilters: _getMyPatientListByFilters,
+    getMyOPPatientList: _getMyOPPatientList /**H30-49671 - OP EMR - My Patient List - Elumalai Govindan*/
   };
 };
 module.exports = MyPatientListController();
