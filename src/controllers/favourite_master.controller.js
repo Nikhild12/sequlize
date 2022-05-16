@@ -951,22 +951,23 @@ const TickSheetMasterController = () => {
       });
     }
   };
-
+//Bhaskar  H30-49679 API Changes for Department based screen load
   const _getAllFavourites = async (req, res) => {
     try {
       const { user_uuid, facility_uuid } = req.headers;
       // Destructuring Req Body
       const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
-      const { pageNo = 0, status = 1, facility_id, department_id, search, user_id } = req.body;
+      const { pageNo = 0, status = 1, department_uuid, search } = req.body;
+
       let findQuery = {
         offset: +(pageNo) * +(paginationSize),
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid }
+        where: { }
       };
 
-      findQuery.where['is_active'] = +(status);
+      findQuery.where['is_active'] = status == '' || status == 1 ? 1 : 0;
 
       if (search && /\S/.test(search)) {
         findQuery.where[Op.or] = [
@@ -975,22 +976,24 @@ const TickSheetMasterController = () => {
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('d_name')), 'LIKE', '%' + search.toLowerCase() + '%')
         ];
       }
+
       if (req.body.name && /\S/.test(req.body.name)) {
         findQuery.where['fm_name'] = {
           [Op.like]: "%" + req.body.name + "%"
         };
       }
-      if (facility_id && /\S/.test(facility_id)) {
-        findQuery.where['fm_facility_uuid'] = facility_id;
+      if (facility_uuid && /\S/.test(facility_uuid)) {
+        findQuery.where['fm_facility_uuid'] = facility_uuid;
       }
 
-      if (department_id && /\S/.test(department_id)) {
-        findQuery.where['fm_department_uuid'] = department_id;
+      if (department_uuid && /\S/.test(department_uuid)) {
+        findQuery.where['fm_department_uuid'] = department_uuid;
       }
 
-      if (user_id && /\S/.test(user_id)) {
-        findQuery.where['fm_user_uuid'] = user_id;
+      if (user_uuid && /\S/.test(user_uuid)) {
+        findQuery.where['fm_user_uuid'] = user_uuid;
       }
+
       if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
         req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
         if (!isNaN(req.body.favourite_type_uuid)) {
@@ -1012,6 +1015,7 @@ const TickSheetMasterController = () => {
         .json({ status: "error", msg: errorMsg });
     }
   };
+  //Bhaskar  H30-49679 API Changes for Department based screen load
 
   return {
     createTickSheetMaster: _createTickSheetMaster,
