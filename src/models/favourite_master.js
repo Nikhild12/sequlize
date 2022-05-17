@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
+        // references: {
+        //   model: 'favourite_type',
+        //   key: 'uuid'
+        // },
         validate: {
           notNull: true
         }
@@ -110,6 +114,10 @@ module.exports = (sequelize, DataTypes) => {
   TICK_SHEET_MASTER.associate = models => {
     TICK_SHEET_MASTER.hasOne(models.favourite_master_details, {
       foreignKey: "favourite_master_uuid"
+    });
+
+    TICK_SHEET_MASTER.belongsTo(models.favourite_type, {
+      foreignKey: "favourite_type_uuid"
     });
   };
 

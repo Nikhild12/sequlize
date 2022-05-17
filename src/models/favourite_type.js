@@ -1,4 +1,5 @@
 
+const emr_constants = require('../config/constants');
 
 module.exports = (sequelize, DataTypes) => {
     const favourite_type = sequelize.define(
@@ -52,6 +53,11 @@ module.exports = (sequelize, DataTypes) => {
             }]
         }
     );
+    favourite_type.associate = models => {
+    favourite_type.hasMany(models.favourite_master, {
+        foreignKey: "favourite_type_uuid"
+      });
+    };
 
     return favourite_type;
 };
