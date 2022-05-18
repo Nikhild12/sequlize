@@ -11305,6 +11305,48 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/dashboard/diagnosis_dashboard": {
+         "get": {
+            "summary": "To get Diagnosis DashBoad Data",
+            "parameters": [
+               {
+                  "in": "header",
+                  "name": "user_uuid",
+                  "required": true,
+                  "type": "integer"
+               },
+               {
+                  "in": "query",
+                  "name": "diagnosis_uuid",
+                  "required": false,
+                  "type": "integer"
+               },
+               {
+                  "in": "header",
+                  "name": "facility_uuid",
+                  "required": true,
+                  "type": "integer"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "tags": [
+               "Dash Board"
+            ],
+            "responses": {
+               "200": {
+                  "description": "get Successfully",
+                  "schema": {
+                     "$ref": "#/definitions/getdashboard"
+                  }
+               }
+            },
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/profiles/update": {
          "put": {
             "summary": "To Update profiles Data",
