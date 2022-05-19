@@ -1,6 +1,6 @@
 const db = require("../config/sequelize");
 const Sequelize = db.Sequelize;
-
+const Op = Sequelize.Op; /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan */
 const rp = require('request-promise');
 
 // Config Import
@@ -259,7 +259,49 @@ const patientOPEmrCensusController = () => {
       });
     }
   }
+
   /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan - End */
+
+  /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan - Start*/
+  /**
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   * @returns Based on the input we are getting cencus details
+   * based on the encounter and patient Id's
+   */
+  const getOPCensusDetails = async (req, res) => {
+    try {
+      const { encounter_uuids, patient_uuids } = req.body;
+      if (encounter_uuids && patient_uuids) {
+        const data = await opEmrCensus_tbl.findAll({
+          attributes: ['encounter_uuid', 'patient_uuid', 'is_prescribed'],
+          where: {
+            encounter_uuid: { [Op.in]: encounter_uuids },
+            patient_uuid: { [Op.in]: patient_uuids }
+          }
+        })
+        return res.send({
+          statusCode: 200,
+          message: 'Rerived census details',
+          responseContents: data
+        });
+      } else {
+        return res.send({
+          statusCode: 200,
+          message: 'Not Retrived. Kindly provide encounter and patient Id',
+          responseContents: []
+        });
+      }
+    } catch (err) {
+      return res.json({
+        statusCode: 500,
+        message: err.message,
+        actualMsg: err
+      });
+    }
+  }
+  /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan - End*/
   // --------------------------------------------return----------------------------------
   return {
     addOPEMRCensusCount,
@@ -268,7 +310,8 @@ const patientOPEmrCensusController = () => {
     getDayWisePatientList,
     getDayWisePatientCount,
     getTotalRegCount,
-    updateOPEMRCensusCount /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan */
+    updateOPEMRCensusCount, /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan */
+    getOPCensusDetails /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan*/
   };
 };
 
