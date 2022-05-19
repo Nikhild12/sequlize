@@ -106,5 +106,10 @@ module.exports = (sequelize, DataTypes) => {
       ]
     }
   );
+  ENCOUNTER_DOCTOR.associate = models => {
+    ENCOUNTER_DOCTOR.belongsTo(models.favourite_type, {
+      foreignKey: "uuid"
+    });
+  };
   return ENCOUNTER_DOCTOR;
 };

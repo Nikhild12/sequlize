@@ -40,7 +40,10 @@ const encounterBlockChain = require('../blockChain/encounter.blockchain');
 const config = require('../config/config');
 const utils = require('../helpers/utils');
 const appMasterData = require("../controllers/appMasterData");
+const _requests = require('../requests/requests');
 
+// Lodash Import
+const _ = require("lodash");
 // Query
 function getActiveEncounterQuery(pId, dId, deptId, etypeId, fId) {
   let encounterQuery = {
@@ -1449,21 +1452,72 @@ const Encounter = () => {
       user_uuid
     ) {
       try {
-        const latestEncounterRecord = await vw_latest_encounter.findAll({
-          attributes: enc_att.getLatestEncounterAttributes(),
-          where: enc_att.getLatestEncounterQuery(patientId, encounterTypeId),
-          order: [["ed_uuid", "desc"]],
-        });
+        // const latestEncounterRecord = await vw_latest_encounter.findAll(
+        //   {
+        //   attributes: enc_att.getLatestEncounterAttributes(),
+        //   where: enc_att.getLatestEncounterQuery(patientId, encounterTypeId),
+        //   order: [["ed_uuid", "desc"]],
+        // }
+        // );
+       let query = {
+        where: {
+          encounter_type_uuid : encounterTypeId
+        },
+        attributes:[["encounter_type_uuid","ed_encounter_type_uuid"]],
+        include : [{
+            model : encounter_doctors_tbl,
+            where :{
+              patient_uuid : patientId
+            },
+            order: [["ed_uuid", "desc"]],
+            attributes:[['uuid','ed_uuid'],['patient_uuid','ed_patient_uuid'],['encounter_uuid','ed_encounter_uuid'],['doctor_uuid','ed_doctor_uuid'],['department_uuid','ed_department_uuid'],['is_active','ed_is_active'],['status','ed_status'],['created_date','ed_created_date']],
+          }]
+        }
+  
+       
+      let  data  =  await encounter_tbl.findAll(query);
+      data = JSON.parse(JSON.stringify(data))
+      let departmentIds = [...new Set(data.map(e => e.encounter_doctors.map(m=>m.ed_department_uuid)))];
+      let userIds = [...new Set(data.map(e => e.encounter_doctors.map(m=>m.ed_doctor_uuid)))];
+      departmentIds = _.flatten(departmentIds);
+      userIds = _.flatten(userIds);
+      let departmentData = await _requests.getResults('department/getDepartmentsByIds',req,{
+        uuid: departmentIds
+      })
+      let departmentGroupBy  = departmentData.responseContent && departmentData.responseContent.length ? _.groupBy(departmentData.responseContent, 'uuid') : [];
+      let userData = await _requests.getResults('userProfile/getSpecificUsersByIds', req, { uuid: userIds});
+      let userGroupBy  = userData.responseContents && userData.responseContents.length ? _.groupBy(userData.responseContents, 'uuid') : [];
+      let salutationIds = [...new Set(userData.responseContents.map(e => e.salutation_uuid))];
+      let titleData = await _requests.getResults('title/getTitleByIds', req, { titleIds: salutationIds});
+      let titleGroupBy  = titleData.responseContent && titleData.responseContent.length ? _.groupBy(titleData.responseContent, 'uuid') : [];
+      let finalResp = []
+      data.forEach(ele=>{
+        let newObj = JSON.parse(JSON.stringify(ele))
+        delete newObj.encounter_doctors;
+        newObj = {...newObj,...ele.encounter_doctors[0]}
+         // for title 
+        newObj.t_uuid = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].salutation_uuid : ''
+        newObj.t_name = titleGroupBy[newObj.t_uuid] && titleGroupBy[newObj.t_uuid].length ?  titleGroupBy[newObj.t_uuid][0].name : ''
+        // for department data
+        newObj.d_uuid = departmentGroupBy[newObj.ed_department_uuid] && departmentGroupBy[newObj.ed_department_uuid].length ? departmentGroupBy[newObj.ed_department_uuid][0].uuid : ''
+        newObj.d_name = departmentGroupBy[newObj.ed_department_uuid] && departmentGroupBy[newObj.ed_department_uuid].length ? departmentGroupBy[newObj.ed_department_uuid][0].name : ''
+        // for user 
+        newObj.u_uuid = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].first_name : ''
+        newObj.u_first_name = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].first_name : ''
+        newObj.u_middle_name = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].middle_name : ''
+        newObj.u_last_name = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].last_name : ''
+        finalResp.push(newObj);
+      })
 
         const {
           responseCode,
           responseMessage,
-        } = enc_att.getLatestEncounterResponse(latestEncounterRecord);
+        } = enc_att.getLatestEncounterResponse(finalResp);
         return res.status(200).send({
           code: responseCode,
           message: responseMessage,
           responseContents: enc_att.modifiedLatestEncounterRecord(
-            latestEncounterRecord
+            finalResp
           )[0],
         });
       } catch (error) {
