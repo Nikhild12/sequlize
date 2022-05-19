@@ -13258,6 +13258,58 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/patientopemrcensus/update_op_emr_census_count": {
+         "post": {
+            "description": "To Update patients census count ",
+            "parameters": [
+               {
+                  "in": "body",
+                  "name": "Update Op EMR Census count",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/updateOPEMRCensusCount"
+                  }
+               },
+               {
+                  "name": "user_uuid",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "authorization",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "responses": {
+               "200": {
+                  "description": "successful operation",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "tags": [
+               "OP_EMR_Census"
+            ],
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/history/createHistory": {
          "post": {
             "description": "To create history ",
@@ -23502,6 +23554,19 @@
             "created_by": {
                "type": "string",
                "example": "1"
+            }
+         }
+      },
+      "updateOPEMRCensusCount": {
+         "type": "object",
+         "properties": {
+            "patient_uuid": {
+               "type": "integer",
+               "example": 0
+            },
+            "encounter_uuid": {
+               "type": "integer",
+               "example": 0
             }
          }
       },

@@ -225,6 +225,41 @@ const patientOPEmrCensusController = () => {
   };
   //H30-49098-Saju-Create new api for get patient total registration count
 
+  /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan - End */
+  const updateOPEMRCensusCount = async (req, res) => {
+    try {
+      const { encounter_uuid, patient_uuid } = req.body;
+      if (encounter_uuid && patient_uuid) {
+        const data = await opEmrCensus_tbl.update({
+          is_prescribed
+            : 1
+        }, {
+          where: {
+            encounter_uuid: encounter_uuid,
+            patient_uuid: patient_uuid
+          }
+        })
+        return res.send({
+          statusCode: 200,
+          message: 'Updated OP EMR Census Count',
+          responseContent: data
+        });
+      } else {
+        return res.send({
+          statusCode: 200,
+          message: 'Not Updated. Kindly provide encounter and patient Id',
+          responseContent: []
+        });
+      }
+    } catch (err) {
+      return res.json({
+        statusCode: 500,
+        message: err.message,
+        actualMsg: err
+      });
+    }
+  }
+  /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan - End */
   // --------------------------------------------return----------------------------------
   return {
     addOPEMRCensusCount,
@@ -232,7 +267,8 @@ const patientOPEmrCensusController = () => {
     getSessionWisePatCount,
     getDayWisePatientList,
     getDayWisePatientCount,
-    getTotalRegCount
+    getTotalRegCount,
+    updateOPEMRCensusCount /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan */
   };
 };
 
