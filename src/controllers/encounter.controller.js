@@ -1442,6 +1442,7 @@ const Encounter = () => {
     }
   };
 
+  
   const _getLatestEncounterByPatientId = async (req, res) => {
     const { user_uuid } = req.headers;
     const { patientId, encounterTypeId } = req.query;
@@ -1459,6 +1460,7 @@ const Encounter = () => {
         //   order: [["ed_uuid", "desc"]],
         // }
         // );
+        // H30-49774  --EMR API-get-latest-enc-by-patient  view replace by API call- jevin -- Start 
        let query = {
         where: {
           encounter_type_uuid : encounterTypeId
@@ -1508,6 +1510,7 @@ const Encounter = () => {
         newObj.u_last_name = userGroupBy[newObj.ed_doctor_uuid] && userGroupBy[newObj.ed_doctor_uuid].length ? userGroupBy[newObj.ed_doctor_uuid][0].last_name : ''
         finalResp.push(newObj);
       })
+      // H30-49774  --EMR API-get-latest-enc-by-patient  view replace by API call- jevin -- End 
 
         const {
           responseCode,
