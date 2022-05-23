@@ -12,6 +12,7 @@ const emr_utility = require("../services/utility.service");
 
 // Initialize Treatment Kit
 const treatmentkitTbl = sequelizeDb.treatment_kit;
+const shareTbl = sequelizeDb.share;
 const treatmentkitLabTbl = sequelizeDb.treatment_kit_lab_map;
 const treatmentkitRadiologyTbl = sequelizeDb.treatment_kit_radiology_map;
 const treatmentkitDrugTbl = sequelizeDb.treatment_kit_drug_map;
@@ -26,6 +27,10 @@ const {
 } = emr_constants.DEPENDENCY_URLS;
 // Treatment Kit Attribute
 const treatmentKitAtt = require('../attributes/treatment_kit.attributes');
+const _requests = require('../requests/requests');
+
+// Lodash Import
+const _ = require("lodash");
 
 // Treatment Kit Filters Query Function
 const getByFilterQuery = (searchBy, searchValue) => {
@@ -416,7 +421,7 @@ const TreatMent_Kit = () => {
       const institutionId = getsearch.institutionId ? getsearch.institutionId : req.headers.facility_uuid;
       const departmentId = getsearch.departmentId ? getsearch.departmentId : 0;
       const userId = getsearch.userId ? getsearch.userId : req.headers.user_uuid;
-      let sortArr = ["tk_uuid", "DESC"];
+      let sortArr = ["uuid", "DESC"];
       if (getsearch.pageNo) {
         let temp = parseInt(getsearch.pageNo);
         if (temp && (temp != NaN)) {
@@ -461,44 +466,73 @@ const TreatMent_Kit = () => {
         },
         group: ['tk_uuid']
       };
-      findQuery.where['tk_facility_uuid'] = institutionId;
+    //H30-49835  --GetAllTreatmentKit view replace with api call - jevin -- Start
+      let findTreatmentQuery = {
+        subQuery: false,
+        offset: offset,
+        limit: itemsPerPage,
+        where: {
+          status: 1,
+          is_active: 1
+        },
+        order: [sortArr],
+        attributes:[
+          ['uuid','tk_uuid'],
+          ['code','tk_code'],
+          ['name','tk_name'],
+          ['is_public','tk_is_public'],
+          ['share_uuid','tk_share_uuid'],
+          ['facility_uuid','tk_facility_uuid'],
+          ['department_uuid','tk_department_uuid'],
+          ['user_uuid','tk_user_uuid'],
+          ['status','tk_status'],
+          ['is_active','tk_is_active'],
+          ['modified_date','modified_date'],
+          ['activefrom','activefrom'],
+          ['activeto','activeactiveto']
+        ],
+        group: ['uuid']
+      };
+      if(institutionId){
+        findTreatmentQuery.where['facility_uuid'] = institutionId
+      }
+      if(departmentId){
+        findTreatmentQuery.where['department_uuid'] = departmentId
+      }
+        
       if (getsearch.search && /\S/.test(getsearch.search)) {
-        findQuery.where[Op.or] = [
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.f_code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
-          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.s_name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%')
+        findTreatmentQuery.where[Op.or] = [
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
+          Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + getsearch.search.toLowerCase() + '%'),
         ];
       }
       if (req.body.codeName && /\S/.test(req.body.codeName)) {
-        if (findQuery.where[Op.or]) {
-          findQuery.where[Op.and] = [{
+        if (findTreatmentQuery.where[Op.or]) {
+          findTreatmentQuery.where[Op.and] = [{
             [Op.or]: [
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
-              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+              Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
             ]
           }];
         } else {
-          findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+          findTreatmentQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('code')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + req.body.codeName.toLowerCase() + '%'),
           ];
         }
       }
       if (getsearch.departmentId && /\S/.test(getsearch.departmentId)) {
-        if (findQuery.where[Op.or]) {
+        if (findTreatmentQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
-            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.d_uuid')), getsearch.departmentId)]
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('department_uuid')), getsearch.departmentId)]
           }];
         } else {
-          findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.d_uuid')), getsearch.departmentId)
+          findTreatmentQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('department_uuid')), getsearch.departmentId)
           ];
         }
       }
-      if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
+      /*if (getsearch.createdBy && /\S/.test(getsearch.createdBy)) {
         if (findQuery.where[Op.or]) {
           findQuery.where[Op.and] = [{
             [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.createdBy.toLowerCase() + '%')]
@@ -508,25 +542,87 @@ const TreatMent_Kit = () => {
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.u_first_name')), 'LIKE', '%' + getsearch.createdBy.toLowerCase() + '%')
           ];
         }
-      }
+      }*/
       if (getsearch.share && /\S/.test(getsearch.share)) {
-        if (findQuery.where[Op.or]) {
-          findQuery.where[Op.and] = [{
-            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)]
+        if (findTreatmentQuery.where[Op.or]) {
+          findTreatmentQuery.where[Op.and] = [{
+            [Op.or]: [Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('share_uuid')), getsearch.share)]
           }];
         } else {
-          findQuery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_treatment_kit.tk_share_uuid')), getsearch.share)
+          findTreatmentQuery.where[Op.or] = [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('share_uuid')), getsearch.share)
           ];
         }
       }
       if (getsearch.hasOwnProperty('status') && /\S/.test(getsearch.status)) {
-        findQuery.where['tk_is_active'] = getsearch.status;
+        findTreatmentQuery.where['is_active'] = getsearch.status;
       }
-      await treatmentKitViewTbl
-        .findAndCountAll(findQuery)
-        .then((data) => {
-          data.rows.forEach(i => {
+      
+
+      let data = await treatmentkitTbl.findAll(findTreatmentQuery);
+      data  = JSON.parse(JSON.stringify(data));
+
+      if(data && data.length){
+      let facilityIds = [...new Set(data.map(e => e.tk_facility_uuid))];
+      let departmentIds = [...new Set(data.map(e => e.tk_department_uuid))];
+      let shareIds = [...new Set(data.map(e => e.tk_share_uuid))]; 
+      let userIds = [...new Set(data.map(e => e.tk_user_uuid))];
+
+      let shareData = await shareTbl.findAll({
+        where:{
+          uuid: shareIds
+        }
+      });
+      shareData  = JSON.parse(JSON.stringify(shareData));
+      let shareDataGroupBy  = shareData && shareData.length ? _.groupBy(shareData, 'uuid') : [];
+
+      let facilityData = await _requests.getResults('facility/getSpecificFacilitiesByIds', req, {
+        uuid: facilityIds
+      });
+      let facilityGroupBy  = facilityData.responseContents && facilityData.responseContents.length ? _.groupBy(facilityData.responseContents, 'uuid') : [];
+      let departmentData = await _requests.getResults('department/getDepartmentsByIds',req,{
+        uuid: departmentIds
+      })
+      let departmentGroupBy  = departmentData.responseContent && departmentData.responseContent.length ? _.groupBy(departmentData.responseContent, 'uuid') : [];
+      let userData = await _requests.getResults('userProfile/getSpecificUsersByIds', req, { uuid: userIds});
+      let userGroupBy  = userData.responseContents && userData.responseContents.length ? _.groupBy(userData.responseContents, 'uuid') : [];
+
+      let salutationIds = [...new Set(userData.responseContents.map(e => e.salutation_uuid))];
+      let titleData = await _requests.getResults('title/getTitleByIds', req, { titleIds: salutationIds});
+      let titleGroupBy  = titleData.responseContent && titleData.responseContent.length ? _.groupBy(titleData.responseContent, 'uuid') : [];
+
+
+      let finalRes = []
+      data.forEach(ele=>{
+        let newObj = JSON.parse(JSON.stringify(ele));
+        // share table
+        newObj.s_code = shareDataGroupBy[ele.tk_share_uuid] && shareDataGroupBy[ele.tk_share_uuid].length ? shareDataGroupBy[ele.tk_share_uuid][0].code : ''
+        newObj.s_name = shareDataGroupBy[ele.tk_share_uuid] && shareDataGroupBy[ele.tk_share_uuid].length ? shareDataGroupBy[ele.tk_share_uuid][0].name : ''
+        
+        // facility table 
+        newObj.f_code = facilityGroupBy[ele.tk_facility_uuid] && facilityGroupBy[ele.tk_facility_uuid].length ? facilityGroupBy[ele.tk_facility_uuid][0].code : ''
+        newObj.f_name = facilityGroupBy[ele.tk_facility_uuid] && facilityGroupBy[ele.tk_facility_uuid].length ? facilityGroupBy[ele.tk_facility_uuid][0].name : ''
+
+        // department table 
+        newObj.d_uuid = departmentGroupBy[ele.tk_department_uuid] && departmentGroupBy[ele.tk_department_uuid].length ? departmentGroupBy[ele.tk_department_uuid][0].uuid : ''
+        newObj.d_name = departmentGroupBy[ele.tk_department_uuid] && departmentGroupBy[ele.tk_department_uuid].length ? departmentGroupBy[ele.tk_department_uuid][0].name : ''
+        // for salutation
+        newObj.u_salutation_uuid = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].salutation_uuid : ''
+        // for title 
+        newObj.ti_uuid = titleGroupBy[newObj.u_salutation_uuid] && titleGroupBy[newObj.u_salutation_uuid].length ?  titleGroupBy[newObj.u_salutation_uuid][0].uuid : ''
+        newObj.ti_name = titleGroupBy[newObj.u_salutation_uuid] && titleGroupBy[newObj.u_salutation_uuid].length ?  titleGroupBy[newObj.u_salutation_uuid][0].name : ''
+        // for user 
+        newObj.u_uuid = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].uuid : ''
+        newObj.u_first_name = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].first_name : ''
+        newObj.u_middle_name = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].middle_name : ''
+        newObj.u_last_name = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].last_name : ''
+        newObj.u_is_active = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].is_active : ''
+        newObj.u_status = userGroupBy[ele.tk_user_uuid] && userGroupBy[ele.tk_user_uuid].length ? userGroupBy[ele.tk_user_uuid][0].status : ''
+        finalRes.push(newObj);
+      })
+    
+     
+      finalRes.forEach(i => {
             i.u_first_name = i.ti_name ? i.ti_name.split('.').join("") + '.' + i.u_first_name : i.u_first_name;
           });
           return res
@@ -535,18 +631,24 @@ const TreatMent_Kit = () => {
               statusCode: 200,
               message: "Get Details Fetched successfully",
               req: '',
-              responseContents: data.rows,
-              totalRecords: data.count.length ? data.count.length : 0
+              responseContents: finalRes,
+              totalRecords: finalRes ? finalRes.length : 0
             });
-        })
-        .catch(err => {
-          return res
-            .status(409)
+
+          }else {
+            return res
+            .status(httpStatus.OK)
             .json({
-              statusCode: 409,
-              error: err
+              statusCode: 200,
+              message: "Get Details Fetched successfully",
+              req: '',
+              responseContents: data,
+              totalRecords: data ? data.length : 0
             });
-        });
+          }
+
+          //H30-49835  --GetAllTreatmentKit view replace with api call - jevin -- End
+      
     } catch (err) {
       const errorMsg = err.errors ? err.errors[0].message : err.message;
       return res
