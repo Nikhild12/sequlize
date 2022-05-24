@@ -159,6 +159,17 @@ const EMRWorkflowSettings = () => {
           responseContents: getEMRData(finalRes)
         });
         //H30-49781  --getEMRWorkflowByUserId view replace with api call  - jevin -- End
+        }else {
+
+          const responseMessage =
+          emr_data && emr_data.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given context`;
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: responseMessage,
+            responseContents: emr_data
+          });
         }
       } catch (ex) {
         console.log(ex);
@@ -225,6 +236,16 @@ const EMRWorkflowSettings = () => {
           responseContents: getEMRData(finalRes)
         });
         //H30-49781  --getEMRWorkflowByUserId view replace with api call  - jevin -- End
+        } else {
+          const responseMessage =
+          emr_data && emr_data.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given context`;
+          return res.status(200).send({
+            code: httpStatus.OK,
+            message: responseMessage,
+            responseContents: emr_data
+          });
         }
     
       } catch (ex) {

@@ -1479,6 +1479,7 @@ const Encounter = () => {
        
       let  data  =  await encounter_tbl.findAll(query);
       data = JSON.parse(JSON.stringify(data))
+      if(data && data.length){
       let departmentIds = [...new Set(data.map(e => e.encounter_doctors.map(m=>m.ed_department_uuid)))];
       let userIds = [...new Set(data.map(e => e.encounter_doctors.map(m=>m.ed_doctor_uuid)))];
       departmentIds = _.flatten(departmentIds);
@@ -1523,9 +1524,19 @@ const Encounter = () => {
             finalResp
           )[0],
         });
+      }else {
+        const {
+          responseCode,
+          responseMessage,
+        } = enc_att.getLatestEncounterResponse(data);
+        return res.status(200).send({
+          code: responseCode,
+          message: responseMessage,
+          responseContents: data
+        });
+      }
       } catch (error) {
         console.log(error);
-
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
           code: httpStatus.INTERNAL_SERVER_ERROR,
           message: error.message,
