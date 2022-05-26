@@ -758,6 +758,7 @@ async function getPrescriptionRseponse(prescriptions) {
             "drug_frequency_name": e.drug_frequency != null ? e.drug_frequency.name : null,
             "drug_frequency_id": e.drug_frequency != null ? e.drug_frequency.uuid : null,
             "drug_frequency_code": e.drug_frequency != null ? e.drug_frequency.code : null,
+            "drug_frequency_in_take": e.frequency_in_take,
             // Drug Period Details
             "drug_period_name": e.duration_period != null ? e.duration_period.name : null,
             "drug_period_id": e.duration_period != null ? e.duration_period.uuid : null,
