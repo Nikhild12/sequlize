@@ -1313,12 +1313,10 @@ const profilesController = () => {
    * @param {*} res 
    */
   const _getDefaultProfiles = async (req, res) => {
-    const {
-      user_uuid
-    } = req.headers;
+    /* const { user_uuid } = req.headers; */
     const {
       profile_type_uuid,
-      user_uuid: user_uuid1,
+      user_uuid,
       facility_uuid,
       department_uuid,
       profile_uuid
@@ -1330,42 +1328,32 @@ const profilesController = () => {
         status: emr_constants.IS_ACTIVE
       }
     };
-    /*
-    if (user_uuid1 && /\S/.test(user_uuid1)) {
+    if (user_uuid && /\S/.test(user_uuid)) {
       Object.assign(whereCond.where, {
-        user_uuid: user_uuid1
+        user_uuid: user_uuid
       });
     }
-    */
-   /*
     if (profile_uuid && /\S/.test(profile_uuid)) {
       Object.assign(whereCond.where, {
         profile_uuid: profile_uuid
       });
     }
-    */
-   /*
     if (facility_uuid && /\S/.test(facility_uuid)) {
       Object.assign(whereCond.where, {
         facility_uuid: facility_uuid
       });
     }
-    */
-    /*
     if (department_uuid && /\S/.test(department_uuid)) {
       Object.assign(whereCond.where, {
         department_uuid: department_uuid
       });
     }
-    */
     try {
       if (profile_type_uuid) {
         const result = await profilesDefaultTbl.findOne(whereCond, {
           returning: true
         });
-        // if (result != null && IsObjectEmpty(result)) {
         if (result != null) {
-
           return res.status(200).send({
             statusCode: 200,
             message: emr_constants.FETCHED_SUCCESSFULLY,
@@ -1382,7 +1370,6 @@ const profilesController = () => {
           statusCode: 422,
           req: req.body,
           message: "profile_type_uuid required"
-          /* message: "user_uuid required" */
         });
       }
     } catch (ex) {
@@ -1413,8 +1400,7 @@ const profilesController = () => {
       //   return res.status(400).send({ statusCode: 400, message: "please set either profile or profileTypes" });
       // }
       if (postData.profile_uuid && postData.profile_type_uuid && user_uuid) {
-        let updateData = {},
-          type = "";
+        let updateData = {};
         updateData = {
           profile_uuid: postData.profile_uuid,
           profile_type_uuid: postData.profile_type_uuid,
