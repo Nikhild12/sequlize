@@ -5,12 +5,14 @@ const httpStatus = require("http-status");
 const sequelizeDb = require("../config/sequelize");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const _requests = require('../requests/requests');
 
 // Lodash Import
 const _ = require("lodash");
 
 // Initialize Tick Sheet Master
 const favouriteMasterTbl = sequelizeDb.favourite_master;
+const favouriteTypeTbl = sequelizeDb.favourite_type;
 const favouritMasterDetailsTbl = sequelizeDb.favourite_master_details;
 const vmTickSheetMasterTbl = sequelizeDb.vw_favourite_master_details;
 const vmTreatmentFavourite = sequelizeDb.vw_favourite_treatment_kit;
@@ -951,22 +953,23 @@ const TickSheetMasterController = () => {
       });
     }
   };
-
-  const _getAllFavourites = async (req, res) => {
+//Bhaskar  H30-49679 API Changes for Department based screen load
+  const _getAllFavourites_old = async (req, res) => {
     try {
       const { user_uuid, facility_uuid } = req.headers;
       // Destructuring Req Body
       const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
-      const { pageNo = 0, status = 1, facility_id, department_id, search, user_id } = req.body;
+      const { pageNo = 0, status = 1, department_uuid, search } = req.body;
+
       let findQuery = {
         offset: +(pageNo) * +(paginationSize),
         limit: +(paginationSize),
         order: [[sortField, sortOrder]],
         attributes: { exclude: ["id", "createdAt", "updatedAt"] },
-        where: { fm_status: 1, fm_facility_uuid: facility_uuid }
+        where: { }
       };
 
-      findQuery.where['is_active'] = +(status);
+      findQuery.where['is_active'] = status == '' || status == 1 ? 1 : 0;
 
       if (search && /\S/.test(search)) {
         findQuery.where[Op.or] = [
@@ -975,22 +978,24 @@ const TickSheetMasterController = () => {
           Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('d_name')), 'LIKE', '%' + search.toLowerCase() + '%')
         ];
       }
+
       if (req.body.name && /\S/.test(req.body.name)) {
         findQuery.where['fm_name'] = {
           [Op.like]: "%" + req.body.name + "%"
         };
       }
-      if (facility_id && /\S/.test(facility_id)) {
-        findQuery.where['fm_facility_uuid'] = facility_id;
+      if (facility_uuid && /\S/.test(facility_uuid)) {
+        findQuery.where['fm_facility_uuid'] = facility_uuid;
       }
 
-      if (department_id && /\S/.test(department_id)) {
-        findQuery.where['fm_department_uuid'] = department_id;
+      if (department_uuid && /\S/.test(department_uuid)) {
+        findQuery.where['fm_department_uuid'] = department_uuid;
       }
 
-      if (user_id && /\S/.test(user_id)) {
-        findQuery.where['fm_user_uuid'] = user_id;
+      if (user_uuid && /\S/.test(user_uuid)) {
+        findQuery.where['fm_user_uuid'] = user_uuid;
       }
+
       if (req.body && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
         req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
         if (!isNaN(req.body.favourite_type_uuid)) {
@@ -1012,6 +1017,133 @@ const TickSheetMasterController = () => {
         .json({ status: "error", msg: errorMsg });
     }
   };
+  //Bhaskar  H30-49679 API Changes for Department based screen load
+  // H30-49697  -- getAllFavourites view replace with api to api call - jevin -- Start 
+  const _getAllFavourites = async (req, res) => {
+    try {
+      const {  facility_uuid } = req.headers;
+      // Destructuring Req Body
+      const { paginationSize = 10, sortOrder = 'DESC', sortField = 'modified_date' } = req.body;
+      const { pageNo = 0, status = 1, facility_id, department_uuid,favourite_type_uuid, search, user_uuid } = req.body;
+      let findQuery = {
+        offset: +(pageNo) * +(paginationSize),
+        limit: +(paginationSize),
+        order: [[sortField, sortOrder]],
+        attributes: [
+          ["uuid","fm_uuid"],
+          ["favourite_type_uuid","fm_favourite_type_uuid"],
+         //["is_public","fm_is_public"]
+         ["facility_uuid","fm_facility_uuid"],
+         ["department_uuid","fm_department_uuid"],
+          ["user_uuid","fm_user_uuid"],["status","fm_status"],["name","fm_name"],"is_active","modified_date","created_date"],
+         
+        where: { status: 1, facility_uuid: facility_id ? facility_id :  facility_uuid}
+      };
+
+      findQuery.where['is_active'] = +(status);
+      // if (search && /\S/.test(search)) {
+      //   findQuery.where[Op.or] = [
+      //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('ft_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+      //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('u_first_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+      //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('d_name')), 'LIKE', '%' + search.toLowerCase() + '%')
+      //   ];
+      // }
+      if (req.body.name && /\S/.test(req.body.name)) {
+        findQuery.where['name'] = {
+          [Op.like]: "%" + req.body.name + "%"
+        };
+      }
+      if (facility_id && /\S/.test(facility_id)) {
+        findQuery.where['facility_uuid'] = facility_id;
+      }
+
+      if (department_uuid && /\S/.test(department_uuid)) {
+        findQuery.where['department_uuid'] = department_uuid;
+      }
+
+      if (user_uuid && /\S/.test(user_uuid)) {
+        findQuery.where['user_uuid'] = user_uuid;
+      }
+      if (favourite_type_uuid && req.body.hasOwnProperty('favourite_type_uuid') && req.body.favourite_type_uuid) {
+        req.body.favourite_type_uuid = +(req.body.favourite_type_uuid);
+        if (!isNaN(req.body.favourite_type_uuid)) {
+          findQuery.where['favourite_type_uuid'] = req.body.favourite_type_uuid;
+        }
+      }
+
+      let includeQuery ={
+        include : [{
+          model : favouriteTypeTbl,
+          attributes:[['uuid','f_uuid'],['is_active','ft_is_active'],['status','ft_status']],
+      }]
+      }
+      let templateList = await favouriteMasterTbl.findAll({...findQuery,...includeQuery})
+     if(templateList && templateList.length){
+      templateList=  JSON.parse(JSON.stringify(templateList))
+      let facilityIds = [...new Set(templateList.map(e => e.fm_facility_uuid))];
+      let departmentIds = [...new Set(templateList.map(e => e.fm_department_uuid))];
+      let userIds = [...new Set(templateList.map(e => e.fm_user_uuid))];
+      let facilityData = await _requests.getResults('facility/getSpecificFacilitiesByIds', req, {
+        uuid: facilityIds
+      });
+      let facilityGroupBy  = facilityData.responseContents && facilityData.responseContents.length ? _.groupBy(facilityData.responseContents, 'uuid') : [];
+      let departmentData = await _requests.getResults('department/getDepartmentsByIds',req,{
+        uuid: departmentIds
+      })
+      let departmentGroupBy  = departmentData.responseContent && departmentData.responseContent.length ? _.groupBy(departmentData.responseContent, 'uuid') : [];
+      let userData = await _requests.getResults('userProfile/getSpecificUsersByIds', req, { uuid: userIds});
+      let userGroupBy  = userData.responseContents && userData.responseContents.length ? _.groupBy(userData.responseContents, 'uuid') : [];
+      let salutationIds = [...new Set(userData.responseContents.map(e => e.salutation_uuid))];
+      let titleData = await _requests.getResults('title/getTitleByIds', req, { titleIds: salutationIds});
+      let titleGroupBy  = titleData.responseContent && titleData.responseContent.length ? _.groupBy(titleData.responseContent, 'uuid') : [];
+      let finalResp = []
+      templateList.forEach(ele=>{
+        let newObj = JSON.parse(JSON.stringify(ele))
+        delete newObj.favourite_type;
+        newObj = {...newObj,...ele.favourite_type}
+        // for facility data 
+        newObj.f_uuid = facilityGroupBy[ele.fm_facility_uuid] && facilityGroupBy[ele.fm_facility_uuid].length ? facilityGroupBy[ele.fm_facility_uuid][0].uuid : ''
+        newObj.f_name = facilityGroupBy[ele.fm_facility_uuid] && facilityGroupBy[ele.fm_facility_uuid].length ? facilityGroupBy[ele.fm_facility_uuid][0].name : ''
+        newObj.f_is_active = facilityGroupBy[ele.fm_facility_uuid] && facilityGroupBy[ele.fm_facility_uuid].length ? facilityGroupBy[ele.fm_facility_uuid][0].is_active : ''
+        newObj.f_status = facilityGroupBy[ele.fm_facility_uuid] && facilityGroupBy[ele.fm_facility_uuid].length ? facilityGroupBy[ele.fm_facility_uuid][0].status : ''
+        // for department data
+        newObj.d_uuid = departmentGroupBy[ele.fm_department_uuid] && departmentGroupBy[ele.fm_department_uuid].length ? departmentGroupBy[ele.fm_department_uuid][0].uuid : ''
+        newObj.d_name = departmentGroupBy[ele.fm_department_uuid] && departmentGroupBy[ele.fm_department_uuid].length ? departmentGroupBy[ele.fm_department_uuid][0].name : ''
+        // for salutation
+        newObj.u_salutation_uuid = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].salutation_uuid : ''
+        // for title 
+        newObj.u_salutation_name = titleGroupBy[newObj.u_salutation_uuid] && titleGroupBy[newObj.u_salutation_uuid].length ?  titleGroupBy[newObj.u_salutation_uuid][0].dr_name : ''
+        // for user 
+        newObj.u_first_name = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].first_name : ''
+        newObj.u_middle_name = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].middle_name : ''
+        newObj.u_last_name = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].last_name : ''
+        newObj.u_is_active = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].is_active : ''
+        newObj.u_status = userGroupBy[ele.fm_user_uuid] && userGroupBy[ele.fm_user_uuid].length ? userGroupBy[ele.fm_user_uuid][0].status : ''
+        finalResp.push(newObj);
+      })
+      return res.status(httpStatus.OK).json({
+        statusCode: 200,
+        req: "",
+        responseContents: finalResp && finalResp.length ? finalResp : [],
+        totalRecords: finalResp.length ? finalResp.length : 0
+      });
+     }else {
+      return res.status(httpStatus.OK).json({
+        statusCode: 200,
+        req: "",
+        responseContents: templateList && templateList.length ? templateList : [],
+        totalRecords: templateList.length ? templateList.length : 0
+      });
+     }
+   
+    } catch (ex) {
+      const errorMsg = ex.errors ? ex.errors[0].message : ex.message;
+      return res
+        .status(httpStatus.INTERNAL_SERVER_ERROR)
+        .json({ status: "error", msg: errorMsg });
+    }
+  };
+  //H30-49697  -- getAllFavourites view replace with api to api call - jevin -- End
 
   return {
     createTickSheetMaster: _createTickSheetMaster,

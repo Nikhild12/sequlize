@@ -138,8 +138,57 @@ const EmrDashBoard = () => {
       return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
     }
   };
+
+  /**H30-49718-EMR Diagnosis Dashboard --> 1. Need Diagnosis filter, 2. Total patient count - Elumalai Govindan - Start */
+  const diagnosis_dashboard = async (req, res, next) => {
+    try {
+      const { facility_uuid } = req.headers;
+      const { diagnosis_uuid } = req.query;
+      let filterQuery = {
+        // logging: console.log,
+        where: {
+          status: emr_constants.IS_ACTIVE,
+          is_active: emr_constants.IS_ACTIVE,
+          diagnosis_uuid: { [Op.ne]: 0 }
+        },
+        group: ['diagnosis_uuid'],
+        attributes: ['diagnosis_uuid',
+          [Sequelize.fn('COUNT', Sequelize.col('patient_uuid')), 'pateint_count']
+        ],
+        include: [{
+          model: diagnosis_tbl,
+          attributes: ['code', 'name'],
+        }],
+        order: [[Sequelize.col('diagnosis_uuid'), 'ASC']]
+      };
+
+      if (!facility_uuid) {
+        return res.status(422).send({ code: httpStatus.UNPROCESSABLE_ENTITY, message: 'Facility Id is required' });
+      } else {
+        Object.assign(filterQuery.where, {
+          facility_uuid: facility_uuid
+        })
+      }
+
+      if (diagnosis_uuid) {
+        Object.assign(filterQuery.where, {
+          diagnosis_uuid: diagnosis_uuid
+        })
+      }
+
+      const data = await patient_diagnosis_tbl.findAll(filterQuery);
+
+      return res.status(200).send({ code: httpStatus.OK, message: 'Fetched Successfully', responseContents: data });
+
+    } catch (ex) {
+      console.log(ex);
+      return res.status(400).send({ code: httpStatus.BAD_REQUEST, message: ex });
+    }
+  }
+  /**H30-49718-EMR Diagnosis Dashboard --> 1. Need Diagnosis filter, 2. Total patient count - Elumalai Govindan - End */
   return {
-    getDashBoard: _getDashBoard
+    getDashBoard: _getDashBoard,
+    diagnosis_dashboard /**H30-49718-EMR Diagnosis Dashboard --> 1. Need Diagnosis filter, 2. Total patient count - Elumalai Govindan */
   };
 };
 

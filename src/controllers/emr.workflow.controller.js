@@ -10,6 +10,9 @@ const emr_workflow_settings = sequelizeDb.emr_workflow_settings;
 const vm_emr_workflow = sequelizeDb.vw_emr_work_flow_setting;
 
 const emr_constants = require("../config/constants");
+const _requests = require('../requests/requests');
+// Lodash Import
+const _ = require("lodash");
 
 const getEMRWorkFlowSettings = [
   "ews_uuid",
@@ -107,33 +110,65 @@ const EMRWorkflowSettings = () => {
         if (!context_uuid) {
           context_uuid = 2;
         }
+       // H30-49781  --getEMRWorkflowByUserId view replace with api call - jevin -- Start 
         let findquery={
-          attributes: getEMRWorkFlowSettings,
+          attributes: [['uuid','ews_uuid'],['facility_uuid','ews_facility_uuid'],['department_uuid','ews_department_uuid'],['role_uuid','ews_role_uuid'],['user_uuid','ews_user_uuid'],['context_uuid','ews_context_uuid'],['context_activity_map_uuid','ews_context_activity_map_uuid'],['activity_uuid','ews_activity_uuid'],['work_flow_order','ews_work_flow_order'],['status','ews_status'],['is_active','ews_is_active'],['created_by','ews_created_by'],['created_date','ews_created_date'],['modified_by','ews_modified_by'],['modified_date','ews_modified_date']],
           where: {
-            ews_is_active: emr_constants.IS_ACTIVE,
-            ews_user_uuid: user_uuid,
-            ews_context_uuid: context_uuid,
-            act_is_active: emr_constants.IS_ACTIVE,
-            act_status: emr_constants.IS_ACTIVE
+            is_active: emr_constants.IS_ACTIVE,
+            user_uuid: user_uuid,
+            context_uuid: context_uuid,
+           // act_is_active: emr_constants.IS_ACTIVE,
+            //act_status: emr_constants.IS_ACTIVE
           },
         }
-        if (search && /\S/.test(search)) {
-          findquery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+        // if (search && /\S/.test(search)) {
+        //   findquery.where[Op.or] = [
+        //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
   
-          ];
-        }
-        const emr_data = await vm_emr_workflow.findAll(findquery);
+        //   ];
+        // }
+        // const emr_data = await vm_emr_workflow.findAll(findquery);
 
-        if (emr_data) {
+        let emr_data  =  await emr_workflow_settings.findAll(findquery)
+        emr_data = JSON.parse(JSON.stringify(emr_data))
+        if(emr_data && emr_data.length){
+          let activityIds = [...new Set(emr_data.map(e => e.ews_activity_uuid))];
+          let activityData = await _requests.getResults('activity/getActivityByIds', req, {
+            uuids: activityIds
+          });
+          let activityGroupBy  = activityData.responseContents && activityData.responseContents.length ? _.groupBy(activityData.responseContents, 'uuid') : [];
+          let finalRes = []
+          emr_data.forEach(ele=>{
+            let newObj = JSON.parse(JSON.stringify(ele));
+            newObj.activity_code = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].code : ''
+            newObj.activity_name = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].name : ''
+            newObj.activity_icon = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].icon : ''
+            newObj.activity_route_url = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].route_url : ''
+            newObj.act_is_active = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].is_active : ''
+            newObj.act_status = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].status : ''
+            finalRes.push(newObj);
+          });
+
           const responseMessage =
-            emr_data && emr_data.length > 0
-              ? emr_constants.EMR_FETCHED_SUCCESSFULLY
-              : `${emr_constants.NO_RECORD_FOUND} for the given user_uuid`;
+          finalRes && finalRes.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given user_uuid`;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: responseMessage,
+          responseContents: getEMRData(finalRes)
+        });
+        //H30-49781  --getEMRWorkflowByUserId view replace with api call  - jevin -- End
+        }else {
+
+          const responseMessage =
+          emr_data && emr_data.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given context`;
           return res.status(200).send({
             code: httpStatus.OK,
             message: responseMessage,
-            responseContents: getEMRData(emr_data)
+            responseContents: emr_data
           });
         }
       } catch (ex) {
@@ -155,32 +190,64 @@ const EMRWorkflowSettings = () => {
     let { search } = req.body;
     if (context_uuid) {
       try {
+        //H30-49781  --getEMRWorkflowByUserId view replace with api call  - jevin -- End
         let findquery={
-          attributes: getEMRWorkFlowSettings,
+          attributes: [['uuid','ews_uuid'],['facility_uuid','ews_facility_uuid'],['department_uuid','ews_department_uuid'],['role_uuid','ews_role_uuid'],['user_uuid','ews_user_uuid'],['context_uuid','ews_context_uuid'],['context_activity_map_uuid','ews_context_activity_map_uuid'],['activity_uuid','ews_activity_uuid'],['work_flow_order','ews_work_flow_order'],['status','ews_status'],['is_active','ews_is_active'],['created_by','ews_created_by'],['created_date','ews_created_date'],['modified_by','ews_modified_by'],['modified_date','ews_modified_date']],
           where: {
-            ews_is_active: emr_constants.IS_ACTIVE,
-            ews_context_uuid: context_uuid,
-            act_is_active: emr_constants.IS_ACTIVE,
-            act_status: emr_constants.IS_ACTIVE
+            is_active: emr_constants.IS_ACTIVE,
+            context_uuid: context_uuid,
           }
         };
-        if (search && /\S/.test(search)) {
-          findquery.where[Op.or] = [
-            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
-          ];
-        }
-        const emr_data = await vm_emr_workflow.findAll(findquery);
-        if (emr_data) {
+        // if (search && /\S/.test(search)) {
+        //   findquery.where[Op.or] = [
+        //     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('vw_emr_work_flow_setting.activity_name')), 'LIKE', '%' + search.toLowerCase() + '%'),
+        //   ];
+        // }
+        //const emr_data = await vm_emr_workflow.findAll(findquery);
+
+
+        let emr_data  =  await emr_workflow_settings.findAll(findquery)
+        emr_data = JSON.parse(JSON.stringify(emr_data))
+        if(emr_data && emr_data.length){
+          let activityIds = [...new Set(emr_data.map(e => e.ews_activity_uuid))];
+          let activityData = await _requests.getResults('activity/getActivityByIds', req, {
+            uuids: activityIds
+          });
+          let activityGroupBy  = activityData.responseContents && activityData.responseContents.length ? _.groupBy(activityData.responseContents, 'uuid') : [];
+          let finalRes = []
+          emr_data.forEach(ele=>{
+            let newObj = JSON.parse(JSON.stringify(ele));
+            newObj.activity_code = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].code : ''
+            newObj.activity_name = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].name : ''
+            newObj.activity_icon = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].icon : ''
+            newObj.activity_route_url = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].route_url : ''
+            newObj.act_is_active = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].is_active : ''
+            newObj.act_status = activityGroupBy[ele.ews_activity_uuid] && activityGroupBy[ele.ews_activity_uuid].length ? activityGroupBy[ele.ews_activity_uuid][0].status : ''
+            finalRes.push(newObj);
+          });
+
           const responseMessage =
-            emr_data && emr_data.length > 0
-              ? emr_constants.EMR_FETCHED_SUCCESSFULLY
-              : `${emr_constants.NO_RECORD_FOUND} for the given context`;
+          finalRes && finalRes.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given context`;
+        return res.status(200).send({
+          code: httpStatus.OK,
+          message: responseMessage,
+          responseContents: getEMRData(finalRes)
+        });
+        //H30-49781  --getEMRWorkflowByUserId view replace with api call  - jevin -- End
+        } else {
+          const responseMessage =
+          emr_data && emr_data.length > 0
+            ? emr_constants.EMR_FETCHED_SUCCESSFULLY
+            : `${emr_constants.NO_RECORD_FOUND} for the given context`;
           return res.status(200).send({
             code: httpStatus.OK,
             message: responseMessage,
-            responseContents: getEMRData(emr_data)
+            responseContents: emr_data
           });
         }
+    
       } catch (ex) {
         console.log(ex);
         return res

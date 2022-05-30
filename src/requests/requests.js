@@ -18,9 +18,7 @@ const getResults = async (url, req, data) => {
         if (data) {
             options.body = data;
         }
-        console.log('getFacilitySettingByFId Options -->' , options);
         const results = await rp(options);
-        console.log('getFacilitySettingByFId Results -->' , results);
         return results;
     } catch (e) { // deepscan-disable-line
         throw e;
