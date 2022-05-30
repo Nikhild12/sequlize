@@ -420,7 +420,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_total" +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE  oecc.encounter_type_uuid != 2 AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
+    " WHERE  oecc.encounter_type_uuid != 2 AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
 
   /**
    * The below conditions are used validate the null values
@@ -454,7 +454,7 @@ async function getDayWisePatientDetails(fromDate, toDate, department_Id, institu
   if (institutiontype_Id && institutiontype_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.facility_type_uuid IN (" + institutiontype_Id + ")";
   if (fromDate && toDate)
-    item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+    item_details_query = item_details_query + "AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
@@ -486,7 +486,7 @@ async function getDayWisePatientCountDetails(fromDate, toDate, department_Id, in
   if (institution_Id && institution_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.facility_uuid IN (" + institution_Id + ")";
   if (fromDate && toDate)
-    item_details_query = item_details_query + "AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+    item_details_query = item_details_query + "AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
 
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
