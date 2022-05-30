@@ -270,7 +270,8 @@ async function getDepartmentWiseCountDetails(fromDate, toDate, facilityUuid, dep
    * The below conditions are used validate the null values
    */
   if (fromDate && toDate)
-    item_details_query = item_details_query + " AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+    // item_details_query = item_details_query + " AND DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'";
+    item_details_query = item_details_query + " AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "'"; //H30-49952-Saju-Change the filter condition registered date into encountered date
   if (facilityUuid !== null && facilityUuid > 0)
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
