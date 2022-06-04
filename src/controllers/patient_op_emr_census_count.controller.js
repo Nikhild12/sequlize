@@ -441,10 +441,12 @@ async function getDayWisePatientDetails(fromDate, toDate, department_Id, institu
   /**
    * The below query is used to fetch the day wise patient details
    */
+  //Bhaskar - H30-50069 Day Wise Patient Details added Address and Aadhaar Number//
   let item_details_query = "SELECT oecc.facility_name,oecc.facility_type_name,oecc.registration_date,oecc.patient_pin_no,oecc.patient_name,oecc.age," +
-    " oecc.period_uuid,oecc.gender_uuid,oecc.visit_type_name,oecc.registered_session_name,oecc.encounter_session_name,oecc.department_name,oecc.mobile " +
+    " oecc.period_uuid,oecc.gender_uuid,oecc.visit_type_name,oecc.registered_session_name,oecc.encounter_session_name,oecc.department_name,oecc.mobile, oecc.address, oecc.aadhaar_number " +
     " FROM op_emr_census_count oecc " +
     " WHERE oecc.is_active = 1 ";
+  //Bhaskar - H30-50069 Day Wise Patient Details added Address and Aadhaar Number//
   if (department_Id && department_Id.length > 0)
     item_details_query = item_details_query + " AND oecc.department_uuid IN(" + department_Id + ")";
   if (institutioncategory_Id && institutioncategory_Id.length > 0)
