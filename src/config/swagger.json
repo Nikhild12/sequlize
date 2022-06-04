@@ -23115,6 +23115,12 @@
             "patient_name": {
                "type": "string"
             },
+            "address": {
+               "type": "string"
+            },
+            "aadhaar_number": {
+               "type": "string"
+            },
             "age": {
                "type": "string",
                "example": "1"
