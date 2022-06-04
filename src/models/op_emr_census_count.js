@@ -41,6 +41,14 @@ module.exports = (sequelize, DataTypes) => {
             patient_name: {
                 type: DataTypes.STRING(100)
             },
+            //Bhaskar H30-50068 - APi Changes for DB //
+            address: {
+                type: DataTypes.STRING(255)
+            },
+            aadhaar_number: {
+                type: DataTypes.STRING(100)
+            },
+            //Bhaskar H30-50068 - APi Changes for DB //
             age: {
                 type: DataTypes.INTEGER(3)
             },
