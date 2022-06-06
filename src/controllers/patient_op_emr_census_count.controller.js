@@ -420,7 +420,8 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_total" +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE  oecc.encounter_type_uuid != 2 AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
+    " WHERE  oecc.encounter_type_uuid != 2 AND DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' "+
+    " OR ((DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "') AND DATE(oecc.encounter_date) ='0000-00-00')"; //H30-50096-Saju- fetch data based on encounter date and registered date
 
   /**
    * The below conditions are used validate the null values
@@ -429,7 +430,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
   //item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
-
+console.log(item_details_query)
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
   });
