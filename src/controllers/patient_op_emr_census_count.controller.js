@@ -430,7 +430,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
   //item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
-console.log(item_details_query)
+
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
   });
