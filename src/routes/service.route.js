@@ -25,6 +25,7 @@ const dischargeSummaryRoute = require("./discharge.summary.settings.route");
 
 const facilityUsageDetailsRouter = require("./facility_usage_details.route"); // H30-48834- Api facility usage details (khurshid)
 const diagnosisSearchRoutes = require('./diagnosis_search.route');  // H30-48750 Api for diagnosis search (khurshid)
+const dayWisePatientListRoutes = require('./dayWisePatientList.route') // H30-50055--- Day wise Patient List API -Khurshid
 const diagnosisRoutes = require("./diagnosis.route");
 const diagnosisVersionRoutes = require("./diagnosis_version.route");
 const diagnosisTypeRoutes = require("./diagnosis_type.route");
@@ -222,6 +223,7 @@ serviceRouter.use("/vitalMasterUOM", vitalMasterUOMRoutes);
 serviceRouter.use("/facilitydetails", facilityUsageDetailsRouter); // H30-48834 Api for facility usage details (khurshid)
 // Diagnosis Routes
 serviceRouter.use("/diagnosisNew", diagnosisSearchRoutes); // H30-48750 Api for diagnosis search (khurshid)
+serviceRouter.use('/dayWisePatient', dayWisePatientListRoutes) // H30-50055---Day wise Patient List API -Khurshid 
 serviceRouter.use("/diagnosis", diagnosisRoutes);
 serviceRouter.use("/diagnosisType", diagnosisTypeRoutes);
 serviceRouter.use("/diagnosisVersion", diagnosisVersionRoutes);

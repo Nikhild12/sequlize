@@ -176,6 +176,53 @@
             "x-throttling-tier": "Unlimited"
          }
       },
+      "/api/dayWisePatient/getDaywiseNewPatientList": {
+         "post": {
+            "description": "GET Day Wise New Patient List",
+            "operationId": "getdaywisepatientlist",
+            "parameters": [
+               {
+                  "in": "body",
+                  "name": "getdaywisepatientlist",
+                  "required": true,
+                  "schema": {
+                     "$ref": "#/definitions/getdaywisepatientlistnew"
+                  }
+               },
+               {
+                  "name": "user_uuid",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               }
+            ],
+            "produces": [
+               "application/json",
+               "application/xml"
+            ],
+            "responses": {
+               "200": {
+                  "description": "successful operation",
+                  "schema": {
+                     "type": "object"
+                  }
+               },
+               "403": {
+                  "description": "You do not have necessary permissions for the resource",
+                  "schema": {
+                     "type": "object"
+                  }
+               }
+            },
+            "summary": " Get Day Wise New Patient List",
+            "tags": [
+               "Day Wise New Patient List"
+            ],
+            "x-auth-type": "Application & Application User",
+            "x-throttling-tier": "Unlimited"
+         }
+      },
       "/api/glass_prescription/get": {
          "post": {
             "description": "Fetch",
@@ -22862,6 +22909,20 @@
             }
          }
       },
+      "getdaywisepatientlistnew": {
+         "type": "object",
+         "properties": {
+            "fromDate": {
+               "type": "string"
+            },
+            "toDate": {
+               "type": "string"
+            },
+            "facility_uuid": {
+               "type": "number"
+            }
+         }
+      },
       "getglassprescription": {
          "type": "object",
          "properties": {
@@ -23519,6 +23580,12 @@
                "example": "1"
             },
             "patient_name": {
+               "type": "string"
+            },
+            "address": {
+               "type": "string"
+            },
+            "aadhaar_number": {
                "type": "string"
             },
             "age": {
