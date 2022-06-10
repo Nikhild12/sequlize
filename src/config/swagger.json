@@ -14190,6 +14190,20 @@
                   "description": "an authorization header",
                   "required": true,
                   "type": "string"
+               },
+               {
+                  "name": "fromDate",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
+               },
+               {
+                  "name": "toDate",
+                  "in": "header",
+                  "description": "an authorization header",
+                  "required": true,
+                  "type": "string"
                }
             ],
             "produces": [

@@ -204,9 +204,16 @@ const patientOPEmrCensusController = () => {
 
   //H30-49098-Saju-Create new api for get patient total registration count
   const getTotalRegCount = async (req, res) => {
-
+    //H30-50188-Saju-Add date filter and fetch speciality op and clinical op count's
+    const { fromdate, todate } = req.headers;
     try {
-      const _query = "SELECT COUNT(c.uuid) AS reg_tot_count FROM op_emr_census_count c";
+      const _query = "SELECT COUNT(oecc.uuid) AS reg_tot_count," +
+        " COUNT(CASE WHEN registered_session_uuid = 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_speciality_op," +
+        " COUNT(CASE WHEN registered_session_uuid != 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_clinic_op " +
+        " FROM op_emr_census_count AS oecc " +
+        " WHERE  oecc.encounter_type_uuid != 2 AND (DATE(oecc.encounter_date) BETWEEN '" + fromdate + "' AND '" + todate + "' " +
+        " OR ((DATE(oecc.registration_date) BETWEEN '" + fromdate + "' AND '" + todate + "') AND DATE(oecc.encounter_date) ='0000-00-00'))"; //H30-50096-Saju- fetch data based on encounter date and registered date
+
       const regCount = await db.sequelize.query(_query, {
         type: Sequelize.QueryTypes.SELECT
       });
@@ -420,7 +427,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
     " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_total" +
     " FROM op_emr_census_count AS oecc " +
-    " WHERE  oecc.encounter_type_uuid != 2 AND (DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' "+
+    " WHERE  oecc.encounter_type_uuid != 2 AND (DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' " +
     " OR ((DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "') AND DATE(oecc.encounter_date) ='0000-00-00'))"; //H30-50096-Saju- fetch data based on encounter date and registered date
 
   /**
@@ -430,7 +437,7 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
     item_details_query = item_details_query +
       " AND oecc.facility_uuid = " + facilityUuid;
   //item_details_query = item_details_query + " GROUP BY oecc.encounter_department_uuid";
-
+  console.log(item_details_query)
   const item_details = await db.sequelize.query(item_details_query, {
     type: Sequelize.QueryTypes.SELECT
   });
