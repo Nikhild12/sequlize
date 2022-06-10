@@ -204,7 +204,7 @@ const patientOPEmrCensusController = () => {
 
   //H30-49098-Saju-Create new api for get patient total registration count
   const getTotalRegCount = async (req, res) => {
-
+    //H30-50188-Saju-Add date filter and fetch speciality op and clinical op count's
     const { fromdate, todate } = req.headers;
     try {
       const _query = "SELECT COUNT(oecc.uuid) AS reg_tot_count," +
