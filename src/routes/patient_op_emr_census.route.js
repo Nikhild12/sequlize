@@ -13,4 +13,7 @@ router.route("/getDayWisePatientCount").post(patientOPEmrCensusCtrl.getDayWisePa
 router.route("/getTotalRegCount").get(patientOPEmrCensusCtrl.getTotalRegCount); //H30-49098-Saju-Create new api for get patient total registration count
 router.route("/update_op_emr_census_count").post(patientOPEmrCensusCtrl.updateOPEMRCensusCount); /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan */
 router.route("/getopcensusdetails").post(patientOPEmrCensusCtrl.getOPCensusDetails); /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan */
+// H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- Start 
+router.route("/getSessionWisePatCountDetails").post(patientOPEmrCensusCtrl.getSessionWisePatCountDetails);
+// H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- Start 
 module.exports = router;
