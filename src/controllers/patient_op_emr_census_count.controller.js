@@ -309,6 +309,43 @@ const patientOPEmrCensusController = () => {
     }
   }
   /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan - End*/
+
+  // H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- Start 
+    const getSessionWisePatCountDetails = async (req, res) => {
+      try {
+        const {
+          startdate,
+          enddate,
+          institution_Id,
+          is_adult,
+          institutioncategory_Id,
+          institutiontype_Id,
+          department_Id,
+          session_Id
+        } = req.body;
+  
+        let Authorization;
+        Authorization = req.headers.Authorization ? req.headers.Authorization : req.headers.authorization
+        const sessionCountDetails = await getSessionWiseCountDetailsQuery(startdate, enddate, institution_Id,institutioncategory_Id,is_adult,institutiontype_Id,department_Id,session_Id);
+  
+        let finalData = [];
+        finalData.push(sessionCountDetails);
+        return res.send({
+          statusCode: 200,
+          responseContent: finalData
+        });
+  
+      } catch (error) {
+        console.log('\n error...', error);
+        return res.status(500).send({
+          statusCode: 500,
+          error
+        });
+      }
+    }
+    // H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- End
+
+
   // --------------------------------------------return----------------------------------
   return {
     addOPEMRCensusCount,
@@ -318,7 +355,8 @@ const patientOPEmrCensusController = () => {
     getDayWisePatientCount,
     getTotalRegCount,
     updateOPEMRCensusCount, /**H30-49778-Update OP EMR Census Count During Prescribing Doctor - Elumalai Govindan */
-    getOPCensusDetails /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan*/
+    getOPCensusDetails, /**H30-49798-OP - EMR Patient Search Response should come with Prescribed Flag - Elumalai Govindan*/
+    getSessionWisePatCountDetails
   };
 };
 
@@ -443,6 +481,100 @@ async function getSessionWiseCountDetails(fromDate, toDate, facilityUuid) {
   });
   return item_details;
 }
+
+// H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- Start 
+async function getSessionWiseCountDetailsQuery(fromDate, toDate, facilityUuid,institutioncategory_Id,is_adultIds,institutiontype_Id,department_Id,session_Id) {
+  /**
+   * The below query is used to fetch the department wise patient count details
+   */
+  //H30-48484-Saju-OP census report issue fixing
+  let item_details_query = "SELECT" +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_new_adult_male," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_adult_female, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS morning_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS morning_new_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_new_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_new_child_female, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END)AS morning_new_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS morning_new_total,   " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_new_adult_male," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS evening_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS evening_new_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_new_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_new_child_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS evening_new_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS evening_new_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_new_adult_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS casualty_new_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS casualty_new_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_new_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_new_child_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_new_child_total," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid != 2 THEN 1 ELSE 0 END) AS casualty_new_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_old_adult_male," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS morning_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS morning_old_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS morning_old_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_child_female, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS morning_old_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 1 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS morning_old_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_old_adult_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS evening_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS evening_old_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS evening_old_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_child_female, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS evening_old_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 2 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS evening_old_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_old_adult_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_adult_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 AND oecc.gender_uuid = 3 THEN 1 ELSE 0 END) AS casualty_old_adult_tg, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 1 THEN 1 ELSE 0 END) AS casualty_old_adult_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 1 THEN 1 ELSE 0 END) AS casualty_old_child_male, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 AND oecc.gender_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_child_female," +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 AND oecc.is_adult = 0 THEN 1 ELSE 0 END) AS casualty_old_child_total, " +
+    " SUM(CASE WHEN oecc.encounter_session_uuid = 3 AND oecc.encounter_visit_type_uuid = 2 THEN 1 ELSE 0 END) AS casualty_old_total" +
+    " FROM op_emr_census_count AS oecc " +
+    " WHERE  oecc.encounter_type_uuid != 2 AND (DATE(oecc.encounter_date) BETWEEN '" + fromDate + "' AND '" + toDate + "' " +
+    " OR ((DATE(oecc.registration_date) BETWEEN '" + fromDate + "' AND '" + toDate + "') AND DATE(oecc.encounter_date) ='0000-00-00'))"; //H30-50096-Saju- fetch data based on encounter date and registered date
+
+  /**
+   * The below conditions are used validate the null values
+   */
+  if (facilityUuid && facilityUuid.length > 0){
+    item_details_query = item_details_query +
+      " AND oecc.facility_uuid in (" + facilityUuid.toString() +")";
+  }
+  if(institutioncategory_Id && institutioncategory_Id.length > 0){
+    item_details_query = item_details_query +
+    " AND oecc.facility_category_uuid in (" + institutioncategory_Id.toString() +")";
+  }
+  if(is_adultIds && is_adultIds.length  > 0){
+    item_details_query = item_details_query +
+    " AND oecc.is_adult in (" + is_adultIds.toString() +")";
+  }
+  if(institutiontype_Id && institutiontype_Id.length > 0){
+    item_details_query = item_details_query +
+    " AND oecc.facility_type_uuid in (" + institutiontype_Id.toString() +")";
+  }
+  if(department_Id && department_Id.length){
+    item_details_query = item_details_query +
+    " AND oecc.department_uuid in (" + department_Id.toString() +")";
+  }
+  if(session_Id && session_Id.length > 0){
+    item_details_query = item_details_query +
+    " AND oecc.registered_session_uuid in (" + session_Id.toString() +")";
+  }
+  console.log(item_details_query)
+  const item_details = await db.sequelize.query(item_details_query, {
+    type: Sequelize.QueryTypes.SELECT
+  });
+  return item_details;
+}
+// H30-50195 - EMR - getSessionreport getSessionWisePatCount need to update API -- jevin -- End 
 
 //H30-47544-Saju-OP Back entry	OP Back entry> Registration date and time mismaches with the day wise patient report
 async function getDayWisePatientDetails(fromDate, toDate, department_Id, institutioncategory_Id, institution_Id, institutiontype_Id) {
