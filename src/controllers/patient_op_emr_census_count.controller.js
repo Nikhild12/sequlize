@@ -207,20 +207,32 @@ const patientOPEmrCensusController = () => {
     //H30-50188-Saju-Add date filter and fetch speciality op and clinical op count's
     const { fromdate, todate } = req.headers;
     try {
-      const _query = "SELECT COUNT(oecc.uuid) AS reg_tot_count," +
-        " COUNT(CASE WHEN registered_session_uuid = 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_speciality_op," +
-        " COUNT(CASE WHEN registered_session_uuid != 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_clinic_op " +
+      // const _query = "SELECT COUNT(oecc.uuid) AS reg_tot_count," +
+      const _query = "SELECT COUNT(CASE WHEN registered_session_uuid = 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_speciality_op" +
+        // " COUNT(CASE WHEN registered_session_uuid != 4 AND DATE(oecc.encounter_date) !='0000-00-00' THEN oecc.uuid END ) AS reg_tot_clinic_op " +
         " FROM op_emr_census_count AS oecc " +
         " WHERE  oecc.encounter_type_uuid != 2 AND (DATE(oecc.encounter_date) BETWEEN '" + fromdate + "' AND '" + todate + "' " +
         " OR ((DATE(oecc.registration_date) BETWEEN '" + fromdate + "' AND '" + todate + "') AND DATE(oecc.encounter_date) ='0000-00-00'))"; //H30-50096-Saju- fetch data based on encounter date and registered date
+
+      const encounter_query = "SELECT COUNT(e.uuid) AS reg_tot_clinic_op FROM encounter e WHERE e.is_active = 1 " +
+        " AND DATE(e.encounter_date) BETWEEN '" + fromdate + "' AND '" + todate + "'";
 
       const regCount = await db.sequelize.query(_query, {
         type: Sequelize.QueryTypes.SELECT
       });
 
+      const encounterCount = await db.sequelize.query(encounter_query, {
+        type: Sequelize.QueryTypes.SELECT
+      });
+
+      const returnObj = {
+        reg_tot_clinic_op: encounterCount && encounterCount.length > 0 ? encounterCount[0].reg_tot_clinic_op : 0,
+        reg_tot_speciality_op: regCount && regCount.length > 0 ? regCount[0].reg_tot_speciality_op : 0,
+      }
+
       return res.send({
         statusCode: 200,
-        responseContent: regCount ? regCount[0] : 0
+        responseContent: returnObj ? returnObj : 0
       });
     }
     catch (err) {
