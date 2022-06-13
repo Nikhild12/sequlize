@@ -68,6 +68,11 @@ module.exports = (sequelize, DataTypes) => {
       patient_treatment_uuid: {
         type: DataTypes.INTEGER
       },
+      //H30-50247-sourav-start
+      diagnosis_type:{
+        type: DataTypes.STRING
+      },
+      //H30-50247-sourav-end
       encounter_type_uuid: {
         type: DataTypes.INTEGER
       },

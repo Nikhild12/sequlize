@@ -357,7 +357,9 @@ const PatientDiagnsis = () => {
           where: query,
           order: [["uuid", "desc"]],
           limit: 5,
-          attributes: ['uuid', 'patient_uuid', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed', 'created_date'],
+          //H30-50247-sourav-start
+          attributes: ['uuid', 'patient_uuid','diagnosis_type', 'diagnosis_uuid', 'encounter_type_uuid', 'other_diagnosis', 'is_snomed', 'created_date'],
+          //H30-50247-sourav-end
           include: [{
             model: diagnosis_tbl,
             attributes: ['uuid', 'code', 'name', 'description', 'in_house']
