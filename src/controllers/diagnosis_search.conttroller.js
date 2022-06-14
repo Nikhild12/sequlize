@@ -69,7 +69,7 @@ const diagnosisController = () => {
       try {
         const diagnosisIcdData = await diagnosisIcdTbl.findAll({
           where: getDiagnosSearch(searchValue),
-          attributes: ["name", "code", "description"],
+          attributes: ["uuid", "name", "code", "description", "in_house"] // H30-50262 -- Adding two new field (uuid, in_house) -- khurshid
         });
         if (diagnosisIcdData && diagnosisIcdData.length > 0) {
           return res.status(200).send({
